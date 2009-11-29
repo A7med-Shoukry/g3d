@@ -6,6 +6,9 @@
 namespace G3D {
 
 /**
+   Set of Vertex, Geometry, and Pixel functions that execute on the GPU/
+
+   This is an abstraction of OpenGL "Programs".
 
    Example:
 
@@ -22,16 +25,145 @@ namespace G3D {
    Shader::Ref filterShader = Shader::create(spec);
    </pre>
 
+\section Vertex Vertex Shader
+
+  A vertex shader transforms each element of an input stream of vertex
+  attributes.  They typically transform vertices from object space to
+  screen space by multiplying by g3d_ObjectToScreenMatrix.  Note that
+  the vertex shader typically does not perform a perspective division.
+
+  When a geometry shader is used, the vertex shader typically
+  transforms only to world or camera space and lets the geometry
+  shader perform the projection and frame buffer transformations.
+
+\section Geometry Geometry Shader
+  Geometry shaders collect a set of outputs from the vertex shader and produce a new vertex stream
+  that is then rasterized.
+
+  Geometry shaders must include layout qualifiers such as:
+<pre>
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 60) out;
+</pre>
+
+  declaring the type of the input and output.  By section 4.3.8 (page 37) of the GLSL 1.50.09 specification 
+  and the GL_EXT_geometry_shader4 extension (http://www.opengl.org/registry/specs/EXT/geometry_shader4.txt),
+  the accepted inputs are:
+
+   - points
+   - lines
+   - lines_adjacency
+   - triangles
+   - triangles_adjacency
+
+  Note that per the GLSL specification, geometry shaders do not
+  support QUAD or QUAD_STRIP primitives.  TRI_STRIP and TRI_FAN are
+  automatrically converted to TRIANGLES and LINE_STRIP is
+  automatically converted to lines.  Under the NV_geometry_shader4
+  extension, QUAD and QUAD_STRIP are converted to TRIANGLES as well.
+
+  The accepted outputs are:
+
+   - points
+   - line_strip
+   - triangle_strip
+
+\subsection Fragment Fragment ("Pixel") Shader
+
+Fragment shaders compute the output values that will be composited
+into the frame buffer.  They typically perform shading computations
+based on lights, shadow maps, and material parameters (BSDFs).
+
+A note on OpenGL terminology: Pixels are the elements of the frame
+buffer. Fragments are the pieces of the rasterized geometry that lie
+within a pixel's bounds.  Because DirectX has "pixel shaders", the two
+terms are often used interchangably, but the distinction can
+occasionally be important: one is an array element and the other is a
+small piece of geometry.
+
   \section Built-ins
+
+  \subsection Vertex
+
+ Section 7.1 (page 70) of the GLSL 1.50.09 specification defines:
+
+<pre>
+in int gl_VertexID;
+in int gl_InstanceID;
+out gl_PerVertex {
+    vec4 gl_Position;
+    float gl_PointSize;
+    float gl_ClipDistance[];
+};
+</pre>
+
+  \subsection Geometry
+
+ Section 7.1 (page 70) of the GLSL 1.50.09 specification defines:
+
+<pre>
+in gl_PerVertex {
+vec4 gl_Position;
+    float gl_PointSize;
+    float gl_ClipDistance[];
+} gl_in[];
+in int gl_PrimitiveIDIn;
+out gl_PerVertex {
+    vec4 gl_Position;
+    float gl_PointSize;
+    float gl_ClipDistance[];
+};
+out int gl_PrimitiveID;
+out int gl_Layer;
+</pre>
+
+  \subsection Fragment
+
+   Section 7.2 (page 72) of the GLSL 1.50.09 specification defines:
+
+<pre>
+in vec4 gl_FragCoord;
+in bool gl_FrontFacing;
+in float gl_ClipDistance[];
+out float gl_FragDepth;
+in vec2 gl_PointCoord;
+in int gl_PrimitiveID;
+</pre>
 
    \subsection gl_FragCoord
 
-   gl_FragCoord.xy is the pixel position of the
-   current sample in the output framebuffer.  By default, it refers to
-   a pixel center and is half-way between two integer coordinates.
-   This can be changed using GLSL directives.
+   gl_FragCoord.xy is the pixel position of the current sample in the
+   output frame buffer.  By default, it refers to a pixel center and is
+   half-way between two integer coordinates and is centered at the
+   lower-left of the window.  This can be changed using GLSL
+   directives.  
 
-  \section Extensions
+   We recommend using: <code>layout (origin_upper_left)
+   in vec4 gl_FragCoord;</code> in your prefix so that gl_FragCoord
+   matches the G3D texture coordinates and RenderDevice 2D mode
+   coordinates.
+
+   \subsection Matrices
+  \htmlonly
+  <table>
+  <tr><td><code>uniform in mat4x3 g3d_ObjectToWorldMatrix</code></td><td>   </td></tr>
+
+  <tr><td><code>uniform in mat4x3 g3d_WorldToCameraMatrix</code></td><td>   </td></tr>
+
+  <tr><td><code>uniform in mat4   g3d_ProjectionMatrix</code>   </td><td>Projection matrix defined by RenderDevice.</td></tr>
+
+  <tr><td><code>uniform in mat4   g3d_FrameBufferMatrix</code>  </td><td>Used by RenderDevice to invert the Y axis when rendering to a texture so that the upper-left corner of the texture corresponds to texture coordinate (0,0).  The identity matrix when rendering to the screen.</td></tr>
+
+  <tr><td><code>uniform in mat4   g3d_ProjectionFrameBufferMatrix</code></td><td> 
+                 <code>= g3d_FrameBufferMatrix * g3d_ProjectionMatrix</code></td></tr>
+
+  <tr><td><code>uniform in mat4   g3d_ObjectToScreenMatrix</code></td><td> 
+                 <code>= g3d_FrameBufferMatrix * g3d_ProjectionMatrix * mat4(g3d_WorldToCameraMatrix) * mat4(g3d_ObjectToWorldMatrix)</code>.</td></tr>
+  </table>
+  \endhtmlonly
+       
+
+  \section Pragmas
   
    \subsection Lines 
 
@@ -42,10 +174,6 @@ namespace G3D {
    <code>#line</code> directives, Shader may report incorrect error
    lines to you.
    
-   \subsection Preamble
-   The entire shader is prefixed with the "G3D Preamble", which defines
-   the helper files.  This preamble is considered source string 0.
-
    \subsection Include
 
    The custom directive:
@@ -63,6 +191,11 @@ namespace G3D {
   Any <code>#version</code> directive encounted in a source string
   is commented out by the G3D preprocessor and that directive is moved
   to the first line of the G3D preamble.
+
+  \section Preamble
+   The entire shader is prefixed with the "G3D Preamble", which defines
+   the helper files.  This preamble is considered source string 0.
+
  */
 class Shader2 : public ReferenceCountedObject {
 public:

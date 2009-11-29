@@ -11,6 +11,23 @@ namespace G3D {
  push/pop.  It also allows RenderDevice to return the state from
  accessors without actually making OpenGL calls, which are slow
  (sometimes catastrophically slow, if using multiple GPUs).
+
+ Example:
+
+<pre>
+GlobalArgs args;
+globalArgs["diffuse"]   = diffuseTex;
+globalArgs["thickness"] = 3.4f;
+
+StreamArgs streamArgs;
+streamArgs.primitive  = Primitive::TRI_LIST;
+streamArgs.index = index;
+streamArgs["vertex"] = vertexRange;
+streamArgs["normal"] = normalRange;
+
+rd->invoke(toonShader, globalArgs, streamArgs);
+</pre>
+
  */
 class RenderDevice2 {
 private:
@@ -42,10 +59,17 @@ private:
         // TODO: draw buffers
         // TODO: read buffer
 
-        CFrame           objectToWorld;
-        CFrame           worldToCamera;
-        Matrix4          projection;
+        // TODO: cull face
 
+        CFrame           objectToWorldMatrix;
+
+        Camera           camera;
+
+        /** Used to flip the coordinate system when rendering to
+            texture by setting the g3d_FrameBufferMatrix. */
+        bool             invertY;
+
+        /** If NULL, render to the default framebuffer */
         FrameBuffer::Ref frameBuffer;
     };
 
@@ -60,9 +84,9 @@ public:
     */
    void invoke
    (Shader2::Ref&  shader,
-    GlobalArgs&   a,
-    StreamArgs&   s,
-    int           numInstances = 1);
+    GlobalArgs&    a,
+    StreamArgs&    s,
+    int            numInstances = 1);
 
     /** Call to begin a block of raw OpenGL commands issued manually  
        (e.g., by calling gl___ functions yourself).  Doing so turns off
