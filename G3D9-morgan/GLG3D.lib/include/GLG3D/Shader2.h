@@ -190,13 +190,18 @@ in int gl_PrimitiveID;
  
   \subsection Version
 
-  Any <code>#version</code> directive encounted in a source string
+  A <code>#version</code> directive encounted on the first line of a source string
   is commented out by the G3D preprocessor and that directive is moved
   to the first line of the G3D preamble.
 
+  The directive must be on the first line, with no preceeding
+  whitespace or comment.  The directive must have no space between the
+  hash mark and the word "version".
+
   \section Preamble
    The entire shader is prefixed with the "G3D Preamble", which defines
-   the helper files.  This preamble is considered source string 0.
+   the G3D built-ins and helpers, and contains the version number for
+   the shader.
 
  */
 class Shader2 : public ReferenceCountedObject {
@@ -224,7 +229,7 @@ public:
                */
             std::string   filename;
 
-            /** Substring from the original code, always ending in a newline. */
+            /** Substring from the original code, always ending in a newline, even if it is empty. */
             std::string   code;
 
             /** Number for the file or source string from which \a code is a substring. */
@@ -283,6 +288,30 @@ public:
             }
         }
 
+        /** Returns b=-1 if no newline is found */
+        static void findNewline(const std::string& s, int startSearch, int& newlineBegin, int& newlineEnd) {
+            int i = contents.find('\r', startSearch);
+            int j = contents.find('\n', startSearch);
+            if (j != -1 && j < i) {
+                i = j;
+            }
+            newlineBegin = i;
+            if (i != -1) {
+                // TODO: find the end
+            }
+        }
+
+        static int countNewlines(const std::string& s) {
+            int b = 0, e = -1;
+
+            // The first time around the loop there might not be a newline
+            int count = -1;
+            while (b != -1) {
+                findNewline(s, e + 1, b, e);
+                ++count;
+            }
+            return count;
+        }
 
         void addSection
         (const std::string& filename,
@@ -290,7 +319,19 @@ public:
          const std::string& contents, 
          const std::string& includeHistory,
          int                startLine) {
-            // TODO
+            Section& section = sectionArray.next();
+            section.includeHistory = includeHistory;
+            section.filename = filename;
+            section.code = contents;
+            
+            // Ensure that contents ends in a newline
+            char c = contents.empty() ? '\0' : contents[contents.size() - 1];
+            if ((c != '\r') && (c != '\n')) {
+                section.code += NEWLINE;
+            }
+            section.stringNumber = stringNumber;
+            section.firstLineNumber = startLine;
+            section.lastLineNumber = countNewlines(section.code);
         }
 
     public:
@@ -305,8 +346,14 @@ public:
                 // Comment out the first line of contents and
                 // move it to the first line of the G3DPreamble
 
-                // TODO: move the first line of contents to the preamble
-                
+                // Find the end of the first line
+                int i = -1, j = -1;
+                findNewline(contents, 0, i, j);
+                if (i == -1) {
+                    i = contents.size() - 1;
+                }
+                preamble = contents.substr(0, i) + NEWLINE + preamble;
+
                 contents = "// " + contents; 
             }
             
@@ -317,7 +364,8 @@ public:
 
     public:
         
-        /** Produces the source code for the entire shader. */
+        /** Produces the source code for the entire shader, including
+            the <code>#line</code> directives. */
         void getConcatenatedShader(std::string& str) const {
             str = "";
             for (int i = 0; i < sectionArray; ++i) {
@@ -330,8 +378,7 @@ public:
 
         /** Given a stringNumber and lineNumber (usually, from an error message),
             returns the original filename, include directives that led to that 
-            file, and the contents of the line, ending with a newline.
-        */
+            file, and the contents of the line, ending with a newline.  */
         void getLine(int stringNumber, 
                      int lineNumber, 
                      std::string& includeString,
@@ -340,6 +387,7 @@ public:
             // TODO
         }
     };
+
 
     class Specification {
     private:
@@ -362,12 +410,12 @@ public:
 
     public:
     };
+
+    void load(Specification& spec);
     
 public:
 
     static Ref create(const Specification& spec);
-
-    void load(Specification& spec);
 
     /** Specification used to create this. */
     const Specification& specification() const;
