@@ -6,9 +6,11 @@
 namespace G3D {
 
 /**
-   Set of Vertex, Geometry, and Pixel functions that execute on the GPU/
+   Set of Vertex, Geometry, and Pixel functions that execute on the
+   GPU.
 
-   This is an abstraction of OpenGL "Programs".
+   This is an abstraction of OpenGL Programs, which are typically
+   called "shaders" in graphics jargon.
 
    Example:
 
@@ -36,56 +38,8 @@ namespace G3D {
   transforms only to world or camera space and lets the geometry
   shader perform the projection and frame buffer transformations.
 
-\section Geometry Geometry Shader
-  Geometry shaders collect a set of outputs from the vertex shader and produce a new vertex stream
-  that is then rasterized.
-
-  Geometry shaders must include layout qualifiers such as:
-<pre>
-layout(triangles) in;
-layout(triangle_strip, max_vertices = 60) out;
-</pre>
-
-  declaring the type of the input and output.  By section 4.3.8 (page 37) of the GLSL 1.50.09 specification 
-  and the GL_EXT_geometry_shader4 extension (http://www.opengl.org/registry/specs/EXT/geometry_shader4.txt),
-  the accepted inputs are:
-
-   - points
-   - lines
-   - lines_adjacency
-   - triangles
-   - triangles_adjacency
-
-  Note that per the GLSL specification, geometry shaders do not
-  support QUAD or QUAD_STRIP primitives.  TRI_STRIP and TRI_FAN are
-  automatrically converted to TRIANGLES and LINE_STRIP is
-  automatically converted to lines.  Under the NV_geometry_shader4
-  extension, QUAD and QUAD_STRIP are converted to TRIANGLES as well.
-
-  The accepted outputs are:
-
-   - points
-   - line_strip
-   - triangle_strip
-
-\subsection Fragment Fragment ("Pixel") Shader
-
-Fragment shaders compute the output values that will be composited
-into the frame buffer.  They typically perform shading computations
-based on lights, shadow maps, and material parameters (BSDFs).
-
-A note on OpenGL terminology: Pixels are the elements of the frame
-buffer. Fragments are the pieces of the rasterized geometry that lie
-within a pixel's bounds.  Because DirectX has "pixel shaders", the two
-terms are often used interchangably, but the distinction can
-occasionally be important: one is an array element and the other is a
-small piece of geometry.
-
-  \section Built-ins
-
-  \subsection Vertex
-
- Section 7.1 (page 70) of the GLSL 1.50.09 specification defines:
+ Section 7.1 (page 70) of the GLSL 1.50.09 specification defines the
+ following built-ins for a vertex shader:
 
 <pre>
 in int gl_VertexID;
@@ -97,9 +51,42 @@ out gl_PerVertex {
 };
 </pre>
 
-  \subsection Geometry
 
- Section 7.1 (page 70) of the GLSL 1.50.09 specification defines:
+\section Geometry Geometry Shader
+  Geometry shaders collect a set of outputs from the vertex shader and produce a new vertex stream
+  that is then rasterized.
+
+  Geometry shaders must include layout qualifiers such as:
+<pre>
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 3) out;
+</pre>
+
+  declaring the type of the input and output.  By section 4.3.8 (page 37) of the GLSL 1.50.09 specification 
+  and the GL_EXT_geometry_shader4 extension (http://www.opengl.org/registry/specs/EXT/geometry_shader4.txt),
+  the accepted inputs are:
+
+   - <code>points</code>
+   - <code>lines</code>
+   - <code>lines_adjacency</code>
+   - <code>triangles</code>
+   - <code>triangles_adjacency</code>
+
+  Note that per the GLSL specification, geometry shaders do not
+  support QUAD or QUAD_STRIP primitives.  TRI_STRIP and TRI_FAN are
+  automatically converted to TRIANGLES and LINE_STRIP is
+  automatically converted to lines.  Under the NV_geometry_shader4
+  extension, QUAD and QUAD_STRIP are converted to TRIANGLES as well.
+
+  The accepted outputs are:
+
+   - <code>points</code>
+   - <code>line_strip</code>
+   - <code>triangle_strip</code>
+
+
+ Section 7.1 (page 70) of the GLSL 1.50.09 specification defines the
+ following built-ins for a geometry shader:
 
 <pre>
 in gl_PerVertex {
@@ -117,9 +104,24 @@ out int gl_PrimitiveID;
 out int gl_Layer;
 </pre>
 
-  \subsection Fragment
 
-   Section 7.2 (page 72) of the GLSL 1.50.09 specification defines:
+
+\subsection Pixel Pixel (Fragment) Shader
+
+A fragment shader computes the output values that will be composited
+into the frame buffer.  It typically performs shading computations
+based on lights, shadow maps, and material parameters (BSDFs).
+
+A note on OpenGL terminology: Pixels are the elements of the frame
+buffer. Fragments are the pieces of the rasterized geometry that lie
+within a pixel's bounds.  Because DirectX has "pixel shaders", the two
+terms are often used interchangably, but the distinction can
+occasionally be important: one is an array element and the other is a
+small piece of geometry.
+
+
+   Section 7.2 (page 72) of the GLSL 1.50.09 specification defines the
+   following built-in uniforms for pixel shaders:
 
 <pre>
 in vec4 gl_FragCoord;
@@ -129,8 +131,6 @@ out float gl_FragDepth;
 in vec2 gl_PointCoord;
 in int gl_PrimitiveID;
 </pre>
-
-   \subsection gl_FragCoord
 
    gl_FragCoord.xy is the pixel position of the current sample in the
    output frame buffer.  By default, it refers to a pixel center and is
@@ -142,6 +142,8 @@ in int gl_PrimitiveID;
    in vec4 gl_FragCoord;</code> in your prefix so that gl_FragCoord
    matches the G3D texture coordinates and RenderDevice 2D mode
    coordinates.
+
+  \section Built-ins
 
    \subsection Matrices
   \htmlonly
