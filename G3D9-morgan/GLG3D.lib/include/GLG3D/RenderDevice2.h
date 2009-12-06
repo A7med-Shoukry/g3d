@@ -15,6 +15,19 @@ namespace G3D {
  Example:
 
 <pre>
+ArgList args;
+args["diffuse"]   = diffuseTex;  // A uniform
+args["thickness"] = 3.4f;        // A uniform
+args["vertex"]    = vertexRange; // A vertex attribute
+args["normal"]    = normalRange; // A vertex attribute
+
+rd->invoke(toonShader, Primitive::TRI_LIST, index, args);
+
+
+</pre>
+
+
+<pre>
 GlobalArgs args;
 globalArgs["diffuse"]   = diffuseTex;
 globalArgs["thickness"] = 3.4f;
@@ -30,6 +43,54 @@ rd->invoke(toonShader, globalArgs, streamArgs);
 
  */
 class RenderDevice2 {
+public:
+
+    enum {
+        /** All vertices; whatever the size of the vertex  */
+        ALL = -1,
+
+        /** Non-instanced is not the same as instanced with a count of
+            1; they lead to different OpenGL calls. */
+        NON_INSTANCED = -1};
+    
+    /** Non-indexed geometry.
+
+        Corresponds to glDrawArrays, glDrawArraysInstanced.  There is no G3D equivalent of
+        glMultiDrawArrays.        
+    */
+    void invoke
+    (const Shader::Ref&, 
+     const ArgList&, 
+     Primitive type, 
+     int startVertex = 0, 
+     int numVertices = ALL,
+     int numInstances = NON_INSTANCED);
+    
+    /** Indexed geometry.
+
+        Corresponds to glDrawElements, glDrawElementsInstanced.   There is no G3D equivalent of
+        glMultiDrawElements, glMultiDrawElementsBaseVertex, or glDrawRangeElements.
+    */
+    void invoke
+    (const Shader::Ref&,
+     const ArgList&, 
+     Primitive type, 
+     VertexRange indexArray, 
+     int numInstances = NON_INSTANCED);
+
+    /** Image processing. */
+    void invoke
+    (const Shader::Ref&, 
+     const ArgList&, 
+     const Rect2D& rect, 
+     int numInstances = NON_INSTANCED);
+
+    /** Full-viewport rectangle. */
+    void invoke
+    (const Shader::Ref&, 
+     const ArgList&, 
+     int numInstances = NON_INSTANCED);
+
 private:
 
     class State {
