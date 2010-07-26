@@ -6,9 +6,6 @@
 
 using G3D::Color3;
 
-// Make Microsoft Windows programs start from the main() entry point
-G3D_START_AT_MAIN();
-
 class Image {
 private:
     int                 m_width;

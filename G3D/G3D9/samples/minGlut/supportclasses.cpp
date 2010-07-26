@@ -1,5 +1,5 @@
 #include <GLG3D/GLG3D.h>
-#include <GL/glut.h>
+#include "glut.h"
 #include "supportclasses.h"
 
 using G3D::Vector2;

@@ -10,6 +10,7 @@
 */
 #include "GLG3D/Profiler.h"
 #include "G3D/stringutils.h"
+#include "G3D/System.h"
 
 namespace G3D {
 

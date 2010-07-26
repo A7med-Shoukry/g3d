@@ -16,6 +16,9 @@
  */
 #include "supportclasses.h"
 
+// Make Microsoft Windows programs start from the main() entry point
+G3D_START_AT_MAIN();
+
 int main(int argc, char** argv) {
     Image im(200, 300);
     for (int i = 0; i < im.width(); ++i) {

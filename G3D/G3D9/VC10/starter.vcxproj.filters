@@ -11,18 +11,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\samples\starter\App.h">
+    <ClInclude Include="..\samples\starter\source\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\samples\starter\Scene.h">
+    <ClInclude Include="..\samples\starter\source\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\samples\starter\App.cpp">
+    <ClCompile Include="..\samples\starter\source\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\samples\starter\Scene.cpp">
+    <ClCompile Include="..\samples\starter\source\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
