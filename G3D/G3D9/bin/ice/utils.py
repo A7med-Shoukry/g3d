@@ -282,18 +282,14 @@ def _findWindowsBinary(program):
     # Paths that may contain the program
        
     PROGRAMFILES = os.getenv('PROGRAMFILES', '')
+    PROGRAMFILESX86 = os.getenv('PROGRAMFILES(x86)', '')
     SYSTEMDRIVE = os.getenv('SystemDrive', '')
 
     PATH = [''] + os.getenv('PATH', '').split(';') + \
            ['.',\
            '../bin',\
-           'C:/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/IDE',\
-           PROGRAMFILES + '/Microsoft Visual Studio 9.0/Common7/IDE',\
-           PROGRAMFILES + '/Microsoft Visual Studio 8/Common7/IDE',\
-           PROGRAMFILES + '/Microsoft Visual Studio/Common/MSDev98/Bin',\
-           PROGRAMFILES + '/Microsoft Visual Studio .NET 2003/Common7/IDE',\
-           PROGRAMFILES + '/Microsoft Visual Studio .NET 2002/Common7/IDE',\
-           PROGRAMFILES + '/Microsoft Visual Studio .NET/Common7/IDE',\
+           PROGRAMFILESX86 + '/Microsoft Visual Studio 10.0/Common7/IDE',\
+           PROGRAMFILES + '/Microsoft Visual Studio 10.0/Common7/IDE',\
            PROGRAMFILES + '/Java/jdk1.5.0_06/bin',\
            SYSTEMDRIVE + '/python',\
            SYSTEMDRIVE + '/doxygen/bin',\
@@ -432,7 +428,7 @@ def devenv(filename, configs):
     return 0
 
 ##############################################
-"""Runs VCExpress (VC9) on the given sln filename and builds the 
+"""Runs VCExpress (VC10) on the given sln filename and builds the 
 specified configs.  configs is a list of strings
 """
 def VCExpress(filename, configs):
@@ -464,9 +460,9 @@ def VCExpress(filename, configs):
 
 ###############################################################################
 """ 
- VC9 dispatcher
+ VC10 dispatcher
 """
-def VC9(filename, configs):
+def VC10(filename, configs):
      # find out the flavor of MSVC
      
      if _findWindowsBinary('devenv'):
@@ -918,6 +914,10 @@ def getCompilerNickname(compilerFilename):
 
        # Windows Visual Studio
        verString = shell('"' + compilerFilename.replace('/', '\\') + '"', False)
+
+       if verString.startswith('Microsoft (R) 32-bit C/C++ Optimizing ' +
+                               'Compiler Version 16.'):
+           return 'vc10.0'
 
        if verString.startswith('Microsoft (R) 32-bit C/C++ Optimizing ' +
                                'Compiler Version 15.'):

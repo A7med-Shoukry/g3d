@@ -10,7 +10,7 @@ import urllib, tarfile
 # To get access to icompile routines
 sys.path.append('bin')
 import ice.copyifnewer, ice.utils
-from ice.utils import run, pathConcat, shell, mkdir, VC9, _findWindowsBinary
+from ice.utils import run, pathConcat, shell, mkdir, VC10, _findWindowsBinary
 import ice.doxygen
 
 doxygen = 'doxygen'
@@ -99,7 +99,7 @@ def initOS():
         print 'Adding iCompile options: ', icompileConfig
 
     if windows:
-        platformName = 'win-i386-vc9.0'
+        platformName = 'win-i386-vc10'
         installDir = 'c:/libraries'
     else:
         installDir = '/usr/local'
@@ -334,7 +334,7 @@ def libTarget():
     x = 0
 
     if windows:
-        x = VC9('VC9/G3D.sln', ['jpeg.lib', 'png.lib', 'zlib.lib', 'zip.lib', 'G3D.lib', 'GLG3D.lib']);
+        x = VC10('VC10/G3D.sln', ['jpeg.lib', 'png.lib', 'zlib.lib', 'zip.lib', 'G3D.lib', 'GLG3D.lib']);
              
     else:
     
@@ -361,19 +361,11 @@ def libTarget():
  
 def toolsTarget():
     if windows:
-        x = VC9('VC9/G3D.sln', ['gfxmeter', 'viewer']);
+        x = VC10('VC10/G3D.sln', ['viewer']);
 
     else:
         x = libTarget()
      
-        if (x == 0):
-            os.chdir("tools/gfxmeter")
-            x = run("../../bin/icompile", icompileConfig + ['--noprompt', '--opt'])
-            os.chdir("../..")
-            if x == 0:
-                copyIfNewer(pathConcat('temp/tools/gfxmeter', platformName),
-                            pathConcat(pathConcat('build/', platformName), 'bin/gfxmeter'))
-            
         if (x == 0):
             os.chdir("tools/viewer")
             x = run("../../bin/icompile", icompileConfig + ['--noprompt', '--opt'])
@@ -403,11 +395,6 @@ def cleanTarget():
     run("../bin/icompile", icompileConfig + ['--clean'])
     os.chdir("..")
 
-    print 'gfxmeter'
-    os.chdir("tools/gfxmeter")
-    run("../../bin/icompile", icompileConfig + ['--clean'])
-    os.chdir("../..")
-
     print 'viewer'
     os.chdir("tools/viewer")
     run("../../bin/icompile", icompileConfig + ['--clean'])
@@ -420,7 +407,7 @@ def cleanTarget():
 def testTarget():
     
     if windows:
-       x = VC9('VC9/G3D.sln', ['test']);
+       x = VC10('VC10/G3D.sln', ['test']);
        if x == 0:
           x = run('temp/test/build/testd.exe')
           if x == 0:
@@ -780,7 +767,7 @@ data       Copy over data-files (and ../data/, if you have it)
 doc        Generate documentation using Doxygen and copy over data-files
            (and ../data/, if you have it)
 
-tools      Build gfxmeter and viewer applications and copy
+tools      Build viewer application and copy
            copyifnewer and icompile
 
 jar        Build G3D.jar, the Java version of network and
