@@ -33,16 +33,11 @@
 #   pragma comment(lib, "avformat")
 
 #   ifdef _DEBUG
-        // Don't link against G3D when building G3D itself.
-#       ifndef G3D_BUILDING_LIBRARY_DLL
-#           pragma comment(lib, "GLG3Dd")
-#       endif
+#		pragma comment(lib, "GLG3Dd")
 #   else
-        // Don't link against G3D when building G3D itself.
-#       ifndef G3D_BUILDING_LIBRARY_DLL
-#           pragma comment(lib, "GLG3D")
-#       endif
+#		pragma comment(lib, "GLG3D")
 #   endif
+
 #endif
 
 #include "GLG3D/glheaders.h"
@@ -62,7 +57,7 @@
 #include "GLG3D/Draw.h"
 #include "GLG3D/tesselate.h"
 #include "GLG3D/GApp.h"
-#include "GLG3D/Surface.h"
+s#include "GLG3D/Surface.h"
 #include "GLG3D/IFSModel.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"

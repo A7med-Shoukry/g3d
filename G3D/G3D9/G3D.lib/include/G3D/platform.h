@@ -73,12 +73,6 @@
 #    define G3D_32BIT
 #endif
 
-// Strongly encourage inlining on gcc
-#ifdef __GNUC__
-#define inline __inline__
-#endif
-
-
 // Verify that the supported compilers are being used and that this is a known
 // processor.
 
@@ -105,6 +99,8 @@
 
 
 #ifdef _MSC_VER
+// Microsoft Visual C++ 10.0				  = 1600
+// Microsoft Visual C++ 9.0					  = 1500
 // Microsoft Visual C++ 8.0 ("Express")       = 1400
 // Microsoft Visual C++ 7.1	("2003") _MSC_VER = 1310
 // Microsoft Visual C++ 7.0	("2002") _MSC_VER = 1300
@@ -178,29 +174,12 @@
 	    #undef _STATIC_CPPLIB
     #endif
 
-    #ifdef _DEBUG
-        #pragma comment (linker, "/NODEFAULTLIB:LIBCMTD.LIB")
-        #pragma comment (linker, "/NODEFAULTLIB:LIBCPMTD.LIB")
-        #pragma comment (linker, "/NODEFAULTLIB:LIBCPD.LIB")
-        #pragma comment (linker, "/DEFAULTLIB:MSVCPRTD.LIB")
-        #pragma comment(linker, "/NODEFAULTLIB:LIBCD.LIB")
-        #pragma comment(linker, "/DEFAULTLIB:MSVCRTD.LIB")
-    #else
-        #pragma comment(linker, "/NODEFAULTLIB:LIBC.LIB")
-        #pragma comment(linker, "/DEFAULTLIB:MSVCRT.LIB")
-        #pragma comment (linker, "/NODEFAULTLIB:LIBCMT.LIB")
-        #pragma comment (linker, "/NODEFAULTLIB:LIBCPMT.LIB")
-        #pragma comment(linker, "/NODEFAULTLIB:LIBCP.LIB")
-        #pragma comment (linker, "/DEFAULTLIB:MSVCPRT.LIB")
-    #endif
-
-    // Now set up external linking
-
-#    ifdef _DEBUG
-        // zlib was linked against the release MSVCRT; force
-        // the debug version.
-#        pragma comment(linker, "/NODEFAULTLIB:MSVCRT.LIB")
-#	 endif
+#ifdef _DEBUG
+	// Some of the support libraries are always built in Release.
+	// Make sure the debug runtime library is linked in
+	#pragma comment(linker, "/NODEFAULTLIB:MSVCRT.LIB")
+	#pragma comment(linker, "/NODEFAULTLIB:MSVCPRT.LIB")
+#endif
 
 
 #    ifndef WIN32_LEAN_AND_MEAN
