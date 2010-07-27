@@ -1,0 +1,116 @@
+================================================================
+               MKVDV - Vorsprung durch Vernichtung
+================================================================
+
+Title		: MKVDV - Vorsprung durch Vernichtung
+Author		: Martin "Killer" Kilcoyne
+Version		: 2nd December 2001
+File Name	: mkvdv.pk3
+E-Mail		: killer@planetquake.com
+Web Site	: http://www.planetquake.com/killer
+
+Description	: Another cool texture set from Lunaran and by
+		  sheer coincidence another map from me :-) This
+		  time it was Lun's LUN3DM3 texture set which
+		  inspired a spell of mapping. The map is a
+		  medium to large affair which will require at
+		  least 4 players to get the most out of it.
+		  
+		  I know the r_speeds are a bit excessive in the
+		  central area but I went to town with the
+		  curves and trim and it looked nice so I wasn't
+		  about to remove it all ;-)
+		  
+		  Hope you have as much fun playing the map as I
+		  have had making it. Thanks for reading.
+
+Credits		: Thanks obviously to Lunaran for his cool
+		  textures check out his work at:
+		  http://lunaran.fragland.net
+		  
+		  Thanks to my house mate Willi Hammes for
+		  teaching me Max, building the cool looking
+		  rocks, doing the funky slime shader and sky
+		  box. Check out his amazing 3d stuff at:
+		  http://www.3dluvr.com/willi
+		  
+Previous Work	: 23/05/01 - MKBASE-TA - Feel The Base (TA)
+		  13/05/01 - MKBASE - Feel The Base
+		  25/02/01 - MKEXP - Industrial Experience
+		  24/12/00 - MKTECH - Technophobia
+		  05/10/00 - MKOXIDE - Iron Oxide for Q3:A
+		  12/02/00 - MKFINGERS - Itchy Trigger Fingers
+		  20/10/99 - MKFUTILE2 - Resistance Is Futile II
+		  18/09/99 - KTDM7 - Silicon Avatar
+		  18/09/99 - KTDM5 - Enemy Mine
+		  18/09/99 - KTDM3 - The Colosseum
+		  18/09/99 - KTDM1 - Iron Oxide
+		  24/12/98 - MKDEPOT - Depot of Decimation
+		  06/11/98 - MKRUST - The Rust Bucket
+		  07/10/98 - MKFUTILE - Resistance Is Futile
+		  16/09/98 - MKMETAL - Metallic Resistance
+		  27/08/98 - MKTRIPLE - The Triple Towers
+
+		  Note KTDM1, 3, 5 and 7 are part of the 8 map
+		  Quake II deathmatch map pack KT-imPAKt. Full
+		  details on the KT-imPAKt Homepage:
+		  http://www.planetquake.com/ktimpakt
+
+================================================================
+
+* Play Information *
+
+Game		: Quake III
+Bot Match	: Yes
+Deathmatch	: 2on2 - 6on6, 4-12 FFA (14 spawns)
+Teamplay	: 2on2 - 6on6
+
+* PK3 Information *
+
+BSP		: maps/mkvdv.bsp
+AAS		: maps/mkvdv.aas
+Shaders		: scripts/mkvdv.shader
+Arena File	: scripts/mkvdv.arena
+Levelshot	: levelshots/mkvdv.jpg
+Textures	: textures/mkvdv/*
+		  env/mkvdvsky_*
+
+* Construction *
+
+Base		: New map from scratch
+Build Time	: About 8 weeks on and off
+Brush Count	: 5728 (of which 391 are entities)
+Compile Machine	: Dual PIII 1GHz with 1Gb RAM
+Compile Time	: 28 minutes
+Editor Used	: Q3Radiant 202
+Other Utils	: Q3Farm, BSPC, 3dsmax 3.1, PopNFresh's MD3
+		  Exporter, NPherno's MD3 Compiler, Photoshop
+		  5.5, WinZip
+Known Bugs	: None
+
+* How to Use *
+
+Simply extract the mkvdv.pk3 file and this text file into your 
+Quake III "baseq3" directory. So for me this would be
+"C:\games\quake3\baseq3". Once installed the map will appear in
+the Single Player Skirmish menu.
+
+* Copyright / Permissions *
+
+You may NOT use this map as a base for other maps.
+
+The textures and shaders used in this map remain the property of
+their respective owners and were used with their permission.
+
+You are NOT allowed to commercially exploit this level, i.e. put
+it on a CD or any other electronic medium that is sold for money
+without my explicit permission.
+
+You MAY distribute this BSP through any electronic network
+(internet, FIDO, local BBS etc.), provided you include this file
+and leave the archive intact.
+
+If any magazines want to put this map on a cover CD, then make
+sure you ask me first, send me a copy and we'll be straight :-)
+
+=========================================================MK2K1==

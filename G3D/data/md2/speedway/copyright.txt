@@ -1,0 +1,3 @@
+These Quake II format characters are from downloaded from
+the Quake II Speedway Mod.
+http://www.gamespot.com/pc/action/quake2/download_6108178.html

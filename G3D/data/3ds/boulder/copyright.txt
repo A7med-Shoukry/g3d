@@ -1,0 +1,3 @@
+Made by Dan Fast for G3D.
+Copyright 2007, Morgan McGuire
+Licensed under the G3D license (BSD)

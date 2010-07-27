@@ -1,0 +1,38 @@
+<2nd May 2001>
+================================================================
+
+Model Name            :	lisab
+Installation Directory:	baseq3\md3-lisab.pk3
+Model Author          :	Frag Cow
+Skin Author           :	a scan of some Lisa Boyle Photos (Photograper Barry Rosen), used without permition, Frag Cow messed around with it in photoshop and hate talking in 3rd person.
+
+Email Address         :	fish_dsc@yahoo.co.uk
+
+Model description     :	Attempt at a realistic model, armpits not as retared as my shiro128
+
+Additional Credits to :	animation taken from Steed (major.bip)
+
+Thanks to             : gundam@btinternet.com for tutorial at http://www.planetquake.com/polycount/resources/quake3/tutorials/MAX-to-q3data/md3q3data.shtml 
+
+Authors notes         :	modeled in lightwave (6 hours), 1 hour for skins, 2 hours in 3ds Max, worked out how to put some jiggle on the breasts, but used steed's lucy.bip as a base but could not get it to work, so substitute major.bip (so some of the jiggle may be broken~ tried to fix most of this)
+
+================================================================
+* Play Information *
+
+Skins                 :	default, blue, red
+Bot support           :	Rank 2, copied from Aeon Flux of Mike and Bill Jukes
+New Sounds            :	Yes, from Caryn "Hellchick" Law hellchick@planetquake.com 
+                          http://www.planetquake.com/voxfeminae
+CTF Skins             :	hope red and blue work for this 
+Polycount             : 1044
+Known Bugs            : quick and dirty vertex weighting, also the uv mapping is pretty rough
+
+* Construction *
+Tools(s) used         :	lightwave5.5, photoshop, 3DS Max 4 + Character Studio, Q3Data 
+
+* How to use this model *
+<INSTALLATION INFO>
+Put md3-lisab.pk3 into your baseq3 folder
+
+* Copyright / Permissions *
+i do not have intelectual copywrite of the image of someone else, so i don't mind what you do with this skin, however if you use the contents of mds-lisab.pk3 (and try to keep file intact) to make money, you perhaps should pay most of it to the muse for this skin, http://www.lisa-boyle.com/

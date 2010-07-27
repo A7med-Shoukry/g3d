@@ -1,0 +1,54 @@
+These IFS files contain data from 3D models that commonly appear
+in scientific publications.  
+
+Most have entered the public domain through this unrestricted use
+and may be freely distributed.
+
+The Stanford models require permission to be used in a commerical
+product.
+
+Sources:
+angel       - Brown University
+armadillo   - Stanford University Computer Graphics Library
+beethoven   -
+buddha      - Stanford University Computer Graphics Library
+bump        - Brown University
+bunny       - Stanford University Computer Graphics Library
+bunny2      - Stanford; high poly, merged and hole-filled
+cow         - Viewpoint Animation Engineering / Sun Microsystems
+cow-subd    - Princeton University
+crocodile   - Brown University
+curvy       - Brown University
+closed-low-poly-teapot - Brown University
+dinosaur    - SGI
+dragon      - Stanford University Computer Graphics Library
+dragon2     - Brown University
+duck        - Brown University
+elephant    - Brown University
+elephant-subd-Princeton University
+galleon     -
+head        - Brown University
+heptoroid   - UC Berkeley Rapid Prototyping Project
+hippo       - Brown University
+horse       -
+hub         - Brown University
+maxplank    - MPI
+mech-part   - Brown University
+p51-mustang -
+rotor       - Brown University
+sandal      - Brown University
+teapot      - Utah
+torus       - Princeton
+trico       - 
+trumpet     - Brown University
+venus-torso - Brown University
+woman       - Brown University
+lucy-small  - Princeton University decimated version of Stanford's model
+
+Other good sources for models are:
+http://graphics.stanford.edu/data/3Dscanrep/
+http://www.cs.princeton.edu/gfx/proj/sugcon/models/
+http://graphics.stanford.edu/data/mich/
+http://www.cc.gatech.edu/projects/large_models/
+http://www.cyberware.com/
+

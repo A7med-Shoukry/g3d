@@ -1,0 +1,37 @@
+>>>>>MAP INFO<<<<<<
+
+
+Title:			GLooM
+Filename:		Storm3tourney1.pk3
+Author:			StormShadow
+Homepage:		http://St0rmSh4d0w@digitalarenas.com
+Contact info:		email - StormShadow@nightterrorists.net justiningels@hotmail.com irc - irc.enterthegame.com #lvldesign #ntclan
+Map info:		TOURNEY or small ffa, reccomended for play as tourney.
+Description:		Relatively small map with one large main room with several smaller rooms and a large hallway off to one side
+Items:			2 YA, RL, RG, PG, LG, SG, MH
+Custom Textures:	Evil7 textures by evil lair (www.planetquake.com/hfx) and a custom jump pad by U8Poo
+Custom Models:		Crow md3 by mike majernik (mikemajernik@hotmail.com)
+Bots:			Bots navigate the level well, but in FFA they stick to the RL area a little too much.  They do quite well in 1v1
+Bugs/Problems:		None (i hope)
+
+Tools:
+	Construction:		q3radiant 2.02 
+	Compile/aas:		q3build 1.4
+	Levelshot editing:	adobe photoshop 5.5
+	Other:			Arenamaster (for .arena file)
+
+Construction time:	On and off for about 4-5 weeks (mostly off :P )
+Compile time:		5-10 mins for build 15 for light 5 for aas
+Compile machine:	pIII 600 256 RAM
+Install instructions:	unzip into baseq3 folder, map will show up in map list under ffa and tourney.  
+
+Thanks to:		Evil Lair for the great texture set, U8Poo for the custom j-pad. Thanks to mike majernik for the crow md3 map object
+			(sorry i dont know this guys handle, thanks to him neglecting to add his name into the readme file) nT.Soul_torcher, 
+			nT.BlackIce, nT.Thunder, TheAce,]DR[Demonwarp, nT.Vegeta nT.ProjeKct for beta testing on server, and all the helpful
+			guys on the quake3world.com forums who gave me beta feedback!  And im really sorry if i left anyone out.
+
+Copywrite info:		This map may not be distributed for profit.  If you want to distribute it over the internet or include it in a map
+			pack you MUST include this readme.txt and give me proper credit, or get my permission (justiningels@hotmail.com)
+
+Other notes:		This map plays incredibly well against human competitors, its very fast paced and fun.  It loses a bit of challenge
+			when played with bots (as all maps do) but it still flows quite well as a tourney map.  Hope you enjoy the map!

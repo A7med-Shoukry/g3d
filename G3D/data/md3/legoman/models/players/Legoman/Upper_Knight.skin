@@ -1,0 +1,12 @@
+U_bodyBox,models/players/Legoman/KnightA2.tga
+U_RArm,models/players/Legoman/KnightA1.tga
+U_armor,models/players/Legoman/KnightA1.tga
+U_LArm,models/players/Legoman/KnightA1.tga
+U_sword,models/common/nodraw
+U_shield,models/players/Legoman/Shield.tga
+U_homb,common/nodraw
+U_backpack,common/nodraw
+U_colcha,common/nodraw
+tag_head,
+tag_weapon,
+tag_torso,

@@ -1,0 +1,5 @@
+This is a subset of the files from Quake 3 Rally, a discontinued Quake3 Mod.
+
+http://planetquake.gamespy.com/View.php?view=MOTW.Detail&id=167
+
+Thanks to Kefei Lei for assembling this file.

@@ -1,0 +1,5 @@
+{
+name		Lisa Byole
+model		lisab
+aifile	bots/lisab_c.c
+}

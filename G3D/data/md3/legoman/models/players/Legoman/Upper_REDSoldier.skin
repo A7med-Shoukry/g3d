@@ -1,0 +1,12 @@
+U_bodyBox,models/players/Legoman/REDSoldierA2.tga
+U_RArm,models/players/Legoman/REDSoldierA1.tga
+U_LArm,models/players/Legoman/REDSoldierA1.tga
+U_armor,common/nodraw
+U_sword,REDSoldierA1.tga
+U_shield,common/nodraw
+U_homb,models/players/Legoman/REDSoldierA1.tga
+U_backpack,common/nodraw
+U_colcha,common/nodraw
+tag_head,
+tag_weapon,
+tag_torso,

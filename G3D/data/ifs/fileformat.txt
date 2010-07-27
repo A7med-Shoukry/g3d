@@ -1,0 +1,53 @@
+The little-endian IFS (indexed face set) file format 1.1 is:
+
+file := 
+  fileheader +
+  vertexheader +
+  vertex* +
+  triheader +
+  tri*
+  texcoordheader +
+  texcoord*
+
+fileheader   := (string32) "IFS" + (float32)1.0 + (string32)modelname
+vertexheader := (string32) "VERTICES" + (uint32)numVertices
+vertex       := (float32)x + (float32)y + (float32)z
+triheader    := (string32)"TRIANGLES" + (uint32)numFaces
+tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
+texcooordheader := (string32) "TEXCOORDS" + [(uint32)numVertices | (uint32)0]
+texcoord     := (float32)x + (float32)y
+
+Where string32 is an unsigned 32-bit integer length (which includes null terminator) followed by a string of that many unsigned char's.  The strings above all include null termination.
+
+Vertex indices are zero based.
+
+Triangles have counter-clockwise winding direction in a right handed coordinate system.  Triangles are "one sided".
+
+Models "face" along the negative z-direction.  For example, the P51 Mustang
+should fly along its object space -z axis.
+
+--------------------------------------------------------------------------------------------
+
+The little-endian IFS (indexed face set) file format 1.0 is:
+
+file := 
+  fileheader +
+  vertexheader +
+  vertex* +
+  triheader +
+  tri*
+
+fileheader   := (string32) "IFS" + (float32)1.0 + (string32)modelname
+vertexheader := (string32) "VERTICES" + (uint32)numVertices
+vertex       := (float32)x + (float32)y + (float32)z
+triheader    := (string32)"TRIANGLES" + (uint32)numFaces
+tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
+
+Where string32 is an unsigned 32-bit integer length (which includes null terminator) followed by a string of that many unsigned char's.  The strings above all include null termination.
+
+Vertex indices are zero based.
+
+Triangles have counter-clockwise winding direction in a right handed coordinate system.  Triangles are "one sided".
+
+Models "face" along the negative z-direction.  For example, the P51 Mustang
+should fly along its object space -z axis.

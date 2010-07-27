@@ -1,0 +1,9 @@
+Model of an oak tree made for the games. It contains 280 triangles. Two textures are included: one for the bark and one for the branches. Branches use alpha map of the .png format.
+
+Could you please rate it when you download.
+
+If you have any questions, please email me at yurakentucky@usa.com
+
+Models by Yuriy Lozitskiy.
+
+http://www.turbosquid.com/FullPreview/Index.cfm/ID/271694

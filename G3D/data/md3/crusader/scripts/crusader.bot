@@ -1,0 +1,29 @@
+{
+name		Magus
+model		crusader/default
+aifile	bots/crusader_c.c
+}
+
+{
+name		Cathedral
+model		crusader/red
+aifile	bots/crusader_c.c
+}
+
+{
+name		Schattenjaeger
+model		crusader/blue
+aifile	bots/crusader_c.c
+}
+
+{
+name		Tomas
+model		crusader/tomas
+aifile	bots/crusader_c.c
+}
+
+{
+name		Gable
+model		crusader/gable
+aifile	bots/crusader_c.c
+}

@@ -1,0 +1,68 @@
+================================================================
+charon3dm11v2 - liquid carbon
+================================================================
+
+Title			: Liquid Carbon
+Date         		: 1-1-2002
+Filename     		: map-charon3dm11v2.pk3
+Author       		: charon
+Email Address		: charon@atlantacon.org
+			: (best to visit my site and get my current email address)
+Website			: http://www.interactivedeath.net/
+
+Description		: A very dark, very green map. Electricity, green slime,
+			: black brick, and solid steel beams make up the soul of
+			: the map. Slightly inspired by a really cool anime
+			: series called "Lain", but really has nothing much
+			: at all to do with it. This is a ffa or tourney map,
+			: to whichever is your liking. This map uses my own textures
+			: created from the ground up with no base textures used.
+			: You may also download these textures from my site as a
+			: seperate zip file. They are called "Liquid Carbon Texture Set 1".
+
+Update			: This is version2 of this map. It corrects a few minor bugs
+			: that were found that irritated me. Namely a clipping issue
+			: and a bot spawning issue.
+
+Additional Credits to   : id software, Dfused, WyldWeyr, Normal, Speed, Scampie,
+			: Maj, goetz, Dietz, and especially the Burial-Grounds.com
+			: crew such as spynx_w2k, Osiriss1281, and BudToker.
+			: Also thanks goes out to those of you I might have missed.
+================================================================
+
+- Play Information -
+
+Players			: 2 to 8
+Bots			: Yes - They rarely go for items such as the RG, MH, and RL,
+			: but amazingly enough I have seen them go for all three.
+Weapons			: Rocket Launcher, Railgun, Super Shotgun,
+			: Grenade Launcher, Lightning Gun, Plasma Gun
+
+-----------
+
+Unzip the the zip file map-charon3dm11v2.zip into your quake3\baseq3 directory.
+Start quake3 and either select it from your map list or press tilde to enter the console and type:
+"/sv_pure 0"
+press enter
+"/map charon3dm11v2"
+
+- Construction -
+
+Base                    : None
+Editor(s) used          : Q3Radiant
+Known Bugs              : None
+Build Time              : 2 weeks or so
+Textures used		: Built from scratch custom texture set with 2 or 3 modified id textures.
+Compile machine         : P3/500 overclocked to 559 with 384megs RAM
+q3map compile Time      : TOTAL - 5639 seconds or roughly 1 hour and 33 minutes
+			: BSP - 38 seconds
+			: VIS - 751 seconds
+			: LIGHT - 4850 seconds
+Brushes     		: 3533
+
+
+- Copyright / Permissions -
+You may not include or distribute this map in/with any sort of commercial product without 
+permission from the author.  You may not mass distribute this level via any
+non-electronic means, including but not limited to compact disks, and floppy disks
+without permission from the author.

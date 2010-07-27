@@ -1,0 +1,14 @@
+U_bodyBox,models/players/Legoman/OctanA2.tga
+U_RArm,models/players/Legoman/SkinOctanA1.tga
+U_LArm,models/players/Legoman/SkinOctanA1.tga
+U_armor,common/nodraw
+U_sword,common/nodraw
+U_shield,common/nodraw
+U_homb,common/nodraw
+U_backpack,common/nodraw
+U_colcha,common/nodraw
+h_Visor,common/nodraw
+h_Helm,common/nodraw
+tag_head,
+tag_weapon,
+tag_torso,

@@ -1,0 +1,76 @@
+{
+name		Legoman
+model		Legoman
+color		4
+aifile	bots/Hard_c.c
+}
+
+{
+name		Fenix
+model		Legoman/fenix
+color		4
+aifile	bots/Easy_c.c
+}
+
+{
+name		Biker
+model		Legoman/biker
+color		4
+aifile	bots/Easy_c.c
+}
+
+{
+name		SWAT
+model		Legoman/swat
+color		4
+aifile	bots/Med_c.c
+}
+
+{
+name		Soldier
+model		Legoman/soldier
+color		4
+aifile	bots/Easy_c.c
+}
+
+{
+name		Parche
+model		Legoman/parche
+color		4
+aifile	bots/Easy_c.c
+}
+
+{
+name		Dragon
+model		Legoman/dragon
+color		4
+aifile	bots/Easy_c.c
+}
+
+{
+name		Soldier2
+model		Legoman/soldier2
+color		4
+aifile	bots/Hard_c.c
+}
+
+{
+name		Captain
+model		Legoman/captain
+color		4
+aifile	bots/Hard_c.c
+}
+
+{
+name		Knight
+model		Legoman/knight
+color		4
+aifile	bots/Hard_c.c
+}
+
+{
+name		Knight2
+model		Legoman/knight2
+color		4
+aifile	bots/Hard_c.c
+}

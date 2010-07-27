@@ -1,0 +1,12 @@
+U_bodyBox,models/players/Legoman/FenixA2.tga
+U_RArm,models/players/Legoman/FenixA1.tga
+U_LArm,models/players/Legoman/FenixA1.tga
+U_armor,common/nodraw
+U_sword,models/players/Legoman/FenixA1.tga
+U_shield,common/nodraw
+U_homb,common/nodraw
+U_backpack,common/nodraw
+U_colcha,common/nodraw
+tag_head,
+tag_weapon,
+tag_torso,

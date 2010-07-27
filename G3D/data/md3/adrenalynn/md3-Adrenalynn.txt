@@ -1,0 +1,124 @@
+***********************************************
+						
+	Adrenalynn for Quake III: Arena
+
+		 06/26/01
+***********************************************
+								
+Character Creator, TM and Copyright: Tony Daniel
+Creator's site: http://www.f5entertainment.com/
+
+Model Author: Mark Forsyth
+email: astrozombie_138@hotmail.com
+site: http://www.geocities.com/m4scythe/index.html
+
+Sound Engineer: Caryn "Hellchick" Law 
+email: hellchick@planetquake.com
+site: http://www.planetquake.com/voxfeminae	
+
+												
+===============================================
+
+Polygons: 1524
+Vertices:  778
+
+LOD_1:     
+Polygons:  762
+Vertices:  393
+ 
+LOD_2:
+Polygons:  405 
+Vertices:  213
+
+
+Skins: 2 x 32-bit, 256x256
+CTF: Yes
+
+
+Custom Sounds: Yes
+Custom Animations: Yes (260 total frames)
+Bot support: Yes	
+
+
+Tools: 
+3D Studio Max 3.1 / Character Studio
+Adobe Photoshop
+Pop n' Fresh's Max to MD3 Exporter
+Npherno's MD3 Compiler
+Polychop
+
+						
+===============================================
+
+About:
+(From the Creator's Website)
+"Adrenalynn is the project name for a special secret weapon that the Soviet Union's KGB was building during the height of the cold war in the 1980's. A cyberneticly enhanced human that would carry to America enough firepower to level three states! An Armageddon-soldier to disable America's defenses! Using an orphan girl named Sabina Nikoli, they gradually enhance her body from the age of eight. By the time she reaches teenhood, she starts to realize the monster Vlatko has turned her into. She plots her escape and denies her mission, which is to meet up with her older-model cyborg counterparts and lead them into battle." - http://www.f5entertainment.com/adrenalynn/index.html
+
+
+This is my first PPM for Q3A from my "Bad Girl Contest" entry. The original model weighed in at 1498 polys (1500 being the contest limit) and the extra polys were added to attempt to conceal the segmented mesh. I realize that this is a high polycount for a Q3 model, but I can honestly say that I noticed no depreciation in performance when I ran her along with 3+ bots on my system (PIII 500, 384Mb RAM, Nvidia TNT2 Ultra). 
+
+
+===============================================
+
+Notes:
+The bot files were 'borrowed' and edited from the Hunter player model for Q3A. Some of the chat lines were edited by myself from direct quotes taken from the comics The Tenth and Adrenalynn: Weapon of War, written by Tony Daniel. Other chat lines were written by myself, taken from several influences and inspirational sources ;-). 
+
+The Adrenalynn default_icon is taken from the cover of The Tenth #8, by Tony Daniel.
+
+Skinners may notice a large area of wasted space on the addi_2 files. This is because I had initially skinned the arms asymmetrically but was unhappy with the results. So the left arm was mirrored to the right side of the body partially to save time, and partially out of laziness.
+						
+===============================================
+
+Installation:
+Unzip and place md3_adrenalynn.pk3 in your Quake III Arena > baseq3 folder
+
+						
+===============================================
+						
+Special Thanx:
+- My lovely wife, Pamela
+- Paul Steed 
+- Tony Daniel
+- Sabina VR Blatch @ adrenalynn.net
+- Philip Amara at DH Comics
+- R13 and all of the Polycounters and denizens of the Polycount messageboard.
+- My Independent Study instructor at AI, Nance Patternoster and my classmates. 
+
+						
+===============================================
+
+Legal:
+QUAKE(R) and QUAKE III Arena(R) are registered trademarks of id Software, Inc.
+Adrenalynn is TM and Copyright Tony Daniel.
+This model may be freely distributed, with this "Read Me" file fully intact, provided ALL contents remain UNALTERED and my credit is maintaned. 
+This model may NOT be converted for public release and distribution outside of its intended use for Q3A without the prior consent of Mark Forsyth (astrozombie_138@hotmail.com).
+
+En Español: 
+QUAKE(R) y el Quake III Arena(R) son marcas registradas registradas de la id Software, Inc.
+Adrenalynn es TM y el copyright Tony Daniel.
+Este modelo puede ser distribuido libremente, con esto " léame " fichero completamente intacto, con tal que TODO EL contenido siga siendo INALTERADO y es mi crédito maintaned. 
+Este modelo no se puede convertir para el desbloquear y la distribución públicos afuera de su uso previsto para Q3A sin el consentimiento previo de la Mark Forsyth (astrozombie_138@hotmail.com).** 
+
+En Français: 
+QUAKE(R) et Quake III Arena(R) sont des marques déposées registre d'id Software, Inc.
+Adrenalynn est TM et copyright Tony Daniel.
+Ce modèle peut être librement distribué, avec ceci " lisez-moi " fichier entièrement intact, si TOUT LE contenu demeure INCHANGÉ et mon crédit est maintaned. 
+Ce modèle ne peut être converti pour la version et la distribution publiques dehors de sa utilisation destinée pour QÁ sans assentiment préalable de Mark Forsyth (astrozombie_138@hotmail.com).***
+
+Auf Deutsch:  
+QUAKE(R) und Quake III Arena(R) sind eingetragene eingetragene Warenzeichen von id Software, Inc. 
+Adrenalynn ist TM und copyright Tony Daniel.
+Dieses Modell kann frei verteilt werden, mit diesem " lesen Sie mich " Datei völlig intact, vorausgesetzt ALLER Inhalt UNVERÄNDERT bleibt und meine Gutschrift maintaned ist.
+Dieses Modell kann möglicherweise NICHT für allgemeine Freigabe und Verteilung seines beabsichtigten Gebrauches für QÁ ohne die vorherige Zustimmung draußen umgewandelt werden von Mark Forsyth (astrozombie_138@hotmail.com).****
+
+In Italiano:  
+QUAKE(R) ed il Quake III Arena(R) sono marchi registrati di id Software, Inc.
+Adrenalynn è TM ed il copyright Tony Daniel.
+Questo modello può essere distribuito liberamente, con questo " leggerlo " archivio completamente intact, se TUTTO IL soddisfare rimane INVARIATO ed il mio accreditamento è maintaned.
+Questo modello non può essere convertito per la versione e la distribuzione pubbliche all'esterno del relativo uso progettato per QÁ senza l' accordo preliminare di Mark Forsyth (astrozombie_138@hotmail.com).*****
+
+*Translated from English by Babelfish - http://babel.altavista.com/
+**Traducido de inglés por Babelfish - http://babel.altavista.com/ 
+***Traduit de l'anglais par Babelfish - http://babel.altavista.com/ 
+****Übersetzt von Englisch durch Babelfish - http://babel.altavista.com/ 
+*****Tradotto dall' inglese da Babelfish - http://babel.altavista.com / 

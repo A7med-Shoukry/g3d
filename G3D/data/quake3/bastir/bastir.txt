@@ -1,0 +1,126 @@
+====================================================
+title:            La Bastille
+file:             bastir.pk3
+author:           Sock 
+email address:    sock@planetquake.com
+URL:              http://www.planetquake.com/simland
+Version:          38
+description:      Dark gloomy prison map.
+                  Carved from mountains and chasms.
+====================================================
+
+Finally completed this map! Its been a long and hard 
+journey with many things breaking on the way but it 
+finally compiled and here it is!  This map was built
+with plenty of help from people in the Q3 community
+and without their assistance it would have stayed on
+my HD for good.
+
+The map is based on a frozen rock/prison atmosphere,
+a placed carved from oppressive mountains and bottomless
+chasm's. The layout is based on my favourite Quake 3
+Capture The Flag map Q3CTF3. I've spent many a hour
+playing that map and have on several occasions started
+to make my own version. Finally after years of failed
+start maps I have created my tribute to Q3CTF3. With
+this opportunity I have re-arranged several key items
+and hopefully made the layout more open for player
+movement.
+
+There is so many area's of this map I do love the look
+of and spent many weeks and months re-creating each 
+section over and over again until they looked and felt
+right. Not all of the original detail is in this map 
+(for r_speed reasons) but most of the original impressions
+are still present.
+
+The map supports many different game types from Vanilla
+Quake 3 to Team Arena and finally Threewave. I have 
+included enough spawn points for a good 4v4 game and
+with the size of this map, I recommend you have plenty
+of players anyway! Unfortunately most of the testing
+I have done with this map has been with bots and no
+matter how much you bend the map to their needs it
+still does not compare to human players.
+
+One final note is that without djbob's help this map
+seriously would not have seen the light of day. Very
+early on the development of this map I hit a compiler
+limitation which stopped me duplicating the bases. Luckly
+for me I spoke to djbob about the problem and he very
+kindly produced another compiler version. It required
+600Mb of memory to compile and alot of HD space but
+evenually it popped out of the compiler oven.
+
+Enjoy
+Sock
+
+====================================================
+play information
+
+CTF:              VQ3, TA modes, 3W compatible
+Bot File (aas):   Optimized
+
+how to play       place bastir.pk3 in your /baseq3/ folder
+                  start quake3arena      
+                  hit ~
+                  type /map bastir
+                  type /addbot <botname> <skill>
+                  hit ~ (to clear the console)
+
+Note: If the map does not start automatically after loading then make
+sure you have the SV_PURE variable set to 0.  I also included an arena
+file in the pk3 file so that it can be loaded from the menus.
+
+====================================================
+Changes and considerations
+
+The map originally started out for the Grim Brothers project
+but got rejected because the original project was binned.
+I then approached Threewave to see if they wanted the map
+for their mod and it was accepted.
+The map has been changed and blended into the Threewave map
+style so that it does not stick out too much from the rest
+of the maps. All original signs and labels have been removed
+and replaced with Threewave items instead.
+Added additional CCTF gameplay for Threewave MOD and re-arranged
+alot of the brushwork to remove all jump pads structures for
+this gametype.
+All the clipping from the weapon markers has been removed at
+Threewave's request as this caused the player to be launched
+into the air when collecting the weapon.
+The bot file has been a constant source of problems from day
+one and is very badly balanced so gameplay will be just average
+with bots due the bot file being incorrect. Normally I would
+have spent alot more time fixing it but it took 1 hr each time
+to test the changes and I just got pissed off waiting. :-\
+
+====================================================
+Distribution / Copyright / Permissions 
+
+Special Thanks to : 
+
+Auhsan, Bal, Cardo, djbob, Maj, Nunuk for Beta testing and advice.
+NakedApe for advice and support on the TA layout.
+djbob, ydnar, rr2d02 for a new compiler.
+Scancode from Threewave for support/help on finishing this map.
+FluffyGimp for some ice/snow templates.
+
+All textures in the CTF_UNIFIED directory belong to THREEWAVE at
+http://www.threewave.com/ site. All copyright of these
+textures belong to the Threewave team and please check their site
+for further details.
+
+Copyright (c) 2002 sock, sock@planetquake.com
+All rights reserved.
+
+Quake III Arena is a registered trademark of 
+id Software, Inc.
+
+This level may be electronically distributed only at 
+NO CHARGE to the recipient in its current state, MUST 
+include this .txt file, and may NOT be modified IN 
+ANY WAY. UNDER NO CIRCUMSTANCES IS THIS LEVEL TO BE 
+DISTRIBUTED ON CD-ROM WITHOUT PRIOR WRITTEN PERMISSION.
+
+====================================================

@@ -1,0 +1,62 @@
+
+================================================================
+
+Model Name              : Chaos-Marine
+
+installation directory  : quake3/baseq3/md3-chaos-marine.pk3
+
+Author                  : Stephen "Neuralstasis" Monteith
+
+Email Address           : stephenmonteith@hotmail.com
+
+Website URL		: http://www.stephenmonteith.net
+
+Model description       : A Chaos Space Marine from the Warhammer 40,000 Universe developed by Games
+Workshop. Chaos Space Marines are bloodthirsy warriors who once fought for humanity, but turned to
+the dark Chaos Gods during the Horus Heresy. Now they fight a never ending war to destroy that which
+they once helped to build.
+There are four of the Chaos legions represented in this model, The Black Legion, The Iron Warriors,
+The Night Lords and the Word Bearers. The skins were mostly built using the surface baker function
+in Lightwave, combined with bump, colour and specular maps. Note that this is my first Q3 model...
+
+
+Thanks to               : Chiral, for making a great Bot Designer
+                          The Polycount forum people for helping me sort out some bugs
+
+================================================================
+* Play Information *
+
+Sounds                  : YES
+CTF Skins               : YES
+LODS			: NO
+
+* Construction *
+
+Poly Count              : 1693 Polygons
+Vert Count              : 1448 Vertices
+Skin Count              : 4 skins
+
+
+Software used           : Lightwave 7.5
+                          Photoshop
+                          Bot Designer
+                          Premiere
+
+Build/Animation time    : 10 months at best guess... ahem.....
+
+KNown bugs/issues	: none?
+
+* How to use this model *
+
+Unzip the contents of md3-chaos-marine.zip into your quake3/baseq3 directory.
+This will place this file (md3-chaos-marine.txt) and the md3-chaos-marine.pk3 pak
+file into your quake3/baseq3 directory.
+
+* Copyright / Permissions *
+
+QUAKE(R) and QUAKE II(R) and QUAKE III(R) are registered trademarks of
+id Software, Inc.
+
+The Chaos Marine model and textures are copyright 2003 by Stephen "Neuralstasis" Monteith
+
+You are hereby granted permission to use and distribute these items so long as they are distributed together and in an unmodified format.

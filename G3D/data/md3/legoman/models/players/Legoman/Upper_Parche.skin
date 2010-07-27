@@ -1,0 +1,12 @@
+U_bodyBox,models/players/Legoman/ParcheA2.tga
+U_RArm,models/players/Legoman/ParcheA1.tga
+U_armor,common/nodraw
+U_sword,models/players/Legoman/ParcheA1.tga
+U_shield,common/nodraw
+U_homb,common/nodraw
+U_backpack,common/nodraw
+U_colcha,common/nodraw
+U_LArm,models/players/Legoman/ParcheA1.tga
+tag_head,
+tag_weapon,
+tag_torso,

@@ -1,0 +1,51 @@
+8/1/02
+================================================================
+Model Name              : Legoman
+installation directory  : quake3/baseq3/md3-legoman.pk3
+Author                  : "MacBastards" Kenneth Lazo V & Peter Lazo V
+Email Address           : alazor@racsa.co.cr
+Model description       : its a almost perfect scale made lego model.
+
+Additional Credits to   :id Software
+
+Thanks to               :Lego, all the people who send me emails and apple    	
+                         copmuters Inc for make the best machines and OS.
+================================================================
+* Play Information *
+
+New Sounds              : YES
+CTF Skins               : YES
+
+
+* Construction *
+Triangles Count         : 7024
+Skin Count              : 21 Skins/11 bots
+Base info               : new model
+				
+Software used           : Virtual PC 5, Photoshop, graphicConverter, BBedit
+                      				and Milkshape3d
+Known Bugs              : nope
+Build/Animation time    :2 months
+
+
+* How to use this model *
+
+INSTALLATION INFO:
+*Legoman Model: Unzip the pack, put "q3mdl-legoman.pk3"and "q3bot-legoman.pk3"
+on the Baseq3 directory
+
+Extras:
+*Legoman Gibs replacement(use it only if you want to play legomens vs legomens):
+put "md3-legogibs.pk3"on the Baseq3 directory
+
+*Legoman CTF pirate vs Soldiers: put "CTF-Pirates.pk3"on the Baseq3 directory
+
+Copyright / Permissions
+Lego dolls are Trademark of LEGO(R)
+Apple(R) logo is copyrighted by Apple Computers Inc.(R)
+Some sound were taked from Marathon °, Marathon°(R) is copyrighted by Bungie(R)
+QUAKE(R) and QUAKE II(R) and QUAKE III(R) are registered trademarks of
+id Software, Inc.
+
+This Model, the extras and wallpaper are for fun, not for profit, share and 
+enjoy but Don't Modify it.

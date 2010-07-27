@@ -1,0 +1,18 @@
+house.jpg    Taken by Morgan McGuire, 2008.  Permission granted for any use with citation.
+
+barbara.tga  Common image processing test image.
+
+checkerboard.jpg Created by Morgan McGuire, 2007. Released into the Public Domain.
+
+lena.tga     Common image processing test image, originally from Playboy Magazine
+
+mandrill.tga Common image processing test image.
+
+peppers.tga  Common image processing test image.
+
+meter.jpg    Created by Morgan McGuire, 2005. Released into the Public Domain.
+
+testimage.*  Created by Morgan McGuire, 2005.   Permission granted for any use with citation.
+
+waterCaustic*.jpg Source unknown.
+

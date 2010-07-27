@@ -1,0 +1,5 @@
+http://www.turbosquid.com/FullPreview/Index.cfm/ID/224624
+
+Only 1890 tris when fully loaded with missiles.
+
+All objects use the same 1024x1024 (scales down easily) texture so you can optimise by merging to the one surface. Also contains .u3d and the original .cob format.

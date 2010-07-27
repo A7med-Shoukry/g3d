@@ -1,0 +1,9 @@
+tag_head,
+tag_weapon,
+tag_torso,
+u_torso_front,models/players/homer/sleeperskin.tga
+u_torso_back,models/players/homer/sleeperskin.tga
+u_r_arm_inner,models/players/homer/sleeperskin.tga
+u_r_arm_outer,models/players/homer/sleeperskin.tga
+u_l_arm_inner,models/players/homer/sleeperskin.tga
+u_l_arm_outer,models/players/homer/sleeperskin.tga

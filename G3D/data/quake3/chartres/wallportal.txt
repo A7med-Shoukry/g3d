@@ -1,0 +1,79 @@
+Friday, December 15, 2000
+-----------------------------------------
+
+Accessory's Name:               
+ Evil Lair's Wall Portal
+Model/Skin Author: 
+ Yves Allaire, aka evil lair
+Email address:                           
+hfx@planetquake.com
+Url:                                           
+http://www.planetquake.com/hfx
+
+Skinmapping:                              
+ EarthQuake
+(http://urbanterror.net)
+Md3 conversion:                         
+ Hoplit
+(hoplit@planetquake.com)
+* Model Description * 
+
+My third Quake3 map object model, it's a wall portal for
+level designers to use in Quake3:Arena maps.
+
+* Notes * 
+
+I made the the model in Mac Lightwave6.
+EarthQuake (http://urbanterror.net) made the skinmap.
+Hoplit (hoplit@planetquake.com) converted it to .md3 and
+fixed some bugs.
+
+-----------------------------------------
+
+* How to use this map object/add to your maps *
+
+Place the "scripts" and "models" folders into  your
+"baseq3" folder but make sure NOT to overwrite any other
+files, if you have those folders already place the
+"wallportal.shader" file into your "scripts" folder and the
+"wallportal" folder inside your "/models/mapobjects/"
+folder. 
+
+This should be how your Quake3 folder directory should look
+like using this mapobject:
+Quake3/baseq3/scripts/wallportal.shader
+Quake3/baseq3/models/mapobjects/wallportal/wallportal.md3
+Quake3/baseq3/models/mapobjects/wallportal/<all other image
+(.tga) files>
+
+In Q3radiant right click wherever you want and select the
+"misc-model" option. Close the browser and type this in the
+"key" and "value" in the boxes from the new floating window:
+Key: "model"
+Value: "models/mapobjects/wallportal/wallportal.md3" 
+
+-----------------------------------------
+
+* Construction *
+
+Base:                                         New
+New Textures:                            Yes
+Editor used:                                Lightwave 6, Photoshop 5.5 and PakRat.
+
+-----------------------------------------
+
+* Copyright / Permissions *
+
+
+You cannot use this model as base to build other models.
+You cannot edit the skin or use it as base to make
+additional skins, I have included the skinmeshes for you to
+make new skins if you wish.
+You may distribute this map object in any electronic format
+(BBS, Internet, CD, etc) as long as you have my permission
+to do so and include all files intact in the original
+archive.
+Copyright(c)2000 Yves Allaire.
+
+QUAKE(R), QUAKE II(R) and QUAKE III(R) are id Software,
+Inc. 

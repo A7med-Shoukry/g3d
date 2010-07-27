@@ -1,0 +1,35 @@
+September 10 2000
+================================================================
+Model Name              : Angela
+installation directory  : \baseq3
+Author, Skin Author     : Alcor
+Email Address           : jlbr@moncourrier.com
+HomePage		: http://www.planetquake.com/polycount/cottages/alcor/
+
+Model description       : 
+
+This is Angela from the Spawn Comic book.  
+
+Other info  :      	
+
+By creating this PPM, I tried to do a character with some complex animations, more complex that what is possible to do while using the ID Software method. A model with upper body animations, and animated Tags. So Angela is what I came up with. This model is not segmented at the waist and it can throw it's gun in the Taunt motion. I spent way more time animating this model than all my last Q3A ppms (together!). I'm really proud of the Deaths anims, I beleive they are out of the ordinary. The Skinwork is by far the best beleive I ever made, and I had a lot of fun playing with the Shaders. I recorded some sounds from the Spawn Animated movie.
+
+================================================================
+* Play Information *
+New Sounds           : Yes
+CTF Skins            : Yes
+VWEP Support         : Yes
+* Construction *
+Poly Count              : Model 968
+Vert Count              : Model 567
+Skin Count              : 3 bodies, 3 items, 3 hairs, 8 environments.
+Editors used            : StudioMax3, CharacterStudio, Photoshop5.5, q3data, MD3Compile, NotePad, and a lot of luck.
+			  	
+known Bugs              : The neck dont looks really good in the crouch idle.
+
+
+* How to use this model *
+Extract md3-angela.pk3 and bot-angela.pk3 into your baseq3 folder.
+
+* Copyright / Permissions *QUAKE(R) and QUAKE III Arena(R) are registered trademarks of id Software, Inc.
+This model isn't built in a lucrative goal, you must ask me the permission before using any parts of this model for another model...

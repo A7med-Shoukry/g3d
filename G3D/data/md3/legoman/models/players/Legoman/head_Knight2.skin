@@ -1,0 +1,16 @@
+h_cap,common/nodraw
+h_head,models/players/Legoman/Happy.tga
+h_Visor,common/nodraw
+h_Helm,models/players/Legoman/Knight2A1.tga
+h_hat,common/nodraw
+h_Helmet,common/nodraw
+h_Cross,common/nodraw
+h_tres,common/nodraw
+h_top,common/nodraw
+h_knig,models/players/Legoman/Knight2A1.tga
+h_knig2,models/players/Legoman/Knight2A1.tga
+h_wingR,common/nodraw
+h_pluma,common/nodraw
+h_wingL,common/nodraw
+h_dragon,models/players/Legoman/pluma.tga
+tag_head,

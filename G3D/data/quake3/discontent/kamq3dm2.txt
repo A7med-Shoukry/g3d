@@ -1,0 +1,74 @@
+================================================================
+Title                   : Discontent
+BSP Name                : kamq3dm2.bsp
+Author                  : Corey "Kamarov" Peters
+Release Date            : July 30, 2001
+Email Address           : kamarov@gamekey.com
+Home Page               : http://www.kamarov.com
+Game                    : Quake 3: Arena; Deathmatch/Tournament
+Players                 : 2-4
+
+Additional Thanks to    : Fresh Team - For what we accomplished together.  We did what
+                          no one else did online; develop maps as a team effort.  Sure,
+                          the maps were owned by the individual authors and fully
+                          developed by one author.  But it was the team that moved the
+                          level from merely good to something great. The feedback and
+                          support was something I will miss.
+
+                          By far one of the best memories I will always have of mapping
+                          will be with this team of amazing artists and designers.
+
+                          In July, 2001 we decided to call it quits after three years
+                          of mapping together.  It was a tough call, but it had to be
+                          done.  Real life finally had managed to catch us.
+
+                          Fresh Team has closed its doors but the designs live
+                          on forever.  Thanks to all of you!
+
+                          Yogi - John Hughes
+                          Kanaeda - Chris Voss
+                          Voodoo - Brian Prollock
+                          WwIII - Warren Williams
+                          Hotcakes- Eddy Dawson
+                          Ziffon - Jorgen Stenkvist
+
+                          http://freshteam.telefragged.com
+
+                          Rest in Peace 1998 - 2001
+                          
+
+                          Yogi - For the entire Arctic Pack texture set.  Damn!
+                          Kanaeda - The layout was sketched out by this fella.
+                          Bob0 - The tunes to deathmatch by.
+                          Wang - The man that can find even the slightest bug in a map.
+                          Maverick - Fuck'n A!  My host and a testicular monkey.
+                          
+================================================================
+
+* MAP Information *
+
+New Textures            : All of them.
+
+New sounds              : Music by Bob0!  The track is called "Snowshoe Stomp"
+                          and was developed specifically for Discontent
+
+* Construction *
+
+Base                    : A single cellular brush.
+Construction Time       : Uh, no comment.  Too long is a hint.
+Editor used             : Q3Radiant 202 (197 has texture bugs okay?)
+Other programs          : Pakscape - Creation/Editing of the .pk3
+
+Known Bugs              : This would be a bad section to have to fill out.
+
+
+* Copyright / Permissions *
+
+All original and composed textures in this level remain property of
+the sources respective owners.
+
+You may NOT use this level as a base to build additional levels.
+
+You MAY distribute this PK3 in any electronic format (BBS, Internet,
+CD, etc) as long as you contact me first, include all files intact in
+the original archive.

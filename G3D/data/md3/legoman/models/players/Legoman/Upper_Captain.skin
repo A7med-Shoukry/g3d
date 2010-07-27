@@ -1,0 +1,12 @@
+U_bodyBox,models/players/Legoman/CaptainA2.tga
+U_RArm,models/players/Legoman/CaptainA1.tga
+U_armor,common/nodraw
+U_sword,models/players/Legoman/CaptainA1.tga
+U_shield,common/nodraw
+U_homb,models/players/Legoman/CaptainA1.tga
+U_backpack,common/nodraw
+U_colcha,common/nodraw
+U_LArm,models/players/Legoman/CaptainA1.tga
+tag_head,
+tag_weapon,
+tag_torso,

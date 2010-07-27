@@ -1,0 +1,170 @@
+November, 2001
+================================================================
+Model Name              : Marvin The Martian
+installation directory  : quake3/baseq3/players/Marvin
+Author                  : Carl Kidwell
+
+
+Email Address           : Melkior@studio-erebus.com
+
+
+Web Site                : http://www.studio-erebus.com
+                          http://www.studio-erebus.com/marvin
+
+
+Model description       : Marvin the Martian from the Looney Toons cartoon series.
+
+
+Sound info              : Sounds were taken mostly from the websites that had Marvin sound clips. Several of them were from the Quake 2 Marvin and are used with the permission of their author fafner_@hotmail.com.
+
+
+Additional Credits to   :  First and foremost to my wife for supporting 
+me in all my efforts. Secondly to Mike McMillen for taking the time to 
+help me learn to model and finally to all the great people on Polycount, 
+Quake3World and Milkshape message boards like Rat, LDAsh, NoSERider and others .. 
+this would have quite possibly been an insurmountable task without the 
+support of all these people.
+
+
+
+================================================================
+* Authors Notes *
+
+
+
+Marvin is my first player model ever.
+
+
+I had particular design goals for this model and the first was to create Marvin the 
+Martian with as low a polycount as possible. I learned a lot, I made a 
+lot of mistakes. Most of the mistakes I found and corrected to the point
+where there is no single aspect of this model that wasn't redone or touched
+up  at least 3 times. Yes the mappings, the model itself, the animations,
+the skins.. its all been gone over with a fine tooth comb. 
+
+
+I humbly present this as my personal best at this time.
+
+
+Before you email me asking why didn't I color Marvin this way, or model
+him that way please see the following message board thread It should
+answer most of those questions: 
+http://dynamic.gamespy.com/~polycount/ubb/Forum2/HTML/003049.html?00006
+
+
+The animations in particular were challenging I'm aware of a few small
+clipping problems but they are usually either isolated to one
+frame such as the 'fire weapon' frame and very minor and thusly probably
+never be seen in action, or due to the size of the Q3 weapons some of
+them with larger back ends or tops may clip through part of his helmet
+or chinguard on occaison but I tried to make it so that wouldn't
+happen in general. .. his feet are very large and presented problems
+getting a natural looking walk and backpeddle type of animations ..
+never mind the crouch! I feel I captured his trademark run very well by
+making a very non-traditional run animation and then upping the speed at which it
+plays. It came off  really well on my computer and I hope it looks as good
+on yours. I was mildly dissapointed that his taunt animation I could not give
+him his trademark fists at his side and run back and forth little angry
+sequence, however the Q3A animation system doesn't allow me  to animate
+the lower body for a taunt animation and therefore I opted for a less
+character fullfilling taunt but one that worked reasonably well for me. 
+
+
+Also I was unable to give him his 'chest forward' type
+of stance much of the time .. partially due to the low polygon
+choices I had made and partially due to the times I would most have liked to
+do it were whenthe animation was keyed to the lower half of the body.
+
+
+I wanted this to be a model that could grace almost anyones hard drive -
+thus the low poly count. And then secondly I gave him the best skinpak
+I could imagine, a wide variety of fun and unique characters that have
+the marvin physique to make them very stylized, funny, and most of all
+fun to play and play against. I've been doing skins for a few years
+now so theres no excuses there - the mappings were done by me and every
+skin in this pak is my work as well. 
+
+
+I did find I made one mistake late into the game after
+having already redoing his mappings twice (for a total of 3 times) and that
+was a minor problem of an area near his thumb was backwards .. I lived
+with it by making that area non-detailed on most of the skins. Other
+than the default Marvin skins the rest of them were done last and this problem
+didnt present itself until late in the game. Other than the thumb the rest
+of the mapping layout.. I feel like I did a good job, I got the coverage
+I wanted in the areas that needed it with little warping.
+
+
+I do have to say this was my first major effort on shaders and in particular
+I had a really hard time with the Darth Marvin shader.
+The first 4 hours I spent trying to use Q3ASE and create his shader were
+disastrous and caused  Q3A to do very wacky things like turn the main menu
+all white and loose all the shader effects on all of the models! Once I
+stopped using Q3ASE I got it up and running I had some tough choices to make between
+natural skin being more detailed or shader sections to darth shiny plastic
+look - very darth-like, but less detailed. I think I struck a good balance in
+the end but I was pretty unhappy with his cape - my personal lowpoint of the
+skinpack, to have done it right I'd really have needed a modeled cape and
+thats not in the cards for him in this implementation.
+
+
+This readme is a little bit long, but I figure theres two types of people -
+those who love readme's and those who don't read them at all. :)
+
+
+Enjoy!
+
+
+================================================================
+* Play Information *
+
+
+New Sounds              : YES  
+CTF Skins               : Yes 
+Bot Support             : No
+
+
+
+* Construction *
+Poly Count              : 713
+Vert Count              : 522
+Skin Count              : 10
+Base                    : modeled from scratch
+
+
+Editor used             : built in 3DSMax, boned and animated in Milkshape
+
+
+Known Bugs              : Marginal joint clipping in some extreme poses due to rigidity of the physique system in Milkshape. Damage sounds can be repetetive but its the best I could come up with sounds off the net.
+
+
+Build Time              : Original model done in about 5 hours, modifications for better deformation were done after my first run through adding another 2 hours.
+
+
+Animation Time          : My first animation for this model took about 8 hours or so, the second run through took about 5 hours and the final tweaking took about 3 hours. (This does not include time learning about keyframing, the animation.cfg files etc. )
+
+
+==================================================
+
+
+
+* How to use this model *
+
+
+Unzip the file, put the md3-marvin.pk3 into your
+/quake3/baseq3/ directory, 
+select Marvin or one of his variants as your model and
+enjoy!
+
+
+* Copyright / Permissions *
+
+
+QUAKE III(R) is a registered trademark of
+id Software, Inc.
+
+Marvin the Martian(R) is a registered trademark of Warner Brothers.
+
+
+Distibute as you wish, but don't change the readme
+file or anything else and call it your own, play nice. 

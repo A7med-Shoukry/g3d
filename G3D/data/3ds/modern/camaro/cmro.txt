@@ -1,0 +1,14 @@
+This model was built for any application... It has plenty of detail, and with it's lower poly count it can be used in real time applications, presentations or any type of project that can use low poly vehicles... This model is uses only one texture, but you the PSD is layered so you can have any color you want on top of the 4 supplied. This model is also clean enough that is can be used in game application, check the wire frame image.
+
+Extras Included in the zip are:
+Cmro_Ref.tga, For render reflective alpha texture, for rendering, or games.
+Cmro_texport.tga, Texport texture.
+
+
+  Verts: 517
+  Faces: 1006
+
+work@gamester.ws
+www.gamesterart.com
+
+

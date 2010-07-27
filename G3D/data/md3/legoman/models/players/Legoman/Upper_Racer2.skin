@@ -1,0 +1,12 @@
+U_bodyBox,models/players/Legoman/Racer2A2.tga
+U_RArm,models/players/Legoman/Racer2A1.tga
+U_LArm,models/players/Legoman/Racer2A1.tga
+U_armor,common/nodraw
+U_sword,common/nodraw
+U_shield,common/nodraw
+U_homb,common/nodraw
+U_backpack,common/nodraw
+U_colcha,common/nodraw
+tag_head,
+tag_weapon,
+tag_torso,
