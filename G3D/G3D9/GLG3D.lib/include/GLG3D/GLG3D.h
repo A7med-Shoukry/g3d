@@ -57,7 +57,7 @@
 #include "GLG3D/Draw.h"
 #include "GLG3D/tesselate.h"
 #include "GLG3D/GApp.h"
-s#include "GLG3D/Surface.h"
+#include "GLG3D/Surface.h"
 #include "GLG3D/IFSModel.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"
