@@ -9,6 +9,7 @@
 
 #include "GLG3D/glheaders.h"
 #include "G3D/ImageFormat.h"
+#include "G3D/stringutils.h"
 
 namespace G3D {
 
@@ -203,7 +204,10 @@ const std::string& ImageFormat::name() const {
 
 
 const ImageFormat* ImageFormat::fromString(const std::string& s) {
-    
+    if (toLower(s) == "auto") {
+        return NULL;
+    }
+
     for (int i = 0; ! nameArray[i].empty(); ++i) {
         if (s == nameArray[i]) {
             return fromCode(ImageFormat::Code(i));

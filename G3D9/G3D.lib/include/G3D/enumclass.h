@@ -11,6 +11,7 @@
 #include "G3D/HashTrait.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
+#include "G3D/Any.h"
 
 /**
 \def G3D_DECLARE_ENUM_CLASS_METHODS
@@ -42,7 +43,7 @@
 #define G3D_DECLARE_ENUM_CLASS_METHODS(Classname)\
 private: \
     void fromString(const std::string& x) {\
-        Value v;\
+        Value v = (Value)0;\
         const char* s;\
         int i = 0;\
 \

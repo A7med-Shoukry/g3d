@@ -1252,6 +1252,7 @@ void NetworkDevice::describeSystem(
     t.pushIndent();
     
     for (int i = 0; i < m_adapterArray.size(); ++i) {
+        t.printf("Adapter%d ", i);
         m_adapterArray[i].describe(t);
     }
 

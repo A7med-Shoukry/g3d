@@ -180,6 +180,18 @@ const Texture::CubeMapInfo& Texture::cubeMapInfo(CubeMapConvention convention) {
 }
 
 
+Texture::Preprocess::operator Any() const {
+    Any a(Any::TABLE, "Texture::Preprocess");
+    a["modulate"] = modulate;
+    a["gammaAdjust"] = gammaAdjust;
+    a["scaleFactor"] = scaleFactor;
+    a["computeMinMaxMean"] = computeMinMaxMean;
+    a["computeNormalMap"] = computeNormalMap;
+    a["bumpMapPreprocess"] = bumpMapPreprocess;
+    return a;
+}
+
+
 bool Texture::Preprocess::operator==(const Preprocess& other) const {
     return 
         (modulate == other.modulate) &&
@@ -2345,7 +2357,7 @@ static void modulateImage(ImageFormat::Code fmt, void* _byte, int n, const Color
 Texture::Specification::operator Any() const {
     Any a = Any(Any::TABLE, "Texture::Specification");
     a["filename"] = filename;
-    a["desiredFormat"] = desiredFormat->name();
+    a["desiredFormat"] = desiredFormat ? desiredFormat->name() : "AUTO";
     a["dimension"] = toString(dimension);
     a["settings"] = settings;
     a["preprocess"] = preprocess;
@@ -2488,6 +2500,18 @@ Texture::InterpolateMode Texture::toInterpolateMode(const std::string& s) {
         debugAssertM(false, "Unrecognized interpolate mode");
         return TRILINEAR_MIPMAP;
     }
+}
+
+
+Texture::Settings::operator Any() const {
+    Any a(Any::TABLE);
+    a["interpolateMode"] = toString(interpolateMode);
+    a["wrapMode"] = wrapMode.operator Any();
+    a["maxAnisotropy"] = maxAnisotropy;
+    a["autoMipMap"] = autoMipMap;
+    a["maxMipMap"] = maxMipMap;
+    a["minMipMap"] = minMipMap;
+    return a;
 }
 
 

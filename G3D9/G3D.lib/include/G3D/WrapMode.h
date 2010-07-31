@@ -15,7 +15,6 @@
 
 #include "G3D/platform.h"
 #include "G3D/enumclass.h"
-#include "G3D/Any.h"
 
 #ifdef IGNORE
 #   undef IGNORE

@@ -252,10 +252,6 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     // v,t,n repeated for each vertex
     Array<int>     faceTempIndex;
 
-    // Count of errors from mismatched texcoord and vertex
-    int texCoordChanged = 0;
-    int normalChanged = 0;
-
     Table<std::string, Material::Ref> materialLibrary;
     Table<std::string, TriListSpec*> groupTable;
 

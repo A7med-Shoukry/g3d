@@ -1597,8 +1597,10 @@ void System::describeSystem(
     t.writeNewline();
     t.pushIndent();
     {
+        const char* g3dPath = getenv("G3DDATA");
         var(t, "Link version", G3D_VER);
         var(t, "Compile version", System::version());
+        var(t, "G3DDATA", std::string(g3dPath ? g3dPath : ""));
     }
     t.popIndent();
     t.writeSymbols("}");

@@ -386,6 +386,8 @@ public:
         */
         Settings(const Any& any);
 
+        operator Any() const;
+
         static const Settings& defaults();
 
         /** 
@@ -473,7 +475,6 @@ public:
 
         BumpMapPreprocess           bumpMapPreprocess;
 
-
         Preprocess() : modulate(Color4::one()), gammaAdjust(1.0f), scaleFactor(1.0f), computeMinMaxMean(true),
                        computeNormalMap(false) {}
 
@@ -485,6 +486,8 @@ public:
             - Texture::Preprocess::none()
         */
         Preprocess(const Any& a);
+
+        operator Any() const;
 
         /** Defaults + gamma adjust set to g*/
         static Preprocess gamma(float g);

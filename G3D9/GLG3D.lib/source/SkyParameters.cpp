@@ -220,7 +220,7 @@ Lighting::Specification::Specification(const Any& any) {
 }
 
 
-Lighting::operator Any() const {
+Lighting::Specification::operator Any() const {
     Any a(Any::TABLE, "lighting");
     a["emissiveScale"] = emissiveScale;
     a["ambientTop"] = ambientTop;
@@ -234,7 +234,7 @@ Lighting::operator Any() const {
 }
 
 Lighting::Ref Lighting::create(const Specification& s) {
-    Lighting::Ref L = Lighting::create();
+    Lighting::Ref L = new Lighting();
     L->lightArray = s.lightArray;
     L->shadowedLightArray = s.shadowedLightArray;
     L->emissiveScale = s.emissiveScale;

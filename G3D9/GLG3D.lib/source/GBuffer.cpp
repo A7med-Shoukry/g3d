@@ -38,7 +38,7 @@ GBuffer::Indices::Indices(const GBuffer::Specification& spec)
 
     numPositionAttach = j;
 
-    int maxAttach = glGetInteger(GL_MAX_COLOR_ATTACHMENTS_EXT);
+    //int maxAttach = glGetInteger(GL_MAX_COLOR_ATTACHMENTS_EXT);
     alwaysAssertM(max(numPrimaryAttach, numPositionAttach) >= i, 
         format("GBuffer requires a GL_MAX_COLOR_ATTACHMENTS value >= %d for this specification "
                "(%d color attachments on this GPU)", i, max(numPrimaryAttach, numPositionAttach)));
