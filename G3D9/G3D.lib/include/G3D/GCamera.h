@@ -4,11 +4,11 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2005-07-20
-  @edited  2009-04-20
+  @edited  2010-07-31
 */
 
-#ifndef G3D_GCamera_H
-#define G3D_GCamera_H
+#ifndef G3D_GCamera_h
+#define G3D_GCamera_h
 
 #include "G3D/platform.h"
 #include "G3D/CoordinateFrame.h"
@@ -23,7 +23,7 @@ class Rect2D;
 class Any;
 
 /**
-  Abstraction of a pinhole camera.
+  Abstraction of a lens or pinhole camera.
 
   The area a camera sees is called a frustum.  It is bounded by the
   near plane, the far plane, and the sides of the view frame projected
@@ -68,6 +68,11 @@ private:
     FOVDirection                m_direction;
 
     Vector2                     m_pixelOffset;
+
+    float                       m_lensRadius;
+
+    /** Negative number */
+    float                       m_focusPlaneZ;
 
 public:
 
@@ -170,6 +175,9 @@ public:
 
        This is the full angle, i.e., from the left side of the
        viewport to the right side.
+
+       The field of view is specified for the pinhole version of the
+       camera.
     */
     void setFieldOfView(float edgeToEdgeAngleRadians, FOVDirection direction);
 
@@ -193,7 +201,7 @@ public:
     
 
     /**
-     Projects a world space point onto a width x height screen.  The
+       Pinhole projects a world space point onto a width x height screen.  The
      returned coordinate uses pixmap addressing: x = right and y =
      down.  The resulting z value is 0 at the near plane, 1 at the far plane,
      and is a linear compression of unit cube projection.
@@ -204,7 +212,7 @@ public:
                     const class Rect2D& viewport) const;
 
     /**
-     Projects a world space point onto a unit cube.  The resulting
+       Pinhole projects a world space point onto a unit cube.  The resulting
      x,y,z values range between -1 and 1, where z is -1
      at the near plane and 1 at the far plane and varies hyperbolically in between.
 
@@ -229,12 +237,13 @@ public:
 
     /**
      Returns the pixel area covered by a shape of the given
-     world space area at the given z value (z must be negative).
+     world space area at the given z value (z must be negative)
+     under pinhole projection.
      */
     float worldToScreenSpaceArea(float area, float z, const class Rect2D& viewport) const;
 
     /**
-     Returns the world space 3D viewport corners.  These
+     Returns the world space 3D viewport corners under pinhole projection.  These
      are at the near clipping plane.  The corners are constructed
      from the nearPlaneZ, viewportWidth, and viewportHeight.
      "left" and "right" are from the GCamera's perspective.
@@ -244,7 +253,7 @@ public:
                                 Vector3& outLL, Vector3& outLR) const;
 
     /**
-     Returns the world space 3D viewport corners.  These
+     Returns the world space 3D viewport corners under pinhole projection.  These
      are at the Far clipping plane.  The corners are constructed
      from the nearPlaneZ, farPlaneZ, viewportWidth, and viewportHeight.
      "left" and "right" are from the GCamera's perspective.
@@ -254,17 +263,11 @@ public:
                                Vector3& outLL, Vector3& outLR) const;
 
     /**
-     Returns the image plane depth,  assumes imagePlane
-     is the same as the near clipping plane.
-     returns a positive number.
-     */
-    float imagePlaneDepth() const;
-
-    /**
       Returns the world space ray passing through the center of pixel
-      (x, y) on the image plane.  The pixel x and y axes are opposite
-      the 3D object space axes: (0,0) is the upper left corner of the screen.
-      They are in viewport coordinates, not screen coordinates.
+      (x, y) on the image plane under pinhole projection.  The pixel x
+      and y axes are opposite the 3D object space axes: (0,0) is the
+      upper left corner of the screen.  They are in viewport
+      coordinates, not screen coordinates.
 
       The ray origin is at the origin.  To start it at the image plane,
       move it forward by imagePlaneDepth/ray.direction.z
@@ -358,6 +361,32 @@ public:
     /** Read and Write camera parameters */
     void serialize(class BinaryOutput& bo) const;
     void deserialize(class BinaryInput& bi);
+
+    /** Plane that is in focus under a lens camera. This is a negative
+        number. */
+    void setFocusPlaneZ(float z) {
+        debugAssert(z < 0);
+        m_focusPlaneZ = z;
+    }
+    
+    float focusPlaneZ() const {
+        return m_focusPlaneZ;
+    }
+
+    void setLensRadius(float r) {
+        m_lensRadius = r;
+    }
+
+    float lensRadius() const {
+        return m_lensRadius;
+    }
+
+    /** World space ray from a lens camera.  (\a u, \a v) are signed
+        (-1, 1) that should lie within a unit-radius disc.*/
+    Ray worldRay(float x, float y, float u, float v, const class Rect2D &viewport) const;
+    
+    /** Circle of confusion radius, in pixels, for a point at distance z from the center of projection. */
+    float circleOfConfusionRadius(float z, const class Rect2D& viewport) const;
    
 };
 

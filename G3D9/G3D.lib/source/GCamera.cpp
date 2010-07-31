@@ -5,7 +5,7 @@
   @author Jeff Marsceill, 08jcm@williams.edu
  
   @created 2005-07-20
-  @edited  2010-02-22
+  @edited  2010-07-31
 */
 #include "G3D/GCamera.h"
 #include "G3D/platform.h"
@@ -47,6 +47,10 @@ GCamera::GCamera(const Any& any) {
             m_farPlaneZ = it->value;
         } else if (k == "PIXELOFFSET") {
             m_pixelOffset = it->value;
+        } else if (k == "LENSRADIUS") {
+            m_lensRadius = it->value;
+        } else if (k == "FOCUSPLANEZ") {
+            m_focusPlaneZ = it->value;
         } else {
             any.verify(false, std::string("Illegal key in table: ") + it->key);
         }
@@ -64,12 +68,31 @@ GCamera::operator Any() const {
     any.set("farPlaneZ", farPlaneZ());
     any.set("coordinateFrame", coordinateFrame());
     any.set("pixelOffset", pixelOffset());
+    any.set("focusPlaneZ", m_focusPlaneZ);
+    any.set("lensRadius", m_lensRadius);
 
     return any;
 }
 
+    
+float GCamera::circleOfConfusionRadius(float z, const class Rect2D& viewport) const {
+    // Circle of confusion at the focus plane, in meters
+    const float r = fabs(m_focusPlaneZ / z) * m_lensRadius;
+    
+    float angle;
+    FOVDirection dir;
+    getFieldOfView(angle, dir);
+    
+    const float s = (dir == HORIZONTAL) ? viewport.width() : viewport.height();
+    
+    // Focus plane radius to pixels
+    const float pixPerMeter = (s * 0.5f) / (m_focusPlaneZ * tan(angle * 0.5f));
+    
+    return r * pixPerMeter;
+}
 
-GCamera::GCamera() {
+
+    GCamera::GCamera() : m_lensRadius(0.0f), m_focusPlaneZ(-10.0f) {
     setNearPlaneZ(-0.2f);
     setFarPlaneZ(-150.0f);
     setFieldOfView((float)toRadians(90.0f), HORIZONTAL);
@@ -111,10 +134,6 @@ void GCamera::setFieldOfView(float angle, FOVDirection dir) {
 }
 
  
-float GCamera::imagePlaneDepth() const{
-    return -m_nearPlaneZ;
-}
-
 float GCamera::viewportWidth(const Rect2D& viewport) const {
     // Compute the side of a square at the near plane based on our field of view
     float s = 2.0f * -m_nearPlaneZ * tan(m_fieldOfView * 0.5f);
@@ -137,6 +156,29 @@ float GCamera::viewportHeight(const Rect2D& viewport) const {
     }
 
     return s;
+}
+
+
+Ray GCamera::worldRay(float x, float y, float u, float v, const class Rect2D &viewport) const {
+
+    // Pinhole ray
+    const Ray& ray = GCamera::worldRay(x, y, viewport);
+
+    // Find the point where all rays through this pixel will converge
+    // in the scene.
+    const Vector3& focusPoint = ray.origin() +
+        ray.direction() * (-m_focusPlaneZ / ray.direction().dot(m_cframe.lookVector()));
+
+    // Shift the ray origin
+    const Vector3& origin = 
+        m_cframe.rightVector() * (u * m_lensRadius) +
+        m_cframe.upVector()    * (v * m_lensRadius) +
+        ray.origin();
+
+    // Find the new direction to the focus point
+    const Vector3& direction = (focusPoint - origin).direction();
+
+    return Ray(origin, direction);
 }
 
 
@@ -265,7 +307,7 @@ float GCamera::worldToScreenSpaceArea(float area, float z, const Rect2D& viewpor
     if (z >= 0) {
         return finf();
     }
-    return area * (float)square(imagePlaneDepth() / z);
+    return area * (float)square(-nearPlaneZ() / z);
 }
 
 
@@ -481,7 +523,6 @@ void GCamera::lookAt(const Vector3& position, const Vector3& up) {
 
 void GCamera::serialize(BinaryOutput& bo) const {
     bo.writeFloat32(m_fieldOfView);
-    bo.writeFloat32(imagePlaneDepth());
     debugAssert(nearPlaneZ() < 0.0f);
     bo.writeFloat32(nearPlaneZ());
     debugAssert(farPlaneZ() < 0.0f);
@@ -489,6 +530,8 @@ void GCamera::serialize(BinaryOutput& bo) const {
     m_cframe.serialize(bo);
     bo.writeInt8(m_direction);
     m_pixelOffset.serialize(bo);
+    bo.writeFloat32(m_lensRadius);
+    bo.writeFloat32(m_focusPlaneZ);
 }
 
 
@@ -501,6 +544,8 @@ void GCamera::deserialize(BinaryInput& bi) {
     m_cframe.deserialize(bi);
     m_direction = (FOVDirection)bi.readInt8();
     m_pixelOffset.deserialize(bi);
+    m_lensRadius = bi.readFloat32();
+    m_focusPlaneZ = bi.readFloat32();
 }
 
 

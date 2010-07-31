@@ -17,8 +17,10 @@
    Changes in 9.00:
    <ul>
      <li> Made alpha-testing optional in TriTree
+     <li> Extended G3D::GCamera to have lens parameters
      <li> Lighting::Specification::operator Any()
      <li> G3D::Any::operator=(Array<T>)
+     <li> Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
    </ul>
 
