@@ -227,14 +227,14 @@ public:
     }
 
     /** \f$\eta_r\f$ for the material on the outside of this object (i.e. side of the normal).*/
-    inline float etaReflect() const {
+    float etaReflect() const {
         return m_eta_r;
     }
 
     /** \f$\kappa_r\f$ Extinction coefficient for the material on the outside;
         complex part of the index of refraction.
         http://en.wikipedia.org/wiki/Complex_index_of_refraction#Dispersion_and_absorption*/
-    inline const Color3& extinctionReflect() const {
+    const Color3& extinctionReflect() const {
         return m_extinction_r;
     }
 
@@ -246,11 +246,11 @@ public:
          although the interface allows them to be set independently.
        - a = \f$s\f$ : shininess ("specular exponent"), packed.
     */
-    inline const Component4& specular() const {
+    const Component4& specular() const {
         return m_specular;
     }
 
-    /** @brief Evaluate the diffuse (finite) portion of the BSDF: 
+    /** @brief Evaluate the finite portion of the BSDF: 
         \f$(f_L + f_g)\f$. 
 
         Used for direct illumination.  Ignores delta functions because
@@ -272,7 +272,7 @@ public:
         @param radiance_L Incident power ("light color") along @a w_L
 
         @return Resulting radiance, with the alpha channel copied from
-        the coverage mask.  Factors the geometric w_L dot n term in.
+        the coverage mask.  Notes NOT factors the geometric w_L dot n term in.
         Unmultipled alpha.
 
       @beta

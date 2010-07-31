@@ -81,8 +81,6 @@ float Tri::area() const {
 }
 
 
-Tri::Intersector::Intersector() : tri(NULL), u(0), v(0) {}
-
 #ifdef _MSC_VER
 // Turn on fast floating-point optimizations
 #pragma float_control( push )
@@ -141,11 +139,11 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
 
     if ((t > 0.0f) && (t < distance)) {
         // Alpha masking
-        if (tri.m_material.notNull() && (tri.m_material->bsdf()->lambertian().min().a < 0.5f)) {
+        u = ua * f;
+        v = va * f;
+        if (alphaTest && tri.m_material.notNull() && (tri.m_material->bsdf()->lambertian().min().a < alphaThreshold)) {
             // This texture has an alpha channel; we have to test against it.
-            const float u = ua * f;
-            const float v = va * f;
-            const float w = 1.0 - u - v;
+            const float w = 1.0f - u - v;
             
             const Image4::Ref& image = tri.m_material->bsdf()->lambertian().image();
 
@@ -157,24 +155,18 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
             texCoord.x *= image->width();
             texCoord.y *= image->height();
 
-            if (image->nearest(texCoord).a < 0.5f) {
+            if (image->nearest(texCoord).a < alphaThreshold) {
                 // Alpha masked location--passed through this tri
                 return;
             }
 
             // Hit the opaque part
-            this->u = u;
-            this->v = v;
-        } else {
-            // Opaque triangle; don't bother alpha testing
-
-            // This is a new hit.  Save away the data about the hit
-            // location, but don't bother computing barycentric w,
-            // the hit location or the normal until after we've checked
-            // against all triangles.
-            this->u   = ua * f;
-            this->v   = va * f;
         }
+        
+        // This is a new hit.  Save away the data about the hit
+        // location, but don't bother computing barycentric w,
+        // the hit location or the normal until after we've checked
+        // against all triangles.
 
         distance = t;
         this->tri = &tri;

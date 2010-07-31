@@ -16,8 +16,10 @@
    <p>
    Changes in 9.00:
    <ul>
+     <li> Made alpha-testing optional in TriTree
      <li> Lighting::Specification::operator Any()
      <li> G3D::Any::operator=(Array<T>)
+     <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
    </ul>
 
    <p>

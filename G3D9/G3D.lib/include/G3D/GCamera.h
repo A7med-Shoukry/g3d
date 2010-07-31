@@ -179,6 +179,7 @@ public:
         angle = m_fieldOfView;
         direction = m_direction;
     }
+
 #if 0
     /** Returns the field of view in \a direction for the \a viewport. */
     float fieldOfView(FOVDirection direction, const Rect2D& viewport) const {

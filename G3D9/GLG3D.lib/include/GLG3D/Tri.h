@@ -90,7 +90,7 @@ public:
     Tri otherSide() const;
     
     /** Returns a bounding box */
-    inline void getBounds(AABox& box) const {
+    void getBounds(AABox& box) const {
         const Vector3& v1 = v0 + e1;
         const Vector3& v2 = v0 + e2;
 
@@ -101,7 +101,7 @@ public:
     float area() const;
 
     /** Vertex position (must be computed) */
-    inline Vector3 vertex(int i) const {
+    Vector3 vertex(int i) const {
         switch (i) {
         case 0:
             return v0;
@@ -117,58 +117,58 @@ public:
 
     /** Face normal.  For degenerate triangles, this is zero.  For all other triangles
     it has unit length and is defined by counter-clockwise winding. */
-    inline const Vector3& normal() const {
+    const Vector3& normal() const {
         return n;
     }
 
     /** Vertex normal */
-    inline const Vector3& normal(int i) const {
+    const Vector3& normal(int i) const {
         debugAssert(i >= 0 && i <= 2);
         return m_normal[i];
     }
 
-    inline const Vector2& texCoord(int i) const {
+    const Vector2& texCoord(int i) const {
         debugAssert(i >= 0 && i <= 2);
         return m_texCoord[i];
     }
 
-    inline const Vector4& packedTangent(int i) const {
+    const Vector4& packedTangent(int i) const {
         debugAssert(i >= 0 && i <= 2);
         return m_packedTangent[i];
     }
 
     /** Per-vertex unit tangent, for bump mapping. Tangents are perpendicular to 
         the corresponding vertex normals.*/
-    inline Vector3 tangent(int i) const {
+    Vector3 tangent(int i) const {
         debugAssert(i >= 0 && i <= 2);
         return m_packedTangent[i].xyz();
     }
 
     /** Per-vertex unit tangent = normal x tangent, for bump mapping.
         (Erroneously called the "binormal" in some literature) */
-    inline Vector3 tangent2(int i) const {
+    Vector3 tangent2(int i) const {
         debugAssert(i >= 0 && i <= 2);
         return m_normal[i].cross(m_packedTangent[i].xyz()) * m_packedTangent[i].w;
     }
 
     /** Application-specific data. Can be used as a convenience 
         hook instead of subclassing Tri.*/
-    inline void* data() const {
+    void* data() const {
         return m_data;
     }
 
     /** Application-specific data; BSDF, image, etc. Can be used as a convenience 
         hook instead of subclassing Tri.*/
-    inline Material::Ref material() const {
+    Material::Ref material() const {
         return m_material;
     }
 
     /** Returns a (relatively) unique integer for this object */
-    inline uint32 hashCode() const {
+    uint32 hashCode() const {
         return (v0.hashCode() << 20) + (e1.hashCode() << 10) + e2.hashCode();
     }
 
-    inline bool operator==(const Tri& t) const {
+    bool operator==(const Tri& t) const {
         return 
             (v0 == t.v0) &&
             (e1 == t.e1) &&
@@ -199,14 +199,27 @@ public:
         /** Barycentric coordinate of the hit that multiplies vertex 2. */
         float           v;
 
-        Intersector();
+        /** Enables alpha testing. */
+        bool            alphaTest;
 
-        /** @brief Computes the two-sided intersection of the ray and triangle.  
+        /** Alpha values in the lambertian channel that are less than
+         this are treated as holes if alphaTest is true.*/
+        bool            alphaThreshold;
+
+        Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f) {}
+
+        virtual ~Intersector() {}
+
+        /** @brief Computes the two-sided intersection of the ray and
+            triangle.
      
-          Called repeatedly by KDTree::intersect.
+          Called repeatedly by BSPTree::intersect and
+          TriTree::intersect.  This corresponds to an OptiX AnyHit
+          program.
 
-          If an intersection is found that is closer than @a distance, updates 
-          distance and stores the result in @a this.  Sample usage:
+          If an intersection is found that is closer than @a distance,
+          updates distance and stores the result in @a this.  Sample
+          usage:
           
           <pre>
             Intersector hit;
