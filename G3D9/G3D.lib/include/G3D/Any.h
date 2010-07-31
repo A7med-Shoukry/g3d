@@ -415,6 +415,17 @@ public:
     /** \a t must be ARRAY, TABLE, or NONE. Removes the comment and name */
     Any& operator=(Type t);
 
+    /** Removes the comment and name */
+    template<class T>
+    Any& operator=(const Array<T>& array) {
+        *this = Any::ARRAY;
+        resize(array.size());
+        for (int i = 0; i < array.size(); ++i) {
+            this->operator [](i) = array[i];
+        }
+        return *this;
+    }
+
     Type type() const;
 
     /** Same as deserialize or load, but operates on a string instead
@@ -518,7 +529,7 @@ public:
 
     // Needed to prevent the operator[](int) overload from catching
     // string literals
-    inline const Any& operator[](const char* key) const {
+    const Any& operator[](const char* key) const {
         return operator[](std::string(key));
     }
 

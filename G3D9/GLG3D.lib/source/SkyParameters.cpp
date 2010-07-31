@@ -221,8 +221,16 @@ Lighting::Specification::Specification(const Any& any) {
 
 
 Lighting::operator Any() const {
-    Any a(Any::TABLE);
-    a.setName("lighting");
+    Any a(Any::TABLE, "lighting");
+    a["emissiveScale"] = emissiveScale;
+    a["ambientTop"] = ambientTop;
+    a["ambientBottom"] = ambientBottom;
+    a["environmentMap"] = environmentMap;
+    a["environmentMapColor"] = environmentMapColor;
+    a["lightArray"] = lightArray;
+    a["shadowedLightArray"] = shadowedLightArray;
+
+    return a;
 }
 
 Lighting::Ref Lighting::create(const Specification& s) {

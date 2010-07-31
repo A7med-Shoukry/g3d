@@ -2342,6 +2342,18 @@ static void modulateImage(ImageFormat::Code fmt, void* _byte, int n, const Color
 
 
 /////////////////////////////////////////////////////
+Texture::Specification::operator Any() const {
+    Any a = Any(Any::TABLE, "Texture::Specification");
+    a["filename"] = filename;
+    a["desiredFormat"] = desiredFormat->name();
+    a["dimension"] = toString(dimension);
+    a["settings"] = settings;
+    a["preprocess"] = preprocess;
+
+    return a;
+}
+
+
 bool Texture::Specification::operator==(const Specification& other) const {
     return 
         (filename == other.filename) &&

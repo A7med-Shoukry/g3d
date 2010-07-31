@@ -566,6 +566,8 @@ public:
         bool operator!=(const Specification& s) const {
             return !(*this == s);
         }
+
+        operator Any() const;
     };
 
     static Ref create(const Specification& s);
@@ -968,15 +970,15 @@ public:
         return m_depth;
     }
 
-    inline const std::string& name() const {
+    const std::string& name() const {
         return m_name;
     }
 
-    inline const ImageFormat* format() const {
+    const ImageFormat* format() const {
         return m_format;
     }
     
-    inline Dimension dimension() const {
+    Dimension dimension() const {
         return m_dimension;
     }
 
