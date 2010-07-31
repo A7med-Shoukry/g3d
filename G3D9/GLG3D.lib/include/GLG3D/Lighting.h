@@ -140,6 +140,7 @@ public:
         Array<GLight>                     shadowedLightArray;
         Specification() : emissiveScale(Color3::white()), ambientTop(Color3::black()), ambientBottom(Color3::black()), environmentMapColor(Color3::white()) {}
         Specification(const class Any&);
+        operator Any() const;
     };
 
 private:
@@ -176,11 +177,7 @@ public:
     Array<GLight>       shadowedLightArray;
 
     /** Creates a (dark) environment. */
-    static Ref create() {
-        return new Lighting();
-    }
-
-    static Ref create(const Specification& s);
+    static Ref create(const Specification& s = Specification());
 
     inline Color3 ambientAverage() const {
         return (ambientBottom + ambientTop) / 2.0f;

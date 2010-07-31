@@ -101,11 +101,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     any.load(filename);
 
     // Load the lighting
-    if (any.containsKey("lighting")) {
-        s->m_lighting = Lighting::create(any["lighting"]);
-    } else {
-        s->m_lighting = Lighting::create();
-    }
+    s->m_lighting = Lighting::create(any.get("lighting", Lighting::Specification()));
 
     // Load the models
     Any models = any["models"];

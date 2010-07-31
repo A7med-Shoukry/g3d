@@ -175,10 +175,21 @@ public:
 
     /** Returns the current full field of view angle (from the left side of the
        viewport to the right side) and direction */
-    inline void getFieldOfView(float& angle, FOVDirection& direction) const {
+    void getFieldOfView(float& angle, FOVDirection& direction) const {
         angle = m_fieldOfView;
         direction = m_direction;
     }
+#if 0
+    /** Returns the field of view in \a direction for the \a viewport. */
+    float fieldOfView(FOVDirection direction, const Rect2D& viewport) const {
+        if (m_fieldOfView == direction) {
+            return m_fieldOfView;
+        } else if (direction == HORIZONTAL) {
+            m_fieldOfView;
+        }
+    }
+#endif
+    
 
     /**
      Projects a world space point onto a width x height screen.  The

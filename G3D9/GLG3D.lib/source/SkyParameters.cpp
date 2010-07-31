@@ -220,6 +220,11 @@ Lighting::Specification::Specification(const Any& any) {
 }
 
 
+Lighting::operator Any() const {
+    Any a(Any::TABLE);
+    a.setName("lighting");
+}
+
 Lighting::Ref Lighting::create(const Specification& s) {
     Lighting::Ref L = Lighting::create();
     L->lightArray = s.lightArray;
