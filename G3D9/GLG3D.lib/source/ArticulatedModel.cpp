@@ -463,14 +463,14 @@ static std::string find3DSTexture(std::string _filename, const std::string& path
     }
 }
 
-Material::Settings ArticulatedModel::compute3DSMaterial
+Material::Specification ArticulatedModel::compute3DSMaterial
 (const void*         ptr,
  const std::string&  path,
  const Preprocess&   preprocess) {
 
     const Load3DS::Material& material = *reinterpret_cast<const Load3DS::Material*>(ptr);
 
-    Material::Settings spec;
+    Material::Specification spec;
 
     if (preprocess.stripMaterials || preprocess.materialOverride.notNull()) {
         spec.setLambertian(Color3::one() * 0.7f);

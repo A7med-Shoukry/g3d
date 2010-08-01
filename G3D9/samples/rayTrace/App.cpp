@@ -207,7 +207,7 @@ Image3::Ref App::rayTraceImage(float scale, int numRays) {
     }
 
     m_result = Texture::fromMemory("Result", im->getCArray(), ImageFormat::RGB32F(), im->width(), im->height(), 1, 
-        GLCaps::supports(ImageFormat::RGB32F()) ? ImageFormat::RGB32F() : ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
+        GLCaps::supportsTexture(ImageFormat::RGB32F()) ? ImageFormat::RGB32F() : ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
 
     return im;
 }

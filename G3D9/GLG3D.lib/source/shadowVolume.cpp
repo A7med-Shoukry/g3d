@@ -30,7 +30,7 @@ void beginMarkShadows(RenderDevice* renderDevice) {
 
         // z-fail; decrement for front faces and increment
         // for back faces.
-        if (renderDevice->supportsTwoSidedStencil()) {
+		if (GLCaps::supports_GL_EXT_stencil_two_side()) {
             renderDevice->setCullFace(RenderDevice::CULL_NONE);
             renderDevice->setStencilOp(
                 RenderDevice::STENCIL_KEEP,
@@ -227,7 +227,7 @@ void markShadows(
         //
         renderDevice->sendIndices(PrimitiveType::TRIANGLES, index);
 
-        if (! renderDevice->supportsTwoSidedStencil()) {
+        if (! GLCaps::supports_GL_EXT_stencil_two_side()) {
             // Render a second pass for the back faces
             renderDevice->setCullFace(RenderDevice::CULL_FRONT);
             renderDevice->setStencilOp(

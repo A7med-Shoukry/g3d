@@ -247,9 +247,6 @@ public:
         size_t hashCode() const;
     };
 
-    /** \deprecated */
-    typedef Specification Settings;
-
 protected:
 
     /** Scattering function */
@@ -437,8 +434,8 @@ public:
 }
 
 template <>
-struct HashTrait<G3D::Material::Settings> {
-    static size_t hashCode(const G3D::Material::Settings& key) {
+struct HashTrait<G3D::Material::Specification> {
+    static size_t hashCode(const G3D::Material::Specification& key) {
         return key.hashCode();
     }
 };

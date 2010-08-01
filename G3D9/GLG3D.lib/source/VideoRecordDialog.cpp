@@ -112,16 +112,16 @@ void VideoRecordDialog::makeGUI() {
     if (false) {
         // For future expansion
         GuiCheckBox*  motionCheck = moviePane->addCheckBox("Motion Blur",  &m_enableMotionBlur);
-        m_framesBox = moviePane->addNumberBox("", &m_motionBlurFrames, "frames", true, 2, 20);
+        m_framesBox = moviePane->addNumberBox("", &m_motionBlurFrames, "frames", GuiTheme::LINEAR_SLIDER, 2, 20);
         m_framesBox->setUnitsSize(46);
         m_framesBox->moveRightOf(motionCheck);
         m_framesBox->setWidth(210);
     }
 
-    GuiNumberBox<float>* playbackBox = moviePane->addNumberBox("Playback",    &m_playbackFPS, "fps", false, 1.0f, 120.0f, 0.1f);
+    GuiNumberBox<float>* playbackBox = moviePane->addNumberBox("Playback",    &m_playbackFPS, "fps", GuiTheme::NO_SLIDER, 1.0f, 120.0f, 0.1f);
     playbackBox->setCaptionSize(captionSize);
 
-    GuiNumberBox<float>* recordBox   = moviePane->addNumberBox("Record",      &m_recordFPS, "fps", false, 1.0f, 120.0f, 0.1f);
+    GuiNumberBox<float>* recordBox   = moviePane->addNumberBox("Record",      &m_recordFPS, "fps", GuiTheme::NO_SLIDER, 1.0f, 120.0f, 0.1f);
     recordBox->setCaptionSize(captionSize);
 
     if (GLCaps::supports_GL_ARB_texture_non_power_of_two() && GLCaps::supports_GL_ARB_framebuffer_object()) {

@@ -148,9 +148,9 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
         m_temp->clear(Texture::CUBE_POS_X, 0, rd);
         m_blurry->clear(Texture::CUBE_POS_X, 0, rd);
 
-        m_framebuffer->set(Framebuffer::COLOR_ATTACHMENT0, m_preBloom);
-        m_tempFramebuffer->set(Framebuffer::COLOR_ATTACHMENT0, m_temp);
-        m_blurryFramebuffer->set(Framebuffer::COLOR_ATTACHMENT0, m_blurry);
+        m_framebuffer->set(Framebuffer::COLOR0, m_preBloom);
+        m_tempFramebuffer->set(Framebuffer::COLOR0, m_temp);
+        m_blurryFramebuffer->set(Framebuffer::COLOR0, m_blurry);
     }
 
     rd->push2D();

@@ -228,27 +228,6 @@ public:
             }
         };
 
-        /**
-         @deprecated
-         */
-         void doSimulation(
-            GameTime deltaTime,
-            bool crouching,
-            bool movingForward,
-            bool movingBackward,
-            bool attack,
-            bool jump,
-            bool flip,
-            bool salute,
-            bool fallback,
-            bool wave,
-            bool point,
-            bool death1,
-            bool death2,
-            bool death3,
-            bool pain1,
-            bool pain2,
-            bool pain3);
 
          /**
          Given a time and state flags indicating a character's desires,

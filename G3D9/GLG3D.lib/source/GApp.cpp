@@ -161,7 +161,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
         defaultController->setPosition(Vector3(0, 0, 4));
         defaultController->lookAt(Vector3::zero());
         defaultController->setActive(false);
-        defaultCamera.setPosition(defaultController->position());
+        defaultCamera.setPosition(defaultController->translation());
         defaultCamera.lookAt(Vector3::zero());
         addWidget(defaultController);
         setCameraManipulator(defaultController);
@@ -195,7 +195,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
                 logPrintf("Warning: Disabled GApp::Settings::film.enabled because none of the provided color formats could be supported on this GPU.");
             } else {
                 m_film = Film::create(colorFormat);
-                m_frameBuffer = FrameBuffer::create("GApp::m_frameBuffer");
+                m_frameBuffer = Framebuffer::create("GApp::m_frameBuffer");
                 resize(renderDevice->width(), renderDevice->height());
             }
         }
@@ -626,9 +626,9 @@ void GApp::resize(int w, int h) {
                 depthFormat, Texture::DIM_2D_NPOT, Texture::Settings::video(), 1);
         }
         
-        m_frameBuffer->set(FrameBuffer::COLOR0, m_colorBuffer0);
+        m_frameBuffer->set(Framebuffer::COLOR0, m_colorBuffer0);
         if (depthFormat) {
-            m_frameBuffer->set(FrameBuffer::DEPTH, m_depthBuffer);
+            m_frameBuffer->set(Framebuffer::DEPTH, m_depthBuffer);
         }
     }
 }

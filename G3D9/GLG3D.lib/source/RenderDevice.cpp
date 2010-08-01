@@ -158,13 +158,6 @@ static const char* isOk(void* x) {
 }
 
 
-bool RenderDevice::supportsOpenGLExtension(
-    const std::string& extension) const {
-
-    return GLCaps::supports(extension);
-}
-
-
 void RenderDevice::init(
     const OSWindow::Settings&      _settings) {
 
@@ -386,23 +379,6 @@ HDC RenderDevice::getWindowHDC() const {
 
 #endif
 
-void RenderDevice::setGamma(
-    double              brightness,
-    double              gamma) {
-    
-    Array<uint16> gammaRamp;
-    gammaRamp.resize(256);
-
-    for (int i = 0; i < 256; ++i) {
-        gammaRamp[i] =
-            (uint16)min(65535, 
-                      max(0, 
-                      (int)(pow((brightness * (i + 1)) / 256.0, gamma) * 65535 + 0.5)));
-	}
-    
-    m_window->setGammaRamp(gammaRamp);
-}
-
 
 void RenderDevice::setVideoMode() {
 
@@ -517,8 +493,6 @@ void RenderDevice::cleanup() {
     SuperShader::Pass::purgeCache();
 
     logLazyPrintf("Shutting down RenderDevice.\n");
-    logPrintf("Restoring gamma.\n");
-    setGamma(1, 1);
 
     logPrintf("Freeing all VertexRange memory\n");
 
@@ -2747,7 +2721,7 @@ double RenderDevice::getDepthBufferValue(
     debugAssertGLOk();
 
     if (m_state.framebuffer.notNull()) {
-        debugAssertM(m_state.framebuffer->has(FrameBuffer::DEPTH_ATTACHMENT),
+        debugAssertM(m_state.framebuffer->has(Framebuffer::DEPTH),
             "No depth attachment");
     }
 
@@ -3292,23 +3266,8 @@ void RenderDevice::internalSendIndices(
 }
 
 
-bool RenderDevice::supportsTwoSidedStencil() const {
-    return GLCaps::supports_GL_EXT_stencil_two_side();
-}
-
-
-bool RenderDevice::supportsTextureRectangle() const {
-    return GLCaps::supports_GL_EXT_texture_rectangle();
-}
-
-
 bool RenderDevice::supportsVertexProgramNV2() const {
     return GLCaps::supports_GL_NV_vertex_program2();
-}
-
-
-bool RenderDevice::supportsVertexBufferObject() const { 
-    return GLCaps::supports_GL_ARB_vertex_buffer_object();
 }
 
 

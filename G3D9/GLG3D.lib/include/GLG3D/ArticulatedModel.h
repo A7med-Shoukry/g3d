@@ -642,7 +642,7 @@ private:
         a dependency problem of having Load3DS.h included here.
 
         @param path Current file load path*/
-    static Material::Settings compute3DSMaterial
+    static Material::Specification compute3DSMaterial
         (const void* material, 
          const std::string& path, 
          const Preprocess& preprocess);

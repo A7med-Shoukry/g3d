@@ -265,16 +265,6 @@ public:
 
     virtual ~MD3Model();
 
-    /**
-        Loads all available parts of a Quake III model in \a modelDir
-        as well as the animation.cfg file containing all standard animation values.
-
-        Order of part loading is: lower.md3 -> upper.md3 -> head.md3
-
-        \deprecated Use MD3Model::create()
-     */
-    static MD3Model::Ref fromDirectory(const std::string& modelDir, const Skin::Ref& defaultSkin = NULL);
-
 	static MD3Model::Ref create(const Specification& spec);
 
     /**

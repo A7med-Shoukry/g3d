@@ -11,7 +11,7 @@ World::World() : m_mode(TRACE) {
 
     {
         ArticulatedModel::Ref teapot = ArticulatedModel::fromFile(System::findDataFile("teapot.ifs"), 0.7f);
-        Material::Settings mirror;
+        Material::Specification mirror;
 
         mirror.setSpecular(Color3::white() * 0.2f);
         mirror.setMirrorShininess();

@@ -569,15 +569,6 @@ MD3Model::~MD3Model() {
 }
 
 
-MD3Model::Ref MD3Model::fromDirectory(const std::string& modelDir, const Skin::Ref& defaultSkin) {
-    // Create default spec to load all parts with default skin and materials
-    Specification spec;
-    spec.directory = modelDir;
-    spec.defaultSkin = defaultSkin;
-    return create(spec);
-}
-
-
 void MD3Model::loadSpecification(const Specification& spec) {
     // Load animation.cfg file
     loadAnimationCfg(pathConcat(spec.directory, "animation.cfg"));

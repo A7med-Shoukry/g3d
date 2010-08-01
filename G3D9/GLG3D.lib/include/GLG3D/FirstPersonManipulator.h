@@ -134,8 +134,7 @@ public:
         return m_pitch;
     }
 
-	/** @deprecated Rename to translation() */
-	const Vector3& position() const {
+	const Vector3& translation() const {
 		return m_translation;
 	}
 

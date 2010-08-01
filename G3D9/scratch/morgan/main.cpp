@@ -112,7 +112,10 @@ void App::onInit() {
 //    std::string path = "D:/morgan/data/md3/dragon/models/players/dragon/";
 //    MD3Model::Skin::Ref skin = MD3Model::Skin::create(path, "Percy");
 
-    m_model = MD3Model::fromDirectory(path, skin);
+	MD3Model::Specification spec;
+	spec.directory = path;
+	spec.defaultSkin = skin;
+    m_model = MD3Model::create(spec);
 
     m_shadowMap = ShadowMap::create();
 

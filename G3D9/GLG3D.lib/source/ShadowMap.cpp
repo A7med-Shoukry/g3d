@@ -98,7 +98,7 @@ void ShadowMap::setSize(int desiredSize, const Texture::Settings& textureSetting
 
     if (GLCaps::supports_GL_ARB_framebuffer_object()) {
         m_framebuffer = Framebuffer::create(m_name + " Frame Buffer");
-        m_framebuffer->set(Framebuffer::DEPTH_ATTACHMENT, m_depthTexture);
+        m_framebuffer->set(Framebuffer::DEPTH, m_depthTexture);
     }
 }
 

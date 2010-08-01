@@ -208,11 +208,6 @@ private:
     /** Should the destructor delete m_window?*/
     bool                        m_deleteWindow;
 
-    /** \deprecated (Not supported on most LCDs) */
-    void setGamma(
-        double                  brightness,
-        double                  gamma);
-
 	void setVideoMode();
 
     /**
@@ -1646,21 +1641,6 @@ private:
 
 public:
 
-    /** @deprecated 
-      Use GLCaps::supports instead.
-     */
-    bool supportsOpenGLExtension(const std::string& extension) const;
-
-    /**
-      When true, the 6-argument version of RenderDevice::setStencilOp
-      can set the front and back operations to different values.
-
-      @deprecated 
-      Use GLCaps::supports_two_sided_stencil instead.
-     
-    */
-    bool supportsTwoSidedStencil() const;
-
     /** Forces setLineWidth to max against this value.  Default is 0 */
     inline void setMinLineWidth(float W) {
         m_minLineWidth = W;
@@ -1669,13 +1649,6 @@ public:
     inline float minLineWidth() const {
         return m_minLineWidth;
     }
-
-    /**
-     When true, Texture::DIM_2D_RECT textures can be created.
-     @deprecated
-     Use GLCaps::supports_GL_EXT_texture_rectangle instead.
-     */
-    bool supportsTextureRectangle() const;
 
     /**
      @deprecated
@@ -1696,14 +1669,6 @@ public:
      Use VertexAndPixelShader
      */
     inline bool supportsPixelProgram() const;
-
-    /**
-     When true, VertexRange arrays will be in video, not main memory,
-     and much faster.
-     @deprecated
-     Use GLCaps::supports_GL_ARB_vertex_buffer_object instead.
-     */
-    bool supportsVertexBufferObject() const;
 
     /**
      Sets the framebuffer to render to.  Use NULL to set the desired rendering 

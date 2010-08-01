@@ -250,17 +250,7 @@ protected:
     /** Handles updating size settings and viewport for window size changes */
     virtual void handleResize(int width, int height);
 
-    /** 
-      Capture the keyboard and mouse focus, locking the mouse to the client area of this window.
-      Sets the inputCaptureCount to 1 if @a c is true and 0 if @a c is false
-      @deprecated use setInputCaptureCount
-     */
-    virtual void setInputCapture(bool c) = 0;
-
-    /** @deprecated Use setMouseVisibleCount */
-    virtual void setMouseVisible(bool b) = 0;
-
-    bool notDone() {
+   bool notDone() {
         return m_loopBodyStack.size() > 0;
     }
 
@@ -409,14 +399,6 @@ public:
     virtual void getJoystickState(unsigned int stickNum, Array<float>& axis, Array<bool>& button) = 0;
 
     void setInputCaptureCount(int c) {
-        if ((m_inputCaptureCount > 0) && (c <= 0)) {
-            // Release mouse
-            setInputCapture(false);
-        } else if ((m_inputCaptureCount <= 0) && (c > 0)) {
-            // Capture mouse
-            setInputCapture(true);
-        }
-
         // Set this variable after the setInputCapture statements since
         // they corrupt its value.
         m_inputCaptureCount = c;
@@ -443,14 +425,6 @@ public:
 
 
     void setMouseHideCount(int c) {
-        if ((m_mouseHideCount > 0) && (c <= 0)) {
-            // Release mouse
-            setMouseVisible(true);
-        } else if ((m_mouseHideCount <= 0) && (c > 0)) {
-            // Capture mouse
-            setMouseVisible(false);
-        }
-
         // Set this variable after the setMouseVisible statements since
         // they corrupt its value.
         m_mouseHideCount = c;
@@ -604,9 +578,6 @@ public:
 
 };
 
-/** @deprecated */
-typedef OSWindow GWindow;
-
-}
+} // namespace G3D
 
 #endif

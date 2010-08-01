@@ -260,36 +260,6 @@ public:
                                                   suffix, sliderScale, min, max, roundIncrement));
     }
 
-    /** @deprecated Use the new version with a GuiTheme::SliderScale argument.*/
-    template<typename Value>
-    GuiNumberBox<Value>* addNumberBox(
-        const GuiText&   text, 
-        Value*           value, 
-        const GuiText&   suffix,
-        bool             showSlider,
-        Value            min = (Value)minVal(Value()), 
-        Value            max = (Value)maxVal(Value()), 
-        Value            roundIncrement = 0) {
-
-        return addControl(new GuiNumberBox<Value>(this, text, Pointer<Value>(value), 
-            suffix, showSlider ? GuiTheme::LINEAR_SLIDER : GuiTheme::NO_SLIDER, min, max, roundIncrement));
-    }
-
-    /** @deprecated Use the new version with a GuiTheme::SliderScale argument.*/
-    template<typename Value>
-    GuiNumberBox<Value>* addNumberBox(
-        const GuiText&   text, 
-        const Pointer<Value>& value, 
-        const GuiText&   suffix, 
-        bool                showSlider, 
-        Value               min = (Value)minVal(Value()), 
-        Value               max = (Value)maxVal(Value()), 
-        Value               roundIncrement = 0) {
-
-        return addControl(new GuiNumberBox<Value>(this, text, value, suffix, showSlider ? GuiTheme::LINEAR_SLIDER : GuiTheme::NO_SLIDER, 
-                                                  min, max, roundIncrement));
-    }
-
     template<typename Value>
     GuiSlider<Value>* addSlider(const GuiText& text, const Pointer<Value>& value, 
         Value min, Value max, bool horizontal = true, GuiTheme::SliderScale scale = GuiTheme::LINEAR_SLIDER) {

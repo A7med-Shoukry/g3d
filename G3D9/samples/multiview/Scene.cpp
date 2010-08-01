@@ -28,7 +28,7 @@ Scene::Ref Scene::create() {
     {
         ArticulatedModel::Ref model = ArticulatedModel::fromFile(crateFile, Vector3(6.0f, 1.0f, 6.0f));
 
-        Material::Settings mat;
+        Material::Specification mat;
         std::string base = pathConcat(materialPath, "asphalt/asphalt-");
         mat.setLambertian(base + "L.png");
         mat.setSpecular(base + "G.png");
@@ -47,7 +47,7 @@ Scene::Ref Scene::create() {
     {
         ArticulatedModel::Ref model = ArticulatedModel::fromFile(crateFile);
 
-        Material::Settings mat;
+        Material::Specification mat;
         std::string base = pathConcat(materialPath, "metalcrate/metalcrate-");
         mat.setLambertian(base + "L.png", 0.2f);
         mat.setSpecular(base + "G.png");

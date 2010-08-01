@@ -57,7 +57,7 @@ Material::Ref Material::createDiffuse(const std::string& lambertianFilename) {
     return create(s);
 }
 
-typedef WeakCache<Material::Settings, Material::Ref> MaterialCache;
+typedef WeakCache<Material::Specification, Material::Ref> MaterialCache;
 
 /** Provides access to the cache.  This is not a global because the order of initialization
     needs to be carefully defined */

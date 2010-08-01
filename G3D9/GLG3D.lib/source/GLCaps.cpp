@@ -468,11 +468,6 @@ bool GLCaps::supports(const std::string& extension) {
 }
 
 
-bool GLCaps::supports(const ImageFormat* fmt) {
-    return supportsTexture(fmt);
-}
-
-
 bool GLCaps::hasBug_R11G10B10F() {
     // TODO: make a better test, actually trying to render to this format
     return GLCaps::enumVendor() == ATI;

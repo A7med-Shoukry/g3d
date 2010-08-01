@@ -23,7 +23,9 @@ void App::loadScene() {
     if (false) {
 //        const std::string path = "D:/morgan/data/md3/chaos-marine/models/players/Chaos-Marine/";
         const std::string path = "D:/morgan/data/md3/dragon/models/players/dragon/";
-        MD3Model::Ref model = MD3Model::fromDirectory(path);
+		MD3Model::Specification spec;
+		spec.directory = path;
+        MD3Model::Ref model = MD3Model::create(spec);
         entityArray.append(Entity::create(model, CFrame(rot180, Vector3(x, groundY + 0.8f, 0))));
         x += 2;
     }
@@ -54,7 +56,7 @@ void App::loadScene() {
         std::string filename = System::findDataFile("cow.ifs");
         ArticulatedModel::Ref model = ArticulatedModel::fromFile(filename);
     
-        Material::Settings spec;
+        Material::Specification spec;
         spec.setLambertian(Color3::zero());
         spec.setSpecular(Color3::white() * 0.5f);
         spec.setShininess(SuperBSDF::packedSpecularMirror());
@@ -116,7 +118,7 @@ void App::loadScene() {
 
         triList->twoSided = false;
 
-        Material::Settings mat;
+        Material::Specification mat;
         mat.setEmissive(Color3::black());
         mat.setLambertian("stone.jpg", 0.8f);        
         BumpMap::Settings s;
