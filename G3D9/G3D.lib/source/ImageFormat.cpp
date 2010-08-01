@@ -25,8 +25,8 @@ ImageFormat::ImageFormat(
     int             _blueBits,
     int             _depthBits,
     int             _stencilBits,
-    int             _hardwareBitsPerTexel,
-    int             _packedBitsPerTexel,
+    int             _openGLBitsPerPixel,
+    int             _cpuBitsPerPixel,
     int             glDataFormat,
     bool            _opaque,
     bool            _floatingPoint,
@@ -48,15 +48,13 @@ ImageFormat::ImageFormat(
     blueBits(_blueBits),
     stencilBits(_stencilBits),
     depthBits(_depthBits),
-    cpuBitsPerPixel(_packedBitsPerTexel),
-    packedBitsPerTexel(_packedBitsPerTexel),
-    openGLBitsPerPixel(_hardwareBitsPerTexel),
-    hardwareBitsPerTexel(_hardwareBitsPerTexel),
+    cpuBitsPerPixel(_cpuBitsPerPixel),
+    openGLBitsPerPixel(_openGLBitsPerPixel),
     openGLDataFormat(glDataFormat),
     opaque(_opaque),
     floatingPoint(_floatingPoint) {
 
-    debugAssert(_packedBitsPerTexel <= _hardwareBitsPerTexel);
+    debugAssert(cpuBitsPerPixel <= openGLBitsPerPixel);
 }
 
 const ImageFormat* ImageFormat::depth(int depthBits) {

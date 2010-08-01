@@ -870,7 +870,7 @@ void SuperSurface::renderShadowMappedLightPass(
 
     // This is the unoptimized, single-object version of renderShadowMappedLightPass.
     // It just calls the optimized version with a single-element array.
-    alwaysAssertM(false, "Deprecated: use the method that takes a ShadowMap");
+    debugAssertM(false, "Deprecated: use the method that takes a ShadowMap");
 }
 
 

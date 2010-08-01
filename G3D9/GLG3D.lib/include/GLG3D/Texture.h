@@ -965,14 +965,6 @@ public:
     /** Returns a rectangle whose m_width and m_height match the dimensions of the texture. */
     Rect2D rect2DBounds() const;
 
-    /**
-     For 3D textures.
-     @deprecated use m_depth()
-     */
-    inline int texelDepth() const {
-        return m_depth;
-    }
-
     const std::string& name() const {
         return m_name;
     }

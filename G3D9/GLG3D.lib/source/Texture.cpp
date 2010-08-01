@@ -682,7 +682,7 @@ Texture::Ref Texture::fromFile(
 
             for (int face = 0; face < numFaces; ++face) {
                 byteMipMapFaces[i][face] = byteStart;
-                byteStart += ((bytesFormat->packedBitsPerTexel / 8) * ((mapWidth + 3) / 4) * ((mapHeight + 3) / 4));
+                byteStart += ((bytesFormat->cpuBitsPerPixel / 8) * ((mapWidth + 3) / 4) * ((mapHeight + 3) / 4));
             }
             mapWidth = iMax(1, iFloor(mapWidth/2));
             mapHeight = iMax(1,iFloor(mapHeight/2));
@@ -986,7 +986,7 @@ Texture::Ref Texture::fromMemory(
             
                 for (int f = 0; f < face.size(); ++f) {
 
-                    int numBytes = iCeil(width * height * depth * bytesFormat->packedBitsPerTexel / 8.0f);
+                    int numBytes = iCeil(width * height * depth * bytesFormat->cpuBitsPerPixel / 8.0f);
 
                     // Allocate space for the converted image
                     face[f] = System::alignedMalloc(numBytes, 16);
@@ -1134,7 +1134,7 @@ Texture::Ref Texture::fromMemory(
                                         mipWidth, 
                                         mipHeight, 
                                         desiredFormat->openGLFormat,
-                                        bytesFormat->packedBitsPerTexel / 8, 
+                                        bytesFormat->cpuBitsPerPixel / 8, 
                                         scaleFactor,
                                         bytesFormat->openGLDataFormat,
                                         preprocess.computeMinMaxMean,
@@ -1152,7 +1152,7 @@ Texture::Ref Texture::fromMemory(
                                   mipHeight, 
                                   depth,
                                   desiredFormat->openGLFormat, 
-                                  bytesFormat->packedBitsPerTexel / 8, 
+                                  bytesFormat->cpuBitsPerPixel / 8, 
                                   mipLevel, 
                                   bytesFormat->compressed, 
                                   useNPOT, 
@@ -1726,7 +1726,7 @@ void Texture::getCubeMapRotation(CubeFace face, Matrix3& outMatrix) {
 
 int Texture::sizeInMemory() const {
 
-    int64 base = (m_width * m_height * m_depth * m_format->hardwareBitsPerTexel) / 8;
+    int64 base = (m_width * m_height * m_depth * m_format->openGLBitsPerPixel) / 8;
 
     int64 total = 0;
 

@@ -278,11 +278,6 @@ public:
      */
     virtual int numWeldedBoundaryEdges() const = 0;
 
-    /** @deprecated */
-    inline int numBrokenEdges() const {
-        return numBoundaryEdges();
-    }
-
     /** 
      Render all terms that are independent of shadowing 
      (e.g., transparency, reflection, ambient illumination, 
