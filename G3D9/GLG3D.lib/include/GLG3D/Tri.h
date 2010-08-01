@@ -204,7 +204,7 @@ public:
 
         /** Alpha values in the lambertian channel that are less than
          this are treated as holes if alphaTest is true.*/
-        bool            alphaThreshold;
+        float           alphaThreshold;
 
         Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f) {}
 
