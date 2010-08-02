@@ -40,9 +40,9 @@ private:
 
 public:
     /**
-     Does not initialize fields.
+     Initializes to all zero.
      */
-    Color3();
+    Color3() : r(0), g(0), b(0) {}
 
     /** \param any Must be in one of the following forms: 
         - Color3(#, #, #)
@@ -258,10 +258,6 @@ inline G3D::Color3 operator* (const G3D::Color3& c, G3D::Color1& s) {
     return c * s.value;
 }
 
-
-//----------------------------------------------------------------------------
-inline Color3::Color3 () {
-}
 
 //----------------------------------------------------------------------------
 

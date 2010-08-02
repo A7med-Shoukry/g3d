@@ -51,9 +51,9 @@ public:
     operator Any() const;
 
     /**
-     * Does not initialize fields.
+     Initializes to all zero
      */
-    Color4 ();
+    Color4() : r(0), g(0), b(0), a(0) {}
 
     Color4(const Color3& c3, float a = 1.0);
 
@@ -191,12 +191,6 @@ inline Color4 operator*(const Color3& c3, const Color4& c4) {
 
 //----------------------------------------------------------------------------
 
-inline Color4::Color4 () {
-    // For efficiency in construction of large arrays of vectors, the
-    // default constructor does not initialize the vector.
-}
-
-//----------------------------------------------------------------------------
 
 inline Color4::Color4(const Color3& c3, float a) {
     r = c3.r;
