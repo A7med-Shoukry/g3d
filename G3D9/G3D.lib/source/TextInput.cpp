@@ -136,8 +136,6 @@ std::string TextInput::readUntilNewlineAsString() {
     currentCharOffset = t.bytePosition();
     stack.clear();
 
-    int begin = currentCharOffset;
-
     if (currentCharOffset == buffer.size()) {
         // End of file
         return "";
@@ -148,14 +146,14 @@ std::string TextInput::readUntilNewlineAsString() {
     // Read until newline or eof
     char c = '\0';
     do {
-      c = buffer[currentCharOffset];
-      if (c == '\r' || c == '\n') {
-          // Done
-          break;
-      } else {
-          s += c;
-          ++currentCharOffset;
-      }
+        c = buffer[currentCharOffset];
+        if (c == '\r' || c == '\n') {
+            // Done
+            break;
+        } else {
+            s += c;
+            ++currentCharOffset;
+        }
     } while (currentCharOffset < buffer.size());
 
     return s;    

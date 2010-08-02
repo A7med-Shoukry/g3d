@@ -415,6 +415,9 @@ inline Color3 Color3::unitCross (const Color3& rkVector) const {
 }
 
 
+typedef Color3 Radiance3;
+typedef Color3 Power3;
+
 } // namespace
 
 

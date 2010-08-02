@@ -532,6 +532,7 @@ int64 FileSystem::_size(const std::string& filename) {
                 struct zip_stat info;
                 zip_stat_init( &info );    // Docs unclear if zip_stat_init is required.
                 int success = zip_stat( z, contents.c_str(), ZIP_FL_NOCASE, &info );
+                (void) success;
                 debugAssertM(success == 0, zip + ": " + contents + ": zip stat failed.");
                 requiredMem = info.size;
             }

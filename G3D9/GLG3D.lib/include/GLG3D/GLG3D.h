@@ -87,6 +87,7 @@
 #include "GLG3D/Tri.h"
 #include "GLG3D/TriTree.h"
 #include "GLG3D/Profiler.h"
+#include "GLG3D/SurfaceSample.h"
 
 #include "GLG3D/GuiTheme.h"
 #include "GLG3D/GuiButton.h"
@@ -121,6 +122,7 @@
 
 #include "GLG3D/Discovery.h"
 #include "GLG3D/GEntity.h"
+
 
 #ifdef G3D_OSX
 #include "GLG3D/CarbonWindow.h"

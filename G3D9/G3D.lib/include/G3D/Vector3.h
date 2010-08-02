@@ -775,6 +775,19 @@ inline bool Vector3::isUnit() const {
     return G3D::fuzzyEq(squaredMagnitude(), 1.0f);
 }
 
+/** 
+ Points are technically distinct mathematical entities from vectors.
+ Actually distinguishing them at the class level tends to add lots of
+ boilerplate (e.g., (P - Point3::zero()).direction()
+ vs. P.direction()), so many programmers prefer use a single class,
+ as GLSL does.  
+
+ G3D provides this typedef as a way of documenting arguments that are
+ locations in space and not directions.  Beware that points and
+ vectors are interchangable from the compiler's point of view, and
+ that the programmer must track which is really which. */
+typedef Vector3 Point3;
+
 } // namespace G3D
 
 
