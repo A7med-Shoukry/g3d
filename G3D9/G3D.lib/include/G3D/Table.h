@@ -809,7 +809,7 @@ public:
         ++m_size;
         created = true;
         return m_bucket[b]->entry;
-   }
+    }
 
     Entry& getCreateEntry(const Key& key) {
         bool ignore;

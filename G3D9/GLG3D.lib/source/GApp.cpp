@@ -24,6 +24,8 @@
 #include "GLG3D/VideoRecordDialog.h"
 #include "G3D/ParseError.h"
 #include "G3D/FileSystem.h"
+#include "GLG3D/GuiTextureBox.h"
+#include "GLG3D/GuiPane.h"
 
 
 namespace G3D {
@@ -241,6 +243,15 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
     lastWaitTime  = System::time();
 
     renderDevice->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
+}
+
+
+void GApp::show(const Texture::Ref& t) {
+    GuiWindow::Ref display = GuiWindow::create(t->name(), NULL, Rect2D::xywh(0,0,0,0), GuiTheme::NORMAL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
+    GuiTextureBox* box = display->pane()->addTextureBox(t);
+    box->setSizeFromInterior(t->vector2Bounds());
+    display->pack();
+    addWidget(display);
 }
 
 
@@ -591,13 +602,15 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
 }
 
 
-void GApp::addWidget(const Widget::Ref& module) {
+void GApp::addWidget(const Widget::Ref& module, bool setFocus) {
     m_widgetManager->add(module);
     
     // Ensure that background widgets do not end up on top
     GuiWindow::Ref w = module.downcast<GuiWindow>();
     if (w.notNull()) {
         m_widgetManager->moveWidgetToBack(module);
+    } else if (setFocus) {
+        m_widgetManager->setFocusedWidget(module);
     }
 }
 

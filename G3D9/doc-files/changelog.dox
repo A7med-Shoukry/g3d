@@ -10,8 +10,8 @@
 
 <hr>
    Highlights of 9.00:
-     <ul>
-     </ul>
+   <ul>
+   </ul>
 
    <p>
    Changes in 9.00:
@@ -21,8 +21,12 @@
      <li> Extended G3D::GCamera to have lens parameters
      <li> Lighting::Specification::operator Any()
      <li> G3D::Any::operator=(Array<T>)
+     <li> G3D::GApp::addWidget now sets the focus on the new widget by default
+     <li> G3D::GApp::show
+     <li> G3D::SurfaceSample
      <li> <b>Backwards Incompatible</b>: Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
+     <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
    </ul>
 
    <p>

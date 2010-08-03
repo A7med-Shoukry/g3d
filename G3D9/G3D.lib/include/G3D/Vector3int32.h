@@ -5,12 +5,12 @@
 
   @created 2008-07-01
   @edited  2008-07-01
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
  */
 
-#ifndef VECTOR3INT32_H
-#define VECTOR3INT32_H
+#ifndef Vector3int32_h
+#define Vector3int32_h
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
@@ -71,32 +71,32 @@ public:
         return Vector3int32(x * s, y * s, z * s);
     }
 
-    inline Vector3int32& operator+=(const Vector3int32& other) {
+    Vector3int32& operator+=(const Vector3int32& other) {
         x += other.x;
         y += other.y;
         z += other.y;
         return *this;
     }
 
-    inline Vector3int32& operator-=(const Vector3int32& other) {
+    Vector3int32& operator-=(const Vector3int32& other) {
         x -= other.x;
         y -= other.y;
         z -= other.z;
         return *this;
     }
 
-    inline Vector3int32& operator*=(const Vector3int32& other) {
+    Vector3int32& operator*=(const Vector3int32& other) {
         x *= other.x;
         y *= other.y;
         z *= other.z;
         return *this;
     }
 
-    inline bool operator== (const Vector3int32& rkVector) const {
+    bool operator== (const Vector3int32& rkVector) const {
         return ( x == rkVector.x && y == rkVector.y && z == rkVector.z );
     }
 
-    inline bool operator!= (const Vector3int32& rkVector) const {
+    bool operator!= (const Vector3int32& rkVector) const {
         return ( x != rkVector.x || y != rkVector.y || z != rkVector.z );
     }
 

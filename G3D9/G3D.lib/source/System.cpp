@@ -386,14 +386,16 @@ std::string System::findDataFile
 
         const char* g3dPath = getenv("G3DDATA");
 #       ifdef G3D_WIN32
-        if (g3dPath == NULL) {
-            // If running the demos under visual studio from the G3D.sln file,
-            // this will locate the data directory.
-            const char* paths[] = {"../data-files/", "../../data-files/", "../../../data-files/", NULL};
-            for (int i = 0; paths[i]; ++i) {
-                if (FileSystem::exists(pathConcat(paths[i], "G3D-DATA-README.TXT"))) {
-                    g3dPath = paths[i];
-                    break;
+        {
+            if (g3dPath == NULL) {
+                // If running the demos under visual studio from the G3D.sln file,
+                // this will locate the data directory.
+                const char* paths[] = {"../data-files/", "../../data-files/", "../../../data-files/", NULL};
+                for (int i = 0; paths[i]; ++i) {
+                    if (FileSystem::exists(pathConcat(paths[i], "G3D-DATA-README.TXT"))) {
+                        g3dPath = paths[i];
+                        break;
+                    }
                 }
             }
         }
@@ -406,7 +408,7 @@ std::string System::findDataFile
         static const std::string subdirs[] = 
             {"font", "gui", "SuperShader", "cubemap", "icon", "material", "image", "md2", "md3", "ifs", "3ds", "sky", ""};
         for (int j = 0; j < baseDirArray.size(); ++j) {
-            std::string d = baseDirArray[j];
+            const std::string& d = baseDirArray[j];
             if ((d == "") || FileSystem::exists(d)) {
                 directoryArray.append(d);
                 for (int i = 0; ! subdirs[i].empty(); ++i) {

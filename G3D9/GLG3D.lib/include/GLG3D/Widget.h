@@ -80,6 +80,10 @@ public:
         m_manager = m;
     }
 
+    WidgetManager* manager() const {
+        return m_manager;
+    }
+
     /** Fire an event on the containing window */
     virtual void fireEvent(const GEvent& event);
 

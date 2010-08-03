@@ -435,6 +435,19 @@ public:
       Useful for loading screens and other slow operations.*/
     void drawMessage(const std::string& message);
 
+    /** Displays the texture in a new GuiWindow */
+    void show(const Texture::Ref& t);
+
+    void show(const GImage& t) {
+        show(Texture::fromGImage("", t));
+    }
+
+    /** \a T must be some Image class, e.g., Image3uint, Image4, etc.*/
+    template<class T>
+    void show(const ReferenceCountedPointer<T>& t) {
+        show(Texture::fromMemory("", t->getCArray(), t->format(), t->width(), t->height(), 1));
+    }
+
 private:
 
     /** Used by doSimulation for elapsed time. */
@@ -481,7 +494,7 @@ public:
     /**
        Installs a module.  Actual insertion may be delayed until the next frame.
     */
-    virtual void addWidget(const Widget::Ref& module);
+    virtual void addWidget(const Widget::Ref& module, bool setFocus = true);
 
     /**
        The actual removal of the module may be delayed until the next frame.
@@ -491,8 +504,8 @@ public:
     /** @brief Elapsed time per RENDERED frame for ideal simulation. Set to 0 to pause
         simulation, 1/fps to match real-time.  The actual sdt argument to
         onSimulation is simTimStep / m_renderPeriod.
-     */
-    inline float simTimeStep() const {
+    */
+    float simTimeStep() const {
         return m_simTimeStep;
     }
 
@@ -501,7 +514,7 @@ public:
     /** Accumulated wall-clock time since init was called on this applet. 
         Since this time is accumulated, it may drift from the true
         wall-clock obtained by System::time().*/
-    inline RealTime realTime() const {
+    RealTime realTime() const {
         return m_realTime;
     }
 
@@ -511,7 +524,7 @@ public:
         Takes into account simTimeSpeed.  Automatically incremented
         after doSimulation.
     */
-    inline SimTime simTime() const {
+    SimTime simTime() const {
         return m_simTime;
     }
 
@@ -521,11 +534,11 @@ public:
         Defaults to finf() */
     virtual void setDesiredFrameRate(float fps);
 
-    inline float desiredFrameRate() const {
+    float desiredFrameRate() const {
         return m_desiredFrameRate;
     }
 
-    inline RealTime desiredFrameDuration() const {
+    RealTime desiredFrameDuration() const {
         return 1.0 / m_desiredFrameRate;
     }
 
