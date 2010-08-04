@@ -160,13 +160,13 @@ private:
 	
     static std::auto_ptr<CarbonWindow> _shareWindow;
 	
-    static void createShareWindow(GWindow::Settings s);
+    static void createShareWindow(OSWindow::Settings s);
     
     /** Constructs from a new window */
-    explicit CarbonWindow(const GWindow::Settings& settings, bool creatingShareWindow = false);
+    explicit CarbonWindow(const OSWindow::Settings& settings, bool creatingShareWindow = false);
     
     /** Constructs from an existing window */
-    explicit CarbonWindow(const GWindow::Settings& settings, WindowRef window);
+    explicit CarbonWindow(const OSWindow::Settings& settings, WindowRef window);
     
     CarbonWindow& operator=(const CarbonWindow& other);
 
@@ -187,9 +187,9 @@ public:
     /** \copydoc OSWindow::numDisplays */
     static int numDisplays();
 
-    static CarbonWindow* create(const GWindow::Settings& settings = GWindow::Settings());
+    static CarbonWindow* create(const OSWindow::Settings& settings = OSWindow::Settings());
     
-    static CarbonWindow* create(const GWindow::Settings& settings, WindowRef window);
+    static CarbonWindow* create(const OSWindow::Settings& settings, WindowRef window);
     
     virtual ~CarbonWindow();
     
@@ -201,7 +201,7 @@ public:
         return _window;
     }
     
-    virtual void getSettings(GWindow::Settings& settings) const;
+    virtual void getSettings(OSWindow::Settings& settings) const;
     
     virtual int width() const;
     virtual int height() const;

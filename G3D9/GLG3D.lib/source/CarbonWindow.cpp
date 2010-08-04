@@ -383,7 +383,7 @@ void CarbonWindow::init(WindowRef window, bool creatingShareWindow /*= false*/) 
     enableJoysticks();
 }
 
-void CarbonWindow::createShareWindow(GWindow::Settings s) {
+void CarbonWindow::createShareWindow(OSWindow::Settings s) {
     static bool initialized = false;
     
     if (initialized) {
@@ -403,7 +403,7 @@ void CarbonWindow::createShareWindow(GWindow::Settings s) {
     
 
 CarbonWindow::CarbonWindow
-(const GWindow::Settings& s, 
+(const OSWindow::Settings& s, 
  bool creatingShareWindow) : 
     lastMod(GKeyMod::NONE),
     _createdWindow(true) {
@@ -543,7 +543,7 @@ CarbonWindow::CarbonWindow
             setIcon(defaultIcon);
         } catch (const GImage::Error& e) {
             /*
-            logPrintf("GWindow's default icon failed to load: %s (%s)", 
+            logPrintf("OSWindow's default icon failed to load: %s (%s)", 
                       e.filename.c_str(), e.reason.c_str());
             */
         }
@@ -603,7 +603,7 @@ CarbonWindow::CarbonWindow
     init(_window);
 }
     
-CarbonWindow::CarbonWindow(const GWindow::Settings& s, WindowRef window) : _createdWindow(false) {
+CarbonWindow::CarbonWindow(const OSWindow::Settings& s, WindowRef window) : _createdWindow(false) {
 }
 
 Vector2 CarbonWindow::primaryDisplaySize() {
@@ -627,12 +627,12 @@ int CarbonWindow::numDisplays() {
 
 #pragma mark Public - CarbonWindow Creation:
 
-CarbonWindow* CarbonWindow::create(const GWindow::Settings& s /*= GWindow::Settings()*/) {
+CarbonWindow* CarbonWindow::create(const OSWindow::Settings& s /*= OSWindow::Settings()*/) {
     // TODO: Create shared window if not already present
     return new CarbonWindow(s);
 }
 
-CarbonWindow* CarbonWindow::create(const GWindow::Settings& s, WindowRef window) {
+CarbonWindow* CarbonWindow::create(const OSWindow::Settings& s, WindowRef window) {
     // TODO: Create shared window if not already present
     return new CarbonWindow(s, window);
 }
@@ -664,7 +664,7 @@ std::string CarbonWindow::getAPIName() const {
 
 #pragma mark Public - CarbonWindow Public API:
 
-void CarbonWindow::getSettings(GWindow::Settings& s) const {
+void CarbonWindow::getSettings(OSWindow::Settings& s) const {
     s = m_settings;
 }
 
