@@ -24,7 +24,10 @@
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default
      <li> G3D::GApp::show
      <li> G3D::SurfaceSample
+     <li> G3D::GLight::castsShadows
+     <li> <b>Backwards Incompatible</b>: Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic
      <li> <b>Backwards Incompatible</b>: Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
+     <li> <b>Backwards Incompatible</b>: Removed ToneMap (use Film)
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
      <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
    </ul>

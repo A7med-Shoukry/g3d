@@ -265,8 +265,10 @@ void configureSingleLightShaderArgs(
 
 
 /** Called by NonShadowedPass::setLighting and ExtraLightPass::setLighting.
- @param lightIndex index of the first light in the array to use.
- @param N number of lights to configure*/
+
+ \param lightIndex index of the first light in the array to use.
+ \param N number of lights to configure.
+*/
 static void configureLights
 (int lightIndex, 
  int N, 

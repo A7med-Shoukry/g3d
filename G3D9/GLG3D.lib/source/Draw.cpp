@@ -2,9 +2,6 @@
  @file Draw.cpp
   
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
- @created 2003-10-29
- @edited  2006-02-18
  */
 #include "G3D/platform.h"
 #include "G3D/Rect2D.h"
@@ -277,9 +274,6 @@ void Draw::lighting(Lighting::Ref lighting, RenderDevice* rd, bool showEffectSph
         float dirDist = min(200.0f, (float)fabs((float)camera.farPlaneZ()) * 0.9f);
         for (int L = 0; L < lighting->lightArray.size(); ++L) {
             drawLight(lighting->lightArray[L], rd, showEffectSpheres, dirDist);
-        }
-        for (int L = 0; L < lighting->shadowedLightArray.size(); ++L) {
-            drawLight(lighting->shadowedLightArray[L], rd, showEffectSpheres, dirDist);
         }
     rd->popState();
 }

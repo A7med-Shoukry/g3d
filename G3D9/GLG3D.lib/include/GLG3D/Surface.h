@@ -298,6 +298,8 @@ public:
         <LI> It may be convenient to support multiple lights by invoking renderShadowedLightPass multiple times.
       </UL>
 
+      The implementation must ignore shadow casting lights from \a lighting.
+
     */
     virtual void renderNonShadowed(
         RenderDevice* rd,

@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2003-11-12
-  @edited  2009-11-08
+  @edited  2010-07-08
 */
 
 #ifndef G3D_GLight_h
@@ -46,26 +46,24 @@ public:
     /** Constant, linear, quadratic */
     float               attenuation[3];
 
-    /** May be outside the range [0, 1] */
+    /** For a point or spot light, this is the total power over the
+        sphere that would be emitted for a 180-degree "cone".  For a
+        directional light, this is the radiance.  May be outside the
+        range [0, 1] */
     Color3              color;
 
     /** If false, this light is ignored */
     bool                enabled;
 
-    /** If false, this light does not create specular highlights
-        (useful when using negative lights). */
-    bool                specular;
+    bool                castsShadows;
 
-    /** If false, this light does not create diffuse illumination
-        (useful when rendering a specular-only pass). */
-    bool                diffuse;
 
     GLight();
    
     /** Accepted forms:
-        - GLight::directional( vector3, color3, [bool, [bool]])
-        - GLight::spot(vector3, vector3, #, color3, [#, [#, [#, [#, [bool, [bool]]]])
-        - GLight::point(vector3, color3, [#, [#, [#, [#, [bool, [bool]]]])
+        - GLight::directional( vector3, color3, [bool])
+        - GLight::spot(vector3, vector3, #, color3, [#, [#, [#, [#, [bool]]])
+        - GLight::point(vector3, color3, [#, [#, [#, [#, [bool]]])
         - GLight { [all fields] }
     */
     GLight(const Any& any);
@@ -74,9 +72,9 @@ public:
     operator Any() const;
 
     /** @param toLight will be normalized */
-    static GLight directional(const Vector3& toLight, const Color3& color, bool specular = true, bool diffuse = true);
+    static GLight directional(const Vector3& toLight, const Radiance3& color, bool castsShadows = true);
 
-    static GLight point(const Vector3& pos, const Color3& color, float constAtt = 1, float linAtt = 0, float quadAtt = 0.5f, bool specular = true, bool diffuse = true);
+    static GLight point(const Vector3& pos, const Power3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f, bool castsShadows = true);
 
     /** @param pointDirection Will be normalized.  Points in the
         direction that light propagates.
@@ -87,14 +85,14 @@ public:
         cone of view.
     */
     static GLight spot(const Vector3& pos, const Vector3& pointDirection, float cutOffAngleDegrees, 
-                       const Color3& color, float constAtt = 1, float linAtt = 0, float quadAtt = 0,
-                       bool specular = true, bool diffuse = true);
+                       const Color3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f,
+                       bool castsShadows = true);
 
     /** Creates a spot light that looks at a specific point (by calling spot() ) */
     static GLight spotTarget(const Vector3& pos, const Vector3& target, float cutOffAngleDegrees, 
-                       const Color3& color, float constAtt = 1, float linAtt = 0, float quadAtt = 0,
-                       bool specular = true, bool diffuse = true) {
-           return spot(pos, target - pos, cutOffAngleDegrees, color, constAtt, linAtt, quadAtt, specular, diffuse);
+                       const Color3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f,
+                       bool castsShadows = true) {
+           return spot(pos, target - pos, cutOffAngleDegrees, color, constAtt, linAtt, quadAtt, castsShadows);
     }
 
     /** Returns the sphere within which this light has some noticable effect.  May be infinite.

@@ -44,10 +44,8 @@ GLight::GLight(const Any& any) {
                 color = it->value;
             } else if (key == "enabled") {
                 enabled = it->value.boolean();
-            } else if (key == "specular") {
-                specular = it->value.boolean();
-            } else if (key == "diffuse") {
-                diffuse = it->value.boolean();
+            } else if (key == "castsshadows") {
+                castsShadows = it->value.boolean();
             } else {
                 any.verify(false, "Illegal key: " + it->key);
             }
@@ -58,26 +56,23 @@ GLight::GLight(const Any& any) {
     } else if (toLower(any.name()) == "glight::directional") {
 
         *this = directional(any[0], any[1], 
-            (any.size() > 2) ? any[2] : Any(true), 
-            (any.size() > 3) ? any[3] : Any(true));
+            (any.size() > 2) ? any[2] : Any(true));
 
     } else if (toLower(any.name()) == "glight::point") {
 
         *this = point(any[0], any[1], 
-            (any.size() > 2) ? any[2] : Any(1), 
+            (any.size() > 2) ? any[2] : Any(0.01f), 
             (any.size() > 3) ? any[3] : Any(0), 
-            (any.size() > 4) ? any[4] : Any(0.5f), 
-            (any.size() > 5) ? any[5] : Any(true), 
-            (any.size() > 6) ? any[6] : Any(true));
+            (any.size() > 4) ? any[4] : Any(1.0f), 
+            (any.size() > 5) ? any[5] : Any(true));
 
     } else if (toLower(any.name()) == "glight::spot") {
 
         *this = spot(any[0], any[1], any[2], any[3],
-            (any.size() > 4) ? any[4] : Any(1), 
-            (any.size() > 5) ? any[5] : Any(0), 
-            (any.size() > 6) ? any[6] : Any(0), 
-            (any.size() > 7) ? any[7] : Any(true), 
-            (any.size() > 8) ? any[8] : Any(true));
+            (any.size() > 4) ? any[4] : Any(0.01f), 
+            (any.size() > 5) ? any[5] : Any(0.0f), 
+            (any.size() > 6) ? any[6] : Any(1.0f), 
+            (any.size() > 7) ? any[7] : Any(true));
     } else {
         any.verify(false, "Unrecognized name");
     }
@@ -97,8 +92,8 @@ GLight::operator Any() const {
     a.set("attenuation", att);
     a.set("color", color.operator Any());
     a.set("enabled", enabled);
-    a.set("specular", specular);
-    a.set("diffuse", diffuse);
+    a.set("castsShadows", castsShadows);
+
     return a;
 }
 
@@ -111,8 +106,7 @@ GLight::GLight() :
     spotSquare(false),
     color(Color3::white()),
     enabled(false),
-    specular(true),
-    diffuse(true) {
+    castsShadows(true) {
 
     attenuation[0]  = 1.0;
     attenuation[1]  = 0.0;
@@ -120,30 +114,28 @@ GLight::GLight() :
 }
 
 
-GLight GLight::directional(const Vector3& toLight, const Color3& color, bool s, bool d) {
+GLight GLight::directional(const Vector3& toLight, const Color3& color, bool s) {
     GLight L;
     L.position = Vector4(toLight.direction(), 0);
     L.color    = color;
-    L.specular = s;
-    L.diffuse  = d;
+    L.castsShadows = s;
     return L;
 }
 
 
-GLight GLight::point(const Vector3& pos, const Color3& color, float constAtt, float linAtt, float quadAtt, bool s, bool d) {
+GLight GLight::point(const Vector3& pos, const Color3& color, float constAtt, float linAtt, float quadAtt, bool s) {
     GLight L;
     L.position = Vector4(pos, 1);
     L.color    = color;
     L.attenuation[0] = constAtt;
     L.attenuation[1] = linAtt;
     L.attenuation[2] = quadAtt;
-    L.specular       = s;
-    L.diffuse        = d;
+    L.castsShadows   = s;
     return L;
 }
 
 
-GLight GLight::spot(const Vector3& pos, const Vector3& pointDirection, float cutOffAngleDegrees, const Color3& color, float constAtt, float linAtt, float quadAtt, bool s, bool d) {
+GLight GLight::spot(const Vector3& pos, const Vector3& pointDirection, float cutOffAngleDegrees, const Color3& color, float constAtt, float linAtt, float quadAtt, bool s) {
     GLight L;
     L.position       = Vector4(pos, 1.0f);
     L.spotDirection  = pointDirection.direction();
@@ -153,8 +145,7 @@ GLight GLight::spot(const Vector3& pos, const Vector3& pointDirection, float cut
     L.attenuation[0] = constAtt;
     L.attenuation[1] = linAtt;
     L.attenuation[2] = quadAtt;
-    L.specular       = s;
-    L.diffuse        = d;
+    L.castsShadows   = s;
     return L;
 }
 
@@ -170,8 +161,7 @@ bool GLight::operator==(const GLight& other) const {
         (attenuation[2] == other.attenuation[2]) &&
         (color == other.color) &&
         (enabled == other.enabled) &&
-        (specular == other.specular) &&
-        (diffuse == other.diffuse);
+        (castsShadows == other.castsShadows);
 }
 
 

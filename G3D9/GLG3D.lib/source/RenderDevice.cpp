@@ -84,7 +84,6 @@ GCamera RenderDevice::projectionAndCameraMatrix() const {
 void RenderDevice::getFixedFunctionLighting(const LightingRef& lighting) const {
     // Reset state
     lighting->lightArray.fastClear();
-    lighting->shadowedLightArray.fastClear();
     lighting->ambientBottom = lighting->ambientTop = Color3::black();
 
     // Load the lights
@@ -3008,6 +3007,7 @@ void RenderDevice::setLight(int i, const GLight* _light, bool force) {
                 glLightfv(gi, GL_SPOT_DIRECTION,        reinterpret_cast<const float*>(&light.spotDirection));
                 glLightf (gi, GL_SPOT_CUTOFF,           light.spotCutoff);
                 glLightfv(gi, GL_AMBIENT,               reinterpret_cast<const float*>(&zero));
+                /*
                 if (light.diffuse) {
                     glLightfv(gi, GL_DIFFUSE,           reinterpret_cast<const float*>(&brightness));
                 } else {
@@ -3017,7 +3017,7 @@ void RenderDevice::setLight(int i, const GLight* _light, bool force) {
                     glLightfv(gi, GL_SPECULAR,          reinterpret_cast<const float*>(&brightness));
                 } else {
                     glLightfv(gi, GL_SPECULAR,          reinterpret_cast<const float*>(&zero));
-                }
+                    }*/
                 glLightf (gi, GL_CONSTANT_ATTENUATION,  light.attenuation[0]);
                 glLightf (gi, GL_LINEAR_ATTENUATION,    light.attenuation[1]);
                 glLightf (gi, GL_QUADRATIC_ATTENUATION, light.attenuation[2]);

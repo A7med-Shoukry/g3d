@@ -178,10 +178,6 @@ protected:
         RenderDevice*                   rd,
         const LightingRef&              lighting) const;
     
-    bool renderPS14NonShadowedOpaqueTerms(
-        RenderDevice*                   rd,
-        const LightingRef&              lighting) const;
-
     bool renderPS20NonShadowedOpaqueTerms(
         RenderDevice*                   rd,
         const LightingRef&              lighting) const;
@@ -233,7 +229,6 @@ public:
 
     /** Classification of a graphics card. 
         FIXED_FUNCTION  Use OpenGL fixed function lighting only.
-        PS14            Use pixel shader 1.4 (texture crossbar; adds specular maps)
         PS20            Use pixel shader 2.0 (shader objects; full feature)
 	 
         @sa profile()
@@ -241,7 +236,6 @@ public:
     enum GraphicsProfile {
         UNKNOWN = 0,
         FIXED_FUNCTION,
-        PS14,
         PS20};
 
     /** Called by Surface.

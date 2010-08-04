@@ -97,14 +97,7 @@ SuperSurface::GraphicsProfile SuperSurface::profile() {
 
         
         if (graphicsProfile == UNKNOWN) {
-            if (GLCaps::supports("GL_ARB_texture_env_crossbar") &&
-                GLCaps::supports("GL_ARB_texture_env_combine") &&
-                GLCaps::supports("GL_EXT_texture_env_add") &&
-                (GLCaps::numTextureUnits() >= 4)) {
-                graphicsProfile = PS14;
-            } else {
-                graphicsProfile = FIXED_FUNCTION;
-            }
+            graphicsProfile = FIXED_FUNCTION;
         }
     }
 
@@ -119,9 +112,6 @@ const char* toString(SuperSurface::GraphicsProfile p) {
 
     case SuperSurface::FIXED_FUNCTION:
         return "Fixed Function";
-
-    case SuperSurface::PS14:
-        return "PS 1.4";
 
     case SuperSurface::PS20:
         return "PS 2.0";
@@ -155,6 +145,7 @@ void SuperSurface::renderNonShadowed(
     if (preserveState) {
         rd->pushState();
     }
+    {
         bool originalDepthWrite = rd->depthWrite();
 
         // Lighting will be turned on and off by subroutines
@@ -218,12 +209,11 @@ void SuperSurface::renderNonShadowed(
                 rd->setCullFace(RenderDevice::CULL_BACK);
             }
 
-
             // Alpha blend will be changed by subroutines so we restore it for each object
             rd->setBlendFunc(srcBlend, dstBlend, blendEq);
             rd->setDepthWrite(originalDepthWrite);
         }
-
+    }
     if (preserveState) {
         rd->popState();
     }
@@ -269,10 +259,6 @@ void SuperSurface::renderShadowMappedLightPass
             // without any real increase in performance.
 
             switch (profile()) {
-            case PS14:
-                // Intentionally fall through; there is no
-                // optimized PS14 path for this function.
-
             case FIXED_FUNCTION:
                 if (posed->m_gpuGeom->twoSided) {
                     rd->enableTwoSidedLighting();
@@ -339,22 +325,6 @@ void SuperSurface::extract(
 
 /////////////////////////////////////////////////////////////////
 
-/** PS14 often needs a dummy texture map in order to enable a combiner */
-static Texture::Ref whiteMap() {
-    static Texture::Ref map;
-
-    if (map.isNull()) {
-        GImage im(4,4,3);
-        for (int y = 0; y < im.height(); ++y) {
-            for (int x = 0; x < im.width(); ++x) {
-                im.pixel3(x, y) = Color3(1, 1, 1);
-            }
-        }
-        map = Texture::fromGImage("White", im, ImageFormat::RGB8());
-    }
-    return map;
-}
-
 
 void SuperSurface::render(RenderDevice* rd) const {
 
@@ -412,16 +382,6 @@ bool SuperSurface::renderNonShadowedOpaqueTerms(
         renderedOnce = renderFFNonShadowedOpaqueTerms(rd, lighting);
         break;
 
-    case PS14:
-        if (preserveState) {
-            rd->pushState();
-        }
-        renderedOnce = renderPS14NonShadowedOpaqueTerms(rd, lighting);
-        if (preserveState) {
-            rd->popState();
-        }
-        break;
-
     case PS20:
         if (preserveState) {
             rd->pushState();
@@ -441,12 +401,11 @@ bool SuperSurface::renderNonShadowedOpaqueTerms(
 
 
 bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
-    RenderDevice*                           rd,
-    const Lighting::Ref&                    lighting) const {
+    RenderDevice*         rd,
+    const Lighting::Ref&  lighting) const {
 
-    const Material::Ref& material = m_gpuGeom->material;
-    const SuperBSDF::Ref&     bsdf = material->bsdf();
-
+    const Material::Ref&  material = m_gpuGeom->material;
+    const SuperBSDF::Ref& bsdf     = material->bsdf();
 
     RenderDevice::BlendFunc srcBlend;
     RenderDevice::BlendFunc dstBlend;
@@ -461,23 +420,25 @@ bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
         return false;
     }
 
-    int numLights = lighting->lightArray.size();
+    LightingRef reducedLighting = lighting->clone();
+    reducedLighting->removeShadowCastingLights();
+
+    int numLights = reducedLighting->lightArray.size();
 
     if (numLights <= SuperShader::NonShadowedPass::LIGHTS_PER_PASS) {
         
-        SuperShader::NonShadowedPass::instance()->setLighting(lighting);
+        SuperShader::NonShadowedPass::instance()->setLighting(reducedLighting);
         rd->setShader(SuperShader::NonShadowedPass::instance()->getConfiguredShader(*(m_gpuGeom->material), rd->cullFace()));
 
         sendGeometry2(rd);
 
     } else {
+        LightingRef originalReducedLighting = reducedLighting->clone();
 
         // SuperShader only supports SuperShader::NonShadowedPass::LIGHTS_PER_PASS lights, so we have to make multiple passes
-        LightingRef reducedLighting = lighting->clone();
+        Array<GLight> lights = reducedLighting->lightArray;
 
-        Array<GLight> lights(lighting->lightArray);
-
-        Sphere myBounds = worldSpaceBoundingSphere();
+        const Sphere& myBounds = worldSpaceBoundingSphere();
         // Remove lights that cannot affect this object
         for (int L = 0; L < lights.size(); ++L) {
             Sphere s = lights[L].effectSphere();
@@ -508,7 +469,7 @@ bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
                  L < numLights; 
                  L += SuperShader::ExtraLightPass::LIGHTS_PER_PASS) {
 
-                SuperShader::ExtraLightPass::instance()->setLighting(lighting->lightArray, L);
+                SuperShader::ExtraLightPass::instance()->setLighting(originalReducedLighting->lightArray, L);
                 rd->setShader(SuperShader::ExtraLightPass::instance()->
                               getConfiguredShader(*(m_gpuGeom->material), rd->cullFace()));
                 sendGeometry2(rd);
@@ -623,182 +584,9 @@ bool SuperSurface::renderFFNonShadowedOpaqueTerms(
 }
 
 
-bool SuperSurface::renderPS14NonShadowedOpaqueTerms(
-    RenderDevice*                   rd,
-    const LightingRef&              lighting) const {
-
-    bool renderedOnce = false;
-    const SuperBSDF::Ref& bsdf = m_gpuGeom->material->bsdf();
-
-    // Emissive
-    if (! m_gpuGeom->material->emissive().factors() != Component3::BLACK) {
-        rd->disableLighting();
-        rd->setColor(m_gpuGeom->material->emissive().constant());
-        rd->setTexture(0, m_gpuGeom->material->emissive().texture());
-        sendGeometry2(rd);
-        setAdditive(rd, renderedOnce);
-    }
-    
-    // Full combiner setup (in practice, we only use combiners that are
-    // needed):
-    //
-    // Unit 0:
-    // Mode = modulate
-    // arg0 = primary
-    // arg1 = texture (diffuse)
-    //
-    // Unit 1:
-    // Mode = modulate
-    // arg0 = constant (envmap constant * envmap color)
-    // arg1 = texture (envmap)
-    //
-    // Unit 2:
-    // Mode = modulate
-    // arg0 = previous
-    // arg1 = texture (reflectmap)
-    //
-    // Unit 3:
-    // Mode = add
-    // arg0 = previous
-    // arg1 = texture0
-
-
-    bool hasDiffuse = bsdf->lambertian().notBlack() || bsdf->lambertian().nonUnitAlpha();
-    bool hasReflection = mirrorReflectiveFF(bsdf) && 
-            lighting.notNull() &&
-            (lighting->environmentMapColor != Color3::black());
-
-    bool hasGlossy = glossyReflectiveFF(bsdf);
-
-    // Add reflective and diffuse
-
-    // We're going to use combiners, which G3D does not preserve
-    glPushAttrib(GL_TEXTURE_BIT);
-    rd->pushState();
-
-        GLint nextUnit = 0;
-        GLint diffuseUnit = GL_PRIMARY_COLOR_ARB;
-
-        if (hasDiffuse) {
-
-            // Add ambient + lights
-            rd->enableLighting();
-            if (bsdf->lambertian().notBlack() || hasGlossy || bsdf->lambertian().nonUnitAlpha()) {
-                rd->setTexture(nextUnit, bsdf->lambertian().texture());
-                rd->setColor(bsdf->lambertian().constant());
-
-                // Fixed function does not receive specular texture maps, only constants.
-                rd->setSpecularCoefficient(bsdf->specular().constant().rgb());
-                rd->setShininess(SuperBSDF::unpackSpecularExponent(bsdf->specular().constant().a));
-
-                // Ambient
-                if (lighting.notNull()) {
-                    rd->setAmbientLightColor(lighting->ambientTop);
-                    if (lighting->ambientBottom != lighting->ambientTop) {
-                        rd->setLight(0, GLight::directional(-Vector3::unitY(), 
-                            lighting->ambientBottom - lighting->ambientTop, false)); 
-                    }
-            
-                    // Lights
-                    for (int L = 0; L < iMin(8, lighting->lightArray.size()); ++L) {
-                        rd->setLight(L + 1, lighting->lightArray[L]);
-                    }
-                }
-            }
-
-            if (bsdf->lambertian().texture().notNull()) {
-                glActiveTextureARB(GL_TEXTURE0_ARB + nextUnit);
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_COMBINE_ARB);
-                glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB,   GL_MODULATE);
-                glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB,   GL_PRIMARY_COLOR_ARB);
-                glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB,  GL_SRC_COLOR);
-                glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB,   GL_TEXTURE);
-                glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB,  GL_SRC_COLOR);
-                diffuseUnit = GL_TEXTURE0_ARB + nextUnit;
-                ++nextUnit;
-            }
-        }
-
-        if (hasReflection) {
-
-            // First configure the reflection map.  There must be one or we wouldn't
-            // have taken this branch.
-
-            alwaysAssertM(lighting->environmentMap.notNull(), "Null Lighting::environmentMap");
-            if (GLCaps::supports_GL_ARB_texture_cube_map() &&
-                (lighting->environmentMap->dimension() == Texture::DIM_CUBE_MAP)) {
-                rd->configureReflectionMap(nextUnit, lighting->environmentMap);
-            } else {
-                // Use the top texture as a sphere map
-                glActiveTextureARB(GL_TEXTURE0_ARB + nextUnit);
-                glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                glEnable(GL_TEXTURE_GEN_S);
-                glEnable(GL_TEXTURE_GEN_T);
-
-                rd->setTexture(nextUnit, lighting->environmentMap);
-            }
-            debugAssertGLOk();
-
-            glActiveTextureARB(GL_TEXTURE0_ARB + nextUnit);
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_COMBINE_ARB);
-            glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB,   GL_MODULATE);
-            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB,   GL_CONSTANT_ARB);
-            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB,  GL_SRC_COLOR);
-            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB,   GL_TEXTURE);
-            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB,  GL_SRC_COLOR);
-            Color4 c(bsdf->specular().constant().rgb() * lighting->environmentMapColor, 1);
-            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, reinterpret_cast<const float*>(&c));
-                
-            debugAssertGLOk();
-
-            ++nextUnit;
-
-            rd->setTexture(nextUnit, bsdf->specular().texture());
-            if (bsdf->specular().texture().notNull()) {
-                // If there is a reflection map for the surface, modulate
-                // the reflected color by it.
-                glActiveTextureARB(GL_TEXTURE0_ARB + nextUnit);
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_COMBINE_ARB);
-                glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB,   GL_MODULATE);
-                glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB,   GL_PREVIOUS_ARB);
-                glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB,  GL_SRC_COLOR);
-                glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB,   GL_TEXTURE);
-                glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB,  GL_SRC_COLOR);
-                ++nextUnit;
-                debugAssertGLOk();
-            }
-
-            if (hasDiffuse) {
-                // Need a dummy texture
-                rd->setTexture(nextUnit, whiteMap());
-
-                // Add diffuse to the previous (reflective) unit
-                glActiveTextureARB(GL_TEXTURE0_ARB + nextUnit);
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_COMBINE_ARB);
-                glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB,   GL_ADD);
-                glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB,   GL_PREVIOUS_ARB);
-                glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB,  GL_SRC_COLOR);
-                glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB,   diffuseUnit);
-                glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB,  GL_SRC_COLOR);
-                debugAssertGLOk();
-                ++nextUnit;
-            }
-        }
-
-        sendGeometry2(rd);
-        setAdditive(rd, renderedOnce);
-
-    rd->popState();
-    glPopAttrib();
-
-    return renderedOnce;
-}
-
-
 void SuperSurface::renderNonShadowed
-(RenderDevice*                   rd,
- const LightingRef&              lighting) const {
+(RenderDevice*        rd,
+ const LightingRef&   lighting) const {
 
     // The transparent rendering path is not optimized to amortize state changes because 
     // it is only called by the single-object version of this function.  Only
@@ -806,7 +594,7 @@ void SuperSurface::renderNonShadowed
     const SuperBSDF::Ref& bsdf = m_gpuGeom->material->bsdf();
 
     if (hasTransmission()) {
-        rd->pushState();
+        rd->pushState(); {
             // Transparent
             bool oldDepthWrite = rd->depthWrite();
 
@@ -836,7 +624,7 @@ void SuperSurface::renderNonShadowed
                 rd->setDepthWrite(oldDepthWrite);
                 rd->setCullFace(RenderDevice::CULL_BACK);
             }
-        rd->popState();
+        } rd->popState();
     } else {
 
         // This is the unoptimized, single-object version of renderNonShadowed.
@@ -944,11 +732,12 @@ void SuperSurface::renderFFShadowMappedLightPass(
 
         // Turn off the diffuse portion of this light
         GLight light2 = light;
-        light2.diffuse = false;
-        rd->setLight(0, light2);
+        rd->setLight(0, light);
         rd->setShininess(SuperBSDF::unpackSpecularExponent(bsdf->specular().constant().a));
 
-        sendGeometry2(rd);
+        static const Color4 zero(0, 0, 0, 1);
+        //glLightfv(gi, GL_DIFFUSE,           reinterpret_cast<const float*>(&zero));
+        //sendGeometry2(rd);
 
         if (separateSpecular) {
             // Restore normal behavior

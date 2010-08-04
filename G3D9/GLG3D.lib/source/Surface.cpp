@@ -147,19 +147,21 @@ void Surface::sortAndRender
 
     Lighting::Ref lighting = _lighting->clone();
 
+    int numShadowCastingLights = lighting->numShadowCastingLights();
+    
     bool renderShadows =
         (shadowMaps.size() > 0) && 
-        (lighting->shadowedLightArray.size() > 0) && 
+        (numShadowCastingLights > 0) && 
         shadowMaps[0]->enabled();
 
     if (renderShadows) {
-        // Remove excess lights
-        if (shadowMaps.size() < lighting->shadowedLightArray.size()) {
-            for (int L = shadowMaps.size() - 1; L < lighting->shadowedLightArray.size(); ++L) {
-                lighting->lightArray.append(lighting->shadowedLightArray[L]);
+        // Disable shadows from excess lights
+        for (int i = lighting->lightArray.size() - 1; (i >= 0) && (shadowMaps.size() < numShadowCastingLights); --i) {
+            if (lighting->lightArray[i].castsShadows) {
+                lighting->lightArray[i].castsShadows = false;
+                --numShadowCastingLights;
             }
-            lighting->shadowedLightArray.resize(shadowMaps.size());
-        }
+        } 
  
         // Find the scene bounds
         AABox sceneBounds;
@@ -168,25 +170,31 @@ void Surface::sortAndRender
         Array<Surface::Ref> lightVisible;
 
         // Generate shadow maps
-        for (int L = 0; L < lighting->shadowedLightArray.size(); ++L) {
-            const GLight& light = lighting->shadowedLightArray[L];
+        int s = 0;
+        for (int L = 0; L < lighting->lightArray.size(); ++L) {
+            const GLight& light = lighting->lightArray[L];
+            if (light.castsShadows) {
 
-            GCamera lightFrame;
-            Matrix4 lightProjectionMatrix;
+                GCamera lightFrame;
+                Matrix4 lightProjectionMatrix;
+                
+                ShadowMap::computeMatrices(light, sceneBounds, lightFrame, lightProjectionMatrix);
+                
+                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible);
+                Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
+                shadowMaps[s]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
 
-            ShadowMap::computeMatrices(light, sceneBounds, lightFrame, lightProjectionMatrix);
-
-            Surface::cull(lightFrame, shadowMaps[L]->rect2DBounds(), allModels, lightVisible);
-            Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
-            shadowMaps[L]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
-
-            lightVisible.fastClear();
+                lightVisible.fastClear();
+                ++s;
+            }
         }
     } else {
         // We're not going to be able to draw shadows, so move the shadowed lights into
         // the unshadowed category.
-        lighting->lightArray.append(lighting->shadowedLightArray);
-        lighting->shadowedLightArray.clear();
+        for (int L = 0; L < lighting->lightArray.size(); ++L) {
+            lighting->lightArray[L].castsShadows = false;
+        }
+        numShadowCastingLights = 0;
     }
 
     // All objects visible to the camera; gets stripped down to opaque non-super
@@ -235,16 +243,22 @@ void Surface::sortAndRender
         visible[m]->renderNonShadowed(rd, lighting);
     }
     SuperSurface::renderNonShadowed(super, rd, lighting);
+
     // Additively blend the additional passes
     rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
     // Opaque shadowed
-    for (int L = 0; L < lighting->shadowedLightArray.size(); ++L) {
-        for (int m = 0; m < visible.size(); ++m) {
-            visible[m]->renderShadowMappedLightPass(rd, lighting->shadowedLightArray[L], shadowMaps[L]);
+    int s = 0;
+    for (int L = 0; L < lighting->lightArray.size(); ++L) {
+        const GLight& light = lighting->lightArray[L];
+        if (light.castsShadows) {
+            for (int m = 0; m < visible.size(); ++m) {
+                visible[m]->renderShadowMappedLightPass(rd, light, shadowMaps[s]);
+            }
+            rd->pushState();
+            SuperSurface::renderShadowMappedLightPass(super, rd, light, shadowMaps[s]);
+            rd->popState();
+            ++s;
         }
-        rd->pushState();
-        SuperSurface::renderShadowMappedLightPass(super, rd, lighting->shadowedLightArray[L], shadowMaps[L]);
-        rd->popState();
     }
 
     // Extra additive passes
@@ -253,14 +267,14 @@ void Surface::sortAndRender
             rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
             for (int p = 0; p < extraAdditivePasses.size(); ++p) {
                 for (int m = 0; m < visible.size(); ++m) {
-                    rd->pushState();
+                    rd->pushState(); {
                         visible[m]->renderSuperShaderPass(rd, extraAdditivePasses[p]);
-                    rd->popState();
+                    } rd->popState();
                 }
                 for (int m = 0; m < super.size(); ++m) {
-                    rd->pushState();
+                    rd->pushState(); {
                         super[m]->renderSuperShaderPass(rd, extraAdditivePasses[p]);
-                    rd->popState();
+                    } rd->popState();
                 }
         }
         rd->popState();
@@ -268,7 +282,7 @@ void Surface::sortAndRender
 
     // Transparent, must be rendered from back to front
     renderTranslucent(rd, translucent, lighting, extraAdditivePasses, 
-                       shadowMaps, RefractionQuality::BEST, alphaMode);
+                      shadowMaps, RefractionQuality::BEST, alphaMode);
     super.fastClear();
     translucent.fastClear();
     visible.fastClear();
@@ -477,8 +491,10 @@ void Surface::renderNonShadowed(
                 ++shift;
             }
 
-            for (int L = 0; L < iMin(7, lighting->lightArray.size()); ++L) {
-                rd->setLight(L + shift, lighting->lightArray[L]);
+            Array<GLight> ns;
+            lighting->getNonShadowCastingLights(ns);
+            for (int L = 0; L < iMin(7, ns.size()); ++L) {
+                rd->setLight(L + shift, ns[L]);
             }
             rd->enableLighting();
         }
@@ -750,13 +766,17 @@ void Surface::renderTranslucent
         } else {
             rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
         }
-        debugAssert(lighting->shadowedLightArray.size() <= shadowMapArray.size());
-        for (int L = 0; L < lighting->shadowedLightArray.size(); ++L) {
-            if (inSuperSurfaceAlphaMode) {
-                // If we've made it to this branch, oneSurface is already set
-                SuperSurface::renderShadowMappedLightPass(oneSurface, rd, lighting->shadowedLightArray[L], shadowMapArray[L], false);
-            } else {
-                model->renderShadowMappedLightPass(rd, lighting->shadowedLightArray[L], shadowMapArray[L]);
+        int s = 0;
+        for (int L = 0; L < lighting->lightArray.size(); ++L) {
+            const GLight& light = lighting->lightArray[L];
+            if (light.castsShadows) {
+                if (inSuperSurfaceAlphaMode) {
+                    // If we've made it to this branch, oneSurface is already set
+                    SuperSurface::renderShadowMappedLightPass(oneSurface, rd, light, shadowMapArray[s], false);
+                } else {
+                    model->renderShadowMappedLightPass(rd, light, shadowMapArray[s]);
+                }
+                ++s;
             }
         }
 

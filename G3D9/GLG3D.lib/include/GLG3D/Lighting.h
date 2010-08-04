@@ -3,7 +3,7 @@
 
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  @created 2002-10-05
- @edited  2010-02-06
+ @edited  2010-08-06
 
  Copyright 2000-2010, Morgan McGuire.
  All rights reserved.
@@ -137,7 +137,6 @@ public:
         Texture::Specification            environmentMap;
         Color3                            environmentMapColor;
         Array<GLight>                     lightArray;
-        Array<GLight>                     shadowedLightArray;
         Specification() : emissiveScale(Color3::white()), ambientTop(Color3::black()), ambientBottom(Color3::black()), environmentMapColor(Color3::white()) {}
         Specification(const class Any&);
         operator Any() const;
@@ -170,11 +169,7 @@ public:
     /** Color to modulate environment map by */
     Color3              environmentMapColor;
 
-    /** Local illumination sources that do not cast shadows. */
     Array<GLight>       lightArray;
-
-    /** Local illumination sources that cast shadows. */
-    Array<GLight>       shadowedLightArray;
 
     /** Creates a (dark) environment. */
     static Ref create(const Specification& s = Specification());
@@ -186,17 +181,32 @@ public:
     /** Make a copy of this lighting environment (does not clone the environment map) */
     Lighting::Ref clone() const;
 
-    /**
-     Removes the dimmest non-shadowed light and adds its contribution in to the ambient terms.
-     (not implemented in this beta)
-     */
-    void reduceNonShadowedLights(int numLeft = 1);
+    int numShadowCastingLights() const {
+        int n = 0;
+        for (int i = 0; i < lightArray.size(); ++i) {
+            n += lightArray[i].castsShadows ? 1 : 0;
+        }
+        return n;
+    }
 
-    /**
-     Removes the dimmest shadowed light and adds its contribution in to the ambient terms.
-     (not implemented in this beta)
-     */
-    void reduceShadowedLights(int numLeft = 0);
+    /** Appends onto the array */
+    void getNonShadowCastingLights(Array<GLight>& array) const {
+        for (int i = 0; i < lightArray.size(); ++i) {
+            if (lightArray[i].castsShadows) {
+                array.append(lightArray[i]);
+            }
+        }
+    }
+
+    /** Changes the order of lights */
+    void removeShadowCastingLights() {
+        for (int i = 0; i < lightArray.size(); ++i) {
+            if (lightArray[i].castsShadows) {
+                lightArray.fastRemove(i);
+                --i;
+            }
+        }
+    }
 };
 
 }

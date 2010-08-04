@@ -206,13 +206,6 @@ Lighting::Specification::Specification(const Any& any) {
             for (int i = 0; i < array.size(); ++i) {
                 lightArray[i] = array[i];
             }
-        } else if (key == "shadowedlightarray") {
-            const Any& array = it->value;
-            array.verifyType(Any::ARRAY);
-            shadowedLightArray.resize(array.size());
-            for (int i = 0; i < shadowedLightArray.size(); ++i) {
-                shadowedLightArray[i] = array[i];
-            }
         } else {
             any.verify(false, "Illegal key: " + it->key);
         }
@@ -228,7 +221,6 @@ Lighting::Specification::operator Any() const {
     a["environmentMap"] = environmentMap;
     a["environmentMapColor"] = environmentMapColor;
     a["lightArray"] = lightArray;
-    a["shadowedLightArray"] = shadowedLightArray;
 
     return a;
 }
@@ -236,7 +228,6 @@ Lighting::Specification::operator Any() const {
 Lighting::Ref Lighting::create(const Specification& s) {
     Lighting::Ref L = new Lighting();
     L->lightArray = s.lightArray;
-    L->shadowedLightArray = s.shadowedLightArray;
     L->emissiveScale = s.emissiveScale;
     L->ambientTop = s.ambientTop;
     L->ambientBottom = s.ambientBottom;
@@ -252,17 +243,6 @@ LightingRef Lighting::clone() const {
     return new Lighting(*this);
 }
 
-void Lighting::reduceNonShadowedLights(int numLeft) {
-    (void)numLeft;
-    // Find dimmest light
-    // TODO
-}
-
-void Lighting::reduceShadowedLights(int numLeft) {
-    (void)numLeft;
-    // Find dimmest light
-    // TODO
-}
 
 LightingRef Lighting::fromSky(const SkyRef& sky, const SkyParameters& skyParameters, const Color3& groundColor) {
     LightingRef lighting = new Lighting();
@@ -273,8 +253,7 @@ LightingRef Lighting::fromSky(const SkyRef& sky, const SkyParameters& skyParamet
     lighting->environmentMap = sky->getEnvironmentMap();
     lighting->environmentMapColor = skyParameters.skyAmbient;
 
-    // TODO: separate sun and moon.
-    lighting->shadowedLightArray.append(skyParameters.directionalLight());
+    lighting->lightArray.append(skyParameters.directionalLight());
 
     return lighting;
 }
