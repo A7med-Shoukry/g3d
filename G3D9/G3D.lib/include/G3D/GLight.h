@@ -104,6 +104,11 @@ public:
 
     bool operator==(const GLight& other) const;
     bool operator!=(const GLight& other) const;
+
+    /** Distance from the point to the light (infinity for directional lights) */
+    float distance(const Point3& p) const {
+        return (p - position.xyz()).length() / position.w;
+    }
 };
 
 } // namespace
