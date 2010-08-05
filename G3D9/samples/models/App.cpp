@@ -50,7 +50,6 @@ void App::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
     screenPrintf("Lights: %d\n", lighting->lightArray.size());
-    screenPrintf("S Lights: %d\n", lighting->shadowedLightArray.size());
     SuperSurface::debugNumSendGeometryCalls = 0;
 
     rd->setProjectionAndCameraMatrix(defaultCamera);

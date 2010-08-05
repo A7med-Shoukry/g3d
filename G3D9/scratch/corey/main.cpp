@@ -77,10 +77,6 @@ void App::onInit() {
     skyParameters = SkyParameters(G3D::toSeconds(11, 00, 00, AM));
     lighting = Lighting::fromSky(sky, skyParameters, Color3::white());
 
-    // This simple demo has no shadowing, so make all lights unshadowed
-    lighting->lightArray.append(lighting->shadowedLightArray);
-    lighting->shadowedLightArray.clear();
-
     /////////////////////////////////////////////////////////////
     // Example of how to add debugging controls
     debugPane->addButton("Exit", this, &App::endProgram);
