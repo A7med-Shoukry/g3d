@@ -6,12 +6,12 @@ most OS X, Linux, and FreeBSD systems:
 
 * Python 2.4 or later (http://www.python.org) 
 * On OS X, Linux, or FreeBSD you will need gcc 4.0 or later
-* On Windows you will need Visual C++ 9.0 (Visual Studio 2008),
-   either the full or Express version (http://msdn.microsoft.com/vstudio/express/)
+* On Windows you will need Visual Studio 2010,
+   either the full or Express version (http://www.microsoft.com/express/downloads/#2010-Visual-CPP)
 
 To build the documentation target, the following are also required:
 
-* Doxygen 1.5 or later (http://www.doxygen.org)
+* Doxygen 1.6 or later (http://www.doxygen.org)
 * Latex (on Windows: http://miktex.org/)
 * Ghostscript (http://pages.cs.wisc.edu/~ghost/)
 
