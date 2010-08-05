@@ -174,10 +174,10 @@
     <ClCompile Include="..\GLG3D.lib\source\SuperShader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperSurface.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Surface.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\SurfaceSample.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\tesselate.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Texture.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ThirdPersonManipulator.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ToneMap.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Tri.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\TriTree.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\TriTree_Poly.cpp" />
@@ -270,10 +270,10 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperShader.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperSurface.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Surface.h" />
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceSample.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\tesselate.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Texture.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ThirdPersonManipulator.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ToneMap.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Tri.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\TriTree.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\UprightSplineManipulator.h" />
