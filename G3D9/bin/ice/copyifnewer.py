@@ -28,6 +28,7 @@ _excludeDirPatterns = \
 _excludeFromCopyingPatterns =\
     ['\.ncb$', \
     '\.opt$', \
+    '\.sdf$', \
     '\.ilk$', \
     '\.cvsignore$', \
     '^\.\#', \
