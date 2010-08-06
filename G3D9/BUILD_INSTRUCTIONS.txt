@@ -1,4 +1,4 @@
-G3D 8.xx Build System Instructions
+G3D 9.xx Build System Instructions
 
 To properly run the G3D build scripts you will need the following
 software.  It is all available for free and comes pre-installed on
