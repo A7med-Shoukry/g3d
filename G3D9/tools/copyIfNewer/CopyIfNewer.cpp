@@ -100,7 +100,7 @@ void printHelp() {
     printf(" copyifnewer [--help] [--exclusions | --super-exclusions] <source> <destdir>\n\n");
     printf("ARGUMENTS:\n\n");
     printf("  --exclusions  If specified, exclude CVS, svn, and ~ files. \n\n");
-    printf("  --super-exclusions  If specified, exclude CVS, svn, ~, .ncb, .obj, .pyc, Release, Debug, build, temp files. \n\n");
+    printf("  --super-exclusions  If specified, exclude CVS, svn, ~, .ncb, .obj, .pyc, .sdf, .ncb, .suo Release, Debug, build, temp files. \n\n");
     printf("  source   Filename or directory name (trailing slash not required).\n");
     printf("           May include standard Win32 wild cards in the filename.\n");
     printf("  dest     Destination directory, no wildcards allowed.\n\n");
@@ -140,11 +140,13 @@ bool excluded(bool exclusions, bool superExclusions, const std::string& filename
             (f == "graveyard") ||
             (f == "temp") ||
             endsWith(f, ".pyc") ||
-            endsWith(f, ".obj") ||
             endsWith(f, ".sbr") ||
             endsWith(f, ".ncb") ||
             endsWith(f, ".opt") ||
             endsWith(f, ".bsc") ||
+            endsWith(f, ".suo") ||
+            endsWith(f, ".ncb") ||
+            endsWith(f, ".sdf") ||
             endsWith(f, ".pch") ||
             endsWith(f, ".ilk") ||
             endsWith(f, ".pdb")) {
