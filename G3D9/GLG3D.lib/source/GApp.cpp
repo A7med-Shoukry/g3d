@@ -246,12 +246,13 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 }
 
 
-void GApp::show(const Texture::Ref& t) {
+GuiWindow::Ref GApp::show(const Texture::Ref& t) {
     GuiWindow::Ref display = GuiWindow::create(t->name(), NULL, Rect2D::xywh(0,0,0,0), GuiTheme::NORMAL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
     GuiTextureBox* box = display->pane()->addTextureBox(t);
     box->setSizeFromInterior(t->vector2Bounds());
     display->pack();
     addWidget(display);
+    return display;
 }
 
 
