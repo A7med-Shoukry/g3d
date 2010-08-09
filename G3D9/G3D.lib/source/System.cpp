@@ -372,7 +372,7 @@ std::string System::findDataFile
     static Array<std::string> directoryArray;
 
     std::string initialAppDataDir(instance().m_appDataDir);
-    const char* g3dPath = getenv("G3DDATA");
+    const char* g3dPath = getenv("G3D9DATA");
 
     if (directoryArray.size() == 0) {
         // Initialize the directory array
@@ -439,13 +439,13 @@ std::string System::findDataFile
         std::string msg = "Could not find '" + full + "'.\n\n";
         msg += "cwd = \'" + FileSystem::currentDirectory() + "\'\n";
         if (g3dPath) {
-            msg += "G3DDATA = ";
+            msg += "G3D9DATA = ";
             if (! FileSystem::exists(g3dPath)) {
                 msg += "(illegal path!) ";
             }
             msg += std::string(g3dPath) + "\'\n";
         } else {
-            msg += "(G3DDATA environment variable is undefined)\n";
+            msg += "(G3D9DATA environment variable is undefined)\n";
         }
         msg += "GApp::Settings.dataDir = ";
         if (! FileSystem::exists(initialAppDataDir)) {
@@ -469,7 +469,7 @@ void System::setAppDataDir(const std::string& path) {
 
 
 std::string demoFindData(bool errorIfNotFound) {
-    static const char* g3dPath = getenv("G3DDATA");
+    static const char* g3dPath = getenv("G3D9DATA");
     if (g3dPath) {
         return g3dPath;
 #   ifdef G3D_WIN32
@@ -1617,10 +1617,10 @@ void System::describeSystem(
     t.writeNewline();
     t.pushIndent();
     {
-        const char* g3dPath = getenv("G3DDATA");
+        const char* g3dPath = getenv("G3D9DATA");
         var(t, "Link version", G3D_VER);
         var(t, "Compile version", System::version());
-        var(t, "G3DDATA", std::string(g3dPath ? g3dPath : ""));
+        var(t, "G3D9DATA", std::string(g3dPath ? g3dPath : ""));
     }
     t.popIndent();
     t.writeSymbols("}");
