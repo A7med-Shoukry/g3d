@@ -49,7 +49,7 @@ You can build just the libraries (much faster) with:
     buildg3d --install lib
 
 If you chose to specify the optional install directory for the build,
-set your G3DDATA directory to that directory + G3D/data
+set your G3D9DATA directory to that directory + G3D/data
 
 (On Unix-like operating systems you may need to first execute
 "chmod a+x buildg3d" and run this command as "./buildg3d",
