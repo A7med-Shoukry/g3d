@@ -110,6 +110,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "G3D.lib", "G3D.lib.vcxproj"
 		{4109E1AD-E10F-412C-9917-1E381D82EEE6} = {4109E1AD-E10F-412C-9917-1E381D82EEE6}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Documentation", "Documentation.vcxproj", "{3BCF1B24-F228-4D95-B100-9300E0886C85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -196,6 +198,9 @@ Global
 		{9EA37246-6A7B-4BCF-A524-21A7FF70E65C}.Debug|Win32.Build.0 = Debug|Win32
 		{9EA37246-6A7B-4BCF-A524-21A7FF70E65C}.Release|Win32.ActiveCfg = Release|Win32
 		{9EA37246-6A7B-4BCF-A524-21A7FF70E65C}.Release|Win32.Build.0 = Release|Win32
+		{3BCF1B24-F228-4D95-B100-9300E0886C85}.Debug|Win32.ActiveCfg = Release|Win32
+		{3BCF1B24-F228-4D95-B100-9300E0886C85}.Release|Win32.ActiveCfg = Release|Win32
+		{3BCF1B24-F228-4D95-B100-9300E0886C85}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
