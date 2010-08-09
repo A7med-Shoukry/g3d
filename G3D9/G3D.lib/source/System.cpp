@@ -371,31 +371,29 @@ std::string System::findDataFile
     // Places to look
     static Array<std::string> directoryArray;
 
+    std::string initialAppDataDir(instance().m_appDataDir);
+    const char* g3dPath = getenv("G3DDATA");
+
     if (directoryArray.size() == 0) {
         // Initialize the directory array
         RealTime t0 = System::time();
 
         Array<std::string> baseDirArray;
-
-        std::string initialAppDataDir(instance().m_appDataDir);
         
         baseDirArray.append("");
         if (! initialAppDataDir.empty()) {
             baseDirArray.append(initialAppDataDir);
         }
 
-        const char* g3dPath = getenv("G3DDATA");
 #       ifdef G3D_WIN32
-        {
-            if (g3dPath == NULL) {
-                // If running the demos under visual studio from the G3D.sln file,
-                // this will locate the data directory.
-                const char* paths[] = {"../data-files/", "../../data-files/", "../../../data-files/", NULL};
-                for (int i = 0; paths[i]; ++i) {
-                    if (FileSystem::exists(pathConcat(paths[i], "G3D-DATA-README.TXT"))) {
-                        g3dPath = paths[i];
-                        break;
-                    }
+        if (g3dPath == NULL) {
+            // If running the demos under visual studio from the G3D.sln file,
+            // this will locate the data directory.
+            const char* paths[] = {"../data-files/", "../../data-files/", "../../../data-files/", NULL};
+            for (int i = 0; paths[i]; ++i) {
+                if (FileSystem::exists(pathConcat(paths[i], "G3D-DATA-README.TXT"))) {
+                    g3dPath = paths[i];
+                    break;
                 }
             }
         }
@@ -408,7 +406,7 @@ std::string System::findDataFile
         static const std::string subdirs[] = 
             {"font", "gui", "SuperShader", "cubemap", "icon", "material", "image", "md2", "md3", "ifs", "3ds", "sky", ""};
         for (int j = 0; j < baseDirArray.size(); ++j) {
-            const std::string& d = baseDirArray[j];
+            std::string d = baseDirArray[j];
             if ((d == "") || FileSystem::exists(d)) {
                 directoryArray.append(d);
                 for (int i = 0; ! subdirs[i].empty(); ++i) {
@@ -435,9 +433,29 @@ std::string System::findDataFile
         // Generate an error message
         std::string locations;
         for (int i = 0; i < directoryArray.size(); ++i) {
-            locations += pathConcat(directoryArray[i], full) + "\n";
+            locations += "\'" + pathConcat(directoryArray[i], full) + "'\n";
         }
-        alwaysAssertM(false, "Could not find '" + full + "' in:\n" + locations);
+
+        std::string msg = "Could not find '" + full + "'.\n\n";
+        msg += "cwd = \'" + FileSystem::currentDirectory() + "\'\n";
+        if (g3dPath) {
+            msg += "G3DDATA = ";
+            if (! FileSystem::exists(g3dPath)) {
+                msg += "(illegal path!) ";
+            }
+            msg += std::string(g3dPath) + "\'\n";
+        } else {
+            msg += "(G3DDATA environment variable is undefined)\n";
+        }
+        msg += "GApp::Settings.dataDir = ";
+        if (! FileSystem::exists(initialAppDataDir)) {
+            msg += "(illegal path!) ";
+        }
+        msg += std::string(initialAppDataDir) + "\'\n";
+
+        msg += "\nLocations searched:\n" + locations;
+
+        alwaysAssertM(false, msg);
     }
 
     // Not found
