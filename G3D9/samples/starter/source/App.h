@@ -1,7 +1,7 @@
 /**
   @file App.h
 
-  The G3D 8.0 default starter app is configured for OpenGL 3.0 and relatively recent
+  The G3D 9.0 default starter app is configured for OpenGL 3.0 and relatively recent
   GPUs.  To support older GPUs you may want to disable the framebuffer and film
   classes and use G3D::Sky to handle the skybox.
  */
