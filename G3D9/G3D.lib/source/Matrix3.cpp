@@ -6,9 +6,9 @@
  @author Morgan McGuire, graphics3d.com
 
  @created 2001-06-02
- @edited  2009-11-15
+ @edited  2010-08-15
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
 */
 
@@ -1339,9 +1339,13 @@ void Matrix3::toAxisAngle (Vector3& rkAxis, float& rfRadians) const {
 
 //----------------------------------------------------------------------------
 Matrix3 Matrix3::fromAxisAngle (const Vector3& _axis, float fRadians) {
-    Vector3 axis = _axis.direction();
+    return fromUnitAxisAngle(_axis.direction(), fRadians);
+}
 
-    Matrix3 m;
+Matrix3 Matrix3::fromUnitAxisAngle (const Vector3& axis, float fRadians) {
+	debugAssertM(axis.isUnit(), "Matrix3::fromUnitAxisAngle requires ||axis|| = 1");
+
+	Matrix3 m;
     float fCos  = cos(fRadians);
     float fSin  = sin(fRadians);
     float fOneMinusCos = 1.0 - fCos;

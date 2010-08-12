@@ -267,7 +267,11 @@ public:
                        0, 0, d.z);
     }
 
+	/** \sa fromUnitAxisAngle */
     static Matrix3 fromAxisAngle(const Vector3& rkAxis, float fRadians);
+
+	/** Assumes that rkAxis has unit length */
+    static Matrix3 fromUnitAxisAngle(const Vector3& rkAxis, float fRadians);
 
     /**
      * The matrix must be orthonormal.  The decomposition is yaw*pitch*roll
