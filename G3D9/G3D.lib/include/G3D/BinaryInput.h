@@ -370,7 +370,7 @@ public:
      */
     std::string readString();
 
-    /** Reads until \r, \r\n, \n\r, \n or the end of the file is encountered. Consumes the newline.*/
+    /** Reads until newline ("&#92;r", "&#92;r&#92;n", "&#92;n&#92;r", "&#92;n") or the end of the file is encountered. Consumes the newline.*/
     std::string readStringNewline();
 
     /**

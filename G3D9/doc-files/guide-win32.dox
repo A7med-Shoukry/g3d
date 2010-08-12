@@ -23,7 +23,7 @@ href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.
 \htmlonly
 Visual Studio 10 (officially known as Visual C++ 2010 Express Edition)
 is available as a free download from Microsoft at <a
-href="hhttp://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a>.
+href="http://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a>.
 Note that there is also a profession
 edition of Visual Studio 2010 that can be purchased.  G3D is compatible with VC2008 and many previous editions, but not supported and you'll
 have to build your own copy of the library.  We recommend that you
@@ -47,25 +47,48 @@ will create the directories <code>c:\libraries\G3D</code>,
 
 <li> <p>Run Visual Studio 2010</p>
 
-<li> Open <code>Microsoft.Cpp.Win32.user.props</code> in Visual Studio.  The default location is
+<li> Do one of the following to set global directories:
+  <ul>
+    <li> <b>Use the Property Manager</b>
+     <ol>
+	    <li> Open <i>any</i> VC10 project, for example C:\G3D\samples\starter.sln
+	    <li> Select View -&gt; Property Manager, as shown below:
+		<center><a href="vc10-property-menu.png"><img src="vc10-property-menu.png" border=1 align=top width=120></a></center></p>
+		<li> Select Debug | Win32 \&gt; Microsoft.Cpp.Win32.user in the Property Manager.
+		<li> Select Common Properties -&gt; VC++ Directories as shown below:
+		<center><a href="vc10-directories.png"><img src="vc10-directories.png" border=1 align=top width=50%></a></center></p>
+		<li> Add the G3D include directory (e.g., C:\G3D9\include) to the Include Directories
+		<li> Add the G3D lib directory (e.g., C:\G3D9\lib) to the Library Directories
+		<li> Press OK
+     </ol>
+    <li> <b>Edit XML Manually</b>
+      <ol>
+       <li> Open <code>Microsoft.Cpp.Win32.user.props</code> in Visual Studio.  The default location in Windows XP is
 <pre>
 C:\Documents and Settings\%USERNAME%\Local Settings\Application Data\Microsoft\MSBuild\v4.0\Microsoft.Cpp.Win32.user.props
 </pre>
-
-<li> Add IncludePath and LibraryPath entries that refer to your G3D install location.  For example,
+The default location in Windows Vista is:
 <pre>
-<?xml version="1.0" encoding="utf-8"?> 
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <PropertyGroup>
-    <IncludePath>$(IncludePath);C:\G3D9\include</IncludePath>
-    <LibraryPath>$(LibraryPath);C:\G3D9\lib</LibraryPath>
-  </PropertyGroup>
-
-</Project>
+C:\Users\%USERNAME%\AppData\Local\Microsoft\MSBuild\v4.0
 </pre>
+where <code>%USERNAME%</code> is your Windows login name.
 
-<li> Save and close <code>Microsoft.Cpp.Win32.user.props</code>.
+      <li> Add IncludePath and LibraryPath entries that refer to your G3D install location.  For example,
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
+
+  &lt;PropertyGroup&gt;
+    &lt;IncludePath&gt;&#36;(IncludePath);C:\G3D9\include&lt;/IncludePath&gt;
+    &lt;LibraryPath&gt;&#36;(LibraryPath);C:\G3D9\lib&lt;/LibraryPath&gt;
+  &lt;/PropertyGroup&gt;
+
+&lt;/Project&gt;
+</pre>
+      <li> Save and close <code>Microsoft.Cpp.Win32.user.props</code>.
+ </ol>
+</ul>
+
 
 <li> <p>Click on the <b>Tools</b> menu and then select <b>Options</b>, as demonstrated in this image:
 
