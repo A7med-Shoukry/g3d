@@ -227,12 +227,12 @@ void App::render(const View& view, GImage& image) {
     debugAssertGLOk();
 
     alwaysAssertM(rd, "OpenGL not initialized");
-    FrameBuffer::Ref fb = FrameBuffer::create("FrameBuffer");
+    Framebuffer::Ref fb = Framebuffer::create("Framebuffer");
         
     Texture::Ref color = Texture::createEmpty("Color", WIDTH, HEIGHT, ImageFormat::RGB8());
     Texture::Ref depth = Texture::createEmpty("Depth", WIDTH, HEIGHT, ImageFormat::DEPTH24());
-    fb->set(FrameBuffer::COLOR0, color);
-    fb->set(FrameBuffer::DEPTH,  depth);
+    fb->set(Framebuffer::COLOR0, color);
+    fb->set(Framebuffer::DEPTH,  depth);
         
     GCamera camera;
     CFrame cframe = view.toCFrame();

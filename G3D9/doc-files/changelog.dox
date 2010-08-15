@@ -26,6 +26,7 @@
      <li> G3D::GApp::show
      <li> G3D::SurfaceSample
      <li> G3D::GLight::castsShadows
+     <li> G3D::GLight::power
      <li> <b>Backwards Incompatible</b>: Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic
      <li> <b>Backwards Incompatible</b>: Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
      <li> <b>Backwards Incompatible</b>: Removed ToneMap (use Film)

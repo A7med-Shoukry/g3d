@@ -11,6 +11,7 @@
 #include "G3D/CoordinateFrame.h"
 #include "G3D/Any.h"
 #include "G3D/stringutils.h"
+#include "G3D/units.h"
 
 namespace G3D {
 
@@ -95,6 +96,15 @@ GLight::operator Any() const {
     a.set("castsShadows", castsShadows);
 
     return a;
+}
+
+    
+Power3 GLight::power() const {
+    if (spotCutoff >= 180) {
+        return color;
+    } else {
+        return 0.5f *  (1.0f - cos(spotCutoff * units::degrees()));
+    }
 }
 
 

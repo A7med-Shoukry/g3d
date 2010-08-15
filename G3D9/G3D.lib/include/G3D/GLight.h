@@ -33,7 +33,8 @@ public:
     /** Direction in which the light faces, if a spot light.  This is the "look vector" of the light source. */
     Vector3             spotDirection;
 
-    /** In <B>degrees</B>.  180 = no cutoff (point/dir).  Values less than 90 = spot light */
+    /** Spotlight cutoff half-angle in <B>degrees</B>.  180 = no
+        cutoff (point/dir).  Values less than 90 = spot light */
     float               spotCutoff;
 
     /** If true, G3D::SuperShader will render a cone of light large
@@ -67,6 +68,11 @@ public:
         - GLight { [all fields] }
     */
     GLight(const Any& any);
+
+    /** For a point emitter, the actual power emitted, taking the
+     spotlight cone into effect.  Undefined for a directional
+     emitter. */
+    Power3 power() const;
     
     /** Converts the Color3 to an Any. */
     operator Any() const;
