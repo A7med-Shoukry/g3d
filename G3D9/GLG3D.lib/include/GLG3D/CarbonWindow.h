@@ -25,7 +25,7 @@
 #endif
 */
 
-#include <Carbon/Carbon.h>
+
 #include <IOKit/hid/IOHIDKeys.h>
 #include <IOKit/IOKitLib.h>
 #include <Kernel/IOKit/hidsystem/IOHIDUsageTables.h>
@@ -36,8 +36,10 @@
 #    define __LP64__
 #endif
 */
-
+// Prevent deprecated Random() Carbon function from interfering with G3D::Random
+#define Random CarbonRandom
 #include <AGL/agl.h>
+#undef Random
 
 namespace G3D {
 
