@@ -39,7 +39,6 @@ public:
 
     virtual bool onEvent(const GEvent& e);
     virtual void onUserInput(UserInput* ui);
-    virtual void onCleanup();
 
     /** Sets m_endProgram to true. */
     virtual void endProgram();

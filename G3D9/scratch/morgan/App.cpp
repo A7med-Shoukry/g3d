@@ -159,9 +159,6 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     for (int i = 0; i < m_scene->lighting()->lightArray.size(); ++i) {
         rd->setLight(i, m_scene->lighting()->lightArray[i]);
     }
-    for (int i = 0; i < m_scene->lighting()->shadowedLightArray.size(); ++i) {
-        rd->setLight(i + m_scene->lighting()->lightArray.size(), m_scene->lighting()->shadowedLightArray[i]);
-    }
     rd->setAmbientLightColor(m_scene->lighting()->ambientAverage());
 
     Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
@@ -180,10 +177,6 @@ void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
 }
 
 
-void App::onCleanup() {
-    // Called after the application loop ends.  Place a majority of cleanup code
-    // here instead of in the constructor so that exceptions can be caught
-}
 
 
 void App::endProgram() {
