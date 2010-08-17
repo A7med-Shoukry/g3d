@@ -25,6 +25,7 @@
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default
      <li> G3D::GApp::show
      <li> G3D::SurfaceSample
+     <li> G3D::PointHashGrid::Iterator::hasMore
      <li> G3D::GLight::castsShadows
      <li> G3D::GLight::power
      <li> <b>Backwards Incompatible</b>: Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic

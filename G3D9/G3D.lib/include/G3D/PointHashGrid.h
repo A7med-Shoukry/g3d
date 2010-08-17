@@ -387,6 +387,10 @@ public:
             }
         }
 
+        bool hasMore() const {
+            return ! m_isEnd;
+        }
+
         bool operator==(const Iterator& other) const {
             return !(*this != other);
         }
