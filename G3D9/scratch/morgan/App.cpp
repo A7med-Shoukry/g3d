@@ -16,12 +16,13 @@ int main(int argc, char** argv) {
 
     PointHashGrid<Vector3> grid(3.0);
 
-    grid.insert(Vector3::zero());
+    //grid.insert(Vector3::zero());
 
     float x = 0.0;
     for (PointHashGrid<Vector3>::Iterator it = grid.begin(); it.hasMore(); ++it) {
         x += it->x;
     }
+    exit(0);
 
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {

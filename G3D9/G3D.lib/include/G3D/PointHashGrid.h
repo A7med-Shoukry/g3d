@@ -3,7 +3,7 @@
 
    @maintainer Morgan McGuire, http://graphics.cs.williams.edu
    @created 2008-07-01
-   @edited  2009-05-28
+   @edited  2010-08-28
 
    Copyright 2000-2010, Morgan McGuire.
    All rights reserved.
@@ -241,7 +241,7 @@ public:
     }
 
     /** Returns the number of elements. */
-    inline int size() const {
+    int size() const {
         return m_size;
     }
 
@@ -360,7 +360,7 @@ public:
                      m_arrayIndex(0), m_epoch(0) {}
 
         Iterator(const ThisType* grid) : 
-            m_isEnd(false),
+            m_isEnd(grid->size() == 0),
             m_grid(grid),
             m_tableIterator( grid->m_data.begin() ),
             m_arrayIndex(0),
