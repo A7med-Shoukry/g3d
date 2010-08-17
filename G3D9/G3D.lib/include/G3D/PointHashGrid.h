@@ -751,12 +751,21 @@ public:
         return it;
     }
 
+    
+    /** Appends results */
+    void getIntersectingMembers(const Sphere& sphere, Array<Value>& result) {
+        for (SphereIterator it = beginSphereIntersection(sphere); it.hasMore(); ++it) {
+            result.append(*it);
+        }
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
 
     /**
        Dereference to access the bounds() and size() [element count] of the underlying
-       cell objet.
+       cell object.
 
        Example:
        <pre>
