@@ -247,10 +247,33 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 
 
 GuiWindow::Ref GApp::show(const Texture::Ref& t) {
-    GuiWindow::Ref display = GuiWindow::create(t->name(), NULL, Rect2D::xywh(0,0,0,0), GuiTheme::NORMAL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
+	static const Vector2 offset = Vector2(25, 15);
+	static Vector2 lastPos = Vector2(0,0);
+	static float y0 = 0;
+
+	lastPos += offset;
+
+    GuiWindow::Ref display = GuiWindow::create(t->name().empty() ? "Image" : t->name(), NULL, Rect2D::xywh(lastPos,Vector2(0,0)), GuiTheme::TOOL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
     GuiTextureBox* box = display->pane()->addTextureBox(t);
     box->setSizeFromInterior(t->vector2Bounds());
+	box->zoomTo1();
     display->pack();
+
+	// Cascade, but don't go off the screen
+	if (display->rect().x1() > window()->width() || display->rect().y1() > window()->height()) {
+		lastPos = offset;
+		lastPos.y += y0;
+		y0 += offset.y;
+
+		display->moveTo(lastPos);
+
+		if (display->rect().y1() > window()->height()) {
+			y0 = 0;
+			lastPos = offset;
+			display->moveTo(lastPos);
+		}
+	}
+
     addWidget(display);
     return display;
 }
@@ -606,11 +629,7 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
 void GApp::addWidget(const Widget::Ref& module, bool setFocus) {
     m_widgetManager->add(module);
     
-    // Ensure that background widgets do not end up on top
-    GuiWindow::Ref w = module.downcast<GuiWindow>();
-    if (w.notNull()) {
-        m_widgetManager->moveWidgetToBack(module);
-    } else if (setFocus) {
+	if (setFocus) {
         m_widgetManager->setFocusedWidget(module);
     }
 }
