@@ -273,7 +273,7 @@ void ShadowMap::computeMatrices
     lightProjFar = max(lightProjNear + 0.1f, min(lightProjFarMax, 
                                                  lightProjFar));
 
-    if (light.spotCutoff <= 90) {
+    if (light.spotHalfAngle <= halfPi()) {
         // TODO: Square spot
 
         // Spot light; we can set the lightProj bounds intelligently
@@ -281,7 +281,7 @@ void ShadowMap::computeMatrices
         debugAssert(light.position.w == 1.0f);
 
         // The cutoff is half the angle of extent (See the Red Book, page 193)
-        const float angle = toRadians(light.spotCutoff);
+        const float angle = light.spotHalfAngle
 
         lightProjX = tan(angle) * lightProjNear;
       

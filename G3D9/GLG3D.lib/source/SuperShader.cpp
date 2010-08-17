@@ -242,9 +242,9 @@ void configureSingleLightShaderArgs(
     
     float cosThresh = -1;
 
-    if (light.spotCutoff < 180) {
+    if (light.spotHalfAngle < pif()) {
         // Spot light
-        const float angle = toRadians(light.spotCutoff);
+        const float angle = light.spotHalfAngle;
 
         cosThresh = cos(angle);
         if (shadowMapPass && light.spotSquare) {

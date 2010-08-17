@@ -3005,7 +3005,7 @@ void RenderDevice::setLight(int i, const GLight* _light, bool force) {
                 glLoadMatrix(m_state.matrices.cameraToWorldMatrixInverse);
                 glLightfv(gi, GL_POSITION,              reinterpret_cast<const float*>(& light.position));
                 glLightfv(gi, GL_SPOT_DIRECTION,        reinterpret_cast<const float*>(&light.spotDirection));
-                glLightf (gi, GL_SPOT_CUTOFF,           light.spotCutoff);
+                glLightf (gi, GL_SPOT_CUTOFF,           toDegrees(light.spotHalfAngle));
                 glLightfv(gi, GL_AMBIENT,               reinterpret_cast<const float*>(&zero));
                 /*
                 if (light.diffuse) {

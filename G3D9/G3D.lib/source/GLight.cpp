@@ -33,8 +33,8 @@ GLight::GLight(const Any& any) {
             } else if (key == "spottarget") {
                 spotTarget = it->value;
                 hasSpotTarget = true;
-            } else if (key == "spotcutoff") {
-                spotCutoff = it->value.number();
+            } else if (key == "spothalfangle") {
+                spotHalfAngle = it->value.number();
             } else if (key == "spotsquare") {
                 spotSquare = it->value.boolean();
             } else if (key == "attenuation") {
@@ -85,7 +85,7 @@ GLight::operator Any() const {
     a.set("position", position.operator Any());
     a.set("rightDirection", rightDirection.operator Any());
     a.set("spotDirection", spotDirection.operator Any());
-    a.set("spotCutoff", spotCutoff);
+    a.set("spotHalfAngle", spotHalfAngle);
     a.set("spotSquare", spotSquare);
 
     Any att(Any::ARRAY);
@@ -100,10 +100,10 @@ GLight::operator Any() const {
 
     
 Power3 GLight::power() const {
-    if (spotCutoff >= 180) {
+    if (spotHalfAngle >= pif()) {
         return color;
     } else {
-        return 0.5f *  (1.0f - cos(spotCutoff * units::degrees()));
+        return 0.5f *  (1.0f - cos(spotHalfAngle));
     }
 }
 
@@ -112,7 +112,7 @@ GLight::GLight() :
     position(0, 0, 0, 0),
     rightDirection(0,0,0),
     spotDirection(0, 0, -1),
-    spotCutoff(180),
+    spotHalfAngle(pif()),
     spotSquare(false),
     color(Color3::white()),
     enabled(false),
@@ -145,12 +145,12 @@ GLight GLight::point(const Vector3& pos, const Color3& color, float constAtt, fl
 }
 
 
-GLight GLight::spot(const Vector3& pos, const Vector3& pointDirection, float cutOffAngleDegrees, const Color3& color, float constAtt, float linAtt, float quadAtt, bool s) {
+GLight GLight::spot(const Vector3& pos, const Vector3& pointDirection, float spotHalfAngle, const Color3& color, float constAtt, float linAtt, float quadAtt, bool s) {
     GLight L;
     L.position       = Vector4(pos, 1.0f);
     L.spotDirection  = pointDirection.direction();
-    debugAssert(cutOffAngleDegrees <= 90);
-    L.spotCutoff     = cutOffAngleDegrees;
+    debugAssert(spotHalfAngle <= pif() / 2.0f);
+    L.spotHalfAngle     = spotHalfAngle;
     L.color          = color;
     L.attenuation[0] = constAtt;
     L.attenuation[1] = linAtt;
@@ -164,7 +164,7 @@ bool GLight::operator==(const GLight& other) const {
     return (position == other.position) && 
         (rightDirection == other.rightDirection) &&
         (spotDirection == other.spotDirection) &&
-        (spotCutoff == other.spotCutoff) &&
+        (spotHalfAngle == other.spotHalfAngle) &&
         (spotSquare == other.spotSquare) &&
         (attenuation[0] == other.attenuation[0]) &&
         (attenuation[1] == other.attenuation[1]) &&

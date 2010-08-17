@@ -33,9 +33,9 @@ public:
     /** Direction in which the light faces, if a spot light.  This is the "look vector" of the light source. */
     Vector3             spotDirection;
 
-    /** Spotlight cutoff half-angle in <B>degrees</B>.  180 = no
-        cutoff (point/dir).  Values less than 90 = spot light */
-    float               spotCutoff;
+    /** Spotlight cutoff half-angle in <B>radians</B>.  pi() = no
+        cutoff (point/dir).  Values less than pi()/2 = spot light */
+    float               spotHalfAngle;
 
     /** If true, G3D::SuperShader will render a cone of light large
         enough to encompass the entire square that bounds the cutoff
@@ -90,15 +90,15 @@ public:
         cone.  I.e., a value of 45 produces a light with a 90-degree 
         cone of view.
     */
-    static GLight spot(const Vector3& pos, const Vector3& pointDirection, float cutOffAngleDegrees, 
+    static GLight spot(const Vector3& pos, const Vector3& pointDirection, float halfAngleRadians, 
                        const Color3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f,
                        bool castsShadows = true);
 
     /** Creates a spot light that looks at a specific point (by calling spot() ) */
-    static GLight spotTarget(const Vector3& pos, const Vector3& target, float cutOffAngleDegrees, 
+    static GLight spotTarget(const Vector3& pos, const Vector3& target, float halfAngleRadians, 
                        const Color3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f,
                        bool castsShadows = true) {
-           return spot(pos, target - pos, cutOffAngleDegrees, color, constAtt, linAtt, quadAtt, castsShadows);
+           return spot(pos, target - pos, halfAngleRadians, color, constAtt, linAtt, quadAtt, castsShadows);
     }
 
     /** Returns the sphere within which this light has some noticable effect.  May be infinite.
