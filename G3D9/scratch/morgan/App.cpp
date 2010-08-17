@@ -12,17 +12,6 @@ int main(int argc, char** argv) {
     // settings class.  For example:
     settings.window.width       = 960; 
     settings.window.height      = 600;
-    settings.film.enabled =false;
-
-    PointHashGrid<Vector3> grid(3.0);
-
-    //grid.insert(Vector3::zero());
-
-    float x = 0.0;
-    for (PointHashGrid<Vector3>::Iterator it = grid.begin(); it.hasMore(); ++it) {
-        x += it->x;
-    }
-    exit(0);
 
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {
@@ -178,6 +167,10 @@ void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
 }
 
 
+void App::onCleanup() {
+    // Called after the application loop ends.  Place a majority of cleanup code
+    // here instead of in the constructor so that exceptions can be caught
+}
 
 
 void App::endProgram() {

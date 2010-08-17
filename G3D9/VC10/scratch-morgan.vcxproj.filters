@@ -23,9 +23,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\scratch\morgan\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\scratch\morgan\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
