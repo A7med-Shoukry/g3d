@@ -33,6 +33,7 @@
      <li> <b>Backwards Incompatible</b>: Removed ToneMap (use Film)
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
      <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
+     <li> Fix: G3D::PointHashGrid::Iterator on an empty grid is correctly initialized to empty.
    </ul>
 
    <p>
