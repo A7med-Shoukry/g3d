@@ -753,7 +753,7 @@ public:
 
     
     /** Appends results */
-    void getIntersectingMembers(const Sphere& sphere, Array<Value>& result) {
+    void getIntersectingMembers(const Sphere& sphere, Array<Value>& result) const {
         for (SphereIterator it = beginSphereIntersection(sphere); it.hasMore(); ++it) {
             result.append(*it);
         }
