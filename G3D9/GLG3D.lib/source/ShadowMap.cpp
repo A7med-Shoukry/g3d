@@ -281,7 +281,7 @@ void ShadowMap::computeMatrices
         debugAssert(light.position.w == 1.0f);
 
         // The cutoff is half the angle of extent (See the Red Book, page 193)
-        const float angle = light.spotHalfAngle
+        const float angle = light.spotHalfAngle;
 
         lightProjX = tan(angle) * lightProjNear;
       
