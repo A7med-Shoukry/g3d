@@ -78,10 +78,7 @@
     <ClInclude Include="..\scratch\morgan\Scene.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\scratch\morgan\App.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\scratch\morgan\App.cpp" />
     <ClCompile Include="..\scratch\morgan\Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
