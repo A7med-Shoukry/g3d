@@ -417,18 +417,6 @@ public:
     /** Returns true if both have the same Component::Factors for each component. */
     bool similarTo(const SuperBSDF::Ref& other) const;
 
-    /** The glossy exponent is packed so that 0 = no specular, 
-        1 = mirror (infinity), and on the open interval \f$e \in (0, 1), ~ e \rightarrow 1024 e^2 + 1\f$.
-        This function abstracts the unpacking, since it may change in future versions.
-        
-        Because direct shading is specified for SuperBSDF to apply a
-        glossy reflection to mirror surfaces, e = 1 produces 1025 as
-        well.
-        */
-    static inline float unpackSpecularExponent(float e) {
-        return square((clamp(e, 0.0f, 1.0f) * 255.0f - 1.0f) * (1.0f /253.0f)) * 1024.0f + 1.0f;
-    }
-
     /** The value that a specular mirror is packed as */
     inline static float packedSpecularMirror() {
         return 1.0f;
@@ -437,6 +425,24 @@ public:
     /** The value that a non-specular surface is packed as */
     inline static float packedSpecularNone() {
         return 0.0f;
+    }
+
+    /** The glossy exponent is packed so that 0 = no specular, 
+        1 = mirror (infinity), and on the open interval \f$e \in (0, 1), ~ e \rightarrow 1024 e^2 + 1\f$.
+        This function abstracts the unpacking, since it may change in future versions.
+        
+        Because direct shading is specified for SuperBSDF to apply a
+        glossy reflection to mirror surfaces, e = 1 produces 1025 as
+        well.
+
+        Returns inf() for mirrors.
+        */
+    static inline float unpackSpecularExponent(float e) {
+        if (e == packedSpecularMirror()) {
+            return finf();
+        } else {
+            return square((clamp(e, 0.0f, 1.0f) * 255.0f - 1.0f) * (1.0f /253.0f)) * 1024.0f + 1.0f;
+        }
     }
 
     /** Packing is \f$\frac{ \sqrt{ \frac{x - 1}{1024} } * 253 + 1}{255} \f$ */
