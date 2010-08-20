@@ -13,7 +13,6 @@
 
 #include "G3D/platform.h"
 #include "G3D/Array.h"
-#include "G3D/G3DGameUnits.h"
 #include "GLG3D/glheaders.h"
 
 namespace G3D {
@@ -103,6 +102,8 @@ protected:
         /** Erase all data */
         void clear();
     };
+
+    bool                                m_supportsQuery;
 
     /** Updated on every call to nextFrame() to ensure */
     uint64                              m_frameNum;
