@@ -14,6 +14,7 @@
 #include "G3D/platform.h"
 #include "G3D/Array.h"
 #include "GLG3D/glheaders.h"
+#include "G3D/G3DGameUnits.h"
 
 namespace G3D {
 
