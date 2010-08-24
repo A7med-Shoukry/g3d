@@ -21,7 +21,12 @@ static const float CONTROL_PADDING = 4.0f;
 
 void GuiPane::init(const Rect2D& rect) {
     setRect(rect);
+	m_layoutDirection = COLUMN;
+	m_layoutPreviousControl = NULL;
+	m_layoutColumnWidth = DEFAULT;
+	m_layoutColumnCaptionWidth = DEFAULT;
 }
+
 
 GuiPane::GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style) 
     : GuiContainer(gui, text), m_style(style) {

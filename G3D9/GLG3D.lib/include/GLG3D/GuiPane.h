@@ -52,6 +52,18 @@ class GuiPane : public GuiContainer {
     friend class GuiRadioButton;
     friend class _GuiSliderBase;
 
+    /** For use with setLayout */	 	  
+	enum LayoutDirection {
+		/** Controls are moved next to the previous control using GuiControl::moveRightOf.  Does not affect the first control added after setLayout.*/
+		ROW, 
+
+		/** Controls are placed at the left edge of the pane below the lowest current control. */
+		COLUMN
+	};
+
+	/** For use with setLayout() */
+	enum {DEFAULT = -1};
+
 protected:
 
     _internal::Morph        m_morph;
@@ -67,25 +79,16 @@ protected:
 
     GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 	
+
 private:
 
-	class Layout {
-	public:
-
-		enum {FREE = -1};
-		enum Direction {FREE_COLUMN, ROW, COLUMN};
-
-		Direction direction;
-
-		/** Only used in COLUMN mode */
-		int columnWidth;
-
-		/** Only used in COLUMN mode */
-		int captionWidth;
-
-		Layout() : direction(FREE_COLUMN), columnWidth(FREE), captionWidth(FREE) {}
-		Layout(Direction d, int colWidth, int capWidth) : direction(d), columnWidth(colWidth), captionWidth(captionWidth) {}
-	};
+	LayoutDirection		m_layoutDirection;
+	/** For use in ROW mode */
+	GuiControl*			m_layoutPreviousControl;
+	/** For use in COLUMN mode */
+	int					m_layoutColumnWidth;
+	/** For use in COLUMN mode */
+	int					m_layoutColumnCaptionWidth;
 
 	Array<Layout>		m_layoutStack;
 
@@ -124,6 +127,14 @@ public:
 	
     /** For use by GuiContainers.  \sa GuiPane::addPane, GuiWindow::pane */
     GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
+
+	/** 
+	  Sets the layout strategy for new controls added to this pane.
+
+	  \param columnWidth If not DEFAULT, controls have their GuiControl::rect.width adjusted to this value.
+	  \param captionWidth If not DEFAULT, controls with non-zero caption widths have their GuiControl::captionWidth adjusted to this value.
+	 */
+	virtual void setLayout(LayoutDirection direction, int columnWidth = DEFAULT, int captionWidth = DEFAULT);
 
     virtual void render(RenderDevice* rd, const GuiThemeRef& theme) const;
 
