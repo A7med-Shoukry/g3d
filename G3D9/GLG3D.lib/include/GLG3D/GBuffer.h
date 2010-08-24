@@ -340,6 +340,15 @@ public:
     (RenderDevice*                  rd, 
      const GCamera&                 camera,
      const Array<Surface::Ref>&     modelArray) const;
+
+    const Specification& specification() const {
+        return m_specification;
+    }
+
+	/** Explicitly override the camera stored in the GBuffer. */
+    void setCamera(const GCamera& camera) {
+        m_camera = camera;
+    }
 };
 
 } // namespace G3D

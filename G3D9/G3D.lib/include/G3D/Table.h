@@ -86,7 +86,7 @@ namespace G3D {
 
   <PRE>
     template<> struct HashTrait<MyEnum> {
-        static size_t equals(const MyEnum& key) const { return reinterpret_cast<size_t>( key ); }
+        static size_t hashCode(const MyEnum& key) const { return reinterpret_cast<size_t>( key ); }
     };
   </PRE>
 
