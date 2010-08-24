@@ -4,7 +4,7 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  @created 2007-06-02
- @edited  2010-03-11
+ @edited  2010-08-11
  */
 #include "G3D/platform.h"
 #include "GLG3D/GuiPane.h"
@@ -21,10 +21,10 @@ static const float CONTROL_PADDING = 4.0f;
 
 void GuiPane::init(const Rect2D& rect) {
     setRect(rect);
-	m_layoutDirection = COLUMN;
-	m_layoutPreviousControl = NULL;
-	m_layoutColumnWidth = DEFAULT;
-	m_layoutColumnCaptionWidth = DEFAULT;
+    m_layoutDirection = COLUMN;
+    m_layoutPreviousControl = NULL;
+    m_layoutControlSize = Vector2(DEFAULT, DEFAULT);
+    m_layoutCaptionSize = Vector2(DEFAULT, DEFAULT);
 }
 
 
@@ -37,6 +37,17 @@ GuiPane::GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiThe
 GuiPane::GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style) 
     : GuiContainer(parent, text), m_style(style) {
     init(rect);
+}
+
+
+void GuiPane::setLayout(LayoutDirection direction, float controlWidth, float controlHeight,
+                        float captionWidth, float captionHeight) {
+    m_layoutPreviousControl = NULL;
+    m_layoutDirection = direction;
+    m_layoutCaptionSize.x = captionWidth;
+    m_layoutCaptionSize.y = captionHeight;
+    m_layoutControlSize.x = controlWidth;
+    m_layoutControlSize.y = controlHeight;
 }
 
 

@@ -38,6 +38,10 @@ class RenderDevice;
 class GuiButton;
 class GuiTabPane;
 
+#ifdef DEFAULT
+#    undef DEFAULT
+#endif
+
 /**
  Sub-rectangle of a window.  Created by GuiWindow::addPane().
  If a pane is invisible, everything inside of it is also invisible.
@@ -53,16 +57,19 @@ class GuiPane : public GuiContainer {
     friend class _GuiSliderBase;
 
     /** For use with setLayout */	 	  
-	enum LayoutDirection {
-		/** Controls are moved next to the previous control using GuiControl::moveRightOf.  Does not affect the first control added after setLayout.*/
-		ROW, 
-
-		/** Controls are placed at the left edge of the pane below the lowest current control. */
-		COLUMN
-	};
-
-	/** For use with setLayout() */
-	enum {DEFAULT = -1};
+    enum LayoutDirection {
+        /** Controls are moved next to the previous control using
+            GuiControl::moveRightOf.  Does not affect the first
+            control added after setLayout.*/
+        ROW, 
+        
+        /** Controls are placed at the left edge of the pane below the
+            lowest current control. */
+        COLUMN
+    };
+    
+    /** For use with setLayout() */
+    enum {DEFAULT = -1};
 
 protected:
 
@@ -82,11 +89,9 @@ protected:
     /** For use in ROW mode */
     GuiControl*             m_layoutPreviousControl;
 
-    /** For use in COLUMN mode */
-    int                     m_layoutColumnWidth;
+    Vector2                 m_layoutCaptionSize;
 
-    /** For use in COLUMN mode */
-    int                     m_layoutColumnCaptionWidth;
+    Vector2                 m_layoutControlSize;
 
     GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 
@@ -130,14 +135,22 @@ public:
     /** For use by GuiContainers.  \sa GuiPane::addPane, GuiWindow::pane */
     GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 
-	/** 
-	  Sets the layout strategy for new controls added to this pane.
+    /** 
+        Sets the layout strategy for new controls added to this pane.
 
-	  \param columnWidth If not DEFAULT, controls have their GuiControl::rect.width adjusted to this value.
-	  \param captionWidth If not DEFAULT, controls with non-zero caption widths have their GuiControl::captionWidth adjusted to this value.
-	 */
-	virtual void setLayout(LayoutDirection direction, int columnWidth = DEFAULT, int captionWidth = DEFAULT);
-
+        If you are in a ROW, setting the layout back to ROW starts a new row.
+        
+        \param controlWidth If not DEFAULT, controls have their GuiControl::rect.width set to this value.
+        \param controlHeight If not DEFAULT, controls have their GuiControl::rect.width set to this value.
+        \param captionWidth If not DEFAULT, controls with non-zero caption widths have their GuiControl::captionWidth adjusted to this value.
+        \param captionHeight If not DEFAULT, controls with non-zero caption heights have their GuiControl::captionWidth adjusted to this value.
+    */
+    virtual void setLayout(LayoutDirection direction,
+                           float controlWidth = DEFAULT,
+                           float controlHeight = DEFAULT,
+                           float captionWidth = DEFAULT,
+                           float captionHeight = DEFAULT);
+    
     virtual void render(RenderDevice* rd, const GuiThemeRef& theme) const;
 
     virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) const;
