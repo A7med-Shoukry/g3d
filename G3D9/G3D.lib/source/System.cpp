@@ -1630,6 +1630,7 @@ void System::describeSystem(
 
 
 void System::setClipboardText(const std::string& s) {
+    // See http://hsivonen.iki.fi/kesakoodi/clipboard/
 #   ifdef G3D_WIN32
         if (OpenClipboard(NULL)) {
             HGLOBAL hMem = GlobalAlloc(GHND | GMEM_DDESHARE, s.size() + 1);
@@ -1645,6 +1646,8 @@ void System::setClipboardText(const std::string& s) {
             CloseClipboard();
             GlobalFree(hMem);
         }
+#   elif defined(G3D_OSX)
+        
 #   endif
 }
 

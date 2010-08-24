@@ -77,20 +77,22 @@ protected:
 
     Array<GuiLabel*>        labelArray;
 
+    LayoutDirection         m_layoutDirection;
+
+    /** For use in ROW mode */
+    GuiControl*             m_layoutPreviousControl;
+
+    /** For use in COLUMN mode */
+    int                     m_layoutColumnWidth;
+
+    /** For use in COLUMN mode */
+    int                     m_layoutColumnCaptionWidth;
+
     GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
-	
+
 
 private:
 
-	LayoutDirection		m_layoutDirection;
-	/** For use in ROW mode */
-	GuiControl*			m_layoutPreviousControl;
-	/** For use in COLUMN mode */
-	int					m_layoutColumnWidth;
-	/** For use in COLUMN mode */
-	int					m_layoutColumnCaptionWidth;
-
-	Array<Layout>		m_layoutStack;
 
     /**
        Called from constructors.

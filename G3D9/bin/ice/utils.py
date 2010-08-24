@@ -1046,10 +1046,10 @@ def isCFile(file):
              (ext == 'mi') or
              (ext == 'mii'))))
 
-""" Returns true if this is a cpp header filename. """
+""" Returns true if this is a cpp header filename (or doxygen file). """
 def isCHeader(file):
     ext = string.lower(extname(file))
-    return (ext == 'h') or (ext == 'hpp') or (ext == 'h++')
+    return (ext == 'h') or (ext == 'hpp') or (ext == 'h++') or (ext == 'dox')
 
 #########################################################################
 
