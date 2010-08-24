@@ -3,7 +3,7 @@
   @author Morgan McGuire, http://graphics.cs.williams.edu
 
  @created 2009-01-01
- @edited  2010-11-05
+ @edited  2010-08-20
 
  Copyright 2000-2009, Morgan McGuire.
  All rights reserved.
@@ -12,6 +12,7 @@
 #include "G3D/stringutils.h"
 #include "GLG3D/glcalls.h"
 #include "GLG3D/GLCaps.h"
+#include "G3D/Log.h"
 
 namespace G3D {
 

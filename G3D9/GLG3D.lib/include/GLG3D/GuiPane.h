@@ -2,7 +2,7 @@
  @file GLG3D/GuiPane.h
 
  @created 2006-05-01
- @edited  2010-01-13
+ @edited  2010-09-13
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2010, Morgan McGuire, http://graphics.cs.williams.edu
@@ -66,13 +66,29 @@ protected:
     Array<GuiLabel*>        labelArray;
 
     GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
-
-public:
-
-    /** For use by GuiContainers.  \sa GuiPane::addPane, GuiWindow::pane */
-    GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
-
+	
 private:
+
+	class Layout {
+	public:
+
+		enum {FREE = -1};
+		enum Direction {FREE_COLUMN, ROW, COLUMN};
+
+		Direction direction;
+
+		/** Only used in COLUMN mode */
+		int columnWidth;
+
+		/** Only used in COLUMN mode */
+		int captionWidth;
+
+		Layout() : direction(FREE_COLUMN), columnWidth(FREE), captionWidth(FREE) {}
+		Layout(Direction d, int colWidth, int capWidth) : direction(d), columnWidth(colWidth), captionWidth(captionWidth) {}
+	};
+
+	Array<Layout>		m_layoutStack;
+
     /**
        Called from constructors.
      */
@@ -105,6 +121,9 @@ private:
     void renderChildren(RenderDevice* rd, const GuiThemeRef& skin) const;
 
 public:
+	
+    /** For use by GuiContainers.  \sa GuiPane::addPane, GuiWindow::pane */
+    GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 
     virtual void render(RenderDevice* rd, const GuiThemeRef& theme) const;
 

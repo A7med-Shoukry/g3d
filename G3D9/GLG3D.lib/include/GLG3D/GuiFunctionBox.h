@@ -112,7 +112,7 @@ public:
         clampTimes();
     }
     
-    virtual float defaultCaptionSize() const;
+    virtual float defaultCaptionHeight() const;
 
     void setCurveColor(const Color4& c) {
         m_splineColor = c;

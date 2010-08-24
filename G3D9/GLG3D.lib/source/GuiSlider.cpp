@@ -23,7 +23,7 @@ void _GuiSliderBase::render(RenderDevice* rd, const GuiThemeRef& skin) const {
     (void)rd;
     if (m_visible) {
         if (m_horizontal) {
-            skin->renderHorizontalSlider(m_rect, floatValue(), m_enabled, focused() || mouseOver(), m_caption, m_captionSize);
+            skin->renderHorizontalSlider(m_rect, floatValue(), m_enabled, focused() || mouseOver(), m_caption, m_captionWidth);
         }
     }
 }
@@ -38,8 +38,8 @@ bool _GuiSliderBase::onEvent(const GEvent& event) {
         Vector2 mouse = Vector2(event.button.x, event.button.y);
 
         float v = floatValue();
-        Rect2D thumbRect = theme()->horizontalSliderToThumbBounds(m_rect, v, m_captionSize);
-        Rect2D trackRect = theme()->horizontalSliderToTrackBounds(m_rect, m_captionSize);
+        Rect2D thumbRect = theme()->horizontalSliderToThumbBounds(m_rect, v, m_captionWidth);
+        Rect2D trackRect = theme()->horizontalSliderToTrackBounds(m_rect, m_captionWidth);
         
         if (thumbRect.contains(mouse)) {
             // Begin drag
@@ -88,7 +88,7 @@ bool _GuiSliderBase::onEvent(const GEvent& event) {
         // help receiving the key focus if the user clicked on the control!
 
         Vector2 mouse = Vector2(event.button.x, event.button.y);
-        Rect2D trackRect = theme()->horizontalSliderToTrackBounds(m_rect, m_captionSize);
+        Rect2D trackRect = theme()->horizontalSliderToTrackBounds(m_rect, m_captionWidth);
 
         float delta = (mouse.x - m_dragStart.x) / trackRect.width();
         float p = clamp(m_dragStartValue + delta, 0.0f, 1.0f);

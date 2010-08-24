@@ -177,7 +177,7 @@ CameraControlWindow::CameraControlWindow(
         Pointer<std::string>(this, &CameraControlWindow::cameraLocation, 
                                    &CameraControlWindow::setCameraLocation));
     cameraLocationTextBox->setRect(Rect2D::xywh(0, 2, 246 + (hasRoll ? 20.0f : 0.0f), 24));
-    cameraLocationTextBox->setCaptionSize(38 + (hasRoll ? 12.0f : 0.0f));
+    cameraLocationTextBox->setCaptionWidth(38 + (hasRoll ? 12.0f : 0.0f));
 
     // Change to black "r" (x) for remove
     GuiButton* bookMarkButton = 
@@ -212,7 +212,7 @@ CameraControlWindow::CameraControlWindow(
 
     trackList = manualPane->addDropDownList("Path", trackFileArray, &trackFileIndex);
     trackList->setRect(Rect2D::xywh(Vector2(0, trackList->rect().y1() - 25), Vector2(180, trackList->rect().height())));
-    trackList->setCaptionSize(34);
+    trackList->setCaptionWidth(34);
 
     visibleCheckBox = manualPane->addCheckBox("Visible", 
         Pointer<bool>(trackManipulator, 

@@ -12,7 +12,7 @@ namespace G3D {
 GuiFunctionBox::GuiFunctionBox(GuiContainer* parent, const GuiText& text, 
                                Spline<float>* spline) : GuiControl(parent, text), m_spline(spline) {
 
-    setCaptionSize(TOP_CAPTION_SIZE);
+    setCaptionHeight(TOP_CAPTION_HEIGHT);
     setSize(Vector2(190, 120));
 
     m_minTime  = 0.0f;
@@ -76,22 +76,22 @@ void GuiFunctionBox::clampTimes(int start) {
 }
 
 
-float GuiFunctionBox::defaultCaptionSize() const {
-    return TOP_CAPTION_SIZE;
+float GuiFunctionBox::defaultCaptionHeight() const {
+    return TOP_CAPTION_HEIGHT;
 }
 
 
 void GuiFunctionBox::render(RenderDevice* rd, const GuiThemeRef& skin) const {
     GuiFunctionBox* me = const_cast<GuiFunctionBox*>(this);
 
-    me->m_clipBounds = skin->canvasToClientBounds(m_rect, m_captionSize);
+    me->m_clipBounds = skin->canvasToClientBounds(m_rect, m_captionHeight);
     int shrink = 4;
     // Shrink bounds slightly so that we can see axes and points rendered against the edge
     me->m_bounds = Rect2D::xywh(m_clipBounds.x0y0() + Vector2(shrink, shrink),
                                 m_clipBounds.wh() - Vector2(shrink, shrink) * 2);
 
     // Use textbox borders
-    skin->renderCanvas(m_rect, m_enabled, focused(), m_caption, m_captionSize);
+    skin->renderCanvas(m_rect, m_enabled, focused(), m_caption, m_captionHeight);
 
     me->m_scale.x = (m_maxTime  - m_minTime)  / m_bounds.width(); 
     me->m_scale.y = (m_maxValue - m_minValue) / m_bounds.height(); 

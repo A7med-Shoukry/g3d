@@ -24,6 +24,7 @@
      <li> G3D::Any::operator=(Array<T>)
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default
      <li> G3D::GApp::show
+	 <li> Separated G3D::GuiControl::captionWidth and G3D::GuiControl::captionHeight
      <li> G3D::SurfaceSample
      <li> G3D::PointHashGrid::Iterator::hasMore
      <li> G3D::GLight::castsShadows

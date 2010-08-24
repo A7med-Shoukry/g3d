@@ -105,7 +105,7 @@ void VideoRecordDialog::makeGUI() {
     int captionSize = 90;
 
     formatList->setWidth(width);
-    formatList->setCaptionSize(captionSize);
+    formatList->setCaptionWidth(captionSize);
 
     moviePane->addNumberBox("Quality", &m_quality, "", GuiTheme::LOG_SLIDER, 0.1f, 100.0f);
     
@@ -119,10 +119,10 @@ void VideoRecordDialog::makeGUI() {
     }
 
     GuiNumberBox<float>* playbackBox = moviePane->addNumberBox("Playback",    &m_playbackFPS, "fps", GuiTheme::NO_SLIDER, 1.0f, 120.0f, 0.1f);
-    playbackBox->setCaptionSize(captionSize);
+    playbackBox->setCaptionWidth(captionSize);
 
     GuiNumberBox<float>* recordBox   = moviePane->addNumberBox("Record",      &m_recordFPS, "fps", GuiTheme::NO_SLIDER, 1.0f, 120.0f, 0.1f);
-    recordBox->setCaptionSize(captionSize);
+    recordBox->setCaptionWidth(captionSize);
 
     if (GLCaps::supports_GL_ARB_texture_non_power_of_two() && GLCaps::supports_GL_ARB_framebuffer_object()) {
         const OSWindow* window = OSWindow::current();
@@ -155,7 +155,7 @@ void VideoRecordDialog::makeGUI() {
     m_ssFormatIndex = 0;
 
     ssFormatList->setWidth(width);
-    ssFormatList->setCaptionSize(captionSize);
+    ssFormatList->setCaptionWidth(captionSize);
 
     label = ssPane->addLabel("Hot key:");
     label->setWidth(captionSize);

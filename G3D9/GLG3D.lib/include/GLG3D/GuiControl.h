@@ -32,8 +32,8 @@ class GuiControl {
 protected:
 
     enum {
-        LEFT_CAPTION_SIZE = 80,
-        TOP_CAPTION_SIZE = 20
+        LEFT_CAPTION_WIDTH = 80,
+        TOP_CAPTION_HEIGHT = 20
     };
 
     /** Interface to hide the default Callback implementation from programmers using it. */
@@ -197,8 +197,8 @@ protected:
 
     GuiText           m_caption;
 
-    /** For classes that have a caption, this is the size reserved for it.*/
-    float             m_captionSize;
+    float             m_captionWidth;
+	float			  m_captionHeight;
 
     bool              m_visible;
 
@@ -223,13 +223,17 @@ public:
     void setFocused(bool b);
     virtual void setEnabled(bool e);
 
-    /** For controls that have a caption outside the bounds of the control,
-        this is the size reserved for the caption. The caption width defaults
-        to CAPTION_LEFT_WIDTH, CAPTION_RIGHT_WIDTH, or CAPTION_TOP_HEIGHT, depending 
-        on the control type, if the initial caption is not "" (even if it is " ") 
-        and 0 if the initial caption is "". */
-    float captionSize() const;
-    virtual void setCaptionSize(float c);
+    /** For controls that have a caption outside the bounds of the control on the left,
+        this is the size reserved for the caption. */
+    float captionWidth() const;
+
+	/** For controls that have a caption outside the bounds of the control on the top or bottom,
+        this is the size reserved for the caption. */
+    float captionHeight() const;
+
+    virtual void setCaptionWidth(float c);
+    virtual void setCaptionHeight(float c);
+
     const GuiText& caption() const;
     const Rect2D& rect() const;
 
@@ -262,8 +266,12 @@ public:
     }
 
     /** Default caption size for this control. */
-    virtual float defaultCaptionSize() const {
-        return LEFT_CAPTION_SIZE;
+    virtual float defaultCaptionHeight() const {
+        return TOP_CAPTION_HEIGHT;
+    }
+
+	virtual float defaultCaptionWidth() const {
+        return LEFT_CAPTION_WIDTH;
     }
 
     /**

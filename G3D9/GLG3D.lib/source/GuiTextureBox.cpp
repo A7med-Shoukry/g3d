@@ -86,7 +86,7 @@ GuiTextureBox::GuiTextureBox
     m_embeddedMode(embeddedMode) {
 
     // Height of caption and button bar
-    const float cs = TOP_CAPTION_SIZE;
+    const float cs = TOP_CAPTION_HEIGHT;
 
     // Height of the drawer
     const float h = cs - 1;
@@ -165,7 +165,7 @@ GuiTextureBox::GuiTextureBox
         }
     }    
 
-    setCaptionSize(h);
+    setCaptionHeight(h);
     float aspect = 1440.0f / 900.0f;
     setSize(Vector2(240 * aspect, 240));
 
@@ -243,7 +243,7 @@ void GuiTextureBox::setSizeFromInterior(const Vector2& dims) {
     Rect2D big = Rect2D::xywh(0, 0, 100, 100);
 
     // Get the canvas bounds
-    Rect2D small = theme()->canvasToClientBounds(canvasRect(big), m_captionSize);
+    Rect2D small = theme()->canvasToClientBounds(canvasRect(big), m_captionHeight);
     
     // Offset is now big - small
     setSize(dims + big.wh() - small.wh() + Vector2(BORDER, BORDER) * 2.0f);
@@ -304,7 +304,7 @@ bool GuiTextureBox::onEvent(const GEvent& event) {
 void GuiTextureBox::setRect(const Rect2D& rect) {
     GuiContainer::setRect(rect);
 
-    m_clipBounds = theme()->canvasToClientBounds(canvasRect(), m_captionSize);
+    m_clipBounds = theme()->canvasToClientBounds(canvasRect(), m_captionHeight);
 
     Rect2D oldRect = m_drawerPane->rect();
     float OPEN_Y = m_rect.height() - oldRect.height() - DRAWER_Y_OFFSET;
@@ -442,7 +442,7 @@ public:
         documentCaption->setWidth(65.0f);
         GuiNumberBox<float>* gammaBox = 
             visPane->addNumberBox(GuiText("g", GFont::fromFile(System::findDataFile("greek.fnt"))), &m_settings.documentGamma, "", GuiTheme::LINEAR_SLIDER, 0.1f, 15.0f);
-        gammaBox->setCaptionSize(15.0f);
+        gammaBox->setCaptionWidth(15.0f);
         gammaBox->setUnitsSize(5.0f);
         gammaBox->setWidth(150.0f);
         gammaBox->moveRightOf(documentCaption);
@@ -454,7 +454,7 @@ public:
         minBox->setWidth(145.0f);
         
         maxBox = visPane->addNumberBox("-", &m_settings.max);
-        maxBox->setCaptionSize(10.0f);
+        maxBox->setCaptionWidth(10.0f);
         maxBox->moveRightOf(minBox);
         visPane->pack();
         visPane->setWidth(230);
@@ -794,7 +794,7 @@ void GuiTextureBox::render(RenderDevice* rd, const GuiTheme::Ref& theme) const {
     }
     theme->popClientRect();
 
-    theme->renderCanvas(cvs, m_enabled, focused(), m_caption, m_captionSize);
+    theme->renderCanvas(cvs, m_enabled, focused(), m_caption, m_captionHeight);
 
     const CoordinateFrame& matrix = rd->objectToWorldMatrix();
 

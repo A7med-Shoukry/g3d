@@ -69,15 +69,30 @@ GuiThemeRef GuiControl::theme() const {
     return m_gui->theme();
 }
 
-float GuiControl::captionSize() const {
-    return m_captionSize;
+
+float GuiControl::captionWidth() const {
+    return m_captionWidth;
 }
 
-void GuiControl::setCaptionSize(float c) {
-    m_captionSize = c;
+
+float GuiControl::captionHeight() const {
+    return m_captionHeight;
+}
+
+
+void GuiControl::setCaptionWidth(float c) {
+    m_captionWidth = c;
     // Update the click rect bounds
     setRect(rect());
 }
+
+
+void GuiControl::setCaptionHeight(float c) {
+    m_captionHeight = c;
+    // Update the click rect bounds
+    setRect(rect());
+}
+
 
 void GuiControl::setPosition(float x, float y) {
     setPosition(Vector2(x, y));
@@ -128,38 +143,48 @@ bool GuiControl::visible() const {
     return m_visible;
 }
 
+
 void GuiControl::setVisible(bool v) {
     m_visible = v;
 }
+
 
 bool GuiControl::enabled() const {
     return m_enabled;
 }
 
+
 void GuiControl::setEnabled(bool e) {
     m_enabled = e;
 }
+
 
 const GuiText& GuiControl::caption() const {
     return m_caption;
 }
 
+
 void GuiControl::setCaption(const GuiText& text) {
     m_caption = text;
     if (m_caption.text() == "") {
-        setCaptionSize(0);
+        setCaptionWidth(0);
+        setCaptionHeight(0);
     } else {
-        setCaptionSize(defaultCaptionSize());
+        setCaptionWidth(defaultCaptionWidth());
+        setCaptionHeight(defaultCaptionHeight());
     }
 }
+
 
 const Rect2D& GuiControl::rect() const {
     return m_rect;
 }
 
+
 void GuiControl::setRect(const Rect2D& rect) {
     m_clickRect = m_rect = rect;
 }
+
 
 void GuiControl::fireEvent(GEventType type) {
     GEvent e;

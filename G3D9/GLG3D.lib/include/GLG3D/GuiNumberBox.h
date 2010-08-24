@@ -275,14 +275,14 @@ public:
     virtual void setRect(const Rect2D& rect) {
         GuiContainer::setRect(rect);
 
-        float controlSpace = m_rect.width() - m_captionSize;
+        float controlSpace = m_rect.width() - m_captionWidth;
 
-        m_textBox->setRect(Rect2D::xywh(m_captionSize, 0, textBoxWidth, CONTROL_HEIGHT));
+        m_textBox->setRect(Rect2D::xywh(m_captionWidth, 0, textBoxWidth, CONTROL_HEIGHT));
 
         if (m_slider != NULL) {
             float x = m_textBox->rect().x1() + m_unitsSize;
             m_slider->setRect(Rect2D::xywh(x, 0.0f, 
-                max(controlSpace - (x - m_captionSize) - 2, 5.0f), (float)CONTROL_HEIGHT));
+                max(controlSpace - (x - m_captionWidth) - 2, 5.0f), (float)CONTROL_HEIGHT));
         }
     }
 
