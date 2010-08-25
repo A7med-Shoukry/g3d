@@ -56,9 +56,10 @@ class GuiPane : public GuiContainer {
     friend class GuiRadioButton;
     friend class _GuiSliderBase;
 
+public:
    
     /** For use with setNewChildSize() */
-    enum {DEFAULT = -1};
+    enum {DEFAULT_SIZE = -1};
 
 protected:
 
@@ -115,17 +116,17 @@ private:
 
         float w = CONTROL_WIDTH;
         float h = height;
-        if (m_layoutControlSize.x != DEFAULT) {
+        if (m_layoutControlSize.x != DEFAULT_SIZE) {
             w = m_layoutControlSize.x;            
         }
-        if (m_layoutControlSize.y != DEFAULT) {
+        if (m_layoutControlSize.y != DEFAULT_SIZE) {
             h = m_layoutControlSize.y;            
         }
         control->setRect(Rect2D::xywh(p, Vector2(w, h)));
-        if ((m_layoutCaptionSize.x != DEFAULT) && (control->captionWidth() != 0)) {
+        if ((m_layoutCaptionSize.x != DEFAULT_SIZE) && (control->captionWidth() != 0)) {
             control->setCaptionWidth(m_layoutCaptionSize.x);
         }
-        if ((m_layoutCaptionSize.y != DEFAULT) && (control->captionHeight() != 0)) {
+        if ((m_layoutCaptionSize.y != DEFAULT_SIZE) && (control->captionHeight() != 0)) {
             control->setCaptionHeight(m_layoutCaptionSize.y);
         }
 
@@ -202,16 +203,16 @@ public:
     }
 
     /** 
-        \param controlWidth If not DEFAULT, controls have their GuiControl::rect.width set to this value.
-        \param controlHeight If not DEFAULT, controls have their GuiControl::rect.width set to this value.
-        \param captionWidth If not DEFAULT, controls with non-zero caption widths have their GuiControl::captionWidth adjusted to this value.
-        \param captionHeight If not DEFAULT, controls with non-zero caption heights have their GuiControl::captionWidth adjusted to this value.
+        \param controlWidth If not DEFAULT_SIZE, controls have their GuiControl::rect.width set to this value.
+        \param controlHeight If not DEFAULT_SIZE, controls have their GuiControl::rect.width set to this value.
+        \param captionWidth If not DEFAULT_SIZE, controls with non-zero caption widths have their GuiControl::captionWidth adjusted to this value.
+        \param captionHeight If not DEFAULT_SIZE, controls with non-zero caption heights have their GuiControl::captionWidth adjusted to this value.
     */
     virtual void setNewChildSize
-    (float controlWidth = DEFAULT,
-     float controlHeight = DEFAULT,
-     float captionWidth = DEFAULT,
-     float captionHeight = DEFAULT);
+    (float controlWidth = DEFAULT_SIZE,
+     float controlHeight = DEFAULT_SIZE,
+     float captionWidth = DEFAULT_SIZE,
+     float captionHeight = DEFAULT_SIZE);
 
     /** 
         If the text is "", no space is reserved for a caption.  If non-empty (even " "), then
