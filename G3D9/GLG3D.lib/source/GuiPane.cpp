@@ -79,12 +79,8 @@ Vector2 GuiPane::contentsExtent() const {
 
 
 Vector2 GuiPane::nextControlPos(bool isTool) const {
-    if ((m_layoutDirection == ROW) || isTool) {
-        if (m_layoutPreviousControl) {
-            return m_layoutPreviousControl->rect().x1y0();
-        } else {
-            return Vector2(CONTROL_PADDING, CONTROL_PADDING);
-        }
+    if (((m_layoutDirection == ROW) || isTool) && m_layoutPreviousControl) {
+        return m_layoutPreviousControl->rect().x1y0();
     } else {
         float y = contentsExtent().y;
         return Vector2(CONTROL_PADDING, max(y, CONTROL_PADDING));

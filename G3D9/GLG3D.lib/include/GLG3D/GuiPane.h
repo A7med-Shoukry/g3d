@@ -112,8 +112,22 @@ private:
     template<class T>
     T* addControl(T* control, float height = CONTROL_HEIGHT) {
         Vector2 p = nextControlPos(control->toolStyle());
-        control->setRect
-            (Rect2D::xywh(p, Vector2((float)CONTROL_WIDTH, height)));
+
+        float w = CONTROL_WIDTH;
+        float h = height;
+        if (m_layoutControlSize.x != DEFAULT) {
+            w = m_layoutControlSize.x;            
+        }
+        if (m_layoutControlSize.y != DEFAULT) {
+            h = m_layoutControlSize.y;            
+        }
+        control->setRect(Rect2D::xywh(p, Vector2(w, h)));
+        if ((m_layoutCaptionSize.x != DEFAULT) && (control->captionWidth() != 0)) {
+            control->setCaptionWidth(m_layoutCaptionSize.x);
+        }
+        if ((m_layoutCaptionSize.y != DEFAULT) && (control->captionHeight() != 0)) {
+            control->setCaptionHeight(m_layoutCaptionSize.y);
+        }
 
         increaseBounds(control->rect().x1y1());
 

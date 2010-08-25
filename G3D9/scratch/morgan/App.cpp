@@ -50,6 +50,13 @@ void App::onInit() {
     // Example of how to add debugging controls
     debugPane->addButton("Exit", this, &App::endProgram);
     
+    debugPane->beginRow();
+        debugPane->addButton("Hi");
+        debugPane->addButton("There");
+    debugPane->endRow();
+    debugPane->setNewChildSize(300, -1, 100);
+    debugPane->addDropDownList("Hello", Array<std::string>("1", "2"));
+    debugPane->addDropDownList("", Array<std::string>("1", "2"));
     debugPane->addLabel("Add more debug controls");
     debugPane->addLabel("in App::onInit().");
 
