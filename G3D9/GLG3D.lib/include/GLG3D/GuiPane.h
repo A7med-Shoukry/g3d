@@ -56,6 +56,12 @@ class GuiPane : public GuiContainer {
     friend class GuiRadioButton;
     friend class _GuiSliderBase;
 
+   
+    /** For use with setNewChildSize() */
+    enum {DEFAULT = -1};
+
+protected:
+
     /** For use with setLayout */	 	  
     enum LayoutDirection {
         /** Controls are moved next to the previous control using
@@ -67,11 +73,6 @@ class GuiPane : public GuiContainer {
             lowest current control. */
         COLUMN
     };
-    
-    /** For use with setLayout() */
-    enum {DEFAULT = -1};
-
-protected:
 
     _internal::Morph        m_morph;
 
@@ -93,8 +94,8 @@ protected:
 
     Vector2                 m_layoutControlSize;
 
-    GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 
+    GuiPane(GuiWindow* gui, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 
 private:
 
@@ -107,6 +108,7 @@ private:
     /** Finds the next vertical position for a control relative to the client rect. */
     Vector2 nextControlPos(bool isTool = false) const;
 
+    // This is templated so that the return type can be the same as the argument type.
     template<class T>
     T* addControl(T* control, float height = CONTROL_HEIGHT) {
         Vector2 p = nextControlPos(control->toolStyle());
@@ -121,6 +123,7 @@ private:
         } else {
             containerArray.append(container);
         }
+        m_layoutPreviousControl = control;
 
         return control;
     }
@@ -135,21 +138,6 @@ public:
     /** For use by GuiContainers.  \sa GuiPane::addPane, GuiWindow::pane */
     GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 
-    /** 
-        Sets the layout strategy for new controls added to this pane.
-
-        If you are in a ROW, setting the layout back to ROW starts a new row.
-        
-        \param controlWidth If not DEFAULT, controls have their GuiControl::rect.width set to this value.
-        \param controlHeight If not DEFAULT, controls have their GuiControl::rect.width set to this value.
-        \param captionWidth If not DEFAULT, controls with non-zero caption widths have their GuiControl::captionWidth adjusted to this value.
-        \param captionHeight If not DEFAULT, controls with non-zero caption heights have their GuiControl::captionWidth adjusted to this value.
-    */
-    virtual void setLayout(LayoutDirection direction,
-                           float controlWidth = DEFAULT,
-                           float controlHeight = DEFAULT,
-                           float captionWidth = DEFAULT,
-                           float captionHeight = DEFAULT);
     
     virtual void render(RenderDevice* rd, const GuiThemeRef& theme) const;
 
@@ -182,6 +170,34 @@ public:
        (e.g., G3D::GuiButton, G3D::GuiPane) control using this method.
      */
     GuiControl* addCustom(GuiControl* control);
+
+    /** 
+        By default, new controls are placed at the left edge of the pane
+        below the lowest control.  Between beginRow()...endRow()
+        controls are placed to the right of the previous control.
+
+        You can start a new row by making another call to beginRow().
+    */
+    virtual void beginRow() {
+        m_layoutDirection = ROW;
+        m_layoutPreviousControl = NULL;
+    }
+        
+    virtual void endRow() {
+        m_layoutDirection = COLUMN;
+    }
+
+    /** 
+        \param controlWidth If not DEFAULT, controls have their GuiControl::rect.width set to this value.
+        \param controlHeight If not DEFAULT, controls have their GuiControl::rect.width set to this value.
+        \param captionWidth If not DEFAULT, controls with non-zero caption widths have their GuiControl::captionWidth adjusted to this value.
+        \param captionHeight If not DEFAULT, controls with non-zero caption heights have their GuiControl::captionWidth adjusted to this value.
+    */
+    virtual void setNewChildSize
+    (float controlWidth = DEFAULT,
+     float controlHeight = DEFAULT,
+     float captionWidth = DEFAULT,
+     float captionHeight = DEFAULT);
 
     /** 
         If the text is "", no space is reserved for a caption.  If non-empty (even " "), then

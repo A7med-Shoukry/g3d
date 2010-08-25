@@ -71,9 +71,9 @@ void App::onInit() {
     m_shadowMap = ShadowMap::create();
 
     loadScene();
-	
-	show(Image3::createEmpty(600, 300));
-	show(Image3::createEmpty(600, 300));
+    
+    //show(Image3::createEmpty(600, 300));
+    //show(Image3::createEmpty(600, 300));
 }
 
 

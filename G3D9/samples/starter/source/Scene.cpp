@@ -62,8 +62,9 @@ static Table<std::string, std::string>& filenameTable() {
         settings.includeParentPath = true;
         settings.recursive = true;
 
-		FileSystem::list("*.scn.any", filenameArray, settings);
+        FileSystem::list("*.scn.any", filenameArray, settings);
 
+        lazyLogPrintf("Found scenes:\n");
         for (int i = 0; i < filenameArray.size(); ++i) {
             Any a;
             a.load(filenameArray[i]);
@@ -73,8 +74,10 @@ static Table<std::string, std::string>& filenameTable() {
                 "Duplicate scene names in " + filenameArray[i] + " and " +
                 filenameTable["name"]);
                 
+            lazyLogPrintf("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
             filenameTable.set(name, filenameArray[i]);
         }
+        logPrintf("");
     }
 
     return filenameTable;

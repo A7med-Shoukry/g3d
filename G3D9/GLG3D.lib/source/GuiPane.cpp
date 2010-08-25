@@ -40,10 +40,9 @@ GuiPane::GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, 
 }
 
 
-void GuiPane::setLayout(LayoutDirection direction, float controlWidth, float controlHeight,
-                        float captionWidth, float captionHeight) {
-    m_layoutPreviousControl = NULL;
-    m_layoutDirection = direction;
+void GuiPane::setNewChildSize
+(float controlWidth, float controlHeight,
+ float captionWidth, float captionHeight) {
     m_layoutCaptionSize.x = captionWidth;
     m_layoutCaptionSize.y = captionHeight;
     m_layoutControlSize.x = controlWidth;
@@ -80,9 +79,12 @@ Vector2 GuiPane::contentsExtent() const {
 
 
 Vector2 GuiPane::nextControlPos(bool isTool) const {
-    if (isTool && (controlArray.size() > 0) && controlArray.last()->toolStyle() ) {
-        // Place next to previous tool
-        return controlArray.last()->rect().x1y0();
+    if ((m_layoutDirection == ROW) || isTool) {
+        if (m_layoutPreviousControl) {
+            return m_layoutPreviousControl->rect().x1y0();
+        } else {
+            return Vector2(CONTROL_PADDING, CONTROL_PADDING);
+        }
     } else {
         float y = contentsExtent().y;
         return Vector2(CONTROL_PADDING, max(y, CONTROL_PADDING));
