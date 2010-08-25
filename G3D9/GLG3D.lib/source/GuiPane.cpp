@@ -23,8 +23,8 @@ void GuiPane::init(const Rect2D& rect) {
     setRect(rect);
     m_layoutDirection = COLUMN;
     m_layoutPreviousControl = NULL;
-    m_layoutControlSize = Vector2(DEFAULT, DEFAULT);
-    m_layoutCaptionSize = Vector2(DEFAULT, DEFAULT);
+    m_layoutControlSize = Vector2(DEFAULT_SIZE, DEFAULT_SIZE);
+    m_layoutCaptionSize = Vector2(DEFAULT_SIZE, DEFAULT_SIZE);
 }
 
 
