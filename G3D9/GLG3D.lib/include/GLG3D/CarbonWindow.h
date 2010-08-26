@@ -119,7 +119,7 @@ private:
     // Carbon Window Data
     WindowRef 		_window;
     AGLContext		_glContext;
-    AGLDrawable		_glDrawable;
+    //    AGLDrawable         _glDrawable;
     
     const bool		_createdWindow;
 

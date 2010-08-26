@@ -424,7 +424,7 @@ CarbonWindow::CarbonWindow
     _receivedCloseEvent = false;
     _windowActive = true;
     m_settings = s;
-    _glDrawable = 0;
+    //_glDrawable = 0;
     _enabledJoysticks = false;
     
     GLint attribs[100];
@@ -440,12 +440,13 @@ CarbonWindow::CarbonWindow
     attribs[i++] = AGL_RGBA;
     attribs[i++] = AGL_DOUBLEBUFFER;
     
-    if(m_settings.msaaSamples > 0) {
+    if (m_settings.msaaSamples > 0) {
         attribs[i++] = AGL_SAMPLE_BUFFERS_ARB; attribs[i++] = 1;
         attribs[i++] = AGL_SAMPLES_ARB;        attribs[i++] = m_settings.msaaSamples;
         //attribs[i++] = AGL_SUPERSAMPLE;
     }
     
+    //http://developer.apple.com/mac/library/qa/qa2007/qa1523.html
     // P-buffer support
     //attribs[i++] = AGL_PBUFFER;				attribs[i++] = GL_TRUE;
 
@@ -479,6 +480,8 @@ CarbonWindow::CarbonWindow
     
     attribs[i++] = AGL_ALL_RENDERERS;
     attribs[i++] = AGL_NONE;
+
+    // attribs[i++] = AGL_DISPLAY_MASK;                    attribs[i++] = openGLDisplayMask;
     
     AGLPixelFormat format;
     
@@ -562,10 +565,14 @@ CarbonWindow::CarbonWindow
     osErr = InstallWindowEventHandler(_window, NewEventHandlerUPP(_internal::OnDeviceScroll), GetEventTypeCount(_deviceScrollSpec), _deviceScrollSpec, this, NULL);
     osErr = InstallReceiveHandler(NewDragReceiveHandlerUPP(_internal::OnDragReceived),_window,this);
     
-    _glDrawable = (AGLDrawable) GetWindowPort(_window);
-    
-    if(!m_settings.fullScreen) {
-        format = aglChoosePixelFormat(NULL, 0, attribs);
+    //_glDrawable = (AGLDrawable) GetWindowPort(_window);
+
+
+
+    if (! m_settings.fullScreen) {
+        // Recommended by Apple, but crashes in full-screen mode
+        format = aglCreatePixelFormat(attribs);
+        //format = aglChoosePixelFormat(NULL, 0, attribs);
     } else {
         format = aglChoosePixelFormat(&displayHandle, 1, attribs);
     }
@@ -574,7 +581,7 @@ CarbonWindow::CarbonWindow
     
     alwaysAssertM(format != 0, "Unsupported Pixel Format.");
     
-    _glContext = aglCreateContext(format, NULL /*TODO: Share context*/);
+    _glContext = aglCreateContext(format, NULL);
     
     alwaysAssertM(_glContext != NULL, "Failed to create OpenGL Context.");
     
@@ -583,12 +590,13 @@ CarbonWindow::CarbonWindow
     if (m_settings.fullScreen) {
         aglEnable(_glContext, AGL_FS_CAPTURE_SINGLE);
     } else {
-        aglSetDrawable(_glContext, _glDrawable);
+        aglSetWindowRef(_glContext, _window);
+        //aglSetDrawable(_glContext, _glDrawable);
     }
     
     osErr = aglReportError();
     
-    alwaysAssertM(osErr == noErr, "Error Encountered Enabling Full Screen or Setting Drawable.");
+    alwaysAssertM(osErr == noErr, "Error Encountered Enabling Full Screen or Setting Window.");
     
     aglSetCurrentContext(_glContext);
     
