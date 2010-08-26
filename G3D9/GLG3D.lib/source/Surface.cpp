@@ -33,6 +33,16 @@ const Array<Vector4>& Surface::objectSpacePackedTangents() const {
     return t;
 }
 
+void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D) {
+    rd->pushState();
+    for (int i = 0; i < surface3D.size(); ++i) {
+        const Surface::Ref& surface = surface3D[i];
+        rd->setObjectToWorldMatrix(surface->coordinateFrame());
+        surface->sendGeometry(rd);
+    }
+    rd->popState();
+}
+
 
 void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds) {
     if (models.size() == 0) {

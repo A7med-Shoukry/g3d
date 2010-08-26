@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2003-11-15
-  @edited  2010-03-27
+  @edited  2010-08-27
  */ 
 
 #ifndef GLG3D_Surface_h
@@ -328,6 +328,12 @@ public:
      If \a partialCoverageIsTranslucent is true, also treats hasPartialCoverage as translucent.
      */
     static void extractTranslucent(Array<Surface::Ref>& all, Array<Surface::Ref>& translucent, bool partialCoverageIsTranslucent);
+
+    /** 
+        Sends the geometry for all of the specified surfaces, each with the corresponding coordinateFrame
+        bound as the RenderDevice objectToWorld matrix.
+     */
+    static void sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D);
 
     /** Render geometry only (no shading), and ignore color (but do perform alpha testing).
         Render only back or front faces (two-sided surfaces render no matter what).

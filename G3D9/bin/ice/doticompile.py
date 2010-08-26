@@ -400,7 +400,7 @@ def getConfigurationState(args):
     if unix and isLibrary(state.binaryType):
         prefix = 'lib'
 
-    state.installDir = state.buildDir + '/'
+    state.installDir = state.buildDir
 
     # Binary name
     if (state.binaryType == EXE):
