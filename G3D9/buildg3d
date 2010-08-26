@@ -252,7 +252,7 @@ def buildNativeFFmpeg():
     print '----------------------------------------------------\n'
     print 'Building ' + ', '.join(libs)
 
-    buildLibPath = pathConcat('build', platformName, 'lib')
+    buildLibPath = pathConcat('build', 'lib')
 
     # Check to see if any ffmpeg library needs to be built
     outOfDate = [(not os.path.exists(pathConcat(buildLibPath, lib))) for lib in libs]
@@ -385,11 +385,11 @@ def toolsTarget():
             x = run("../../bin/icompile", icompileConfig + ['--noprompt', '--opt'])
             os.chdir("../..")
             if x == 0:
-                copyIfNewer(pathConcat('temp/tools/viewer', platformName),
-                            pathConcat(pathConcat('build/', platformName), 'bin/viewer'))
+                copyIfNewer('temp/tools/viewer',
+                            pathConcat('build/bin/viewer'))
 
     if (x == 0):
-        dest = pathConcat('build', pathConcat(platformName, 'bin'))
+        dest = 'build/bin'
         copyIfNewer('bin', dest)
         f = pathConcat(dest, 'PKZIP25.EXE')
         if os.path.exists(f): os.remove(f)
@@ -816,9 +816,9 @@ def install():
     installInclude = pathConcat(libInstallDir, 'include')
     installLib     = pathConcat(libInstallDir, 'lib')
 
-    copyIfNewer('build/' + platformName + '/bin', installBin)
-    copyIfNewer('build/' + platformName + '/include', installInclude)
-    copyIfNewer('build/' + platformName + '/lib', installLib)
+    copyIfNewer('build/bin',     installBin)
+    copyIfNewer('build/include', installInclude)
+    copyIfNewer('build/lib',     installLib)
     copyIfNewer('build/G3D.jar', pathConcat(libInstallDir, 'lib/G3D.jar'))
     
     copyIfNewer('build/manual',  pathConcat(docInstallDir, 'manual'))

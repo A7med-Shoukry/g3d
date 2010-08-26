@@ -571,8 +571,8 @@ CarbonWindow::CarbonWindow
 
     if (! m_settings.fullScreen) {
         // Recommended by Apple, but crashes in full-screen mode
-        format = aglCreatePixelFormat(attribs);
-        //format = aglChoosePixelFormat(NULL, 0, attribs);
+        //format = aglCreatePixelFormat(attribs);
+        format = aglChoosePixelFormat(NULL, 0, attribs);
     } else {
         format = aglChoosePixelFormat(&displayHandle, 1, attribs);
     }
