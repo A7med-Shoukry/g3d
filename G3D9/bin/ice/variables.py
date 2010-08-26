@@ -310,6 +310,9 @@ class State:
     # rootDir
     buildDir                    = None
 
+    # Location used as the CWD when running the program
+    workDir                     = None
+
     # Location to which distribution files are written relative to rootDir
     installDir                  = None
      

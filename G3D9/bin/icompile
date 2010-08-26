@@ -644,8 +644,9 @@ def separateArgs(args):
 def runCompiledProgram(state, progArgs):
     printBar()
     curDir = os.getcwd()
-    os.chdir(state.binaryDir)
-    cmd = './' + state.binaryName + ' ' + string.join(progArgs, ' ')
+    cmd = os.path.abspath(pathConcat(state.binaryDir, state.binaryName)) + ' ' + string.join(progArgs, ' ')
+
+    os.chdir(state.workDir)
     ret = os.system(cmd)
     os.chdir(curDir)
     return ret
@@ -666,6 +667,7 @@ def gdbCompiledProgram(state, progArgs):
     tempDir = state.tempDir
     if not isUnixAbsolutePath(tempDir):
         tempDir = os.path.abspath(tempDir)
+
     commandFile = pathConcat(tempDir, 'gdb-commands.txt')
     f = open(commandFile, 'w')
     f.write('run ' + string.join(progArgs, ' '))
@@ -676,8 +678,8 @@ def gdbCompiledProgram(state, progArgs):
     #          -cd  Working directory
     #          -f   Print files and line numbers in Emacs-compatible format
     #          -silent Don't print copyright
-    cmd = ('gdb -silent -x ' + commandFile + ' -cd ' + state.binaryDir +
-                ' -q -f ' + state.binaryName)
+    cmd = ('gdb -silent -x ' + os.path.abspath(commandFile) + ' -cd ' + state.workDir +
+                ' -q -f ' + os.path.abspath(pathConcat(state.binaryDir, state.binaryName)))
     print cmd
     printBar()
     return os.system(cmd)
@@ -896,8 +898,9 @@ machine readability.
 """
 def printInfo(state):
     print 'icompile info'
-    print 'format 1' # Increment this when the output format changes
-    print 'workingDir           = "' + state.binaryDir + '"'
+    print 'format 2' # Increment this when the output format changes
+    print 'workDir              = "' + state.workDir + '"'
+    print 'binaryDir            = "' + state.binaryDir + '"'
     print 'binaryName           = "' + state.binaryName + '"'
     print 'binaryType           = "' + state.binaryType + '"'
     print 'target               = "' + state.target + '"'

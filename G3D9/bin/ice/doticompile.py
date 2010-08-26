@@ -63,6 +63,10 @@ configHelp = """
 #
 #  beep               If True, beep after compilation
 #
+#  workdir            Directory to use as the current working directory
+#                     (cwd) when launching the compiled program with
+#                     the --gdb or --run flag
+#
 # DEBUG and RELEASE Sections
 #
 #  compileoptions                     
@@ -139,6 +143,8 @@ library: %(defaultlibrary)s
 
 exclude: %(defaultexclude)s
 
+workdir: data-files
+
 # Colon-separated list of libraries on which this project depends.  If
 # a library is specified (e.g., png.lib) the platform-appropriate 
 # variation of that name is added to the libraries to link against.
@@ -173,9 +179,7 @@ linkoptions:
 """ Reads [section]name from the provided configuration, replaces
     <> and $() values with the appropriate settings.
 
-    If exp is False $() variables are *not* expanded. 
-
-    If
+    If exp is False, then $() variables are *not* expanded. 
 """    
 def configGet(state, config, section, name, exp = True):
     try:
@@ -292,6 +296,8 @@ def processProjectFile(state, ignoreIceTxt = False):
                 state.addUsesLibrary(u, False)
 
     state.buildDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'builddir', True))
+
+    state.workDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'workdir', True))
     
     state.tempParentDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'tempdir', True))
     state.tempDir = addTrailingSlash(pathConcat(state.tempParentDir, state.projectName))
