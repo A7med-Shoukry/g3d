@@ -282,10 +282,15 @@ GuiWindow::Ref GApp::show(const Texture::Ref& t) {
 void GApp::drawMessage(const std::string& message) {
     renderDevice->push2D();
     {
+        // White scrim
         renderDevice->setBlendFunc(RenderDevice::BLEND_SRC_ALPHA, RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA);
         Draw::fastRect2D(renderDevice->viewport(), renderDevice, Color4(Color3::white(), 0.8f));
-        debugWindow->theme()->defaultStyle().font->draw2D(renderDevice, message, renderDevice->viewport().center(), 30, 
-            Color3::black(), Color4::clear(), GFont::XALIGN_CENTER, GFont::YALIGN_CENTER);
+
+        // Text        
+        const GFont::Ref font = debugWindow->theme()->defaultStyle().font;
+        const float width = font->bounds(message, 1).x;
+        font->draw2D(renderDevice, message, renderDevice->viewport().center(), min(30.0f, renderDevice->viewport().width() / width * 0.80f), 
+                     Color3::black(), Color4::clear(), GFont::XALIGN_CENTER, GFont::YALIGN_CENTER);
     }
     renderDevice->pop2D();
     renderDevice->swapBuffers();

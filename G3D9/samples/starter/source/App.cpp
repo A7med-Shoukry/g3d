@@ -81,7 +81,15 @@ void App::loadScene() {
     drawMessage("Loading " + sceneName + "...");
 
     // Load the scene
-    m_scene = Scene::create(sceneName, defaultCamera);
+    try {
+        m_scene = Scene::create(sceneName, defaultCamera);
+    } catch (const ParseError& e) {
+        const std::string& msg = e.filename + format(":%d(%d): ", e.line, e.character) + e.message;
+        drawMessage(msg);
+        debugPrintf("%s", msg.c_str());
+        System::sleep(5);
+        m_scene = NULL;
+    }
 }
 
 
@@ -99,7 +107,9 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     (void)idt; (void)sdt; (void)rdt;
     // Add physical simulation here.  You can make your time
     // advancement based on any of the three arguments.
-    m_scene->onSimulation(sdt);
+    if (m_scene->notNull()) {
+        m_scene->onSimulation(sdt);
+    }
 }
 
 
@@ -128,14 +138,20 @@ void App::onUserInput(UserInput* ui) {
 
 void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
     // Append any models to the arrays that you want to later be rendered by onGraphics()
-    m_scene->onPose(surfaceArray);
+    if (m_scene.notNull()) {
+        m_scene->onPose(surfaceArray);
+    }
     (void)surface2D;
 }
 
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-    if (m_scene->lighting()->environmentMap.notNull()) {
-        Draw::skyBox(rd, m_scene->lighting()->environmentMap);
+    if (m_scene.isNull()) {
+        return;
+    }
+
+    if (m_scene->skyBox().notNull()) {
+        Draw::skyBox(rd, m_scene->skyBox());
     }
 
     // Render all objects (or, you can call Surface methods on the

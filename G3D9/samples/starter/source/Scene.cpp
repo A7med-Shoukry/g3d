@@ -64,18 +64,22 @@ static Table<std::string, std::string>& filenameTable() {
 
         FileSystem::list("*.scn.any", filenameArray, settings);
 
-        lazyLogPrintf("Found scenes:\n");
+        logLazyPrintf("Found scenes:\n");
         for (int i = 0; i < filenameArray.size(); ++i) {
             Any a;
-            a.load(filenameArray[i]);
-
-            std::string name = a["name"].string();
-            alwaysAssertM(! filenameTable.containsKey(name),
-                "Duplicate scene names in " + filenameArray[i] + " and " +
-                filenameTable["name"]);
+            try {
+                a.load(filenameArray[i]);
                 
-            lazyLogPrintf("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
-            filenameTable.set(name, filenameArray[i]);
+                std::string name = a["name"].string();
+                alwaysAssertM(! filenameTable.containsKey(name),
+                              "Duplicate scene names in " + filenameArray[i] + " and " +
+                              filenameTable["name"]);
+                
+                logLazyPrintf("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
+                filenameTable.set(name, filenameArray[i]);
+            } catch (...) {
+                logLazyPrintf("  <Parse error while loading %s>\n", filenameArray[i].c_str());
+            }
         }
         logPrintf("");
     }
@@ -168,7 +172,12 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     } else {
         s->m_skyBox = s->m_lighting->environmentMap;
     }
-    
+
+    // Default to using the skybox as an environment map if none is specified.
+    if (s->m_skyBox.notNull() && s->m_lighting->environmentMap.isNull()) {
+        s->m_lighting->environmentMap = s->m_skyBox;
+    }
+
     return s;
 }
 
