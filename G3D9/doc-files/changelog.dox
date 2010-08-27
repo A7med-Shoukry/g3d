@@ -21,6 +21,7 @@
      <li> Made alpha-testing optional in TriTree
      <li> Extended G3D::GCamera to have lens parameters
      <li> Lighting::Specification::operator Any()
+	 <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
      <li> G3D::Any::operator=(Array<T>)
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default
      <li> G3D::GApp::show

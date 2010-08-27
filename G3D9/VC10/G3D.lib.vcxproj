@@ -43,11 +43,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
     <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)\..\G3D.lib\include;$(SolutionDir)\..\GLG3D.lib\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)\..\build\win-i386-vc10\lib\</OutDir>
+    <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <TargetName>G3Dd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\..\build\win-i386-vc10\lib\</OutDir>
+    <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetExt>.lib</TargetExt>
     <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)\..\G3D.lib\include;$(SolutionDir)\..\GLG3D.lib\include;$(IncludePath)</IncludePath>

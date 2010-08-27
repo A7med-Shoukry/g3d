@@ -37,7 +37,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\..\build\win-i386-vc10\lib\</OutDir>
+    <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>pngd</TargetName>
@@ -49,7 +49,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zlib.lib\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)\..\build\win-i386-vc10\lib\</OutDir>
+    <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <TargetExt>.lib</TargetExt>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>png</TargetName>
