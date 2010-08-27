@@ -77,8 +77,10 @@ static Table<std::string, std::string>& filenameTable() {
                 
                 logLazyPrintf("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
                 filenameTable.set(name, filenameArray[i]);
+            } catch (const ParseError& e) {
+                logLazyPrintf("  <Parse error at %s:%d(%d): %s>\n", e.filename.c_str(), e.line, e.character, e.message.c_str());
             } catch (...) {
-                logLazyPrintf("  <Parse error while loading %s>\n", filenameArray[i].c_str());
+                logLazyPrintf("  <Error while loading %s>\n", filenameArray[i].c_str());
             }
         }
         logPrintf("");
@@ -94,6 +96,9 @@ Array<std::string> Scene::sceneNames() {
 
 
 Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
+    if (scene == "") {
+        return NULL;
+    }
 
     Scene::Ref s = new Scene();
 
