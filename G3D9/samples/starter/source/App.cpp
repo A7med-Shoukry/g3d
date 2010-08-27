@@ -107,7 +107,7 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     (void)idt; (void)sdt; (void)rdt;
     // Add physical simulation here.  You can make your time
     // advancement based on any of the three arguments.
-    if (m_scene->notNull()) {
+    if (m_scene.notNull()) {
         m_scene->onSimulation(sdt);
     }
 }
