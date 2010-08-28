@@ -1152,6 +1152,10 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
 		++ndim;
 	}
 
+	if (ndim < 3) {
+		throw std::string("OFF files must contain at least 3 dimensions");
+	}
+
     int nV = iFloor(ti.readNumber());
     int nF = iFloor(ti.readNumber());
     int nE = iFloor(ti.readNumber());
@@ -1159,16 +1163,64 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
 
 	///////////////////////////////////////////////////
 
-	/*
-    vertex.resize(nV);
-    texCoord.resize(0);
-    name = filenameBaseExt(filename);
+	// There is only one part, with one triList
+	Part& part = partArray.next();
+	Part::TriList::Ref triList = part.newTriList();
 
-    for (int i = 0; i < nV; ++i) {
-        vertex[i].x = ti.readNumber();
-        vertex[i].y = ti.readNumber();
-        vertex[i].z = ti.readNumber();            
+	Array<Vector3>& vertex = part.geometry.vertexArray;
+	Array<Vector3>& normal = part.geometry.normalArray;
+	Array<Vector2>& texCoord = part.texCoordArray;
+	Array<int>& index = triList->indexArray;
+
+    vertex.resize(nV);
+	if (hasNormals) {
+	    normal.resize(nV);
+	}
+
+	if (hasTexCoords) {
+	    texCoord.resize(nV);
+	}
+
+	name = filenameBaseExt(filename);
+
+	// Read the per-vertex data
+    for (int v = 0; v < nV; ++v) {
+
+		// Vertex 
+		for (int i = 0; i < 3; ++i) {
+	        vertex[v][i] = ti.readNumber();
+		}
+
+		// Ignore higher dimensions
+		for (int i = 3; i < ndim; ++i) {
+			ti.readNumber();
+		}
+
+		if (hasNormals) {
+			// Normal (assume always 3 components)
+			for (int i = 0; i < 3; ++i) {
+				normal[v][i] = ti.readNumber();
+			}
+		}
+
+		if (hasColors) {
+			// Color (assume always 3 components)
+			for (int i = 0; i < 3; ++i) {
+				ti.readNumber();
+			}
+		}
+
+		if (hasTexCoords) {
+			// Texcoords (assume always 2 components)
+			for (int i = 0; i < 2; ++i) {
+				texCoord[v][i] = ti.readNumber();
+			}
+		}
+		// Skip to the end of the line.  If the file was corrupt we'll at least get the next vertex right
+		ti.readUntilNewlineAsString();
     }
+
+	// Faces
 
     // Convert arbitrary triangle fans to triangles
     Array<int> poly;
@@ -1193,8 +1245,10 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
             // Expand the poly into triangles
             MeshAlg::toIndexedTriList(poly, PrimitiveType::TRIANGLE_FAN, index);
         }
+
+		// Ignore per-face colors
+		ti.readUntilNewlineAsString();
     }
-	*/
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 
