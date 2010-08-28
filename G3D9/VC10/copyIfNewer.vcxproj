@@ -37,20 +37,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\..\build\win-i386-vc10\bin\</OutDir>
+    <OutDir>$(SolutionDir)\..\build\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)..\build\win-i386-vc10\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\build\win-i386-vc10\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\build\win-i386-vc10\bin\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\build\bin\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)..\build\win-i386-vc10\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)..\build\win-i386-vc10\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

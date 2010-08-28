@@ -34,6 +34,8 @@
      <li> G3D::Surface::sendGeometry
      <li> Build system output directory no longer includes platform name (affects icompile as well)
      <li> Added new icompile working directory ([Global] workdir), defaults to data-files for new projects
+     <li> Improved OFF file parsing compatibility
+     <li> <b>Backwards Incompatible</b>: Removed OFF file loading from G3D::IFSModel 
      <li> <b>Backwards Incompatible</b>: Separated G3D::GuiControl::captionWidth and G3D::GuiControl::captionHeight
      <li> <b>Backwards Incompatible</b>: Replaced G3D::GLight::spotCutoff (in degrees) with G3D::GLight::spotHalfAngle (radians)
      <li> <b>Backwards Incompatible</b>: Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic

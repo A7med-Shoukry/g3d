@@ -37,15 +37,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>$(SolutionDir)..\build\win-i386-vc10\lib;$(SolutionDir)..\samples\minGlut\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)..\build\win-i386-vc10\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\build\lib;$(SolutionDir)..\samples\minGlut\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)d</TargetName>
     <OutDir>$(SolutionDir)..\build\win-i386-vc10\bin\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>$(SolutionDir)..\build\win-i386-vc10\lib;$(SolutionDir)..\samples\minGlut\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)..\build\win-i386-vc10\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\build\lib;$(SolutionDir)..\samples\minGlut\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)..\build\win-i386-vc10\bin\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>

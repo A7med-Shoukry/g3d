@@ -222,8 +222,10 @@ ArticulatedModel::Ref ArticulatedModel::fromFile(const std::string& filename, co
         model->init3DS(filename, preprocess);
     } else if (ext == "obj") {
         model->initOBJ(filename, preprocess);
-    } else if ((ext == "ifs") || (ext == "ply2") || (ext == "off") || (ext == "ply")) {
+    } else if ((ext == "ifs") || (ext == "ply2") || (ext == "ply")) {
         model->initIFS(filename, preprocess.xform);
+    } else if (ext == "off") {
+        model->initOFF(filename, preprocess);
     } else if (ext == "bsp") {
         model->initBSP(filename, preprocess);
     }
@@ -1099,6 +1101,54 @@ void ArticulatedModel::Part::pose
     }
 }
 
+
+void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& preprocess) {
+	/*
+    TextInput ti(filename);
+
+    // Based on http://www.geomview.org/docs/html/OFF.html
+    ti.readSymbol("OFF");
+    int nV = iFloor(ti.readNumber());
+    int nF = iFloor(ti.readNumber());
+    int nE = iFloor(ti.readNumber());
+    (void)nE;
+
+    vertex.resize(nV);
+    texCoord.resize(0);
+    name = filenameBaseExt(filename);
+
+    for (int i = 0; i < nV; ++i) {
+        vertex[i].x = ti.readNumber();
+        vertex[i].y = ti.readNumber();
+        vertex[i].z = ti.readNumber();            
+    }
+
+    // Convert arbitrary triangle fans to triangles
+    Array<int> poly;
+    for (int i = 0; i < nF; ++i) {
+        poly.fastClear();
+        int polySize = iFloor(ti.readNumber());
+        debugAssert(polySize > 2);
+
+        if (polySize == 3) {
+            // Triangle (common case)
+            for (int j = 0; j < 3; ++j) {
+                index.append(iFloor(ti.readNumber()));
+            }
+        } else {
+            poly.resize(polySize);
+            for (int j = 0; j < polySize; ++j) {
+                poly[j] = iFloor(ti.readNumber());
+                debugAssertM(poly[j] < nV, 
+                    "OFF file contained an index greater than the number of vertices."); 
+            }
+
+            // Expand the poly into triangles
+            MeshAlg::toIndexedTriList(poly, PrimitiveType::TRIANGLE_FAN, index);
+        }
+    }
+	*/
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 
 ArticulatedModel::PoseSpline::PoseSpline() {}

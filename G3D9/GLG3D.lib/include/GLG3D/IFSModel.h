@@ -6,7 +6,7 @@
   @cite Original IFS code by Nate Robbins
 
   @created 2003-11-12
-  @edited  2009-02-10
+  @edited  2010-08-10
  */ 
 
 
@@ -25,7 +25,7 @@ typedef ReferenceCountedPointer<class IFSModel> IFSModelRef;
 
 
 /**
- Loads the IFS, PLY2, PLY, and OFF research file formats.
+ Loads the IFS, PLY2, and PLY research file formats.
  You can also load these using ArticulatedModel, which provides more sophisticated 
  rendering mechanisms.
 

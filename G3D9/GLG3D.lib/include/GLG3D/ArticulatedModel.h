@@ -31,9 +31,12 @@ class Any;
  effects.
  
  Loads <a href="http://www.the-labs.com/Blender/3DS-details.html">3DS</a>, 
- <a href="http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html">OBJ</a>, <a href="http://www.riken.jp/brict/Yoshizawa/Research/PLYformat/PLYformat.html">PLY2</a>,
- <a href="http://local.wasp.uwa.edu.au/~pbourke/dataformats/ply/">PLY</a>, <a href="http://people.sc.fsu.edu/~jburkardt/data/off/off.html">OFF</a>, 
- <a href="http://www.mralligator.com/q3/">BSP</a>, and <a href="http://graphics.cs.brown.edu/games/brown-mesh-set/">IFS</a> files (with Articulatedmodel::fromFile), or
+ <a href="http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html">OBJ</a>, 
+ <a href="http://www.riken.jp/brict/Yoshizawa/Research/PLYformat/PLYformat.html">PLY2</a>,
+ <a href="http://local.wasp.uwa.edu.au/~pbourke/dataformats/ply/">PLY</a>, 
+ <a href="http://www.geomview.org/docs/html/OFF.html">OFF</a>, 
+ <a href="http://www.mralligator.com/q3/">BSP</a>, and 
+ <a href="http://graphics.cs.brown.edu/games/brown-mesh-set/">IFS</a> files (with Articulatedmodel::fromFile), or
  you can create models (with ArticulatedModel::createEmpty) from code at
  run time.  You can also load a model and then adjust the materials
  explicitly.  See ArticulatedModel::Preprocess and
@@ -628,8 +631,11 @@ private:
 
     /** Called from the constructor */
     void init3DS(const std::string& filename, const Preprocess& preprocess);
-
+	
     /** Called from the constructor */
+	void initOFF(const std::string& filename, const Preprocess& preprocess);
+    
+	/** Called from the constructor */
     void initOBJ(const std::string& filename, const Preprocess& preprocess);
 
     /** Called from the constructor */
