@@ -1103,16 +1103,63 @@ void ArticulatedModel::Part::pose
 
 
 void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& preprocess) {
-	/*
     TextInput ti(filename);
 
     // Based on http://www.geomview.org/docs/html/OFF.html
-    ti.readSymbol("OFF");
+    
+	///////////////////////////////////////////////////////////////
+	// Parse header
+	std::string header = ti.readSymbol();
+	bool hasTexCoords = false;
+	bool hasColors = false;
+	bool hasNormals = false;
+	bool hasHomogeneous = false;
+	bool hasHighDimension = false;
+
+	if (beginsWith(header, "ST")) {
+		hasTexCoords = true;
+		header = header.substr(2);
+	}
+	if (beginsWith(header, "C")) {
+		hasColors = true;
+		header = header.substr(1);
+	}
+	if (beginsWith(header, "N")) {
+		hasNormals = true;
+		header = header.substr(1);
+	}
+	if (beginsWith(header, "4")) {
+		hasHomogeneous = true;
+		header = header.substr(1);
+	}
+	if (beginsWith(header, "n")) {
+		hasHighDimension = true;
+		header = header.substr(1);
+	}
+
+	// Remaining header should be "OFF", but is not required according to the spec
+
+	Token t = ti.peek();
+	if ((t.type() == Token::SYMBOL) && (t.string() == "BINARY")) {
+		throw std::string("BINARY OFF files are not supported by this version of G3D::ArticulatedModel");
+	}
+
+	int ndim = 3;
+	if (hasHighDimension) {
+		ndim = ti.readNumber();
+	}
+	if (hasHomogeneous) {
+		++ndim;
+	}
+
     int nV = iFloor(ti.readNumber());
     int nF = iFloor(ti.readNumber());
     int nE = iFloor(ti.readNumber());
     (void)nE;
 
+	///////////////////////////////////////////////////
+
+	/*
     vertex.resize(nV);
     texCoord.resize(0);
     name = filenameBaseExt(filename);
