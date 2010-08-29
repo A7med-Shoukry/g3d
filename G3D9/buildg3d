@@ -472,7 +472,7 @@ def dataTarget():
     # Generate demos and support
     copyIfNewer('data-files', 'build/data')
     copyIfNewer('../data', 'build/data')
-    copyIfNewer('demos', 'build/demos')
+    copyIfNewer('samples', 'build/samples')
 
     return 0
 
@@ -823,7 +823,7 @@ def install():
     
     copyIfNewer('build/manual',  pathConcat(docInstallDir, 'manual'))
     copyIfNewer('build/data',    pathConcat(docInstallDir, 'data'))
-    copyIfNewer('build/demos',   pathConcat(docInstallDir, 'demos'))
+    copyIfNewer('build/samples', pathConcat(docInstallDir, 'samples'))
 
     if unix:
         # Set file permissions to world-readable

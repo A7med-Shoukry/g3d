@@ -74,6 +74,9 @@ private:
     /** Negative number */
     float                       m_focusPlaneZ;
 
+    /** Non-negative, in seconds */
+    float                       m_exposureTime;
+
 public:
 
     /** Must be of the format produced by the Any cast, e.g.,
@@ -127,6 +130,26 @@ public:
         return m_cframe;
     }
 
+    /** 
+        Time from "shutter open" to "shutter close".  This is often 0 for 
+        traditional real-time rendering.  Larger numbers are useful for
+        capturing motion blur in more sophisticated rendering systems.
+        
+        In a real camera, a longer exposure also makes the image
+        brighter.  In rendering, it is useful to control the global
+        image intensity separately from the amount of motion blur,
+        so this interval may not affect image intensity under
+        your renderer.
+     */
+    float exposureTime() const {
+        return m_exposureTime;
+    }
+
+    void setExposureTime(float t) {
+        debugAssert(t >= 0);
+        m_exposureTime = t;
+    }
+    
     /** Displacement from the upper left added in pixels in screen
         space to the projection matrix.  This is useful for shifting
         the sampled location from the pixel center (OpenGL convention)
