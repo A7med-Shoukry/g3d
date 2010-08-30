@@ -298,6 +298,10 @@ def processProjectFile(state, ignoreIceTxt = False):
     state.buildDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'builddir', True))
 
     state.workDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'workdir', True))
+    if not os.path.exists(state.workDir):
+       maybeWarn("Working directory '" + state.workDir + "' does not exist; changing to '.'." +
+          " Edit ice.txt to configure this permanently.") 
+       state.workDir = ''
     
     state.tempParentDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'tempdir', True))
     state.tempDir = addTrailingSlash(pathConcat(state.tempParentDir, state.projectName))
