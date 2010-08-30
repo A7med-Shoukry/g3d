@@ -197,6 +197,7 @@ void SuperSurface::renderNonShadowed(
                 // do so now.
                 rd->disableLighting();
                 rd->setColor(Color3::black());
+                rd->setShader(NULL);
                 if (posed->m_gpuGeom->twoSided) {
                     rd->setCullFace(RenderDevice::CULL_NONE);
                 }
