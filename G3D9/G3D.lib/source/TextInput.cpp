@@ -129,18 +129,18 @@ Token TextInput::read() {
 
 
 std::string TextInput::readUntilNewlineAsString() {
-    // Go to the front of the next token
-    Token t = read();
-
-    // Reset the position to the start of that token
+/*
+    // Reset the read position back to the start of that token
     currentCharOffset = t.bytePosition();
+    lineNumber = t.line();
+    charNumber = t.character();
     stack.clear();
 
     if (currentCharOffset == buffer.size()) {
         // End of file
         return "";
     }
-
+    */
     std::string s;
 
     // Read until newline or eof
@@ -153,6 +153,7 @@ std::string TextInput::readUntilNewlineAsString() {
         } else {
             s += c;
             ++currentCharOffset;
+            ++charNumber;
         }
     } while (currentCharOffset < buffer.size());
 
