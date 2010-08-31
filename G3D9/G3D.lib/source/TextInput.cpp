@@ -132,7 +132,7 @@ std::string TextInput::readUntilNewlineAsString() {
     // Go to the front of the next token
     Token t = read();
 
-    // Reset the position to the start of this token
+    // Reset the position to the start of that token
     currentCharOffset = t.bytePosition();
     stack.clear();
 

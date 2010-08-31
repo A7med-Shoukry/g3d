@@ -1163,8 +1163,8 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
     }
 
     int nV = iFloor(ti.readNumber());
-    int nF = iFloor(ti.readNumber());
     int nE = iFloor(ti.readNumber());
+    int nF = iFloor(ti.readNumber());
     (void)nE;
 
     ///////////////////////////////////////////////////
