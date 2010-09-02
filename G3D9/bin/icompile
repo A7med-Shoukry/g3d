@@ -1138,6 +1138,9 @@ def icompile(projectDir, allArgs):
 
 if __name__ == '__main__':
 
+    #if ('EMACS' in os.environ) and (os.environ.get('EMACS') == 't'):
+    #    print '-*- compilation-shell-minor-mode -*-'
+
     # Process global arguments and then invoke the actual build process
 
     (args, progArgs) = separateArgs(sys.argv[1:])

@@ -128,7 +128,7 @@ public:
                NULL (or an empty list) indicates that no depth buffer should be allocated. */
             Array<const ImageFormat*>   preferredDepthFormats;
 
-            inline FilmSettings() : enabled(true), dimensions(-1, -1) {     
+            FilmSettings() : enabled(true), dimensions(-1, -1) {     
 
                 preferredColorFormats.append(ImageFormat::R11G11B10F(), ImageFormat::RGB16F(), ImageFormat::RGBA8());
                 preferredDepthFormats.append(ImageFormat::DEPTH24(), ImageFormat::DEPTH16(), ImageFormat::DEPTH32());
@@ -136,9 +136,22 @@ public:
         };
 
         FilmSettings            film;
+
+        /** Arguments to the program, from argv.  The first is the name of the program. */
+        Array<std::string>      argArray;
         
-        inline Settings() : dataDir("<AUTO>"), debugFontName("console-small.fnt"), 
-                     logFilename("log.txt"), useDeveloperTools(true), writeLicenseFile(true) {
+        Settings() : 
+            dataDir("<AUTO>"), debugFontName("console-small.fnt"), 
+            logFilename("log.txt"), useDeveloperTools(true), writeLicenseFile(true) {
+        }
+
+        Settings(int argc, const char* argv[]) : 
+            dataDir("<AUTO>"), debugFontName("console-small.fnt"), 
+            logFilename("log.txt"), useDeveloperTools(true), writeLicenseFile(true) {
+            argArray.resize(argc);
+            for (int i = 0; i < argc; ++i) {
+                argArray[i] = argv[i];
+            }
         }
     };
 
