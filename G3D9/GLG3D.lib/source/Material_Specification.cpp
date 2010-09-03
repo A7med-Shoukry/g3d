@@ -94,14 +94,18 @@ Material::Specification::Specification(const Any& any) {
                 break;
             }    
         } else if (key == "transmissive") {
-            if (beginsWith(toLower(it->value.name()), "color3")) {
+            if (it->value.type() == Any::STRING) {
+                setTransmissive(it->value.resolveStringAsFilename());
+            } else if (beginsWith(toLower(it->value.name()), "color3")) {
                 setTransmissive(Color3(it->value));
             } else {
                 // Full specification
                 setTransmissive(Texture::Specification(it->value));
             }
         } else if (key == "emissive") {
-            if (it->value.nameBeginsWith("Color3")) {
+            if (it->value.type() == Any::STRING) {
+                setEmissive(it->value.resolveStringAsFilename());
+            } else if (it->value.nameBeginsWith("Color3")) {
                 setEmissive(Color3(it->value));
             } else {
                 // Full specification

@@ -46,6 +46,9 @@ void App::onInit() {
     developerWindow->videoRecordDialog->setEnabled(true);
     showRenderingStats = true;
 
+    m_shader = Shader::fromFiles("shade.vrt", "shade.pix");
+    m_sphere = ArticulatedModel::fromFile(System::findDataFile("ifs/sphere.ifs"));
+
     /////////////////////////////////////////////////////////////
     // Example of how to add debugging controls
     debugPane->addButton("Exit", this, &App::endProgram);
@@ -147,6 +150,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     if (m_scene->lighting()->environmentMap.notNull()) {
         Draw::skyBox(rd, m_scene->lighting()->environmentMap);
     }
+    /*
 
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
@@ -168,6 +172,12 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
+    */
+    m_shader->args.set("cubemap", m_scene->lighting()->environmentMap);
+    rd->setShader(m_shader);
+    Array<Surface::Ref> a;
+    m_sphere->pose(a);
+    a[0]->sendGeometry(rd);
 }
 
 

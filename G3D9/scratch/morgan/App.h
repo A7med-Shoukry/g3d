@@ -18,6 +18,9 @@ class App : public GApp {
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;
 
+    Shader::Ref         m_shader;
+    ArticulatedModel::Ref m_sphere;
+
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
 
