@@ -105,10 +105,12 @@ public:
          \beta */
         Specification(const Any& any);
 
+        Specification(const Color3& lambertian);
+
         bool operator==(const Specification& s) const;
         operator Any() const;
 
-        inline bool operator!=(const Specification& s) const {
+        bool operator!=(const Specification& s) const {
             return !((*this) == s);
         }
 
@@ -139,13 +141,13 @@ public:
 
         void setLambertian(const Texture::Specification& spec);
         
-        inline void setLambertian(const std::string& filename, float c) {
+        void setLambertian(const std::string& filename, float c) {
             setLambertian(filename, Color4(Color3(c), 1.0f));
         }
 
         void setLambertian(const Color4& constant);
 
-        inline void setLambertian(float c) {
+        void setLambertian(float c) {
             setLambertian(Color4(Color3(c), 1.0f));
         }
         

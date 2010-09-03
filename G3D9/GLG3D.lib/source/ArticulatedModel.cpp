@@ -3,7 +3,7 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  @created 2003-09-14
- @edited  2010-03-18
+ @edited  2010-09-18
  */
 
 #include "GLG3D/ArticulatedModel.h"
@@ -73,9 +73,11 @@ ArticulatedModel::Preprocess::Preprocess(const Any& any) {
         } else if (key == "normalmapwhiteheightinpixels") {
             normalMapWhiteHeightInPixels = it->value;
         } else if (key == "materialsubstitution") {
-            // TODO
+            for (Any::AnyTable::Iterator m = it->value.table().begin(); m.hasMore(); ++m) {
+                materialSubstitution.set(m->key, m->value);
+            }
         } else if (key == "materialoverride") {
-            materialOverride = Material::create(it->value);
+            setMaterialOverride(it->value);
         } else if (key == "program") {
             program.resize(it->value.size());
             for (int i = 0; i < program.size(); ++i) {
@@ -87,12 +89,14 @@ ArticulatedModel::Preprocess::Preprocess(const Any& any) {
     }
 }
 
+
 ArticulatedModel::Preprocess::operator Any() const {
     Any a(Any::TABLE, "ArticulatedModel::Preprocess");
     a.set("stripMaterials", stripMaterials);
 
-
-    // TODO: a.set("materialOverride", stripMaterials);
+    if (m_hasMaterialOverride) {
+        a.set("materialOverride", m_materialOverride);
+    }
     // a["textureDimension"] = TODO
     a.set("addBumpMaps", addBumpMaps);
     a.set("xform", xform.operator Any());
@@ -100,7 +104,12 @@ ArticulatedModel::Preprocess::operator Any() const {
     a.set("bumpMapScale", bumpMapScale);
     a.set("normalMapWhiteHeightInPixels", normalMapWhiteHeightInPixels);
     a.set("replaceTwoSidedWithGeometry", replaceTwoSidedWithGeometry);
-    //a["materialSubstitution"] = materialSubstitution
+    
+    Any t(Any::TABLE);
+    for (Table<std::string, Material::Specification>::Iterator it = materialSubstitution.begin(); it.hasMore(); ++it) {
+        t[it->key] = it->value;
+    }
+    a["materialSubstitution"] = t;
 
     return a;
 }
@@ -230,11 +239,12 @@ ArticulatedModel::Ref ArticulatedModel::fromFile(const std::string& filename, co
         model->initBSP(filename, preprocess);
     }
 
-    if (preprocess.materialOverride.notNull()) {
+    if (preprocess.hasMaterialOverride()) {
+        Material::Ref mo = Material::create(preprocess.materialOverride());
         for (int p = 0; p < model->partArray.size(); ++p) {
             Part& part = model->partArray[p];
             for (int t = 0; t < part.triList.size(); ++t) {
-                part.triList[t]->material = preprocess.materialOverride;
+                part.triList[t]->material = mo;
             }
         }
     }
@@ -317,6 +327,11 @@ void ArticulatedModel::init3DS(const std::string& filename, const Preprocess& pr
 
     // Rotation/scale component
     Matrix3 R = xform.upper3x3();
+
+    Table<std::string, Material::Ref> materialSubstitution;
+    for (Table<std::string, Material::Specification>::Iterator it = preprocess.materialSubstitution.begin(); it.hasMore(); ++it) {
+        materialSubstitution.set(it->key, Material::create(it->value));
+    }
 
     for (int p = 0; p < load.objectArray.size(); ++p) {
         Load3DS::Object& object = load.objectArray[p];
@@ -407,7 +422,8 @@ void ArticulatedModel::init3DS(const std::string& filename, const Preprocess& pr
                         if (load.materialNameToIndex.containsKey(materialName)) {
                             int i = load.materialNameToIndex[materialName];
                             const Load3DS::Material& material = load.materialArray[i];
-                            if (! preprocess.materialSubstitution.get(material.texture1.filename, mat)) {
+                            
+                            if (! materialSubstitution.get(material.texture1.filename, mat)) {
                                 const Material::Specification& spec = compute3DSMaterial(&material, path, preprocess);
                                 mat = Material::create(spec);
                             }
@@ -474,7 +490,7 @@ Material::Specification ArticulatedModel::compute3DSMaterial
 
     Material::Specification spec;
 
-    if (preprocess.stripMaterials || preprocess.materialOverride.notNull()) {
+    if (preprocess.stripMaterials || preprocess.hasMaterialOverride()) {
         spec.setLambertian(Color3::one() * 0.7f);
         spec.setSpecular(Color3::one() * 0.2f);
         spec.setGlossyExponentShininess(100);
@@ -564,7 +580,7 @@ void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& pr
 
     // Convert it to an ArticulatedModel (discarding light maps)
     ArticulatedModel::Settings settings;
-//    settings.weld.normalSmoothingAngle = 0; // Turn off smoothing
+    //    settings.weld.normalSmoothingAngle = 0; // Turn off smoothing
     setSettings(settings);
 
     name = bspFile;

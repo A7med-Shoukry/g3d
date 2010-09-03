@@ -33,9 +33,11 @@
      <li> G3D::GuiPane::setNewChildSize(), GuiPane::beginRow()...GuiPane::endRow()
      <li> G3D::PointHashGrid::getIntersectingMembers()
      <li> G3D::Surface::sendGeometry
+     <li> G3D::Material::Specification(Color3)
      <li> Build system output directory no longer includes platform name (affects icompile as well)
      <li> Added new icompile working directory ([Global] workdir), defaults to data-files for new projects
      <li> Improved OFF file parsing compatibility
+     <li> <b>Backwards Incompatible</b>: Changed G3D::ArticulatedModel::Preprocess::materialOverride to a Material::Specification; likewise for the materialSubstitution table.
      <li> <b>Backwards Incompatible</b>: Removed OFF file loading from G3D::IFSModel 
      <li> <b>Backwards Incompatible</b>: Separated G3D::GuiControl::captionWidth and G3D::GuiControl::captionHeight
      <li> <b>Backwards Incompatible</b>: Replaced G3D::GLight::spotCutoff (in degrees) with G3D::GLight::spotHalfAngle (radians)

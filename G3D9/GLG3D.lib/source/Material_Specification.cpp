@@ -25,6 +25,12 @@ Material::Specification::Specification() :
 }
 
 
+Material::Specification::Specification(const Color3& lambertian) {
+    *this = Specification();
+    setLambertian(lambertian);
+}
+
+
 Material::Specification::Specification(const Any& any) {
     *this = Specification();
 
@@ -33,7 +39,12 @@ Material::Specification::Specification(const Any& any) {
         setLambertian(any.resolveStringAsFilename());
         return;
     }
-
+    
+    if (any.nameBeginsWith("Color3")) {
+        setLambertian(Color3(any));
+        return;
+    }
+    
     any.verifyName("Material::Specification");
 
     for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
@@ -41,9 +52,9 @@ Material::Specification::Specification(const Any& any) {
         if (key == "lambertian") {
             if (it->value.type() == Any::STRING) {
                 setLambertian(it->value.resolveStringAsFilename());
-            } else if (beginsWith(toLower(it->value.name()), "color4")) {
+            } else if (it->value.nameBeginsWith("Color4")) {
                 setLambertian(Color4(it->value));
-            } else if (beginsWith(toLower(it->value.name()), "color3")) {
+            } else if (it->value.nameBeginsWith("Color3")) {
                 setLambertian(Color3(it->value));
             } else {
                 // Full specification
@@ -52,7 +63,7 @@ Material::Specification::Specification(const Any& any) {
         } else if (key == "specular") {
             if (it->value.type() == Any::STRING) {
                 setSpecular(it->value.resolveStringAsFilename());
-            } else if (beginsWith(toLower(it->value.name()), "color3")) {
+            } else if (it->value.nameBeginsWith("Color3")) {
                 setSpecular(Color3(it->value));
             } else {
                 // Full specification
@@ -65,10 +76,10 @@ Material::Specification::Specification(const Any& any) {
                 break;
 
             case Any::ARRAY:
-                if (beginsWith(toLower(it->value.name()), "glossyexponent")) {
+                if (it->value.nameBeginsWith("glossyExponent")) {
                     it->value.verifySize(1);
                     setGlossyExponentShininess(it->value[0]);
-                } else if (beginsWith(toLower(it->value.name()), "mirror")) {
+                } else if (it->value.nameBeginsWith("mirror")) {
                     it->value.verifySize(0);
                     setMirrorShininess();
                 } else {
@@ -90,7 +101,7 @@ Material::Specification::Specification(const Any& any) {
                 setTransmissive(Texture::Specification(it->value));
             }
         } else if (key == "emissive") {
-            if (beginsWith(toLower(it->value.name()), "color3")) {
+            if (it->value.nameBeginsWith("Color3")) {
                 setEmissive(Color3(it->value));
             } else {
                 // Full specification
@@ -118,6 +129,14 @@ Material::Specification::Specification(const Any& any) {
             any.verify(false, "Illegal key: " + it->key);
         }
     }
+}
+
+
+Material::Specification::operator Any() const {
+    Any a(Any::TABLE, "Material::Specification");
+    // TODO
+    debugAssertM(false, "Unimplemented");
+    return a;
 }
 
 

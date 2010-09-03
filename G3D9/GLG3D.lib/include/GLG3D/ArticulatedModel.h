@@ -527,7 +527,9 @@ public:
       (or even invert!) the model as it is loaded. */
     class Preprocess {
     public:
-        /** Removes all material properties while loading for cases where only geometry is desired. */
+        /** Removes all material properties while loading for cases
+            where only geometry is desired.  materialOverride runs
+            after this, so it can replace the materials. */
         bool                          stripMaterials;
 
         /** Transformation to apply to geometry after it is loaded. 
@@ -553,32 +555,55 @@ public:
         /** When loading normal maps, argument used for G3D::GImage::computeNormalMap() whiteHeightInPixels.  Default is -0.02f */
         float                         normalMapWhiteHeightInPixels;
 
-        /** During loading, whenever a material whose diffuse texture is named X is specified, it is automatically replaced
-            with materialSubstitution[X].*/
-        Table<std::string, Material::Ref> materialSubstitution;
+        /** During loading, whenever a material whose diffuse texture
+            is named X is specified, it is automatically replaced with
+            materialSubstitution[X].
 
-        /** Override all materials with this one, if non-NULL.  This
-            forces stripMaterials to be true.*/
-        Material::Ref                 materialOverride;
+            
+        */
+        Table<std::string, Material::Specification> materialSubstitution;
 
         /** \sa ArticulatedModel::replaceTwoSidedWithGeometry */
         bool                          replaceTwoSidedWithGeometry;
 
         /** Operations are performed after all other transformations during loading, except for replaceTwoSidedWithGeometry. */
         Array<Operation::Ref>         program;
-        
+
+    private:
+
+        bool                          m_hasMaterialOverride;
+       
+        /** If Override all materials with this one, if non-NULL.  This
+            forces stripMaterials to be true.*/
+        Material::Specification       m_materialOverride;
+
+    public:
         Preprocess(const Any& any);
         operator Any() const;
 
-        inline Preprocess() : stripMaterials(false), xform(Matrix4::identity()), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false) {}
+        void setMaterialOverride(const Material::Specification& m) {
+            m_hasMaterialOverride = true;
+            m_materialOverride = m;
+        }
 
-        explicit inline Preprocess(const Matrix4& m) : stripMaterials(false), xform(m), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false) {}
+        const Material::Specification& materialOverride() const {
+            debugAssert(m_hasMaterialOverride);
+            return m_materialOverride;
+        }
+
+        bool hasMaterialOverride() const {
+            return m_hasMaterialOverride;
+        }
+
+        Preprocess() : stripMaterials(false), xform(Matrix4::identity()), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false), m_hasMaterialOverride(false) {}
+
+        explicit Preprocess(const Matrix4& m) : stripMaterials(false), xform(m), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false), m_hasMaterialOverride(false) {}
 
         /** Initializes with a scale matrix */
-        explicit inline Preprocess(const Vector3& scale) : stripMaterials(false), xform(Matrix4::scale(scale)), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false) {}
+        explicit Preprocess(const Vector3& scale) : stripMaterials(false), xform(Matrix4::scale(scale)), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false), m_hasMaterialOverride(false) {}
  
         /** Initializes with a scale matrix */
-        explicit inline Preprocess(const float scale) : stripMaterials(false), xform(Matrix4::scale(scale)), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false) {}
+        explicit Preprocess(const float scale) : stripMaterials(false), xform(Matrix4::scale(scale)), addBumpMaps(false), parallaxSteps(0), bumpMapScale(0.05f), normalMapWhiteHeightInPixels(-0.02f), replaceTwoSidedWithGeometry(false), m_hasMaterialOverride(false) {}
     };
 
 
