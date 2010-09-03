@@ -1205,6 +1205,11 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
 
     name = filenameBaseExt(filename);
 
+    Matrix3 normalXform;
+    if (hasNormals) {
+        normalXform = preprocess.xform.upper3x3().inverse().transpose();
+    }
+
     // Read the per-vertex data
     for (int v = 0; v < nV; ++v) {
 
@@ -1212,6 +1217,8 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
         for (int i = 0; i < 3; ++i) {
             vertex[v][i] = ti.readNumber();
         }
+
+        vertex[v] = (preprocess.xform * Vector4(vertex[v], 1.0f)).xyz();
 
         // Ignore higher dimensions
         for (int i = 3; i < ndim; ++i) {
@@ -1223,6 +1230,8 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
             for (int i = 0; i < 3; ++i) {
                 normal[v][i] = ti.readNumber();
             }
+
+            normal[v] = (normalXform * normal[v]).direction();
         }
 
         if (hasColors) {
