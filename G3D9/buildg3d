@@ -521,12 +521,12 @@ def zip(source, zipfile):
     else:
         run('zip', ['-r', '-9', zipfile, source])
 
-def srcTarget():
+def srczipTarget():
     if windows:
         raise 'src target must be run on a Unix platform'
     
     # First copy everything to the temp directory to remove
-    # CVS files
+    # .svn files
     dest ='temp/src/G3D'
     mkdir(dest)
     copyIfNewer('.', dest)
@@ -535,6 +535,19 @@ def srcTarget():
     # Now produce the zipfile
     zip('G3D', '../../build/' + 'G3D' + '-' + g3dVersion.toString() + '-src.zip')
     os.chdir('../..')
+
+def sourceTarget():
+    if windows:
+        raise 'src target must be run on a Unix platform'
+    
+    # First copy everything to the temp directory to remove
+    # .svn and ~ files
+    dest ='build/source'
+    mkdir(dest)
+    copyIfNewer('.', dest)
+
+    return 1    
+
     
 ##################################################################################
     
@@ -796,7 +809,9 @@ help       Display this message
 
 DEVELOPER TARGETS (unsupported)
 
-src        Build a sources zipfile (Unix only)
+source     Move the sources into the build directory
+
+srczip     Build a sources zipfile (Unix only)
 
 ffmpegWin  Build precompiled Windows libraries for ffmpeg using a Unix 
            g++ MinGW cross-compiler.
@@ -840,7 +855,13 @@ def dispatchOnTarget(target, validTargets):
     code = 0
     for v in validTargets:
         if target == v.func_name:
-            return v()
+            code = v()
+            found += 1
+            if code != 0:
+                return code
+
+    if (found > 0):
+        return 0
 
     print '"' + target[0:-6] + '" is not a valid build target (type "build help" to see all targets).'
     return -1
@@ -855,7 +876,7 @@ if __name__ == "__main__":
     
     code = dispatchOnTarget(sys.argv[1] + 'Target',
         [libTarget, cleanTarget, testTarget,
-         docTarget, allTarget, srcTarget, toolsTarget,
+         docTarget, allTarget, srczipTarget, sourceTarget, toolsTarget,
          jarTarget, helpTarget, updateTarget, 
          ffmpegWinTarget, ffmpegCCTarget, dataTarget])
 

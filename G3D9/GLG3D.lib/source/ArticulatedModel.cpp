@@ -66,6 +66,7 @@ ArticulatedModel::Preprocess::Preprocess(const Any& any) {
             replaceTwoSidedWithGeometry = it->value.boolean();
         } else if (key == "xform") {
             xform = it->value;
+            debugPrintf("%s\n", xform.toString().c_str());
         } else if (key == "parallaxsteps") {
             parallaxSteps = it->value;
         } else if (key == "bumpmapscale") {
