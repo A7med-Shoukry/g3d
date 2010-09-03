@@ -1530,7 +1530,7 @@ void RenderDevice::setFramebuffer(const FramebufferRef& fbo) {
             glDrawBuffer(GLenum(m_state.drawBuffer));
             debugAssertGLOk();
         } else {
-            debugAssertM(GLCaps::supports_GL_ARB_framebuffer_object(), 
+            debugAssertM(GLCaps::supports_GL_ARB_framebuffer_object() || GLCaps::supports_GL_EXT_framebuffer_object(), 
                 "Framebuffer Object not supported!");
             m_state.framebuffer = fbo;
             syncDrawBuffer(false);
