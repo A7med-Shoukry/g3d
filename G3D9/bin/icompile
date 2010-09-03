@@ -670,7 +670,12 @@ def gdbCompiledProgram(state, progArgs):
 
     commandFile = pathConcat(tempDir, 'gdb-commands.txt')
     f = open(commandFile, 'w')
-    f.write('run ' + string.join(progArgs, ' '))
+    if 'ICE_EXTRA_SOURCE' in os.environ:
+        # Split at ; and :
+        dirs = os.environ[ICE_EXTRA_SOURCE].split(';').join(':').split(':')
+        for d in dirs:
+            f.write('directory ' + d + '\n')
+    f.write('run ' + string.join(progArgs, ' ') + '\n')
     f.close()
 
     # Options: -q   Don't print copyright info

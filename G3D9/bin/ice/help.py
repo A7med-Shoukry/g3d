@@ -55,9 +55,13 @@ Options:
  
  --doc            Generate documentation before building.
  
- --gdb            Run the program under gdb if compilation succeeds,
-                  passing all further arguments (...) to the program.
-                  You can also just run gdb yourself after using iCompile.
+ --gdb            Run the program under gdb if compilation succeeds, passing all
+                  further arguments (...) to the program.  gdb will
+                  look in the directories in the ICE_EXTRA_SOURCE
+                  environment variable for library and other source
+                  files, in addition to the ones from your program.
+                  You can also just run gdb yourself after using
+                  iCompile.
 
  --info           Read configuration files and command line options, but instead
                   of building, print out information about where the generated
@@ -101,7 +105,7 @@ Special file and directory names:
   data-files       Files that will be needed at runtime
   doc-files        Files needed by your documentation (Doxygen output)
   tmp              Object files are put here
-  icon.*           Becomes the program icon
+  icon.*           Becomes the program icon on OS X
   
 iCompile will not look for source files in directories matching: """ +
            str(copyifnewer._excludeDirPatterns) +
