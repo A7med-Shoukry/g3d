@@ -44,8 +44,6 @@ void App::onInit() {
     sky = Sky::fromFile(System::findDataFile("sky"));
     skyParameters = SkyParameters( G3D::toSeconds(10, 00, 00, AM) );
     lighting = Lighting::fromSky( sky, skyParameters, Color3::white() );
-    lighting->ambientTop = Color3::white() * 0.3f;
-    lighting->ambientBottom = Color3::white() * 0.1f;
 	
     colorClear = Color3::white();
     //modelController = ThirdPersonManipulator::create();
@@ -111,11 +109,7 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& posed3D, Array<Surfa
     rd->clear(true, true, true);
 
     rd->enableLighting();
-        rd->setAmbientLightColor(localLighting->ambientTop);
-        if (localLighting->ambientBottom != localLighting->ambientTop) {
-            rd->setLight(iMin(7, localLighting->lightArray.size()) + 1, GLight::directional(-Vector3::unitY(), 
-                localLighting->ambientBottom - localLighting->ambientTop, false)); 
-        }
+        rd->setAmbientLightColor(Color3::white() * 0.3f);
             
         // Lights
         for (int L = 0; L < iMin(7, localLighting->lightArray.size()); ++L) {

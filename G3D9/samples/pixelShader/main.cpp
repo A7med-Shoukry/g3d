@@ -155,7 +155,7 @@ void App::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surface
     rd->pushState();
         rd->enableLighting();
         rd->setLight(0, localLighting->lightArray[0]);
-        rd->setAmbientLightColor(localLighting->ambientAverage());
+        rd->setAmbientLightColor(Color3::white() * 0.3f);
 
         // 3D
         if (posed3D.size() > 0) {
@@ -183,7 +183,7 @@ void App::configureShaderArgs(const LightingRef lighting) {
 	phongShader->args.set("wsLight", light.position.xyz().direction());
 	phongShader->args.set("lightColor", light.color);
 	phongShader->args.set("wsEyePosition", defaultCamera.coordinateFrame().translation);
-	phongShader->args.set("ambientLightColor", lighting->ambientAverage());
+	phongShader->args.set("ambientLightColor", Color3::white() * 0.3f);
 
 	Color3 color = colorList[diffuseColorIndex].element(0).color(Color3::white()).rgb();
 	phongShader->args.set("diffuseColor", color);

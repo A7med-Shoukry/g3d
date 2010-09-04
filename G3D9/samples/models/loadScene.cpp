@@ -78,7 +78,7 @@ void App::loadScene() {
         glass.setRefractionHint(RefractionQuality::DYNAMIC_FLAT);
 
         ArticulatedModel::Preprocess p;
-        p.materialOverride = Material::create(glass);
+        p.setMaterialOverride(glass);
         ArticulatedModel::Ref model = ArticulatedModel::fromFile(filename, p);
 
         entityArray.append(Entity::create(model, CoordinateFrame(rot180, Vector3(x,0.05f,0))));
@@ -94,7 +94,7 @@ void App::loadScene() {
         tissue.setGlossyExponentShininess(10);
 
         ArticulatedModel::Preprocess p;
-        p.materialOverride = Material::create(tissue);
+        p.setMaterialOverride(tissue);
         ArticulatedModel::Ref model = ArticulatedModel::fromFile(filename, p);
 
         entityArray.append(Entity::create(model, CoordinateFrame(rot180, Vector3(x,0.05f,0))));
@@ -148,8 +148,6 @@ void App::loadScene() {
             lighting->environmentMapColor = Color3::black();
         }
 
-        lighting->ambientTop = Color3(0.7f, 0.7f, 1.0f) * skyParameters.diffuseAmbient;
-        lighting->ambientBottom = Color3(0.3f, 0.4f, 0.5f) * skyParameters.diffuseAmbient;
         lighting->emissiveScale = skyParameters.emissiveScale;
         lighting->lightArray.clear();
 
