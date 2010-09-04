@@ -15,6 +15,9 @@
     <Filter Include="Header Files\GL">
       <UniqueIdentifier>{d5e14431-3939-4851-be3a-b314ad925b95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{97dc342c-9265-435f-9ff4-b34a422106c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp">
@@ -587,6 +590,45 @@
   <ItemGroup>
     <None Include="..\GLG3D.lib\source\NSAutoreleasePoolWrapper.mm">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_Refract.vrt">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.vrt">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_BumpMap.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_Components.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_GBuffer.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_GBufferPosition.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_Globals.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_LambertianComponent.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_Light.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_NonShadowedPass.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_NonShadowedPass.vrt">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_Refract.pix">
+      <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>
 </Project>

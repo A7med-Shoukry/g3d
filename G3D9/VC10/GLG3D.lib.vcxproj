@@ -290,6 +290,19 @@
     <ClInclude Include="..\GLG3D.lib\source\Load3DS.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\data-files\SuperShader\SS_BumpMap.pix" />
+    <None Include="..\data-files\SuperShader\SS_Components.pix" />
+    <None Include="..\data-files\SuperShader\SS_GBuffer.pix" />
+    <None Include="..\data-files\SuperShader\SS_GBufferPosition.pix" />
+    <None Include="..\data-files\SuperShader\SS_Globals.pix" />
+    <None Include="..\data-files\SuperShader\SS_LambertianComponent.pix" />
+    <None Include="..\data-files\SuperShader\SS_Light.pix" />
+    <None Include="..\data-files\SuperShader\SS_NonShadowedPass.pix" />
+    <None Include="..\data-files\SuperShader\SS_NonShadowedPass.vrt" />
+    <None Include="..\data-files\SuperShader\SS_Refract.pix" />
+    <None Include="..\data-files\SuperShader\SS_Refract.vrt" />
+    <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.pix" />
+    <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.vrt" />
     <None Include="..\GLG3D.lib\source\NSAutoreleasePoolWrapper.mm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
