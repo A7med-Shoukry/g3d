@@ -1814,23 +1814,29 @@ public:
     /**
      Sets the current shininess exponent used in the lighting equation.
      On the range 0 (large highlight) to 255 (tiny, focussed highlight).
+     \deprecated
      */
     void setShininess(float s);
 
     /**
      You must also RenderDevice::enableLighting.
+     \deprecated
      */
     void setAmbientLightColor(
         const Color3&        color);
 
+    /** \deprecated */
     void setAmbientLightColor(
         const Color4&        color);
 
+    /** \deprecated */
     const Color4& ambientLightColor() const {
         return m_state.lights.ambient;
     }
 
-    /** Returns an approximation of the current fixed function lighting state */
+    /** Returns an approximation of the current fixed function lighting state.
+     \deprecated 
+    */
     void getFixedFunctionLighting(const LightingRef& lighting) const;
 
     /**

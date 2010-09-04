@@ -296,12 +296,7 @@ void NonShadowedPass::setLighting(const LightingRef& lighting) {
 
     configureLights(0, LIGHTS_PER_PASS, lighting->lightArray, args);
     
-    args.set("ambientTop",      lighting->ambientTop);
-    args.set("ambientBottom",   lighting->ambientBottom);
-
-    if (lighting->environmentMap.notNull()) {
-        args.set("environmentMap",  lighting->environmentMap, OPTIONAL);
-    }
+    args.set("environmentMap",  Texture::whiteCubeIfNull(lighting->environmentMap), OPTIONAL);
 
     // Emissive scale is modified in getConfiguredShader
 
@@ -340,13 +335,9 @@ ExtraLightPass::ExtraLightPass() :
     Pass(System::findDataFile("SS_NonShadowedPass.vrt"),
          System::findDataFile("SS_NonShadowedPass.pix")) {
 
-    args.set("ambientTop",      Color3::black());
-    args.set("ambientBottom",   Color3::black());
-
     // Knock out all other terms if they are specified
     args.set("environmentConstant", Color3::black(), OPTIONAL);
-    static TextureRef emptyCubeMap = Texture::createEmpty("empty cube map", 16, 16, ImageFormat::RGB8(), Texture::DIM_CUBE_MAP);
-    args.set("environmentMap",  emptyCubeMap, OPTIONAL);
+    args.set("environmentMap",  Texture::whiteCube(), OPTIONAL);
 
     args.set("emissiveConstant", Color3::black(), OPTIONAL);
     args.set("reflectConstant", Color3::black(), OPTIONAL);

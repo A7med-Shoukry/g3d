@@ -269,6 +269,12 @@ public:
         or future calls will return the mutated texture as well. */
     static Texture::Ref white();
 
+    /** @brief Returns a small all-white (1,1,1,1) cube map texture.  
+    
+        The result is memoized and shared. Do not mutate this texture
+        or future calls will return the mutated texture as well. */
+    static Texture::Ref whiteCube();
+
     /** @brief Returns a small opaque all-black (0,0,0,1) texture.  
     
         The result is memoized and shared. Do not mutate this texture
@@ -294,18 +300,28 @@ public:
     static Texture::Ref createColor(const Color4uint8& c);
 
     /** @copydoc white(). */
-    inline static Texture::Ref one() {
+    static Texture::Ref one() {
         return white();
     }
 
     /** Returns \a t if it is non-NULL, or white() if \a t is NULL */
-    inline static Texture::Ref whiteIfNull(const Texture::Ref& t) {
+    static Texture::Ref whiteIfNull(const Texture::Ref& t) {
         if (t.isNull()) {
             return white();
         } else {
             return t;
         }
     }
+
+    /** Returns \a t if it is non-NULL, or whiteCube() if \a t is NULL */
+    static Texture::Ref whiteCubeIfNull(const Texture::Ref& t) {
+        if (t.isNull()) {
+            return whiteCube();
+        } else {
+            return t;
+        }
+    }
+
 
     /** Returns \a t if it is non-NULL, or opaqueBlack() if \a t is NULL */
     inline static Texture::Ref opaqueBlackIfNull(const Texture::Ref& t) {

@@ -27,24 +27,22 @@
         
        crateModel = ArticulatedModel::Specification {            
             filename = "ifs/crate.ifs",
+            /*
             preprocess = ArticulatedModel::Preprocess {
                 // You can #include a material file, or simply put all of the
                 // options here as was done for groundModel.  #include can be
                 // used to replace any Any value, including a whole 
                 // ArticulatedModel::Specification.
                 materialOverride = #include("material/metalcrate/metalcrate.mat.any")              
-            }
+                }*/
        },
        
        
     },
     
     lighting = Lighting::Specification {
-        ambientTop    = Color3::fromARGB(0x303842),
-        ambientBottom = Color3::fromARGB(0x262627),
-
-        lightArray = (GLight::directional(Vector3(1, 2, 1), Color3::fromARGB(0xfcf6eb), true),
-                      GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false)),
+        //        lightArray = (GLight::directional(Vector3(1, 2, 1), Color3::fromARGB(0xfcf6eb), true),
+        //            GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false)),
 
         environmentMap = Texture::Specification {
             filename      = "cubemap/noonclouds/noonclouds_*.png",

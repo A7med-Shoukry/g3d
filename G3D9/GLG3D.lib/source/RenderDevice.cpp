@@ -84,12 +84,9 @@ GCamera RenderDevice::projectionAndCameraMatrix() const {
 void RenderDevice::getFixedFunctionLighting(const LightingRef& lighting) const {
     // Reset state
     lighting->lightArray.fastClear();
-    lighting->ambientBottom = lighting->ambientTop = Color3::black();
 
     // Load the lights
     if (m_state.lights.lightEnabled) {
-
-        lighting->ambientBottom = lighting->ambientTop = m_state.lights.ambient.rgb();
 
         for (int i = 0; i < MAX_LIGHTS; ++i) {
             if (m_state.lights.lightEnabled[i]) {

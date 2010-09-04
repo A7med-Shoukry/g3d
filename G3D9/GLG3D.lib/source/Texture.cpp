@@ -373,9 +373,31 @@ TextureRef Texture::white() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        GImage im(8, 8, 3);
+        GImage im(4, 4, 4);
         System::memset(im.byte(), 0xFF, im.width() * im.height() * im.channels());
         t = Texture::fromGImage("White", im);
+
+        // Store in cache
+        cache = t;
+    }
+
+    return t;
+}
+
+TextureRef Texture::whiteCube() {
+    static WeakReferenceCountedPointer<Texture> cache;
+
+    TextureRef t = cache.createStrongPtr();
+    if (t.isNull()) {
+        // Cache is empty
+        GImage im(4, 4, 4);
+        System::memset(im.byte(), 0xFF, im.width() * im.height() * im.channels());
+        Array< Array<const void*> > bytes;
+        Array<const void*>& cubeFace = bytes.next();
+        for (int i = 0; i < 6; ++i)  {
+            cubeFace.append(im.pixel4());
+        }
+        t = Texture::fromMemory("White cube", bytes, ImageFormat::RGBA8(), im.width(), im.height(), 1, ImageFormat::RGBA8(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
 
         // Store in cache
         cache = t;

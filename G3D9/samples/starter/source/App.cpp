@@ -165,7 +165,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     for (int i = 0; i < m_scene->lighting()->lightArray.size(); ++i) {
         rd->setLight(i, m_scene->lighting()->lightArray[i]);
     }
-    rd->setAmbientLightColor(m_scene->lighting()->ambientAverage());
+    rd->setAmbientLightColor(Color3::white() * 0.5f);
 
     Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
     Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());

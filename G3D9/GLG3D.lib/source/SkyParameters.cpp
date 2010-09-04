@@ -187,10 +187,6 @@ Lighting::Specification::Specification(const Any& any) {
         const std::string& key = toLower(it->key);
         if (key == "emissivescale") {
             emissiveScale = it->value;
-        } else if (key == "ambienttop") {
-            ambientTop = it->value;
-        } else if (key == "ambientbottom") {
-            ambientBottom = it->value;
         } else if (key == "environmentmap") {
             environmentMap = it->value;
             if (it->value.type() == Any::STRING) {
@@ -216,8 +212,6 @@ Lighting::Specification::Specification(const Any& any) {
 Lighting::Specification::operator Any() const {
     Any a(Any::TABLE, "lighting");
     a["emissiveScale"] = emissiveScale;
-    a["ambientTop"] = ambientTop;
-    a["ambientBottom"] = ambientBottom;
     a["environmentMap"] = environmentMap;
     a["environmentMapColor"] = environmentMapColor;
     a["lightArray"] = lightArray;
@@ -228,9 +222,6 @@ Lighting::Specification::operator Any() const {
 Lighting::Ref Lighting::create(const Specification& s) {
     Lighting::Ref L = new Lighting();
     L->lightArray = s.lightArray;
-    L->emissiveScale = s.emissiveScale;
-    L->ambientTop = s.ambientTop;
-    L->ambientBottom = s.ambientBottom;
     if (s.environmentMap.filename != "") {
         L->environmentMap = Texture::create(s.environmentMap);
     }
@@ -246,9 +237,6 @@ LightingRef Lighting::clone() const {
 
 LightingRef Lighting::fromSky(const SkyRef& sky, const SkyParameters& skyParameters, const Color3& groundColor) {
     LightingRef lighting = new Lighting();
-
-    lighting->ambientTop    = skyParameters.ambient * Color3(0.9, 0.9, 1.1);
-    lighting->ambientBottom = skyParameters.ambient * groundColor;
 
     lighting->environmentMap = sky->getEnvironmentMap();
     lighting->environmentMapColor = skyParameters.skyAmbient;

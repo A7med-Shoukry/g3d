@@ -3,7 +3,7 @@
 
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  @created 2002-10-05
- @edited  2010-08-06
+ @edited  2010-09-06
 
  Copyright 2000-2010, Morgan McGuire.
  All rights reserved.
@@ -132,19 +132,17 @@ public:
     class Specification {
     public:
         Color3                            emissiveScale;
-        Color3                            ambientTop;
-        Color3                            ambientBottom;
         Texture::Specification            environmentMap;
         Color3                            environmentMapColor;
         Array<GLight>                     lightArray;
-        Specification() : emissiveScale(Color3::white()), ambientTop(Color3::black()), ambientBottom(Color3::black()), environmentMapColor(Color3::white()) {}
+        Specification() : emissiveScale(Color3::white()), environmentMapColor(Color3::white()) {}
         Specification(const class Any&);
         operator Any() const;
     };
 
 private:
 
-    Lighting() : emissiveScale(Color3::white()), ambientTop(Color3::black()), ambientBottom(Color3::black()), environmentMapColor(Color3::white()) {}
+    Lighting() : emissiveScale(Color3::white()), environmentMapColor(Color3::white()) {}
 
 public:
 
@@ -153,14 +151,11 @@ public:
 
     /** Multiply this by all emissive values when rendering.  
         Some algorithms (e.g., G3D::ToneMap) scale
-        down light intensity to preserve dynamic range.*/
+        down light intensity to preserve dynamic range.
+
+        \deprecated
+    */
     Color3              emissiveScale;
-
-    /** Light reflected from the sky (usually slightly blue) */
-    Color3              ambientTop;
-
-    /** Light reflected from the ground (usually neutral, brown, or green).  May be identical to ambientTop. */
-    Color3              ambientBottom;
 
     /** Cube map or sphere map of the surrounding environment (often just the skybox, although 
          it may be rendered per-object). */
@@ -173,10 +168,6 @@ public:
 
     /** Creates a (dark) environment. */
     static Ref create(const Specification& s = Specification());
-
-    inline Color3 ambientAverage() const {
-        return (ambientBottom + ambientTop) / 2.0f;
-    }
 
     /** Make a copy of this lighting environment (does not clone the environment map) */
     Lighting::Ref clone() const;

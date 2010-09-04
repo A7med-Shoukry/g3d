@@ -505,19 +505,11 @@ void Surface::renderNonShadowed(
 
     rd->pushState();
         if (rd->colorWrite()) {
-            rd->setAmbientLightColor(lighting->ambientTop);
-            Color3 C = lighting->ambientBottom - lighting->ambientTop;
-
-            int shift = 0;
-            if ((C.r != 0) || (C.g != 0) || (C.b != 0)) {
-                rd->setLight(0, GLight::directional(-Vector3::unitY(), C, false));
-                ++shift;
-            }
-
+            rd->setAmbientLightColor(Color3::white() * 0.5);
             Array<GLight> ns;
             lighting->getNonShadowCastingLights(ns);
             for (int L = 0; L < iMin(7, ns.size()); ++L) {
-                rd->setLight(L + shift, ns[L]);
+                rd->setLight(L, ns[L]);
             }
             rd->enableLighting();
         }

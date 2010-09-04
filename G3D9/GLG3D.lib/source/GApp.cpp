@@ -562,8 +562,6 @@ Lighting::Ref GApp::defaultLighting() {
 
     lighting->lightArray.append(GLight::directional(Vector3(1,2,1), Color3::fromARGB(0xfcf6eb), true));
     lighting->lightArray.append(GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false));
-    lighting->ambientTop    = Color3::fromARGB(0x303842);
-    lighting->ambientBottom = Color3::fromARGB(0x262627);
 
     // Perform our own search first, since we have a better idea of where this directory might be
     // than the general System::findDataFile.  This speeds up loading of the starter app.
