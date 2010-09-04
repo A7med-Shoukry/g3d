@@ -253,7 +253,7 @@ class NonShadowedPass : public Pass {
 protected:
     
     Color3   m_emissiveScale;
-    Color3   m_environmentMapColor;
+    float    m_environmentMapScale;
 
     NonShadowedPass();
 

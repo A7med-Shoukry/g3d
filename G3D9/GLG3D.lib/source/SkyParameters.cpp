@@ -193,8 +193,8 @@ Lighting::Specification::Specification(const Any& any) {
                 // Cube map defaults
                 environmentMap.settings = Texture::Settings::cubeMap();
             }
-        } else if (key == "environmentmapcolor") {
-            environmentMapColor = it->value;
+        } else if (key == "environmentmapcscale") {
+            environmentMapScale = it->value;
         } else if (key == "lightarray") {
             const Any& array = it->value;
             array.verifyType(Any::ARRAY);
@@ -213,7 +213,7 @@ Lighting::Specification::operator Any() const {
     Any a(Any::TABLE, "lighting");
     a["emissiveScale"] = emissiveScale;
     a["environmentMap"] = environmentMap;
-    a["environmentMapColor"] = environmentMapColor;
+    a["environmentMapScale"] = environmentMapScale;
     a["lightArray"] = lightArray;
 
     return a;
@@ -225,7 +225,7 @@ Lighting::Ref Lighting::create(const Specification& s) {
     if (s.environmentMap.filename != "") {
         L->environmentMap = Texture::create(s.environmentMap);
     }
-    L->environmentMapColor = s.environmentMapColor;
+    L->environmentMapScale = s.environmentMapScale;
     return L;
 }
 
@@ -239,7 +239,7 @@ LightingRef Lighting::fromSky(const SkyRef& sky, const SkyParameters& skyParamet
     LightingRef lighting = new Lighting();
 
     lighting->environmentMap = sky->getEnvironmentMap();
-    lighting->environmentMapColor = skyParameters.skyAmbient;
+    lighting->environmentMapScale = skyParameters.skyAmbient.average();
 
     lighting->lightArray.append(skyParameters.directionalLight());
 

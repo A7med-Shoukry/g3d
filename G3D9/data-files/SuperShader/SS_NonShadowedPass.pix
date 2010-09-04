@@ -29,7 +29,7 @@ uniform vec3        lightDirection3;
 uniform vec4        lightAttenuation3;
 
 uniform samplerCube environmentMap;
-uniform vec3        environmentMapScale;
+uniform float       environmentMapScale;
 
 #ifdef EMISSIVECONSTANT
     uniform vec3        emissiveConstant;

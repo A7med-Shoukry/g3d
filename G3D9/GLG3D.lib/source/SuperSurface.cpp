@@ -507,13 +507,13 @@ bool SuperSurface::renderFFNonShadowedOpaqueTerms(
 
     if (! mirrorReflectiveFF(bsdf) &&
         lighting.notNull() &&
-        (lighting->environmentMapColor != Color3::black())) {
+        (lighting->environmentMapScale != 0.0f)) {
 
         rd->pushState();
 
             // Reflections are specular and not affected by surface texture, only
             // the reflection coefficient
-            rd->setColor(bsdf->specular().constant().rgb() * lighting->environmentMapColor);
+            rd->setColor(bsdf->specular().constant().rgb() * lighting->environmentMapScale);
 
             // TODO: Use diffuse alpha map here somehow?
             rd->setTexture(0, NULL);

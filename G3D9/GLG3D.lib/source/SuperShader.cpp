@@ -315,7 +315,7 @@ void NonShadowedPass::setLighting(const LightingRef& lighting) {
     // Emissive scale is modified in getConfiguredShader
 
     m_emissiveScale       = lighting->emissiveScale;
-    m_environmentMapColor = lighting->environmentMapColor;
+    m_environmentMapScale = lighting->environmentMapScale;
 
 }
 
@@ -327,7 +327,7 @@ Shader::Ref NonShadowedPass::getConfiguredShader
     const Shader::Ref& s = Pass::getConfiguredShader(material, c);
 
     s->args.set("emissiveConstant",    material.emissive().constant() * m_emissiveScale, OPTIONAL);
-    s->args.set("environmentMapScale", m_environmentMapColor, OPTIONAL);
+    s->args.set("environmentMapScale", m_environmentMapScale, OPTIONAL);
 
     return s;
 }

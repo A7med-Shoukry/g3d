@@ -577,7 +577,7 @@ Lighting::Ref GApp::defaultLighting() {
                           TextureFormat::RGB8(), Texture::DIM_CUBE_MAP,
                           Texture::Settings::cubeMap(), 
                           Texture::Preprocess::gamma(2.1f));
-    lighting->environmentMapColor = Color3::one();
+    lighting->environmentMapScale = 1.0f;
 
     return lighting;
 }
