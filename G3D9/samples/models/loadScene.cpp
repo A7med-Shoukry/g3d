@@ -2,9 +2,7 @@
 
 void App::loadScene() {
     const std::string path = "";
-
-    sky = Sky::fromFile(System::findDataFile("sky"));
-
+	
     const Matrix3 rot180 = Matrix3::fromAxisAngle(Vector3::unitY(), toRadians(180));
     const Matrix3 rot270 = Matrix3::fromAxisAngle(Vector3::unitY(), toRadians(270));
 
@@ -135,34 +133,9 @@ void App::loadScene() {
         entityArray.append(Entity::create(model, CoordinateFrame(Vector3(0, groundY, 0))));
     }
 
-    lighting = Lighting::create();
     {
-        skyParameters = SkyParameters(G3D::toSeconds(1, 00, 00, PM));
-
-        skyParameters.skyAmbient = Color3::white();
-
-        if (sky.notNull()) {
-            lighting->environmentMap = sky->getEnvironmentMap();
-            lighting->environmentMapColor = skyParameters.skyAmbient;
-        } else {
-            lighting->environmentMapColor = Color3::black();
-        }
-
-        lighting->emissiveScale = skyParameters.emissiveScale;
-        lighting->lightArray.clear();
-
-        GLight L = skyParameters.directionalLight();
-        // Decrease the blue since we're adding blue ambient
-        L.color *= Color3(1.2f, 1.2f, 1) * 0.5f;
-        L.position = Vector4(Vector3(0,1,1).direction(), 0);
-
-        /*
-        L.position = Vector4(0,10,0,1);
-        L.spotCutoff = 45;
-        L.spotDirection = -Vector3::unitY();
-        */
-
-        lighting->lightArray.append(L);
+	    lighting = defaultLighting();
+		// Some point lights
         lighting->lightArray.append(GLight::point(Vector3(-1.5f,-0.6f,2.5f), Color3::blue() * 0.7f, 0.1f, 0, 1.5f, false));
         lighting->lightArray.append(GLight::point(Vector3(1.5f,-0.6f,2.5f), Color3::purple() * 0.7f, 0.1f, 0, 1.5f, false));
         lighting->lightArray.append(GLight::point(Vector3(-1.5f,-0.6f,1), Color3::green() * 0.7f, 0.1f, 0, 1.5f, false));

@@ -9,11 +9,7 @@ private:
 
     ShadowMap::Ref              shadowMap;
     Texture::Ref                logo;
-
-    SkyRef                      sky;
-    SkyParameters               skyParameters;
-    LightingRef                 lighting;
-
+    Lighting::Ref               lighting;
     Array<Entity::Ref>          entityArray;
     Texture::Ref                texture;
 

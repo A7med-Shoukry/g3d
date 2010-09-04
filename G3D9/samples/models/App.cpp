@@ -58,11 +58,10 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
     // Cyan background
     rd->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
 
-    rd->clear(sky.notNull(), true, true);
+    rd->clear();
 
-    if (sky.notNull()) {
-        sky->render(rd, skyParameters);
-    }
+	rd->setColor(lighting->environmentMapColor);
+	Draw::skyBox(rd, lighting->environmentMap);
     
     Surface::sortAndRender(rd, defaultCamera, posed3D, lighting, Array<ShadowMap::Ref>(shadowMap), 
         Array<SuperShader::Pass::Ref>(), Surface::ALPHA_BLEND);
