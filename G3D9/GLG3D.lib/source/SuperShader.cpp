@@ -112,6 +112,20 @@ void Pass::primeCodeCache(const std::string& originalFilename) {
     shaderTextCache.set(originalFilename, code);
 }
 
+/** Produces A + B, ensuring that any #version directive in B remains at the very top
+of the final string */
+static std::string glslConcat(const std::string& A, std::string B) {
+	std::string versionLine;
+	if (beginsWith(B, "#version ")) {
+		// Strip off the version line, including the \n. We must keep
+		// it in front of everything else. 
+		int pos = B.find("\n") + 1;
+		versionLine = B.substr(0, pos);
+		B = B.substr(versionLine.length());
+	}
+
+	return versionLine + A + B;	
+}
 
 Shader::Ref Pass::loadShader(
     const std::string& vertexFilename,
@@ -125,8 +139,8 @@ Shader::Ref Pass::loadShader(
     // Fetch and compile the customized shader
     ShaderRef s = 
         Shader::fromStrings(
-            defines + shaderTextCache[vertexFilename],
-            defines + shaderTextCache[pixelFilename]);
+			glslConcat(defines, shaderTextCache[vertexFilename]),
+            glslConcat(defines, shaderTextCache[pixelFilename]));
 
     // By default, assume backface culling
     s->args.set("backside", 1.0, true);

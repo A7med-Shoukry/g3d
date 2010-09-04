@@ -28,12 +28,8 @@ uniform vec3        lightColor3;
 uniform vec3        lightDirection3;
 uniform vec4        lightAttenuation3;
 
-#ifdef MIRROR
-	// Only provided when the BSDF is known to contain
-	// mirror reflective terms
-	uniform samplerCube environmentMap;
-	uniform vec3        environmentMapScale;
-#endif
+uniform samplerCube environmentMap;
+uniform vec3        environmentMapScale;
 
 #ifdef EMISSIVECONSTANT
     uniform vec3        emissiveConstant;
