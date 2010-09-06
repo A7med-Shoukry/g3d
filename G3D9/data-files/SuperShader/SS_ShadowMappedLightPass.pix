@@ -18,6 +18,8 @@ uniform sampler2DShadow shadowMap;
 varying vec4        shadowCoord;
 
 void main(void) {
+#define pi (3.1415926)
+#define invPi (0.318309886)
 
 #include "SS_LambertianComponent.pix"
     gl_FragColor.a = 
@@ -102,20 +104,22 @@ void main(void) {
        shininess = 0.0;
 #   endif
 
-    vec3 I_lambertian = BLACK;
-    vec3 I_specular = BLACK;
+    // Incident irradiance
+    vec3 E_lambertian = BLACK;
+    vec3 E_specular = BLACK;
 
     addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition0, lightAttenuation0,
-                         lightDirection0, lightColor0, I_lambertian, I_specular, wsL);
+                         lightDirection0, lightColor0, E_lambertian, E_specular, wsL);
         
+    // Factor of 1/pi has been factored out of the BRDF coefficients
     gl_FragColor.rgb =
-        shadow * (BLACK
+        invPi * shadow * (BLACK
 #       if defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP)
-           + I_lambertian * lambertianColor.rgb 
+           + E_lambertian * lambertianColor.rgb 
 #       endif
 
 #       if defined(SPECULARCONSTANT) || defined(SPECULARMAP)
-           + I_specular * specularColor.rgb
+           + E_specular * specularColor.rgb
 #       endif
         );
 }

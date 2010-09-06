@@ -72,11 +72,41 @@ namespace G3D {
  See the source file ArticulatedModel_pose.cpp for examples of how to use
  the built-in SuperShader Passes
 
- @sa G3D::SuperShader::Pass, G3D::Material
+ \section sm Shading Model
 
- @cite McGuire, The %SuperShader. Chapter 8.1, 485--498, in <i>ShaderX<sup>4</sup></i>, W. Engel ed., 2005.
+ (See G3D::GLight for the definition of E)
+ <pre>
+   w_m = 2*(w_i dot n)m - w_i
+   w_h = normalize(w_i + w_o)
+
+
+   // Treat mirror as glossy for the purpose of emitters
+   // so that they always appear
+   M = material.mirror * max(0, w_m dot w_o)^1000 * (1008 / 8pi)
+   L_mirror = E * M / sr
+   E *= (1 - M)
+
+   G = material.glossy * max(0, w_h dot w_o)^material.exponent * (material.exponent + 8) / 8pi
+   L_glossy = E * G / sr
+   E *= (1 - G)
+
+   L = material.lambertian / pi
+   L_Lambertian = E * L / sr
+
+   L_reflected += L_Lambertian + L_glossy + L_mirror
+
+
+
+ </pre>
+
+ \sa G3D::SuperShader::Pass, G3D::Material, G3D::GLight
+
+ \cite McGuire, The %SuperShader. Chapter 8.1, 485--498, in <i>ShaderX<sup>4</sup></i>, W. Engel ed., 2005.
  */
 namespace SuperShader {
+    //   L_reflected += // Sky lighting model
+    //   L_transmitted = ??
+    //   L_emitted = material.emit / (4 pi sr)
 
 /** Configures the material arguments on a SuperShader NonShadowed shader for
     the opaque pass with LIGHTS_PER_PASS lights. */

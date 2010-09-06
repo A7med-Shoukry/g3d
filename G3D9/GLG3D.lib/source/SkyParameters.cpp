@@ -193,7 +193,7 @@ Lighting::Specification::Specification(const Any& any) {
                 // Cube map defaults
                 environmentMap.settings = Texture::Settings::cubeMap();
             }
-        } else if (key == "environmentmapcscale") {
+        } else if (key == "environmentmapscale") {
             environmentMapScale = it->value;
         } else if (key == "lightarray") {
             const Any& array = it->value;

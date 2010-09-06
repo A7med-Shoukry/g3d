@@ -74,8 +74,8 @@ Film::Film(const ImageFormat* f) :
     m_intermediateFormat(f),
     m_gamma(2.0f),
     m_exposure(1.0f),
-    m_bloomStrength(0),// 0.08f), // Commented out because the blur is currently slow
-    m_bloomRadiusFraction(0.03f) {
+    m_bloomStrength(0.18f),
+    m_bloomRadiusFraction(0.016f) {
 
     init();
 }

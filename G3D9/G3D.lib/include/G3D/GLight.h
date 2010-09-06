@@ -29,6 +29,29 @@ class Any;
    Named "GLight" instead of "Light" so that you can define your
    own more general (e.g., area) emitter class without a name 
    conflict.
+
+   \section lm Lighting Model
+
+ <pre>
+ r = distance to light (maybe inf)
+ w_i = direction to light
+
+ if local light:
+     Phi = light.color  // J
+     E_perp = Phi / (4 * pi * r^2) // W/m^2
+     if spot light and X outside cone:
+         E_perp = 0
+ else: // infinite/directional light
+     E_perp = E_L
+
+ if in shadow:
+     E_perp = 0
+
+ // Adjust for angle of incidence
+ E = E_perp * max(0, w_i dot n)
+</pre>
+
+  \sa G3D::SuperShader
  */
 class GLight  {
 public:

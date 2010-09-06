@@ -41,15 +41,17 @@ uniform float       environmentMapScale;
 
 void main(void) {
 
+#define pi (3.1415926)
+#define invPi (0.318309886)
 #include "SS_LambertianComponent.pix"
 #include "SS_Components.pix"
 
     // Sample the highest MIP-level
-    vec3 ambientTop    = textureCubeLod(environmentMap, vec3(0.0,  1.0, 0.0), 100.0).rgb * environmentMapScale;
-    vec3 ambientBottom = textureCubeLod(environmentMap, vec3(0.0, -1.0, 0.0), 100.0).rgb * environmentMapScale;
+    vec3 ambientTop    = textureCubeLod(environmentMap, vec3(0.0,  1.0, 0.0), 100.0).rgb;
+    vec3 ambientBottom = textureCubeLod(environmentMap, vec3(0.0, -1.0, 0.0), 100.0).rgb;
 
-    vec3 I_lambertian  = ambientTop + (ambientTop - ambientBottom) * min(wsN.y, 0.0);
-    vec3 I_specular;
+    vec3 E_lambertian  = (ambientTop + (ambientTop - ambientBottom) * min(wsN.y, 0.0)) * (environmentMapScale * pi);
+    vec3 E_specular;
     float shininess;
 
 #   if defined(EMISSIVECONSTANT) || defined(EMISSIVEMAP)     
@@ -74,40 +76,39 @@ void main(void) {
         // If 0.0, no specular
         // Otherwise exponent = shininess * 127 + 1. 
         {        
-			vec4 temp =
-#			ifdef SPECULARCONSTANT
-				specularConstant
-#				ifdef SPECULARMAP
-					* texture2D(specularMap, offsetTexCoord)
-#				endif
-#			else
-				texture2D(specularMap, offsetTexCoord)
-#			endif
-			;
+            vec4 temp =
+#               ifdef SPECULARCONSTANT
+                    specularConstant
+#                   ifdef SPECULARMAP
+                        * texture2D(specularMap, offsetTexCoord)
+#                   endif
+#               else
+                    texture2D(specularMap, offsetTexCoord)
+#               endif
+                ;
 				   
-		   F0 = temp.rgb;
-  		   specularColor = computeF(F0, max(0.0, cos_i));
+            F0 = temp.rgb;
+            specularColor = computeF(F0, max(0.0, cos_i));
 
-//         Only if this texture is known to contain some mirror reflective value do we bother
-//         testing each pixel's specular exponent for mirror reflection
-#		   ifdef MIRROR
-           if (temp.a == 1.0) {
-                // Mirror reflection
+//          Only if this texture is known to contain some mirror reflective value do we bother
+//          testing each pixel's specular exponent for mirror reflection
+#           ifdef MIRROR
+                if (temp.a == 1.0) {
+                    // Mirror reflection
                 
-                // Reflection vector
-                vec3 wsR = normalize(wsN * (2.0 * cos_i) - wsE);
-				
-				I_specular = textureCube(environmentMap, wsR).rgb * environmentMapScale;
+                    // Reflection vector
+                    vec3 wsR = normalize(wsN * (2.0 * cos_i) - wsE);
+                    E_specular = textureCube(environmentMap, wsR).rgb * environmentMapScale;
 
-           } else
-#		   endif
-           {
+                } else
+#	    endif
+            {
                 // Only glossy reflection
-                I_specular = BLACK;
-           }
-           // Unpack the specular exponent
-           shininess = unpackSpecularExponent(temp.a);
-       }
+                E_specular = BLACK;
+            }
+            // Unpack the specular exponent
+            shininess = unpackSpecularExponent(temp.a);
+        }
 
 #      if defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP)
           // modulate the lambertian color by the specular; this
@@ -119,25 +120,25 @@ void main(void) {
 #   endif
     
     vec3 ignore;
-    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition0, lightAttenuation0, lightDirection0, lightColor0, I_lambertian, I_specular, ignore);
-    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition1, lightAttenuation1, lightDirection1, lightColor1, I_lambertian, I_specular, ignore);
-    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition2, lightAttenuation2, lightDirection2, lightColor2, I_lambertian, I_specular, ignore);
-    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition3, lightAttenuation3, lightDirection3, lightColor3, I_lambertian, I_specular, ignore);
+    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition0, lightAttenuation0, lightDirection0, lightColor0, E_lambertian, E_specular, ignore);
+    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition1, lightAttenuation1, lightDirection1, lightColor1, E_lambertian, E_specular, ignore);
+    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition2, lightAttenuation2, lightDirection2, lightColor2, E_lambertian, E_specular, ignore);
+    addLightContribution(wsN, wsE, wsPosition, shininess, lightPosition3, lightAttenuation3, lightDirection3, lightColor3, E_lambertian, E_specular, ignore);
 
     gl_FragColor.rgb =
-        BLACK
 #       if defined(EMISSIVECONSTANT) || defined(EMISSIVEMAP)
-            + emissiveColor
+            emissiveColor +
 #       endif
-
+        (
+        BLACK
 #       if defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP)
-           + I_lambertian * lambertianColor.rgb 
+           + E_lambertian * lambertianColor.rgb
 #       endif
 
 #       if defined(SPECULARCONSTANT) || defined(SPECULARMAP)
-           + I_specular * specularColor.rgb
+           + E_specular * specularColor.rgb
 #       endif
-        ;
+         ) * invPi;
 
     /*
     // Debugging:
