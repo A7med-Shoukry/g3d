@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2003-11-12
-  @edited  2010-07-08
+  @edited  2010-09-01
 */
 
 #ifndef G3D_GLight_h
@@ -19,18 +19,28 @@ namespace G3D {
 class Any;
 
 /**
- A light representation that closely follows the OpenGL light format.
+   A point (omni/spot/directional) light representation inspired by
+   the classic OpenGL light format.
+
+   A directional light has position.w == 0.  A spot light has
+   spotHalfAngle < pi() / 2 and position.w == 1.  An omni light has
+   spotHalfAngle == pi() and position.w == 1.
+   
+   Named "GLight" instead of "Light" so that you can define your
+   own more general (e.g., area) emitter class without a name 
+   conflict.
  */
 class GLight  {
 public:
-    /** World space position (for a directional light, w = 0 */
+    /** World space position (for a directional light, w = 0) */
     Vector4             position;
 
-    /** For a spot or directional light, this is the "right vector" that will be used when constructing
-        a reference frame(). */
+    /** For a spot or directional light, this is the "right vector"
+        that will be used when constructing a reference frame(). */
     Vector3             rightDirection;
 
-    /** Direction in which the light faces, if a spot light.  This is the "look vector" of the light source. */
+    /** Direction in which the light faces, if a spot light.  This is
+        the "look vector" of the light source. */
     Vector3             spotDirection;
 
     /** Spotlight cutoff half-angle in <B>radians</B>.  pi() = no
@@ -47,10 +57,20 @@ public:
     /** Constant, linear, quadratic */
     float               attenuation[3];
 
-    /** For a point or spot light, this is the total power over the
-        sphere that would be emitted for a 180-degree "cone".  For a
-        directional light, this is the radiance.  May be outside the
-        range [0, 1] */
+    /** 
+        Point light: this is the the total power (\f$\Phi\f$) emitted
+        uniformly over the sphere.  The incident normal irradiance at
+        a point distance \f$r\f$ from the light is \f$ E_{\perp} =
+        \frac{\Phi}{4 \pi r^2} \f$.
+        
+        Spot light: the power is the same as for a point light, but
+        line of sight is zero outside the spot cone.  Thus the area
+        within the spot cone does not change illumination when the
+        cone shrinks.
+
+        Directional light: this is the incident normal irradiance
+        in the light's direction, \f$E_\perp\f$.
+    */
     Color3              color;
 
     /** If false, this light is ignored */
