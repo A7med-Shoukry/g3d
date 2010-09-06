@@ -850,21 +850,21 @@ def install():
 
 ################################################################################
 
-def dispatchOnTarget(target, validTargets):
-    found = 0
-    code = 0
-    for v in validTargets:
-        if target == v.func_name:
-            code = v()
-            found += 1
-            if code != 0:
-                return code
+def dispatchOnTargets(targets, validTargets):
+    for target in targets:
+        found = False
+        for v in validTargets:      
+            if target == v.func_name:
+                code = v()
+                found = True
+                if code != 0:
+                    return code
 
-    if (found > 0):
-        return 0
+        if not found:
+            print '"' + target[0:-6] + '" is not a valid build target (type "build help" to see all targets).'
+            return -1
 
-    print '"' + target[0:-6] + '" is not a valid build target (type "build help" to see all targets).'
-    return -1
+    return 0
 
 
 if __name__ == "__main__":
@@ -874,7 +874,7 @@ if __name__ == "__main__":
         
     t0 = time.time()
     
-    code = dispatchOnTarget(sys.argv[1] + 'Target',
+    code = dispatchOnTargets([(x + 'Target') for x in sys.argv[1:]],
         [libTarget, cleanTarget, testTarget,
          docTarget, allTarget, srczipTarget, sourceTarget, toolsTarget,
          jarTarget, helpTarget, updateTarget, 
