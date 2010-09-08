@@ -98,10 +98,8 @@ private:
     /** \brief Monitor gamma used in tone-mapping. Default is 2.0. */
     float                   m_gamma;
 
-    /** \brief Exposure time.  If the input images to exposeAndDraw() measure radiance,
-      this is in units of seconds.  Most rendering intensities are scaled by an arbitrary 
-      constant, however, so the units here aren't important; larger is brighter. */
-    float                   m_exposure;
+    /** \brief Scale factor applied to the pixel values during exposeAndRender(). */
+    float                   m_sensitivity;
 
     /** \brief 0 = no bloom, 1 = blurred out image. */
     float                   m_bloomStrength;
@@ -128,25 +126,23 @@ public:
     static Ref create(const ImageFormat* intermediateFormat = ImageFormat::RGB16F());
 
     /** \brief Monitor gamma used in tone-mapping. Default is 2.0. */
-    inline float gamma() const {
+    float gamma() const {
         return m_gamma;
     }
 
-    /** \brief Exposure time.  If the input images to exposeAndRender() measure radiance,
-      this is in units of seconds.  Most rendering intensities are scaled by an arbitrary 
-      constant, however, so the units here aren't importan; larger is brighter. */
-    inline float exposure() const {
-        return m_exposure;
+    /** \brief Scale factor applied to the pixel values during exposeAndRender() */
+     float sensitivity() const {
+        return m_sensitivity;
     }
 
     /** \brief 0 = no bloom, 1 = blurred out image. */
-    inline float bloomStrength() const {
+    float bloomStrength() const {
         return m_bloomStrength;
     }
 
     /** \brief Bloom filter kernel radius as a fraction 
      of the larger of image width/height.*/
-    inline float bloomRadiusFraction() const {
+    float bloomRadiusFraction() const {
         return m_bloomRadiusFraction;
     }
 
@@ -154,8 +150,8 @@ public:
         m_gamma = g;
     }
 
-    void setExposure(float e) {
-        m_exposure = e;
+    void setSensitivity(float s) {
+        m_sensitivity = s;
     }
 
     void setBloomStrength(float s) {
@@ -167,7 +163,7 @@ public:
     }
 
     /** Adds controls for this Film to the specified GuiPane. */
-    void makeGui(class GuiPane*, float maxExposure = 10.0f, float sliderWidth = GuiContainer::CONTROL_WIDTH, float controlIndent = 0);
+    void makeGui(class GuiPane*, float maxSensitivity = 10.0f, float sliderWidth = GuiContainer::CONTROL_WIDTH, float controlIndent = 0);
 
     /** \brief Renders the input as filtered by the film settings to the currently bound framebuffer.
         \param downsample One side of the downsampling filter in pixels. 1 = no downsampling. 2 = 2x2 downsampling (antialiasing). Not implemented.

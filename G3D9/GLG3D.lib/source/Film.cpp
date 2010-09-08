@@ -22,7 +22,7 @@ static const char* shaderCode =
     uniform sampler2D bloomTexture;\n\
     uniform float     bloomStrengthScaled;\n\
 #endif\n\
-uniform float     exposure;\
+uniform float     sensitivity;\
 \
 /* 1.0 / monitorGamma.  Usually about invGamma = 0.5*/\
 uniform float     invGamma;\
@@ -36,7 +36,7 @@ void main(void) {\
         vec3 src   = texture2D(sourceTexture, gl_TexCoord[0].st).rgb;\n\
 #   endif\n\
 \
-    src *= exposure;\n\
+    src *= sensitivity;\n\
 #   ifdef BLOOM\n\
         vec3 bloom = texture2D(bloomTexture,  gl_TexCoord[0].st).rgb;\n\
         src += bloom * bloomStrengthScaled;\n\
@@ -58,13 +58,13 @@ void main(void) {\
 
 static const char* preBloomShaderCode = 
 "uniform sampler2D sourceTexture;\
-uniform float     exposure;\
+uniform float     sensitivity;\
 \
 void main(void) {\n\
 #   if __VERSION__ >= 150\n\
-        vec3 src = texelFetch(sourceTexture, ivec2(gl_TexCoord[g3d_Index(sourceTexture)].st * g3d_sampler2DSize(sourceTexture)), 0).rgb * exposure;\n\
+        vec3 src = texelFetch(sourceTexture, ivec2(gl_TexCoord[g3d_Index(sourceTexture)].st * g3d_sampler2DSize(sourceTexture)), 0).rgb * sensitivity;\n\
 #   else\n\
-        vec3 src = texture2D(sourceTexture, gl_TexCoord[g3d_Index(sourceTexture)].st).rgb * exposure;\n\
+        vec3 src = texture2D(sourceTexture, gl_TexCoord[g3d_Index(sourceTexture)].st).rgb * sensitivity;\n\
 #   endif\n\
     float p  = max(max(src.r, src.g), src.b);\
     gl_FragColor.rgb = src * smoothstep(1.0, 2.0, p);\
@@ -73,7 +73,7 @@ void main(void) {\n\
 Film::Film(const ImageFormat* f) :
     m_intermediateFormat(f),
     m_gamma(2.0f),
-    m_exposure(1.0f),
+    m_sensitivity(1.0f),
     m_bloomStrength(0.18f),
     m_bloomRadiusFraction(0.008f) {
 
@@ -161,7 +161,7 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
         rd->setFramebuffer(m_framebuffer);
         rd->clear();
         m_preBloomShader->args.set("sourceTexture",  input);
-        m_preBloomShader->args.set("exposure", m_exposure);
+        m_preBloomShader->args.set("sensitivity", m_sensitivity);
         rd->setShader(m_preBloomShader);
         Draw::fastRect2D(m_preBloom->rect2DBounds(), rd);
 
@@ -183,7 +183,7 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
         m_shader->args.set("sourceTexture",  input);
         m_shader->args.set("bloomTexture",   (bloomStrength > 0) ? m_blurry : Texture::zero());
         m_shader->args.set("bloomStrengthScaled",  bloomStrength * 10.0);
-        m_shader->args.set("exposure",       m_exposure);
+        m_shader->args.set("sensitivity",       m_sensitivity);
         m_shader->args.set("invGamma",       1.0f / m_gamma);
         rd->setShader(m_shader);
 
@@ -193,13 +193,13 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
 }
 
 
-void Film::makeGui(class GuiPane* pane, float maxExposure, float sliderWidth, float indent) {
+void Film::makeGui(class GuiPane* pane, float maxSensitivity, float sliderWidth, float indent) {
     GuiNumberBox<float>* n = NULL;
 
     n = pane->addNumberBox("Gamma",         &m_gamma, "", GuiTheme::LOG_SLIDER, 1.0f, 7.0f, 0.1f);
     n->setWidth(sliderWidth);  n->moveBy(indent, 0);
 
-    n = pane->addNumberBox("Exposure",      &m_exposure, "", GuiTheme::LOG_SLIDER, 0.001f, maxExposure);
+    n = pane->addNumberBox("Sensitivity",   &m_sensitivity, "", GuiTheme::LOG_SLIDER, 0.001f, maxSensitivity);
     n->setWidth(sliderWidth);  n->moveBy(indent, 0);
 
     n = pane->addNumberBox("Bloom Str.",    &m_bloomStrength, "", GuiTheme::LOG_SLIDER, 0.0f, 1.0f);
