@@ -103,7 +103,7 @@ Power3 GLight::power() const {
     if (spotHalfAngle >= pif()) {
         return color;
     } else {
-        return 0.5f *  (1.0f - cos(spotHalfAngle));
+        return 0.5f *  (1.0f - cosf(spotHalfAngle)) * color;
     }
 }
 
