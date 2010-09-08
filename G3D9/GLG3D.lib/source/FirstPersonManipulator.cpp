@@ -105,6 +105,7 @@ void FirstPersonManipulator::reset() {
 
 
 bool FirstPersonManipulator::rightDown(UserInput* ui) const {
+
 #   ifdef G3D_OSX
        return 
            ui->keyDown(GKey::RIGHT_MOUSE) || 
