@@ -310,12 +310,12 @@ void NonShadowedPass::setLighting(const LightingRef& lighting) {
 
     configureLights(0, LIGHTS_PER_PASS, lighting->lightArray, args);
     
-    args.set("environmentMap",  Texture::whiteCubeIfNull(lighting->environmentMap), OPTIONAL);
+    args.set("environmentMap",  Texture::whiteCubeIfNull(lighting->environmentMapTexture), OPTIONAL);
 
     // Emissive scale is modified in getConfiguredShader
 
     m_emissiveScale       = lighting->emissiveScale;
-    m_environmentMapScale = lighting->environmentMapScale;
+    m_environmentMapScale = lighting->environmentMapConstant;
 
 }
 

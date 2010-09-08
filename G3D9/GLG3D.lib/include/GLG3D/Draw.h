@@ -82,8 +82,9 @@ public:
     /** Visualize the light sources in this scene. */
     static void lighting(LightingRef lighting, RenderDevice* rd, bool showEffectSpheres = false);
 
-    /** Render a skybox using \a cubeMap, and the set of 6 cube map faces in \a texture if \a cubeMap is NULL. */
-    static void skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, const Texture::Ref* texture = NULL);
+    /** Render a skybox using \a cubeMap, and the set of 6 cube map
+        faces in \a texture if \a cubeMap is NULL. */
+    static void skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, float radianceScale = 1.0f);
 
     static void physicsFrameSpline(const class PhysicsFrameSpline& spline, RenderDevice* rd);
 

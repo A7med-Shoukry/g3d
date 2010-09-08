@@ -188,13 +188,16 @@ Lighting::Specification::Specification(const Any& any) {
         if (key == "emissivescale") {
             emissiveScale = it->value;
         } else if (key == "environmentmap") {
-            environmentMap = it->value;
-            if (it->value.type() == Any::STRING) {
-                // Cube map defaults
-                environmentMap.settings = Texture::Settings::cubeMap();
+            environmentMapConstant = it->value.get("constant", 1.0f);
+
+            if (it->value.containsKey("texture")) {
+                Any t = it->value["texture"];
+                environmentMapTexture = t;
+                if (it->value.type() == Any::STRING) {
+                    // Cube map defaults
+                    environmentMapTexture.settings = Texture::Settings::cubeMap();
+                }
             }
-        } else if (key == "environmentmapscale") {
-            environmentMapScale = it->value;
         } else if (key == "lightarray") {
             const Any& array = it->value;
             array.verifyType(Any::ARRAY);
@@ -212,8 +215,8 @@ Lighting::Specification::Specification(const Any& any) {
 Lighting::Specification::operator Any() const {
     Any a(Any::TABLE, "lighting");
     a["emissiveScale"] = emissiveScale;
-    a["environmentMap"] = environmentMap;
-    a["environmentMapScale"] = environmentMapScale;
+    a["environmentMapConstant"] = environmentMapConstant;
+    a["environmentMapTexture"] = environmentMapTexture;
     a["lightArray"] = lightArray;
 
     return a;
@@ -222,10 +225,10 @@ Lighting::Specification::operator Any() const {
 Lighting::Ref Lighting::create(const Specification& s) {
     Lighting::Ref L = new Lighting();
     L->lightArray = s.lightArray;
-    if (s.environmentMap.filename != "") {
-        L->environmentMap = Texture::create(s.environmentMap);
+    if (s.environmentMapTexture.filename != "") {
+        L->environmentMapTexture = Texture::create(s.environmentMapTexture);
     }
-    L->environmentMapScale = s.environmentMapScale;
+    L->environmentMapConstant = s.environmentMapConstant;
     return L;
 }
 
@@ -238,8 +241,8 @@ LightingRef Lighting::clone() const {
 LightingRef Lighting::fromSky(const SkyRef& sky, const SkyParameters& skyParameters, const Color3& groundColor) {
     LightingRef lighting = new Lighting();
 
-    lighting->environmentMap = sky->getEnvironmentMap();
-    lighting->environmentMapScale = skyParameters.skyAmbient.average();
+    lighting->environmentMapTexture = sky->getEnvironmentMap();
+    lighting->environmentMapConstant = skyParameters.skyAmbient.average();
 
     lighting->lightArray.append(skyParameters.directionalLight());
 

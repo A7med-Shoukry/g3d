@@ -75,7 +75,7 @@ Film::Film(const ImageFormat* f) :
     m_gamma(2.0f),
     m_exposure(1.0f),
     m_bloomStrength(0.18f),
-    m_bloomRadiusFraction(0.016f) {
+    m_bloomRadiusFraction(0.008f) {
 
     init();
 }

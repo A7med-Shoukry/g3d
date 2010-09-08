@@ -11,7 +11,7 @@
   pass in order to allow alpha testing early.
 
   @created 2007-12-18
-  @edited  2009-03-31
+  @edited  2010-09-07
  */
     const vec3 BLACK = vec3(0.0, 0.0, 0.0);
 
@@ -30,6 +30,7 @@
 
 #   if (defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP))
         vec4 lambertianColor =
+            invPi *
 #       ifdef LAMBERTIANCONSTANT
             lambertianConstant
 #           ifdef LAMBERTIANMAP

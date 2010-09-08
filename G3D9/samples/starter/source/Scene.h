@@ -34,10 +34,14 @@ protected:
     /** Current time */
     GameTime                    m_time;
     Lighting::Ref               m_lighting;
-    Texture::Ref                m_skyBox;
+    Texture::Ref                m_skyBoxTexture;
+    float                       m_skyBoxConstant;
     Array<Entity::Ref>          m_entityArray;
 	
-    Scene() : m_time(0) {}
+    Scene() : 
+        m_time(0), 
+        m_skyBoxTexture(Texture::whiteCube()), 
+        m_skyBoxConstant(1.0f) {}
 
 public:
 
@@ -57,8 +61,12 @@ public:
         return m_time;
     }
 
-    Texture::Ref skyBox() const {
-        return m_skyBox;
+    Texture::Ref skyBoxTexture() const {
+        return m_skyBoxTexture;
+    }
+
+    float skyBoxConstant() const {
+        return m_skyBoxConstant;
     }
 
     /** Enumerate the names of all available scenes. */

@@ -325,7 +325,7 @@ void Sky::render(
         renderDevice->setDepthWrite(false);
         renderDevice->setDepthTest(RenderDevice::DEPTH_ALWAYS_PASS);
 
-        Draw::skyBox(renderDevice, cubeMap, texture);
+        Draw::skyBox(renderDevice, cubeMap);
 
         if (drawCelestialBodies) {   
             // Ignore depth, make sure we're not clipped by the far plane

@@ -173,14 +173,20 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     camera = any["camera"];
 
     if (any.containsKey("skybox")) {
-        s->m_skyBox = Texture::create(any["skybox"]);
+        Any sky = any["skyBox"];
+        s->m_skyBoxConstant = sky.get("constant", 1.0f);
+        if (sky.containsKey("texture")) {
+            s->m_skyBoxTexture = Texture::create(sky["texture"]);
+        }
     } else {
-        s->m_skyBox = s->m_lighting->environmentMap;
+        s->m_skyBoxTexture = s->m_lighting->environmentMapTexture;
+        s->m_skyBoxConstant = s->m_lighting->environmentMapConstant;
     }
 
     // Default to using the skybox as an environment map if none is specified.
-    if (s->m_skyBox.notNull() && s->m_lighting->environmentMap.isNull()) {
-        s->m_lighting->environmentMap = s->m_skyBox;
+    if (s->m_skyBoxTexture.notNull() && s->m_lighting->environmentMapTexture.isNull()) {
+        s->m_lighting->environmentMapTexture  = s->m_skyBoxTexture;
+        s->m_lighting->environmentMapConstant = s->m_skyBoxConstant;
     }
 
     return s;

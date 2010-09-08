@@ -150,9 +150,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
         return;
     }
 
-    if (m_scene->skyBox().notNull()) {
-        Draw::skyBox(rd, m_scene->skyBox());
-    }
+    Draw::skyBox(rd, m_scene->skyBoxTexture(), m_scene->skyBoxConstant());
 
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
@@ -171,7 +169,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());
     Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f),
               Color3::black());
-
+    
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
 }

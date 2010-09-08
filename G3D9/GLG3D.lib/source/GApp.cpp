@@ -572,12 +572,12 @@ Lighting::Ref GApp::defaultLighting() {
             cubePath = System::findDataFile("cubemap");
         }
     }
-    lighting->environmentMap = 
+    lighting->environmentMapTexture = 
         Texture::fromFile(pathConcat(cubePath, "noonclouds/noonclouds_*.png"), 
                           TextureFormat::RGB8(), Texture::DIM_CUBE_MAP,
                           Texture::Settings::cubeMap(), 
                           Texture::Preprocess::gamma(2.1f));
-    lighting->environmentMapScale = 1.0f;
+    lighting->environmentMapConstant = 1.0f;
 
     return lighting;
 }

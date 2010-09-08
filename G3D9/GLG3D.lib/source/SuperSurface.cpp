@@ -507,23 +507,23 @@ bool SuperSurface::renderFFNonShadowedOpaqueTerms(
 
     if (! mirrorReflectiveFF(bsdf) &&
         lighting.notNull() &&
-        (lighting->environmentMapScale != 0.0f)) {
+        (lighting->environmentMapConstant != 0.0f)) {
 
         rd->pushState();
 
             // Reflections are specular and not affected by surface texture, only
             // the reflection coefficient
-            rd->setColor(bsdf->specular().constant().rgb() * lighting->environmentMapScale);
+            rd->setColor(bsdf->specular().constant().rgb() * lighting->environmentMapConstant);
 
             // TODO: Use diffuse alpha map here somehow?
             rd->setTexture(0, NULL);
 
             // Configure reflection map
-            if (lighting->environmentMap.isNull()) {
+            if (lighting->environmentMapTexture.isNull()) {
                 rd->setTexture(1, NULL);
             } else if (GLCaps::supports_GL_ARB_texture_cube_map() &&
-                (lighting->environmentMap->dimension() == Texture::DIM_CUBE_MAP)) {
-                rd->configureReflectionMap(1, lighting->environmentMap);
+                       (lighting->environmentMapTexture->dimension() == Texture::DIM_CUBE_MAP)) {
+                rd->configureReflectionMap(1, lighting->environmentMapTexture);
             } else {
                 // Use the top texture as a sphere map
                 glActiveTextureARB(GL_TEXTURE0_ARB + 1);
@@ -532,7 +532,7 @@ bool SuperSurface::renderFFNonShadowedOpaqueTerms(
                 glEnable(GL_TEXTURE_GEN_S);
                 glEnable(GL_TEXTURE_GEN_T);
 
-                rd->setTexture(1, lighting->environmentMap);
+                rd->setTexture(1, lighting->environmentMapTexture);
             }
 
             sendGeometry2(rd);

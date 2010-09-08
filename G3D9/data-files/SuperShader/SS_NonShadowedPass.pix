@@ -128,8 +128,7 @@ void main(void) {
     gl_FragColor.rgb =
 #       if defined(EMISSIVECONSTANT) || defined(EMISSIVEMAP)
             emissiveColor +
-#       endif
-        (
+#       endif      
         BLACK
 #       if defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP)
            + E_lambertian * lambertianColor.rgb
@@ -138,7 +137,7 @@ void main(void) {
 #       if defined(SPECULARCONSTANT) || defined(SPECULARMAP)
            + E_specular * specularColor.rgb
 #       endif
-         ) * invPi;
+        ;
 
     /*
     // Debugging:

@@ -132,17 +132,22 @@ public:
     class Specification {
     public:
         Color3                            emissiveScale;
-        Texture::Specification            environmentMap;
-        float                             environmentMapScale;
+        Texture::Specification            environmentMapTexture;
+        float                             environmentMapConstant;
         Array<GLight>                     lightArray;
-        Specification() : emissiveScale(Color3::white()), environmentMapScale(1.0f) {}
+
+        Specification() : emissiveScale(Color3::white()), environmentMapConstant(1.0f) {
+            environmentMapTexture.filename = "<white>";
+            environmentMapTexture.settings = Texture::Settings::cubeMap();
+        }
+
         Specification(const class Any&);
         operator Any() const;
     };
 
 private:
 
-    Lighting() : emissiveScale(Color3::white()), environmentMapScale(1.0f) {}
+    Lighting() : emissiveScale(Color3::white()), environmentMapConstant(1.0f) {}
 
 public:
 
@@ -159,10 +164,11 @@ public:
 
     /** Cube map or sphere map of the surrounding environment (often just the skybox, although 
          it may be rendered per-object). This contains radiance values.*/
-    Texture::Ref        environmentMap;
+    Texture::Ref        environmentMapTexture;
 
-    /** Scale environmentMap values by this; useful for encoding large radiance values in an 8-bit map. */
-    float               environmentMapScale;
+    /** Scale environmentMap values by this; useful for encoding large
+        radiance values in an 8-bit map. */
+    float               environmentMapConstant;
 
     Array<GLight>       lightArray;
 

@@ -68,43 +68,14 @@ void Draw::physicsFrameSpline(const PhysicsFrameSpline& spline, RenderDevice* rd
 
 /** Draws a single sky-box vertex.  Called from Draw::skyBox. (s,t) are
     texture coordinates for the case where the cube map is not used.*/
-static void skyVertex(RenderDevice* renderDevice, 
-                 bool cube,
-                 const Texture::Ref* texture,
-                 float x, float y, float z, float s, float t) {
-    const float w = 0;
-    static bool explicitTexCoord = GLCaps::hasBug_normalMapTexGen();
-
-    if (cube) {
-        if (explicitTexCoord) {
-            glTexCoord3f(x, y, z);
-        } else {
-            // Texcoord generation will move this normal to tex coord 0
-            renderDevice->setNormal(Vector3(x,y,z));
-        }
-    } else {
-        if (!GLCaps::supports_GL_EXT_texture_edge_clamp()) {
-            // Move the edge coordinates towards the center just
-            // enough that the black clamped border isn't sampled.
-            if (s == 0) {
-                s += (0.6f / (float)texture[0]->width());
-            } else if (s == 1) {
-                s -= (0.6f / (float)texture[0]->width());
-            }
-            if (t == 0) {
-                t += (0.6f / (float)texture[0]->height());
-            } else if (t == 1) {
-                t -= (0.6f / (float)texture[0]->height());
-            }
-        }
-        renderDevice->setTexCoord(0, Vector2(s, t));
-    }
-    
-    renderDevice->sendVertex(Vector4(x,y,z,w));
+inline static void skyVertex
+(RenderDevice* renderDevice, 
+ float x, float y, float z) {
+    glVertex4f(x,y,z,0);
 }
 
 
-void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, const Texture::Ref* texture) {
+void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, float radianceScale) {
     enum Direction {UP = 0, LT = 1, RT = 2, BK = 3, FT = 4, DN = 5};
     renderDevice->pushState();
 
@@ -113,109 +84,61 @@ void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, const
     camera.setFarPlaneZ(-finf());
     renderDevice->setProjectionAndCameraMatrix(camera);
 
-    bool cube = (cubeMap.notNull());
-
-    if (cube) {
-        renderDevice->setTexture(0, cubeMap);
-
-        if (! GLCaps::hasBug_normalMapTexGen()) {
-            // On old Radeon Mobility, explicit cube map coordinates don't work right.
-            // We instead put cube map coords in the normals and use texgen to copy
-            // them over
-            glActiveTextureARB(GL_TEXTURE0_ARB + 0);
-            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-            glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-            glEnable(GL_TEXTURE_GEN_S);
-            glEnable(GL_TEXTURE_GEN_T);
-            glEnable(GL_TEXTURE_GEN_R);
-        } else {
-            // Hope that we're on a card where explicit texcoords work
-        }
-
-        CoordinateFrame cframe = renderDevice->cameraToWorldMatrix();
-        cframe.translation = Vector3::zero();
-        renderDevice->setTextureMatrix(0, cframe);
-
-    } else {
-        // In the 6-texture case, the sky box is rotated 90 degrees
-        // (this is because the textures are loaded incorrectly)
- 
-        renderDevice->setObjectToWorldMatrix(Matrix3::fromAxisAngle(Vector3::unitY(), toRadians(-90)));
-        renderDevice->setTexture(0, texture[BK]);
-    }
+    renderDevice->setTexture(0, cubeMap);
+    
+    static const Shader::Ref shader =
+        Shader::fromStrings
+        (STR(varying vec3 direction;
+             void main() {
+                 direction = gl_Vertex.xyz;
+                 gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+             }),
+         STR(varying vec3 direction;
+             uniform samplerCube skyBox;
+             uniform float       radianceScale;
+             
+             void main() {
+                 gl_FragColor.rgb = textureCube(skyBox, direction).rgb * radianceScale;
+             }));
+         
+    shader->args.set("skyBox", cubeMap);
+    shader->args.set("radianceScale", radianceScale);
+    renderDevice->setShader(shader);
 
     float s = 1;
     renderDevice->beginPrimitive(PrimitiveType::QUADS);
-        skyVertex(renderDevice, cube, texture, -s, +s, -s, 0, 0);
-        skyVertex(renderDevice, cube, texture, -s, -s, -s, 0, 1);
-        skyVertex(renderDevice, cube, texture, +s, -s, -s, 1, 1);
-        skyVertex(renderDevice, cube, texture, +s, +s, -s, 1, 0);
-	renderDevice->endPrimitive();
-        
-    if (! cube) {
-        renderDevice->setTexture(0, texture[LT]);
-    }
-
-    renderDevice->beginPrimitive(PrimitiveType::QUADS);
-        skyVertex(renderDevice, cube, texture, -s, +s, +s, 0, 0);
-        skyVertex(renderDevice, cube, texture, -s, -s, +s, 0, 1);
-        skyVertex(renderDevice, cube, texture, -s, -s, -s, 1, 1);
-        skyVertex(renderDevice, cube, texture, -s, +s, -s, 1, 0);
-	renderDevice->endPrimitive();
-
+    skyVertex(renderDevice, -s, +s, -s);
+    skyVertex(renderDevice, -s, -s, -s);
+    skyVertex(renderDevice, +s, -s, -s);
+    skyVertex(renderDevice, +s, +s, -s);
     
-    if (! cube) {
-        renderDevice->setTexture(0, texture[FT]);
-    }
+    skyVertex(renderDevice, -s, +s, +s);
+    skyVertex(renderDevice, -s, -s, +s);
+    skyVertex(renderDevice, -s, -s, -s);
+    skyVertex(renderDevice, -s, +s, -s);
+    
+    skyVertex(renderDevice, +s, +s, +s);
+    skyVertex(renderDevice, +s, -s, +s);
+    skyVertex(renderDevice, -s, -s, +s);
+    skyVertex(renderDevice, -s, +s, +s);
 
-    renderDevice->beginPrimitive(PrimitiveType::QUADS);
-        skyVertex(renderDevice, cube, texture, +s, +s, +s, 0, 0);
-        skyVertex(renderDevice, cube, texture, +s, -s, +s, 0, 1);
-        skyVertex(renderDevice, cube, texture, -s, -s, +s, 1, 1);
-        skyVertex(renderDevice, cube, texture, -s, +s, +s, 1, 0);
-	renderDevice->endPrimitive();
-
-    if (! cube) {
-        renderDevice->setTexture(0, texture[RT]);
-    }
-
-    renderDevice->beginPrimitive(PrimitiveType::QUADS);
-        skyVertex(renderDevice, cube, texture, +s, +s, +s, 1, 0);
-        skyVertex(renderDevice, cube, texture, +s, +s, -s, 0, 0);
-        skyVertex(renderDevice, cube, texture, +s, -s, -s, 0, 1);
-        skyVertex(renderDevice, cube, texture, +s, -s, +s, 1, 1);
-	renderDevice->endPrimitive();
-
-    if (! cube) {
-        renderDevice->setTexture(0, texture[UP]);
-    }
-
-    renderDevice->beginPrimitive(PrimitiveType::QUADS);
-        skyVertex(renderDevice, cube, texture, +s, +s, +s, 1, 1);
-        skyVertex(renderDevice, cube, texture, -s, +s, +s, 1, 0);
-        skyVertex(renderDevice, cube, texture, -s, +s, -s, 0, 0);
-        skyVertex(renderDevice, cube, texture, +s, +s, -s, 0, 1);
-	renderDevice->endPrimitive();
-
-    if (! cube) {
-        renderDevice->setTexture(0, texture[DN]);
-    }
-
-    renderDevice->beginPrimitive(PrimitiveType::QUADS);
-        skyVertex(renderDevice, cube, texture, +s, -s, -s, 0, 0);
-        skyVertex(renderDevice, cube, texture, -s, -s, -s, 0, 1);
-        skyVertex(renderDevice, cube, texture, -s, -s, +s, 1, 1);
-        skyVertex(renderDevice, cube, texture, +s, -s, +s, 1, 0);
-	renderDevice->endPrimitive();
-
-    if (! GLCaps::hasBug_normalMapTexGen() && cube) {
-        glDisable(GL_TEXTURE_GEN_S);
-        glDisable(GL_TEXTURE_GEN_T);
-        glDisable(GL_TEXTURE_GEN_R);
-    }
+    skyVertex(renderDevice, +s, +s, +s);
+    skyVertex(renderDevice, +s, +s, -s);
+    skyVertex(renderDevice, +s, -s, -s);
+    skyVertex(renderDevice, +s, -s, +s);
+    
+    skyVertex(renderDevice, +s, +s, +s);
+    skyVertex(renderDevice, -s, +s, +s);
+    skyVertex(renderDevice, -s, +s, -s);
+    skyVertex(renderDevice, +s, +s, -s);
+    
+    skyVertex(renderDevice, +s, -s, -s);
+    skyVertex(renderDevice, -s, -s, -s);
+    skyVertex(renderDevice, -s, -s, +s);
+    skyVertex(renderDevice, +s, -s, +s);
+    renderDevice->endPrimitive();
+    
     renderDevice->popState();
-
 }
 
 

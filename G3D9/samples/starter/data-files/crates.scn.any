@@ -43,14 +43,27 @@
         lightArray = (GLight::directional(Vector3(1, 2, 1), Color3::fromARGB(0xfcf6eb), true),
                      GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false)),
 
-        environmentMap = Texture::Specification {
+        environmentMap = {
+            constant = 1.0,
+            texture = Texture::Specification {
+                filename      = "cubemap/noonclouds/noonclouds_*.png",
+                desiredFormat = "RGB8",
+                dimension     = "DIM_CUBE_MAP",
+                settings      = Texture::Settings::cubeMap(),
+                preprocess    = Texture::Preprocess::gamma(2.1f)
+            }
+        },
+    },
+
+    skyBox = {
+        constant = 1.0,
+        texture = Texture::Specification {
             filename      = "cubemap/noonclouds/noonclouds_*.png",
             desiredFormat = "RGB8",
             dimension     = "DIM_CUBE_MAP",
             settings      = Texture::Settings::cubeMap(),
             preprocess    = Texture::Preprocess::gamma(2.1f)
-        },
-		environmentMapScale = 1
+        }
     },
     
     entities = {
