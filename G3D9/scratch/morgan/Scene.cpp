@@ -165,7 +165,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     if (any.containsKey("skybox")) {
         s->m_skyBox = Texture::create(any["skybox"]);
     } else {
-        s->m_skyBox = s->m_lighting->environmentMap;
+        s->m_skyBox = s->m_lighting->environmentMapTexture;
     }
     
     return s;

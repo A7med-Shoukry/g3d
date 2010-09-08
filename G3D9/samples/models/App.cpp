@@ -60,8 +60,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
 
     rd->clear();
 
-    rd->setColor(lighting->environmentMapScale * Color3::white());
-    Draw::skyBox(rd, lighting->environmentMap);
+    Draw::skyBox(rd, lighting->environmentMapTexture, lighting->environmentMapConstant);
     
     Surface::sortAndRender(rd, defaultCamera, posed3D, lighting, Array<ShadowMap::Ref>(shadowMap), 
                            Array<SuperShader::Pass::Ref>(), Surface::ALPHA_BLEND);

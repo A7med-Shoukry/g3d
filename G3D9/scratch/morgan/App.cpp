@@ -147,8 +147,8 @@ void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surfa
 
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-    if (m_scene->lighting()->environmentMap.notNull()) {
-        Draw::skyBox(rd, m_scene->lighting()->environmentMap);
+    if (m_scene->lighting()->environmentMapTexture.notNull()) {
+        Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     }
     /*
 
