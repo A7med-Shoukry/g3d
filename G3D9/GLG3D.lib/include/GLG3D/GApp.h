@@ -69,6 +69,9 @@ void debugDraw(const ShapeRef& shape, const Color4& solidColor = Color3::white()
  The GApp::run method starts the main loop.  It invokes GApp::onInit, runs the main loop
  until completion, and then invokes GApp::onCleanup.
 
+ onWait runs before onGraphics because the beginning of onGraphics causes the CPU to block, waiting for the GPU
+ to complete the previous frame.
+
  \sa GApp::Settings, OSWindow, RenderDevice, G3D_START_AT_MAIN
 */
 class GApp {
