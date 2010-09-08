@@ -195,6 +195,9 @@ CameraControlWindow::CameraControlWindow(
 
     GuiButton* copyButton = pane->addButton(GuiText(CLIPBOARD, iconFont, 16), GuiControl::Callback(this, &CameraControlWindow::copyToClipboard), GuiTheme::TOOL_BUTTON_STYLE);
     copyButton->setSize(w, h);
+#   ifdef G3D_OSX
+        copyButton->setEnabled(false);
+#   endif
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -210,60 +213,65 @@ CameraControlWindow::CameraControlWindow(
 
     manualPane->addCheckBox("Manual Control (F2)", &manualOperation)->moveBy(-2, 3);
 
-    trackList = manualPane->addDropDownList("Path", trackFileArray, &trackFileIndex);
-    trackList->setRect(Rect2D::xywh(Vector2(0, trackList->rect().y1() - 25), Vector2(180, trackList->rect().height())));
-    trackList->setCaptionWidth(34);
+    manualPane->beginRow();
+    {
+        trackList = manualPane->addDropDownList("Path", trackFileArray, &trackFileIndex);
+        trackList->setRect(Rect2D::xywh(Vector2(0, trackList->rect().y1() - 25), Vector2(180, trackList->rect().height())));
+        trackList->setCaptionWidth(34);
 
-    visibleCheckBox = manualPane->addCheckBox("Visible", 
-        Pointer<bool>(trackManipulator, 
-                      &UprightSplineManipulator::showPath, 
-                      &UprightSplineManipulator::setShowPath));
+        visibleCheckBox = manualPane->addCheckBox("Visible", 
+            Pointer<bool>(trackManipulator, 
+                          &UprightSplineManipulator::showPath, 
+                          &UprightSplineManipulator::setShowPath));
 
-    visibleCheckBox->moveRightOf(trackList);
-    visibleCheckBox->moveBy(6, 0);
+        visibleCheckBox->moveBy(6, 0);
+    }
+    manualPane->endRow();
     
-    Vector2 buttonSize = Vector2(20, 20);
-    recordButton = manualPane->addRadioButton
-        (GuiText::Symbol::record(), 
-         UprightSplineManipulator::RECORD_KEY_MODE, 
-         trackManipulator.pointer(),
-         &UprightSplineManipulator::mode,
-         &UprightSplineManipulator::setMode,
-         GuiTheme::TOOL_RADIO_BUTTON_STYLE);
-    recordButton->moveBy(32, 2);
-    recordButton->setSize(buttonSize);
+    manualPane->beginRow();
+    {
+        Vector2 buttonSize = Vector2(20, 20);
+        recordButton = manualPane->addRadioButton
+            (GuiText::Symbol::record(), 
+             UprightSplineManipulator::RECORD_KEY_MODE, 
+             trackManipulator.pointer(),
+             &UprightSplineManipulator::mode,
+             &UprightSplineManipulator::setMode,
+             GuiTheme::TOOL_RADIO_BUTTON_STYLE);
+        recordButton->moveBy(32, 2);
+        recordButton->setSize(buttonSize);
     
-    playButton = manualPane->addRadioButton
-        (GuiText::Symbol::play(), 
-         UprightSplineManipulator::PLAY_MODE, 
-         trackManipulator.pointer(),
-         &UprightSplineManipulator::mode,
-         &UprightSplineManipulator::setMode,
-         GuiTheme::TOOL_RADIO_BUTTON_STYLE);
-    playButton->setSize(buttonSize);
+        playButton = manualPane->addRadioButton
+            (GuiText::Symbol::play(), 
+             UprightSplineManipulator::PLAY_MODE, 
+             trackManipulator.pointer(),
+             &UprightSplineManipulator::mode,
+             &UprightSplineManipulator::setMode,
+             GuiTheme::TOOL_RADIO_BUTTON_STYLE);
+        playButton->setSize(buttonSize);
 
-    stopButton = manualPane->addRadioButton
-        (GuiText::Symbol::stop(), 
-         UprightSplineManipulator::INACTIVE_MODE, 
-         trackManipulator.pointer(),
-         &UprightSplineManipulator::mode,
-         &UprightSplineManipulator::setMode,
-         GuiTheme::TOOL_RADIO_BUTTON_STYLE);
-    stopButton->setSize(buttonSize);
+        stopButton = manualPane->addRadioButton
+            (GuiText::Symbol::stop(), 
+             UprightSplineManipulator::INACTIVE_MODE, 
+             trackManipulator.pointer(),
+             &UprightSplineManipulator::mode,
+             &UprightSplineManipulator::setMode,
+             GuiTheme::TOOL_RADIO_BUTTON_STYLE);
+        stopButton->setSize(buttonSize);
 
-    saveButton = manualPane->addButton("Save...");
-    saveButton->moveRightOf(stopButton);
-    saveButton->setSize(saveButton->rect().wh() - Vector2(20, 1));
-    saveButton->moveBy(20, -3);
-    saveButton->setEnabled(false);
+        saveButton = manualPane->addButton("Save...");
+        saveButton->setSize(saveButton->rect().wh() - Vector2(20, 1));
+        saveButton->moveBy(20, -3);
+        saveButton->setEnabled(false);
 
-    cyclicCheckBox = manualPane->addCheckBox("Cyclic", 
-        Pointer<bool>(trackManipulator, 
-                      &UprightSplineManipulator::cyclic, 
-                      &UprightSplineManipulator::setCyclic));
+        cyclicCheckBox = manualPane->addCheckBox("Cyclic", 
+            Pointer<bool>(trackManipulator, 
+                          &UprightSplineManipulator::cyclic, 
+                          &UprightSplineManipulator::setCyclic));
 
-    cyclicCheckBox->setPosition(visibleCheckBox->rect().x0(), saveButton->rect().y0() + 1);
-
+        cyclicCheckBox->setPosition(visibleCheckBox->rect().x0(), saveButton->rect().y0() + 1);
+    }
+    manualPane->endRow();
     /*
     static float m_playbackSpeed = 1.0f;
     GuiNumberBox<float>* speedBox = manualPane->addNumberBox("Speed", &m_playbackSpeed, "x", GuiTheme::LOG_SLIDER, 0.1f, 10.0f);
@@ -273,7 +281,7 @@ CameraControlWindow::CameraControlWindow(
     */
 
 #   ifdef G3D_OSX
-        manualHelpCaption = GuiText("W,A,S,D and shift+left mouse to move.", NULL, 10);
+        manualHelpCaption = GuiText("W,A,S,D and right (or shift+left) mouse to move.", NULL, 10);
 #   else
         manualHelpCaption = GuiText("W,A,S,D and right mouse to move.", NULL, 10);
 #   endif
