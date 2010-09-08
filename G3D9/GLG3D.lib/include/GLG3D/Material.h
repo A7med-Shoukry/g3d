@@ -73,10 +73,10 @@ public:
         Color3          m_transmissiveConstant;
 
         float           m_etaTransmit;
-        float           m_extinctionTransmit;
+        Color3          m_extinctionTransmit;
 
         float           m_etaReflect;
-        float           m_extinctionReflect;
+        Color3          m_extinctionReflect;
 
         Texture::Specification m_emissive;
         Color3          m_emissiveConstant;

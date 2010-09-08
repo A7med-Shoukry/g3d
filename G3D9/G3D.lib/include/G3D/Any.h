@@ -628,6 +628,10 @@ public:
         It may contain identifier operators after this */
     void verifyName(const std::string& n, const std::string& m) const;
 
+    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p(case insensitive). 
+        It may contain identifier operators after this */
+    void verifyName(const std::string& n, const std::string& m, const std::string& p) const;
+
     /** Verifies that the type is \a t. */
     void verifyType(Type t) const;
 

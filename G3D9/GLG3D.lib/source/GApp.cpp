@@ -1,10 +1,10 @@
 /**
- @file GApp.cpp
+ \file GApp.cpp
   
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2003-11-03
- @edited  2010-03-12
+ \created 2003-11-03
+ \edited  2010-09-12
  */
 
 #include "G3D/platform.h"

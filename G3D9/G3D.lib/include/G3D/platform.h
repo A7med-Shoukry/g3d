@@ -201,8 +201,9 @@
 #   endif
 
 
-/** @def G3D_START_AT_MAIN()
-    Defines necessary wrapper around WinMain on Windows to allow transfer of execution to main(). */
+/** \def G3D_START_AT_MAIN()
+    Makes Windows programs using the WINDOWS subsystem invoke main() at program start by
+    defining a WinMain(). Does nothing on other operating systems.*/
 #   define G3D_START_AT_MAIN()\
 int WINAPI G3D_WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw);\
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\

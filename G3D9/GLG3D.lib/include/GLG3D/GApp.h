@@ -1,10 +1,10 @@
 /**
-   @file GApp.h
+   \file GApp.h
  
-   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-   @created 2003-11-03
-   @edited  2009-09-12
+   \created 2003-11-03
+   \edited  2010-09-12
 */
 
 #ifndef G3D_GApp_h
@@ -31,45 +31,45 @@ class UserInput;
 class Log;
 
 /**
- @brief Schedule a G3D::Shape for later rendering.
+ \brief Schedule a G3D::Shape for later rendering.
 
  Adds this shape and the specified information to the current G3D::GApp::debugShapeArray, 
  to be rendered at runtime for debugging purposes.
 
- @beta
+ \beta
 
- @sa debugPrintf, logPrintf, screenPrintf
+ \sa debugPrintf, logPrintf, screenPrintf
  */
 void debugDraw(const ShapeRef& shape, const Color4& solidColor = Color3::white(), 
                const Color4& wireColor = Color3::black(), const CFrame& frame = CFrame());
 
 //  See @link guideapp @endlink for a discussion of GApp and GApplet. 
 /**
+ \brief Optional base class for quickly creating 3D applications.
 
- For each frame, the GApp has several tasks that can be implemented by overriding
- base class methods.  The use of cooperative, round-robbin scheduling avoids the need
- for threads in most applications.  These tasks are:
+ GApp has several event handlers implemented as virtual methods.  It invokes these in
+ a cooperative, round-robin fashion.  This avoids the need for threads in most
+ applications.  The methods are, in order of invocation from GApp::oneFrame:
  
  <ul>
- <li> Graphics
- <li> User Input
- <li> AI / Game Logic
- <li> Network receive (network send occurs wherever needed)
- <li> Physical simulation
- <li> Wait (sleep to maintain constant frame rate)
+ <li> GApp::onEvent - invoked once for each G3D::GEvent
+ <li> GApp::onUserInput - process the current state of the keyboard, mouse, and game pads
+ <li> GApp::onNetwork - receive network packets; network <i>send</i> occurs wherever it is needed
+ <li> GApp::onAI - game logic and NPC AI
+ <li> GApp::onSimulation - physical simulation
+ <li> GApp::onPose - create an array of Surface and Surface2D for rendering
+ <li> GApp::onWait - tasks to process while waiting for the next frame to start
+ <li> GApp::onGraphics - render the Surface and Surface2D arrays.  By default, this invokes two helper methods:
+   <ul>
+   <li> GApp::onGraphics3D - render the Surface array and any immediate mode 3D 
+   <li> GApp::onGraphics2D - render the Surface2D array and any immediate mode 2D 
+   </ul>
  </ul>
  
- Other event handlers include onInit/onCleanup, onEvent for fine-grain
- event handling, and onConsoleCommand.
- 
- The onConsoleCommand handler allows you to add an in-game command console
- to your program.  By default it is activated when '~' is pressed; you can also
- set the GApp::escapeAction to open the console on ESC.  The console is a Widget,
- so you can completely disable it (e.g., in a release build of the program) by
- executing <code>removeWidget(console)</code>.
- 
- To invoke a GApp and let it control the main loop, call
- run(). 
+ The GApp::run method starts the main loop.  It invokes GApp::onInit, runs the main loop
+ until completion, and then invokes GApp::onCleanup.
+
+ \sa GApp::Settings, OSWindow, RenderDevice, G3D_START_AT_MAIN
 */
 class GApp {
 public:

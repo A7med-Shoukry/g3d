@@ -40,9 +40,10 @@ private:
 
 public:
     /**
-     Initializes to all zero.
+     \brief Initializes to all zero.
      */
     Color3() : r(0), g(0), b(0) {}
+
 
     /** \param any Must be in one of the following forms: 
         - Color3(#, #, #)
@@ -59,7 +60,9 @@ public:
     explicit Color3(class BinaryInput& bi);
 
     Color3(float r, float g, float b);
-    Color3(float v) : r(v), g(v), b(v) {}
+
+    /** \brief Initializes all channels to \a v */
+    explicit Color3(float v) : r(v), g(v), b(v) {}
 
     explicit Color3(const class Vector3& v);
     

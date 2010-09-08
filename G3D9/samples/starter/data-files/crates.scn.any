@@ -40,7 +40,7 @@
     },
     
     lighting = Lighting::Specification {
-        lightArray = (GLight::directional(Vector3(1, 2, 1), Color3(5,5,5), true),
+        lightArray = (GLight::directional(Vector3(1, 2, 1), Color3(10), true),
                      GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false)),
 
         environmentMap = {
