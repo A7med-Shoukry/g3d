@@ -96,7 +96,7 @@ float GCamera::circleOfConfusionRadius(float z, const class Rect2D& viewport) co
 
 
 GCamera::GCamera() : m_lensRadius(0.0f), m_focusPlaneZ(-10.0f), m_exposureTime(0.0f) {
-    setNearPlaneZ(-0.2f);
+    setNearPlaneZ(-0.15f);
     setFarPlaneZ(-150.0f);
     setFieldOfView((float)toRadians(90.0f), HORIZONTAL);
 }

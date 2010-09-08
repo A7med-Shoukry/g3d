@@ -30,7 +30,6 @@
 
 #   if (defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP))
         vec4 lambertianColor =
-            invPi *
 #       ifdef LAMBERTIANCONSTANT
             lambertianConstant
 #           ifdef LAMBERTIANMAP
@@ -40,5 +39,6 @@
             texture2D(lambertianMap, offsetTexCoord)
 #       endif
         ;
+	  lambertianColor.rgb *= invPi;
 #   endif
 /* End SS_LambertianComponent.pix */
