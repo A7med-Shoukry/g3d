@@ -28,27 +28,25 @@ private:
     static int32     dummy;
 
 public:
-    Vector3          center;
+    Point3           center;
     float            radius;
 
-    Sphere() {
-        center = Vector3::zero();
-        radius = 0;
+    Sphere() : center(Point3::zero()), radius(0) {
     }
 
     Sphere(class BinaryInput& b);
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);
 
-    Sphere(
-        const Vector3&  center,
-        float           radius) {
-
-        this->center = center;
-        this->radius = radius;
+    Sphere
+    (const Point3&  center,
+     float          radius) : center(center), radius(radius) {
     }
 
     virtual ~Sphere() {}
+
+    /** Returns the infinite sphere. */
+    static const Sphere& inf();
 
     bool operator==(const Sphere& other) const {
         return (center == other.center) && (radius == other.radius);
@@ -62,7 +60,7 @@ public:
      Returns true if point is less than or equal to radius away from
      the center.
      */
-    bool contains(const Vector3& point) const;
+    bool contains(const Point3& point) const;
 
     bool contains(const Sphere& other) const;
 
@@ -111,12 +109,12 @@ public:
     /**
      Uniformly distributed on the surface.
      */
-    Vector3 randomSurfacePoint() const;
+    Point3 randomSurfacePoint() const;
 
     /**
      Uniformly distributed on the interior (includes surface)
      */
-    Vector3 randomInteriorPoint() const;
+    Point3 randomInteriorPoint() const;
 
     void getBounds(class AABox& out) const;
 

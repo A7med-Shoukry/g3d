@@ -6,14 +6,14 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
   @created 2004-01-10
-  @edited  2009-02-10
+  @edited  2010-09-10
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
  */
 
-#ifndef G3D_AABOX_H
-#define G3D_AABOX_H
+#ifndef G3D_AABox_h
+#define G3D_AABox_h
 
 #include "G3D/platform.h"
 #include "G3D/Vector3.h"
@@ -33,18 +33,18 @@ private:
     /** Optional argument placeholder */
     static int dummy;
 
-    Vector3  lo;
-    Vector3  hi;
+    Point3  lo;
+    Point3  hi;
 
 public:
 
-    /** Does not initialize the fields */
-    inline AABox() {}
+    /** Creates a zero-area box at the origin */
+    AABox() {}
 
     /**
      Constructs a zero-area AABox at v.
      */
-    inline explicit AABox(const Vector3& v) {
+    explicit AABox(const Point3& v) {
         lo = hi = v;
     }
 
@@ -52,13 +52,13 @@ public:
         To have this automatically enforced, use
         <code>AABox(low.min(high), low.max(high));</code>
     */
-    inline AABox(const Vector3& low, const Vector3& high) {
+    AABox(const Point3& low, const Point3& high) {
         set(low, high);
     }
 
     /** Assumes that low is less than or equal to high along each dimension.
     */
-    inline void set(const Vector3& low, const Vector3& high) {
+    inline void set(const Point3& low, const Point3& high) {
         debugAssert(
             (low.x <= high.x) &&
             (low.y <= high.y) &&
@@ -75,7 +75,7 @@ public:
         hi = hi.max(a.hi);
     }
 
-    inline void merge(const Vector3& a) {
+    inline void merge(const Point3& a) {
         lo = lo.min(a);
         hi = hi.max(a);
     }
@@ -88,11 +88,11 @@ public:
         return lo.isFinite() && hi.isFinite();
     }
 
-    inline const Vector3& low() const {
+    inline const Point3& low() const {
         return lo;
     }
 
-    inline const Vector3& high() const {
+    inline const Point3& high() const {
         return hi;
     }
 
@@ -112,11 +112,11 @@ public:
     /**
       Returns the centroid of the box.
      */
-    inline Vector3 center() const {
+    inline Point3 center() const {
         return (lo + hi) * 0.5;
     }
 
-    Vector3 corner(int index) const;
+    Point3 corner(int index) const;
 
     /**
      Distance from corner(0) to the next corner along axis a.
@@ -192,7 +192,7 @@ public:
     }
 
     inline bool contains(
-        const Vector3&      point) const {
+        const Point3&      point) const {
         return
             (point.x >= lo.x) &&
             (point.y >= lo.y) &&
@@ -212,9 +212,9 @@ public:
         return diag.x * diag.y * diag.z;
     }
 
-    Vector3 randomInteriorPoint() const;
+    Point3 randomInteriorPoint() const;
 
-    Vector3 randomSurfacePoint() const;
+    Point3 randomSurfacePoint() const;
 
     /** Returns true if there is any overlap */
     bool intersects(const AABox& other) const;
@@ -225,8 +225,8 @@ public:
 
     /** Return the intersection of the two boxes */
     AABox intersect(const AABox& other) const {
-        Vector3 H = hi.min(other.hi);
-        Vector3 L = lo.max(other.lo).min(H);
+        Point3 H = hi.min(other.hi);
+        Point3 L = lo.max(other.lo).min(H);
         return AABox(L, H);
     }
 

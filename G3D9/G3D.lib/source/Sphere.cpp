@@ -6,7 +6,7 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
  @created 2001-04-17
- @edited  2009-01-20
+ @edited  2010-09-10
  */
 
 #include "G3D/platform.h"
@@ -35,6 +35,12 @@ void Sphere::serialize(class BinaryOutput& b) const {
 void Sphere::deserialize(class BinaryInput& b) {
     center.deserialize(b);
     radius = (float)b.readFloat64();
+}
+
+
+const Sphere& Sphere::inf() {
+    static const Sphere s(Point3::zero(), finf());
+    return s;
 }
 
 

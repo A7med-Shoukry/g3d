@@ -96,4 +96,14 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
     }
 }
 
+
+void GEntity::getBounds(AABox& box) const {
+    box = AABox(-Vector3::inf(), Vector3::inf());
+}
+
+
+void GEntity::getBounds(Sphere& sphere) const {
+    sphere = Sphere(m_frame.translation, finf());
+}
+
 }

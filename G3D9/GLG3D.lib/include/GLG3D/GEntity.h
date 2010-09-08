@@ -6,14 +6,16 @@
 #include "GLG3D/ArticulatedModel.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"
+#include "G3D/AABox.h"
+#include "G3D/Sphere.h"
 
 namespace G3D {
 
 /** \brief Sample base class for an object in a 3D world.
 
-    G3D does not contain a mandatory Entity class in the API because it is a
-    very application-specific role. However, this is a base class of how you 
-    might begin to structure one to get you started.
+    G3D does not contain a mandatory Entity class in the API because
+    it is a very application-specific role. However, this is a base
+    class of how you might begin to structure one to get you started.
 
     \beta
 */
@@ -82,7 +84,14 @@ public:
 
     virtual void onSimulation(GameTime absoluteTime, GameTime deltaTime);
 
+    /** Pose as of the last simulation time */
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
+
+    /** Return a world-space bounding box. */
+    virtual void getBounds(AABox& box) const;
+
+    /** Return a world-space bounding sphere. */
+    virtual void getBounds(Sphere& sphere) const;
 };
 
 }
