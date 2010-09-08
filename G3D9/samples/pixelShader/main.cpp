@@ -195,8 +195,8 @@ void App::configureShaderArgs(const LightingRef lighting) {
 	phongShader->args.set("shine", shine);
 	phongShader->args.set("reflect", reflect);
 
-	phongShader->args.set("environmentMap", lighting->environmentMap);
-	phongShader->args.set("environmentMapColor", lighting->environmentMapColor);
+	phongShader->args.set("environmentMap", lighting->environmentMapTexture);
+	phongShader->args.set("environmentMapColor", Color3::white() * lighting->environmentMapConstant);
 }
 
 G3D_START_AT_MAIN();

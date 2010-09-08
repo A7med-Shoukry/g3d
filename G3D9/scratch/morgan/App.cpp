@@ -173,7 +173,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
     */
-    m_shader->args.set("cubemap", m_scene->lighting()->environmentMap);
+    m_shader->args.set("cubemap", m_scene->lighting()->environmentMapTexture);
     rd->setShader(m_shader);
     Array<Surface::Ref> a;
     m_sphere->pose(a);

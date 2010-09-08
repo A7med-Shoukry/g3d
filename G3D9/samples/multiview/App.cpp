@@ -133,7 +133,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     // Render full shading viewport
     Rect2D shadeViewport = m_gbuffer->rect2DBounds() + Vector2(m_gbuffer->width(), 0) + Vector2(3, 1);
     rd->setViewport(shadeViewport);
-    Draw::skyBox(rd, m_scene->lighting()->environmentMap);
+    Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     // For convenience we'll just forward render again; a real
     // application would actually use the G-Buffer to perform deferred
     // shading.
