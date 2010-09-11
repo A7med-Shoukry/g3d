@@ -6,8 +6,6 @@
 #include "GLG3D/ArticulatedModel.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"
-#include "G3D/AABox.h"
-#include "G3D/Sphere.h"
 
 namespace G3D {
 
@@ -87,11 +85,24 @@ public:
     /** Pose as of the last simulation time */
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
 
-    /** Return a world-space bounding box. */
-    virtual void getBounds(AABox& box) const;
+    /** Return a world-space axis-aligned bounding box. */
+    virtual void getBounds(class AABox& box) const;
 
     /** Return a world-space bounding sphere. */
-    virtual void getBounds(Sphere& sphere) const;
+    virtual void getBounds(class Sphere& sphere) const;
+
+	/** Return a world-space bounding box. */
+    virtual void getBounds(class Box& box) const;
+
+	/** Return the distance to the first intersection of the GEntity's bounds
+	  with ray \a R at distance
+	  less than \a maxDistance.  Returns finf() if there is no such intersection.
+
+	  The bounds used may be more accurate than any of the given getBounds() results
+	  because the method may recurse into individual parts of the scene graph
+	  within the GEntity.
+	  */
+	float intersectBounds(const Ray& R, float maxDistance = finf()) const;
 };
 
 }

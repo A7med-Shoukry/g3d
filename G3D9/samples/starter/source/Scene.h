@@ -71,6 +71,15 @@ public:
 
     /** Enumerate the names of all available scenes. */
     static Array<std::string> sceneNames();
+
+	/** Returns the Entity whose conservative bounds are first
+	    intersected by \a ray, excluding Entitys in \a exclude.  
+		Useful for mouse selection.  Returns NULL if none are intersected.
+
+		Note that this may not return the closest Entity if another's bounds
+		project in front of it.
+     */	  
+	Entity::Ref intersectBounds(const Ray& ray, const Array<Entity::Ref>& exclude = Array<Entity::Ref>());
 };
 
 #endif

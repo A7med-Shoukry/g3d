@@ -1,4 +1,7 @@
 #include "GLG3D/GEntity.h"
+#include "G3D/Box.h"
+#include "G3D/AABox.h"
+#include "G3D/Sphere.h"
 
 namespace G3D {
 
@@ -102,8 +105,17 @@ void GEntity::getBounds(AABox& box) const {
 }
 
 
+void GEntity::getBounds(Box& box) const {
+    box = Box(-Vector3::inf(), Vector3::inf());
+}
+
 void GEntity::getBounds(Sphere& sphere) const {
     sphere = Sphere(m_frame.translation, finf());
+}
+
+float GEntity::intersectBounds(const Ray& R, float maxDistance) const {
+	// TODO
+	return finf();
 }
 
 }

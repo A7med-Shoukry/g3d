@@ -210,3 +210,22 @@ void Scene::onPose(Array<Surface::Ref>& surfaceArray) {
         m_entityArray[e]->onPose(surfaceArray);
     }
 }
+
+
+Entity::Ref Scene::intersectBounds(const Ray& ray, const Array<Entity::Ref>& exclude) {
+	Entity::Ref closest = NULL;
+	float distance = finf();
+
+	for (int e = 0; e < m_entityArray.size(); ++e) {
+		const Entity::Ref& entity = m_entityArray[e];
+		if (! exclude.contains(entity)) {
+			float intersection = entity->intersectBounds(ray, distance);
+			if (intersection < distance) {
+				closest = entity;
+				distance = intersection;
+			}
+		}
+	}
+
+	return closest;
+}
