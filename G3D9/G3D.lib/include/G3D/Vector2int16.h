@@ -4,9 +4,9 @@
   @maintainer Morgan McGuire, matrix@brown.edu
 
   @created 2003-08-09
-  @edited  2004-01-03
+  @edited  2010-01-03
 
-  Copyright 2000-2006, Morgan McGuire.
+  Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
  */
 
@@ -21,7 +21,7 @@ namespace G3D {
 
 /**
  \class Vector2int16 
- A Vector2 that packs its fields into uint16s.
+ A Vector2 that packs its fields into G3D::int16 s.
  */
 G3D_BEGIN_PACKED_CLASS(2)
 class Vector2int16 {

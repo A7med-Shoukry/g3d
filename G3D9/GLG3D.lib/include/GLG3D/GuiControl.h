@@ -53,8 +53,7 @@ protected:
     private:
         void (*m_callback)();
     public:
-        FunctionCallback(
-                         void (*callback)()) : m_callback(callback) {
+        FunctionCallback(void (*callback)()) : m_callback(callback) {
         }
         
         virtual void execute() {
@@ -74,8 +73,7 @@ protected:
         Class*		m_object;
         void (Class::*m_callback)();
     public:
-        MethodCallback(
-                       Class* object,
+        MethodCallback(Class* object,
                        void (Class::*callback)()) : m_object(object), m_callback(callback) {}
         
         virtual void execute() {

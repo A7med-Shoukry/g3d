@@ -34,6 +34,7 @@
 #include "G3D/Crypto.h"
 #include "G3D/format.h"
 #include "G3D/Vector2.h"
+#include "G3D/Vector2int32.h"
 #include "G3D/Vector3.h"
 #include "G3D/Vector4.h"
 #include "G3D/Color1.h"

@@ -68,6 +68,11 @@ GThreadRef GThread::create(const std::string& name, void (*proc)(void*), void* p
 }
 
 
+/*template<class Class>
+void GThread::runConcurrently(const Vector2int32& start, const Vector2int32& upTo, 
+*/
+
+
 bool GThread::started() const {
     return m_status != STATUS_CREATED;
 }
