@@ -70,10 +70,10 @@ static Table<std::string, std::string>& filenameTable() {
             try {
                 a.load(filenameArray[i]);
                 
-                std::string name = a["name"].string();
+                const std::string& name = a["name"].string();
                 alwaysAssertM(! filenameTable.containsKey(name),
                               "Duplicate scene names in " + filenameArray[i] + " and " +
-                              filenameTable["name"]);
+                              filenameTable[name]);
                 
                 logLazyPrintf("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
                 filenameTable.set(name, filenameArray[i]);
@@ -172,8 +172,10 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     // Load the camera
     camera = any["camera"];
 
-    if (any.containsKey("skybox")) {
+    if (any.containsKey("skyBox")) {
         Any sky = any["skyBox"];
+		sky.verifyType(Any::TABLE);
+		sky.verifyName("");
         s->m_skyBoxConstant = sky.get("constant", 1.0f);
         if (sky.containsKey("texture")) {
             s->m_skyBoxTexture = Texture::create(sky["texture"]);
@@ -188,6 +190,16 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
         s->m_lighting->environmentMapTexture  = s->m_skyBoxTexture;
         s->m_lighting->environmentMapConstant = s->m_skyBoxConstant;
     }
+
+	if ((s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP) && 
+		(s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
+		throw std::string("skyBox texture must be a cube map.");
+	}
+
+	if ((s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP) && 
+		(s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
+		throw std::string("environmentMap texture must be a cube map.");
+	}
 
     return s;
 }
