@@ -664,5 +664,8 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Vector2int32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\SpawnBehavior.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

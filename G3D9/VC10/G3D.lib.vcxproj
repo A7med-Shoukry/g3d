@@ -283,6 +283,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\serialize.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Set.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\SmallArray.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\SpawnBehavior.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Sphere.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Spline.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\splinefunc.h" />

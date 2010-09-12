@@ -135,7 +135,9 @@ Color3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i, i
                 for (int i = 0; i < impulseArray.size(); ++i) {
                     const SuperBSDF::Impulse& impulse = impulseArray[i];
                     Ray secondaryRay = Ray::fromOriginAndDirection(hit.position, impulse.w).bump(0.001f);
+					debugAssert(secondaryRay.direction().isFinite());
                     radiance += rayTrace(secondaryRay, world, impulse.extinction, bounce + 1) * impulse.coefficient;
+					debugAssert(radiance.isFinite());
                 }
             }
             break;
