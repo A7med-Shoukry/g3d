@@ -433,6 +433,8 @@ inline bool Vector2::isUnit() const {
     return squaredLength() == 1.0f;
 }
 
+typedef Vector2 Point2;
+
 } // namespace G3D
 
 template <>

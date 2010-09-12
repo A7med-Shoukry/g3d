@@ -200,6 +200,7 @@ href="classes.html">Classes</a>.
     \link G3D::PhysicsFrame PhysicsFrame\endlink (\link G3D::PhysicsFrame PFrame\endlink),
     \link G3D::PhysicsFrameSpline PhysicsFrameSpline\endlink,
     \link G3D::Plane Plane\endlink,
+    \link G3D::Point2 Point2\endlink,
     \link G3D::Point3 Point3\endlink,
     \link G3D::Power3 Power3\endlink,
     \link G3D::Ray Ray\endlink,

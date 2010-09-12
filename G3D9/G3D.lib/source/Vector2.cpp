@@ -27,7 +27,7 @@ namespace G3D {
 
 
 Vector2::Vector2(const Any& any) {
-    any.verifyName("Vector2");
+    any.verifyName("Vector2", "Point2");
     any.verifyType(Any::TABLE, Any::ARRAY);
     any.verifySize(2);
 
@@ -70,26 +70,26 @@ const Vector2& Vector2::unitY() {
 }
 
 const Vector2& Vector2::inf() { 
-	static Vector2 v((float)G3D::finf(), (float)G3D::finf());
-	return v; 
+    static Vector2 v(G3D::finf(), G3D::finf());
+    return v; 
 }
 
 
 const Vector2& Vector2::nan() { 
-	static Vector2 v((float)G3D::fnan(), (float)G3D::fnan()); 
-	return v; 
+    static Vector2 v(G3D::fnan(), G3D::fnan()); 
+    return v; 
 }
 
 
 const Vector2& Vector2::minFinite() {
-	static Vector2 v(-FLT_MAX, -FLT_MAX); 
-	return v; 
+    static Vector2 v(-FLT_MAX, -FLT_MAX); 
+    return v; 
 }
 
 
 const Vector2& Vector2::maxFinite() {
-	static Vector2 v(FLT_MAX, FLT_MAX); 
-	return v; 
+    static Vector2 v(FLT_MAX, FLT_MAX); 
+    return v; 
 }
 
 
