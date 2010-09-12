@@ -39,7 +39,7 @@ private:
     void makeGUI();
 
     /** Trace a single ray backwards. */
-    Color3 rayTrace(const Ray& ray, World* world, const Color3& extinction_i = Color3::zero(), int bounces = 1);
+    Radiance3 rayTrace(const Ray& ray, World* world, const Color3& extinction_i = Color3::zero(), int bounces = 1);
 
     /** Trace a whole image. */
     Image3::Ref rayTraceImage(float scale, int numRays);

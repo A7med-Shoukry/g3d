@@ -92,8 +92,8 @@ void App::onCleanup() {
 
 static G3D::Random rnd(0xF018A4D2, false);
 
-Color3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i, int bounce) {
-    Color3 radiance = Color3::zero();
+Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i, int bounce) {
+    Radiance3 radiance = Radiance3::zero();
 
     Hit hit;
     float dist = inf();
@@ -113,9 +113,11 @@ Color3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i, i
                 // Attenduated radiance
                 const Color3& radiance_L = light.color / distance2;
 
+				debugAssert(radiance.isFinite());
                 radiance += bsdf->evaluate(hit.normal, hit.texCoord, w_L, 
                                            radiance_L, -ray.direction()).rgb() * 
                                            max(0.0f, w_L.dot(hit.normal));
+				debugAssert(radiance.isFinite());
             }
         }
 
