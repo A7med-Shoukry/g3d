@@ -27,6 +27,11 @@ private:
 
     Texture::Ref        m_result;
 
+    /** Used to pass information from rayTraceImage() to trace() */
+    Image3::Ref         m_currentImage;
+    /** Used to pass information from rayTraceImage() to trace() */
+    int                 m_currentRays;
+
     /** Position during the previous frame */
     CFrame              m_prevCFrame;
 
@@ -41,6 +46,9 @@ private:
 
     /** Show a full-screen message */
     void message(const std::string& msg) const;
+
+    /** Trace one pixel of m_currentImage */
+    void trace(int x, int y);
 
 public:
 

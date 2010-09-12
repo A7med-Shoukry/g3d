@@ -4,7 +4,7 @@
  GThread class.
 
  @created 2005-09-24
- @edited  2005-10-22
+ @edited  2010-09-22
  */
 
 #include "G3D/GThread.h"
@@ -68,56 +68,16 @@ GThreadRef GThread::create(const std::string& name, void (*proc)(void*), void* p
 }
 
 
-#if 0
-enum {
-/** Tells GThread::runConcurrently() and GThread::runConcurrently2D() to
-  use System::numCores() threads.*/
-NUM_CORES = -100
-};
-
-/** 
-Iterates over a 2D region using multiple threads and blocks
-until all threads have completed.
-
-Evaluates \a object->\a method(\ax, \ay) for every 
-<code>start.x <= x < upTo.x</code> and 
-<code>start.y <= y < upTo.y</code>.  Iteration is row major,
-so each thread can expect to see successivly increasing x values.
-
-\param maxThreads Maximum number of threads to use.  By default at
-most one thread per processor core will be used.
-
-Example:
-<pre>
-class RayTracer {
-public:
-
-	void trace(const Vector2int32& pixel) {
-		...
-	}
-
-	void traceAll() {
-		GThread::runConcurrently2D(Vector2int32(0,0), Vector2int32(w,h), this, &RayTracer::trace);
-	}
-};
-</pre>
-*/
-template<class Class>
-void GThread::runConcurrently2D
-(const Vector2int32& start, 
- const Vector2int32& upTo, 
- Class*				 object,
- void (Class::*method)(int x, int y),
- int maxThreads = NUM_CORES) {
-
-	 TODO 
- }
-#endif
-
 
 bool GThread::started() const {
     return m_status != STATUS_CREATED;
 }
+
+
+int GThread::numCores() {
+    return System::numCores();
+}
+
 
 bool GThread::start(SpawnBehavior behavior) {
     

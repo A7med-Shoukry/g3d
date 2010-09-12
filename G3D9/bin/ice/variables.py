@@ -6,6 +6,7 @@ import os, utils
 from utils import *
 from platform import machine
 from library import *
+import multiprocessing
 
 ##############################################################################
 #                                 Constants                                  #
@@ -359,7 +360,9 @@ class State:
         self.usesProjectsList = []
         self.usesLibrariesList = []
         self.compilerVerboseOptions = []
-        self.numProcessors = cpuCount()
+
+        # includes HT virtual cores, unlike the cpuCount() function
+        self.numProcessors = multiprocessing.cpu_count()
         self.args = []
 
     # path is either a string or a list of paths

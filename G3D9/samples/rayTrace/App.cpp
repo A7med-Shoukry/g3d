@@ -18,7 +18,11 @@ int main(int argc, char** argv) {
 }
 
 
-App::App(const GApp::Settings& settings) : GApp(settings), m_mode(MODE_RECURSIVE), m_world(NULL), m_maxBounces(3), m_raysPerPixel(1) {}
+App::App(const GApp::Settings& settings) : 
+    GApp(settings), m_mode(MODE_RECURSIVE), 
+    m_maxBounces(3), m_raysPerPixel(1), 
+    m_world(NULL) {
+}
 
 
 void App::onInit() {
@@ -62,7 +66,7 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& posed3D, Array<Surfa
         // Update the preview image only while moving
         Mode m = m_mode;
         m_mode = MODE_RECURSIVE;
-        rayTraceImage(0.18f, 1);
+        rayTraceImage(0.2f, 1);
         m_mode = m;
         m_prevCFrame = defaultCamera.coordinateFrame();
     }
@@ -130,7 +134,7 @@ Color3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i, i
                 
                 for (int i = 0; i < impulseArray.size(); ++i) {
                     const SuperBSDF::Impulse& impulse = impulseArray[i];
-                    Ray secondaryRay = Ray::fromOriginAndDirection(hit.position, impulse.w).bump(0.0001f);
+                    Ray secondaryRay = Ray::fromOriginAndDirection(hit.position, impulse.w).bump(0.001f);
                     radiance += rayTrace(secondaryRay, world, impulse.extinction, bounce + 1) * impulse.coefficient;
                 }
             }
@@ -186,28 +190,38 @@ void App::onRender() {
 }
 
 
+void App::trace(int x, int y) {
+    Color3 sum = Color3::black();
+    if (m_currentRays == 1) {
+        sum = rayTrace(defaultCamera.worldRay(x + 0.5f, y + 0.5f, m_currentImage->rect2DBounds()), m_world);
+    } else {
+        for (int i = 0; i < m_currentRays; ++i) {
+            sum += rayTrace(defaultCamera.worldRay(x + rnd.uniform(), y + rnd.uniform(), m_currentImage->rect2DBounds()), m_world);
+        }
+    }
+    m_currentImage->set(x, y, sum / m_currentRays);
+}
+
+
 Image3::Ref App::rayTraceImage(float scale, int numRays) {
 
     int width = window()->width() * scale;
     int height = window()->height() * scale;
     
-    Image3::Ref im = Image3::createEmpty(width, height); 
+    m_currentImage = Image3::createEmpty(width, height); 
+    m_currentRays = numRays;
+    GThread::runConcurrently2D(Vector2int32(0, 0), Vector2int32(width, height), this, &App::trace);
+    /*
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            Color3 sum = Color3::black();
-            if (numRays == 1) {
-                sum = rayTrace(defaultCamera.worldRay(x + 0.5f, y + 0.5f, im->rect2DBounds()), m_world);
-            } else {
-                for (int i = 0; i < numRays; ++i) {
-                    sum += rayTrace(defaultCamera.worldRay(x + rnd.uniform(), y + rnd.uniform(), im->rect2DBounds()), m_world);
-                }
-            }
-            im->set(x, y, sum / numRays);
+            trace(x, y);
         }
-    }
+        }*/
 
-    m_result = Texture::fromMemory("Result", im->getCArray(), ImageFormat::RGB32F(), im->width(), im->height(), 1, 
-        GLCaps::supportsTexture(ImageFormat::RGB32F()) ? ImageFormat::RGB32F() : ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
-
-    return im;
+    m_result = 
+        Texture::fromMemory("Result", m_currentImage->getCArray(), m_currentImage->format(), 
+                            m_currentImage->width(), m_currentImage->height(), 1, 
+                            GLCaps::supportsTexture(ImageFormat::RGB32F()) ? ImageFormat::RGB32F() : ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
+    
+    return m_currentImage;
 }

@@ -849,7 +849,7 @@ void ArticulatedModel::updateAll() {
     }
     debugAssertM(startIndex == geometryPart.size(), 
                  "Did not spawn threads for all parts");
-    threads.start(GThread::USE_CURRENT_THREAD);
+    threads.start(USE_CURRENT_THREAD);
     threads.waitForCompletion();
 
     // Upload data to GPU
