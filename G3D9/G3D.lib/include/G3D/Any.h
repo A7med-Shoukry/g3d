@@ -18,6 +18,7 @@
 #include "G3D/Table.h"
 #include "G3D/Array.h"
 #include "G3D/AtomicInt32.h"
+#include "G3D/stringutils.h"
 #include <string>
 
 // needed for Token
