@@ -9,7 +9,6 @@
 #define App_h
 
 #include <G3D/G3DAll.h>
-#include <GLG3D/GLG3D.h>
 
 #include "Scene.h"
 
