@@ -111,17 +111,17 @@ public:
 		      lambertian = "diffusemap.png",
 		      specular = "specmap.png",
 		      shininess = "shinemap.png",
-		      transmissive = "transmap.png", // Simple transmission
+		      transmissive = "transmap.png", # Simple transmission
 		      emissive = "emitmap.png",
-		      bump = "bumpmap.png",  // see BumpMap::Specification
+		      bump = "bumpmap.png",  # see BumpMap::Specification
 
-		      // Sophisticated transmission
+		      # Sophisticated transmission
 		      etatransmit = 1.0, 
 		      extinctionTransmit = Color3(1,1,1),
 		      etaReflect = 1.0,
 		      extinctionReflect = Color3(1,1,1),
 		      
-		      // Hints and hacks
+		      # Hints and hacks
 		      refractionHint = "DYNAMIC_FLAT",
 		      mirrorHint = "STATIC_ENV",
 		      customShaderPrefix = "",
@@ -140,17 +140,17 @@ public:
 
 		  Red plastic:
 		  <pre>
-                  Material::Specification {
-		     lambertian = Color3(0.95, 0.2, 0.05),
-		     specular = Color3(0.3),
-		     shininess = glossyExponent(200)
+          Material::Specification {
+		      lambertian = Color3(0.95, 0.2, 0.05),
+		      specular = Color3(0.3),
+		      shininess = glossyExponent(200)
 		  }
 		  </pre>
 		  
 		  Green glass:
 		  <pre>
 		  Material::Specification {
-	      	      lambertian = Color3(0.01, 0.1, 0.05),
+	      	  lambertian = Color3(0.01, 0.1, 0.05),
 		      transmissive = Color3(0.01, 0.9, 0.01),
 		      specular = Color3(0.4),
 		      shininess = mirror()
