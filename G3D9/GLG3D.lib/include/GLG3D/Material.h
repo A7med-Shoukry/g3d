@@ -100,9 +100,65 @@ public:
 
         Specification();
         
-        /** The parsing has been under significant revision and so is intentionally undocumented; see
-           the Material_Specification.cpp source code for the latest format.
-         \beta */
+        /** 
+		  \brief Construct a Material::Specification from an Any, typically loaded by parsing a file.
+
+		  Some simple examples follow.
+
+		  All fields as texture maps:
+		  <pre>
+		  Material::Specification {
+		      lambertian = "diffusemap.png",
+		      specular = "specmap.png",
+		      shininess = "shinemap.png",
+		      transmissive = "transmap.png", // Simple transmission
+		      emissive = "emitmap.png",
+		      bump = "bumpmap.png",  // see BumpMap::Specification
+
+		      // Sophisticated transmission
+		      etatransmit = 1.0, 
+		      extinctionTransmit = Color3(1,1,1),
+		      etaReflect = 1.0,
+		      extinctionReflect = Color3(1,1,1),
+		      
+		      // Hints and hacks
+		      refractionHint = "DYNAMIC_FLAT",
+		      mirrorHint = "STATIC_ENV",
+		      customShaderPrefix = "",
+		      depthWriteHintDistance = nan()
+		      }	       
+		  </pre>
+
+		  Mirror:
+		  <pre>
+		  Material::Specification {
+		      lambertian = Color3(0.01),
+		      specular = Color3(0.9),
+		      shininess = mirror()
+		      }
+		  </pre>
+
+		  Red plastic:
+		  <pre>
+                  Material::Specification {
+		     lambertian = Color3(0.95, 0.2, 0.05),
+		     specular = Color3(0.3),
+		     shininess = glossyExponent(200)
+		  }
+		  </pre>
+		  
+		  Green glass:
+		  <pre>
+		  Material::Specification {
+	      	      lambertian = Color3(0.01, 0.1, 0.05),
+		      transmissive = Color3(0.01, 0.9, 0.01),
+		      specular = Color3(0.4),
+		      shininess = mirror()
+		  }		    
+		  </pre>
+
+         \sa G3D::RefractionQuality, \sa G3D::MirrorQuality, \sa G3D::BumpMapSpecification
+	 \beta */
         Specification(const Any& any);
 
         Specification(const Color3& lambertian);
