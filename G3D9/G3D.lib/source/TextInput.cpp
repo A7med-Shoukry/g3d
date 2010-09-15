@@ -144,10 +144,9 @@ std::string TextInput::readUntilNewlineAsString() {
     std::string s;
 
     // Read until newline or eof
-    char c = '\0';
-    do {
-        c = buffer[currentCharOffset];
-        if (c == '\r' || c == '\n') {
+    while (currentCharOffset < buffer.size()) {
+        const char c = buffer[currentCharOffset];
+        if ((c == '\r') || (c == '\n')) {
             // Done
             break;
         } else {
@@ -155,7 +154,7 @@ std::string TextInput::readUntilNewlineAsString() {
             ++currentCharOffset;
             ++charNumber;
         }
-    } while (currentCharOffset < buffer.size());
+    } 
 
     return s;    
 }

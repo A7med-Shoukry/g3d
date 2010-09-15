@@ -1179,8 +1179,8 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
     }
 
     int nV = iFloor(ti.readNumber());
-    int nE = iFloor(ti.readNumber());
     int nF = iFloor(ti.readNumber());
+    int nE = iFloor(ti.readNumber());
     (void)nE;
 
     ///////////////////////////////////////////////////
@@ -1277,8 +1277,12 @@ void ArticulatedModel::initOFF(const std::string& filename, const Preprocess& pr
             MeshAlg::toIndexedTriList(poly, PrimitiveType::TRIANGLE_FAN, index);
         }
 
-        // Ignore per-face colors
-        ti.readUntilNewlineAsString();
+        // Trim to the end of the line, except on the last line of the
+        // file (where it doesn't matter)
+        if (i != nF - 1) {
+            // Ignore per-face colors
+            ti.readUntilNewlineAsString();
+        }
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////
