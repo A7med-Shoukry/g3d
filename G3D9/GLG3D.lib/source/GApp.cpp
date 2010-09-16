@@ -268,6 +268,9 @@ GuiWindow::Ref GApp::show(const Texture::Ref& t) {
             hour = 12;
         } else if (hour >= 12) {
             ap = "pm";
+            if (hour > 12) {
+                hour -= 12;
+            }
         }
         name = format("%s %d:%02d %s", day[t->tm_wday], t->tm_hour, t->tm_min, ap);
     }
