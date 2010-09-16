@@ -272,7 +272,7 @@ GuiWindow::Ref GApp::show(const Texture::Ref& t) {
                 hour -= 12;
             }
         }
-        name = format("%s %d:%02d %s", day[t->tm_wday], t->tm_hour, t->tm_min, ap);
+        name = format("%s %d:%02d %s", day[t->tm_wday], hour, t->tm_min, ap);
     }
 
     GuiWindow::Ref display = 
