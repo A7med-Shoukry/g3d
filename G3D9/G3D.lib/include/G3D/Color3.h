@@ -1,16 +1,16 @@
 /**
- @file Color3.h
+ \file Color3.h
  
  Color class
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- @cite Portions based on Dave Eberly's Magic Software Library
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \cite Portions based on Dave Eberly's Magic Software Library
       at <A HREF="http://www.magic-software.com">http://www.magic-software.com</A>
  
- @created 2001-06-02
- @edited  2009-04-28
+ \created 2001-06-02
+ \edited  2010-09-28
 
- Copyright 2000-2009, Morgan McGuire.
+ Copyright 2000-2010, Morgan McGuire.
  All rights reserved.
  */
 
@@ -47,10 +47,15 @@ public:
 
     /** \param any Must be in one of the following forms: 
         - Color3(#, #, #)
+        - Color3(#)
         - Color3::fromARGB(#)
         - Color3{r = #, g = #, b = #)
         - Color3::one()
         - Color3::zero()
+
+        In the current implementation, G3D::Power3 and G3D::Radiance3
+        are typedefs for Color3, so Color3 accepts "Power3" and
+        "Radiance3" as a prefixes as well, e.g., Power3(1,0,0).
         */
     Color3(const Any& any);
     

@@ -124,7 +124,7 @@ std::string readWholeFile(
     } else if (zipfileExists(filename)) {
 
         void* zipBuffer;
-        size_t length;
+        size_t length  = 0;
         zipRead(filename, zipBuffer, length);
 
         char* buffer = (char*)System::alignedMalloc(length + 1, 16);

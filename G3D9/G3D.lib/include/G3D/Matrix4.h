@@ -50,7 +50,13 @@ private:
     bool operator>=(const Matrix4&) const;
 
 public:
-    /** Must be of the form: <code>Matrix4(#, #, # .... #)</code>*/
+
+    /** Must be in one of the following forms:
+        -Matrix4(#, #, # .... #)
+        -Matrix4::scale(#)
+        -Matrix4::scale(#, #, #)
+        -Matrix4::translation(#, #, #)
+    */
     Matrix4(const Any& any);
 
     operator Any() const;

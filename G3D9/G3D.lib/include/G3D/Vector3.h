@@ -1,13 +1,14 @@
 /**
-  @file Vector3.h
+  \file Vector3.h
  
   3D vector class
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2001-06-02
-  @edited  2009-11-01
-  Copyright 2000-2009, Morgan McGuire.
+  \created 2001-06-02
+  \edited  2010-09-01
+
+  Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
  */
 
@@ -72,7 +73,12 @@ public:
     /** Initializes to zero */
     Vector3();
 
-    /** \param any Must either Vector3(#, #, #) or Vector3 {x = #, y = #, z = #}*/
+    /** 
+        \param any  Must either Vector3(#, #, #) or Vector3 {x = #, y = #, z = #}.
+        Because Point3 is a typedef for Vector3 in the current implementation,
+        this constructor accepts Point3(#, #, #), etc. as well.
+        
+     */
     Vector3(const Any& any);
     
     /** Converts the Vector3 to an Any. */
@@ -87,7 +93,7 @@ public:
     explicit Vector3(float coordinate[3]);
     explicit Vector3(double coordinate[3]);
     Vector3(const class Vector3int16& v);
-	explicit Vector3(class TextInput& t);
+    explicit Vector3(class TextInput& t);
     explicit Vector3(const class Color3& c);
 
 	/** Format is three float32's */
