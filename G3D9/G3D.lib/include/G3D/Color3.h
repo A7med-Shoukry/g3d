@@ -53,9 +53,10 @@ public:
         - Color3::one()
         - Color3::zero()
 
-        In the current implementation, G3D::Power3 and G3D::Radiance3
-        are typedefs for Color3, so Color3 accepts "Power3" and
-        "Radiance3" as a prefixes as well, e.g., Power3(1,0,0).
+        In the current implementation, G3D::Power3, G3D::Radiance3,
+        and G3D::Irradiance3 are typedefs for Color3, so Color3
+        accepts "Power3" and "Radiance3" as a prefixes as well, e.g.,
+        Power3(1,0,0).
         */
     Color3(const Any& any);
     
@@ -424,6 +425,7 @@ inline Color3 Color3::unitCross (const Color3& rkVector) const {
 
 
 typedef Color3 Radiance3;
+typedef Color3 Irradiance3;
 typedef Color3 Power3;
 
 } // namespace

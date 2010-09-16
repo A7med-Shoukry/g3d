@@ -7,12 +7,13 @@
   This file is included into NonShadowedPass.pix and 
   ShadowMappedLightPass.pix.
 
-  @edited  2009-03-24
-  @created 2007-12-18
+  \created 2007-12-18
+  \edited  2010-09-24
  */
 
 // 1.0 / (8.0 pi); used for normalizing the specular lobe
 #define inv8pi (0.0397887358)
+//#define pi (3.14159265356)
  
 /**
  @param lightAttenuation OpenGL distance attenuation polynomial coefficients
@@ -25,7 +26,7 @@ void addLightContribution(in vec3 wsN, in vec3 wsE, in vec3 wsPosition, in float
     // Light vector
     wsL = lightPosition.xyz - wsPosition.xyz * lightPosition.w;
     float lightDistance = length(wsL);
-    wsL = wsL / lightDistance;
+    wsL = normalize(wsL);
 
     float attenuation =
         lightPosition.w *
@@ -34,7 +35,7 @@ void addLightContribution(in vec3 wsN, in vec3 wsE, in vec3 wsPosition, in float
         ((-dot(lightDirection, wsL) >= lightAttenuation.w) ? 
          
          // Within spotlight cone
-         (1.0 / dot( vec3(1.0, lightDistance, lightDistance * lightDistance), lightAttenuation.xyz)) : 
+         (1.0 / dot( vec3(1.0, lightDistance, 4 * pi * lightDistance * lightDistance), lightAttenuation.xyz)) : 
          
          // Outside spotlight cone
          0.0) + (1.0 - lightPosition.w);

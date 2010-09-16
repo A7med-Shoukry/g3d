@@ -24,7 +24,7 @@ static const char* shaderCode =
 #endif\n\
 uniform float     sensitivity;\
 \
-/* 1.0 / monitorGamma.  Usually about invGamma = 0.5*/\
+/* 1.0 / monitorGamma.  Usually about invGamma = 0.45*/\
 uniform float     invGamma;\
 \
 void main(void) {\
@@ -72,7 +72,7 @@ void main(void) {\n\
 
 Film::Film(const ImageFormat* f) :
     m_intermediateFormat(f),
-    m_gamma(2.0f),
+    m_gamma(2.2f),
     m_sensitivity(1.0f),
     m_bloomStrength(0.18f),
     m_bloomRadiusFraction(0.008f) {

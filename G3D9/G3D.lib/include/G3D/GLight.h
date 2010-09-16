@@ -81,7 +81,17 @@ public:
         has no effect.*/
     bool                spotSquare;
 
-    /** Constant, linear, quadratic */
+    /** The attenuation observed by an omni or spot light is 
+
+        \f[ \frac{1}{a_0 + a_1 r + 4 \pi a_2 r^2},\f]
+
+        where \f$a_i\f$ <code>= attenuation[i]</code> and
+        \f$r\f$ is the distance to the source.
+    
+        Directional lights ignore attenuation.  A physically correct
+        light source should have $\f$a_0=0, a_1=0, a_2=1\f$, but it
+        may be artistically desirable to alter the falloff function.
+    */
     float               attenuation[3];
 
     /** 

@@ -1307,6 +1307,16 @@ void Any::verifyName(const std::string& n, const std::string& m, const std::stri
 }
 
 
+void Any::verifyName(const std::string& n, const std::string& m, const std::string& p, const std::string& q) const {
+    beforeRead();
+    const std::string& x = toUpper(name());
+    verify(beginsWith(x, toUpper(n)) ||
+           beginsWith(x, toUpper(m)) ||
+           beginsWith(x, toUpper(p)) ||
+           beginsWith(x, toUpper(q)), "Name must begin with " + n + ", " + m + ", " + p + ", or " + q);
+}
+
+
 void Any::verifyType(Type t) const {
     beforeRead();
     if (type() != t) {

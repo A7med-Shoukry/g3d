@@ -43,6 +43,7 @@
      <li> Improved OFF file parsing compatibility
      <li> <b>Backwards Incompatible</b>: G3D::Film::exposure &rarr; G3D::Film::sensitivity
      <li> <b>Backwards Incompatible</b>: GLight::attenuation now defaults to (0.0001,0,1); SuperShader ignores attenuation on directional lights
+     <li> <b>Backwards Incompatible</b>: SuperShader scales the quadratic attenuation term by 4pi to produce a physically-meaningful radiance value for point lights
      <li> <b>Backwards Incompatible</b>: G3D::Draw::skyBox now uses programmable pipeline and requires a cube map
      <li> <b>Backwards Incompatible</b>: Replaced Lighting::ambientTop and ambientBottom and SuperShader pixel shader with pure environment map-based ambient.
      <li> <b>Backwards Incompatible</b>: Changed G3D::ArticulatedModel::Preprocess::materialOverride to a Material::Specification; likewise for the materialSubstitution table.

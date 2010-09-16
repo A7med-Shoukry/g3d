@@ -26,7 +26,7 @@
 #include "G3D/FileSystem.h"
 #include "GLG3D/GuiTextureBox.h"
 #include "GLG3D/GuiPane.h"
-
+#include <time.h>
 
 namespace G3D {
 

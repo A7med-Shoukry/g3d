@@ -24,7 +24,7 @@ namespace G3D {
 
 Color3::Color3(const Any& any) {
     *this = Color3::zero();
-    any.verifyName("Color3", "Power3", "Radiance3");
+    any.verifyName("Color3", "Power3", "Radiance3", "Irradiance3");
 
     switch (any.type()) {
     case Any::TABLE:
