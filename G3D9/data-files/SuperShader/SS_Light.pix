@@ -35,7 +35,7 @@ void addLightContribution(in vec3 wsN, in vec3 wsE, in vec3 wsPosition, in float
         ((-dot(lightDirection, wsL) >= lightAttenuation.w) ? 
          
          // Within spotlight cone
-         (1.0 / dot( vec3(1.0, lightDistance, 4 * pif * lightDistance * lightDistance), lightAttenuation.xyz)) : 
+         (1.0 / dot( vec3(1.0, lightDistance, 4.0 * pif * lightDistance * lightDistance), lightAttenuation.xyz)) : 
          
          // Outside spotlight cone
          0.0) + (1.0 - lightPosition.w);
