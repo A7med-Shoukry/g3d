@@ -40,7 +40,7 @@ Entity::Ref Entity::create(const std::string& n, const PhysicsFrameSpline& frame
 
 ////////////////////////////////////////////////////////////////////////
 
-void Scene::onSimulation(RealTime deltaTime) {
+void Scene::onSimulation(GameTime deltaTime) {
     m_time += deltaTime;
     for (int i = 0; i < m_entityArray.size(); ++i) {
         m_entityArray[i]->onSimulation(m_time, deltaTime);
