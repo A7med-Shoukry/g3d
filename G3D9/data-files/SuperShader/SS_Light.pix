@@ -28,14 +28,16 @@ void addLightContribution(in vec3 wsN, in vec3 wsE, in vec3 wsPosition, in float
     wsL = wsL / lightDistance;
 
     float attenuation =
+        lightPosition.w *
+
         // Spotlight cone (lightAttenuation.w = -1 for other lights)
-        (-dot(lightDirection, wsL) >= lightAttenuation.w) ? 
-
-          // Within spotlight cone
-          (1.0 / dot( vec3(1.0, lightDistance, lightDistance * lightDistance), lightAttenuation.xyz)) : 
-
-          // Outside spotlight cone
-          0.0;
+        ((-dot(lightDirection, wsL) >= lightAttenuation.w) ? 
+         
+         // Within spotlight cone
+         (1.0 / dot( vec3(1.0, lightDistance, lightDistance * lightDistance), lightAttenuation.xyz)) : 
+         
+         // Outside spotlight cone
+         0.0) + (1.0 - lightPosition.w);
 
 #   ifdef NORMALBUMPMAP
         // For a bump mapped surface, do not allow illumination on the back side even if the

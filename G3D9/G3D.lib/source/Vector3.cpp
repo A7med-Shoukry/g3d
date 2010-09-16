@@ -32,7 +32,7 @@
 namespace G3D {
 
 Vector3::Vector3(const Any& any) {
-    any.verifyName("Vector3");
+    any.verifyName("Vector3", "Point3");
     any.verifyType(Any::TABLE, Any::ARRAY);
     any.verifySize(3);
 

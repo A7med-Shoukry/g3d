@@ -21,7 +21,7 @@
      <li> Made alpha-testing optional in TriTree
      <li> Extended G3D::GCamera to have lens parameters
      <li> Lighting::Specification::operator Any()
-	 <li> G3D::Vector2int32
+     <li> G3D::Vector2int32
      <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
      <li> G3D::GCamera::exposureTime 
      <li> G3D::Any::operator=(Array<T>)
@@ -41,7 +41,8 @@
      <li> Build system output directory no longer includes platform name (affects icompile as well)
      <li> Added new icompile working directory ([Global] workdir), defaults to data-files for new projects
      <li> Improved OFF file parsing compatibility
-	 <li> <b>Backwards Incompatible</b>: G3D::Film::exposure &rarr; G3D::Film::sensitivity
+     <li> <b>Backwards Incompatible</b>: G3D::Film::exposure &rarr; G3D::Film::sensitivity
+     <li> <b>Backwards Incompatible</b>: GLight::attenuation now defaults to (0.0001,0,1); SuperShader ignores attenuation on directional lights
      <li> <b>Backwards Incompatible</b>: G3D::Draw::skyBox now uses programmable pipeline and requires a cube map
      <li> <b>Backwards Incompatible</b>: Replaced Lighting::ambientTop and ambientBottom and SuperShader pixel shader with pure environment map-based ambient.
      <li> <b>Backwards Incompatible</b>: Changed G3D::ArticulatedModel::Preprocess::materialOverride to a Material::Specification; likewise for the materialSubstitution table.

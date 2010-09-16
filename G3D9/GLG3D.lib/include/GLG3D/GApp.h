@@ -368,11 +368,11 @@ public:
         m_cameraManipulator = man;
     }
 
-    inline Manipulator::Ref cameraManipulator() const {
+    Manipulator::Ref cameraManipulator() const {
         return m_cameraManipulator;
     }
     
-    inline OSWindow* window() const {
+    OSWindow* window() const {
         return _window;
     }
 

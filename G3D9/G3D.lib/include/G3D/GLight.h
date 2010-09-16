@@ -24,7 +24,11 @@ class Any;
 
    A directional light has position.w == 0.  A spot light has
    spotHalfAngle < pi() / 2 and position.w == 1.  An omni light has
-   spotHalfAngle == pi() and position.w == 1.
+   spotHalfAngle == pi() and position.w == 1.  
+
+   For a physically correct light, set attenuation = (0,0,1) for spot
+   and omni lights (the default).  SuperShader ignores attenuation on
+   directional lights, although in general it should be (1,0,0).
    
    Named "GLight" instead of "Light" so that you can define your
    own more general (e.g., area) emitter class without a name 

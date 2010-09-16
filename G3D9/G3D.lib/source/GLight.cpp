@@ -118,9 +118,9 @@ GLight::GLight() :
     enabled(false),
     castsShadows(true) {
 
-    attenuation[0]  = 1.0;
-    attenuation[1]  = 0.0;
-    attenuation[2]  = 0.0;
+    attenuation[0]  = 0.0001f;
+    attenuation[1]  = 0.0f;
+    attenuation[2]  = 1.0f;
 }
 
 

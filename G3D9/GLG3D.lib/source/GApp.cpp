@@ -248,33 +248,53 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 
 
 GuiWindow::Ref GApp::show(const Texture::Ref& t) {
-	static const Vector2 offset = Vector2(25, 15);
-	static Vector2 lastPos = Vector2(0,0);
-	static float y0 = 0;
+    static const Vector2 offset = Vector2(25, 15);
+    static Vector2 lastPos = Vector2(0,0);
+    static float y0 = 0;
+    
+    lastPos += offset;
 
-	lastPos += offset;
+    std::string name = t->name();
 
-    GuiWindow::Ref display = GuiWindow::create(t->name().empty() ? "Image" : t->name(), NULL, Rect2D::xywh(lastPos,Vector2(0,0)), GuiTheme::TOOL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
+    if (name.empty()) {
+        // Use the current time as the name
+        time_t t1;
+        ::time(&t1);
+        tm* t = localtime(&t1);
+        static const char* day[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        int hour = t->tm_hour;
+        const char* ap = "am";
+        if (hour == 0) {
+            hour = 12;
+        } else if (hour >= 12) {
+            ap = "pm";
+        }
+        name = format("%s %d:%02d %s", day[t->tm_wday], t->tm_hour, t->tm_min, ap);
+    }
+
+    GuiWindow::Ref display = 
+        GuiWindow::create(name, NULL, Rect2D::xywh(lastPos,Vector2(0,0)), GuiTheme::TOOL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
+
     GuiTextureBox* box = display->pane()->addTextureBox(t);
     box->setSizeFromInterior(t->vector2Bounds());
-	box->zoomTo1();
+    box->zoomTo1();
     display->pack();
 
-	// Cascade, but don't go off the screen
-	if (display->rect().x1() > window()->width() || display->rect().y1() > window()->height()) {
-		lastPos = offset;
-		lastPos.y += y0;
-		y0 += offset.y;
-
-		display->moveTo(lastPos);
-
-		if (display->rect().y1() > window()->height()) {
-			y0 = 0;
-			lastPos = offset;
-			display->moveTo(lastPos);
-		}
-	}
-
+    // Cascade, but don't go off the screen
+    if ((display->rect().x1() > window()->width()) || (display->rect().y1() > window()->height())) {
+        lastPos = offset;
+        lastPos.y += y0;
+        y0 += offset.y;
+        
+        display->moveTo(lastPos);
+        
+        if (display->rect().y1() > window()->height()) {
+            y0 = 0;
+            lastPos = offset;
+            display->moveTo(lastPos);
+        }
+    }
+    
     addWidget(display);
     return display;
 }
