@@ -1172,7 +1172,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     launchDir = os.getcwd()
-    if not os.path.exists('ice.txt') and launchDir.endswith('/source') and os.path.exists('../ice.txt'):
+    if not os.path.exists('ice.txt') and (launchDir.endswith('/source') or launchDir.endsWith('/data-files')) and os.path.exists('../ice.txt'):
         # run from parent directory; icompile was run from within the source directory
         os.chdir('..')
     

@@ -36,6 +36,7 @@
      <li> G3D::PointHashGrid::getIntersectingMembers()
      <li> G3D::Surface::sendGeometry
      <li> G3D::Material::Specification(Color3)
+     <li> G3D::Matrix3::diagonal, G3D::Matrix4::diagonal
      <li> iCompile can now use ICE_EXTRA_SOURCE environment variable to find G3D sources if you move
           them after compilation
      <li> Build system output directory no longer includes platform name (affects icompile as well)

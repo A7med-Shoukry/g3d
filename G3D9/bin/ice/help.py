@@ -114,6 +114,9 @@ iCompile will not look for source files in directories matching: """ +
 Generated file ice-stats.csv contains a history of the size of your files at
 compilation times that is interesting for tracking development progress.
 
+For convenience, if run from the source or data-files directory, iCompile
+will automatically step up to the parent directory before compilation.
+
 Edit ice.txt and ~/.icompile if your project has specific configuration needs.
 See manual.html or http://ice.sf.net for full information. iCompile was created
 by Morgan McGuire with additional programming by Robert Hunter and Corey Taylor.

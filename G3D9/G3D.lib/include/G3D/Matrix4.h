@@ -83,6 +83,13 @@ public:
 
     Matrix4();
 
+    static Matrix4 diagonal(float e00, float e11, float e22, float e33) {
+        return Matrix4(e00, 0, 0, 0,
+                       0, e11, 0, 0,
+                       0, 0, e22, 0,
+                       0, 0, 0, e33);
+    }
+
     /** Produces an RT transformation that nearly matches this Matrix4.
         Because a Matrix4 may not be precisely a rotation and translation,
         this may introduce error. */

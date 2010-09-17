@@ -62,12 +62,18 @@ public:
              float fEntry10, float fEntry11, float fEntry12,
              float fEntry20, float fEntry21, float fEntry22);
 
-	bool fuzzyEq(const Matrix3& b) const;
+    bool fuzzyEq(const Matrix3& b) const;
 
     /** Constructs a matrix from a quaternion.
         @cite Graphics Gems II, p. 351--354
  	    @cite Implementation from Watt and Watt, pg 362*/
     Matrix3(const class Quat& q);
+
+    static Matrix3 diagonal(float e00, float e11, float e22) {
+        return Matrix3(e00, 0, 0, 
+                       0, e11, 0,
+                       0, 0, e22);
+    }
 
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);
