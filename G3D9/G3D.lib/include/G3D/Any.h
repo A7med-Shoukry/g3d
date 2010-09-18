@@ -747,6 +747,12 @@ public:
 
     AnyKeyIterator& operator++();
 #endif   
+
+    /** \copydoc get(const std::string& s, ValueType& v) */
+    void get(const std::string& s, std::string& v) {
+        v = m_any[s].string();
+        m_alreadyRead.insert(toLower(s));
+    }
     
     /** If key \s appears in the any, reads its value into \a v and 
         removes that key from the ones available to iterate over.
@@ -762,6 +768,7 @@ public:
         v = m_any[s];
         m_alreadyRead.insert(toLower(s));
     }
+
 
     /** Get the value associated with a key only if the key is actually present.
     
