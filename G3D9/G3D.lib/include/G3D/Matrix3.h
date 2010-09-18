@@ -32,7 +32,7 @@ namespace G3D {
 class Any;
 
 /**
-  3x3 matrix.  Do not subclass.
+  A 3x3 matrix.  Do not subclass.  Data is unitializd when default constructed.
  */
 class Matrix3 {
 private:
@@ -47,13 +47,19 @@ private:
 
 public:
 
+    /** Must be in one of the following forms:
+        -Matrix3(#, #, # .... #)
+        -Matrix3::fromAxisAngle(#, #)
+        -Matrix3::diagonal(#, #, #)
+        -Matrix3::identity()
+    */
     Matrix3(const Any& any);
 
     operator Any() const;
 
-    /** Initial values are undefined for performance.  See also 
-        Matrix3::zero(), Matrix3::identity(), Matrix3::fromAxisAngle, etc.*/
-    inline Matrix3() {}
+    /** Initial values are undefined for performance. 
+        \sa Matrix3::zero, Matrix3::identity, Matrix3::fromAxisAngle, etc.*/
+    Matrix3() {}
 
     Matrix3 (class BinaryInput& b);
     Matrix3 (const float aafEntry[3][3]);

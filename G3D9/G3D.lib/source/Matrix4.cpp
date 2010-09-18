@@ -49,7 +49,13 @@ Matrix4::Matrix4(const Any& any) {
             *this = translation(any[0], any[1], any[2]);
         } else {
             any.verify(false, "Matrix4::translation() requires 3 arguments");
-        }    } else {
+        }    
+    } else if (name == "matrix4::diagonal") {
+        any.verifySize(4);
+        *this = diagonal(any[0], any[1], any[2], any[3]);
+    } else if (name == "matrix4::identity") {
+        *this = identity();
+    } else {
         any.verify(false, "Expected Matrix4 constructor");
     }
 }

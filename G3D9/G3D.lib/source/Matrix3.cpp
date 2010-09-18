@@ -32,7 +32,12 @@ Matrix3::Matrix3(const Any& any) {
 
     if (any.nameEquals("Matrix3::fromAxisAngle")) {
         any.verifySize(2);
-        *this = Matrix3::fromAxisAngle(any[0], any[1].number());
+        *this = fromAxisAngle(any[0], any[1].number());
+    } else if (any.nameEquals("Matrix3::diagonal")) {
+        any.verifySize(3);
+        *this = diagonal(any[0], any[1], any[2]);
+    } else if (any.nameEquals("Matrix3::identity")) {
+        *this = identity();
     } else {
         any.verifySize(9);
 

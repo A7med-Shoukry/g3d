@@ -28,9 +28,9 @@ namespace G3D {
 class Any;
 
 /**
-  A 4x4 matrix.
+  A 4x4 matrix.  Do not subclass.  Data is initialized to 0 when default constructed.
 
-  See also G3D::CoordinateFrame, G3D::Matrix3, G3D::Quat
+  \sa G3D::CoordinateFrame, G3D::Matrix3, G3D::Quat
  */
 class Matrix4 {
 private:
@@ -56,6 +56,7 @@ public:
         -Matrix4::scale(#)
         -Matrix4::scale(#, #, #)
         -Matrix4::translation(#, #, #)
+        -Matrix4::identity()
     */
     Matrix4(const Any& any);
 
