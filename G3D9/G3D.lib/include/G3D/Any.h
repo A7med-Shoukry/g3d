@@ -351,7 +351,14 @@ public:
         int     index;
         int     size;
         IndexOutOfBounds() : index(0), size(0) {}
-        IndexOutOfBounds(int i, int s) : index(i), size(s) {}
+        IndexOutOfBounds(const Data* data, int i, int s) : index(i), size(s) {
+            if (data) {
+                filename  = data->source.filename;
+                line      = data->source.line;
+                character = data->source.character;
+            }
+            message = format("Index out of bounds: index = %d, array size = %d", i, s);
+        }
     };
 
     /** NONE constructor */

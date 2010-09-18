@@ -521,6 +521,9 @@ const Any& Any::operator[](int i) const {
     verifyType(ARRAY);
     debugAssert(m_data != NULL);
     Array<Any>& array = *(m_data->value.a);
+    if (i < 0 || i >= array.size()) {
+        throw IndexOutOfBounds(m_data, i, array.size());
+    }
     return array[i];
 }
 
@@ -539,6 +542,9 @@ Any& Any::operator[](int i) {
     verifyType(ARRAY);
     debugAssert(m_data != NULL);
     Array<Any>& array = *(m_data->value.a);
+    if (i < 0 || i >= array.size()) {
+        throw IndexOutOfBounds(m_data, i, array.size());
+    }
     return array[i];
 }
 
