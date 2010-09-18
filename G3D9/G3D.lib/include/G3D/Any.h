@@ -1,11 +1,11 @@
 /**
- @file Any.h
+ \file Any.h
   
- @author Morgan McGuire, Shawn Yarbrough, and Corey Taylor
- @maintainer Morgan McGuire
+ \author Morgan McGuire, Shawn Yarbrough, and Corey Taylor
+ \maintainer Morgan McGuire
   
- @created 2006-06-11
- @edited  2010-03-16
+ \created 2006-06-11
+ \edited  2010-09-16
 
  Copyright 2000-2010, Morgan McGuire.
  All rights reserved.
@@ -175,6 +175,8 @@ which also convenient when commenting out the last element.
 
 The serializer indents four spaces for each level of nesting. 
 Tables are written with the keys in alphabetic order.
+
+\sa G3D::AnyTableReader
 */
 class Any {
 public:
@@ -520,7 +522,8 @@ public:
     void append(const Any& v0, const Any& v1, const Any& v2);
     void append(const Any& v0, const Any& v1, const Any& v2, const Any& v3);
 
-    /** Directly exposes the underlying data structure for table.*/
+    /** Directly exposes the underlying data structure for table.
+    \sa G3D::AnyTableReader*/
     const Table<std::string, Any>& table() const;
 
     /** For a table, returns the element for \a key. Throws KeyNotFound
@@ -655,6 +658,126 @@ private:
     void deserializeArray(TextInput& ti,const std::string& term);
 
 };    // class Any
+
+
+
+
+/**
+   Convenient iteration over the keys of a Any::TABLE, usually
+   for implementing construction of an object from an Any.
+
+   Getting an element using either iteration or explicit requests
+   consumes that element from the iterator (but not from the Any!)
+   It is an error to consume the same element more than once from
+   the same iterator.
+
+   <pre>
+    AnyKeyIterator r(a);
+    r.getIfPresent("enabled",            enabled);
+    r.getIfPresent("showSamples",        showSamples);
+    r.getIfPresent("showTiles",          showTiles);
+
+    r.verifyDone();
+    </pre>
+
+    \beta
+*/
+class AnyTableReader {
+private:
+   Any              m_any;
+   Set<std::string> m_alreadyRead;
+public:
+    
+    /** Verifies that \a is a TABLE with the given \a name. */
+    AnyTableReader(const std::string& name, const Any& a) : m_any(a) {
+        try {
+            m_any.verifyType(Any::TABLE);
+            m_any.verifyName(name);
+        } catch (const ParseError& e) {
+            // If an exception is thrown, the destructors will not be 
+            // invoked automatically.
+            m_any.~Any();
+            m_alreadyRead.~Set();
+            throw e;
+        }
+    }
+
+    /** Verifies that \a is a TABLE. */
+    AnyTableReader(const Any& a) : m_any(a) {
+        try {
+            m_any.verifyType(Any::TABLE);
+        } catch (const ParseError& e) {
+            // If an exception is thrown, the destructors will not be 
+            // invoked automatically.
+            m_any.~Any();
+            m_alreadyRead.~Set();
+            throw e;
+        }
+    }
+
+    bool hasMore() const {
+        return m_any.size() > m_alreadyRead.size();
+    }
+
+    /** Verifies that all keys have been read. */
+    void verifyDone() const {
+        if (hasMore()) {
+            // Generate all keys
+            // Remove the ones we've read
+            // Assert the rest
+          //  any.verify("");
+        }
+    }
+
+#if 0
+    /** Returns the current key */
+    const std::string& key() const;
+
+    /** Returns the current value */
+    const Any& value() const;
+
+    AnyKeyIterator& operator++();
+#endif   
+    
+    /** If key \s appears in the any, reads its value into \a v and 
+        removes that key from the ones available to iterate over.
+
+        If key \s does not appear in the any, throws a G3D::ParseError.
+
+        Assumes that if key \s appears in the any it has not already been extracted
+        by this iterator.  If it has been read before, an assertion will fail in debug mode.
+
+      */
+    template<class ValueType>
+    void get(const std::string& s, ValueType& v) {
+        v = m_any[s];
+        m_alreadyRead.insert(toLower(s));
+    }
+
+    /** Get the value associated with a key only if the key is actually present.
+    
+        If key \s appears in the any, reads its value into \a v and 
+        removes that key from the ones available to iterate over.
+
+        If key \s does not appear in the any, does nothing.
+
+        Assumes that if key \s appears in the any it has not already been extracted
+        by this iterator.  If it has been read before, an assertion will fail in debug mode.
+
+        \return True if the value was read.
+      */
+    template<class ValueType>
+    bool getIfPresent(const std::string& s, ValueType& v) {
+        if (m_any.containsKey(s)) {
+            debugAssertM(! m_alreadyRead.contains(toLower(s)), "read twice");
+
+            get(s, v);
+            return true;
+        } else {
+            return false;
+        }
+    }
+};
 
 }    // namespace G3D
 

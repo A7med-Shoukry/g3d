@@ -301,6 +301,8 @@ public:
             reflectance maps, etc. */
         Visualization(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f);
 
+        Visualization(const Any& a);
+
         /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
           actually match true sRGB values, which have a non-linear gamma. */
         static const Visualization& sRGB();
