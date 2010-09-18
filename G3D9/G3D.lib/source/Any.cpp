@@ -94,8 +94,7 @@ void Any::beforeRead() const {
         e.character = m_data->source.character;
         e.key       = m_placeholderName;
         e.message   = 
-            "This exception may have been thrown later than "
-            "the actual operator[] invocation.";
+            "Key not found in operator[] lookup.";
 
         throw e;
     } 
@@ -329,7 +328,7 @@ Any::~Any() {
 void Any::beforeWrite() {
     if (isPlaceholder()) {
         // This is no longer a placeholder
-        m_placeholderName = "";
+        m_placeholderName.clear();
     }
 }
 
@@ -610,6 +609,7 @@ const Any& Any::operator[](const std::string& x) const {
             e.character = m_data->source.character;
         }
         e.key = x;
+        e.message = "Key not found in operator[] lookup.";
         throw e;
     }
     return *value;
