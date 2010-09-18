@@ -157,6 +157,7 @@
     <ClCompile Include="..\G3D.lib\source\MeshBuilder.cpp" />
     <ClCompile Include="..\G3D.lib\source\NetAddress.cpp" />
     <ClCompile Include="..\G3D.lib\source\NetworkDevice.cpp" />
+    <ClCompile Include="..\G3D.lib\source\ParseError.cpp" />
     <ClCompile Include="..\G3D.lib\source\PhysicsFrame.cpp" />
     <ClCompile Include="..\G3D.lib\source\PhysicsFrameSpline.cpp" />
     <ClCompile Include="..\G3D.lib\source\Plane.cpp" />
