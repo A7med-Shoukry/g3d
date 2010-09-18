@@ -9,7 +9,7 @@ Texture::Visualization::Visualization(Channels c, float g, float mn, float mx) :
 
 Texture::Visualization::Visualization(const Any& a) {
     *this = Visualization();
-//    AnyTableReader
+    AnyTableReader
 }
 
 

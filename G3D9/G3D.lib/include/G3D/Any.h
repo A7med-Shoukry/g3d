@@ -672,10 +672,11 @@ private:
    the same iterator.
 
    <pre>
-    AnyKeyIterator r(a);
-    r.getIfPresent("enabled",            enabled);
-    r.getIfPresent("showSamples",        showSamples);
-    r.getIfPresent("showTiles",          showTiles);
+    AnyTableReader r(a);
+    r.getIfPresent("enabled", enabled);
+    r.getIfPresent("showSamples", showSamples);
+    
+    r.get("showTiles", showTiles);
 
     r.verifyDone();
     </pre>
