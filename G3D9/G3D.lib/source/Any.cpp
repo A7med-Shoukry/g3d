@@ -86,15 +86,11 @@ void Any::beforeRead() const {
     if (isPlaceholder()) {
         // Tried to read from a placeholder--throw an exception as if
         // the original operator[] had failed.
-        KeyNotFound e;
         alwaysAssertM(m_data, "Corrupt placeholder");
+        KeyNotFound e(m_data);
 
-        e.filename  = m_data->source.filename;
-        e.line      = m_data->source.line;
-        e.character = m_data->source.character;
         e.key       = m_placeholderName;
-        e.message   = 
-            "Key not found in operator[] lookup.";
+        e.message   = "Key \"" + m_placeholderName + "\" not found in operator[] lookup.";
 
         throw e;
     } 
@@ -602,12 +598,7 @@ const Any& Any::operator[](const std::string& x) const {
     const Table<std::string, Any>& table = *(m_data->value.t);
     Any* value = table.getPointer(x);
     if (value == NULL) {
-        KeyNotFound e;
-        if (m_data) {
-            e.filename  = m_data->source.filename;
-            e.line      = m_data->source.line;
-            e.character = m_data->source.character;
-        }
+        KeyNotFound e(m_data);
         e.key = x;
         e.message = "Key not found in operator[] lookup.";
         throw e;

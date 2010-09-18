@@ -326,31 +326,32 @@ private:
      This proxy can be copied exactly once on return from operator[].*/
     Any(const std::string& key, Data* data);
 
-    inline bool isPlaceholder() const {
+    bool isPlaceholder() const {
         return ! m_placeholderName.empty();
     }
 
 public:
-
-    /** Base class for all Any exceptions.*/
-    class Exception {
-    public:
-        virtual ~Exception() {}
-    };
-
     /** Thrown by operator[] when a key is not present in a const table. */
     class KeyNotFound : public ParseError {
     public:
         std::string key;
+
+        KeyNotFound(const Data* data) {
+            if (data) {
+                filename  = data->source.filename;
+                line      = data->source.line;
+                character = data->source.character;
+            }
+        }
     };
 
     /** Thrown by operator[] when an array index is not present. */
-    class IndexOutOfBounds : public Exception {
+    class IndexOutOfBounds : public ParseError {
     public:
         int     index;
         int     size;
-        inline IndexOutOfBounds() : index(0), size(0) {}
-        inline IndexOutOfBounds(int i, int s) : index(i), size(s) {}
+        IndexOutOfBounds() : index(0), size(0) {}
+        IndexOutOfBounds(int i, int s) : index(i), size(s) {}
     };
 
     /** NONE constructor */

@@ -301,6 +301,9 @@ public:
             reflectance maps, etc. */
         Visualization(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f);
 
+        /** Accepts the name of any static factory method as an Any::ARRAY, e.g.,
+            "v = sRGB()" or a table, e.g., "v = Texture::Visualization { documentGamma = 2.2, ... }"
+        */
         Visualization(const Any& a);
 
         /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
