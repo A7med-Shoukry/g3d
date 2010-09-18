@@ -284,11 +284,10 @@ void testAny() {
 
     } catch( const Any::KeyNotFound& err ) {
         errss << "failed: Any::KeyNotFound key=" << err.key.c_str();
-    } catch( const ParseError& err ) {
-//      (void)err;
-        errss << "failed: ParseError: \"" << err.message << "\" " << err.filename << " line " << err.line << ":" << err.character;
     } catch( const Any::IndexOutOfBounds& err ) {
         errss << "failed: Any::IndexOutOfBounds index=" << err.index << " size=" << err.size;
+    } catch( const ParseError& err ) {
+        errss << "failed: ParseError: \"" << err.message << "\" " << err.filename << " line " << err.line << ":" << err.character;
     } catch( const std::exception& err ) {
         errss << "failed: std::exception \"" << err.what() << "\"\n";
     } catch( const std::string& err ) {
