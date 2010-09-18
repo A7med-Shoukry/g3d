@@ -662,6 +662,9 @@ private:
     
 public:
 
+    /** Used to display this Texture in a GuiTextureBox \beta */
+    Visualization                   visualization;
+
     class Specification {
     public:
         std::string               filename;
