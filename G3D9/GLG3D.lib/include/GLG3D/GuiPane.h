@@ -222,11 +222,11 @@ public:
 
     GuiTextureBox* addTextureBox(const GuiText& caption = "",
                                  const Texture::Ref& t = NULL,
-                                 const GuiTextureBox::Settings&  s = GuiTextureBox::Settings(),
+                                 const Texture::Visualization&  s = Texture::Visualization(),
                                  bool embedded = false);
 
     GuiTextureBox* addTextureBox(const Texture::Ref& t,
-                                 const GuiTextureBox::Settings&  s = GuiTextureBox::Settings(),
+                                 const Texture::Visualization&  s = Texture::Visualization(),
                                  bool embedded = false);
 
     GuiTabPane* addTabPane(const Pointer<int>& index = NULL);

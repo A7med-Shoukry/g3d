@@ -243,7 +243,104 @@ public:
         See also G3D::RenderDevice::configureShadowMap and the Collision_Demo.
      */
     enum DepthReadMode {DEPTH_NORMAL = 0, DEPTH_LEQUAL = 1, DEPTH_GEQUAL = 2};
+
     
+    
+    class Visualization {
+    public:
+
+        /** Which channels to display. */
+        enum Channels {
+            /** RGB as a color*/
+            RGB,
+
+            /** Red only */
+            R, 
+
+            /** Green only */
+            G, 
+
+            /** Blue only */
+            B, 
+
+            /** Red as grayscale */
+            RasL,
+
+            /** Green as grayscale */
+            GasL,
+
+            /** Blue as grayscale */
+            BasL,
+        
+            /** Alpha as grayscale */
+            AasL, 
+
+            /** RGB mean as luminance: (R + G + B) / 3; visualizes the net 
+               reflectance or energy of a texture */
+            MeanRGBasL,
+    
+            /** (Perceptula) Luminance; visualizes the brightness people perceive of an image. */
+            Luminance
+        };
+
+        Channels         channels;
+
+        /** Texture's gamma. Texels will be converted to pixels by p = t^(g/2.2)*/
+        float            documentGamma;
+
+        /** Lowest expected value */
+        float            min;
+
+        /** Highest expected value */
+        float            max;
+
+        /** If true, show as 1 - (adjusted value) */
+        bool             invertIntensity;
+
+        /** Defaults to linear data on [0, 1]: packed normal maps,
+            reflectance maps, etc. */
+        Visualization(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f);
+
+        /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
+          actually match true sRGB values, which have a non-linear gamma. */
+        static const Visualization& sRGB();
+
+        /** For signed unit vectors, like a GBuffer's normals, on the
+            range [-1, 1] for RGB channels */
+        static const Visualization& unitVector();
+
+        /** For bump map packed in an alpha channel. */
+        static const Visualization& bumpInAlpha();
+
+        /** For a hyperbolic depth map in the red channel (e.g., a shadow map). */
+        static const Visualization& depthBuffer();
+
+        static const Visualization& defaults();
+
+        /** Unit vectors packed into RGB channels, e.g. a normal map.  Same as defaults() */
+        static const Visualization& packedUnitVector() {
+            return defaults();
+        }
+
+        /** Reflectivity map.  Same as defaults() */
+        static const Visualization& reflectivity() {
+            return defaults();
+        }
+
+        /** Radiance map.  Same as defaults() */
+        static const Visualization& radiance() {
+            return defaults();
+        }
+
+        /** Linear RGB map.  Same as defaults() */
+        static const Visualization& linearRGB() {
+            return defaults();
+        }
+
+        /** True if these settings require the use of a GLSL shader */
+        bool needsShader() const;
+    };
+
     static const char* toString(DepthReadMode m);
     static DepthReadMode toDepthReadMode(const std::string& s);
     

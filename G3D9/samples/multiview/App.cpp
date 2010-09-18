@@ -72,36 +72,36 @@ void App::onInit() {
     GuiPane* pane = background->pane();
 
     pane->addLabel("Buffers:");
-    GuiTextureBox* posBox = pane->addTextureBox("Position", m_gbuffer->wsPosition(), GuiTextureBox::Settings::unitVector());
+    GuiTextureBox* posBox = pane->addTextureBox("Position", m_gbuffer->wsPosition(), Texture::Visualization::unitVector());
     posBox->setSizeFromInterior(gbufferViewSize);
     posBox->setShowInfo(false);
     posBox->zoomToFit();
 
-    GuiTextureBox* norBox = pane->addTextureBox("Normal", m_gbuffer->wsNormal(), GuiTextureBox::Settings::unitVector());
+    GuiTextureBox* norBox = pane->addTextureBox("Normal", m_gbuffer->wsNormal(), Texture::Visualization::unitVector());
     norBox->moveRightOf(posBox);
     norBox->setSizeFromInterior(gbufferViewSize);
     norBox->setShowInfo(false);
     norBox->zoomToFit();
 
-    GuiTextureBox* depBox = pane->addTextureBox("Depth", m_gbuffer->depth(), GuiTextureBox::Settings::depthBuffer());
+    GuiTextureBox* depBox = pane->addTextureBox("Depth", m_gbuffer->depth(), Texture::Visualization::depthBuffer());
     depBox->setSizeFromInterior(gbufferViewSize);
     depBox->moveRightOf(norBox);
     depBox->setShowInfo(false);
     depBox->zoomToFit();
 
-    GuiTextureBox* lamBox = pane->addTextureBox("Lambertian", m_gbuffer->lambertian(), GuiTextureBox::Settings::reflectivity());
+    GuiTextureBox* lamBox = pane->addTextureBox("Lambertian", m_gbuffer->lambertian(), Texture::Visualization::reflectivity());
     lamBox->setSizeFromInterior(gbufferViewSize);
     lamBox->moveRightOf(depBox);
     lamBox->setShowInfo(false);
     lamBox->zoomToFit();
 
-    GuiTextureBox* gloBox = pane->addTextureBox("Glossy", m_gbuffer->specular(), GuiTextureBox::Settings::reflectivity());
+    GuiTextureBox* gloBox = pane->addTextureBox("Glossy", m_gbuffer->specular(), Texture::Visualization::reflectivity());
     gloBox->setSizeFromInterior(gbufferViewSize);
     gloBox->moveRightOf(lamBox);
     gloBox->setShowInfo(false);
     gloBox->zoomToFit();
     
-    GuiTextureBox* shaBox = pane->addTextureBox("Shadow Map", m_shadowMap->depthTexture(), GuiTextureBox::Settings::depthBuffer());
+    GuiTextureBox* shaBox = pane->addTextureBox("Shadow Map", m_shadowMap->depthTexture(), Texture::Visualization::depthBuffer());
     shaBox->setSizeFromInterior(gbufferViewSize);
     shaBox->moveRightOf(gloBox);
     shaBox->setShowInfo(false);

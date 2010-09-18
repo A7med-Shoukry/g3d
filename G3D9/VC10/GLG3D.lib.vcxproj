@@ -177,6 +177,7 @@
     <ClCompile Include="..\GLG3D.lib\source\SurfaceSample.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\tesselate.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Texture.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\Texture_Visualization.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ThirdPersonManipulator.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Tri.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\TriTree.cpp" />

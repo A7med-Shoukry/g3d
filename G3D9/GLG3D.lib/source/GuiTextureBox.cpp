@@ -24,57 +24,11 @@ static const float DRAWER_Y_OFFSET = 5.0f;
 
 WeakReferenceCountedPointer<Shader> GuiTextureBox::g_cachedShader;
 
-GuiTextureBox::Settings::Settings(Channels c, float g, float mn, float mx) : 
-    channels(c), documentGamma(g), min(mn), max(mx), invertIntensity(false) {
-}
-
-
-const GuiTextureBox::Settings& GuiTextureBox::Settings::sRGB() {
-    static const Settings s(RGB, 2.2f, 0.0f, 1.0f);
-    return s;
-}
-
-
-const GuiTextureBox::Settings& GuiTextureBox::Settings::unitVector() {
-    static const Settings s(RGB, 1.0f, -1.0f, 1.0f);
-    return s;
-}
-
-
-const GuiTextureBox::Settings& GuiTextureBox::Settings::depthBuffer() {
-    static const Settings s(RasL, 9.0f, 0.2f, 1.0f);
-    return s;
-}
-
-
-const GuiTextureBox::Settings& GuiTextureBox::Settings::bumpInAlpha() {
-    static const Settings s(AasL, 1.0f, 0.0f, 1.0f);
-    return s;
-}
-
-
-const GuiTextureBox::Settings& GuiTextureBox::Settings::defaults() {
-    static const Settings s;
-    return s;
-}
-
-
-bool GuiTextureBox::Settings::needsShader() const {
-    return 
-        (channels != RGB) ||
-        (documentGamma != 2.2f) ||
-        (min != 0.0f) ||
-        (max != 1.0f) ||
-        invertIntensity;
-}
-
-//////////////////////////////////////////////////////////
-
 GuiTextureBox::GuiTextureBox
 (GuiContainer*       parent,
  const GuiText&      caption,
  const Texture::Ref& t,
- const Settings&     s,
+ const Texture::Visualization& s,
  bool                embeddedMode) : 
     GuiContainer(parent, caption), 
     m_texture(t),
@@ -353,7 +307,7 @@ class GuiTextureBoxInspector : public GuiWindow {
 protected:
 
     /** Settings of the original GuiTextureBox */
-    GuiTextureBox::Settings&    m_settings;
+    Texture::Visualization&     m_settings;
 
     GuiTextureBox*              m_textureBox;
 
@@ -395,7 +349,7 @@ public:
 
     /** \param parentWindow Hold a pointer to the window containing the original 
         GuiTextureBox so that it is not collected while we have its Settings&. */
-    GuiTextureBoxInspector(const GuiText& displayCaption, const Texture::Ref& texture, GuiTextureBox::Settings& settings, const GuiWindow::Ref& parentWindow) :
+    GuiTextureBoxInspector(const GuiText& displayCaption, const Texture::Ref& texture, Texture::Visualization& settings, const GuiWindow::Ref& parentWindow) :
         GuiWindow("Inspecting \"" + texture->name() + "\"", 
             parentWindow->theme(), 
             Rect2D::xywh(0,0, 100, 100),
@@ -409,7 +363,7 @@ public:
         GuiPane* p = pane();
         GuiPane* leftPane = p->addPane("", GuiTheme::NO_PANE_STYLE);
 
-        GuiTextureBox::Settings s = GuiTextureBox::Settings(GuiTextureBox::RGB, 0.01f, 0.0f, 1.0f);
+        Texture::Visualization s = Texture::Visualization(Texture::Visualization::RGB, 0.01f, 0.0f, 1.0f);
         m_textureBox = leftPane->addTextureBox(displayCaption, texture, m_settings, true);
 
         m_textureBox->setSize(screenBounds - Vector2(450, 275));
@@ -581,10 +535,10 @@ public:
             if ((event.gui.control == m_modeDropDownList) && (m_modeDropDownList->selectedIndex() > 0)) {
                 std::string preset = m_modeDropDownList->selectedValue().text();
                 if (preset == "sRGB Image") {
-                    m_settings = GuiTextureBox::Settings::sRGB();
+                    m_settings = Texture::Visualization::sRGB();
                 } else if (preset == "Radiance") {
                     // Choose the maximum value
-                    m_settings = GuiTextureBox::Settings::defaults();
+                    m_settings = Texture::Visualization::defaults();
                     Texture::Ref tex = m_textureBox->texture();
                     if (tex.notNull()) {
                         Color4 max = tex->max();
@@ -593,15 +547,15 @@ public:
                         }
                     }
                 } else if (preset == "Reflectivity") {
-                    m_settings = GuiTextureBox::Settings::defaults();
+                    m_settings = Texture::Visualization::defaults();
                 } else if (preset == "8-bit Normal/Dir") {
-                    m_settings = GuiTextureBox::Settings::packedUnitVector();
+                    m_settings = Texture::Visualization::packedUnitVector();
                 } else if (preset == "Float Normal/Dir") {
-                    m_settings = GuiTextureBox::Settings::unitVector();
+                    m_settings = Texture::Visualization::unitVector();
                 } else if (preset == "Depth Buffer") {
-                    m_settings = GuiTextureBox::Settings::depthBuffer();
+                    m_settings = Texture::Visualization::depthBuffer();
                 } else if (preset == "Bump Map (in Alpha)") {
-                    m_settings = GuiTextureBox::Settings::bumpInAlpha();
+                    m_settings = Texture::Visualization::bumpInAlpha();
                 }
 
                 // Switch back to <click to load>
@@ -951,7 +905,7 @@ void GuiTextureBox::setTexture(const Texture::Ref& t) {
 }
 
 
-void GuiTextureBox::setSettings(const Settings& s) {
+void GuiTextureBox::setSettings(const Texture::Visualization& s) {
     // Check the settings for this computer
     m_settings = s;
     if (m_settings.needsShader()) {

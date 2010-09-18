@@ -27,99 +27,6 @@ class GuiTextureBox : public GuiContainer {
 public:
     friend class GuiTextureBoxInspector;
 
-    /** Which channels to display. */
-    enum Channels {
-        /** RGB as a color*/
-        RGB,
-
-        /** Red only */
-        R, 
-
-        /** Green only */
-        G, 
-
-        /** Blue only */
-        B, 
-
-        /** Red as grayscale */
-        RasL,
-
-        /** Green as grayscale */
-        GasL,
-
-        /** Blue as grayscale */
-        BasL,
-        
-        /** Alpha as grayscale */
-        AasL, 
-
-        /** RGB mean as luminance: (R + G + B) / 3; visualizes the net 
-           reflectance or energy of a texture */
-        MeanRGBasL,
-    
-        /** (Perceptula) Luminance. Visualizes the brightness people perceive of an image. */
-        Luminance};
-    
-    class Settings {
-    public:
-        Channels         channels;
-
-        /** Texture's gamma. Texels will be converted to pixels by p = t^(g/2.2)*/
-        float            documentGamma;
-
-        /** Lowest expected value */
-        float            min;
-
-        /** Highest expected value */
-        float            max;
-
-        /** If true, show as 1 - (adjusted value) */
-        bool             invertIntensity;
-
-        /** Defaults to linear data on [0, 1]: packed normal maps,
-            reflectance maps, etc. */
-        Settings(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f);
-
-        /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
-          actually match true sRGB values, which have a non-linear gamma. */
-        static const Settings& sRGB();
-
-        /** For signed unit vectors, like a GBuffer's normals, on the
-            range [-1, 1] for RGB channels */
-        static const Settings& unitVector();
-
-        /** For bump map packed in an alpha channel. */
-        static const Settings& bumpInAlpha();
-
-        /** For a hyperbolic depth map in the red channel (e.g., a shadow map). */
-        static const Settings& depthBuffer();
-
-        static const Settings& defaults();
-
-        /** Unit vectors packed into RGB channels, e.g. a normal map.  Same as defaults() */
-        static const Settings& packedUnitVector() {
-            return defaults();
-        }
-
-        /** Reflectivity map.  Same as defaults() */
-        static const Settings& reflectivity() {
-            return defaults();
-        }
-
-        /** Radiance map.  Same as defaults() */
-        static const Settings& radiance() {
-            return defaults();
-        }
-
-        /** Linear RGB map.  Same as defaults() */
-        static const Settings& linearRGB() {
-            return defaults();
-        }
-
-        /** True if these settings require the use of a GLSL shader */
-        bool needsShader() const;
-    };
-
 protected:
 
     /** Padding around the image */
@@ -129,7 +36,7 @@ protected:
 
     WeakReferenceCountedPointer<GuiTextureBoxInspector>     m_inspector;
 
-    Settings                 m_settings;
+    Texture::Visualization   m_settings;
 
     /** Bounds for mouse clicks and scissor region, updated by every render. */
     Rect2D                   m_clipBounds;
@@ -189,7 +96,7 @@ public:
     (GuiContainer*       parent,
      const GuiText&      caption,
      const Texture::Ref& t = NULL,
-     const Settings&     s = Settings(),
+     const Texture::Visualization&     s = Texture::Visualization(),
      bool                embeddedMode = false);
 
     virtual ~GuiTextureBox();
@@ -232,13 +139,13 @@ public:
     void zoomToFit();
 
     void setTexture(const Texture::Ref& t);
-    void setSettings(const Settings& s);
+    void setSettings(const Texture::Visualization& s);
 
     inline const Texture::Ref& texture() const {
         return m_texture;
     }
 
-    inline const Settings& settings() const {
+    inline const Texture::Visualization& settings() const {
         return m_settings;
     }
 
