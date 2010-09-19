@@ -34,6 +34,7 @@ href="classes.html">Classes</a>.
     \link G3D::Surface2D Surface2D\endlink,
     \link G3D::SurfaceSample SurfaceSample\endlink,
     \link G3D::Tri Tri\endlink,
+    \link G3D::Tri::Intersector Tri::Intersector\endlink,
     \link G3D::TriTree TriTree\endlink,
     \link G3D::VideoInput VideoInput\endlink,
     \link G3D::VideoOutput VideoOutput\endlink

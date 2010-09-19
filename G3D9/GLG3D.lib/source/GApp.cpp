@@ -247,16 +247,17 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 }
 
 
-GuiWindow::Ref GApp::show(const Texture::Ref& t) {
+GuiWindow::Ref GApp::show(const Texture::Ref& t, const std::string& windowCaption) {
     static const Vector2 offset = Vector2(25, 15);
     static Vector2 lastPos = Vector2(0,0);
     static float y0 = 0;
     
     lastPos += offset;
 
-    std::string name = t->name();
+    std::string name;
+    std::string dayTime;
 
-    if (name.empty()) {
+    {
         // Use the current time as the name
         time_t t1;
         ::time(&t1);
@@ -272,9 +273,15 @@ GuiWindow::Ref GApp::show(const Texture::Ref& t) {
                 hour -= 12;
             }
         }
-        name = format("%s %d:%02d %s", day[t->tm_wday], hour, t->tm_min, ap);
+        dayTime = format("%s %d:%02d:%02d %s", day[t->tm_wday], hour, t->tm_min, t->tm_sec, ap);
     }
 
+    
+    if (! windowCaption.empty()) {
+        name = windowCaption + " - ";
+    }
+    name += dayTime;
+    
     GuiWindow::Ref display = 
         GuiWindow::create(name, NULL, Rect2D::xywh(lastPos,Vector2(0,0)), GuiTheme::TOOL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
 

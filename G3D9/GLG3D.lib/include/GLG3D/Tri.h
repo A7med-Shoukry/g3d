@@ -183,51 +183,99 @@ public:
             (m_material == t.m_material);
     }
 
-    /** @brief Performs intersection testing against Tri.  For use
-     with a KDTree.  Avoids computing the interpolated parameters from
-     barycentric coords until all intersection computations have
-     completed.*/
+    /** \brief Performs intersection testing against Tri.  
+
+        For use as a ray intersection functor (callback) for TriTree
+        and KDTree.  
+
+        A typical intersection routine will invoke
+        Intersector::operator() many times but retain only the closest
+        intersection.  Therefore this class computes only \a tri, \a
+        u, and \a v when operator() is invoked.
+
+        To obtain the full result of the intersection computation,
+        call one of the getResult() methods.
+
+        You can also create your own intersection loops for use with
+        an intersector.
+
+        \sa Ray, SurfaceSample, CollisionDetection
+    */
     class Intersector {
     public:
 
-        /** The triangle hit, NULL if no triangle hit. */
+        /** The triangle hit, NULL if no triangle hit. 
+
+            This is an "output".*/
         const Tri*      tri;
 
-        /** Barycentric coordinate of the hit that multiplies vertex 1. */
+        /** Barycentric coordinate of the hit corresponding to
+            <code>tri->vertex(1)</code>. 
+
+            This is an "output".*/
         float           u;
 
-        /** Barycentric coordinate of the hit that multiplies vertex 2. */
+        /** Barycentric coordinate of the hit corresponding to
+            <code>tri->vertex(2)</code>. 
+
+            This is an "output"*/
         float           v;
 
-        /** Enables alpha testing. */
+        /** Enables alpha testing in operator() when true. This is an
+            "input"*/
         bool            alphaTest;
 
         /** Alpha values in the lambertian channel that are less than
-         this are treated as holes if alphaTest is true.*/
+         this are treated as holes if alphaTest is true.  This is an
+         "input"*/
         float           alphaThreshold;
 
         Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f) {}
 
         virtual ~Intersector() {}
 
-        /** @brief Computes the two-sided intersection of the ray and
+        /** \brief Computes the two-sided intersection of the ray and
             triangle.
      
-          Called repeatedly by BSPTree::intersect and
-          TriTree::intersect.  This corresponds to an OptiX AnyHit
-          program.
+          Called repeatedly by KDTree::intersect and
+          TriTree::intersect.  
 
-          If an intersection is found that is closer than @a distance,
-          updates distance and stores the result in @a this.  Sample
-          usage:
-          
+          If an intersection is found that is closer than \a distance,
+          updates distance and stores the result in \a this.  Sample
+          usage follows.
+
+          An explicit intersection loop for an array of triangles:          
           <pre>
+            SurfaceSample s;
             Intersector hit;
-            float distance = inf();
-            for (int i = 0; i < m_array.size(); ++i) {
-                hit(ray, m_array[i], distance);
+            float distance = finf();
+            for (int t = 0; t < array.size(); ++t) {
+                hit(ray, array[t], distance);
             }
-          </pre>      
+
+            if (hit.tri != NULL) {
+                SurfaceSample s(hit);
+                ... shading ...
+            }
+          </pre>
+
+
+          Using TriTree to run the intersection loop:
+
+          <pre>
+          float distance = finf();
+          Intersector hit;
+          tree.intersectRay(ray, hit, distance);  
+
+          if (hit.tri != NULL) {
+              SurfaceSample s(hit);
+              ... shading ...
+          }
+          </pre>
+          
+          
+          (This corresponds to an "AnyHit program" in the NVIDIA OptiX
+          API.)
           */
         void operator()(const Ray& ray, const Tri& tri, float& distance);
 

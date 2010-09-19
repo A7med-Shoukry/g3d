@@ -250,39 +250,39 @@ public:
         return m_specular;
     }
 
-    /** @brief Evaluate the finite portion of the BSDF: 
-        \f$(f_L + f_g)\f$. 
+    /** \brief Evaluate the finite portion of the BSDF: \f$(f_L + f_g)\f$. 
 
-        Used for direct illumination.  Ignores delta functions because
-        for a random pair of directions, there is zero probability of
-        sampling the delta function at a non-zero location; the infinite
-        result would not be useful anyway.
+        Used for direct illumination.  Ignores impulses (delta
+        functions) because for a random pair of directions, there is
+        zero probability of sampling the delta function at a non-zero
+        location, and an the infinite result would not be useful anyway.
 
-        @param n \f$\vec{n}\f$ surface normal. 
+        \param n \f$\hat{n}\f$ unit surface normal. 
 
-        @param w_L \f$\vec{\omega}_L = \vec{\omega}_i\f$ unit vector pointing back
-        towards where the photon came from (typically, the light)
+        \param w_i \f$\hat{\omega}_i = \hat{\omega}_\mathrm{light}\f$ unit vector pointing to where
+        the photon came from (often a the light source)
 
-        @param w_eye \f$\vec{\omega}_{eye} = \vec{\omega}_o\f$ unit vector pointing forward
+        \param w_o \f$\hat{\omega}_{o} = \hat{\omega}_{\mathrm{eye}}\f$ unit vector pointing forward
         towards where the photon is going (typically, the viewer)
 
-        @param texCoord Texture coordinate on the surface at which to
+        \param texCoord Texture coordinate on the surface at which to
         sample from.
 
-        @param radiance_L Incident power ("light color") along @a w_L
+        \param radiance_i Incident power ("light color") along @a w_i
 
-        @return Resulting radiance, with the alpha channel copied from
-        the coverage mask.  Notes NOT factors the geometric w_L dot n term in.
-        Unmultipled alpha.
+        \return Resulting radiance, with the alpha channel copied from
+        the coverage mask.  Note that this does NOT factor the
+        geometric \f$\hat{\omega}_\mathrm{i} \cdot \hat{n}\f$ term
+        into the result.  Unmultipled alpha.
 
-      @beta
+        \beta
     */
     virtual Color4 evaluate
-    (const Vector3& n,
-     const Vector2& texCoord,
-     const Vector3& w_L,
-     const Color3&  radiance_i,
-     const Vector3& w_eye) const;
+    (const Vector3&   n,
+     const Vector2&   texCoord,
+     const Vector3&   w_i,
+     const Radiance3& radiance_i,
+     const Vector3&   w_o) const;
 
     /** \brief Move or copy data to CPU or GPU.  
         Called from G3DMaterial::setStorage(). */

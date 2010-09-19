@@ -450,16 +450,16 @@ public:
     void drawMessage(const std::string& message);
 
     /** Displays the texture in a new GuiWindow */
-    GuiWindow::Ref show(const Texture::Ref& t);
+    GuiWindow::Ref show(const Texture::Ref& t, const std::string& windowCaption = "");
 
-    GuiWindow::Ref show(const GImage& t) {
-        return show(Texture::fromGImage("", t));
+    GuiWindow::Ref show(const GImage& t, const std::string& windowCaption = "") {
+        return show(Texture::fromGImage("", t), windowCaption);
     }
 
     /** \a T must be some Image class, e.g., Image3uint, Image4, etc.*/
     template<class T>
-    GuiWindow::Ref show(const ReferenceCountedPointer<T>& t) {
-        return show(Texture::fromMemory("", t->getCArray(), t->format(), t->width(), t->height(), 1));
+    GuiWindow::Ref show(const ReferenceCountedPointer<T>& t, const std::string& windowCaption = "") {
+        return show(Texture::fromMemory("", t->getCArray(), t->format(), t->width(), t->height(), 1), windowCaption);
     }
 
 private:
