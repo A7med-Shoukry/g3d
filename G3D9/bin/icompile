@@ -14,7 +14,7 @@
 # EDIT ice.txt AND ~/.icompile TO CUSTOMIZE YOUR PROJECT CONFIGURATION.
 #**********************************************************************
 
-version = [0, 5, 11]
+version = [0, 5, 12]
 
 import sys, string, os, os.path, fileinput, tempfile, shutil, re
 import commands, pickle, time, copy, threading, platform
@@ -78,13 +78,12 @@ def buildDocumentation(state):
 def buildDataFiles(state):
     src = 'data-files'
     dst = state.installDir
-    
     if os.path.exists(src):
         outOfDateFiles = copyIfNewer(src, dst, False, False, False)
 
         if len(outOfDateFiles) > 0:
             if ice.utils.verbosity >= NORMAL: colorPrint('\nCopying data files', SECTION_COLOR)
-            copyIfNewer(src, dst, ice.utils.verbosity >= VERBOSE, ice.utils.verbosity == NORMAL)
+            copyIfNewer(src, dst, ice.utils.verbosity >= VERBOSE, ice.utils.verbosity == NORMAL, True)
             if ice.utils.verbosity >= VERBOSE: colorPrint('Done copying data files', SECTION_COLOR)
 
             if (state.os == 'osx') and any([x.endswith('.dylib') for x in outOfDateFiles]):
@@ -672,7 +671,7 @@ def gdbCompiledProgram(state, progArgs):
     f = open(commandFile, 'w')
     if 'ICE_EXTRA_SOURCE' in os.environ:
         # Split at ; and :
-        dirs = os.environ[ICE_EXTRA_SOURCE].split(';').join(':').split(':')
+        dirs = os.environ['ICE_EXTRA_SOURCE'].split(';').join(':').split(':')
         for d in dirs:
             f.write('directory ' + d + '\n')
     f.write('run ' + string.join(progArgs, ' ') + '\n')

@@ -81,13 +81,15 @@ def copyIfNewer(source, dest, echoCommands = True, echoFilenames = True, actuall
     
     if source == dest:
         # Copying in place
-        return False
+        #print 'Copying in place: nothing to do'
+        return []
 
     dest = removeTrailingSlash(dest)
 
     if (not os.path.exists(source)):
         # Source does not exist
-        return False
+        #print 'Source does not exist: nothing to do'
+        return []
 
     if (not os.path.isdir(source) and newer(source, dest)):
         if echoCommands: 
@@ -101,7 +103,6 @@ def copyIfNewer(source, dest, echoCommands = True, echoFilenames = True, actuall
         _copyIfNewerCopiedAnything += [source]
         
     else:
-
         # Walk is a special iterator that visits all of the
         # children and executes the 2nd argument on them.  
         os.path.walk(source, _copyIfNewerVisit, 
@@ -125,20 +126,21 @@ args is a list of:
 def _copyIfNewerVisit(args, sourceDirname, names):
     global _copyIfNewerCopiedAnything
 
+    if (excludeFromCopying.search(betterbasename(sourceDirname)) != None):
+        # Don't recurse into subdirectories of excluded directories
+        del names[:]
+        return
+
     prefixLen   = args[0]
     # Construct the destination directory name
     # by concatenating the root dir and source dir
     destDirname = pathConcat(args[1], sourceDirname[prefixLen:])
     dirName     = betterbasename(destDirname)
 
-    echoCommands = args[2]
+    echoCommands  = args[2]
     echoFilenames = args[3]
-    actuallyCopy = args[4]
-        
-    if (excludeFromCopying.search(dirName) != None):
-        # Don't recurse into subdirectories of excluded directories
-        del names[:]
-        return
+    actuallyCopy  = args[4]
+   
 
     # Create the corresponding destination dir if necessary
     if actuallyCopy:
