@@ -862,7 +862,7 @@ public:
         const Preprocess&                   preprocess     = Preprocess::defaults());
 
 
-	 /** Construct from a single packed 2D or 3D data set.  For 3D
+    /** Construct from a single packed 2D or 3D data set.  For 3D
          textures, the interpolation mode must be one that does not
          use MipMaps. */
     static Texture::Ref fromMemory(
@@ -876,6 +876,21 @@ public:
         Dimension                       dimension      = defaultDimension(),
         const Settings&                 settings       = Settings::defaults(),
         const Preprocess&               preprocess     = Preprocess::defaults());
+
+    /** \sa Texture::fromMemory, Texture::fromGImage */
+    static Texture::Ref fromImage
+    (const std::string&              name,
+     const Image3::Ref&              image,
+     const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
+     Dimension                       dimension      = defaultDimension(),
+     const Settings&                 settings       = Settings::defaults(),
+     const Preprocess&               preprocess     = Preprocess::defaults()) {
+
+        return fromMemory(name, image->getCArray(), image->format(),
+                          image->width(), image->height(), 1,
+                          (desiredFormat == NULL) ? image->format() : desiredFormat, 
+                          dimension, settings, preprocess);
+    }
 
     static Texture::Ref fromGImage(
         const std::string&              name,
