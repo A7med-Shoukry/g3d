@@ -6,9 +6,14 @@ Texture::Visualization::Visualization(Channels c, float g, float mn, float mx) :
     channels(c), documentGamma(g), min(mn), max(mx), invertIntensity(false) {
 }
 
-static Texture::Visualization::Channels toChannels(const std::string& s) {
-    const static std::string name[] = 
+const static std::string name[] = 
     {"RGB", "R", "G", "B", "RasL", "GasL", "BasL", "AasL", "MeanRGBasL", "Luminance", ""};
+
+static std::string channelsToString(const Texture::Visualization::Channels& c) {
+    return name[c];
+}
+
+static Texture::Visualization::Channels toChannels(const std::string& s) {
 
     for (int i = 0; ! name[i].empty(); ++i) {
         if (s == name[i]) {
@@ -17,6 +22,17 @@ static Texture::Visualization::Channels toChannels(const std::string& s) {
     }
 
     return Texture::Visualization::RGB;
+}
+
+
+Texture::Visualization::operator Any() const {
+    Any a(Any::TABLE, "Texture::Visualization");
+    a["channels"] = channelsToString(channels);
+    a["documentGamma"] = documentGamma;
+    a["min"] = min;
+    a["max"] = max;
+    a["invertIntensity"] = invertIntensity;
+    return a;
 }
 
 

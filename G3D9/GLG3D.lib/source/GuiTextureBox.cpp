@@ -2,7 +2,7 @@
  @file GLG3D/GuiTextureBox.cpp
 
  @created 2009-09-11
- @edited  2010-03-19
+ @edited  2010-09-19
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2010, Morgan McGuire http://graphics.cs.williams.edu
@@ -28,11 +28,8 @@ GuiTextureBox::GuiTextureBox
 (GuiContainer*       parent,
  const GuiText&      caption,
  const Texture::Ref& t,
- const Texture::Visualization& s,
  bool                embeddedMode) : 
     GuiContainer(parent, caption), 
-    m_texture(t),
-    m_settings(s), 
     m_showInfo(true), 
     m_drawerOpen(embeddedMode),
     m_dragging(false), 
@@ -46,7 +43,6 @@ GuiTextureBox::GuiTextureBox
     const float h = cs - 1;
 
     setTexture(t);
-    setSettings(s);
 
     GFont::Ref iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
 
@@ -364,7 +360,7 @@ public:
         GuiPane* leftPane = p->addPane("", GuiTheme::NO_PANE_STYLE);
 
         Texture::Visualization s = Texture::Visualization(Texture::Visualization::RGB, 0.01f, 0.0f, 1.0f);
-        m_textureBox = leftPane->addTextureBox(displayCaption, texture, m_settings, true);
+        m_textureBox = leftPane->addTextureBox(displayCaption, texture, true);
 
         m_textureBox->setSize(screenBounds - Vector2(450, 275));
         m_textureBox->zoomToFit();
@@ -902,6 +898,7 @@ void GuiTextureBox::setTexture(const Texture::Ref& t) {
         // lot of GUI changes to update it, so we simply close that window.
         window()->manager()->remove(ins);
     }
+    setSettings(t->visualization);
 }
 
 

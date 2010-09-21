@@ -116,17 +116,15 @@ GuiPane::~GuiPane() {
 GuiTextureBox* GuiPane::addTextureBox
 (const GuiText& caption,
  const Texture::Ref& t,
- const Texture::Visualization& s,
  bool embedded) {
-    return addControl(new GuiTextureBox(this, caption, t, s, embedded), 240);
+    return addControl(new GuiTextureBox(this, caption, t, embedded), 240);
 }
 
 
 GuiTextureBox* GuiPane::addTextureBox
 (const Texture::Ref& t,
- const Texture::Visualization& s,
  bool embedded) {
-     return addTextureBox(t->name(), t, s, embedded);
+    return addTextureBox(t->name(), t, embedded);
 }
 
 

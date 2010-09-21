@@ -239,25 +239,32 @@ void GBuffer::resize(int w, int h) {
 
     Texture::Settings settings = Texture::Settings::buffer();
 
-#   define BUFFER(buf, ind)\
+#   define BUFFER(buf, ind, vis)\
     if (m_indices.ind >= 0) {\
         m_##buf   = Texture::createEmpty(#buf, w, h, m_specification.format, Texture::DIM_2D_NPOT, settings);\
+        m_##buf->visualization = vis;\
         m_framebuffer->set(Framebuffer::AttachmentPoint(Framebuffer::COLOR0 + m_indices.ind), m_##buf); \
     }
 
-    BUFFER(lambertian, L);
-    BUFFER(specular, s);
-    BUFFER(transmissive, t);
-    BUFFER(emissive, e);
-    BUFFER(csNormal, csN);
-    BUFFER(wsNormal, wsN);
-    BUFFER(csFaceNormal, csF);
-    BUFFER(wsFaceNormal, wsF);
-    BUFFER(packedDepth, z);
+    const Texture::Visualization& vectorVis =
+        (m_specification.normalsAreUnsigned 
+         ? Texture::Visualization::packedUnitVector()
+         : Texture::Visualization::unitVector());
+
+    BUFFER(lambertian, L, Texture::Visualization::reflectivity());
+    BUFFER(specular, s, Texture::Visualization::reflectivity());
+    BUFFER(transmissive, t, Texture::Visualization::reflectivity());
+    BUFFER(emissive, e, Texture::Visualization::reflectivity());
+    BUFFER(csNormal, csN, vectorVis);
+    BUFFER(wsNormal, wsN, vectorVis);
+    BUFFER(csFaceNormal, csF, vectorVis);
+    BUFFER(wsFaceNormal, wsF, vectorVis);
+    BUFFER(packedDepth, z, Texture::Visualization::reflectivity());
 
 #   undef BUFFER
 
     m_depth = Texture::createEmpty("Depth", w, h, m_specification.depthFormat, Texture::DIM_2D_NPOT, settings);
+    m_depth->visualization = Texture::Visualization::depthBuffer();
 
     if (m_framebuffer.notNull()) {
         m_framebuffer->set(Framebuffer::DEPTH, m_depth);

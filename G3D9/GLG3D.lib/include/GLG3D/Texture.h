@@ -244,8 +244,6 @@ public:
      */
     enum DepthReadMode {DEPTH_NORMAL = 0, DEPTH_LEQUAL = 1, DEPTH_GEQUAL = 2};
 
-    
-    
     class Visualization {
     public:
 
@@ -279,7 +277,8 @@ public:
                reflectance or energy of a texture */
             MeanRGBasL,
     
-            /** (Perceptula) Luminance; visualizes the brightness people perceive of an image. */
+            /** (Perceptula) Luminance; visualizes the brightness
+                people perceive of an image. */
             Luminance
         };
 
@@ -305,6 +304,17 @@ public:
             "v = sRGB()" or a table, e.g., "v = Texture::Visualization { documentGamma = 2.2, ... }"
         */
         Visualization(const Any& a);
+
+        operator Any() const;
+
+        bool operator==(const Visualization& v) const {
+            return
+                (channels == v.channels) &&
+                (documentGamma == v.documentGamma) &&
+                (min == v.min) &&
+                (max == v.max) &&
+                (invertIntensity == v.invertIntensity);
+        }
 
         /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
           actually match true sRGB values, which have a non-linear gamma. */
@@ -679,6 +689,8 @@ public:
         Settings                  settings;
 
         Preprocess                preprocess;
+
+        Visualization             visualization;
 
         Specification() : desiredFormat(ImageFormat::AUTO()), 
                           dimension(defaultDimension()) {}

@@ -96,7 +96,6 @@ public:
     (GuiContainer*       parent,
      const GuiText&      caption,
      const Texture::Ref& t = NULL,
-     const Texture::Visualization&     s = Texture::Visualization(),
      bool                embeddedMode = false);
 
     virtual ~GuiTextureBox();

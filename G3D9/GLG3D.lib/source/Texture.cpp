@@ -2381,8 +2381,9 @@ Texture::Specification::operator Any() const {
     a["filename"] = filename;
     a["desiredFormat"] = desiredFormat ? desiredFormat->name() : "AUTO";
     a["dimension"] = toString(dimension);
-    a["settings"] = settings;
+    a["settings"]  = settings;
     a["preprocess"] = preprocess;
+    a["visualization"] = visualization;
 
     return a;
 }
@@ -2394,7 +2395,8 @@ bool Texture::Specification::operator==(const Specification& other) const {
         (desiredFormat == other.desiredFormat) &&
         (dimension == other.dimension) &&
         (settings == other.settings) &&
-        (preprocess == other.preprocess);
+        (preprocess == other.preprocess) &&
+        (visualization == other.visualization);
 }
 
 
@@ -2421,6 +2423,8 @@ Texture::Specification::Specification(const Any& any) {
                 settings = it->value;
             } else if (key == "preprocess") {
                 preprocess = it->value;
+            } else if (key == "visualization") {
+                visualization = it->value;
             } else {
                 any.verify(false, "Illegal key: " + it->key);
             }
