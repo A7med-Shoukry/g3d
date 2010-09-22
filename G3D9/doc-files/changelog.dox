@@ -44,20 +44,26 @@
      <li> Build system output directory no longer includes platform name (affects icompile as well)
      <li> Added new icompile working directory ([Global] workdir), defaults to data-files for new projects
      <li> Improved OFF file parsing compatibility
-     <li> <b>Backwards Incompatible</b>: G3D::Film::exposure &rarr; G3D::Film::sensitivity
-     <li> <b>Backwards Incompatible</b>: GLight::attenuation now defaults to (0.0001,0,1); SuperShader ignores attenuation on directional lights
-     <li> <b>Backwards Incompatible</b>: SuperShader scales the quadratic attenuation term by 4pi to produce a physically-meaningful radiance value for point lights
-     <li> <b>Backwards Incompatible</b>: G3D::Draw::skyBox now uses programmable pipeline and requires a cube map
-     <li> <b>Backwards Incompatible</b>: Replaced Lighting::ambientTop and ambientBottom and SuperShader pixel shader with pure environment map-based ambient.
-     <li> <b>Backwards Incompatible</b>: Changed G3D::ArticulatedModel::Preprocess::materialOverride to a Material::Specification; likewise for the materialSubstitution table.
-     <li> <b>Backwards Incompatible</b>: Removed OFF file loading from G3D::IFSModel 
-     <li> <b>Backwards Incompatible</b>: Separated G3D::GuiControl::captionWidth and G3D::GuiControl::captionHeight
-     <li> <b>Backwards Incompatible</b>: Replaced G3D::GLight::spotCutoff (in degrees) with G3D::GLight::spotHalfAngle (radians)
-     <li> <b>Backwards Incompatible</b>: Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic
-     <li> <b>Backwards Incompatible</b>: Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
-     <li> <b>Backwards Incompatible</b>: Removed ToneMap (use Film)
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
      <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
+	 </ul>
+
+     <b>Backwards Incompatible Changes</b>:
+	 <ul>
+	 <li> G3D::GuiTextureBox::Settings &rarr; G3D::Texture::Visualization
+     <li> G3D::Film::exposure &rarr; G3D::Film::sensitivity
+     <li> GLight::attenuation now defaults to (0.0001,0,1); SuperShader ignores attenuation on directional lights
+     <li> SuperShader scales the quadratic attenuation term by 4pi to produce a physically-meaningful radiance value for point lights
+     <li> G3D::Draw::skyBox now uses programmable pipeline and requires a cube map
+     <li> Replaced Lighting::ambientTop and ambientBottom and SuperShader pixel shader with pure environment map-based ambient.
+     <li> Changed G3D::ArticulatedModel::Preprocess::materialOverride to a Material::Specification; likewise for the materialSubstitution table.
+     <li> Removed OFF file loading from G3D::IFSModel 
+	 <li> G3D::Material::Settings &rarr; G3D::Material::Specification
+     <li> Separated G3D::GuiControl::captionWidth and G3D::GuiControl::captionHeight from G3D::GuiControl::captionSize
+     <li> Replaced G3D::GLight::spotCutoff (in degrees) with G3D::GLight::spotHalfAngle (radians)
+     <li> Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic
+     <li> Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
+     <li> Removed ToneMap (use Film)
    </ul>
 
    Changes in 8.01:
@@ -72,7 +78,8 @@
      <li> Fix: G3D::Profiler disables profiling if glGetQueryObjectiv takes too long to return
      <li> Fix: Perfectly black G3D::SuperSurfaces now render black rather than picking up the previous material
      <li> Fix: Default bounds for GuiNumberBox<int> are now correct [Matthaeus Chajdas]
-   </ul>
+     <li> Fix: Corrected shutdown memory leak in G3D::System::flushPool [Eric Cassel]
+ </ul>
 
    <p>
    <hr>
