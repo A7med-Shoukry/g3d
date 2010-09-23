@@ -15,11 +15,11 @@ public:
 protected:
 
     int                         m_width;
-    Array<class Image::Ref>     m_imageArray;
+    Array<typename Image::Ref>     m_imageArray;
 
     CubeMap() {}
 
-    void init(const Array<class Image::Ref>& imageArray) {
+    void init(const Array<typename Image::Ref>& imageArray) {
         m_imageArray = imageArray;
         debugAssert(imageArray.size() == 6);
         m_width = m_imageArray[0]->width();
@@ -36,18 +36,20 @@ public:
         return NULL;
     }
 
-    static Ref create(const Array<class Image::Ref>& imageArray) {
+    static Ref create(const Array<typename Image::Ref>& imageArray) {
         Ref c = new CubeMap<Image>();
         c->init(imageArray);
         return c;
     }
 
-    class Image::ComputeType bilinear(const Vector3& v) const;
+    typename Image::ComputeType bilinear(const Vector3& v) const;
 
-    class Image::ComputeType nearest(const Vector3& v) const;
+    typename Image::ComputeType nearest(const Vector3& v) const;
 
-    /** */
-    const class Image::Ref face() const;
+    /** Return the image representing one face. */
+    const typename Image::Ref face(CubeFace f) const {
+        return m_image[f];
+    }
     
     /** Returns the width of one side, which must be the same as the height. */
     int width() const {
@@ -80,6 +82,9 @@ int main(int argc, char** argv) {
             chdir("../samples/starter/data-files");
         }
 #   endif
+
+    CubeMap<Image3>::Ref im;// = CubeMap<Image3>::create();
+
 
     return App(settings).run();
 }
