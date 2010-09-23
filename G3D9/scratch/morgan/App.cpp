@@ -32,7 +32,7 @@ protected:
 public:
 
     static Ref create(const std::string& fileSpec) {
-        // todo
+        // TODO
         return NULL;
     }
 
@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
         }
 #   endif
 
-    CubeMap<Image3>::Ref im;// = CubeMap<Image3>::create();
+    CubeMap<Image3>::Ref im = CubeMap<Image3>::create(System::findDataFile("test/testcube_*.jpg"));
 
 
     return App(settings).run();
