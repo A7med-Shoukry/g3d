@@ -26,6 +26,8 @@ class RenderDevice;
     Requires SS_GBuffer.pix, SS_GBufferPosition.pix, and
     SS_NonShadowedPass.vrt at runtime, which can be found in the
     G3D/data-files/SuperShader directory of the G3D distribution.
+
+    \beta
 */
 class GBuffer : public ReferenceCountedObject {
 public:
@@ -40,7 +42,7 @@ public:
         bool                  csNormal;
 
         bool                  lambertian;
-        bool                  specular;
+        bool                  glossy;
         bool                  transmissive;
         bool                  emissive;
 
@@ -81,7 +83,7 @@ public:
             wsNormal(false),
             csNormal(false),
             lambertian(false),
-            specular(false),
+            glossy(false),
             transmissive(false),
             emissive(false),
             wsFaceNormal(false),
@@ -101,7 +103,7 @@ public:
                  int(wsNormal)           |
                 (int(csNormal)    << 1)  |
                 (int(lambertian)  << 2)  |
-                (int(specular)    << 3)  |
+                (int(glossy)    << 3)  |
                 (int(transmissive)<< 4)  |
                 (int(emissive)    << 5)  |
                 (int(csFaceNormal)<< 6)  |
@@ -181,7 +183,7 @@ private:
 
     /** RGB = F0, A = \f$\sigma\f$ (packed glossy exponent).  Fresnel
         is not applied */
-    Texture::Ref                m_specular;
+    Texture::Ref                m_glossy;
 
     /** RGB = T0, A = eta.  Fresnel is not applied */
     Texture::Ref                m_transmissive;
@@ -264,8 +266,8 @@ public:
 
     /** RGB = F0, A = \f$\sigma\f$ (packed glossy exponent).  Fresnel
         is not applied */
-    Texture::Ref specular() const {
-        return m_specular;
+    Texture::Ref glossy() const {
+        return m_glossy;
     }
 
     /** RGB = T0, A = eta.  Fresnel is not applied */
