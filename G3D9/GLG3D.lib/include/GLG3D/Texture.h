@@ -13,6 +13,7 @@
 #include "G3D/ReferenceCount.h"
 #include "G3D/Array.h"
 #include "G3D/Table.h"
+#include "G3D/CubeFace.h"
 #include "G3D/Vector2.h"
 #include "G3D/WrapMode.h"
 #include "G3D/ImageFormat.h"
@@ -95,36 +96,7 @@ typedef ReferenceCountedPointer<Texture> TextureRef;
 class Texture : public ReferenceCountedObject {
 public:
 
-    enum CubeFace {
-        CUBE_POS_X = 0,
-        CUBE_NEG_X = 1,
-        CUBE_POS_Y = 2,
-        CUBE_NEG_Y = 3,
-        CUBE_POS_Z = 4,
-        CUBE_NEG_Z = 5,
 
-		NUM_CUBEFACES
-	};
-
-    /** Image alignment conventions specified by different APIs. 
-        G3D loads cube maps so that they act like reflection maps.
-        That is, it assumes you are <i>inside</i> the cube map.
-     */
-    enum CubeMapConvention {
-        /** Uses "up", "lf", etc. */
-        CUBE_QUAKE, 
-        
-        /** Uses "up", "west", etc. */
-        CUBE_UNREAL, 
-
-        /** Uses "+y", "-x", etc. */
-        CUBE_G3D,
-
-        /** Uses "PY", "NX", etc. */
-        CUBE_DIRECTX,
-
-		NUM_CUBECONVENTIONS
-	};
 
     struct CubeMapInfo {
         struct Face {
@@ -779,7 +751,7 @@ public:
 
         \beta
     */
-    void clear(CubeFace face = CUBE_POS_X, int mipLevel = 0, class RenderDevice* rd = NULL);
+    void clear(CubeFace face = CubeFace::POS_X, int mipLevel = 0, class RenderDevice* rd = NULL);
 
     /** Resize the underlying OpenGL texture memory buffer, without reallocating the OpenGL texture ID.  This does not scale the contents; 
         the contents are undefined after resizing.  This is only useful for textures that are render targets. */

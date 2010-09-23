@@ -78,6 +78,7 @@
 #include "G3D/MemoryManager.h"
 #include "G3D/AreaMemoryManager.h"
 #include "G3D/BumpMapPreprocess.h"
+#include "G3D/CubeFace.h"
 
 template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
     static size_t hashCode(G3D::ReferenceCountedPointer<T> key) { return reinterpret_cast<size_t>( key.pointer() ); }

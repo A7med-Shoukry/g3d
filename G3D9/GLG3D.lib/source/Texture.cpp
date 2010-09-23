@@ -68,112 +68,112 @@ Color4 Texture::readTexel(int x, int y, RenderDevice* rd) const {
 
 
 const Texture::CubeMapInfo& Texture::cubeMapInfo(CubeMapConvention convention) {
-    static CubeMapInfo cubeMapInfo[NUM_CUBECONVENTIONS];
+    static CubeMapInfo cubeMapInfo[CubeMapConvention::COUNT];
     static bool initialized = false;
     if (! initialized) {
         initialized = true;
-        cubeMapInfo[CUBE_QUAKE].name = "Quake";
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_X].flipX  = true;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_X].flipY  = false;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_X].suffix = "bk";
+        cubeMapInfo[CubeMapConvention::QUAKE].name = "Quake";
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_X].suffix = "bk";
 
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_X].flipX  = true;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_X].flipY  = false;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_X].suffix = "ft";
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_X].suffix = "ft";
 
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_Y].flipX  = true;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_Y].flipY  = false;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_Y].suffix = "up";
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_Y].suffix = "up";
 
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_Y].flipX  = true;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_Y].flipY  = false;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_Y].suffix = "dn";
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_Y].suffix = "dn";
 
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_Z].flipX  = true;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_Z].flipY  = false;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_POS_Z].suffix = "rt";
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::POS_Z].suffix = "rt";
 
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_Z].flipX  = true;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_Z].flipY  = false;
-        cubeMapInfo[CUBE_QUAKE].face[CUBE_NEG_Z].suffix = "lf";
-
-
-        cubeMapInfo[CUBE_UNREAL].name = "Unreal";
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_X].flipX  = true;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_X].flipY  = false;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_X].suffix = "east";
-
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_X].flipX  = true;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_X].flipY  = false;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_X].suffix = "west";
-
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_Y].flipX  = true;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_Y].flipY  = false;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_Y].suffix = "up";
-
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_Y].flipX  = true;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_Y].flipY  = false;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_Y].suffix = "down";
-
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_Z].flipX  = true;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_Z].flipY  = false;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_POS_Z].suffix = "south";
-
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_Z].flipX  = true;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_Z].flipY  = false;
-        cubeMapInfo[CUBE_UNREAL].face[CUBE_NEG_Z].suffix = "north";
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::QUAKE].face[CubeFace::NEG_Z].suffix = "lf";
 
 
-        cubeMapInfo[CUBE_G3D].name = "G3D";
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_X].flipX  = true;
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_X].flipY  = false;
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_X].suffix = "+x";
+        cubeMapInfo[CubeMapConvention::UNREAL].name = "Unreal";
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_X].suffix = "east";
 
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_X].flipX  = true;
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_X].flipY  = false;
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_X].suffix = "-x";
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_X].suffix = "west";
 
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_Y].flipX  = true;
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_Y].flipY  = false;
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_Y].suffix = "+y";
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_Y].suffix = "up";
 
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_Y].flipX  = true;
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_Y].flipY  = false;
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_Y].suffix = "-y";
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_Y].suffix = "down";
 
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_Z].flipX  = true;
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_Z].flipY  = false;
-        cubeMapInfo[CUBE_G3D].face[CUBE_POS_Z].suffix = "+z";
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::POS_Z].suffix = "south";
 
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_Z].flipX  = true;
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_Z].flipY  = false;
-        cubeMapInfo[CUBE_G3D].face[CUBE_NEG_Z].suffix = "-z";
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::UNREAL].face[CubeFace::NEG_Z].suffix = "north";
 
 
-        cubeMapInfo[CUBE_DIRECTX].name = "DirectX";
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_X].flipX  = true;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_X].flipY  = false;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_X].suffix = "PX";
+        cubeMapInfo[CubeMapConvention::G3D].name = "G3D";
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_X].suffix = "+x";
 
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_X].flipX  = true;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_X].flipY  = false;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_X].suffix = "NX";
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_X].suffix = "-x";
 
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_Y].flipX  = true;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_Y].flipY  = false;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_Y].suffix = "PY";
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_Y].suffix = "+y";
 
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_Y].flipX  = true;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_Y].flipY  = false;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_Y].suffix = "NY";
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_Y].suffix = "-y";
 
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_Z].flipX  = true;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_Z].flipY  = false;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_POS_Z].suffix = "PZ";
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::POS_Z].suffix = "+z";
 
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_Z].flipX  = true;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_Z].flipY  = false;
-        cubeMapInfo[CUBE_DIRECTX].face[CUBE_NEG_Z].suffix = "NZ";
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::G3D].face[CubeFace::NEG_Z].suffix = "-z";
+
+
+        cubeMapInfo[CubeMapConvention::DIRECTX].name = "DirectX";
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_X].suffix = "PX";
+
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_X].flipX  = true;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_X].flipY  = false;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_X].suffix = "NX";
+
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_Y].suffix = "PY";
+
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_Y].flipX  = true;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_Y].flipY  = false;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_Y].suffix = "NY";
+
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::POS_Z].suffix = "PZ";
+
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_Z].flipX  = true;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_Z].flipY  = false;
+        cubeMapInfo[CubeMapConvention::DIRECTX].face[CubeFace::NEG_Z].suffix = "NZ";
     }
 
     return cubeMapInfo[convention];
@@ -295,27 +295,27 @@ Texture::Dimension Texture::defaultDimension() {
 }
 
 
-Texture::CubeMapConvention Texture::determineCubeConvention(const std::string& filename) {
+CubeMapConvention Texture::determineCubeConvention(const std::string& filename) {
     std::string filenameBase, filenameExt;
     Texture::splitFilenameAtWildCard(filename, filenameBase, filenameExt);
     if (FileSystem::exists(filenameBase + "east" + filenameExt)) {
-        return Texture::CUBE_UNREAL;
+        return CubeMapConvention::UNREAL;
     } else if (FileSystem::exists(filenameBase + "lf" + filenameExt)) {
-        return Texture::CUBE_QUAKE;
+        return CubeMapConvention::QUAKE;
     } else if (FileSystem::exists(filenameBase + "+x" + filenameExt)) {
-        return Texture::CUBE_G3D;
+        return CubeMapConvention::G3D;
     } else if (FileSystem::exists(filenameBase + "PX" + filenameExt) || FileSystem::exists(filenameBase + "px" + filenameExt)) {
-        return Texture::CUBE_DIRECTX;
+        return CubeMapConvention::DIRECTX;
     }
     throw std::string("File not found");
-    return Texture::CUBE_G3D;
+    return CubeMapConvention::G3D;
 }
 
 static void generateCubeMapFilenames(const std::string& src, std::string realFilename[6], Texture::CubeMapInfo& info) {
     std::string filenameBase, filenameExt;
     Texture::splitFilenameAtWildCard(src, filenameBase, filenameExt);
 
-    Texture::CubeMapConvention convention = Texture::determineCubeConvention(src);
+    CubeMapConvention convention = Texture::determineCubeConvention(src);
 
     info = Texture::cubeMapInfo(convention);
     for (int f = 0; f < 6; ++f) {
@@ -1676,8 +1676,6 @@ void Texture::copyFromScreen(
     debugAssertM(m_width == rect.width(), "Cube maps require all six faces to have the same dimensions");
     debugAssertM(m_height == rect.height(), "Cube maps require all six faces to have the same dimensions");
     debugAssert(m_dimension == DIM_CUBE_MAP || m_dimension == DIM_CUBE_MAP_NPOT);
-    debugAssert(face >= 0);
-    debugAssert(face < 6);
 
     if (GLCaps::supports_GL_ARB_multitexture()) {
         glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -1710,27 +1708,27 @@ void Texture::copyFromScreen(
 
 void Texture::getCubeMapRotation(CubeFace face, Matrix3& outMatrix) {
     switch (face) {
-    case Texture::CUBE_POS_X:
+    case CubeFace::POS_X:
         outMatrix = Matrix3::fromAxisAngle(Vector3::unitY(), (float)halfPi());
         break;
         
-    case Texture::CUBE_NEG_X:
+    case CubeFace::NEG_X:
         outMatrix = Matrix3::fromAxisAngle(Vector3::unitY(), (float)-halfPi());
         break;
         
-    case Texture::CUBE_POS_Y:
+    case CubeFace::POS_Y:
         outMatrix = CFrame::fromXYZYPRDegrees(0,0,0,180,-90,0).rotation;
         break;
         
-    case Texture::CUBE_NEG_Y:
+    case CubeFace::NEG_Y:
         outMatrix = CFrame::fromXYZYPRDegrees(0,0,0,180,90,0).rotation;
         break;
         
-    case Texture::CUBE_POS_Z:
+    case CubeFace::POS_Z:
         outMatrix = Matrix3::fromAxisAngle(Vector3::unitY(), (float)pi());
         break;
         
-    case Texture::CUBE_NEG_Z:
+    case CubeFace::NEG_Z:
         outMatrix = Matrix3::identity();
         break;
 

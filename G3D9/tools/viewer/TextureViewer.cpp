@@ -13,17 +13,17 @@
 
 static bool allCubeMapFacesExist(const std::string& base, const std::string& ext, std::string& wildcardBase) {
 
-	Texture::CubeMapConvention matchedConv = Texture::CUBE_G3D;
+	CubeMapConvention matchedConv = CubeMapConvention::G3D;
 	bool foundMatch = false;
 
 	// Check of filename ends in one of the convensions
-	for (int convIndex = 0; convIndex < Texture::NUM_CUBECONVENTIONS; ++convIndex) {
-		const Texture::CubeMapInfo& info = Texture::cubeMapInfo(static_cast<Texture::CubeMapConvention>(convIndex));
+	for (int convIndex = 0; convIndex < CubeMapConvention::COUNT; ++convIndex) {
+		const Texture::CubeMapInfo& info = Texture::cubeMapInfo(static_cast<CubeMapConvention>(convIndex));
 
-		for (int faceIndex = 0; faceIndex < Texture::NUM_CUBEFACES; ++faceIndex) {
+		for (int faceIndex = 0; faceIndex < 6; ++faceIndex) {
 			if (endsWith(base, info.face[faceIndex].suffix)) {
 				foundMatch = true;
-				matchedConv = static_cast<Texture::CubeMapConvention>(convIndex);
+				matchedConv = static_cast<CubeMapConvention>(convIndex);
 				wildcardBase = base.substr(0, base.length() - info.face[faceIndex].suffix.length());
 				break;
 			}
@@ -40,7 +40,7 @@ static bool allCubeMapFacesExist(const std::string& base, const std::string& ext
 
 
 	// See if all faces exist
-	for (int faceIndex = 0; faceIndex < Texture::NUM_CUBEFACES; ++faceIndex) {
+	for (int faceIndex = 0; faceIndex < 6; ++faceIndex) {
 		if (! FileSystem::exists(wildcardBase + info.face[faceIndex].suffix + "." + ext)) {
 			success = false;
 			break;

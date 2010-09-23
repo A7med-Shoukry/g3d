@@ -144,9 +144,9 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
         m_blurry   = Texture::createEmpty("Film Blurry",  w/4, h/4, m_intermediateFormat, Texture::defaultDimension(), Texture::Settings::video());
 
 		// Clear the newly created textures
-        m_preBloom->clear(Texture::CUBE_POS_X, 0, rd);
-        m_temp->clear(Texture::CUBE_POS_X, 0, rd);
-        m_blurry->clear(Texture::CUBE_POS_X, 0, rd);
+        m_preBloom->clear(CubeFace::POS_X, 0, rd);
+        m_temp->clear(CubeFace::POS_X, 0, rd);
+        m_blurry->clear(CubeFace::POS_X, 0, rd);
 
         m_framebuffer->set(Framebuffer::COLOR0, m_preBloom);
         m_tempFramebuffer->set(Framebuffer::COLOR0, m_temp);

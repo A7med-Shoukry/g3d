@@ -337,6 +337,8 @@ href="classes.html">Classes</a>.
 
      <LI><B>Images</B> &nbsp; &nbsp;
         \link G3D::BumpMapPreprocess BumpMapPreprocess\endlink,
+        \link G3D::CubeFace CubeFace\endlink,
+        \link G3D::CubeMapConvention CubeMapConvention\endlink,
         \link G3D::GImage GImage\endlink,
         \link G3D::GImage::Error GImage::Error\endlink,
         \link G3D::Image1\endlink,

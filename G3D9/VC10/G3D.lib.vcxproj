@@ -219,6 +219,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\ConvexPolyhedron.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\CoordinateFrame.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Crypto.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\CubeFace.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Cylinder.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\debug.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\debugAssert.h" />

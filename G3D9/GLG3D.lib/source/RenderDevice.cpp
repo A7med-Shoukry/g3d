@@ -1844,7 +1844,7 @@ void RenderDevice::setVertexAndPixelShader(const VertexAndPixelShaderRef& s) {
 }
 
 
-void RenderDevice::copyTextureFromScreen(const Texture::Ref& texture, const Rect2D& rect, const ImageFormat* format, int mipLevel, Texture::CubeFace face) {  
+void RenderDevice::copyTextureFromScreen(const Texture::Ref& texture, const Rect2D& rect, const ImageFormat* format, int mipLevel, CubeFace face) {  
     if (format == NULL) {
         format = texture->format();
     }

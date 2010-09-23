@@ -192,19 +192,19 @@ public:
 
         Texture::Ref                m_texture;
 
-        /** If texture is a Texture::CUBE_MAP, this is the face that
+        /** If texture is a CubeFace::MAP, this is the face that
             is attached. */
-        Texture::CubeFace           m_cubeFace;
+        CubeFace                    m_cubeFace;
         
         /** Mip level being rendered to */
         int                         m_mipLevel;
 
         Attachment(AttachmentPoint ap, const Renderbuffer::Ref& r);
 
-        Attachment(AttachmentPoint ap, const Texture::Ref& r, Texture::CubeFace c, int miplevel);
+        Attachment(AttachmentPoint ap, const Texture::Ref& r, CubeFace c, int miplevel);
         
         /** Assumes the point is correct */
-        bool equals(const Texture::Ref& t, Texture::CubeFace f, int miplevel) const;
+        bool equals(const Texture::Ref& t, CubeFace f, int miplevel) const;
 
         /** Assumes the point is correct */
         bool equals(const Renderbuffer::Ref& r) const;
@@ -239,7 +239,7 @@ public:
             return m_texture;
         }
 
-        inline Texture::CubeFace cubeFace() const {
+        inline CubeFace cubeFace() const {
             return m_cubeFace;
         }
 
@@ -400,7 +400,7 @@ public:
        \param mipLevel   Target MIP-map level to render to.
     */
     void set(AttachmentPoint ap, const Texture::Ref& texture, 
-             Texture::CubeFace face, int mipLevel = 0);
+             CubeFace face, int mipLevel = 0);
     
     /**
        Set one of the attachment points to reference a renderbuffer.

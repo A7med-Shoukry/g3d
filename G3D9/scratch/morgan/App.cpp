@@ -4,6 +4,64 @@
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
 
+/** 
+ CubeMap<Image3>::Ref cube = CubeMap<Image3>::create(...);
+*/
+template<class Image>
+class CubeMap : public ReferenceCountedObject {
+public:
+    typedef ReferenceCountedPointer< class CubeMap<Image> > Ref;
+
+protected:
+
+    int                         m_width;
+    Array<class Image::Ref>     m_imageArray;
+
+    CubeMap() {}
+
+    void init(const Array<class Image::Ref>& imageArray) {
+        m_imageArray = imageArray;
+        debugAssert(imageArray.size() == 6);
+        m_width = m_imageArray[0]->width();
+        for (int i = 0; i < 6; ++i) {
+            debugAssert(m_imageArray[i]->width() == m_width);
+            debugAssert(m_imageArray[i]->height() == m_width);
+        }    
+    }
+
+public:
+
+    static Ref create(const std::string& fileSpec) {
+        // todo
+        return NULL;
+    }
+
+    static Ref create(const Array<class Image::Ref>& imageArray) {
+        Ref c = new CubeMap<Image>();
+        c->init(imageArray);
+        return c;
+    }
+
+    class Image::ComputeType bilinear(const Vector3& v) const;
+
+    class Image::ComputeType nearest(const Vector3& v) const;
+
+    /** */
+    const class Image::Ref face() const;
+    
+    /** Returns the width of one side, which must be the same as the height. */
+    int width() const {
+        return m_width;
+    }
+
+    /** Returns the height of one side in pixels, which must be the same as the height. */
+    int height() const {
+        // Width and height are the same in this class.
+        return m_width;
+    }
+
+};
+
 int main(int argc, char** argv) {
     (void)argc; (void)argv;
     GApp::Settings settings;
@@ -46,22 +104,6 @@ void App::onInit() {
     developerWindow->videoRecordDialog->setEnabled(true);
     showRenderingStats = true;
 
-    m_shader = Shader::fromFiles("shade.vrt", "shade.pix");
-    m_sphere = ArticulatedModel::fromFile(System::findDataFile("ifs/sphere.ifs"));
-
-    /////////////////////////////////////////////////////////////
-    // Example of how to add debugging controls
-    debugPane->addButton("Exit", this, &App::endProgram);
-    
-    debugPane->beginRow();
-        debugPane->addButton("Hi");
-        debugPane->addButton("There");
-    debugPane->endRow();
-    debugPane->setNewChildSize(300, -1, 100);
-    debugPane->addDropDownList("Hello", Array<std::string>("1", "2"));
-    debugPane->addDropDownList("", Array<std::string>("1", "2"));
-    debugPane->addLabel("Add more debug controls");
-    debugPane->addLabel("in App::onInit().");
 
     // More examples of debugging GUI controls:
     // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
@@ -150,34 +192,23 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     if (m_scene->lighting()->environmentMapTexture.notNull()) {
         Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     }
-    /*
 
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
     // ShadowMap as the final argument to create shadows.)
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
 
-    //////////////////////////////////////////////////////
-    // Sample immediate-mode rendering code
-    rd->enableLighting();
-    for (int i = 0; i < m_scene->lighting()->lightArray.size(); ++i) {
-        rd->setLight(i, m_scene->lighting()->lightArray[i]);
-    }
-    rd->setAmbientLightColor(m_scene->lighting()->ambientAverage());
-
-    Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
-    Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());
-    Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f),
-              Color3::black());
 
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
-    */
+    
+    /*
     m_shader->args.set("cubemap", m_scene->lighting()->environmentMapTexture);
     rd->setShader(m_shader);
     Array<Surface::Ref> a;
     m_sphere->pose(a);
     a[0]->sendGeometry(rd);
+    */
 }
 
 

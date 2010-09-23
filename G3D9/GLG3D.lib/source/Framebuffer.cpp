@@ -91,11 +91,11 @@ void Framebuffer::set(AttachmentPoint ap, const void* n) {
 
 
 void Framebuffer::set(AttachmentPoint ap, const Texture::Ref& texture) {
-    set(ap, texture, Texture::CUBE_NEG_X, 0);
+    set(ap, texture, CubeFace::NEG_X, 0);
 }
 
    
-void Framebuffer::set(AttachmentPoint ap, const Texture::Ref& texture, Texture::CubeFace face, int mipLevel) {
+void Framebuffer::set(AttachmentPoint ap, const Texture::Ref& texture, CubeFace face, int mipLevel) {
     if (texture.isNull()) {
         // We're in the wrong overload due to C++ static type dispatch
         set(ap, NULL);
@@ -292,12 +292,12 @@ Framebuffer::Attachment::Attachment(AttachmentPoint ap, const RenderbufferRef& r
     m_type(RENDERBUFFER),
     m_point(ap),
     m_renderbuffer(r),
-    m_cubeFace(Texture::CUBE_NEG_X),
+    m_cubeFace(CubeFace::NEG_X),
     m_mipLevel(0) {
 }
 
 
-Framebuffer::Attachment::Attachment(AttachmentPoint ap, const Texture::Ref& r, Texture::CubeFace c, int m) : 
+Framebuffer::Attachment::Attachment(AttachmentPoint ap, const Texture::Ref& r, CubeFace c, int m) : 
     m_type(TEXTURE), 
     m_point(ap),
     m_texture(r),
@@ -337,7 +337,7 @@ int Framebuffer::Attachment::height() const {
 }
 
 
-bool Framebuffer::Attachment::equals(const Texture::Ref& t, Texture::CubeFace c, int L) const {
+bool Framebuffer::Attachment::equals(const Texture::Ref& t, CubeFace c, int L) const {
     return
         (m_type == TEXTURE) &&
         (m_texture == t) &&

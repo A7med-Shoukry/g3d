@@ -670,5 +670,8 @@
     <ClInclude Include="..\G3D.lib\include\G3D\SpawnBehavior.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\CubeFace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

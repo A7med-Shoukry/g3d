@@ -715,7 +715,7 @@ public:
     void setStencilTest(StencilTest test);
 
     /** \param format If NULL, defaults to texture->format() */
-    void copyTextureFromScreen(const Texture::Ref& texture, const Rect2D& rect, const ImageFormat* format = NULL, int mipLevel = 0, Texture::CubeFace face = Texture::CUBE_POS_X);
+    void copyTextureFromScreen(const Texture::Ref& texture, const Rect2D& rect, const ImageFormat* format = NULL, int mipLevel = 0, CubeFace face = CubeFace::POS_X);
 
     void setRenderMode(RenderMode mode);
     RenderMode renderMode() const;
