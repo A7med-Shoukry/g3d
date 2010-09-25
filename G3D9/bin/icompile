@@ -14,7 +14,7 @@
 # EDIT ice.txt AND ~/.icompile TO CUSTOMIZE YOUR PROJECT CONFIGURATION.
 #**********************************************************************
 
-version = [0, 5, 12]
+version = [0, 5, 13]
 
 import sys, string, os, os.path, fileinput, tempfile, shutil, re
 import commands, pickle, time, copy, threading, platform
@@ -671,7 +671,7 @@ def gdbCompiledProgram(state, progArgs):
     f = open(commandFile, 'w')
     if 'ICE_EXTRA_SOURCE' in os.environ:
         # Split at ; and :
-        dirs = os.environ['ICE_EXTRA_SOURCE'].split(';').join(':').split(':')
+        dirs = '.'.join(os.environ['ICE_EXTRA_SOURCE'].split(';')).split(':')
         for d in dirs:
             f.write('directory ' + d + '\n')
     f.write('run ' + string.join(progArgs, ' ') + '\n')
