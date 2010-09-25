@@ -68,7 +68,6 @@ namespace G3D {
     <LI>GL_ARB_fragment_shader
     <LI>GL_ARB_vertex_shader
     <LI>GL_EXT_geometry_shader4
-    <LI>GL_EXT_framebuffer_object
     <LI>GL_ARB_framebuffer_object
     <LI>GL_ARB_frambuffer_sRGB
     <LI>GL_SGIS_generate_mipmap
@@ -158,7 +157,6 @@ private:
     DECLARE_EXT(GL_ARB_fragment_shader);
     DECLARE_EXT(GL_ARB_vertex_shader);
     DECLARE_EXT(GL_EXT_geometry_shader4);
-    DECLARE_EXT(GL_EXT_framebuffer_object);
     DECLARE_EXT(GL_ARB_framebuffer_object);
     DECLARE_EXT(GL_ARB_framebuffer_sRGB);
     DECLARE_EXT(GL_SGIS_generate_mipmap);

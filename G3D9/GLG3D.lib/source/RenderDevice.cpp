@@ -1527,7 +1527,7 @@ void RenderDevice::setFramebuffer(const FramebufferRef& fbo) {
             glDrawBuffer(GLenum(m_state.drawBuffer));
             debugAssertGLOk();
         } else {
-            debugAssertM(GLCaps::supports_GL_ARB_framebuffer_object() || GLCaps::supports_GL_EXT_framebuffer_object(), 
+            debugAssertM(GLCaps::supports_GL_ARB_framebuffer_object(), 
                 "Framebuffer Object not supported!");
             m_state.framebuffer = fbo;
             syncDrawBuffer(false);
@@ -3269,37 +3269,29 @@ bool RenderDevice::supportsVertexProgramNV2() const {
 
 
 bool RenderDevice::checkFramebuffer(std::string& whyNot) const {
-    GLenum status = static_cast<GLenum>(glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT));
+    GLenum status = static_cast<GLenum>(glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
     switch(status) {
-    case GL_FRAMEBUFFER_COMPLETE_EXT:
+    case GL_FRAMEBUFFER_COMPLETE:
         return true;
 
-    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
         whyNot = "Framebuffer Incomplete: Incomplete Attachment.";
 		break;
 
-    case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+    case GL_FRAMEBUFFER_UNSUPPORTED:
         whyNot = "Unsupported framebuffer format.";
 		break;
 
-    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
         whyNot = "Framebuffer Incomplete: Missing attachment.";
 		break;
 
-    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-        whyNot = "Framebuffer Incomplete: Attached images must have same dimensions.";
-		break;
-
-    case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-        whyNot = "Framebuffer Incomplete: Attached images must have same format.";
-		break;
-
-    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
         whyNot = "Framebuffer Incomplete: Missing draw buffer.";
 		break;
 
-    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
         whyNot = "Framebuffer Incomplete: Missing read buffer.";
 		break;
 

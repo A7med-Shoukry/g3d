@@ -270,7 +270,6 @@ void GLCaps::init() {
     DECLARE_EXT(GL_ARB_fragment_shader);
     DECLARE_EXT(GL_ARB_vertex_shader);
     DECLARE_EXT(GL_EXT_geometry_shader4);
-    DECLARE_EXT(GL_EXT_framebuffer_object);
     DECLARE_EXT(GL_ARB_framebuffer_object);
     DECLARE_EXT(GL_ARB_framebuffer_sRGB);
     DECLARE_EXT(GL_SGIS_generate_mipmap);
@@ -351,7 +350,6 @@ void GLCaps::loadExtensions(Log* debugLog) {
             DECLARE_EXT(GL_ARB_fragment_shader);
             DECLARE_EXT(GL_ARB_vertex_shader);
             DECLARE_EXT(GL_EXT_geometry_shader4);
-            DECLARE_EXT_GL2(GL_EXT_framebuffer_object);
             DECLARE_EXT_GL3(GL_ARB_framebuffer_object);
             DECLARE_EXT_GL3(GL_ARB_framebuffer_sRGB);
             DECLARE_EXT(GL_SGIS_generate_mipmap);
