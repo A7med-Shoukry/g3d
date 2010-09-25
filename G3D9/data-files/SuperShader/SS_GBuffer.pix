@@ -20,12 +20,12 @@
 #   endif
 #endif
 
-#if (SPECULAR_INDEX < 0)
-#   ifdef SPECULARMAP
-#       undef SPECULARMAP
+#if (GLOSSY_INDEX < 0)
+#   ifdef GLOSSYMAP
+#       undef GLOSSYMAP
 #   endif
-#   ifdef SPECULARCONSTANT
-#       undef SPECULARCONSTANT
+#   ifdef GLOSSYCONSTANT
+#       undef GLOSSYCONSTANT
 #   endif
 #endif
 
@@ -75,14 +75,14 @@ void main(void) {
         gl_FragData[LAMBERTIAN_INDEX].rgba = lambertianColor.rgba;
 #   endif
 
-#   if (SPECULAR_INDEX >= 0)
-        gl_FragData[SPECULAR_INDEX] =
-#       if defined(SPECULARCONSTANT)
+#   if (GLOSSY_INDEX >= 0)
+        gl_FragData[GLOSSY_INDEX] =
+#       if defined(GLOSSYCONSTANT)
             specularConstant
-#           ifdef SPECULARMAP
+#           ifdef GLOSSYMAP
                 * texture2D(specularMap, offsetTexCoord)
 #           endif
-#       elif defined(SPECULARMAP)
+#       elif defined(GLOSSYMAP)
             texture2D(specularMap, offsetTexCoord)
 #       else
             vec4(0.0);
