@@ -154,6 +154,9 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
                 // Poses 
                 poseSpline = modelArgs[1];
             }
+        } else {
+            // Need at least one coordinate frame in the spline.
+            frameSpline.append(CFrame());
         }
 
         ArticulatedModel::Ref artModel = model->downcast<ArticulatedModel>();
