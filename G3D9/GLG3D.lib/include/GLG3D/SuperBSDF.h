@@ -14,8 +14,6 @@ namespace G3D {
 /**
    Description of how a surface reflects light (photons).
 
-   \beta
-
    This is an analytic energy-conserving Bidirectional Scattering
    Distribution Function (BSDF) with phenomenonlogically meaningful
    parameters. It comprises Lambertian reflection, Schlick's Fresnel
@@ -38,22 +36,22 @@ namespace G3D {
 
    <table border=0>
    <tr><td width=20></td><td width=100><b>scatter()</b></td><td>\copybrief scatter()</td></tr>
-   <tr><td></td><td><b>shadeDirect()</b></td><td>\copybrief shadeDirect()</td></tr>
+   <tr><td></td><td><b>getImpulses()</b></td><td>\copybrief getImpulses()</td></tr>
    <tr><td></td><td ><b>evaluate()</b></td><td>\copybrief evaluate()</td></tr>
    </table>
 
    The material is parameterized by:
 
    <table border=0>
-   <tr valign=top><td width=20></td><td width=100>\f$\rho_{L0}\f$</td><td>Peak Lambertian ("diffuse surface color") reflection, on [0, 1]. The actual
+   <tr valign=top><td width=20></td><td width=100>\f$\rho_{L0}\f$</td><td>[SuperBSDF::lambertian.rgb, Material::Specification::setLambertian]. Peak Lambertian (a.k.a. "diffuse surface color") reflectance, on [0, 1]. The actual
         reflectance applied at normal incidence is \f$(1 - F_0) * \rho_{L0}\f$</td></tr>
    </td></tr>
-   <tr valign=top><td></td><td>\f$T_0\f$</td><td>transmission modulation factor ("transparent color") on [0, 1]; 
+   <tr valign=top><td></td><td>\f$T_0\f$</td><td>[SuperBSDF::transmissive, Material::Specification::setTransmissive]. Transmission modulation factor ("transparent color") for the entire volume, on [0, 1]; 
      0 for opaque surfaces. The actual transmission at normal incidence will be 
-     \f$(1 - F_0) * T_0\f$</td></tr>
-   <tr valign=top><td></td><td>\f$F_0\f$</td><td>Fresnel reflection at normal incidence ("specular/reflection color") on [0, 1]</td></tr>
-   <tr valign=top><td></td><td>\f$\sigma\f$</td><td>0 for purely lambertian surfaces, 
-     packedSpecularMirror() for perfect reflection, and values between packSpecularExponent(1) and packSpecularExponent(128)
+     \f$(1 - F_0) * T_0\f$.  This is a fast approximation.  Use the extinction coefficients for true participating medium transmission.</td></tr>
+   <tr valign=top><td></td><td>\f$F_0\f$</td><td>[SuperBSDF::specular.rgb, Material::Specification::setShininess]. Fresnel reflection at normal incidence (a.k.a. "glossy/specular/reflection color") on [0, 1]</td></tr>
+   <tr valign=top><td></td><td>\f$\sigma\f$</td><td>[SuperBSDF::specular.a, Material::Specification::setShininess] Surface shininess/smoothness (a.k.a. "shininess", "specular exponent") 0 for purely Lambertian surfaces, 
+     packedSpecularMirror()/Material::Specification::setMirrorShininess() for perfect reflection, and values between packSpecularExponent(1) and packSpecularExponent(128)
      for glossy reflection.  This is the exponent on the normalized Blinn-Phong lobe.</td></tr>
     <tr valign=top><td></td><td>\f$\eta_i\f$</td><td>Index of refraction outside the material, i.e., on the same side as the normal (only used for surfaces with \f$\rho_t > 0\f$; 
       for computing refraction angle, not used for Fresnel factor).</td></tr>
@@ -66,7 +64,9 @@ namespace G3D {
    The following terminology for photon scattering is used in the 
    G3D::Material::Settings and G3D::SuperBSDF classes and 
    their documentation:
-   \image html scatter-terms.png
+   \htmlonly 
+   <center><img src="scatter-terms.png" width=80%/></center>
+   \endhtmlonly
 
    (Departures from theory for artistic control: The direct shader always applies a glossy highlight with an exponent of 128 to mirror surfaces so that
    light sources produce highlights.  Setting the Glossy/Mirror coefficient to zero for a transmissive surface
@@ -76,15 +76,15 @@ namespace G3D {
    non-zero): Lambertian, Glossy, Mirror, and Transmissive,
 
    \f[
-   f(\vec{\omega}_i, \vec{\omega}_o) = f_L + f_g + f_m + f_t
+   f(\vec{\omega}_\mathrm{i}, \vec{\omega}_\mathrm{o}) = f_L + f_g + f_m + f_t
    \f]
 
    where
 
    \f{eqnarray}
-     \nonumber f_L &=& \frac{F_L(\vec{\omega}_i)}{\pi} \rho_{L0}\\
-     \nonumber f_g &=& \left\{\begin{array}{ccc}
-\frac{s + 8}{8 \pi} F_r(\vec{\omega}_i) \max(0, \vec{n} \cdot \vec{\omega}_h)^{s} && \mbox{\texttt{packSpecularExponent}}(0) < \sigma <  \mbox{\texttt{packedSpecularMirror()}}\\
+     \nonumber f_L &=& \rho_{L0} \cdot \frac{F_L(\vec{\omega}_\mathrm{i})}{\pi} \\
+     \nonumber f_g &=& \left\{\begin{array}{ccc}     
+ F_r(\vec{\omega}_\mathrm{i}) \cdot \frac{s + 8}{8 \pi} \cdot \max(0, \vec{n} \cdot \vec{\omega}_\mathrm{h})^{s} && \mbox{\texttt{packSpecularExponent}}(0) < \sigma <  \mbox{\texttt{packedSpecularMirror()}}\\
  \\
  0~\mbox{sr}^{-1} & &  \mbox{otherwise}  \\
 \end{array}\right.\\
@@ -118,7 +118,10 @@ F_r(\vec{\omega}_i) ~ \delta(\vec{\omega}_o, \vec{\omega}_m) ~/ ~(\vec{\omega}_i
   applying a constant attenuation is a typical one in rendering,
   however.  
 
-  @sa G3D::Material, G3D::Component, G3D::BumpMap, G3D::GMaterial, G3D::Texture
+
+  \beta SuperBSDF is scheduled to be merged into G3D::Material in December 2010.
+
+  \sa G3D::Material, G3D::Component, G3D::BumpMap, G3D::GMaterial, G3D::Texture
 */
 class SuperBSDF : public ReferenceCountedObject {
 public:
