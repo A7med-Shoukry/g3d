@@ -52,10 +52,10 @@ namespace G3D {
    <tr valign=top><td></td><td>\f$F_0\f$</td><td>[SuperBSDF::specular.rgb, Material::Specification::setShininess]. Fresnel reflection at normal incidence (a.k.a. "glossy/specular/reflection color") on [0, 1]</td></tr>
    <tr valign=top><td></td><td>\f$\sigma\f$</td><td>[SuperBSDF::specular.a, Material::Specification::setShininess] Surface shininess/smoothness (a.k.a. "shininess", "specular exponent") 0 for purely Lambertian surfaces, 
      packedSpecularMirror()/Material::Specification::setMirrorShininess() for perfect reflection, and values between packSpecularExponent(1) and packSpecularExponent(128)
-     for glossy reflection.  This is the exponent on the normalized Blinn-Phong lobe.</td></tr>
-    <tr valign=top><td></td><td>\f$\eta_i\f$</td><td>Index of refraction outside the material, i.e., on the same side as the normal (only used for surfaces with \f$\rho_t > 0\f$; 
+     for glossy reflection.  This is used to compute \f$s\f$, the exponent on the normalized Blinn-Phong lobe.</td></tr>
+    <tr valign=top><td></td><td>\f$\eta_\mathrm{i}\f$</td><td>Index of refraction outside the material, i.e., on the same side as the normal (only used for surfaces with \f$\rho_t > 0\f$; 
       for computing refraction angle, not used for Fresnel factor).</td></tr>
-    <tr valign=top><td></td><td>\f$\eta_o\f$</td><td>Index of refraction inside the material, i.e., opposite the normal (only used for surfaces with \f$\rho_t > 0\f$; 
+    <tr valign=top><td></td><td>\f$\eta_\mathrm{o}\f$</td><td>Index of refraction inside the material, i.e., opposite the normal (only used for surfaces with \f$\rho_t > 0\f$; 
       for computing refraction angle, not used for Fresnel factor).</td></tr>
     </table>
  
