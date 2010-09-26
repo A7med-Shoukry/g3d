@@ -13,6 +13,7 @@ namespace G3D {
     bump/normal map */
 class SurfaceSample {
 public:
+    Material::Ref material;
 
     /** Location after bump map is applied. */
     Point3     shadingLocation;
@@ -67,7 +68,7 @@ public:
     Color3     extinctionTransmit;
 
     /** Sampled from the emission map. */
-    Power3     emit;
+    Radiance3  emit;
 
     SurfaceSample() : coverage(0.0f), glossyExponent(0.0f) {}
 

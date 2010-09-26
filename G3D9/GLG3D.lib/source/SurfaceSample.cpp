@@ -44,6 +44,7 @@ void SurfaceSample::sample
  const Vector2&  texCoord,
  const Vector3&  interpolatedTangent,
  const Vector3&  interpolatedTangent2) {
+    this->material = material;
     this->texCoord = texCoord;
     this->geometricLocation = geometricLocation;
     this->interpolatedNormal = interpolatedNormal;

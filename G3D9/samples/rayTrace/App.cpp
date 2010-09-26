@@ -107,17 +107,17 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i
             // Shadow rays
             if (world->lineOfSight(hit.position + hit.normal * 0.0001f, light.position.xyz())) {
                 Vector3 w_L = light.position.xyz() - hit.position;
-                float distance2 = w_L.squaredLength();
+                const float distance2 = w_L.squaredLength();
                 w_L /= sqrt(distance2);
 
                 // Attenduated radiance
-                const Color3& radiance_L = light.color / distance2;
+                const Irradiance3& E_i = light.power() / (4.0f * pif() * distance2);
 
-				debugAssert(radiance.isFinite());
-                radiance += bsdf->evaluate(hit.normal, hit.texCoord, w_L, 
-                                           radiance_L, -ray.direction()).rgb() * 
-                                           max(0.0f, w_L.dot(hit.normal));
-				debugAssert(radiance.isFinite());
+                radiance += 
+                    bsdf->evaluate(hit.normal, hit.texCoord, w_L, -ray.direction()).rgb() * 
+                    E_i *
+                    max(0.0f, w_L.dot(hit.normal));
+                debugAssert(radiance.isFinite());
             }
         }
 

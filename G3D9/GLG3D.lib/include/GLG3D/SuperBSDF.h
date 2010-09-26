@@ -268,8 +268,6 @@ public:
         \param texCoord Texture coordinate on the surface at which to
         sample from.
 
-        \param radiance_i Incident power ("light color") along @a w_i
-
         \return Resulting radiance, with the alpha channel copied from
         the coverage mask.  Note that this does NOT factor the
         geometric \f$\hat{\omega}_\mathrm{i} \cdot \hat{n}\f$ term
@@ -281,7 +279,6 @@ public:
     (const Vector3&   n,
      const Vector2&   texCoord,
      const Vector3&   w_i,
-     const Radiance3& radiance_i,
      const Vector3&   w_o) const;
 
     /** \brief Move or copy data to CPU or GPU.  

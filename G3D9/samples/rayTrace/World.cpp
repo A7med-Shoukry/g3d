@@ -4,8 +4,8 @@
 World::World() : m_mode(TRACE) {
     begin();
 
-    lightArray.append(GLight::point(Vector3(0, 10, 0), Color3::white() * 100));
-    lightArray.append(GLight::point(Vector3(22.6f, 2.9f,  6.6f), Color3::fromARGB(0xffe5bd) * 90));
+    lightArray.append(GLight::point(Vector3(0, 10, 0), Color3::white() * 1200));
+    lightArray.append(GLight::point(Vector3(22.6f, 2.9f,  6.6f), Color3::fromARGB(0xffe5bd) * 1000));
 
     ambient = Color3::fromARGB(0x304855) * 0.9f;
 

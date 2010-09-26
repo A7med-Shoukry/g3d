@@ -39,7 +39,6 @@ Color4 SuperBSDF::evaluate
 (const Vector3& n,
  const Vector2& texCoord,
  const Vector3& w_i,
- const Color3&  power_i,
  const Vector3& w_o) const {
     
     // Lambertian coefficients
@@ -58,19 +57,19 @@ Color4 SuperBSDF::evaluate
     float shininess = specular.a;
 
     if ((shininess != packedSpecularNone()) && (shininess != packedSpecularMirror())) {
-		// Glossy
-		// Half-vector
-		const Vector3& w_h = (w_i + w_o).direction();
-		const float cos_h = max(0.0f, w_h.dot(n));
-
-		const float e = (float)unpackSpecularExponent(shininess);
+        // Glossy
+        // Half-vector
+        const Vector3& w_h = (w_i + w_o).direction();
+        const float cos_h = max(0.0f, w_h.dot(n));
         
-		result += computeF(specular.rgb(), cos_i) * 
-			(powf(cos_h, e) *
-				(e + 8.0f) * INV_8PI);
+        const float e = (float)unpackSpecularExponent(shininess);
+        
+        result += computeF(specular.rgb(), cos_i) * 
+            (powf(cos_h, e) *
+             (e + 8.0f) * INV_8PI);
     }
     
-    return Color4(result * power_i, diffuse.a);
+    return Color4(result, diffuse.a);
 }
 
 
@@ -303,7 +302,7 @@ bool SuperBSDF::scatter
         // TODO: Remove
         // Testing code to generate Russian roulette scattering
         w_o = Vector3::cosHemiRandom(n, random);
-        power_o = evaluate(n, texCoord, w_i, power_i, w_o).rgb();
+        power_o = evaluate(n, texCoord, w_i, w_o).rgb() * power_i;
         if (power_o.average() > random.uniform()) {
             power_o /= power_o.average();
             debugAssert(power_o.r >= 0.0f);
