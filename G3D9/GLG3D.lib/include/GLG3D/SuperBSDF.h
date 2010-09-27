@@ -198,8 +198,9 @@ public:
 
     /** Computes F_r, given the cosine of the angle of incidence and 
        the reflectance at normal incidence. */
-    inline Color3 computeF(const Color3& F0, float cos_i) const {
-        return F0 + (Color3::white() - F0) * pow5(1.0f - cos_i);
+    // Must match SuperShader/sS_Globals.pix
+    static inline Color3 computeF(const Color3& F0, float cos_i) {
+        return (F0.r + F0.g + F0.b > 0.0f) ? (lerp(F0, Color3(1.0), clamp(pow5(1.0f - cos_i), 0.0f, 0.3f))) : F0;
     }
 
     /** @brief Packed factors affecting the lambertian term.
@@ -435,18 +436,15 @@ public:
         glossy reflection to mirror surfaces, e = 1 produces 1025 as
         well.
 
-        Returns inf() for mirrors.
+        Returns a large finite number for mirrors so that light
+        sources produce some visible highlights.
         */
     static inline float unpackSpecularExponent(float e) {
-        if (e == packedSpecularMirror()) {
-            return finf();
-        } else {
-            return square((clamp(e, 0.0f, 1.0f) * 255.0f - 1.0f) * (1.0f /253.0f)) * 1024.0f + 1.0f;
-        }
+        return square((clamp(e, 0.0f, 1.0f) * 255.0f - 1.0f) * (1.0f /253.0f)) * 1024.0f + 1.0f;
     }
 
     /** Packing is \f$\frac{ \sqrt{ \frac{x - 1}{1024} } * 253 + 1}{255} \f$ */
-    inline static float packSpecularExponent(float x) {
+    static inline float packSpecularExponent(float x) {
         debugAssert(x > 0);
         // Never let the exponent go above the max representable non-mirror value in a uint8
         return (clamp((float)(sqrt((x - 1.0f) * (1.0f / 1024.0f))), 0.0f, 1.0f) * 253.0f + 1.0f) * (1.0f / 255.0f);

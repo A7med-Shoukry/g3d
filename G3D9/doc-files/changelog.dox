@@ -46,7 +46,8 @@
      <li> Improved OFF file parsing compatibility
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
      <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
-	 </ul>
+     <li> Fix: SuperBSDF::evaluate now computes the same result as SuperShader for glossy terms
+    </ul>
 
      <b>Backwards Incompatible Changes</b>:
      <ul>

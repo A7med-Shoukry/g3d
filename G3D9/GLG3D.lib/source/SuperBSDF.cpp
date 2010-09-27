@@ -51,25 +51,28 @@ Color4 SuperBSDF::evaluate
     
     const float cos_i = max(0.0f, w_i.dot(n));
 
-    Color3 result = diffuse.rgb() * INV_PI;
     
     const Color4& specular = m_specular.sample(texCoord);
-    float shininess = specular.a;
+    float sigma = specular.a;
 
-    if ((shininess != packedSpecularNone()) && (shininess != packedSpecularMirror())) {
+    Color3 S(Color3::zero());
+    Color3 F(Color3::zero());
+    if (sigma != packedSpecularNone()) {
         // Glossy
+
         // Half-vector
         const Vector3& w_h = (w_i + w_o).direction();
         const float cos_h = max(0.0f, w_h.dot(n));
         
-        const float e = (float)unpackSpecularExponent(shininess);
+        const float s = unpackSpecularExponent(sigma);
         
-        result += computeF(specular.rgb(), cos_i) * 
-            (powf(cos_h, e) *
-             (e + 8.0f) * INV_8PI);
+        F = computeF(specular.rgb(), cos_i);
+        S = F * (powf(cos_h, s) * (s + 8.0f) * INV_8PI);
     }
+
+    const Color3& D = (diffuse.rgb() * INV_PI) * (Color3(1.0f) - F);
     
-    return Color4(result, diffuse.a);
+    return Color4(S + D, diffuse.a);
 }
 
 

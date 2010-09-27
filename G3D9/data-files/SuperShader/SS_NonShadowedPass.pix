@@ -112,7 +112,8 @@ void main(void) {
 
 #      if defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP)
           // modulate the lambertian color by the specular; this
-          // ensures energy conservation at glancing angles under Fresnel effects.
+          // ensures energy conservation at glancing angles under
+          // Fresnel effects.
           lambertianColor.rgb *= vec3(1.0) - specularColor;
 #      endif
 #   else
