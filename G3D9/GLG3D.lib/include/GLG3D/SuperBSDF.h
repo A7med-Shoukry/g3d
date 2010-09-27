@@ -356,22 +356,27 @@ public:
     /** Infinite peak in the BSDF.  For use with getImpulses.*/
     class Impulse {
     public:
+        /** Unit direction vector.  This points away from the
+            intersection. */
         Vector3   w;
 
-        /** \f$ f(\vec{\omega}_i, \vec{\omega}_o)
-            \mbox{max}(\vec{\omega}_i \cdot \vec{n}, 0) /
-            \delta(\vec{\omega}_o, \vec{\omega}_o) \f$ for the
-            impulse; the integral of the BSDF over a small area.  This
-            is the factor to multiply scattered illumination by.  
+        /** \f$ f(\hat{\omega}_\mathrm{i}, \hat{\omega}_\mathrm{o})
+            \mbox{max}(\hat{\omega}_\mathrm{i} \cdot \hat{n}, 0) /
+            \delta(\hat{\omega}_\mathrm{o}, \hat{\omega}_\mathrm{o})
+            \f$ for the impulse; the integral of the BSDF over a small
+            area.  This is the factor to multiply scattered
+            illumination by.
 
             For backwards recursive ray tracing, this is the
             coefficient on the recursive path's radiance. Do not
             multiply this by a cosine factor; that has already been
-            factored in.*/
+            factored in if necessary.*/
         Color3    coefficient;
 
+        /** For use under refraction */
         float     eta;
 
+        /** For use under refraction */
         Color3    extinction;
     };
 
@@ -380,22 +385,23 @@ public:
         and mirror reflection).
 
         Used for Whitted backwards ray tracing with a small number of
-        samples, where w_i = w_eye.  Distribution (stochastic) ray
-        tracers should use the scatter() method instead.
+        samples, where w_o = w_eye (pointing away from the
+        intersection).  Distribution (stochastic) ray tracers should
+        use the scatter() method instead.
+
+        \param n Unit surface normal at the intersection point
+
+        \param impulseArray Impulses are appended to this (it is <i>not</u>
+        cleared first)
 
         \param lowFreq If true, sample from the average texture color
         instead of at each texel.  This can improve performance by
         increasing memory coherence.
-
-        \param impulseArray Impulses are appended to this (it is not
-        cleared first)
-        
-
      */
     virtual void getImpulses
     (const Vector3&  n,
      const Vector2&  texCoord,
-     const Vector3&  w_i,
+     const Vector3&  w_o,
      SmallArray<Impulse, 3>& impulseArray,
      bool            lowFreq = false) const;
 
@@ -403,7 +409,7 @@ public:
     virtual void getImpulses
     (const Vector3&  n,
      const Vector2&  texCoord,
-     const Vector3&  w_i,
+     const Vector3&  w_o,
      Array<Impulse>& impulseArray,
      bool            lowFreq = false) const;
 
