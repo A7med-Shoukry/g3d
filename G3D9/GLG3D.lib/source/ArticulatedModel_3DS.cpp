@@ -228,16 +228,19 @@ Material::Specification ArticulatedModel::compute3DSMaterial
     const Load3DS::Map& texture1 = material.texture1;
 
     const Color4& lambertianConstant = 
-        Color4((Color3::white() * material.texture1.pct) *
+        Color4((material.diffuse * material.texture1.pct) *
                (1.0f - material.transparency), 1.0f);
 
     std::string lambertianFilename = find3DSTexture(texture1.filename, path);
     
     spec.setLambertian(lambertianFilename, lambertianConstant);
 
-
     // Strength of the shininess (higher is brighter)
-    spec.setSpecular(material.shininessStrength * material.specular * (1.0f - material.transparency));
+    spec.setSpecular(max(material.shininessStrength * material.specular, Color3(material.reflection)) * (1.0f - material.transparency));
+
+    if (material.reflection > 0.05f) {
+        spec.setMirrorShininess();
+    }
 
     //extent (area, higher is closely contained, lower is spread out) of shininess.
     // Don't scale up to the G3D maximum (1024) because 3DS files don't expect to ever be that shiny
