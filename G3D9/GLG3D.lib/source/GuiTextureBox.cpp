@@ -898,7 +898,9 @@ void GuiTextureBox::setTexture(const Texture::Ref& t) {
         // lot of GUI changes to update it, so we simply close that window.
         window()->manager()->remove(ins);
     }
-    setSettings(t->visualization);
+    if (t.notNull()) {
+        setSettings(t->visualization);
+    }
 }
 
 
