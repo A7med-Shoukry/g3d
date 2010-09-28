@@ -21,7 +21,7 @@ GBuffer::Indices::Indices(const GBuffer::Specification& spec)
     int i = 0;
 
     if (spec.lambertian) {    L = i;    ++i;   }
-    if (spec.glossy) {      s = i;    ++i;   }
+    if (spec.specular) {      s = i;    ++i;   }
     if (spec.transmissive) {  t = i;    ++i;   }
     if (spec.emissive) {      e = i;    ++i;   }
     if (spec.csNormal) {      csN = i;  ++i;   }
@@ -225,7 +225,7 @@ void GBuffer::resize(int w, int h) {
 
     // Discard old textures, allowing them to be garbage collected
     m_lambertian   = NULL;
-    m_glossy     = NULL;
+    m_specular     = NULL;
     m_transmissive = NULL;
     m_wsPosition   = NULL;
     m_csPosition   = NULL;
@@ -252,7 +252,7 @@ void GBuffer::resize(int w, int h) {
          : Texture::Visualization::unitVector());
 
     BUFFER(lambertian, L, Texture::Visualization::reflectivity());
-    BUFFER(glossy, s, Texture::Visualization::reflectivity());
+    BUFFER(specular, s, Texture::Visualization::reflectivity());
     BUFFER(transmissive, t, Texture::Visualization::reflectivity());
     BUFFER(emissive, e, Texture::Visualization::reflectivity());
     BUFFER(csNormal, csN, vectorVis);

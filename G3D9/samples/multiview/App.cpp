@@ -43,7 +43,7 @@ void App::onInit() {
     specification.wsPosition    = true;
     specification.wsNormal      = true;
     specification.lambertian    = true;
-    specification.glossy        = true;
+    specification.specular      = true;
     m_gbuffer = GBuffer::create("GBuffer", specification);
     m_gbuffer->resize((window()->width() - 4) / 2, window()->height() - GUI_HEIGHT - 2);
 
@@ -95,7 +95,7 @@ void App::onInit() {
     lamBox->setShowInfo(false);
     lamBox->zoomToFit();
 
-    GuiTextureBox* gloBox = pane->addTextureBox("Glossy", m_gbuffer->glossy());
+    GuiTextureBox* gloBox = pane->addTextureBox("Specular", m_gbuffer->specular());
     gloBox->setSizeFromInterior(gbufferViewSize);
     gloBox->moveRightOf(lamBox);
     gloBox->setShowInfo(false);

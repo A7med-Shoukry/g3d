@@ -42,7 +42,7 @@ public:
         bool                  csNormal;
 
         bool                  lambertian;
-        bool                  glossy;
+        bool                  specular;
         bool                  transmissive;
         bool                  emissive;
 
@@ -83,7 +83,7 @@ public:
             wsNormal(false),
             csNormal(false),
             lambertian(false),
-            glossy(false),
+            specular(false),
             transmissive(false),
             emissive(false),
             wsFaceNormal(false),
@@ -103,7 +103,7 @@ public:
                  int(wsNormal)           |
                 (int(csNormal)    << 1)  |
                 (int(lambertian)  << 2)  |
-                (int(glossy)    << 3)  |
+                (int(specular)    << 3)  |
                 (int(transmissive)<< 4)  |
                 (int(emissive)    << 5)  |
                 (int(csFaceNormal)<< 6)  |
@@ -181,9 +181,9 @@ private:
     /** RGB = diffuse reflectance (Fresnel is not applied), A = alpha */
     Texture::Ref                m_lambertian;
 
-    /** RGB = F0, A = \f$\sigma\f$ (packed glossy exponent).  Fresnel
+    /** RGB = F0, A = \f$\sigma\f$ (packed specular exponent).  Fresnel
         is not applied */
-    Texture::Ref                m_glossy;
+    Texture::Ref                m_specular;
 
     /** RGB = T0, A = eta.  Fresnel is not applied */
     Texture::Ref                m_transmissive;
@@ -264,10 +264,10 @@ public:
         return m_lambertian;
     }
 
-    /** RGB = F0, A = \f$\sigma\f$ (packed glossy exponent).  Fresnel
+    /** RGB = F0, A = \f$\sigma\f$ (packed specular exponent).  Fresnel
         is not applied */
-    Texture::Ref glossy() const {
-        return m_glossy;
+    Texture::Ref specular() const {
+        return m_specular;
     }
 
     /** RGB = T0, A = eta.  Fresnel is not applied */
