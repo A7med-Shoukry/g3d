@@ -67,6 +67,7 @@ static Table<std::string, std::string>& filenameTable() {
         logLazyPrintf("Found scenes:\n");
         for (int i = 0; i < filenameArray.size(); ++i) {
             Any a;
+            std::string msg;
             try {
                 a.load(filenameArray[i]);
                 
@@ -75,12 +76,17 @@ static Table<std::string, std::string>& filenameTable() {
                               "Duplicate scene names in " + filenameArray[i] + " and " +
                               filenameTable[name]);
                 
-                logLazyPrintf("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
+                msg = format("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
                 filenameTable.set(name, filenameArray[i]);
             } catch (const ParseError& e) {
-                logLazyPrintf("  <Parse error at %s:%d(%d): %s>\n", e.filename.c_str(), e.line, e.character, e.message.c_str());
+                msg = format("  <Parse error at %s:%d(%d): %s>\n", e.filename.c_str(), e.line, e.character, e.message.c_str());
             } catch (...) {
-                logLazyPrintf("  <Error while loading %s>\n", filenameArray[i].c_str());
+                msg = format("  <Error while loading %s>\n", filenameArray[i].c_str());
+            }
+
+            if (! msg.empty()) {
+                lazyLogPrintf("%s", msg.c_str());
+                debugPrintf("%s", msg.c_str());
             }
         }
         logPrintf("");
