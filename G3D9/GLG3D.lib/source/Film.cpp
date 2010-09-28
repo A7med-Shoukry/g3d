@@ -126,7 +126,7 @@ void Film::exposeAndRender
     rd->push2D(fb);
         rd->clear();
         exposeAndRender(rd, input, downsample);
-    rd->pop2D(fb);
+    rd->pop2D();
 
     // Override the document gamma
     output->visualization = Texture::Visualization::sRGB();
