@@ -733,9 +733,10 @@ Texture::Ref Texture::fromFile(
         "Can't specify more than one filename");
 
     realFilename[0] = filename[0];
-    // Test for both DIM_CUBE_MAP and DIM_CUBE_MAP_NPOT
     CubeMapInfo info;
-    if (numFaces == 6) {
+
+    // Ensure that this is not "<white>" before splitting names
+    if ((numFaces == 6) && ! beginsWith(filename[0], "<")) {
         // Parse the filename into a base name and extension
         generateCubeMapFilenames(filename[0], realFilename, info);
     }
@@ -743,7 +744,7 @@ Texture::Ref Texture::fromFile(
     // The six cube map faces, or the one texture and 5 dummys.
     GImage image[6];
 
-    if (numFaces == 1) {
+    if ((numFaces == 1) && (dimension == DIM_2D) || (dimension == DIM_2D_NPOT) || (dimension == DIM_3D_NPOT) || (dimension == DIM_3D)) {
         if (toLower(realFilename[0]) == "<white>") {
             image[0].resize(1, 1, 4, false);
             image[0].pixel4(0, 0) = Color4uint8(255, 255, 255, 255);
@@ -755,7 +756,7 @@ Texture::Ref Texture::fromFile(
         ThreadSet threadSet;
 
         for (int f = 0; f < numFaces; ++f) {
-            if (toLower(realFilename[f]) == "<white>") {
+            if ((toLower(realFilename[f]) == "<white>") || realFilename[f].empty()) {
                 image[f].resize(1, 1, 4, false);
                 image[f].pixel4(0, 0) = Color4uint8(255, 255, 255, 255);
             } else {

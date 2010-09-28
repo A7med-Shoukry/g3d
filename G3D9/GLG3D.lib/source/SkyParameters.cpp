@@ -195,6 +195,7 @@ Lighting::Specification::Specification(const Any& any) {
                 environmentMapTexture = t;
                 if (it->value.type() == Any::STRING) {
                     // Cube map defaults
+                    environmentMapTexture.dimension = Texture::DIM_CUBE_MAP;
                     environmentMapTexture.settings = Texture::Settings::cubeMap();
                 }
             }
@@ -215,8 +216,11 @@ Lighting::Specification::Specification(const Any& any) {
 Lighting::Specification::operator Any() const {
     Any a(Any::TABLE, "lighting");
     a["emissiveScale"] = emissiveScale;
-    a["environmentMapConstant"] = environmentMapConstant;
-    a["environmentMapTexture"] = environmentMapTexture;
+        
+    Any b(Any::TABLE);
+    b["constant"] = environmentMapConstant;
+    b["texture"] = environmentMapTexture;
+    a["environmentMap"] = b; 
     a["lightArray"] = lightArray;
 
     return a;

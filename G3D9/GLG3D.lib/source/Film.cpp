@@ -110,6 +110,30 @@ void Film::init() {
 }
 
 
+void Film::exposeAndRender
+    (RenderDevice*      rd,
+    const Texture::Ref& input,
+    Texture::Ref&       output,
+    int                 downsample) {
+
+    if (output.isNull()) {
+        // Allocate new output texture
+        output = Texture::createEmpty("Exposed image", input->width(), input->height(), input->format(), input->dimension(), input->settings());
+    }
+
+    Framebuffer::Ref fb = Framebuffer::create("Film temp");
+    fb->set(Framebuffer::COLOR0, output);
+    rd->push2D(fb);
+        rd->clear();
+        exposeAndRender(rd, input, downsample);
+    rd->pop2D(fb);
+
+    // Override the document gamma
+    output->visualization = Texture::Visualization::sRGB();
+    output->visualization.documentGamma = gamma();
+}
+
+
 void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int downsample) {
     debugAssertM(downsample == 1, "Downsampling not implemented in this release");
     if (m_framebuffer.isNull()) {

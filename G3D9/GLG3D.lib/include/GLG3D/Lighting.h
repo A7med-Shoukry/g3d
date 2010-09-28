@@ -138,6 +138,7 @@ public:
 
         Specification() : emissiveScale(Color3::white()), environmentMapConstant(1.0f) {
             environmentMapTexture.filename = "<white>";
+            environmentMapTexture.dimension = Texture::DIM_CUBE_MAP;
             environmentMapTexture.settings = Texture::Settings::cubeMap();
         }
 

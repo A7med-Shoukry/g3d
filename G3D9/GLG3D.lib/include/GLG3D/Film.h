@@ -167,11 +167,27 @@ public:
 
     /** \brief Renders the input as filtered by the film settings to the currently bound framebuffer.
         \param downsample One side of the downsampling filter in pixels. 1 = no downsampling. 2 = 2x2 downsampling (antialiasing). Not implemented.
+
+        If rendering to a bound texture, set the Texture::Visualization::documentGamma = gamma() afterwards.
     */
     void exposeAndRender
         (RenderDevice* rd, 
-         const Texture::Ref& input0,
+         const Texture::Ref& input,
          int downsample = 1);
+
+    /**
+      Render to texture helper.  You can also render to a texture by binding \a output to a FrameBuffer, 
+      setting the FrameBuffer on the RenderDevice, and calling the 
+      three-argument version of exposeAndRender.  That process will be faster than this
+      version, which must create its FrameBuffer every time it is invoked.
+
+     \param output If NULL, this will be allocated to be the same size and format as \a input.
+     */
+    void exposeAndRender
+        (RenderDevice*      rd,
+        const Texture::Ref& input,
+        Texture::Ref&       output,
+        int                 downsample = 1);
 };
 
 } // namespace
