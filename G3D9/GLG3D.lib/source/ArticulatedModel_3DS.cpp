@@ -188,17 +188,17 @@ void ArticulatedModel::init3DS(const std::string& filename, const Preprocess& pr
 static std::string find3DSTexture(std::string _filename, const std::string& path) {    
     if (_filename != "") {
         std::string filename = _filename;
-        if (endsWith(toUpper(filename), "GIF")) {
+        if (endsWith(toUpper(filename), ".GIF")) {
             // Load PNG instead of GIF, since we can't load GIF
             filename = filename.substr(0, filename.length() - 3) + "png";
         }
 
-        if (! FileSystem::exists(filename) && FileSystem::exists(pathConcat(path, filename))) {
+        if (! FileSystem::exists(filename, true, false) && FileSystem::exists(pathConcat(path, filename), true, false)) {
             filename = pathConcat(path, filename);
         }
 
         // Load textures
-        filename = System::findDataFile(filename, false);
+        filename = System::findDataFile(filename, false, false);
         
         if (filename == "") {
             logPrintf("Could not locate 3DS file texture '%s'\n", _filename.c_str());
@@ -231,7 +231,7 @@ Material::Specification ArticulatedModel::compute3DSMaterial
         Color4((material.diffuse * material.texture1.pct) *
                (1.0f - material.transparency), 1.0f);
 
-    std::string lambertianFilename = find3DSTexture(texture1.filename, path);
+    const std::string& lambertianFilename = find3DSTexture(texture1.filename, path);
     
     spec.setLambertian(lambertianFilename, lambertianConstant);
 

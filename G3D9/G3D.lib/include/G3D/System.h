@@ -1,14 +1,14 @@
 /** 
-  @file System.h
+  \file System.h
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
-  @cite Rob Wyatt http://www.gamasutra.com/features/wyatts_world/19990709/processor_detection_01.htm
-  @cite Benjamin Jurke http://www.flipcode.com/cgi-bin/msg.cgi?showThread=COTD-ProcessorDetectionClass&forum=cotd&id=-1
-  @cite Michael Herf http://www.stereopsis.com/memcpy.html
+  \cite Rob Wyatt http://www.gamasutra.com/features/wyatts_world/19990709/processor_detection_01.htm
+  \cite Benjamin Jurke http://www.flipcode.com/cgi-bin/msg.cgi?showThread=COTD-ProcessorDetectionClass&forum=cotd&id=-1
+  \cite Michael Herf http://www.stereopsis.com/memcpy.html
 
-  @created 2003-01-25
-  @edited  2008-10-14
+  \created 2003-01-25
+  \edited  2010-09-25
  */
 
 #ifndef G3D_System_h
@@ -427,7 +427,13 @@ public:
      If found, returns the full path to the resource, otherwise
      returns the empty string.
      */    
-    static std::string findDataFile(const std::string& full, bool errorIfNotFound = true);
+    static std::string findDataFile(const std::string& full, bool errorIfNotFound = true, bool caseSensitive =
+#ifdef G3D_WIN32
+        false
+#else
+        true
+#endif
+        );
 
     /**
         Sets the path that the application is using as its data directory.

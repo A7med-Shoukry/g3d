@@ -85,7 +85,7 @@ static Table<std::string, std::string>& filenameTable() {
             }
 
             if (! msg.empty()) {
-                lazyLogPrintf("%s", msg.c_str());
+                logLazyPrintf("%s", msg.c_str());
                 debugPrintf("%s", msg.c_str());
             }
         }

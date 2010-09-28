@@ -4,7 +4,7 @@
  @author Morgan McGuire, http://graphics.cs.williams.edu
  
  @author  2002-06-06
- @edited  2010-02-05
+ @edited  2010-09-27
  */
 #ifndef G3D_FileSystem_h
 #define G3D_FileSystem_h
@@ -182,8 +182,17 @@ private:
 
         \param trustCache If true, uses the cache for optimizing repeated calls 
         in the same parent directory. 
+
+        \param caseSensitive If true, the match must have exactly the same case for the base and extension.  If false,
+        case is ignored.  The default on Windows is false and the default on other operating systems is true.
      */
-    bool _exists(const std::string& f, bool trustCache = true);
+    bool _exists(const std::string& f, bool trustCache = true, bool caseSensitive = 
+#ifdef G3D_WIN32
+        false
+#else
+        true
+#endif
+        );
 
     /** Known bug: does not work inside zipfiles */
     bool _isDirectory(const std::string& path);
@@ -333,8 +342,14 @@ public:
     }
 
     /** \copydoc _exists */
-    static bool exists(const std::string& f, bool trustCache = true) {
-        return instance()._exists(f, trustCache);
+    static bool exists(const std::string& f, bool trustCache = true, bool caseSensitive = 
+#ifdef G3D_WIN32
+        false
+#else
+        true
+#endif
+        ) {
+        return instance()._exists(f, trustCache, caseSensitive);
     }
 
     /** \copydoc _isDirectory */

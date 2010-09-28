@@ -343,7 +343,8 @@ void getG3DVersion(std::string& s) {
 
 std::string System::findDataFile
 (const std::string&  full,
- bool                errorIfNotFound) {
+ bool                errorIfNotFound,
+ bool                caseSensitive) {
 
     // Places where specific files were most recently found.  This is
     // used to cache seeking of common files.
@@ -351,14 +352,14 @@ std::string System::findDataFile
 
     // First check if the file exists as requested.  This will go
     // through the FileSystemCache, so most calls do not touch disk.
-    if (FileSystem::exists(full)) {
+    if (FileSystem::exists(full, true, caseSensitive)) {
         return full;
     }
 
     // Now check where we previously found this file.
     std::string* last = lastFound.getPointer(full);
     if (last != NULL) {
-        if (FileSystem::exists(*last)) {
+        if (FileSystem::exists(*last, true, caseSensitive)) {
             // Even if cwd has changed the file is still present.
             // We won't notice if it has been deleted, however.
             return *last;
@@ -391,7 +392,7 @@ std::string System::findDataFile
             // this will locate the data directory.
             const char* paths[] = {"../data-files/", "../../data-files/", "../../../data-files/", NULL};
             for (int i = 0; paths[i]; ++i) {
-                if (FileSystem::exists(pathConcat(paths[i], "G3D-DATA-README.TXT"))) {
+                if (FileSystem::exists(pathConcat(paths[i], "G3D-DATA-README.TXT"), true, caseSensitive)) {
                     g3dPath = paths[i];
                     break;
                 }
@@ -411,7 +412,7 @@ std::string System::findDataFile
                 directoryArray.append(d);
                 for (int i = 0; ! subdirs[i].empty(); ++i) {
                     const std::string& p = pathConcat(d, subdirs[i]);
-                    if (FileSystem::exists(p)) {
+                    if (FileSystem::exists(p, true, caseSensitive)) {
                         directoryArray.append(p);
                     }
                 }
@@ -423,7 +424,7 @@ std::string System::findDataFile
 
     for (int i = 0; i < directoryArray.size(); ++i) {
         const std::string& p = pathConcat(directoryArray[i], full);
-        if (FileSystem::exists(p)) {
+        if (FileSystem::exists(p, true, caseSensitive)) {
             lastFound.set(full, p);
             return p;
         }
@@ -440,7 +441,7 @@ std::string System::findDataFile
         msg += "cwd = \'" + FileSystem::currentDirectory() + "\'\n";
         if (g3dPath) {
             msg += "G3D9DATA = ";
-            if (! FileSystem::exists(g3dPath)) {
+            if (! FileSystem::exists(g3dPath, true, caseSensitive)) {
                 msg += "(illegal path!) ";
             }
             msg += std::string(g3dPath) + "\'\n";
@@ -448,7 +449,7 @@ std::string System::findDataFile
             msg += "(G3D9DATA environment variable is undefined)\n";
         }
         msg += "GApp::Settings.dataDir = ";
-        if (! FileSystem::exists(initialAppDataDir)) {
+        if (! FileSystem::exists(initialAppDataDir, true, caseSensitive)) {
             msg += "(illegal path!) ";
         }
         msg += std::string(initialAppDataDir) + "\'\n";

@@ -411,7 +411,7 @@ void FileSystem::_copyFile(const std::string& source, const std::string& dest) {
 }
 
 
-bool FileSystem::_exists(const std::string& f, bool trustCache) {
+bool FileSystem::_exists(const std::string& f, bool trustCache, bool caseSensitive) {
 
     if (FilePath::isRoot(f)) {
 #       ifdef G3D_WIN32
@@ -422,8 +422,8 @@ bool FileSystem::_exists(const std::string& f, bool trustCache) {
 #       endif
     }
 
-    std::string path = FilePath::removeTrailingSlash(f);
-    std::string parentPath = FilePath::parent(path);
+    const std::string& path = FilePath::removeTrailingSlash(f);
+    const std::string& parentPath = FilePath::parent(path);
 
     const Dir& entry = getContents(parentPath, ! trustCache);
 
@@ -435,11 +435,7 @@ bool FileSystem::_exists(const std::string& f, bool trustCache) {
 
         const std::string& pattern = FilePath::baseExt(path);
 
-#       ifdef G3D_WIN32
-            static const int flags = FNM_CASEFOLD;
-#       else
-            static const int flags = 0;
-#       endif
+        const int flags = caseSensitive ? 0 : FNM_CASEFOLD;
 
         // See if any element of entry matches the wild card
         for (int i = 0; i < entry.nodeArray.size(); ++i) {
