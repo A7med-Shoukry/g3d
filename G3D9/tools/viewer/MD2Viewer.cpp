@@ -27,7 +27,7 @@ void MD2Viewer::onInit(const std::string& filename) {
 	
     model = MD2Model::create(filename);
 
-	currentPose = MD2Model::Pose::Pose(MD2Model::STAND, 0);
+	currentPose = MD2Model::Pose(MD2Model::STAND, 0);
 }
 
 
