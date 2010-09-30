@@ -111,8 +111,13 @@ private:
         /** When this entry was last updated */
         double                  lastChecked;
 
-        /** Case-independent comparison on Windows */
-        bool contains(const std::string& child) const;
+        bool contains(const std::string& child, bool caseSensitive =
+#ifdef G3D_WIN32
+            false
+#else
+            true
+#endif
+) const;
 
         /** Compute the contents of nodeArray from this zipfile. */
         void computeZipListing(const std::string& zipfile, const std::string& pathInsideZipfile);

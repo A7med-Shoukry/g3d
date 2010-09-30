@@ -31,7 +31,9 @@
 #   include <unistd.h>
 #   define _getcwd getcwd
 #   define _stat stat
-#endif
+#   define stricmp strcasecmp 
+#   define strnicmp strncasecmp 
+#endif#endif
 
 namespace G3D {
 
@@ -61,21 +63,20 @@ FileSystem::FileSystem() : m_cacheLifetime(10) {}
 
 /////////////////////////////////////////////////////////////
 
-bool FileSystem::Dir::contains(const std::string& f) const {
+    bool FileSystem::Dir::contains(const std::string& f, bool caseSensitive) const {
     
     for (int i = 0; i < nodeArray.size(); ++i) {
-#       ifdef G3D_WIN32
-            if (stricmp(f.c_str(), nodeArray[i].name.c_str()) == 0) {
-                return true;
-            }
-#       else
+        if (caseSensitive) {
             if (f == nodeArray[i].name) {
                 return true;
             }
-#       endif
+        } else if (stricmp(f.c_str(), nodeArray[i].name.c_str()) == 0) {
+            return true;
+        }
     }
     return false;
 }
+
     
 void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::string& pathInsideZipfile) {
     struct zip* z = zip_open( FilePath::removeTrailingSlash(zipfile).c_str(), ZIP_CHECKCONS, NULL );
@@ -448,7 +449,7 @@ bool FileSystem::_exists(const std::string& f, bool trustCache, bool caseSensiti
         return false;
 
     } else {
-        return entry.exists && entry.contains(FilePath::baseExt(path));
+        return entry.exists && entry.contains(FilePath::baseExt(path), caseSensitive);
     }
 }
 
