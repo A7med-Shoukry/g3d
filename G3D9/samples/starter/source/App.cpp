@@ -83,6 +83,7 @@ void App::loadScene() {
     // Load the scene
     try {
         m_scene = Scene::create(sceneName, defaultCamera);
+        defaultController->setFrame(defaultCamera.coordinateFrame());
     } catch (const ParseError& e) {
         const std::string& msg = e.filename + format(":%d(%d): ", e.line, e.character) + e.message;
         drawMessage(msg);
