@@ -77,8 +77,6 @@ Color4 SuperBSDF::evaluate
         f += S + D;
     }
 
-    // TODO: Transmit
-
     return Color4(f, diffuse.a);
 }
 
