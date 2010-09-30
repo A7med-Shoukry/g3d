@@ -49,15 +49,14 @@ Color4 SuperBSDF::evaluate
         return Color4::zero();
     }
     
-    const float cos_i = max(0.0f, w_i.dot(n));
+    const float cos_i = abs(w_i.dot(n));
 
-    
     const Color4& specular = m_specular.sample(texCoord);
     float sigma = specular.a;
 
     Color3 S(Color3::zero());
     Color3 F(Color3::zero());
-    if (sigma != packedSpecularNone()) {
+    if ((sigma != packedSpecularNone()) && (specular.r > 0) || (specular.g > 0) || (specular.b > 0)) {
         // Glossy
 
         // Half-vector
@@ -71,8 +70,16 @@ Color4 SuperBSDF::evaluate
     }
 
     const Color3& D = (diffuse.rgb() * INV_PI) * (Color3(1.0f) - F);
-    
-    return Color4(S + D, diffuse.a);
+
+    Color3 f;
+    if ((w_i.dot(n) >= 0) == (w_o.dot(n) >= 0)) {
+        // Rays are on the same side of the normal
+        f += S + D;
+    }
+
+    // TODO: Transmit
+
+    return Color4(f, diffuse.a);
 }
 
 
