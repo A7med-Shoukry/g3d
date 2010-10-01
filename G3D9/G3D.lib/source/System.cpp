@@ -1466,9 +1466,12 @@ void* System::alignedMalloc(size_t bytes, size_t alignment) {
     // We must align to at least a word boundary.
     alignment = iMax(alignment, sizeof(void *));
 
-    // Pad the allocation size with the alignment size and the
-    // size of the redirect pointer.
-    size_t totalBytes = bytes + alignment + sizeof(void*);
+    // Pad the allocation size with the alignment size and the size of
+    // the redirect pointer.  This is the worst-case size we'll need.
+    // Since the alignment size is at least teh word size, we don't
+    // need to allocate space for the redirect pointer.  We repeat the max here
+    // for clarity.
+    size_t totalBytes = bytes + iMax(alignment, sizeof(void*));
 
     size_t truePtr = (size_t)System::malloc(totalBytes);
 
@@ -1484,19 +1487,25 @@ void* System::alignedMalloc(size_t bytes, size_t alignment) {
     //  debugAssert(_CrtIsValidPointer((void*)truePtr, totalBytes, TRUE) );
     #endif
 
-    // The return pointer will be the next aligned location (we must at least
-    // leave space for the redirect pointer, however).
-    size_t  alignedPtr = truePtr + sizeof(void*);
 
-    // 2^n - 1 has the form 1111... in binary.
-    uint32 bitMask = (alignment - 1);
+    // We want alignedPtr % alignment == 0, which we'll compute with a
+    // binary AND because 2^n - 1 has the form 1111... in binary.
+    const size_t bitMask = (alignment - 1);
 
-    // Advance forward until we reach an aligned location.
-    while ((alignedPtr & bitMask) != 0) {
-        alignedPtr += sizeof(void*);
-    }
+    // The return pointer will be the next aligned location that is at
+    // least sizeof(void*) after the true pointer. We need the padding
+    // to have a place to write the redirect pointer.
+    size_t alignedPtr = truePtr + sizeof(void*);
 
-    debugAssert(alignedPtr - truePtr + bytes <= totalBytes);
+    const size_t remainder = alignedPtr & bitMask;
+    
+    // Add what we need to make it to the next alignment boundary, but
+    // if the remainder was zero, let it wrap to zero and don't add
+    // anything.
+    alignedPtr += ((alignment - remainder) & bitMask);
+
+    debugAssert((alignedPtr & bitMask) == 0);
+    debugAssert((alignedPtr - truePtr + bytes) <= totalBytes);
 
     // Immediately before the aligned location, write the true array location
     // so that we can free it correctly.

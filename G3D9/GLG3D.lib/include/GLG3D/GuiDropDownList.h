@@ -2,7 +2,7 @@
  @file GLG3D/GuiDropDownList.h
 
  @created 2007-06-15
- @edited  2009-04-20
+ @edited  2010-09-20
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2010, Morgan McGuire morgan@cs.williams.edu
@@ -75,13 +75,17 @@ public:
 
     void append(const GuiText& c);
 
-    inline const GuiText& get(int i) const {
+    const GuiText& get(int i) const {
         return m_listValue[i];
     }
 
-    inline void set(int i, const GuiText& v) {
+    void set(int i, const GuiText& v) {
         m_listValue[i] = v;
         m_menu = NULL;
+    }
+
+    int numElements() const {
+        return m_listValue.size();
     }
 
     virtual void setRect(const Rect2D&);
@@ -90,15 +94,15 @@ public:
     const GuiText& selectedValue() const;
     
     /** The index of the currently selected value; -1 if the list is empty */
-    inline int selectedIndex() const {
+    int selectedIndex() const {
         if (m_listValue.size() == 0) {
             return -1;
         } else {
             return iClamp(*m_indexValue, 0, m_listValue.size() - 1);
         }
     }
-
-    inline void setSelectedIndex(int i) {
+    
+    void setSelectedIndex(int i) {
         *m_indexValue = i;
     }
 
@@ -106,7 +110,7 @@ public:
         found, leaves the index unchanged. */
     void setSelectedValue(const std::string& s);
 
-    inline void resize(int n) {
+    void resize(int n) {
         m_listValue.resize(n);
         *m_indexValue = selectedIndex();
         m_menu = NULL;
