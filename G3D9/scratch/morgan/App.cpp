@@ -68,6 +68,8 @@ int main(int argc, char** argv) {
     (void)argc; (void)argv;
     GApp::Settings settings;
     
+    debugPrintf("\n\n%d bytes\n\n", sizeof(SmallArray<uint16, 2>));
+
     // Change the window and other startup parameters by modifying the
     // settings class.  For example:
     settings.window.width       = 960; 

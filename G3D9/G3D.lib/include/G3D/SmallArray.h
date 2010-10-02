@@ -83,6 +83,18 @@ public:
         push(v);
     }
 
+    /** Find the index of \a v or -1 if not found */
+    int findIndex(const T& v) {
+        int M = iMin(N, m_size);
+        for (int i = 0; i < N; ++i) {
+            if (m_embedded[i] == v) {
+                return i;
+            }
+        }
+
+        return m_rest.findIndex(v) + N;
+    }
+
     void fastRemove(int i, bool shrinkIfNecessary = false) {
         debugAssert(i < m_size && i >= 0);
         if (i < N) {

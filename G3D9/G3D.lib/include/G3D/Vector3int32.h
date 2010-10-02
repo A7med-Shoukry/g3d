@@ -38,7 +38,9 @@ public:
 
     Vector3int32() : x(0), y(0), z(0) {}
     Vector3int32(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
+    /** Rounds to the nearest int */
     Vector3int32(const class Vector3int16& v);
+    /** Rounds to the nearest int */
     Vector3int32(const class Vector3& v);
     Vector3int32(class BinaryInput& bi);
 
@@ -112,6 +114,8 @@ public:
 }
 G3D_END_PACKED_CLASS(4)
 
+
+Vector3int32 iFloor(const Vector3&);
 }
 
 template <> struct HashTrait<G3D::Vector3int32> {

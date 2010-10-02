@@ -17,6 +17,9 @@
 #include "G3D/format.h"
 
 namespace G3D {
+Vector3int32 iFloor(const Vector3& v) {
+    return Vector3int32(iFloor(v.x), iFloor(v.y), iFloor(v.z));
+}
 
 Vector3int32::Vector3int32(const class Vector3& v) {
     x = (int32)iFloor(v.x + 0.5);
