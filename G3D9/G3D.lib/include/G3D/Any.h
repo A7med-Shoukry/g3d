@@ -753,6 +753,18 @@ public:
         v = m_any[s].string();
         m_alreadyRead.insert(toLower(s));
     }
+
+    /** \copydoc get(const std::string& s, ValueType& v) */
+    void get(const std::string& s, uint8& v) {
+        v = uint8(m_any[s].number());
+        m_alreadyRead.insert(toLower(s));
+    }
+
+    /** \copydoc get(const std::string& s, ValueType& v) */
+    void get(const std::string& s, uint16& v) {
+        v = uint16(m_any[s].number());
+        m_alreadyRead.insert(toLower(s));
+    }
     
     /** If key \s appears in the any, reads its value into \a v and 
         removes that key from the ones available to iterate over.

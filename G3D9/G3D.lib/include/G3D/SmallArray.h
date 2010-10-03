@@ -85,7 +85,6 @@ public:
 
     /** Find the index of \a v or -1 if not found */
     int findIndex(const T& v) {
-        int M = iMin(N, m_size);
         for (int i = 0; i < N; ++i) {
             if (m_embedded[i] == v) {
                 return i;

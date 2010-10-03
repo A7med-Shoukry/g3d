@@ -21,6 +21,7 @@
 #include <string>
 
 #ifdef G3D_OSX
+#define Zone OSX_Zone
 #   include <CoreServices/CoreServices.h>
 #endif
 
@@ -509,5 +510,10 @@ inline void System::endCycleCount(uint64& cycleCount) {
 
 
 } // namespace
+
+
+#ifdef G3D_OSX
+#undef Zone
+#endif
 
 #endif
