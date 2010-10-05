@@ -243,13 +243,34 @@ static void testParse() {
         debugAssert(val1.type() == Any::NUMBER);
         debugAssert(val1.number() == 3);
         debugAssert(val1.comment() == "Comment 1");
-    }
-    
+    }    
+}
+
+static void testTableReader() {
+    Any a(Any::TABLE);
+    a["HI"] = 3;
+    a["hello"] = false;
+
+    AnyTableReader r(a);
+    float f = 0;
+    bool b = true;
+
+    // Test case insensitive reading
+    r.get("hi", f);
+    debugAssert(f == 3);
+
+    f = 0;
+    r.get("HI", f);
+    debugAssert(f == 3);
+
+    r.get("hello", b);
+    debugAssert(b == false);
 }
 
 void testAny() {
 
     printf("G3D::Any ");
+//    testTableReader();
     testParse();
 
     testRefCount1();
