@@ -34,7 +34,7 @@ namespace G3D {
     G3D::EqualsTrait.  Overloads are provided for
     common G3D classes like G3D::Vector3.  For example:
 
-   <pre>
+    \code
     class EqualsFunc {
     public:
         static bool equals(const Data& p, const Data& q) {
@@ -50,13 +50,36 @@ namespace G3D {
     };
 
     PointHashGrid<Data, Data::PosFunc, Data::EqualsFunc> grid;
-   </pre>
+   \endcode
 
-   If the Value class defines operator==, the Equalsfunc is optional:
+   If the <i>Value</i> class defines operator==, the Equalsfunc is optional:
 
-   <pre>
+   \code
     PointHashGrid<Data, Data::PosFunc> grid;
-   </pre>
+   \endcode
+
+   The simplest way to define these is often to make them both methods
+   of the parameter class itself, e.g.,
+
+   \code
+   
+    class Data {
+    public:
+        Point3     location;
+        ...
+
+        bool operator==(const Data& other) const {
+            return (location == other.location) && ...;
+        }
+
+        static void getPosition(const Data& p, Vector3& pos) {
+            pos = p.location;
+        } 
+   };
+
+   typedef PointHashGrid<Data, Data> DataGrid;
+   \endcode
+   
 
 */
 template<class Value,
