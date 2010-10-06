@@ -215,6 +215,19 @@ public:
         m_invCellWidth = 1.0f / m_cellWidth;
     }
 
+    float radiusHint() const {
+        return m_cellWidth;
+    }
+    
+
+    void clearAndSetRadiusHint(float radiusHint) {
+        debugAssertM(radiusHint > 0, "Cell radius must be positive");
+        m_data.clear();
+        m_cellWidth = radiusHint;
+        m_invCellWidth = 1.0f / m_cellWidth;
+    }
+
+
     /**
        If radiusHint is negative, it is automatically chosen to put 
        about 5 values in each grid cell (which means about 27 * 5 
