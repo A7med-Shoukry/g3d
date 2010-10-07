@@ -51,6 +51,7 @@
      <li> Fix: SuperBSDF::evaluate now computes the same result as SuperShader for glossy terms
      <li> Fix: Diffuse colors for 3DS files loaded by ArticulatedModel
      <li> Fix: Correct loading of texture maps for 3DS files with incorrect case in them on OS X, support for 3DS reflection
+     <li> Fix: VideoRecordDialog correctly inverts the Y axis on half-size video recording
     </ul>
 
      <b>Backwards Incompatible Changes</b>:

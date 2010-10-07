@@ -131,7 +131,7 @@ href="classes.html">Classes</a>.
 
   <LI><B>Extensions to base OpenGL</B> &nbsp; &nbsp;
     \link debugAssertGLOk() debugAssertGLOk\endlink,
-    \link DECLARE_GLFORMATOF() DECLARE_GLFORMAT\endlink,
+    \link DECLARE_GLFORMATOF() DECLARE_GLFORMATOF\endlink,
     \link G3D::glLoadMatrix glLoadMatrix\endlink, 
     \link G3D::glLoadInvMatrix glLoadInvMatrix\endlink, 
     \link G3D::GLCaps GLCaps\endlink,

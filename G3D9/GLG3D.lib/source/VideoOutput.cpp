@@ -294,12 +294,12 @@ void VideoOutput::append(RenderDevice* rd, bool backbuffer) {
 }
 
 
-void VideoOutput::append(const Texture::Ref& frame) {
+void VideoOutput::append(const Texture::Ref& frame, bool invertY) {
     debugAssert(frame->width() == m_settings.width);
     debugAssert(frame->height() == m_settings.height);
 
     frame->getImage(m_temp, TextureFormat::RGB8());
-    encodeFrame(const_cast<uint8*>(m_temp.byte()), ImageFormat::RGB8(), false);
+    encodeFrame(const_cast<uint8*>(m_temp.byte()), ImageFormat::RGB8(), invertY);
 }
 
 

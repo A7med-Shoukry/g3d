@@ -283,7 +283,7 @@ void VideoRecordDialog::recordFrame(RenderDevice* rd) {
         rd->pop2D();
 
         // Write downsampled texture to the video
-        m_video->append(m_downsampleDst);
+        m_video->append(m_downsampleDst, rd->invertY());
     } else {
         // Full-size: grab directly from the screen
         m_video->append(rd, true);

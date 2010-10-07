@@ -199,7 +199,7 @@ public:
        inferred from the pointer type by the preprocessor.  Sample
        usage:       
        
-       <PRE>
+       \code
        // Once at the beginning of the program
        VertexBufferRef dataArea  = VertexBuffer::create(5 * 1024 * 1024);
        VertexBufferRef indexArea = VertexBuffer::create(1024 * 1024, VertexBuffer::WRITE_EVERY_FRAME, VertexBuffer::INDEX);
@@ -225,11 +225,11 @@ public:
            renderDevice->sendIndices(PrimitiveType::TRIANGLES, indexVARGPU);
        }
        renderDevice->endIndexedPrimitives();
-       </PRE>
+       \endcod
     */
     template<class T>
     VertexRange(const T* sourcePtr, int _numElements, VertexBufferRef _area) {
-        alwaysAssertM((_area->type() == VertexBuffer::DATA) || isIntType(T),
+        alwaysAssertM((_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
         init(sourcePtr, _numElements, _area, glFormatOf(T), sizeof(T));
     }		
@@ -238,7 +238,7 @@ public:
     template<class T>
     VertexRange(const Array<T>& source, VertexBufferRef _area) {
 
-        alwaysAssertM((_area->type() == VertexBuffer::DATA) || isIntType(T),
+        alwaysAssertM((_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
         init(source.getCArray(), source.size(), _area, glFormatOf(T), sizeof(T));
     }
@@ -502,7 +502,7 @@ public:
     
     template<class T>
     void update(const T* sourcePtr, int _numElements) {
-        debugAssertM((m_area->type() == VertexBuffer::DATA) || isIntType(T),
+        debugAssertM((m_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
         update(sourcePtr, _numElements, glFormatOf(T), sizeof(T));
     }
@@ -515,7 +515,7 @@ public:
     */
     template<class T>
     void update(const Array<T>& source) {
-        debugAssertM((m_area->type() == VertexBuffer::DATA) || isIntType(T),
+        debugAssertM((m_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
         update(source.getCArray(), source.size(), glFormatOf(T), sizeof(T));
     }
@@ -530,7 +530,7 @@ public:
     // direct access to VertexRange memory is generally slow and discouraged.
     template<class T>
     void set(int index, const T& value) {
-        debugAssertM((m_area->type() == VertexBuffer::DATA) || isIntType(T),
+        debugAssertM((m_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
         set(index, &value, glFormatOf(T), sizeof(T));
     }

@@ -316,7 +316,7 @@ public:
 
     const std::string& filename() const { return m_filename; }
 
-    void append(const Texture::Ref& frame); 
+    void append(const Texture::Ref& frame, bool invertY = false); 
 
     void append(const GImage& frame); 
 
