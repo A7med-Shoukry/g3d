@@ -3129,11 +3129,11 @@ void RenderDevice::configureReflectionMap(
 
 
 void RenderDevice::sendSequentialIndices
-(RenderDevice::Primitive primitive, int numVertices) {
+(RenderDevice::Primitive primitive, int numVertices, int start) {
 
     beforePrimitive();
 
-    glDrawArrays(primitiveToGLenum(primitive), 0, numVertices);
+    glDrawArrays(primitiveToGLenum(primitive), start, numVertices);
     // Mark all active arrays as busy.
     setVARAreaMilestone();
 

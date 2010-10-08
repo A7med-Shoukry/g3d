@@ -222,7 +222,7 @@ public:
 
     void clearAndSetRadiusHint(float radiusHint) {
         debugAssertM(radiusHint > 0, "Cell radius must be positive");
-        m_data.clear();
+        clear();
         m_cellWidth = radiusHint;
         m_invCellWidth = 1.0f / m_cellWidth;
     }

@@ -1246,7 +1246,8 @@ public:
      */
     void sendSequentialIndices
     (RenderDevice::Primitive primitive, 
-     int                     numVertices);
+     int                     numVertices,
+     int                     startVertex = 0);
 
     /**
      Renders sequential vertices from the current vertex array for

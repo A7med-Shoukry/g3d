@@ -1,9 +1,9 @@
 /**
-  @file GLG3D/VertexRange.h
+  \file GLG3D/VertexRange.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2001-05-29
-  @edited  2010-07-06
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2001-05-29
+  \edited  2010-07-06
 */
 
 #ifndef GLG3D_VERTEXRANGE_h
@@ -20,7 +20,8 @@ class RenderDevice;
 
 
 /**
- @brief A block of GPU memory storing a stream of vector data (e.g., vertices, normals, texture coordinates)
+ \brief A block of GPU memory storing a stream of vector data (e.g.,
+ vertices, normals, texture coordinates)
  
  A pointer to a "Vertex Arrray" of data (e.g., vertices,
  colors, or normals) in video memory.
@@ -136,16 +137,16 @@ public:
     }
 
     /** The G3D::VertexBuffer containing this VertexRange. */
-    inline VertexBuffer::Ref buffer() const {
+    VertexBuffer::Ref buffer() const {
         return m_area;
     }
 
-    inline VertexBuffer::Type type() const {
+    VertexBuffer::Type type() const {
         return m_area->type();
     }
 
-    /** @brief Number of elements in this array (not byte size!) */
-    inline int size() const {
+    /** \brief Number of elements in this array (not byte size!) */
+    int size() const {
         return m_numElements;
     }
 
