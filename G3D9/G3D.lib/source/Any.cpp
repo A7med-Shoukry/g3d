@@ -1213,6 +1213,12 @@ Any::operator int() const {
 }
 
 
+Any::operator uint32() const {
+    beforeRead();
+    return uint32(number() + 0.5);
+}
+
+
 Any::operator float() const {
     beforeRead();
     return float(number());

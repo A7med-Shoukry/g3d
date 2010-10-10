@@ -598,10 +598,27 @@ public:
     bool operator!=(const Any& x) const;
 
     operator int() const;
+    operator uint32() const;
     operator float() const;
     operator double() const;
     operator bool() const;
     operator std::string() const;
+
+    operator char() const {
+        return char(int(*this));
+    }
+
+    operator uint8() const {
+        return uint8(int(*this));
+    }
+
+    operator int16() const {
+        return int16(int(*this));
+    }
+
+    operator uint16() const {
+        return uint16(int(*this));
+    }
 
     /** Resize to \a n elements, where new elements are NIL 
        It is an error to call this method if this is not an Any::ARRAY */
