@@ -111,7 +111,7 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i
                 w_L /= sqrt(distance2);
 
                 // Attenduated radiance
-                const Irradiance3& E_i = light.power() / (4.0f * pif() * distance2);
+                const Irradiance3& E_i = light.color / (4.0f * pif() * distance2);
 
                 radiance += 
                     bsdf->evaluate(hit.normal, hit.texCoord, w_L, -ray.direction()).rgb() * 
