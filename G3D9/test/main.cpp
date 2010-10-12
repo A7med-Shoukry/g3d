@@ -22,10 +22,10 @@
 using namespace G3D;
 #include <iostream>
 
-using namespace G3D;
-
-#ifdef WIN32
+#ifdef G3D_WIN32
 #    include "conio.h"
+#else
+#    include "curses.h"
 #endif
 #include <string>
 
@@ -142,6 +142,7 @@ void testAny();
 void testPointHashGrid();
 void perfPointHashGrid();
 
+void perfHashTrait();
 
 void testTableTable() {
 
@@ -567,6 +568,7 @@ void testCoordinateFrame() {
         c.lookAt(Vector3(-1, 0, -1));
         float h = c.getHeading();
         debugAssert(fuzzyEq(h, G3D::pi() / 4));
+        (void)h;
     }
 
     // Test getHeading at a variety of angles
@@ -638,9 +640,54 @@ void testLineSegment2D() {
     debugAssert(i2.fuzzyEq(Vector2(1.2f, 1.2f)));
 }
 
+
+void perfHashTrait() {
+    printf("Hash functions for Vector3:\n");
+
+    const int N = 1000000;
+    const Vector3 v(100, 32, 0.11);
+    {
+        const RealTime start = System::time();
+        size_t h = 0;
+        for (int i = 0; i < N; ++i) {
+            h += v.hashCode();
+        }
+        (void)h;
+        printf("Vector3::hashCode:  %f\n", System::time() - start);
+    }
+    {
+        const RealTime start = System::time();
+        size_t h = 0;
+        for (int i = 0; i < N; ++i) {
+            h += Crypto::crc32(&v, sizeof(v));
+        }
+        (void)h;
+        printf("Crypto::crc32:  %f\n", System::time() - start);
+    }
+    {
+        const RealTime start = System::time();
+
+        size_t h = 0;
+        for (int i = 0; i < N; ++i) {
+            h += Crypto::md5(&v, sizeof(v))[0];
+        }
+        (void)h;
+        printf("Crypto::md5:  %f\n", System::time() - start);
+    }
+    {
+        const RealTime start = System::time();
+
+        size_t h = 0;
+        for (int i = 0; i < N; ++i) {
+            Vector4 w(v.x, v.y, v.z, 0);
+            h += HashTrait<uint128>::hashCode(*(uint128*)&w);
+        }
+        (void)h;
+        printf("HashTrait<uint128>:  %f\n", System::time() - start);
+    }
+}
+
 int main(int argc, char* argv[]) {
-
-
     (void)argc;
     (void)argv;
 
@@ -655,8 +702,8 @@ int main(int argc, char* argv[]) {
     char x[2000];
     getcwd(x, sizeof(x));
     
-	debugAssertM(FileSystem::exists("apiTest.zip", false), 
-        format("Tests are being run from the wrong directory.  cwd = %s", x));
+    debugAssertM(FileSystem::exists("apiTest.zip", false), 
+                 format("Tests are being run from the wrong directory.  cwd = %s", x));
 
     RenderDevice* renderDevice = NULL;
 
@@ -671,10 +718,13 @@ int main(int argc, char* argv[]) {
 #    ifndef _DEBUG
         printf("Performance analysis:\n\n");
 
+        perfHashTrait();
+        // Pause so that we can see the values in the debugger
+        getch();
+
+
         perfKDTree();
 
-        // Pause so that we can see the values in the debugger
-//	        getch();
 
         perfCollisionDetection();
 

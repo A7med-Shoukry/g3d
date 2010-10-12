@@ -48,21 +48,25 @@ template <> struct HashTrait <long unsigned int> {
 };
 #endif
 
-template <> struct HashTrait <G3D::int64> {
-    static size_t hashCode(G3D::int64 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <G3D::uint64> {
+    static size_t hashCode(G3D::uint64 k) { return static_cast<size_t>(k) ^ static_cast<size_t>(k >> 32); }
 };
 
-template <> struct HashTrait <G3D::uint64> {
-    static size_t hashCode(G3D::uint64 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <G3D::int64> {
+    static size_t hashCode(G3D::int64 k) { return HashTrait<G3D::uint64>::hashCode(G3D::uint64(k)); }
 };
+
 
 template <> struct HashTrait <std::string> {
     static size_t hashCode(const std::string& k) { return static_cast<size_t>(G3D::Crypto::crc32(k.c_str(), k.size())); }
 };
 
 template <> struct HashTrait<G3D::uint128> {
-    // Use the FNV-1 hash (http://isthe.com/chongo/tech/comp/fnv/#FNV-1).
     static size_t hashCode(G3D::uint128 key) {
+        return HashTrait<G3D::uint64>::hashCode(key.hi) ^ HashTrait<G3D::uint64>::hashCode(key.lo);
+
+#if 0 // Really slow on OS X!
+    // Use the FNV-1 hash (http://isthe.com/chongo/tech/comp/fnv/#FNV-1).
         static const G3D::uint128 FNV_PRIME_128(1 << 24, 0x159);
         static const G3D::uint128 FNV_OFFSET_128(0xCF470AAC6CB293D2ULL, 0xF52F88BF32307F8FULL);
 
@@ -76,6 +80,7 @@ template <> struct HashTrait<G3D::uint128> {
 	
         G3D::uint64 foldedHash = hash.hi ^ hash.lo;
         return static_cast<size_t>((foldedHash >> 32) ^ (foldedHash & 0xFFFFFFFF));
+#endif
     }
 };
 

@@ -105,7 +105,11 @@ Vector3::Axis Vector3::primaryAxis() const {
 
 
 size_t Vector3::hashCode() const {
-    return Vector4(*this, 0.0f).hashCode();
+    const uint32* u = (const uint32*)this;
+    return 
+        HashTrait<uint32>::hashCode(u[0]) ^ 
+        HashTrait<uint32>::hashCode(~u[1]) ^
+        HashTrait<uint32>::hashCode((u[2] << 16) | ~(u[2] >> 16));
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector3& v) {
