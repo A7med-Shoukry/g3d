@@ -400,14 +400,18 @@ href="classes.html">Classes</a>.
         \link G3D::NetworkDevice NetworkDevice\endlink,
         \link G3D::ReliableConduit ReliableConduit\endlink
 
-     <LI><B>Time, Memory, and Threads</B> &nbsp; &nbsp;
+    <li><b>Hash Functions</b> &nbsp; &nbsp;
+       \link G3D::Crypto Crypto\endlink,
+       \link G3D::superFastHash superFastHash\endlink,
+       \link G3D::HashTrait HashTrait\endlink
+
+    <LI><B>Time, Memory, and Threads</B> &nbsp; &nbsp;
         \link G3D::AlignedMemoryManager AlignedMemoryManager\endlink,  
         \link G3D::AreaMemoryManager AreaMemoryManager\endlink,
         \link G3D::AtomicInt32 AtomicInt32\endlink,
         \link G3D::BinaryFormat BinaryFormat\endlink,
         \link G3D::byteSize byteSize\endlink,
         \link G3D::binaryFormatOf binaryFormatOf\endlink,
-        \link G3D::Crypto Crypto\endlink,
         \link G3D::CRTMemoryManager CRTMemoryManager\endlink,  
         \link G3D::G3DEndian G3DEndian\endlink,
         \link G3D::GMutex GMutex\endlink,

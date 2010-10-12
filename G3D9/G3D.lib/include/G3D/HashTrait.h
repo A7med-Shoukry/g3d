@@ -17,6 +17,72 @@
 #include "G3D/g3dmath.h"
 #include "G3D/uint128.h"
 
+
+#include <stdint.h>
+#undef get16bits
+#if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
+    || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
+#define get16bits(d) (*((const uint16_t *) (d)))
+#endif
+
+#if !defined (get16bits)
+#define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
+                      +(uint32_t)(((const uint8_t *)(d))[0]) )
+#endif
+namespace G3D {
+/** \brief A hash function that is faster than CRC32 
+    \cite From http://www.azillionmonkeys.com/qed/hash.html by Paul Hsieh*/
+inline uint32_t superFastHash (const void* _data, int numBytes) {
+    const char* data = (const char*)_data;
+    uint32_t hash = numBytes;
+    uint32_t tmp;
+    int rem;
+
+    if (numBytes <= 0 || data == NULL) {
+        return 0;
+    }
+
+    rem = numBytes & 3;
+    numBytes >>= 2;
+
+    /* Main loop */
+    for (;numBytes > 0; --numBytes) {
+        hash  += get16bits (data);
+        tmp    = (get16bits (data+2) << 11) ^ hash;
+        hash   = (hash << 16) ^ tmp;
+        data  += 2*sizeof (uint16_t);
+        hash  += hash >> 11;
+    }
+
+    /* Handle end cases */
+    switch (rem) {
+    case 3: hash += get16bits (data);
+        hash ^= hash << 16;
+        hash ^= data[sizeof (uint16_t)] << 18;
+        hash += hash >> 11;
+        break;
+    case 2: hash += get16bits (data);
+        hash ^= hash << 11;
+        hash += hash >> 17;
+        break;
+    case 1: hash += *data;
+        hash ^= hash << 10;
+        hash += hash >> 1;
+    }
+
+    /* Force "avalanching" of final 127 bits */
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 4;
+    hash += hash >> 17;
+    hash ^= hash << 25;
+    hash += hash >> 6;
+
+    return hash;
+}
+}
+#undef get16bits
+
 /** Must be specialized for custom types.
     @see G3D::Table for specialization requirements.
 */
@@ -58,12 +124,16 @@ template <> struct HashTrait <G3D::int64> {
 
 
 template <> struct HashTrait <std::string> {
-    static size_t hashCode(const std::string& k) { return static_cast<size_t>(G3D::Crypto::crc32(k.c_str(), k.size())); }
+    static size_t hashCode(const std::string& k) { 
+        return G3D::superFastHash(k.c_str(), k.size());
+        //return static_cast<size_t>(G3D::Crypto::crc32(k.c_str(), k.size())); 
+    }
 };
 
 template <> struct HashTrait<G3D::uint128> {
     static size_t hashCode(G3D::uint128 key) {
-        return HashTrait<G3D::uint64>::hashCode(key.hi) ^ HashTrait<G3D::uint64>::hashCode(key.lo);
+        return G3D::superFastHash(&key, sizeof(key));
+        //return HashTrait<G3D::uint64>::hashCode(key.hi) ^ HashTrait<G3D::uint64>::hashCode(key.lo);
 
 #if 0 // Really slow on OS X!
     // Use the FNV-1 hash (http://isthe.com/chongo/tech/comp/fnv/#FNV-1).

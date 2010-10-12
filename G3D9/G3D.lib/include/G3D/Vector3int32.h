@@ -15,6 +15,7 @@
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
 #include "G3D/HashTrait.h"
+#include "G3D/Crypto.h"
 
 namespace G3D {
 
@@ -120,12 +121,16 @@ Vector3int32 iFloor(const Vector3&);
 
 template <> struct HashTrait<G3D::Vector3int32> {
     static size_t hashCode(const G3D::Vector3int32& key) {
+        return G3D::superFastHash(&key, sizeof(key));
+        //return G3D::Crypto::crc32(&key, sizeof(key));
+        /*
         // Mask for the top bit of a uint32
         const G3D::uint32 top = (1UL << 31);
         // Mask for the bottom 10 bits of a uint32
         const G3D::uint32 bot = 0x000003FF;
         return static_cast<size_t>(((key.x & top) | ((key.y & top) >> 1) | ((key.z & top) >> 2)) | 
                                    (((key.x & bot) << 19) ^ ((key.y & bot) << 10) ^ (key.z & bot)));
+        */
     }
 };
 
