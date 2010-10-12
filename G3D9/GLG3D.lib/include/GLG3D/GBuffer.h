@@ -52,10 +52,10 @@ public:
         /** Camera-space triangle normal in RGB. */
         bool                  csFaceNormal;
 
-        /** If true, normal channels are encoded as \f$ \vec{n}'_i = (\vec{n}_i + 1)/n\f$. 
+        /** If false, normal channels are encoded as \f$ \vec{n}'_i = (\vec{n}_i + 1)/n\f$. 
             This is typically desirable for 8-bit formats.
-            Defaults to true.*/
-        bool                  normalsAreUnsigned;
+            Defaults to false.*/
+        bool                  normalsAreSigned;
 
         /** Packed camera-space depth. */
         bool                  packedDepth;
@@ -88,7 +88,7 @@ public:
             emissive(false),
             wsFaceNormal(false),
             csFaceNormal(false),
-            normalsAreUnsigned(true),
+            normalsAreSigned(false),
             packedDepth(false),
             custom(false),
             wsPosition(false),
@@ -112,7 +112,7 @@ public:
                 (int(custom)      << 9)  |
                 (int(csPosition)  << 10) |
                 (int(wsPosition)  << 11) |
-                (int(normalsAreUnsigned) << 12);
+                (int(normalsAreSigned) << 12);
         }
 
         /** Can be used with G3D::Table as an Equals function */

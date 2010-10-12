@@ -52,10 +52,10 @@
 #include "SS_BumpMap.pix"
 
 vec3 maybePackNormal(in vec3 n) {
-#   if defined(NORMALS_ARE_UNSIGNED)
-        return n * 0.5 + vec3(0.5);
-#   else
+#   if defined(NORMALS_ARE_SIGNED)
         return n;
+#   else
+        return n * 0.5 + vec3(0.5);
 #   endif
 }
 
