@@ -44,6 +44,14 @@ void App::onInit() {
     sky = Sky::fromFile(System::findDataFile("sky"));
     skyParameters = SkyParameters( G3D::toSeconds(10, 00, 00, AM) );
     lighting = Lighting::fromSky( sky, skyParameters, Color3::white() );
+    lighting->lightArray.clear();
+    lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(10)));
+    lighting->lightArray.append( GLight::directional(Vector3(-1,0,-1), Radiance3(0.8f, 0.9f, 1), false));
+    lighting->environmentMapConstant = 0.3f;
+    // TODO: load better lighting map
+    defaultCamera.setFarPlaneZ(-1000);
+    defaultCamera.setNearPlaneZ(-0.2f);
+
 	
     colorClear = Color3::white();
     //modelController = ThirdPersonManipulator::create();

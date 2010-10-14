@@ -88,7 +88,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
             scale = 1;
         }
 
-        m_scale = scale;
+        m_scale = scale * 100.0f;
         m_offset = -scale * center;
 
         if (! center.isFinite()) {
