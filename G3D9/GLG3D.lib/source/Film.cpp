@@ -118,7 +118,8 @@ void Film::exposeAndRender
 
     if (output.isNull()) {
         // Allocate new output texture
-        output = Texture::createEmpty("Exposed image", input->width(), input->height(), input->format(), input->dimension(), input->settings());
+        output = Texture::createEmpty("Exposed image", input->width(), input->height(), input->format(), 
+                                      input->dimension(), Texture::Settings::buffer());
     }
 
     Framebuffer::Ref fb = Framebuffer::create("Film temp");

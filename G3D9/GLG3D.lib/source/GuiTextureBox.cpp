@@ -1,8 +1,8 @@
 /**
- @file GLG3D/GuiTextureBox.cpp
+ \file GLG3D/GuiTextureBox.cpp
 
- @created 2009-09-11
- @edited  2010-09-19
+ \created 2009-09-11
+ \edited  2010-09-19
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2010, Morgan McGuire http://graphics.cs.williams.edu
@@ -495,7 +495,6 @@ public:
         // Keep our display in sync with the original one when a GUI control changes
         m_textureBox->setSettings(m_settings);
 
-
         // Update the xy/uv/rgba labels
         Texture::Ref tex = m_textureBox->texture();
         float w = 1, h = 1;
@@ -592,8 +591,15 @@ void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
     Texture::DepthReadMode oldReadMode = m_texture->settings().depthReadMode;
     m_texture->setDepthReadMode(Texture::DEPTH_NORMAL);
 
+    // The GuiTextureBox inspector can directly manipulate this value,
+    // so it might not reflect the value we had at the last m_settings
+    // call.
+    const_cast<GuiTextureBox*>(this)->setSettings(m_settings);
+
     // Draw texture
     if (m_settings.needsShader()) {
+        debugAssert(m_shader.notNull());
+
         static const Matrix4 colorShift[] = {
             // RGB
             Matrix4(1, 0, 0, 0,
@@ -666,6 +672,7 @@ void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
         m_shader->args.set("adjustGamma", m_settings.documentGamma / 2.2f);
         m_shader->args.set("bias", -m_settings.min);
         m_shader->args.set("scale", 1.0f / (m_settings.max - m_settings.min));
+        //debugPrintf("%s\n", Any(m_settings).unparse().c_str());
 
         m_shader->args.set("invertIntensity", m_settings.invertIntensity);
         m_shader->args.set("colorShift", colorShift[m_settings.channels]);
@@ -929,18 +936,17 @@ void GuiTextureBox::setSettings(const Texture::Visualization& s) {
 
                          void main(void) {
                              vec4 c = texture2D(texture, gl_TexCoord[g3d_Index(texture)].xy);
-                             c = (c + bias) * scale;
+                             /*c = (c + bias) * scale;
                              c = invertIntensity ? vec4(1.0 - c) : c;
                              c = pow(c, vec4(adjustGamma));
-                             gl_FragColor.rgb = (colorShift * c).rgb;
+                             gl_FragColor.rgb = (colorShift * c).rgb;*/
+                             gl_FragColor.rgb = c.rgb;
                              gl_FragColor.a = 1.0;
                              }));
                 g_cachedShader = m_shader;
             }
         }
     }
-
-    m_settings = s;
 }
 
 

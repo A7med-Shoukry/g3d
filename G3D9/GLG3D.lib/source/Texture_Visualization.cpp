@@ -112,6 +112,7 @@ const Texture::Visualization& Texture::Visualization::defaults() {
 
 bool Texture::Visualization::needsShader() const {
     return 
+        true || // TODO: currently set to true because the non-shader path of GuiTextureBox is broken
         (channels != RGB) ||
         (documentGamma != 2.2f) ||
         (min != 0.0f) ||

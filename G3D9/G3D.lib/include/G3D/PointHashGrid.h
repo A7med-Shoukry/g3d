@@ -1,9 +1,9 @@
 /**
-   @file PointHashGrid.h
+   \file PointHashGrid.h
 
-   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-   @created 2008-07-01
-   @edited  2010-08-28
+   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+   \created 2008-07-01
+   \edited  2010-10-28
 
    Copyright 2000-2010, Morgan McGuire.
    All rights reserved.
@@ -202,9 +202,10 @@ private:
 public:
 
     /** 
-        @param radiusHint the radius that will typically be used with 
+        \param radiusHint the radius that will typically be used with 
         beginSphereIntersection and beginBoxIntersection. If two <i>Value</i>s are equal,
-        their positions must be within this radius as well.
+        their positions must be within this radius as well.  You can later change this
+        value with clearAndSetRadiusHint().
     */
     PointHashGrid(float radiusHint, const MemoryManager::Ref& m = MemoryManager::create()) : m_size(0), m_memoryManager(m) {
         initOffsetArray();
@@ -215,6 +216,7 @@ public:
         m_invCellWidth = 1.0f / m_cellWidth;
     }
 
+    /** \sa clearAndSetRadiusHint() */
     float radiusHint() const {
         return m_cellWidth;
     }
@@ -229,9 +231,11 @@ public:
 
 
     /**
-       If radiusHint is negative, it is automatically chosen to put 
+       If \a radiusHint is negative, it is automatically chosen to put 
        about 5 values in each grid cell (which means about 27 * 5 
        values for each beginIntersection call).
+       
+       \sa clearAndSetRadiusHint()
     */
     PointHashGrid(const Array<Value>& init, float radiusHint = -1.0f, const MemoryManager::Ref& m = MemoryManager::create()) : m_size(0), m_memoryManager(m) {		
         initOffsetArray();
