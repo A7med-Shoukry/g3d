@@ -208,12 +208,12 @@ MapRef Map::fromFile(const std::string& path, const std::string& fileName, float
     }
 }
 
-bool Map::load(
-    const std::string&  resPath,
-    const std::string&  filename,
-    const std::string&  altPath,
-    const std::string&  defaultTextureFile) {
-
+bool Map::load
+(const std::string&  resPath,
+ const std::string&  filename,
+ const std::string&  altPath,
+ const std::string&  defaultTextureFile) {
+    
     int supportedVersion[NUM_FILE_FORMATS + 1];
 //    supportedVersion[Q1] = 23;
 //    supportedVersion[Q2] = 38;
@@ -225,7 +225,7 @@ bool Map::load(
 
     if ((defaultTextureFile != "") && FileSystem::exists(defaultTextureFile)) {
         defaultTexture = loadBrightTexture(defaultTextureFile);
-    } else {
+    } else {     
         defaultTexture = Texture::white();
     }
 

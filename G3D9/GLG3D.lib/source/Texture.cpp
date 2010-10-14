@@ -367,16 +367,15 @@ Texture::Ref Texture::createColor(const Color4uint8& c) {
 }
 
 
-TextureRef Texture::white() {
+Texture::Ref Texture::white() {
     static WeakReferenceCountedPointer<Texture> cache;
 
-    TextureRef t = cache.createStrongPtr();
+    Texture::Ref t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        GImage im(4, 4, 4);
+        GImage im(4, 4, 3);
         System::memset(im.byte(), 0xFF, im.width() * im.height() * im.channels());
-        t = Texture::fromGImage("White", im);
-
+        t = Texture::fromGImage("<white>", im);
         // Store in cache
         cache = t;
     }
@@ -2590,7 +2589,7 @@ Texture::Settings::Settings() :
     maxAnisotropy(4.0),
     autoMipMap(true),
     maxMipMap(1000),
-    minMipMap(-1000){
+    minMipMap(-1000) {
 }
 
 

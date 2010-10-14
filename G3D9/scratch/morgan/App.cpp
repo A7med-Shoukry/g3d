@@ -48,7 +48,7 @@ public:
 
     /** Return the image representing one face. */
     const typename Image::Ref face(CubeFace f) const {
-        return m_image[f];
+        return m_imageArray[f];
     }
     
     /** Returns the width of one side, which must be the same as the height. */
@@ -85,8 +85,8 @@ int main(int argc, char** argv) {
         }
 #   endif
 
-    CubeMap<Image3>::Ref im = CubeMap<Image3>::create(System::findDataFile("test/testcube_*.jpg"));
-
+        //CubeMap<Image3>::Ref im = CubeMap<Image3>::create(System::findDataFile("test/testcube_*.jpg"));
+    
 
     return App(settings).run();
 }

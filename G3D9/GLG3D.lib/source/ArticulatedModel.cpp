@@ -292,7 +292,7 @@ ArticulatedModel::Ref ArticulatedModel::createEmpty() {
 
 void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& preprocess) {
     Stopwatch s;
-    std::string defaultTexture = "";
+    std::string defaultTexture = "<white>";
 
     // TODO: make a load option
     Sphere keepOnly(Vector3::zero(), finf());
@@ -309,7 +309,7 @@ void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& pr
 
     Array< Vector3 >    vertexArray;
     Array< Vector3 >   	normalArray;
-    Array< int >  	    indexArray;
+    Array< int >  	indexArray;
     Array< Vector2 >    texCoordArray;
     Array< int >        textureMapIndexArray;
     Array< Vector2 >    lightCoordArray;
@@ -339,7 +339,9 @@ void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& pr
     // Maps texture names to triLists
     Table<std::string, ArticulatedModel::Part::TriList::Ref > triListTable;
 
-    // There will be one part with many tri lists, one for each texture.  Note that many textures are simply "white"
+    // There will be one part with many tri lists, one for each
+    // texture.  Create those tri lists here.  Note that many textures
+    // are simply "white".
     for (int i = 0; i < textureMapArray.size(); ++i) {
         if (! skip.contains(textureMapArray[i]->name())) {
 
@@ -360,7 +362,7 @@ void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& pr
                 const SuperBSDF::Ref& bsdf =
                     SuperBSDF::create(Component4(Color4::one(), lambertianTexture), 
                                      Color4::zero(), Color3::zero(), 1.0, Color3::black());
-                triList->material = Material::create(bsdf);                
+                triList->material = Material::create(bsdf);
             }
         }
     }

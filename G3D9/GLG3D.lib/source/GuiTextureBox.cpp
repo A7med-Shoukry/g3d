@@ -936,10 +936,10 @@ void GuiTextureBox::setSettings(const Texture::Visualization& s) {
 
                          void main(void) {
                              vec4 c = texture2D(texture, gl_TexCoord[g3d_Index(texture)].xy);
-                             /*c = (c + bias) * scale;
+                             c = (c + bias) * scale;
                              c = invertIntensity ? vec4(1.0 - c) : c;
                              c = pow(c, vec4(adjustGamma));
-                             gl_FragColor.rgb = (colorShift * c).rgb;*/
+                             gl_FragColor.rgb = (colorShift * c).rgb;
                              gl_FragColor.rgb = c.rgb;
                              gl_FragColor.a = 1.0;
                              }));
