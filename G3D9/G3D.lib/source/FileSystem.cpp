@@ -436,11 +436,9 @@ bool FileSystem::_exists(const std::string& f, bool trustCache, bool caseSensiti
 
         const std::string& pattern = FilePath::baseExt(path);
 
-        const int flags = caseSensitive ? 0 : FNM_CASEFOLD;
-
         // See if any element of entry matches the wild card
         for (int i = 0; i < entry.nodeArray.size(); ++i) {
-            if (FilePath::matches(entry.nodeArray[i].name, pattern, flags)) {
+            if (FilePath::matches(entry.nodeArray[i].name, pattern, caseSensitive)) {
                 return true;
             }
         }
