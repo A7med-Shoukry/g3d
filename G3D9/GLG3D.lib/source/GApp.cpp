@@ -283,7 +283,7 @@ GuiWindow::Ref GApp::show(const Texture::Ref& t, const std::string& windowCaptio
     name += dayTime;
     
     GuiWindow::Ref display = 
-        GuiWindow::create(name, NULL, Rect2D::xywh(lastPos,Vector2(0,0)), GuiTheme::TOOL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
+        GuiWindow::create(name, NULL, Rect2D::xywh(lastPos,Vector2(0,0)), GuiTheme::NORMAL_WINDOW_STYLE, GuiWindow::REMOVE_ON_CLOSE);
 
     GuiTextureBox* box = display->pane()->addTextureBox(t);
     box->setSizeFromInterior(t->vector2Bounds());
