@@ -1,10 +1,10 @@
 /**
- @file FileSystem.cpp
+ \file FileSystem.cpp
  
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
  
- @author  2002-06-06
- @edited  2010-04-10
+ \author  2002-06-06
+ \edited  2010-10-10
  */
 #include "G3D/FileSystem.h"
 #include "G3D/System.h"
@@ -79,6 +79,7 @@ FileSystem::FileSystem() : m_cacheLifetime(10) {}
 
     
 void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::string& pathInsideZipfile) {
+
     struct zip* z = zip_open( FilePath::removeTrailingSlash(zipfile).c_str(), ZIP_CHECKCONS, NULL );
     debugAssert(z);
 
@@ -238,7 +239,9 @@ FileSystem::Dir& FileSystem::getContents(const std::string& path, bool forceUpda
 }
 
 
-bool FileSystem::_inZipfile(const std::string& path, std::string& z) {
+bool FileSystem::_inZipfile(const std::string& _path, std::string& z) {
+    const std::string& path = FilePath::expandEnvironmentVariables(_path);
+
     // Reject trivial cases before parsing
     if (path.find('.') == std::string::npos) {
         // There is no zipfile possible, since G3D requires
@@ -276,7 +279,9 @@ bool FileSystem::_inZipfile(const std::string& path, std::string& z) {
 }
 
 
-bool FileSystem::_isZipfile(const std::string& filename) {
+bool FileSystem::_isZipfile(const std::string& _filename) {
+    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
+
     if (FilePath::ext(filename).empty()) {
         return false;
     }
@@ -301,7 +306,9 @@ bool FileSystem::_isZipfile(const std::string& filename) {
 }
 
 
-FILE* FileSystem::_fopen(const char* filename, const char* mode) {
+FILE* FileSystem::_fopen(const char* _filename, const char* mode) {
+    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
+
     for (const char* m = mode; *m != '\0'; ++m) {
         if (*m == 'w') {
             // Purge the cache entry for the parent of this directory
@@ -309,11 +316,13 @@ FILE* FileSystem::_fopen(const char* filename, const char* mode) {
             break;
         }
     }
-    return ::fopen(filename, mode);
+    return ::fopen(filename.c_str(), mode);
 }
 
 
-void FileSystem::_clearCache(const std::string& path) {
+void FileSystem::_clearCache(const std::string& _path) {
+    const std::string& path = FilePath::expandEnvironmentVariables(_path);
+
     if ((path == "") || FilePath::isRoot(path)) {
         m_cache.clear();
     } else {
@@ -343,8 +352,9 @@ void FileSystem::_setCacheLifetime(float t) {
 }
 
 
-void FileSystem::_createDirectory(const std::string& dir) {
-    
+void FileSystem::_createDirectory(const std::string& _dir) {
+    const std::string& dir = FilePath::expandEnvironmentVariables(_dir);
+
     if (dir == "") {
         return;
     }
@@ -397,7 +407,9 @@ void FileSystem::_createDirectory(const std::string& dir) {
 }
 
 
-void FileSystem::_copyFile(const std::string& source, const std::string& dest) {
+void FileSystem::_copyFile(const std::string& _source, const std::string& _dest) {
+    const std::string& source = FilePath::expandEnvironmentVariables(_source);
+    const std::string& dest = FilePath::expandEnvironmentVariables(_dest);
 #   ifdef G3D_WIN32
         // TODO: handle case where srcPath is in a zipfile
         CopyFileA(source.c_str(), dest.c_str(), FALSE);
@@ -412,7 +424,8 @@ void FileSystem::_copyFile(const std::string& source, const std::string& dest) {
 }
 
 
-bool FileSystem::_exists(const std::string& f, bool trustCache, bool caseSensitive) {
+bool FileSystem::_exists(const std::string& _f, bool trustCache, bool caseSensitive) {
+    const std::string& f = FilePath::expandEnvironmentVariables(_f);
 
     if (FilePath::isRoot(f)) {
 #       ifdef G3D_WIN32
@@ -452,7 +465,8 @@ bool FileSystem::_exists(const std::string& f, bool trustCache, bool caseSensiti
 }
 
 
-bool FileSystem::_isDirectory(const std::string& filename) {
+bool FileSystem::_isDirectory(const std::string& _filename) {
+    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
     // TODO: work with zipfiles and cache
     struct _stat st;
     const bool exists = _stat(FilePath::removeTrailingSlash(filename).c_str(), &st) != -1;
@@ -460,7 +474,10 @@ bool FileSystem::_isDirectory(const std::string& filename) {
 }
 
 
-std::string FileSystem::_resolve(const std::string& filename, const std::string& cwd) {
+std::string FileSystem::_resolve(const std::string& _filename, const std::string& _cwd) {
+    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
+    const std::string& cwd = FilePath::expandEnvironmentVariables(_cwd);
+
     if (filename.size() >= 1) {
         if (isSlash(filename[0])) {
             // Already resolved
@@ -500,7 +517,10 @@ std::string FileSystem::_currentDirectory() {
 }
 
 
-bool FileSystem::_isNewer(const std::string& src, const std::string& dst) {
+bool FileSystem::_isNewer(const std::string& _src, const std::string& _dst) {
+    const std::string& src = FilePath::expandEnvironmentVariables(_src);
+    const std::string& dst = FilePath::expandEnvironmentVariables(_dst);
+
     // TODO: work with cache and zipfiles
     struct _stat sts;
     bool sexists = _stat(src.c_str(), &sts) != -1;
@@ -512,7 +532,9 @@ bool FileSystem::_isNewer(const std::string& src, const std::string& dst) {
 }
 
 
-int64 FileSystem::_size(const std::string& filename) {
+int64 FileSystem::_size(const std::string& _filename) {
+    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
+
     struct stat64 st;
     int result = stat64(filename.c_str(), &st);
     
@@ -578,7 +600,9 @@ void FileSystem::listHelper(const std::string& shortSpec, const std::string& par
 }
 
 
-void FileSystem::_list(const std::string& spec, Array<std::string>& result, const ListSettings& settings) {
+void FileSystem::_list(const std::string& _spec, Array<std::string>& result, const ListSettings& settings) {
+    const std::string& spec = FilePath::expandEnvironmentVariables(_spec);
+
     const std::string& shortSpec = FilePath::baseExt(spec);
     const std::string& parentPath = FilePath::parent(spec);
 
@@ -850,6 +874,65 @@ void FilePath::parse
         path.append(f.substr(prev, cur - prev));
         ++cur;
     }
+}
+
+
+std::string FilePath::expandEnvironmentVariables(const std::string& path) {
+    // Search for pattern
+    int end = path.find_first_of('$', 0);
+    if (end == std::string::npos) {
+        // Pattern does not exist
+        return path;
+    }
+
+    int start = 0;
+    std::string result;
+    while (end != std::string::npos) {
+        const std::string& before = path.substr(start, end - start);
+        result += before;
+        start = end + 1;
+        std::string var;
+        if (path[start] == '(') {
+            // Search for close paren
+            end = path.find_first_of(')', start + 1);
+            if (end == std::string::npos) {
+                throw std::string("Missing close paren in environment variable in \"") + path + "\"";
+            }
+            var = path.substr(start + 1, end - start - 1);
+        } else {
+            // Search for slash or end of string
+            end = path.find_first_of('/', start);
+            int i = path.find_first_of('\\', start);
+            if ((i != std::string::npos) && ((end == std::string::npos) || (i < end))) {
+                end = i;
+            }
+            if (end == std::string::npos) {
+                // If the varible goes to the end of the string, it is the rest of the string
+                end = path.size();
+            } else {
+                --end;
+            }
+            var = path.substr(start, end - start + 1);
+        }
+
+        const char* value = getenv(var.c_str());
+
+        if (value == NULL) {
+            throw (std::string("Environment variable \"") + var + "\" not defined for path \"" + path + "\"");
+        } else {
+            result += value;
+        }
+
+        start = end + 1;
+        end = path.find_first_of('$', end);
+    }
+
+    // Paste on the remainder of the source path
+    if (start < int(path.size())) {
+        result += path.substr(start);
+    }
+
+    return result;
 }
 
 }

@@ -65,6 +65,13 @@ public:
 };
 
 int main(int argc, char** argv) {
+
+    std::string result;
+//    result = FilePath::expandEnvironmentVariables("$G3D9DATA");
+
+//    result = FilePath::expandEnvironmentVariables("$(G3D9DATA)/");
+    bool b = FileSystem::exists("$G3D9DATA/ifs");
+
     (void)argc; (void)argv;
     GApp::Settings settings;
     

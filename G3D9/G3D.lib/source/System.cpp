@@ -342,9 +342,10 @@ void getG3DVersion(std::string& s) {
 
 
 std::string System::findDataFile
-(const std::string&  full,
+(const std::string&  _full,
  bool                errorIfNotFound,
  bool                caseSensitive) {
+     const std::string full = FilePath::expandEnvironmentVariables(_full);
 
     // Places where specific files were most recently found.  This is
     // used to cache seeking of common files.

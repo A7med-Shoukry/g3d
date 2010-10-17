@@ -1,10 +1,10 @@
 /**
- @file FileSystem.h
+ \file FileSystem.h
  
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
  
- @author  2002-06-06
- @edited  2010-09-27
+ \author  2002-06-06
+ \edited  2010-10-27
  */
 #ifndef G3D_FileSystem_h
 #define G3D_FileSystem_h
@@ -33,6 +33,8 @@ namespace G3D {
    <li> The zipfile name contains an extension (e.g., map.pk3, files.zip)
    <li> There are no nested zipfiles
  </ul>
+
+ All FileSystem routines invoke FilePath::expandEnvironmentVariables if the input contains a '$'.
 
  The extension requirement allows G3D to quickly identify whether a path could enter a
  zipfile without forcing it to open all parent directories for reading.
@@ -279,7 +281,6 @@ private:
 
 public:
 
-
     /** Create the common instance. */
     static void init();
 
@@ -443,6 +444,11 @@ public:
     /** Convert all slashes to '/' */
     static std::string canonicalize(std::string x);
 
+    /** \brief Replaces <code>$VAR</code> and <code>$(VAR)</code> patterns with the corresponding environment variable.
+        Throws std::string if the environment variable is not defined.
+     */
+    static std::string expandEnvironmentVariables(const std::string& path);
+
     /**
       Parses a filename into four useful pieces.
 
@@ -473,7 +479,6 @@ public:
      Array<std::string>& path,
      std::string&        base,
      std::string&        ext);
-
 
     /**
       Returns true if \a path matches \a pattern, with standard filesystem wildcards.
