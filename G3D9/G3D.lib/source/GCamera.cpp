@@ -79,19 +79,39 @@ GCamera::operator Any() const {
 
     
 float GCamera::circleOfConfusionRadius(float z, const class Rect2D& viewport) const {
-    // Circle of confusion at the focus plane, in meters
-    const float r = fabs(m_focusPlaneZ / z) * m_lensRadius;
+    debugAssert(z < 0);
     
-    float angle;
-    FOVDirection dir;
-    getFieldOfView(angle, dir);
+    //              Actual position z
+    //                     |
+    //      ()-----______  |
+    //     (  )          --|---___| 
+    //     (  )    ______--|---   |          
+    //      ()-----        |      |
+    //                           
+    //      Lens                 Rays converge at m_focusPlaneZ
+    //
+    //                     |<---->|
+    //                 | focusPlaneZ - z |
+    //                            
+    //       |<------------------>| 
+    //          | focusPlaneZ |
+    //
+    // By similar triangles,
+    //
+    //   | focusPlaneZ - z |
+    //  --------------------- lensRadius = radius at z
+    //         -focusPlaneZ 
+
+    // Circle of confusion at z, in meters
+    const float rzmeters = fabs((m_focusPlaneZ - z) / focusPlaneZ) * m_lensRadius;
+
+    // Project
+    const float rimeters = r / -z;
     
-    const float s = (dir == HORIZONTAL) ? viewport.width() : viewport.height();
-    
-    // Focus plane radius to pixels
-    const float pixPerMeter = (s * 0.5f) / (m_focusPlaneZ * tan(angle * 0.5f));
-    
-    return r * pixPerMeter;
+    // Convert to pixels
+    const float ripixels = rimeters * imagePlanePixelsPerMeter(viewport);
+
+    return ripixels;
 }
 
 
@@ -141,7 +161,7 @@ void GCamera::setFieldOfView(float angle, FOVDirection dir) {
 }
 
  
-float GCamera::viewportWidth(const Rect2D& viewport) const {
+float GCamera::nearPlaneViewportWidth(const Rect2D& viewport) const {
     // Compute the side of a square at the near plane based on our field of view
     float s = 2.0f * -m_nearPlaneZ * tan(m_fieldOfView * 0.5f);
 
@@ -153,7 +173,7 @@ float GCamera::viewportWidth(const Rect2D& viewport) const {
 }
 
 
-float GCamera::viewportHeight(const Rect2D& viewport) const {
+float GCamera::nearPlaneViewportHeight(const Rect2D& viewport) const {
     // Compute the side of a square at the near plane based on our field of view
     float s = 2.0f * -m_nearPlaneZ * tan(m_fieldOfView * 0.5f);
 
@@ -163,6 +183,17 @@ float GCamera::viewportHeight(const Rect2D& viewport) const {
     }
 
     return s;
+}
+
+
+float GCamera::imagePlanePixelsPerMeter(const class Rect2D& viewport) const {
+    const float scale = -2.0 * tan(m_fieldOfView * 0.5);
+    
+    if (m_direction == GCamera::HORIZONTAL) {
+        return viewport.width() / scale;        
+    } else {
+        return viewport.height() / scale;
+    }
 }
 
 
@@ -199,8 +230,8 @@ Ray GCamera::worldRay(float x, float y, const Rect2D& viewport) const {
     float cx = screenWidth  / 2.0f;
     float cy = screenHeight / 2.0f;
 
-    float vw = viewportWidth(viewport);
-    float vh = viewportHeight(viewport);
+    float vw = nearPlaneViewportWidth(viewport);
+    float vh = nearPlaneViewportHeight(viewport);
 
 	Vector3 direction = Vector3( (x - cx) * vw / screenWidth,
                             -(y - cy) * vh / screenHeight,
@@ -343,8 +374,8 @@ void GCamera::frustum(const Rect2D& viewport, Frustum& fr) const {
     // The volume is the convex hull of the vertices definining the view
     // frustum and the light source point at infinity.
 
-    const float x               = viewportWidth(viewport) / 2;
-    const float y               = viewportHeight(viewport) / 2;
+    const float x               = nearPlaneViewportWidth(viewport) / 2;
+    const float y               = nearPlaneViewportHeight(viewport) / 2;
     const float zn              = m_nearPlaneZ;
     const float zf              = m_farPlaneZ;
     float xx, zz, yy;
@@ -474,8 +505,8 @@ void GCamera::getNearViewportCorners
  Vector3&      outLR) const {
     
     // Must be kept in sync with getFrustum()
-    const float w  = viewportWidth(viewport) / 2.0f;
-    const float h  = viewportHeight(viewport) / 2.0f;
+    const float w  = nearPlaneViewportWidth(viewport) / 2.0f;
+    const float h  = nearPlaneViewportHeight(viewport) / 2.0f;
     const float z  = nearPlaneZ();
 
     // Compute the points
@@ -499,8 +530,8 @@ void GCamera::getFarViewportCorners(
     Vector3& outLR) const {
 
     // Must be kept in sync with getFrustum()
-    const float w = viewportWidth(viewport) * m_farPlaneZ / m_nearPlaneZ;
-    const float h = viewportHeight(viewport) * m_farPlaneZ / m_nearPlaneZ;
+    const float w = nearPlaneViewportWidth(viewport) * m_farPlaneZ / m_nearPlaneZ;
+    const float h = nearPlaneViewportHeight(viewport) * m_farPlaneZ / m_nearPlaneZ;
     const float z = m_farPlaneZ;
     
     // Compute the points

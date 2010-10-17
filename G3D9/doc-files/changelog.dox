@@ -73,10 +73,13 @@
      <li> Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic
      <li> Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
      <li> Removed ToneMap (use Film)
+	 <li> G3D::GCamera::viewportWidth &rarr; G3D::GCamera::nearPlaneViewportWidth
+	 <li> G3D::GCamera::viewportHeight &rarr; G3D::GCamera::nearPlaneViewportHeight
    </ul>
 
    Changes in 8.01:
    <ul>
+     <li> G3D::GCamera::imagePlanePixelsPerMeter
      <li> G3D::GApp::Settings::argArray
      <li> G3D::Surface::renderDepthOnly (i.e., for shadow maps) is now 3x faster than 8.00
      <li> G3D::PointHashGrid::Iterator::hasMore
@@ -86,8 +89,10 @@
      <li> Fix: G3D::Profiler checks for the presence of the timer query extension before using it
      <li> Fix: G3D::Profiler disables profiling if glGetQueryObjectiv takes too long to return
      <li> Fix: Perfectly black G3D::SuperSurfaces now render black rather than picking up the previous material
+     <li> Fix: TextInput::readUntilNewlineAsString now does not skip lines if invoked at the end of a line
      <li> Fix: Default bounds for GuiNumberBox<int> are now correct [Matthaeus Chajdas]
      <li> Fix: Corrected shutdown memory leak in G3D::System::flushPool [Eric Cassel]
+     <li> Fix: GuiTextureBox now correctly displays colors when some channels are negative.
  </ul>
 
    <p>

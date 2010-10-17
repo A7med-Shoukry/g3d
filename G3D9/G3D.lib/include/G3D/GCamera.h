@@ -1,10 +1,10 @@
 /**
-  @file GCamera.h
+  \file GCamera.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2005-07-20
-  @edited  2010-07-31
+  \created 2005-07-20
+  \edited  2010-10-31
 */
 
 #ifndef G3D_GCamera_h
@@ -23,7 +23,7 @@ class Rect2D;
 class Any;
 
 /**
-  Abstraction of a lens or pinhole camera.
+  \brief Abstraction of a lens or pinhole camera.
 
   The area a camera sees is called a frustum.  It is bounded by the
   near plane, the far plane, and the sides of the view frame projected
@@ -335,16 +335,22 @@ public:
         debugAssert(z < 0);
         m_nearPlaneZ = z;
     }
+    
+    /** \brief The number of pixels per meter at z=-1 for the given viewport.
+       This is useful for performing explicit projections and for transforming world-space 
+       values like circle of confusion into
+       screen space.*/
+    float imagePlanePixelsPerMeter(const class Rect2D& viewport) const;
 
     /**
-     Returns the camera space width of the viewport at the near plane.
+     Returns the camera space width in meters of the viewport at the near plane.
      */
-    float viewportWidth(const class Rect2D& viewport) const;
+    float nearPlaneViewportWidth(const class Rect2D& viewport) const;
 
     /**
-     Returns the camera space height of the viewport at the near plane.
+     Returns the camera space height of the viewport in meters at the near plane.
      */
-    float viewportHeight(const class Rect2D& viewport) const;
+    float nearPlaneViewportHeight(const class Rect2D& viewport) const;
 
     void setPosition(const Vector3& t);
 
@@ -369,8 +375,7 @@ public:
        absolute dimensions and xy values don't matter.
     */
     void getClipPlanes
-    (
-     const Rect2D& viewport,
+    (const Rect2D& viewport,
      Array<Plane>& outClip) const;
 
     /**
@@ -408,7 +413,8 @@ public:
         (-1, 1) that should lie within a unit-radius disc.*/
     Ray worldRay(float x, float y, float u, float v, const class Rect2D &viewport) const;
     
-    /** Circle of confusion radius, in pixels, for a point at distance z from the center of projection. */
+    /** Circle of confusion radius, in pixels, for a point at negative position \a z from the center of projection
+    along the camera-space z axis.*/
     float circleOfConfusionRadius(float z, const class Rect2D& viewport) const;
    
 };
