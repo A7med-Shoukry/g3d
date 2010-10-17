@@ -103,10 +103,10 @@ float GCamera::circleOfConfusionRadius(float z, const class Rect2D& viewport) co
     //         -focusPlaneZ 
 
     // Circle of confusion at z, in meters
-    const float rzmeters = fabs((m_focusPlaneZ - z) / focusPlaneZ) * m_lensRadius;
+    const float rzmeters = fabs((m_focusPlaneZ - z) / m_focusPlaneZ) * m_lensRadius;
 
     // Project
-    const float rimeters = r / -z;
+    const float rimeters = rzmeters / -z;
     
     // Convert to pixels
     const float ripixels = rimeters * imagePlanePixelsPerMeter(viewport);

@@ -645,7 +645,7 @@ void perfHashTrait() {
     printf("Hash functions for Vector3:\n");
 
     const int N = 1000000;
-    const Vector3 v(100, 32, 0.11);
+    const Vector3 v(100, 32, 0.11f);
     {
         const RealTime start = System::time();
         size_t h = 0;
