@@ -743,10 +743,14 @@ public:
         return fromFile(s.filename, s.preprocess, s.settings);
     }
 
-    static ArticulatedModel::Ref createHeightfield(const Image1::Ref& height, float xzExtent = 10.0f, float yExtent = 1.0f, const Vector2& texScale = Vector2(1.0, 1.0));
+    /** 
+        \param zExtent If finf(), defaults to \a xExtent, otherwise,
+        the extent of the generated heightfield along the z-axis.
+     */
+    static ArticulatedModel::Ref createHeightfield(const Image1::Ref& height, float xExtent = 10.0f, float yExtent = 1.0f, float zExtent = finf(), const Vector2& texScale = Vector2(1.0, 1.0), bool spaceCentered = true, bool twoSided = false);
 
-    static ArticulatedModel::Ref createHeightfield(const std::string& filename, float xzExtent = 10.0f, float yExtent = 1.0f, const Vector2& texScale = Vector2(1.0, 1.0)) {
-        return createHeightfield(Image1::fromFile(filename), xzExtent, yExtent, texScale);
+    static ArticulatedModel::Ref createHeightfield(const std::string& filename, float xExtent = 10.0f, float yExtent = 1.0f, float zExtent = finf(), const Vector2& texScale = Vector2(1.0, 1.0), bool spaceCentered = true, bool twoSided = false) {
+        return createHeightfield(Image1::fromFile(filename), xExtent, yExtent, zExtent, texScale, spaceCentered, twoSided);
     }
     
     /**
