@@ -69,6 +69,7 @@
      <li> SuperShader scales the quadratic attenuation term by 4pi to produce a physically-meaningful radiance value for point lights
      <li> G3D::Draw::skyBox now uses programmable pipeline and requires a cube map
      <li> Replaced Lighting::ambientTop and ambientBottom and SuperShader pixel shader with pure environment map-based ambient.
+     <li> G3D::ArticulatedModel::createHeightfield arguments now more closely follow MeshAlg::generateGrid
      <li> Changed G3D::ArticulatedModel::Preprocess::materialOverride to a Material::Specification; likewise for the materialSubstitution table.
      <li> Removed OFF file loading from G3D::IFSModel 
 	 <li> G3D::Material::Settings &rarr; G3D::Material::Specification
