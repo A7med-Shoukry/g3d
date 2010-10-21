@@ -40,6 +40,7 @@
      <li> G3D::Material::Specification(Color3)
      <li> G3D::Matrix3::diagonal, G3D::Matrix4::diagonal
      <li> G3D::Crypto::md5 is now static
+     <li> G3D::Rect2D::serialize and deserialize
      <li> Upgraded to libpng 1.4.4
      <li> Tuned Vector4, Vector3, uint64, uint128 hash codes for performance instead of quality
      <li> iCompile can now use ICE_EXTRA_SOURCE environment variable to find G3D sources if you move

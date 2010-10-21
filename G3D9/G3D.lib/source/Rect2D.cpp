@@ -6,7 +6,7 @@
   @created 2003-11-13
   @created 2009-11-16
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
  */
 
@@ -14,8 +14,22 @@
 #include "G3D/Rect2D.h"
 #include "G3D/Any.h"
 #include "G3D/stringutils.h"
+#include "G3D/BinaryInput.h"
+#include "G3D/BinaryOutput.h"
 
 namespace G3D {
+
+void Rect2D::serialize(class BinaryOutput& b) const {
+    min.serialize(b);
+    max.serialize(b);
+}
+
+    
+void Rect2D::deserialize(class BinaryInput& b) {
+    min.deserialize(b);
+    max.deserialize(b);
+}
+
 
 /** \param any Must either Rect2D::xywh(#, #, #, #) or Rect2D::xyxy(#, #, #, #)*/
 Rect2D::Rect2D(const Any& any) {

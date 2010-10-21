@@ -1,12 +1,12 @@
 /**
-  @file Rect2D.h
+  \file Rect2D.h
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
-  @created 2003-11-13
-  @created 2009-11-16
+  \created 2003-11-13
+  \created 2010-11-16
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
  */
 
@@ -296,6 +296,10 @@ public:
     bool operator!=(const Rect2D& other) const {
         return (min != other.min) || (max != other.max);
     }
+
+    void serialize(class BinaryOutput& b) const;
+
+    void deserialize(class BinaryInput& b);
 
     /** Returns the corners in the order: (min,min), (max,min), (max,max), (min,max). */
     Vector2 corner(int i) const {

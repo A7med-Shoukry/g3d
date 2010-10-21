@@ -71,6 +71,7 @@ public:
         return Color1(value + other.value);
     }
 
+    /** \deprecated */
     Color1 operator+ (const float other) const {
         return Color1(value + other);
     }
@@ -89,6 +90,7 @@ public:
         return Color1(value - other.value);
     }
 
+    /** \deprecated */
     Color1 operator- (const float other) const {
         return Color1(value - other);
     }
@@ -140,5 +142,8 @@ struct HashTrait<G3D::Color1> {
     }
 };
 
+inline G3D::Color1 operator*(float f, G3D::Color1 c) {
+    return c * f;
+}
 
 #endif
