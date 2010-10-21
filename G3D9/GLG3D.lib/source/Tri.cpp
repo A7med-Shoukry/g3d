@@ -77,7 +77,7 @@ Tri Tri::otherSide() const {
 
 
 float Tri::area() const {
-    return e1.cross(e2).length();
+    return e1.cross(e2).length() * 0.5f;
 }
 
 
