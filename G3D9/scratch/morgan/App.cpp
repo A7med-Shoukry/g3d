@@ -66,16 +66,24 @@ public:
 
 int main(int argc, char** argv) {
 
-    std::string result;
-//    result = FilePath::expandEnvironmentVariables("$G3D9DATA");
-
-//    result = FilePath::expandEnvironmentVariables("$(G3D9DATA)/");
-    bool b = FileSystem::exists("$G3D9DATA/ifs");
+    Image1::Ref im = Image1::fromFile("test.png", GImage::PNG16);
+    im->save("foo.png", GImage::PNG);
+    /*
+    Image1::Ref im = Image1::createEmpty(32, 64);
+    for (int y = 0; y < im->height(); ++y) {
+        for (int x = 0; x < im->width(); ++x) {
+            im->set(x, y, Color1(x / float(im->width() - 1)));
+        }
+    }
+    im->save("test.png", GImage::PNG16);
+    */
+    debugPrintf("Done\n");
+    return 0;
 
     (void)argc; (void)argv;
     GApp::Settings settings;
     
-    debugPrintf("\n\n%d bytes\n\n", sizeof(SmallArray<uint16, 2>));
+    debugPrintf("\n\n%d bytes\n\n", (int)sizeof(SmallArray<uint16, 2>));
 
     // Change the window and other startup parameters by modifying the
     // settings class.  For example:

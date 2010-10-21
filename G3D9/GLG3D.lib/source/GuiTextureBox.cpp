@@ -940,7 +940,7 @@ void GuiTextureBox::setSettings(const Texture::Visualization& s) {
                              c = invertIntensity ? vec4(1.0 - c) : c;
                              c = colorShift * c;
                              c = max(c, vec4(0.0));
-                             gl_FragColor.rgb = pow(c, vec4(adjustGamma));
+                             gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
                              gl_FragColor.a = 1.0;
                              }));
                 g_cachedShader = m_shader;

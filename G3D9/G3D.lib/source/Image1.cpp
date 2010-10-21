@@ -74,8 +74,26 @@ Image1::Ref Image1::fromFile(const std::string& filename, WrapMode wrap, GImage:
 
 
 void Image1::load(const std::string& filename, GImage::Format fmt) {
-    copyGImage(GImage(filename, fmt));
-    setChanged(true);
+    if (fmt == GImage::PNG16) {
+        // Special case
+        BinaryInput input(filename, G3D_LITTLE_ENDIAN);
+        
+        uint16* src = NULL;
+        int w, h, c;
+        MemoryManager::Ref memMan = MemoryManager::create();
+        GImage::decodePNG16(input, w, h, c, src, memMan);
+        resize(w, h);
+        int N = w * h;
+        for (int i = 0; i < N; ++i) {
+            data[i] = Color1(float(src[i * c]) * (1.0f / 65535.0f));
+        }
+        memMan->free(src);
+        src = NULL;
+
+    } else {
+        copyGImage(GImage(filename, fmt));
+        setChanged(true);
+    }
 }
 
 
@@ -205,15 +223,28 @@ void Image1::copyArray(const Color3* src, int w, int h) {
 
 /** Saves in any of the formats supported by G3D::GImage. */
 void Image1::save(const std::string& filename, GImage::Format fmt) {
-    GImage im(width(), height(), 1);
-
-    int N = im.width() * im.height();
-    Color1uint8* dst = im.pixel1();
-    for (int i = 0; i < N; ++i) {
-        dst[i] = Color1uint8(data[i]);
-    }
+    if (fmt == GImage::PNG16) {
+        // Special case
+        BinaryOutput out(filename, G3D_LITTLE_ENDIAN);
+        const int N = width() * height();
+        uint16* temp = new uint16[N];
+        for (int i = 0; i < N; ++i) {
+            temp[i] = iClamp(data[i].value * 65535, 0, 65535);
+        }
+        GImage::encodePNG16(out, width(), height(), 1, temp);
+        delete[] temp;
+        out.commit();
+    } else {
+        GImage im(width(), height(), 1);
+        
+        int N = im.width() * im.height();
+        Color1uint8* dst = im.pixel1();
+        for (int i = 0; i < N; ++i) {
+            dst[i] = Color1uint8(data[i]);
+        }
     
-    im.save(filename, fmt);
+        im.save(filename, fmt);
+    }
 }
 
 
