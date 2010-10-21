@@ -39,25 +39,6 @@
 
 <tr><td culspan=2 height=10> </td></tr>
 
-<tr><td culspan=2>Models (<a href="../samples/shader">samples/models</a>)</td></tr>
-<tr valign=top>
-<td>
-\htmlonly<IMG SRC="demo-models.png" width=250 >\endhtmlonly
-</td>
-<td>
-<ul>
- <li> G3D::ArticulatedModel
- <li> G3D::Material
- <li> G3D::BumpMap
- <li> G3D::SuperBSDF
- <li> G3D::MD2Model
- <li> G3D::Lighting
-</ul>
-</td>
-</tr>
-
-<tr><td culspan=2 height=10> </td></tr>
-
 <tr><td culspan=2>Geometry Shader (<a href="../samples/geometry">samples/geometry</a>)</td></tr>
 <tr valign=top>
 <td>
