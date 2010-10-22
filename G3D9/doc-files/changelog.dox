@@ -49,6 +49,8 @@
      <li> Added new icompile working directory ([Global] workdir), defaults to data-files for new projects
      <li> GImage::encodePNG16, GImage::decodePNG16; Image1::load and Image1::save now support PNG16
      <li> Improved OFF file parsing compatibility
+     <li> G3D::GuiWindow subclasses can now initialize without OpenGL, for compute servers
+     <li> G3D::Discovery now can operate without a GUI.
      <li> G3D::System::findDataFile now takes an optional caseSensitive argument
      <li> G3D::FileSystem::exists now takes an optional caseSensitive argument
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area

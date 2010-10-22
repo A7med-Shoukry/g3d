@@ -1,15 +1,15 @@
 /**
- @file GLG3D/GuiWindow.h
+ \file GLG3D/GuiWindow.h
 
- @created 2006-05-01
- @edited  2009-09-21
+ \created 2006-05-01
+ \edited  2010-10-21
 
  G3D Library http://g3d.sf.net
- Copyright 2000-2010, Morgan McGuire morgan@users.sf.net
+ Copyright 2000-2010, Morgan McGuire, http://graphics.cs.williams.edu
  All rights reserved.
 */
-#ifndef G3D_GUIWINDOW_H
-#define G3D_GUIWINDOW_H
+#ifndef G3D_GuiWindow_h
+#define G3D_GuiWindow_h
 
 #include <string>
 #include "G3D/Pointer.h"
@@ -136,7 +136,7 @@ protected:
     public:
         UserInput*          userInput;
         WidgetManager::Ref  manager;
-        OSWindow*            osWindow;
+        OSWindow*           osWindow;
         RenderDevice*       renderDevice;
         
         /** Image of the screen under the modal dialog.*/
@@ -202,6 +202,11 @@ protected:
 protected:
 
     GuiWindow(const GuiText& text, GuiTheme::Ref skin, const Rect2D& rect, GuiTheme::WindowStyle style, CloseAction closeAction);
+
+    /** Creates a non-functional window.  Useful for subclasses that
+        also need to operate on a compute server that does not
+        intialize OpenGL. */
+    GuiWindow();
 
     virtual void render(RenderDevice* rd) const;
 

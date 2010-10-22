@@ -53,7 +53,7 @@
 </tr>
 
 <tr><td culspan=2 height=10> </td></tr>
-<tr><td culspan=2>Network Discovery (<a href="../samples/network">samples/network</a>)</td></tr>
+<tr><td culspan=2>Compute Server Discovery (<a href="../samples/computeDiscovery">samples/computeDiscoveryk</a>)</td></tr>
 <tr valign=top>
 <td>
 \htmlonly <IMG SRC="demo-network.png" width=250 > \endhtmlonly
@@ -62,11 +62,6 @@
 <ul>
  <li> G3D::Discovery::Client
  <li> G3D::Discovery::Server
- <li> G3D::GFont
- <li> G3D::GApp::addWidget
- <li> G3D::GuiButton
- <li> G3D::GuiWindow
- <li> G3D::GApp::onEvent
 </ul>
 </td>
 </tr>

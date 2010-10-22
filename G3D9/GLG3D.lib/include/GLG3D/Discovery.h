@@ -176,6 +176,8 @@ private:
     Client(const std::string& applicationName, const Settings& settings,
            OSWindow* osWindow, GuiThemeRef theme);
 
+    Client(const std::string& applicationName, const Settings& settings);
+
     /** Called from onNetwork() to receive an incoming message on m_net */
     void receiveDescription();
 
@@ -185,12 +187,28 @@ private:
     /** Implements browse() on an instance. */
     bool browseImpl(ServerDescription& d);
 
+    /** Called from both constructors */
+    void initNetwork();
+
 public:
 
+    /** \brief Creates a Gui-based server browser.
+        This is suitable for games.
+        \sa createNoGui */
     static ClientRef create(const std::string& applicationName, 
                             OSWindow* osWindow = NULL, 
                             GuiThemeRef theme = NULL,
                             const Settings& settings = Settings());
+    
+    /** \brief Creates an invisible discovery client that maintains a
+        list of available servers.  
+
+        This is suitable for compute servers.  
+
+        \sa create
+     */
+    static ClientRef createNoGui(const std::string& applicationName,
+                                 const Settings& settings = Settings());
 
     virtual void onNetwork();
 

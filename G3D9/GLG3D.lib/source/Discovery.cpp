@@ -84,6 +84,29 @@ void Client::Display::render(RenderDevice* rd) const {
 
 /////////////////////////////////////////////////////////////
 
+void Client::initNetwork() {
+    // Construct broadcast array
+    const Array<uint32> ipArray = NetworkDevice::instance()->broadcastAddressArray();
+    m_broadcastAddressArray.resize(ipArray.size());
+    for (int i = 0; i < m_broadcastAddressArray.size(); ++i) {
+        m_broadcastAddressArray[i] = NetAddress(ipArray[i], m_settings.clientBroadcastPort);
+    }
+
+    m_net = LightweightConduit::create(m_settings.serverBroadcastPort, true, true);
+}
+
+
+Client::Client(const std::string& applicationName, const Settings& settings) : 
+    m_settings(settings), 
+    m_osWindow(false), 
+    m_applicationName(applicationName), 
+    m_index(0), 
+    m_connectPushed(false) {
+
+    initNetwork();    
+}
+
+
 Client::Client(const std::string& applicationName, const Settings& settings,
                OSWindow* osWindow, GuiThemeRef theme) :
     GuiWindow("Server Browser", theme, 
@@ -92,12 +115,7 @@ Client::Client(const std::string& applicationName, const Settings& settings,
     m_osWindow(osWindow),
     m_applicationName(applicationName) {
 
-    // Construct broadcast array
-    const Array<uint32> ipArray = NetworkDevice::instance()->broadcastAddressArray();
-    m_broadcastAddressArray.resize(ipArray.size());
-    for (int i = 0; i < m_broadcastAddressArray.size(); ++i) {
-        m_broadcastAddressArray[i] = NetAddress(ipArray[i], m_settings.clientBroadcastPort);
-    }
+    initNetwork();
 
     if (theme.notNull()) { 
         if (m_settings.displayStyle.font.isNull()) {
@@ -114,8 +132,7 @@ Client::Client(const std::string& applicationName, const Settings& settings,
         }
     }
 
-    m_net = LightweightConduit::create(m_settings.serverBroadcastPort, true, true);
-    
+   
     m_display = new Display();
     m_display->client = this;
     m_connectPushed = false;
@@ -128,13 +145,20 @@ Client::Client(const std::string& applicationName, const Settings& settings,
 
 
 ClientRef Client::create
-(
- const std::string& applicationName, 
+(const std::string& applicationName, 
  OSWindow* osWindow,
  GuiThemeRef theme,
  const Settings& settings) {
 
     return new Client(applicationName, settings, osWindow, theme);
+}
+
+
+ClientRef Client::createNoGui
+(const std::string& applicationName, 
+ const Settings& settings) {
+
+    return new Client(applicationName, settings);
 }
 
 

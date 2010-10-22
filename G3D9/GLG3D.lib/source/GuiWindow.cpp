@@ -31,6 +31,24 @@ void GuiWindow::setCaption(const GuiText& text) {
     m_text = text;
 }
 
+GuiWindow::GuiWindow() 
+    : modal(NULL), 
+      m_text(""), 
+      m_rect(Rect2D::xywh(0,0,0,0)),
+      m_visible(false), 
+      m_style(GuiTheme::NO_WINDOW_STYLE),
+      m_closeAction(NO_CLOSE), 
+      m_skin(NULL), 
+      inDrag(false),
+      mouseOverGuiControl(NULL), 
+      keyFocusGuiControl(NULL),
+      m_enabled(true),
+      m_focused(false),
+      m_mouseVisible(false),
+      m_rootPane(NULL) {
+
+}
+
 
 GuiWindow::GuiWindow(const GuiText& text, GuiThemeRef skin, const Rect2D& rect, GuiTheme::WindowStyle style, CloseAction close) 
     : modal(NULL), m_text(text), m_rect(rect), m_visible(true), 
@@ -89,7 +107,7 @@ void GuiWindow::setRect(const Rect2D& r) {
     
     if (m_style == GuiTheme::NO_WINDOW_STYLE) {
         m_clientRect = m_rect;
-    } else {
+    } else if (m_skin.notNull()) {
         m_clientRect = m_skin->windowToClientBounds(m_rect, GuiTheme::WindowStyle(m_style));
     }
 }
