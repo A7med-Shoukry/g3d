@@ -7,9 +7,24 @@ void printHelp() {
 
 
 void runClient() {
-    Discovery::Client::Ref discoveryClient = Discovery::Client::createNoGui("My Game");
-    
+    Discovery::ClientRef discoveryClient = Discovery::Client::createNoGui("My Game");
+    debugPrintf("Running client (press any key to exit)\n");
+    while (! System::consoleKeyPressed()) {
+        discoveryClient->onNetwork();
+        debugPrintf("\rKnown Servers:");
+
+        const Array<Discovery::ServerDescription>& server = 
+            discoveryClient->serverArray();
+
+        for (int i = 0; i < server.size(); ++i) {
+            debugPrintf("%s (%s);  ", 
+                        server[i].serverName.c_str(), 
+                        server[i].applicationAddress.toString().c_str());
+        }
+        System::sleep(1.0f / 30.0f);
+    }
 }
+
 
 const uint16 GAME_PORT = 4808;
 
