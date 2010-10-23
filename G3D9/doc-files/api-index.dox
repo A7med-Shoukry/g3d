@@ -273,6 +273,7 @@ href="classes.html">Classes</a>.
      \link G3D::rsq rsq\endlink,
      \link G3D::min min\endlink,
      \link G3D::max max\endlink,
+     \link G3D::Noise Noise\endlink,
      \link G3D::Random Random\endlink,
      \link G3D::PrecomputedRandom PrecomputedRandom\endlink,
      \link G3D::square square\endlink,

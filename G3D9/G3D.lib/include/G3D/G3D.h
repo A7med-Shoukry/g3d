@@ -28,6 +28,7 @@
 #include "G3D/units.h"
 #include "G3D/ParseError.h"
 #include "G3D/Random.h"
+#include "G3D/Noise.h"
 #include "G3D/Array.h"
 #include "G3D/SmallArray.h"
 #include "G3D/Queue.h"

@@ -6,7 +6,7 @@
  @created 2009-01-02
  @edited  2009-03-20
 
- Copyright 2000-2009, Morgan McGuire.
+ Copyright 2000-2010, Morgan McGuire.
  All rights reserved.
  */
 #ifndef G3D_Random_h
@@ -33,6 +33,8 @@ namespace G3D {
     
     On OS X, Random is about 10x faster than drand48() (which is
     threadsafe) and 4x faster than rand() (which is not threadsafe).
+
+    \sa Noise
  */
 class Random {
 protected:

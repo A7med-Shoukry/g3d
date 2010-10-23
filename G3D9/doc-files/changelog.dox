@@ -34,6 +34,7 @@
      <li> G3D::GLight::castsShadows
      <li> G3D::GLight::power
      <li> G3D::Point2 typedef
+     <li> G3D::Noise
      <li> G3D::GuiPane::setNewChildSize(), GuiPane::beginRow()...GuiPane::endRow()
      <li> G3D::PointHashGrid::getIntersectingMembers()
      <li> G3D::Surface::sendGeometry
