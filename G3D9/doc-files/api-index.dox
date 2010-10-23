@@ -406,19 +406,11 @@ href="classes.html">Classes</a>.
        \link G3D::superFastHash superFastHash\endlink,
        \link G3D::HashTrait HashTrait\endlink
 
-    <LI><B>Time, Memory, and Threads</B> &nbsp; &nbsp;
-        \link G3D::AlignedMemoryManager AlignedMemoryManager\endlink,  
-        \link G3D::AreaMemoryManager AreaMemoryManager\endlink,
+    <LI><B>Time and Threads</B> &nbsp; &nbsp;
         \link G3D::AtomicInt32 AtomicInt32\endlink,
-        \link G3D::BinaryFormat BinaryFormat\endlink,
-        \link G3D::byteSize byteSize\endlink,
-        \link G3D::binaryFormatOf binaryFormatOf\endlink,
-        \link G3D::CRTMemoryManager CRTMemoryManager\endlink,  
-        \link G3D::G3DEndian G3DEndian\endlink,
         \link G3D::GMutex GMutex\endlink,
         \link G3D::GThread GThread\endlink,
         \link G3D::GUniqueID GUniqueID\endlink,
-        \link G3D::MemoryManager MemoryManager\endlink, 
         \link G3D::msgBox msgBox\endlink,
         \link G3D::pathConcat pathConcat\endlink,
         \link G3D::prompt prompt\endlink, 
@@ -426,6 +418,20 @@ href="classes.html">Classes</a>.
         \link G3D::Stopwatch Stopwatch\endlink,
         \link G3D::System System\endlink,
         \link G3D::ThreadSet ThreadSet\endlink
+
+     <li><b>CPU Memory</b>
+        \link G3D::AlignedMemoryManager AlignedMemoryManager\endlink,  
+        \link G3D::AreaMemoryManager AreaMemoryManager\endlink,
+        \link G3D::BinaryFormat BinaryFormat\endlink,
+        \link G3D::binaryFormatOf binaryFormatOf\endlink,
+        \link G3D::BlockPoolMemoryManager BlockPoolMemoryManager\endlink, 
+        \link G3D::byteSize byteSize\endlink,
+        \link G3D::CRTMemoryManager CRTMemoryManager\endlink,  
+        \link G3D::G3DEndian G3DEndian\endlink,
+        \link G3D::MemoryManager MemoryManager\endlink,
+        \link G3D::System::free System::free\endlink,
+        \link G3D::System::malloc System::malloc\endlink
+     </li>
         
      <LI><B>Utilities and Constants</B> &nbsp; &nbsp;
         \link G3D::MirrorQuality MirrorQuality\endlink,

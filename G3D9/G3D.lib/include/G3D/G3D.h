@@ -77,6 +77,7 @@
 #include "G3D/GMutex.h"
 #include "G3D/PrecomputedRandom.h"
 #include "G3D/MemoryManager.h"
+#include "G3D/BlockPoolMemoryManager.h"
 #include "G3D/AreaMemoryManager.h"
 #include "G3D/BumpMapPreprocess.h"
 #include "G3D/CubeFace.h"

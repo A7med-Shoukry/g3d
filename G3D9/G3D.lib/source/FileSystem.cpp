@@ -879,7 +879,7 @@ void FilePath::parse
 
 std::string FilePath::expandEnvironmentVariables(const std::string& path) {
     // Search for pattern
-    int end = path.find_first_of('$', 0);
+    size_t end = path.find_first_of('$', 0);
     if (end == std::string::npos) {
         // Pattern does not exist
         return path;
