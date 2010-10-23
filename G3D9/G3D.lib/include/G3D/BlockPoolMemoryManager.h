@@ -42,10 +42,11 @@ public:
         alwaysAssertM(s == m_blockSize, "BlockPoolMemoryManager can only allocate fixed-size blocks");
         m_mutex.lock();
         if (m_freeList.size() == 0) {
-            m_freeList.append(new uint32[iCeil(double(s) / sizeof(uint32))]);
+            m_freeList.push(new uint32[iCeil(double(s) / sizeof(uint32))]);
             m_allBlocks.insert(m_freeList.last());
         }
         void* ptr = m_freeList.pop();
+        debugAssert(ptr == NULL || isValidHeapPointer(ptr));
         m_mutex.unlock();
         return ptr;
     }
@@ -73,7 +74,7 @@ public:
             debugAssertM(m_allBlocks.contains(ptr), 
                          "Tried to BlockPoolMemoryManager::free a pointer not allocated by this memory manager.");
             debugAssertM(! m_freeList.contains(ptr), "Double free");
-            m_freeList.append(ptr);
+            m_freeList.push(ptr);
             m_mutex.unlock();
         }
     }
