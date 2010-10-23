@@ -45,7 +45,7 @@ public:
             m_freeList.append(new uint32[iCeil(double(s) / sizeof(uint32))]);
             m_allBlocks.insert(m_freeList.last());
         }
-        void* ptr = m_freeList.last();
+        void* ptr = m_freeList.pop();
         m_mutex.unlock();
         return ptr;
     }
