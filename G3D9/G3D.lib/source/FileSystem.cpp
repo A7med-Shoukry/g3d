@@ -903,7 +903,7 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
             // Search for slash or end of string
             end = path.find_first_of('/', start);
             int i = path.find_first_of('\\', start);
-            if ((i != std::string::npos) && ((end == std::string::npos) || (i < end))) {
+            if ((size_t(i) != std::string::npos) && ((end == std::string::npos) || (size_t(i) < end))) {
                 end = i;
             }
             if (end == std::string::npos) {

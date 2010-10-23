@@ -14,10 +14,10 @@ namespace G3D {
 class BlockPoolMemoryManager : public ReferenceCountedObject {
 protected:
     
-    const size_t   m_blockSize;
-    Set<void*>     m_allBlocks;
-    Array<void*>   m_freeList;
-    GMutex         m_mutex;
+    const size_t         m_blockSize;
+    Set<uint32*>         m_allBlocks;
+    Array<uint32*>       m_freeList;
+    mutable GMutex       m_mutex;
 
     BlockPoolMemoryManager(size_t s) : m_blockSize(s) {}
 
@@ -42,8 +42,8 @@ public:
         alwaysAssertM(s == m_blockSize, "BlockPoolMemoryManager can only allocate fixed-size blocks");
         m_mutex.lock();
         if (m_freeList.size() == 0) {
-            m_freeList.append(new uint32[s/sizeof(uint32)]);
-            m_allBlocks.append(m_freeList.last());
+            m_freeList.append(new uint32[iCeil(double(s) / sizeof(uint32))]);
+            m_allBlocks.insert(m_freeList.last());
         }
         void* ptr = m_freeList.last();
         m_mutex.unlock();
@@ -66,8 +66,9 @@ public:
     /** Invoke to declare that this memory will no longer be used by
         the program.  The memory manager is not required to actually
         reuse or release this memory. */
-    virtual void free(void* ptr) {
-        if (ptr != NULL) {
+    virtual void free(void* _ptr) {
+        if (_ptr != NULL) {
+            uint32* ptr = (uint32*)_ptr; 
             m_mutex.lock();
             debugAssertM(m_allBlocks.contains(ptr), 
                          "Tried to BlockPoolMemoryManager::free a pointer not allocated by this memory manager.");
@@ -85,7 +86,7 @@ public:
 
     /** Creates a new instance. Each instance is allowed to have its own block size. */
     static BlockPoolMemoryManager::Ref create(size_t blockSize) {
-        retur new BlockPoolMemoryManager(blockSize);
+        return new BlockPoolMemoryManager(blockSize);
     }
 };
 
