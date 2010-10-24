@@ -261,7 +261,7 @@ Material::Specification ArticulatedModel::compute3DSMaterial
     if (preprocess.addBumpMaps) {
         // See if a bump map exists:
         std::string filename = 
-            pathConcat(pathConcat(path, filenamePath(texture1.filename)),
+            FilePath::concat(FilePath::concat(path, filenamePath(texture1.filename)),
                        filenameBase(texture1.filename) + "-bump");
 
         filename = findAnyImage(filename);
