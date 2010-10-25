@@ -42,8 +42,8 @@ public:
     /** Rounds to the nearest int */
     Vector3int32(const class Vector3int16& v);
     /** Rounds to the nearest int */
-    Vector3int32(const class Vector3& v);
-    Vector3int32(class BinaryInput& bi);
+    explicit Vector3int32(const class Vector3& v);
+    explicit Vector3int32(class BinaryInput& bi);
 
     void serialize(class BinaryOutput& bo) const;
     void deserialize(class BinaryInput& bi);

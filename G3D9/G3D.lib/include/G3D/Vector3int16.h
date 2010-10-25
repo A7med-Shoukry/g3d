@@ -45,8 +45,8 @@ public:
 
     Vector3int16() : x(0), y(0), z(0) {}
     Vector3int16(G3D::int16 _x, G3D::int16 _y, G3D::int16 _z) : x(_x), y(_y), z(_z) {}
-    Vector3int16(const class Vector3& v);
-    Vector3int16(class BinaryInput& bi);
+    explicit Vector3int16(const class Vector3& v);
+    explicit Vector3int16(class BinaryInput& bi);
 
     void serialize(class BinaryOutput& bo) const;
     void deserialize(class BinaryInput& bi);
