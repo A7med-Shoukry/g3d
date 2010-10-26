@@ -31,8 +31,8 @@ void SurfaceSample::sampleBSDF(const SuperBSDF::Ref& bsdf) {
 
 void SurfaceSample::sampleBump(const BumpMap::Ref& bump) {
     // TODO: Bump mapping goes here
-    shadingNormal = interpolatedNormal;
-    shadingLocation = geometricLocation;
+    shading.normal = shadingNormal = interpolatedNormal;
+    shading.location = shadingLocation = geometricLocation;
 }
 
 
@@ -44,13 +44,13 @@ void SurfaceSample::sample
  const Vector2&  texCoord,
  const Vector3&  interpolatedTangent,
  const Vector3&  interpolatedTangent2) {
-    this->material = material;
-    this->texCoord = texCoord;
-    this->geometricLocation = geometricLocation;
-    this->interpolatedNormal = interpolatedNormal;
-    this->geometricNormal = geometricNormal;
-    this->interpolatedTangent = interpolatedTangent;
-    this->interpolatedTangent2 = interpolatedTangent2;
+    this->material        = material;
+    interpolated.texCoord = this->texCoord = texCoord;
+    geometric.location    = this->geometricLocation = geometricLocation;
+    geometric.normal      = this->geometricNormal = geometricNormal;
+    interpolated.normal   = this->interpolatedNormal = interpolatedNormal;
+    interpolated.tangent  = this->interpolatedTangent = interpolatedTangent;
+    interpolated.tangent2 = this->interpolatedTangent2 = interpolatedTangent2;
     
     sampleEmit(material->emissive());
     sampleBSDF(material->bsdf());
@@ -65,8 +65,8 @@ void SurfaceSample::sample(const Tri::Intersector& intersector) {
     Vector3 n;
     Vector2 texCoord;
     Vector3 t1, t2;
-    intersector.getResult(P, n, texCoord, t1, t2);
-    sample(intersector.tri->material(), P, intersector.tri->normal(), n, texCoord, t1, t2);
+    intersector.getResult(P, n, interpolated.texCoord, t1, t2);
+    sample(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2);
 }
 
 } // G3D

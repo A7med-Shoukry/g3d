@@ -15,30 +15,63 @@ class SurfaceSample {
 public:
     Material::Ref material;
 
-    /** Location after bump map is applied. */
+    /** Location after bump map is applied. \deprecated */
     Point3     shadingLocation;
     
-    /** Normal after normal map is applied. */
+    /** Normal after normal map is applied. \deprecated*/
     Vector3    shadingNormal;
 
-    /** Smoothed (e.g., interpolated vertex normals) normal for curved surfaces. */
+    /** Smoothed (e.g., interpolated vertex normals) normal for curved surfaces. \deprecated*/
     Vector3    interpolatedNormal;
 
-    /** Location before bump map is applied. */
+    /** Location before bump map is applied. \deprecated*/
     Vector3    geometricLocation;
 
     /** Normal to the true surface (e.g., containing triangle face)
-        at the shading location. */
+        at the shading location. \deprecated*/
     Vector3    geometricNormal;
     
-    /** Approximately orthogonal to interpolatedNormal. */
+    /** Approximately orthogonal to interpolatedNormal. \deprecated*/
     Vector3    interpolatedTangent;
     
-    /** Approximately orthogonal to interpolatedNormal and interpolatedTangent. */
+    /** Approximately orthogonal to interpolatedNormal and interpolatedTangent. \deprecated*/
     Vector3    interpolatedTangent2;
 
-    /** Texture coordinate */
+    /** Texture coordinate \deprecated*/
     Vector2    texCoord;
+
+    /** Post-bump map shading information. This is probably what you
+        want to use if you're writing the shading code for a ray
+        tracer or software renderer.*/
+    struct Shading {
+        Vector3 normal;
+        Vector2 texCoord;
+        Vector3 location;
+    } shading;
+
+    /** Pre-bump map, interpolated attributes. These are probably not
+     what you want to use for shading--see the \a shading field
+     instead.*/
+    struct Interpolated {
+        /** The interpolated vertex normal. */
+        Vector3 normal;
+        Vector3 tangent;
+
+        /** This is the second tangent for parallax mapping (the
+            "bitangent".) */
+        Vector3 tangent2;
+        Vector2 texCoord;
+    } interpolated;
+
+    struct Geometric {
+        /** For a triangle, this is the face normal. This is useful
+         for ray bumping */
+        Vector3 normal;
+
+        /** Actual location on the surface (it may be changed by
+            displacement or bump mapping later. */
+        Vector3 location;
+    } geometric;
 
     /** Screen space derivative of the texture coordinate.  \beta Currently unused. */
     Vector2    dTexCoorddX;
@@ -91,7 +124,6 @@ public:
         shadingLocation to the geometricLocation.
     */
     void sampleBump(const BumpMap::Ref& bump);
-
 
     /** Samples all fields. */
     void sample
