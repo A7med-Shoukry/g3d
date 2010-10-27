@@ -4,7 +4,7 @@
  @author Morgan McGuire, http://graphics.cs.williams.edu
   
  @created 2008-07-01
- @edited  2008-07-01
+ @edited  2010-10-20
  */
 
 #include "G3D/platform.h"
@@ -22,9 +22,14 @@ Vector3int32 iFloor(const Vector3& v) {
 }
 
 Vector3int32::Vector3int32(const class Vector3& v) {
-    x = (int32)iFloor(v.x + 0.5);
-    y = (int32)iFloor(v.y + 0.5);
-    z = (int32)iFloor(v.z + 0.5);
+    x = (int32)(v.x + 0.5);
+    y = (int32)(v.y + 0.5);
+    z = (int32)(v.z + 0.5);
+}
+
+
+Vector3int32 Vector3int32::truncate(const class Vector3& v) {
+    return Vector3int32(int32(v.x), int32(v.y), int32(v.z));
 }
 
 

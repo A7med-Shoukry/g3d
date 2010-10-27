@@ -39,11 +39,14 @@ public:
 
     Vector3int32() : x(0), y(0), z(0) {}
     Vector3int32(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
-    /** Rounds to the nearest int */
+
     Vector3int32(const class Vector3int16& v);
+
     /** Rounds to the nearest int */
     explicit Vector3int32(const class Vector3& v);
     explicit Vector3int32(class BinaryInput& bi);
+
+    static Vector3int32 truncate(const class Vector3& v);
 
     void serialize(class BinaryOutput& bo) const;
     void deserialize(class BinaryInput& bi);
@@ -72,6 +75,16 @@ public:
 
     inline Vector3int32 operator*(const int s) const {
         return Vector3int32(x * s, y * s, z * s);
+    }
+
+    /** Integer division */
+    inline Vector3int32 operator/(const Vector3int32& other) const {
+        return Vector3int32(x / other.x, y / other.y, z / other.z);
+    }
+
+    /** Integer division */
+    inline Vector3int32 operator/(const int s) const {
+        return Vector3int32(x / s, y / s, z / s);
     }
 
     Vector3int32& operator+=(const Vector3int32& other) {
