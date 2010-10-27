@@ -103,6 +103,26 @@ public:
         return Color1(value * other.value);
     }
 
+    Color1& operator*=(const Color1 other) {
+        value *= other.value;
+        return *this;
+    }
+
+    Color1& operator*=(const float other) {
+        value *= other;
+        return *this;
+    }
+
+    Color1& operator/=(const float other) {
+        value /= other;
+        return *this;
+    }
+
+    Color1& operator/=(const Color1 other) {
+        value /= other.value;
+        return *this;
+    }
+
     Color1 operator* (const float other) const {
         return Color1(value * other);
     }

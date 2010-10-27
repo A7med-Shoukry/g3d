@@ -166,7 +166,7 @@ public:
         return m_underlyingRepresentation;
     }
 
-  /** For VBO_MEMORY, this is the offset.  For MAIN_MEMORY, this is
+    /** For VBO_MEMORY, this is the offset.  For MAIN_MEMORY, this is
         a pointer to the block of uploaded memory.
         
         When there was a dstOffset as a constructor argument, it has already
@@ -226,7 +226,7 @@ public:
            renderDevice->sendIndices(PrimitiveType::TRIANGLES, indexVARGPU);
        }
        renderDevice->endIndexedPrimitives();
-       \endcod
+       \endcode
     */
     template<class T>
     VertexRange(const T* sourcePtr, int _numElements, VertexBufferRef _area) {
@@ -245,15 +245,16 @@ public:
     }
 
 
-    /** Return a pointer to CPU-addressable memory for this VertexRange.  The buffer must be unmapped
-        later before any rendering calls are made.  This contains a glPushClientAttrib call
-        that must be matched by unmapBuffer.
+    /** Return a pointer to CPU-addressable memory for this
+        VertexRange.  The buffer must be unmapped later before any
+        rendering calls are made.  This contains a glPushClientAttrib
+        call that must be matched by unmapBuffer.
 
         Works for both CPU memory and VBO memory VertexRange.
 
         This method of moving data is not typesafe and is not recommended.
         
-        @param permissions Same as the argument to 
+        \param permissions Same as the argument to 
         <a href="http://www.opengl.org/sdk/docs/man/xhtml/glMapBuffer.xml">glMapBufferARB</a>:
         <code>GL_READ_ONLY</code>, <code>GL_WRITE_ONLY</code>, or <code>GL_READ_WRITE</code>.                
         */

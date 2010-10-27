@@ -294,7 +294,6 @@ ArticulatedModel::Ref ArticulatedModel::createEmpty() {
 }
 
 
-
 void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& preprocess) {
     Stopwatch s;
     std::string defaultTexture = "<white>";
