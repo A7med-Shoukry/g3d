@@ -173,8 +173,12 @@ public:
         varies from -1 to 1 on all axes.  The projection matrix does
         not include the camera transform.
 
+        For rendering direct to an OSWindow (vs. rendering to Texture/Framebuffer),
+        multiply this matrix by <code>Matrix4::scale(1, -1, 1)</code>. 
+
         This is the matrix that a RenderDevice (or OpenGL) uses as the projection matrix.
-        @sa RenderDevice::setProjectionAndCameraMatrix, RenderDevice::setProjectionMatrix, Matrix4::perspectiveProjection
+        \sa RenderDevice::setProjectionAndCameraMatrix, RenderDevice::setProjectionMatrix, Matrix4::perspectiveProjection,
+        gluPerspective
     */
     void getProjectUnitMatrix(const Rect2D& viewport, Matrix4& P) const;
 
@@ -292,8 +296,10 @@ public:
       upper left corner of the screen.  They are in viewport
       coordinates, not screen coordinates.
 
-      The ray origin is at the origin.  To start it at the image plane,
-      move it forward by imagePlaneDepth/ray.direction.z
+      The ray origin is at the camera-space origin, that is, in world space
+      it is at GCamera::coordinateFrame().translation.  To start it at the image plane,
+      move it forward by imagePlaneDepth/ray.direction.z along the camera's
+      look vector.
 
       Integer (x, y) values correspond to
       the upper left corners of pixels.  If you want to cast rays

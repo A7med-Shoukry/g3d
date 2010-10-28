@@ -22,22 +22,45 @@ class RenderDevice;
 typedef ReferenceCountedPointer<class VertexBuffer> VertexBufferRef;
 
 /**
- @brief A block of GPU memory within which G3D::VertexRanges can be allocated.
+ \brief A block of GPU memory within which G3D::VertexRange%s for
+ vertex, texcoord, normal, etc. arrays or index lists can be
+ allocated.
 
- Wrapper for OpenGL Vertex Buffer Object
+ The name "VertexBuffer" is historical an inherited from OpenGL; a
+ better name might be "StreamBuffer" since these are used to store
+ streaming arguments for GPU programs.
+
+ Allocate a VertexBuffer, then allocate VertexRange%s within it.  For example:
+
+ \code
+    // Allocate on CPU
+    Array<Vector3>   cpuVertex;
+    Array<Vector2>   cpuTexCoord;
+    Array<int>       cpuIndex;
+
+    ... initialize ...
+
+    // Upload to GPU
+    VertexBuffer::Ref vbuffer = VertexBuffer::create((sizeof(Vector3) + sizeof(Vector2)) * cpuVertex.size());
+    VertexRange gpuVertex   = VertexRange(cpuVertex, vbuffer);
+    VertexRange gpuTexCoord = VertexRange(cpuTexCoord, vbuffer);
+
+    VertexBuffer::Ref ibuffer = VertexBuffer::create(sizeof(int) * cpuIndex.size(), VertexBuffer::WRITE_ONCE, VertexBuffer::INDEX);
+    VertexRange gpuIndex = VertexRange(cpuIndex, ibuffer);
+ \endcode
+
+ VertexBuffer%s are garbage collected: when no pointers remain to
+ VertexRange%s inside it or the VertexBuffer itself, it will
+ automatically be reclaimed by the system.
+
+ You cannot mix pointers from different VertexBuffer%s when rendering.
+ For example, if the vertex VertexRange is in one VertexBuffer, the
+ normal VertexRange and color VertexRange must come from the same
+ area.
+
+ This class corresponds closely to the OpenGL Vertex Buffer Object
  http://oss.sgi.com/projects/ogl-sample/registry/ARB/vertex_buffer_object.txt
  http://developer.nvidia.com/docs/IO/8230/GDC2003_OGL_BufferObjects.ppt
-
- Allocate a VertexBuffer, then allocate VertexRanges within it.  VertexBuffer are garbage
- collected: when no pointers remain to VertexRanges inside it or the VertexBuffer itself,
- it will automatically be reclaimed by the system.
-
- You cannot mix pointers from different VertexBuffers when rendering.  For
- example, if the vertex VertexRange is in one VertexBuffer, the normal VertexRange and color
- VertexRange must come from the same area.
-
- You can't find out how much space is left for VARAreas in video memory,
- except by checking the VertexBuffer::create value and seeing if it is NULL.
  */
 class VertexBuffer : public ReferenceCountedObject {
 public:
