@@ -139,15 +139,20 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
         s->m_lighting->environmentMapConstant = s->m_skyBoxConstant;
     }
 
-	if ((s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP) && 
-		(s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
-		throw std::string("skyBox texture must be a cube map.");
-	}
+    if ((s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP) && 
+        (s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
+        throw std::string("skyBox texture must be a cube map.");
+    }
+    
+    if ((s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP) && 
+        (s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
+        throw std::string("environmentMap texture must be a cube map.");
+    }
 
-	if ((s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP) && 
-		(s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
-		throw std::string("environmentMap texture must be a cube map.");
-	}
+    // Set the initial positions
+    for (int e = 0; e < s->m_entityArray.size(); ++e) {
+        s->m_entityArray[e]->onSimulation(0, 0);
+    }
 
     return s;
 }

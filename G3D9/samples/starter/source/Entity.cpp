@@ -13,8 +13,5 @@ Entity::Ref Entity::create
  AnyTableReader&    propertyTable,
  const ModelTable&  modelTable) {
 
-    Entity::Ref e = new Entity(name, propertyTable, modelTable);
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
+    return new Entity(name, propertyTable, modelTable);
 }
