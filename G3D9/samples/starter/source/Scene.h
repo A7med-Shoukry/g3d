@@ -2,23 +2,8 @@
 #define Scene_h
 
 #include <G3D/G3DAll.h>
+#include "Entity.h"
 
-class Entity : public GEntity {
-private:
-    Entity();
-
-    Entity(const std::string& n, const PhysicsFrameSpline& frameSpline, 
-        const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
-        const MD2Model::Ref& md2Model,
-        const MD3Model::Ref& md3Model);
-
-public:
-    typedef ReferenceCountedPointer<Entity> Ref;
-
-    static Entity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline);
-    static Entity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD2Model::Ref& m);
-    static Entity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m);
-};
 
 /** Sample scene graph.
 
@@ -37,7 +22,7 @@ protected:
     Texture::Ref                m_skyBoxTexture;
     float                       m_skyBoxConstant;
     Array<Entity::Ref>          m_entityArray;
-	
+
     Scene() : 
         m_time(0), 
         m_skyBoxTexture(Texture::whiteCube()), 

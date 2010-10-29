@@ -7,6 +7,38 @@ namespace G3D {
 
 GEntity::GEntity() {}
 
+GEntity::GEntity
+(const std::string& name,
+ AnyTableReader&    propertyTable,
+ const ModelTable&  modelTable) 
+    : m_name(name),
+      m_modelType(ARTICULATED_MODEL) {
+
+    const Any& modelNameAny = propertyTable["model"];
+    const std::string& modelName = modelNameAny.string();
+    
+    const ReferenceCountedPointer<ReferenceCountedObject>* model = modelTable.getPointer(modelName);
+    modelNameAny.verify((model != NULL), 
+                        "Can't instantiate undefined model named " + modelName + ".");
+    
+    m_artModel = model->downcast<ArticulatedModel>();
+    m_md2Model = model->downcast<MD2Model>();
+    m_md3Model = model->downcast<MD3Model>();
+
+    if (m_artModel.notNull()) {
+        m_modelType = ARTICULATED_MODEL;
+        propertyTable.getIfPresent("pose", m_artPoseSpline);
+    } else if (m_md2Model.notNull()) {
+        m_modelType = MD2_MODEL;
+    } else if (m_md3Model.notNull()) {
+        m_modelType = MD3_MODEL;
+    }
+
+    // Create a default value
+    m_frameSpline = CFrame();
+    propertyTable.getIfPresent("position", m_frameSpline);
+}
+
 
 GEntity::GEntity
 (const std::string& n, const PhysicsFrameSpline& frameSpline, 
@@ -114,8 +146,8 @@ void GEntity::getBounds(Sphere& sphere) const {
 }
 
 float GEntity::intersectBounds(const Ray& R, float maxDistance) const {
-	// TODO
-	return finf();
+    // TODO
+    return finf();
 }
 
 }

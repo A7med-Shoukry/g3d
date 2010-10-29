@@ -3,43 +3,6 @@
 using namespace G3D::units;
 
 
-Entity::Entity
-(const std::string& n, const PhysicsFrameSpline& frameSpline, 
- const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
- const MD2Model::Ref& md2Model,
- const MD3Model::Ref& md3Model) : GEntity(n, frameSpline, artModel, artPoseSpline, md2Model, md3Model) {
-}
-
-
-Entity::Ref Entity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline) {
-    Entity::Ref e = new Entity(n, frameSpline, m, poseSpline, NULL, NULL);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-Entity::Ref Entity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD2Model::Ref& m) {
-    Entity::Ref e = new Entity(n, frameSpline, NULL, ArticulatedModel::PoseSpline(), m, NULL);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-Entity::Ref Entity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m) {
-    Entity::Ref e = new Entity(n, frameSpline, NULL, ArticulatedModel::PoseSpline(), NULL, m);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-////////////////////////////////////////////////////////////////////////
-
 void Scene::onSimulation(GameTime deltaTime) {
     m_time += deltaTime;
     for (int i = 0; i < m_entityArray.size(); ++i) {
@@ -145,37 +108,13 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     Any entities = any["entities"];
     for (Table<std::string, Any>::Iterator it = entities.table().begin(); it.hasMore(); ++it) {
         const std::string& name = it->key;
-        const Any& modelArgs = it->value;
 
-        modelArgs.verifyType(Any::ARRAY);
-        const ModelRef* model = modelTable.getPointer(modelArgs.name());
-        modelArgs.verify((model != NULL), 
-            "Can't instantiate undefined model named " + modelArgs.name() + ".");
-
-        PhysicsFrameSpline frameSpline;
-        ArticulatedModel::PoseSpline poseSpline;
-        if (modelArgs.size() >= 1) {
-            frameSpline = modelArgs[0];
-            if (modelArgs.size() >= 2) {
-                // Poses 
-                poseSpline = modelArgs[1];
-            }
-        } else {
-            // Need at least one coordinate frame in the spline.
-            frameSpline.append(CFrame());
-        }
-
-        ArticulatedModel::Ref artModel = model->downcast<ArticulatedModel>();
-        MD2Model::Ref         md2Model = model->downcast<MD2Model>();
-        MD3Model::Ref         md3Model = model->downcast<MD3Model>();
-
-        if (artModel.notNull()) {
-            s->m_entityArray.append(Entity::create(name, frameSpline, artModel, poseSpline));
-        } else if (md2Model.notNull()) {
-            s->m_entityArray.append(Entity::create(name, frameSpline, md2Model));
-        } else if (md3Model.notNull()) {
-            s->m_entityArray.append(Entity::create(name, frameSpline, md3Model));
-        }
+        AnyTableReader propertyTable(it->value);
+        if (it->value.nameEquals("Entity")) {
+            s->m_entityArray.append(Entity::create(name, propertyTable, modelTable));
+        } /* else if (it->value.nameEquals("...")) {  TODO: add your own subclasses here! } */
+        
+        propertyTable.verifyDone();
     }
 
     // Load the camera

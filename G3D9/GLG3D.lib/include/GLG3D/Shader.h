@@ -540,26 +540,26 @@ typedef ReferenceCountedPointer<Shader> ShaderRef;
   constructor, the following additional features will be available
   inside the shaders:
 
-  <PRE>
+  \code
     uniform mat4 g3d_WorldToObjectMatrix;
     uniform mat4 g3d_ObjectToWorldMatrix;
     uniform mat4 g3d_WorldToCameraMatrix;
     uniform mat4 g3d_CameraToWorldMatrix;
     uniform mat3 g3d_ObjectToWorldNormalMatrix; // Upper 3x3 matrix (assumes that the transformation is RT so that the inverse transpose of the upper 3x3 is just R)
     uniform mat3 g3d_WorldToObjectNormalMatrix; // Upper 3x3 matrix (assumes that the transformation is RT so that the inverse transpose of the upper 3x3 is just R)
-   </pre>
+  \endcode
 
    Macros:
-   <pre>
+   \code
     vec2 g3d_sampler2DSize(sampler2D t);        // Returns the x and y dimensions of t
     vec2 g3d_sampler2DInvSize(sampler2D t);     // Returns vec2(1.0, 1.0) / g3d_size(t) at no additional cost
 
     int g3d_Index(sampler t); // Replaced at compile-time with the OpenGL index of the texture unit for samplerName (which must be a uniform).
-    // This is needed when reading from textures rendered using Framebuffer, which are likely upside down and have inverted texture coordinates.
     // Typical usage : gl_TexCoord[g3d_Index(sampler)]
 
+    // Source inclusion:
     \#include "file"
-  </PRE>
+   \endcode
 
   The macros that take a sampler argument must not have anything (even
   spaces!) inside the parentheses and their argument must be the name

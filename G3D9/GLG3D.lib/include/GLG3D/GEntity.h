@@ -21,6 +21,9 @@ class GEntity : public ReferenceCountedObject {
 public:
     typedef ReferenceCountedPointer<GEntity> Ref;
 
+    /** Maps model names that are referenced in to ArticulatedModel::Ref, MD2Model::Ref or MD3::ModelRef */
+    typedef Table<std::string, ReferenceCountedPointer<ReferenceCountedObject> > ModelTable;
+
 protected:
 
     enum ModelType {
@@ -61,16 +64,63 @@ protected:
 
     GEntity();
 
+    /** \deprecated */
     GEntity(const std::string& n, const PhysicsFrameSpline& frameSpline, 
         const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
         const MD2Model::Ref& md2Model,
         const MD3Model::Ref& md3Model);
 
+
+    /**\brief Construct a GEntity.
+
+       \param name The name of this GEntity, e.g., "Player 1"
+
+       \param propertyTable The form is given below.  It is intended that
+       subclasses replace the table name and add new fields.
+
+       \code
+       <some base class name> {
+           model    = <modelname>,
+           position = <CFrame, Vector3, or PhysicsFrameSpline>,
+           pose     = <ArticulatedModel::PoseSpline>
+       }
+       \endcode
+
+       The pose and position fields are optional.  The GEntity base class
+       reads these fields.  Other subclasses read their own fields.
+
+       \param modelTable Maps model names that are referenced in \a propertyTable
+       to ArticulatedModel::Ref, MD2Model::Ref or MD3::ModelRef.
+       
+       The original caller (typically, a Scene class) should invoke
+       AnyTableReader::verifyDone to ensure that all of the fields 
+       specified were read by some subclass along the inheritance chain.       
+
+       See samples/starter/source/Scene.cpp for an example of use.
+     */
+    GEntity
+    (const std::string& name,
+     AnyTableReader&    propertyTable,
+     const ModelTable&  modelTable);
+
 public:
 
+    /** \deprecated */
     static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline);
+
+    /** \deprecated */
     static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD2Model::Ref& m);
+
+    /** \deprecated */
     static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m);
+
+    /** \copydoc GEntity(const std::string&, AnyTableReader&, const ModelTable&)*/
+    static GEntity::Ref create 
+    (const std::string& name,
+     AnyTableReader&    propertyTable,
+     const ModelTable&  modelTable) {
+        return new GEntity(name, propertyTable, modelTable);
+    }
 
     const CFrame& frame() const {
         return m_frame;

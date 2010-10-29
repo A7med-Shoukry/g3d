@@ -20,6 +20,7 @@ href="classes.html">Classes</a>.
     \link G3D::_BSPMAP::Map BSPMap\endlink,
     \link G3D::debugDraw debugDraw\endlink,
     \link G3D::DirectionHistogram DirectionHistogram\endlink,
+    \link G3D::GEntity GEntity\endlink,
     \link G3D::GFont GFont\endlink,
     \link G3D::SuperSurface SuperSurface\endlink
     \link G3D::SuperSurface::CPUGeom SuperSurface::CPUGeom\endlink,
@@ -172,12 +173,6 @@ href="classes.html">Classes</a>.
     \link G3D::UprightFrame UprightFrame\endlink,
     \link G3D::UprightSpline UprightSpline\endlink,
     \link G3D::CollisionDetection CollisionDetection\endlink,
-    \link G3D::Color1 Color1\endlink,
-    \link G3D::Color1uint8 Color1uint8\endlink,
-    \link G3D::Color3 Color3\endlink,
-    \link G3D::Color3uint8 Color3uint8\endlink,
-    \link G3D::Color4 Color4\endlink,
-    \link G3D::Color4uint8 Color4uint8\endlink,
     \link G3D::Cone Cone\endlink,
     \link G3D::ConvexPolygon ConvexPolygon\endlink,
     \link G3D::ConvexPolygon2D ConvexPolygon2D\endlink,
@@ -203,11 +198,7 @@ href="classes.html">Classes</a>.
     \link G3D::PhysicsFrame PhysicsFrame\endlink (\link G3D::PhysicsFrame PFrame\endlink),
     \link G3D::PhysicsFrameSpline PhysicsFrameSpline\endlink,
     \link G3D::Plane Plane\endlink,
-    \link G3D::Point2 Point2\endlink,
-    \link G3D::Point3 Point3\endlink,
-    \link G3D::Power3 Power3\endlink,
     \link G3D::Ray Ray\endlink,
-    \link G3D::Radiance3 Radiance3\endlink,
     \link G3D::RealTime RealTime\endlink,
     \link G3D::Rect2D Rect2D\endlink,
     \link G3D::Sphere Sphere\endlink,
@@ -215,16 +206,24 @@ href="classes.html">Classes</a>.
     \link G3D::Triangle Triangle\endlink,
     \link G3D::tesselateComplexPolygon tesselateComplexPolygon\endlink,
     \link G3D::toSeconds toSeconds\endlink,
-    \link G3D::Vector2 Vector2\endlink,
+    \link G3D::Vector2 Vector2\endlink (\link G3D::Point2 Point2\endlink),
     \link G3D::Vector2int16 Vector2int16\endlink,
     \link G3D::Vector2int32 Vector2int16\endlink,
-    \link G3D::Vector3 Vector3\endlink,
+    \link G3D::Vector3 Vector3\endlink (\link G3D::Point3 Point3\endlink),
     \link G3D::Vector3int16 Vector3int16\endlink,
     \link G3D::Vector3int32 Vector3int32\endlink,
     \link G3D::Vector4 Vector4\endlink,
     \link G3D::Vector4int8 Vector4int8\endlink,
     \link G3D::Welder Welder\endlink
-     
+
+  <li><b>Radiometry</b>  &nbsp;&nbsp;
+    \link G3D::Color1 Color1\endlink,
+    \link G3D::Color1uint8 Color1uint8\endlink,
+    \link G3D::Color3 Color3\endlink (\link G3D::Power3 Power3\endlink, \link G3D::Radiance3 Radiance3\endlink, \link G3D::Irradiance3 Irradiance3\endlink),
+    \link G3D::Color3uint8 Color3uint8\endlink,
+    \link G3D::Color4 Color4\endlink,
+    \link G3D::Color4uint8 Color4uint8\endlink
+      
   <LI><B>Integer math</B> &nbsp; &nbsp;
     \link G3D::ceilPow2 ceilPow2\endlink,
     \link G3D::highestBit highestBit\endlink,
@@ -468,6 +467,6 @@ href="classes.html">Classes</a>.
      PRAGMA(), G3D_BEGIN_PACKED_CLASS(), G3D_END_PACKED_CLASS(),
      G3D_CHECK_PRINTF_METHOD_ARGS(), G3D_CHECK_VPRINTF_METHOD_ARGS(),
      G3D_CHECK_PRINTF_ARGS(), G3D_CHECK_VPRINTF_ARGS(),
-     G3D_START_AT_MAIN, G3D_DEPRECATED, G3D_DEBUG
+     G3D_START_AT_MAIN(), G3D_DEPRECATED(), G3D_DEBUG
    </UL>
  */

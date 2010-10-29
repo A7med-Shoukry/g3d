@@ -696,15 +696,14 @@ private:
    It is an error to consume the same element more than once from
    the same iterator.
 
-   <pre>
+    \code
     AnyTableReader r(a);
     r.getIfPresent("enabled", enabled);
     r.getIfPresent("showSamples", showSamples);
-    
     r.get("showTiles", showTiles);
 
     r.verifyDone();
-    </pre>
+    \endcode
 
     \beta
 */
@@ -798,6 +797,11 @@ public:
         m_alreadyRead.insert(toLower(s));
     }
 
+    /** Same as get() */
+    const Any& operator[](const std::string& s) {
+        m_alreadyRead.insert(toLower(s));
+        return m_any[s];
+    }
 
     /** Get the value associated with a key only if the key is actually present.
     
@@ -821,6 +825,12 @@ public:
         } else {
             return false;
         }
+    }
+
+    /** \return True if \a s is in the table and has not yet been read
+        using get() or getIfPresent(). */
+    bool containsUnread(const std::string& s) const {
+        return m_any.containsKey(s) && ! m_alreadyRead.contains(toLower(s));
     }
 };
 

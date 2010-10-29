@@ -114,7 +114,7 @@
 // for debug assertions in inlined methods.
 #  pragma warning (disable : 4127)
 
-/** @def G3D_DEPRECATED()
+/** \def G3D_DEPRECATED()
     Creates deprecated warning. */
 #  define G3D_DEPRECATED __declspec(deprecated)
 
