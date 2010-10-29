@@ -6,7 +6,10 @@
 class Entity : public GEntity {
 private:
 
-    Entity();
+    /** Prevent instantiation */
+    Entity() {}
+
+protected:
 
     Entity
     (const std::string& name,
