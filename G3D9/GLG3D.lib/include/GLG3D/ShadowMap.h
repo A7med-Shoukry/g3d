@@ -89,13 +89,13 @@ public:
     \param lightProjY Scene bounds in the light's reference frame for
     a directional light.  Not needed for a spot light
 
-    \param lightProjNear Shadow map near plane depth in the light's
+    \param lightProjNearMin Shadow map near plane depth in the light's
     reference frame for a directional light.  For a spot light, a
     larger value will be chosen if the method determines that it can
     safely do so.  For directional and point lights, this value is
     used directly.
 
-    \param lightProjFar Shadow map far plane depth in the light's
+    \param lightProjFarMax Shadow map far plane depth in the light's
     reference frame for a directional light.   For a spot light, a
     smaller value will be chosen if the method determines that it can
     safely do so.  For directional and point lights, this value is
@@ -105,8 +105,8 @@ public:
     Set to 0 to cast shadows as far as the entire scene.
     */
     static void computeMatrices
-    (const GLight& light, const AABox& sceneBounds, GCamera& lightFrame, Matrix4& lightProjectionMatrix,
-     float lightProjX = 20, float lightProjY = 20, float lightProjNear = 1.0f, float lightProjFar = 60,
+    (const GLight& light, const AABox& sceneBounds, GCamera& lightCamera, Matrix4& lightProjectionMatrix,
+     float lightProjX = 20, float lightProjY = 20, float lightProjNearMin = 0.3f, float lightProjFarMax = 500.0f,
      float intensityCutoff = 1/255.0f);
 
     /** Call with desiredSize = 0 to turn off shadow maps.

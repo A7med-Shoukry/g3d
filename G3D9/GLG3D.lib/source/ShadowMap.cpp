@@ -249,29 +249,27 @@ void ShadowMap::computeMatrices
 
     const CFrame& f = lightFrame.coordinateFrame();
 
-    float lightProjNear = lightProjNearMin;
-    float lightProjFar  = lightProjFarMax;
+    float lightProjNear = finf();
+    float lightProjFar  = 0.0f;
 
     // TODO: for a spot light, only consider objects this light can see
 
     // Find nearest and farthest corners of the scene bounding box
-    lightProjNear = finf();
-    lightProjFar  = 0;
     for (int c = 0; c < 8; ++c) {
-        Vector3 v = sceneBounds.corner(c);
-        v = f.pointToObjectSpace(v);
-        lightProjNear = min(lightProjNear, -v.z);
-        lightProjFar = max(lightProjFar, -v.z);
+        const Vector3&  v         = sceneBounds.corner(c);
+        const float     distance = -f.pointToObjectSpace(v).z;
+
+        lightProjNear  = min(lightProjNear, distance);
+        lightProjFar   = max(lightProjFar, distance);
     }
     
     // Don't let the near get too close to the source, and obey
     // the specified hint.
     lightProjNear = max(lightProjNearMin, lightProjNear);
-    
+
     // Don't bother tracking shadows past the effective radius
     lightProjFar = min(light.effectSphere(intensityCutoff).radius, lightProjFar);
-    lightProjFar = max(lightProjNear + 0.1f, min(lightProjFarMax, 
-                                                 lightProjFar));
+    lightProjFar = max(lightProjNear + 0.1f, min(lightProjFarMax, lightProjFar));
 
     if (light.spotHalfAngle <= halfPi()) {
         // TODO: Square spot

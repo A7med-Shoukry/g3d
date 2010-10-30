@@ -142,9 +142,9 @@ public:
     /** @param pointDirection Will be normalized.  Points in the
         direction that light propagates.
 
-        @param cutOffAngleDegrees Must be on the range [0, 90]. This
+        \param halfAngleRadians Must be on the range [0, pi()/2]. This
         is the angle from the point direction to the edge of the light
-        cone.  I.e., a value of 45 produces a light with a 90-degree 
+        cone.  I.e., a value of pi() / 4 produces a light with a pi() / 2-degree 
         cone of view.
     */
     static GLight spot(const Vector3& pos, const Vector3& pointDirection, float halfAngleRadians, 
