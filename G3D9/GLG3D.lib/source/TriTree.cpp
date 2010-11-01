@@ -21,6 +21,32 @@ const char* TriTree::algorithmName(SplitAlgorithm s) {
 }
 
 
+void TriTree::intersectSphere
+(const Sphere& sphere,
+ Array<Tri>&   triArray) const {
+
+    for (int t = 0; t < m_size; ++t) {
+        const Tri& tri = m_triArray[t];
+        if (CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
+            triArray.append(tri);
+        }
+    }
+}
+
+
+void TriTree::intersectBox
+(const AABox&  box,
+ Array<Tri>&   triArray) const {
+
+    for (int t = 0; t < m_size; ++t) {
+        const Tri& tri = m_triArray[t];
+        if (CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
+            triArray.append(tri);
+        }
+    }
+}
+
+
 void TriTree::setContents(const Array<Surface::Ref>& surfaceArray, ImageStorage newStorage, const Settings& settings) {
     Array<Tri> triArray;
 

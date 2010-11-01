@@ -75,7 +75,8 @@ namespace G3D {
   <tr><td><b>Line</b></td><td>Line::closestPoint Line::distance</td><td></td><td>\link CollisionDetection::closestPointsBetweenLineAndLine CD\endlink</td><td></td><td bgcolor=#C0C0C0 colspan=7 ></td></tr>
   <tr><td><b>Plane</b></td><td></td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=6 ></td></tr>
   <tr><td><b>Triangle</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=5 ></td></tr>
-  <tr><td><b>Sphere</b></td><td>Sphere::contains</td><td></td><td>\link CollisionDetection::collisionTimeForMovingPointFixedSphere CD \endlink, \link Ray::intersectionTime R::time\endlink</td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=4 ></td></tr>
+  <tr><td><b>Sphere</b></td><td>Sphere::contains</td><td></td><td>\link CollisionDetection::collisionTimeForMovingPointFixedSphere CD \endlink, \link Ray::intersectionTime R::time\endlink</td><td></td><td></td><td>\link G3D::CollisionDetection::fixedSolidSphereIntersectsFixedTriangle CD\endlink</td><td>
+\link G3D::CollisionDetection::penetrationDepthForFixedSphereFixedSphere CD\endlink</td><td bgcolor=#C0C0C0 colspan=4 ></td></tr>
   <tr><td><b>Cylinder</b></td><td>Cylinder::contains</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=3 ></td></tr>
   <tr><td><b>Capsule</b></td><td>Capsule::contains</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=2 ></td></tr>
   <tr><td><b>AABox</b></td><td>AABox::contains</td><td></td><td></td><td></td><td></td><td>\link CollisionDetection::fixedSolidBoxIntersectsFixedTriangle CD\endlink</td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=1 ></td></tr>
@@ -88,7 +89,7 @@ namespace G3D {
   <i>* Note: Moving collision detection against certain primitives is equivalent to static collision
    detection against a bigger primitive.  Ray, Line Segment == ``moving Point''; Capsule ==``moving Sphere''; Plane == ``moving Line''</i>
 
-   @deprecated Routines moving to the G3D::Intersect class in G3D 8.0
+   @deprecated Routines moving to the G3D::Intersect class in G3D 9.0
  */
 class CollisionDetection {
 private:

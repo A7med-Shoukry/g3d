@@ -1,10 +1,10 @@
 /**
-  @file GLG3D/TriTree.h
+  \file GLG3D/TriTree.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2009-06-10
-  @edited  2009-06-29
+  \created 2009-06-10
+  \edited  2009-06-29
 */
 #ifndef G3D_TriTree_h
 #define G3D_TriTree_h
@@ -479,6 +479,18 @@ public:
     (const Ray& ray,
      Tri::Intersector& intersectCallback, 
      float& distance) const;
+
+    /** Returns all triangles that intersect or are contained within
+        the sphere (technically, this is a ball intersection). */
+    void intersectSphere
+    (const Sphere& sphere,
+     Array<Tri>&   triArray) const;
+
+    /** Returns all triangles that intersect or are contained within
+        the box. */
+    void intersectBox
+    (const AABox&  box,
+     Array<Tri>&   triArray) const;
 
     /** Render the tree for debugging and visualization purposes. 
         Inefficent.
