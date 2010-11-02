@@ -40,8 +40,9 @@ class Any;
  you can create models (with ArticulatedModel::createEmpty) from code at
  run time.  You can also load a model and then adjust the materials
  explicitly.  See ArticulatedModel::Preprocess and
- ArticulatedModel::Setings for options.  See <a href="http://web.axelero.hu/karpo/">3D Object Converter</a> for 
- a shareware program that converts between many other file formats.
+ ArticulatedModel::Setings for options.  See <a href="http://web.axelero.hu/karpo/">3D Object Converter</a> and
+ <a href="http://meshlab.sourceforge.net/">Meshlab</a> for some software that can
+ convert between various 3D file formats.
 
  Note that merging parts by material can dramatically improve the performance 
  of rendering imported models.  The easiest way to import models is to create a

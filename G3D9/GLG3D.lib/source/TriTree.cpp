@@ -27,7 +27,7 @@ void TriTree::intersectSphere
 
     for (int t = 0; t < m_size; ++t) {
         const Tri& tri = m_triArray[t];
-        if (CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
+        if ((tri.area() > 0) && CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
             triArray.append(tri);
         }
     }
@@ -40,7 +40,7 @@ void TriTree::intersectBox
 
     for (int t = 0; t < m_size; ++t) {
         const Tri& tri = m_triArray[t];
-        if (CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
+        if ((tri.area() > 0) && CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
             triArray.append(tri);
         }
     }
