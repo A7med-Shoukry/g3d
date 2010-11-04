@@ -12,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\samples\starter\source\App.h" />
+    <ClInclude Include="..\samples\starter\source\Entity.h" />
     <ClInclude Include="..\samples\starter\source\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\samples\starter\source\App.cpp" />
+    <ClCompile Include="..\samples\starter\source\Entity.cpp" />
     <ClCompile Include="..\samples\starter\source\Scene.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

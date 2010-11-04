@@ -17,12 +17,18 @@
     <ClInclude Include="..\samples\starter\source\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\samples\starter\source\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\samples\starter\source\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\samples\starter\source\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\samples\starter\source\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
