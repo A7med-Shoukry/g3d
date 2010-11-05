@@ -103,6 +103,9 @@ void SuperBSDF::getImpulses
  SmallArray<Impulse, 3>& impulseArray,
  bool            lowFreq) const {
 
+    debugAssert(w_i.isUnit());
+    debugAssert(n.isUnit());
+
     Color3 F(0,0,0);
     bool Finit = false;
 
@@ -134,6 +137,7 @@ void SuperBSDF::getImpulses
                 imp.coefficient  = F;
                 imp.eta          = m_eta_r;
                 imp.extinction   = m_extinction_r;
+                debugAssert(imp.w.isUnit());
             }
         }
     }
@@ -171,6 +175,8 @@ void SuperBSDF::getImpulses
         if (imp.w.isZero()) {
             // Total internal refraction
             impulseArray.popDiscard();
+        } else {
+            debugAssert(imp.w.isUnit());
         }
     }
 }
