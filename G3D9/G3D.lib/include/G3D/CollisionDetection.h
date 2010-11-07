@@ -1,5 +1,5 @@
 /**
-  @file CollisionDetection.h
+  \file CollisionDetection.h
 
 
   Moving collision detection for simple primitives.
@@ -12,10 +12,10 @@
   Thanks to Max McGuire of Iron Lore for various bug fixes.
   Box-Triangle by Tomas Akenine-Moller
 
-  @created 2001-11-19
-  @edited  2008-12-19
+  \created 2001-11-19
+  \edited  2010-11-10
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 
@@ -78,7 +78,7 @@ namespace G3D {
   <tr><td><b>Sphere</b></td><td>Sphere::contains</td><td></td><td>\link CollisionDetection::collisionTimeForMovingPointFixedSphere CD \endlink, \link Ray::intersectionTime R::time\endlink</td><td></td><td></td><td>\link G3D::CollisionDetection::fixedSolidSphereIntersectsFixedTriangle CD\endlink</td><td>
 \link G3D::CollisionDetection::penetrationDepthForFixedSphereFixedSphere CD\endlink</td><td bgcolor=#C0C0C0 colspan=4 ></td></tr>
   <tr><td><b>Cylinder</b></td><td>Cylinder::contains</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=3 ></td></tr>
-  <tr><td><b>Capsule</b></td><td>Capsule::contains</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=2 ></td></tr>
+  <tr><td><b>Capsule</b></td><td>Capsule::contains</td> <td></td> <td></td> <td></td> <td></td> <td>\link G3D::CollisionDetection::collisionTimeForMovingSphereFixedTriangle CD\endlink</td> <td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=2 ></td></tr>
   <tr><td><b>AABox</b></td><td>AABox::contains</td><td></td><td></td><td></td><td></td><td>\link CollisionDetection::fixedSolidBoxIntersectsFixedTriangle CD\endlink</td><td></td><td></td><td></td><td></td><td bgcolor=#C0C0C0 colspan=1 ></td></tr>
   <tr><td><b>Box</b></td><td>Box::contains</td><td>(treat as Ray)</td><td>\link CollisionDetection::collisionTimeForMovingPointFixedBox CD\endlink</td><td>(treat as Ray)</td><td>\link CollisionDetection::penetrationDepthForFixedBoxFixedPlane CD \endlink</td><td>\link CollisionDetection::penetrationDepthForFixedBoxFixedPlane CD\endlink</td><td>\link CollisionDetection::penetrationDepthForFixedSphereFixedBox CD\endlink</td><td>None (use OPCODE)</td><td>\link CollisionDetection::movingSpherePassesThroughFixedBox CD \endlink</td><td>\link CollisionDetection::penetrationDepthForFixedBoxFixedBox CD\endlink</td><td>\link CollisionDetection::penetrationDepthForFixedBoxFixedBox CD\endlink</td></tr>
   </table>
