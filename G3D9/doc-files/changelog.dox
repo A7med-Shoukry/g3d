@@ -31,6 +31,8 @@
      <li> G3D::GApp::removeDebugShape, G3D::GApp::removeAllDebugShapes
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default
      <li> G3D::GApp::show
+     <li> G3D::ShadowMap::updateDepth now allows small negative values
+     <li> G3D::MD2Model::Specification::negateNormals
      <li> G3D::SurfaceSample
      <li> G3D::PointHashGrid::Iterator::hasMore
      <li> G3D::GLight::castsShadows

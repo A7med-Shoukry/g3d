@@ -116,7 +116,7 @@ void ShadowMap::updateDepth
  float                           biasDepth,
  RenderDevice::CullFace          cullFace) {
 
-    if (biasDepth < 0) {
+    if (biasDepth == USE_DEFAULT_BIAS) {
         biasDepth = m_bias;
     }
 

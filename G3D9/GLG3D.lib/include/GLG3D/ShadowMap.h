@@ -167,9 +167,11 @@ public:
 
     bool enabled() const;
 
+    enum {USE_DEFAULT_BIAS = -1};
+
     /** 
     \param biasDepth amount to bias z values by in the biasedMVP when
-    later rendering Usually around 0.0001-0.005.  If negative,
+    later rendering Usually around 0.0001-0.005.  If USE_DEFAULT_BIAS,
     the current bias() value is used.  This field is deprecated.
     */
     virtual void updateDepth
@@ -177,7 +179,7 @@ public:
      const CoordinateFrame&        lightFrame,
      const Matrix4&                lightProjectionMatrix,
      const Array< ReferenceCountedPointer<Surface> >& shadowCaster,
-     float                         biasDepth = -1,
+     float                         biasDepth = USE_DEFAULT_BIAS,
      RenderDevice::CullFace        cullFace = RenderDevice::CULL_BACK);
 
     /** Model-View-Projection matrix that maps world space to the

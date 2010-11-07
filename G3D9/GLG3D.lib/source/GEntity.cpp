@@ -92,10 +92,7 @@ GEntity::Ref GEntity::create(const std::string& n, const PhysicsFrameSpline& fra
 }
 
 
-void GEntity::onSimulation(GameTime absoluteTime, GameTime deltaTime) {
-    (void)deltaTime;
-    m_frame = m_frameSpline.evaluate(float(absoluteTime));
-
+void GEntity::simulatePose(GameTime absoluteTime, GameTime deltaTime) {
     switch (m_modelType) {
     case ARTICULATED_MODEL:
         m_artPoseSpline.get(float(absoluteTime), m_artPose);
@@ -112,6 +109,13 @@ void GEntity::onSimulation(GameTime absoluteTime, GameTime deltaTime) {
         m_md3Model->simulatePose(m_md3Pose, deltaTime);
         break;
     }
+}
+
+
+void GEntity::onSimulation(GameTime absoluteTime, GameTime deltaTime) {
+    m_frame = m_frameSpline.evaluate(float(absoluteTime));
+
+    simulatePose(absoluteTime, deltaTime);
 }
 
 

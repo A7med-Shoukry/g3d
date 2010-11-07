@@ -63,10 +63,10 @@ static Material::Ref makeWeaponMaterial(const std::string& path) {
 }
 
 
-MD2Model::Specification::Specification() : scale(1.0f) {}
+MD2Model::Specification::Specification() : negateNormals(false), scale(1.0f) {}
 
 MD2Model::Specification::Specification(const std::string& trisFilename) 
-: filename(trisFilename), scale(1.0f) {
+    : filename(trisFilename), negateNormals(false), scale(1.0f) {
 
     if (! FileSystem::exists(trisFilename)) {
         material = Material::createDiffuse(Color3::white());
@@ -147,6 +147,8 @@ MD2Model::Specification::Specification(const Any& any) {
             weaponFilename = it->value.resolveStringAsFilename();
         } else if (key == "weaponmaterial") {
             weaponMaterial = makeQuakeMaterial(it->value);
+        } else if (key == "negatenormals") {
+            negateNormals = it->value;
         } else {
             it->value.verify(false, "Unknown key: " + it->key);
         }
@@ -161,6 +163,7 @@ MD2Model::Ref MD2Model::create(const Specification& s) {
     ps.filename = s.filename;
     ps.material = s.material;
     ps.scale = s.scale;
+    m->negateNormals = s.negateNormals;
     m->m_part.append(Part::create(ps));
 
     if (! s.weaponFilename.empty()) {
@@ -182,7 +185,7 @@ MD2Model::Ref MD2Model::create(const Specification& s) {
 
 void MD2Model::pose(Array<Surface::Ref>& surfaceArray, const CFrame& rootFrame, const MD2Model::Pose& pose) {
     for (int p = 0; p < m_part.size(); ++p) {
-        m_part[p]->pose(surfaceArray, rootFrame, pose);
+        m_part[p]->pose(surfaceArray, rootFrame, pose, negateNormals);
     }
 }
 
@@ -646,7 +649,7 @@ void MD2Model::Part::allocateVertexArrays(RenderDevice* renderDevice) {
 }
 
 
-void MD2Model::Part::pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const Pose& pose) {
+void MD2Model::Part::pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const Pose& pose, bool negateNormals) {
 
     // Keep a back pointer so that the index array can't be deleted
     SuperSurface::Ref surface = SuperSurface::create(name(), cframe, SuperSurface::GPUGeom::create(), 
@@ -662,7 +665,7 @@ void MD2Model::Part::pose(Array<Surface::Ref>& surfaceArray, const CoordinateFra
     cpuGeom.packedTangent = &packedTangentArray;
     cpuGeom.texCoord0     = &_texCoordArray;
 
-    getGeometry(pose, *const_cast<MeshAlg::Geometry*>(cpuGeom.geometry));
+    getGeometry(pose, *const_cast<MeshAlg::Geometry*>(cpuGeom.geometry), negateNormals);
     
     // Upload data to the GPU
     SuperSurface::GPUGeom::Ref gpuGeom = surface->gpuGeom();
@@ -687,8 +690,8 @@ void MD2Model::Part::render(RenderDevice* renderDevice, const Pose& pose) {
 }
 
 
-void MD2Model::Part::debugRenderWireframe(RenderDevice* renderDevice, const Pose& pose) {
-    getGeometry(pose, interpolatedFrame);
+void MD2Model::Part::debugRenderWireframe(RenderDevice* renderDevice, const Pose& pose, bool negateNormals) {
+    getGeometry(pose, interpolatedFrame, negateNormals);
 
     renderDevice->pushState();
         renderDevice->setDepthTest(RenderDevice::DEPTH_LEQUAL);
@@ -741,7 +744,7 @@ MeshAlg::Geometry MD2Model::Part::interpolatedFrame;
     #pragma warning( disable : 4731 )
 #endif
 
-void MD2Model::Part::getGeometry(const Pose& pose, MeshAlg::Geometry& out) const {
+void MD2Model::Part::getGeometry(const Pose& pose, MeshAlg::Geometry& out, bool negateNormals) const {
     
     const int numVertices = keyFrame[0].vertexArray.size();
 
@@ -810,6 +813,11 @@ void MD2Model::Part::getGeometry(const Pose& pose, MeshAlg::Geometry& out) const
             nI[v] = normalTable[n0[v]].lerp(normalTable[n1[v]], alpha);
         }
 
+        if (negateNormals) {
+            for (int v = numVertices - 1; v >= 0; --v) {
+                nI[v] = -nI[v];
+            }
+        }
         return;
     }
 
@@ -921,6 +929,12 @@ void MD2Model::Part::getGeometry(const Pose& pose, MeshAlg::Geometry& out) const
         for (int i = num128 * 4; i < numFloats; ++i) {
             vI[i] = vI[i] + (v1[i] - vI[i]) * alpha;
             nI[i] = nI[i] + (n1[i] - nI[i]) * alpha;
+        }
+
+        if (negateNormals) {
+            for (int v = numVertices - 1; v >= 0; --v) {
+                nI[v] = -nI[v];
+            }
         }
 
     #endif

@@ -28,26 +28,39 @@ namespace G3D {
    \brief Quake II model class primarily used for low-polygon keyframe animated characters.
  <P>
 
- Quake II models contain up to two parts, where the second part is typically a weapon.
- Each part is a single mesh that is keyframe animated.  Because the vertex positions and normals
- are highly quantized, these models tend to distort a bit under animation.
+ Quake II models contain up to two parts, where the second part is
+ typically a weapon.  Each part is a single mesh that is keyframe
+ animated.  Because the vertex positions and normals are highly
+ quantized, these models tend to distort a bit under animation.
 
- <P>
- Models are centered about their waist.  To figure out where the feet are you
- might want to look at the bounding box for the stand/walk animations.
+ <P> Models are centered about their waist.  To figure out where the
+ feet are you might want to look at the bounding box for the
+ stand/walk animations.
  
- <P>This class is not threadsafe; you cannot
- even call methods on two different instances on different threads.
+ <P>This class is not threadsafe; you cannot even call methods on two
+ different instances on different threads.
 
  <P>
  When getting geometry from the posed model, the normalArray 
  values are interpolated and often have slightly less than unit length.
 
- <P>
-  When available, this class uses SSE instructions for fast vertex blending.
-  This cuts the time for getGeometry by a factor of 2 on most processors.
+ <P> When available, this class uses SSE instructions for fast vertex
+  blending.  This cuts the time for getGeometry by a factor of 2 on
+  most processors.
 
-  \sa G3D::MD3Model, G3D::ArticulatedModel, G3D::IFSModel
+ <p>
+  Sample posing code:
+  \code
+    MD2Model::Pose::Action a;
+    a.movingForward  = true;
+    pose.onSimulation(dt, a);
+  \endcode
+
+  You can specify multiple fields of the Action and the onSimulation method
+  will resolve the best underlying animation.
+
+
+  \sa G3D::MD3Model, G3D::ArticulatedModel, G3D::IFSModel, G3D::GEntity
  */
  class MD2Model : public ReferenceCountedObject {
 public:
@@ -228,7 +241,6 @@ public:
             }
         };
 
-
          /**
          Given a time and state flags indicating a character's desires,
          computes the new pose.
@@ -279,6 +291,11 @@ public:
         /** May be NULL if weaponFilename is the empty string. */
         Material::Ref   weaponMaterial;
 
+        /** If true, negate the normal direction on this object when
+         rendering. Most models do not need this.  An example of one
+         that does is the "suw" model included with the G3D data pack.*/
+        bool            negateNormals;
+
         float           scale;
 
         Specification();
@@ -286,6 +303,21 @@ public:
         /** Infers the rest of the specification from the path to (and including) the tris.md2 file */
         Specification(const std::string& trisFilename);
 
+        /**
+           Example .any file format:
+
+           \code
+           MD2Model::Specification {
+               filename = "md2/bauul/tris.md2",
+               material = Material::Specification {
+                   lambertian = "md2/bauul/ctf_b.pcx"
+               }
+
+               weaponFilename = "md2/bauul/weapon.md2",
+               weaponMaterial = "md2/bauul/weapon.pcx"
+           }
+           \endcode
+         */
         Specification(const Any& any);
     };
 
@@ -424,7 +456,6 @@ public:
 
         void sendGeometry(RenderDevice* rd, const Pose& pose) const;
 
-
         /**
          Wipe all data structures.  Called from load.
          */
@@ -440,7 +471,7 @@ public:
 
          Called from PosedMD2Model::getGeometry
          */
-        void getGeometry(const Pose& pose, MeshAlg::Geometry& geometry) const;
+        void getGeometry(const Pose& pose, MeshAlg::Geometry& geometry, bool negateNormals = false) const;
 
     public:
 
@@ -466,7 +497,7 @@ public:
 
         virtual ~Part() {}
 
-        void pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const Pose& pose);
+        void pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const Pose& pose, bool negateNormals = false);
 
         const Array<Vector2>& texCoordArray() const {
             return _texCoordArray;
@@ -489,7 +520,7 @@ public:
         /**
          Render the wireframe mesh.
          */
-        void debugRenderWireframe(RenderDevice* renderDevice, const Pose& pose);
+        void debugRenderWireframe(RenderDevice* renderDevice, const Pose& pose, bool negateNormals = false);
 
         /**
          A bounding sphere on the model.  Covers all vertices in all animations.
@@ -544,6 +575,9 @@ protected:
     std::string             m_name;
     int                     m_numTriangles;
     Array<Part::Ref>        m_part;
+
+    /** If true, negate the normal direction on this object when rendering. */
+    bool            negateNormals;
 
 public:
     

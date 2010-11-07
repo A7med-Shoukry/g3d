@@ -103,6 +103,11 @@ protected:
      AnyTableReader&    propertyTable,
      const ModelTable&  modelTable);
 
+    /** Animates the appropriate pose type for the model selected.
+     Called from onSimulation.  Subclasses will frequently replace
+     onSimulation but retain this helper method.*/
+    virtual void simulatePose(GameTime absoluteTime, GameTime deltaTime);
+
 public:
 
     /** \deprecated */
@@ -130,6 +135,12 @@ public:
         return m_name;
     }
 
+    /** 
+        \brief Physical simulation callback.
+
+        The default implementation animates the model pose (by calling
+        simulatePose()) and moves the frame() along m_frameSpline.
+     */
     virtual void onSimulation(GameTime absoluteTime, GameTime deltaTime);
 
     /** Pose as of the last simulation time */
@@ -141,18 +152,18 @@ public:
     /** Return a world-space bounding sphere. */
     virtual void getBounds(class Sphere& sphere) const;
 
-	/** Return a world-space bounding box. */
+    /** Return a world-space bounding box. */
     virtual void getBounds(class Box& box) const;
 
-	/** Return the distance to the first intersection of the GEntity's bounds
-	  with ray \a R at distance
-	  less than \a maxDistance.  Returns finf() if there is no such intersection.
-
-	  The bounds used may be more accurate than any of the given getBounds() results
-	  because the method may recurse into individual parts of the scene graph
-	  within the GEntity.
-	  */
-	float intersectBounds(const Ray& R, float maxDistance = finf()) const;
+    /** Return the distance to the first intersection of the GEntity's bounds
+        with ray \a R at distance
+        less than \a maxDistance.  Returns finf() if there is no such intersection.
+        
+        The bounds used may be more accurate than any of the given getBounds() results
+        because the method may recurse into individual parts of the scene graph
+        within the GEntity.
+    */
+    float intersectBounds(const Ray& R, float maxDistance = finf()) const;
 };
 
 }

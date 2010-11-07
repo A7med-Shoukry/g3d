@@ -70,6 +70,8 @@ DebugID debugDraw
         s.endTime           = System::time() + displayTime;
         s.id                = lastGApp->m_lastDebugID++;
         return s.id;
+    } else {
+        return 0;
     }
 }
 
