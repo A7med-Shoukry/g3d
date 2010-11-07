@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2008-08-10
-  @edited  2009-06-20
+  @edited  2010-11-10
 */
 #ifndef GLG3D_Tri_h
 #define GLG3D_Tri_h
@@ -18,6 +18,7 @@
 #include "G3D/Array.h"
 #include "G3D/CoordinateFrame.h"
 #include "G3D/ReferenceCount.h"
+#include "G3D/Triangle.h"
 #include "GLG3D/Material.h"
 
 
@@ -84,6 +85,9 @@ public:
         const Material::Ref& material = NULL,
         const Vector2& t0 = Vector2::zero(), const Vector2& t1 = Vector2::zero(), const Vector2& t2 = Vector2::zero(),
         const Vector4& tan0 = Vector4::zero(), const Vector4& tan1 = Vector4::zero(), const Vector4& tan2 = Vector4::zero());
+
+    /** Cast to Triangle */
+    operator Triangle() const;
 
     /** Backfacing version of this triangle.  Normals and tangents are
         negated and the winding order is reversed. */

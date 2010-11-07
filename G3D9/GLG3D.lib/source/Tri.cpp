@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2009-05-25
-  @edited  2009-05-25
+  @edited  2010-11-25
  */ 
 #include "GLG3D/Tri.h"
 #include "G3D/Ray.h"
@@ -17,17 +17,17 @@ Tri::Tri() : m_data(NULL) {}
 
 Tri::~Tri() {}
 
-Tri::Tri(
-    const Vector3& v0, const Vector3& v1, const Vector3& v2, 
-    const Vector3& n0, const Vector3& n1, const Vector3& n2,
-    void* data,
-    const Material::Ref& material,
-    const Vector2& t0, const Vector2& t1, const Vector2& t2,
-    const Vector4& tan0, const Vector4& tan1, const Vector4& tan2) :
+Tri::Tri
+(const Vector3& v0, const Vector3& v1, const Vector3& v2, 
+ const Vector3& n0, const Vector3& n1, const Vector3& n2,
+ void* data,
+ const Material::Ref& material,
+ const Vector2& t0, const Vector2& t1, const Vector2& t2,
+ const Vector4& tan0, const Vector4& tan1, const Vector4& tan2) :
     v0(v0), e1(v1 - v0), e2(v2 - v0),
     m_material(material),
     m_data(data) {
-
+    
     debugAssert(material.isNull() ||
                 (isValidHeapPointer(material.pointer()) &&
                  (material.pointer() > (void*)0xf)));
@@ -47,6 +47,11 @@ Tri::Tri(
     n = e1.cross(e2).directionOrZero();
 }
 
+
+Tri::operator Triangle() const {
+    return Triangle(vertex(0), vertex(1), vertex(2));
+}
+    
 
 Tri Tri::otherSide() const {
     Tri t;
