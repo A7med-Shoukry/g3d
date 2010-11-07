@@ -60,7 +60,10 @@ static Table<std::string, std::string>& filenameTable() {
 
 
 Array<std::string> Scene::sceneNames() {
-    return filenameTable().getKeys();
+    Array<std::string> a;
+    filenameTable().getKeys(a);
+    a.sort();
+    return a;
 }
 
 
