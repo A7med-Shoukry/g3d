@@ -145,7 +145,7 @@ public:
 
     /** Pose as of the last simulation time */
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
-
+#if 0
     /** Return a world-space axis-aligned bounding box. */
     virtual void getBounds(class AABox& box) const;
 
@@ -164,6 +164,7 @@ public:
         within the GEntity.
     */
     float intersectBounds(const Ray& R, float maxDistance = finf()) const;
+#endif
 };
 
 }

@@ -135,7 +135,7 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
     }
 }
 
-
+#if 0
 void GEntity::getBounds(AABox& box) const {
     box = AABox(-Vector3::inf(), Vector3::inf());
 }
@@ -145,13 +145,16 @@ void GEntity::getBounds(Box& box) const {
     box = Box(-Vector3::inf(), Vector3::inf());
 }
 
+
 void GEntity::getBounds(Sphere& sphere) const {
     sphere = Sphere(m_frame.translation, finf());
 }
+
 
 float GEntity::intersectBounds(const Ray& R, float maxDistance) const {
     // TODO
     return finf();
 }
+#endif
 
 }
