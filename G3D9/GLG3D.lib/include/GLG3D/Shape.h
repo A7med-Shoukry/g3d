@@ -1,13 +1,13 @@
 /**
-  @file GLG3D/Shape.h
+  \file GLG3D/Shape.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2005-08-10
-  @edited  2009-12-30
+  \created 2005-08-10
+  \edited  2010-11-08
 */
-#ifndef G3D_SHAPE_H
-#define G3D_SHAPE_H
+#ifndef G3D_Shape_h
+#define G3D_Shape_h
 
 #include "G3D/platform.h"
 #include "G3D/ReferenceCount.h"
@@ -20,13 +20,16 @@
 #include "G3D/Color4.h"
 #include "G3D/Box.h"
 #include "G3D/KDTree.h"
+#include "GLG3D/Tri.h"
 
 namespace G3D {
 
 typedef ReferenceCountedPointer<class Shape> ShapeRef;
 
 /** 
-   Base class for other shapes.  G3D primitives like Box and Cylinder
+   \brief Base class for debugging shapes that can render themselves.
+
+   G3D primitives like Box and Cylinder
    have no base class so that their implementations are maximally efficient,
    and have no "render" method because they are lower-level than the
    rendering API.  
@@ -37,6 +40,8 @@ typedef ReferenceCountedPointer<class Shape> ShapeRef;
    Mesh shapes are intentionally immutable because they precompute data.
 
    <b>BETA API</b> This API is subject to change in future releases.
+
+   \sa Draw, debugDraw, ArticulatedModel
   */
 class Shape : public ReferenceCountedObject {
 public:
@@ -200,10 +205,10 @@ public:
 };
 
 /** 
- Mesh shape is intended for debugging and for collision detection.  It is not a general purpose
- mesh. 
+ Mesh shape is intended for debugging and for collision detection.  It
+ is not a general purpose mesh.
 
- @sa G3D::Surface, G3D::IFSModel, G3D::MD2Model, G3D::MeshAlg, contrib/ArticulatedModel/ArticulatedModel.h
+ \sa G3D::Surface, G3D::ArticulatedModel, G3D::IFSModel, G3D::MD2Model, G3D::MeshAlg
  */
 class MeshShape : public Shape {
 
@@ -212,7 +217,7 @@ class MeshShape : public Shape {
 
     /** If true, the bspTree and _area, _boundingSphere, _boundingAABox have been initialized. */
     bool                _hasTree;
-    KDTree<Triangle> _bspTree;
+    KDTree<Triangle>    _bspTree;
     double              _area;
     Sphere              _boundingSphere;
     AABox               _boundingAABox;
@@ -226,6 +231,9 @@ public:
         The index array must describe a triangle list; you can
         convert other primitives using the MeshAlg methods.*/
     MeshShape(const Array<Vector3>& vertex, const Array<int>& index);
+
+    /** Copies the triangle array */
+    MeshShape(const Array<Tri>& tri);
 
     virtual void render(RenderDevice* rd, const CoordinateFrame& cframe, Color4 solidColor = Color4(.5,.5,0,.5), Color4 wireColor = Color3::black());
 

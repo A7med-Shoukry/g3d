@@ -42,8 +42,7 @@ void screenPrintf(const char* fmt ...) {
 }
 
 void GApp::vscreenPrintf
-(
- const char*                 fmt,
+(const char*                 fmt,
  va_list                     argPtr) {
     if (showDebugText) {
         std::string s = G3D::vformat(fmt, argPtr);
@@ -53,15 +52,24 @@ void GApp::vscreenPrintf
     }
 }
 
-void debugDraw(const Shape::Ref& shape, const Color4& solidColor, 
-               const Color4& wireColor, const CFrame& frame) {
+
+DebugID debugDraw
+(const Shape::Ref& shape, 
+ float             displayTime, 
+ const Color4&     solidColor, 
+ const Color4&     wireColor, 
+ const CFrame&     frame) {
+
     if (lastGApp) {
         debugAssert(shape.notNull());
         GApp::DebugShape& s = lastGApp->debugShapeArray.next();
-        s.shape = shape;
-        s.solidColor = solidColor;
-        s.wireColor = wireColor;
-        s.frame = frame;
+        s.shape             = shape;
+        s.solidColor        = solidColor;
+        s.wireColor         = wireColor;
+        s.frame             = frame;
+        s.endTime           = System::time() + displayTime;
+        s.id                = lastGApp->m_lastDebugID++;
+        return s.id;
     }
 }
 
@@ -77,6 +85,7 @@ static void writeLicense() {
 
 
 GApp::GApp(const Settings& settings, OSWindow* window) :
+    m_lastDebugID(0),
     m_activeVideoRecordDialog(NULL),
     m_settings(settings),
     m_renderPeriod(1),
@@ -809,7 +818,15 @@ void GApp::oneFrame() {
         m_activeVideoRecordDialog->maybeRecord(renderDevice);        
     }
     renderDevice->endFrame();
-    debugShapeArray.fastClear();
+
+    // Remove all expired debug shapes
+    RealTime now = System::time();
+    for (int i = 0; i < debugShapeArray.size(); ++i) {
+        if (debugShapeArray[i].endTime <= now) {
+            debugShapeArray.fastRemove(i);
+            --i;
+        }
+    }
     debugText.fastClear();
 
     if (m_endProgram && window()->requiresMainLoop()) {
@@ -823,6 +840,21 @@ void GApp::drawDebugShapes() {
     for (int i = 0; i < debugShapeArray.size(); ++i) {
         const DebugShape& s = debugShapeArray[i];
         s.shape->render(renderDevice, s.frame, s.solidColor, s.wireColor); 
+    }
+}
+
+
+void GApp::removeAllDebugShapes() {
+    debugShapeArray.fastClear();
+}
+
+
+void GApp::removeDebugShape(DebugID id) {
+    for (int i = 0; i < debugShapeArray.size(); ++i) {
+        if (debugShapeArray[i].id == id) {
+            debugShapeArray.fastRemove(i);
+            return;
+        }
     }
 }
 

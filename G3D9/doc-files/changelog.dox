@@ -27,6 +27,8 @@
      <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
      <li> G3D::GCamera::exposureTime 
      <li> G3D::Any::operator=(Array<T>)
+     <li> G3D::debugDraw now allows specification of the display time
+     <li> G3D::GApp::removeDebugShape, G3D::GApp::removeAllDebugShapes
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default
      <li> G3D::GApp::show
      <li> G3D::SurfaceSample

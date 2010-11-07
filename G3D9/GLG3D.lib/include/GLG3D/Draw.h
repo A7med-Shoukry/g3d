@@ -31,12 +31,16 @@ class Cylinder;
 class Plane;
 
 /**
- Useful routines for rendering primitives when debugging.  Compared
+   \brief Useful routines for rendering primitives when debugging.  
+
+  Compared
  to the optimized RenderDevice::beginIndexedPrimitives calls used
- by IFSModel, these routines are slow.
+ by ArticulatedModel, <b>these routines are slow</b>.
 
  When rendering translucent bounding objects, depth write is automatically
  disabled.  Render from back to front for proper transparency.
+
+ \sa debugDraw, Shape
  */
 class Draw {
 private:

@@ -73,6 +73,78 @@ protected:
     /** Returns System::numCores(); put here to break a dependence on System.h */
     static int numCores();
 
+    template<class Class>
+    void runConcurrently2DHelper
+    (const Vector2int32& start, 
+     const Vector2int32& upTo, 
+     Class*              object,
+     void (Class::*method1)(int x, int y),
+     void (Class::*method2)(int x, int y, int threadID),
+     int                 maxThreads) {
+        /** For use by runConcurrently2D. Designed for arbitrary iteration, although only used for
+            interlaced rows in the current implementation. */
+        class Worker : public GThread {
+        public:
+            /** Start for this thread, which differs from the others */
+            const int                 threadID;
+            const Vector2int32        start;
+            const Vector2int32        upTo;
+            const Vector2int32        stride;
+            Class*                    object;
+            void             (Class::*method1)(int x, int y);
+            void             (Class::*method2)(int x, int y, int threadID);
+            
+            Worker(int                 threadID,
+                   const Vector2int32& start, 
+                   const Vector2int32& upTo, 
+                   Class*              object,
+                   void (Class::*method1)(int x, int y),
+                   void (Class::*method2)(int x, int y, int threadID),
+                   const Vector2int32& stride) : 
+                GThread("runConcurrently2D worker"),
+                threadID(threadID),
+                start(start),
+                upTo(upTo), 
+                stride(stride),
+                object(object), 
+                method1(method1),
+                method1(method2) {}
+            
+            virtual void threadMain() {
+                for (int y = start.y; y < upTo.y; y += stride.y) {
+                    // Run whichever method was provided
+                    if (method1) {
+                        for (int x = start.x; x < upTo.x; x += stride.x) {
+                            (object->*method1)(x, y);
+                        }
+                    } else {
+                        for (int x = start.x; x < upTo.x; x += stride.x) {
+                            (object->*method2)(x, y, threadID);
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Create a group of threads
+        if (maxThreads == NUM_CORES) {
+            maxThreads = numCores();
+        }
+
+        const int numRows = upTo.y - start.y;
+        const int numThreads = min(maxThreads, numRows);
+        const Vector2int32 stride(1, numThreads);
+        ThreadSet threadSet;
+        for (int t = 0; t < numThreads; ++t) {
+            threadSet.insert(new Worker(t, start + Vector2int32(0, t), upTo, object, method1, method2, stride));
+        }
+
+        // Run the threads, reusing the current thread and blocking until
+        // all complete
+        threadSet.start(USE_CURRENT_THREAD);
+        threadSet.waitForCompletion();
+    }
+
 public:
     typedef ReferenceCountedPointer<class GThread> Ref;
 
@@ -143,11 +215,11 @@ public:
         most one thread per processor core will be used.
 
         Example:
-        <pre>
+        \code
         class RayTracer {
         public:
-
-	void trace(const Vector2int32& pixel) {
+        
+  	void trace(const Vector2int32& pixel) {
         ...
 	}
 
@@ -155,7 +227,7 @@ public:
         GThread::runConcurrently2D(Vector2int32(0,0), Vector2int32(w,h), this, &RayTracer::trace);
 	}
         };
-        </pre>
+        \endcode
     */
     template<class Class>
     static void runConcurrently2D
@@ -164,56 +236,21 @@ public:
      Class*              object,
      void (Class::*method)(int x, int y),
      int                 maxThreads = NUM_CORES) {
+        runConcurrently2DHelper(start, upTo, object, object, method, NULL, maxThreads);
+    }
 
-        /** Designed for arbitrary iteration, although only used for
-            interlaced rows in the current implementation. */
-        class Worker : public GThread {
-        public:
-            /** Start for this thread, which differs from the others */
-            const Vector2int32        start;
-            const Vector2int32        upTo;
-            const Vector2int32        stride;
-            Class*                    object;
-            void             (Class::*method)(int x, int y);
-
-            Worker(const Vector2int32& start, 
-                   const Vector2int32& upTo, 
-                   Class*              object,
-                   void (Class::*method)(int x, int y),
-                   const Vector2int32& stride) : 
-                GThread("runConcurrently2D worker"),
-                start(start),
-                upTo(upTo), 
-                stride(stride),
-                object(object), 
-                method(method) {}
-
-            virtual void threadMain() {
-                for (int y = start.y; y < upTo.y; y += stride.y) {
-                    for (int x = start.x; x < upTo.x; x += stride.x) {
-                        (object->*method)(x, y);
-                    }
-                }
-            }
-        };
-
-        // Create a group of threads
-        if (maxThreads == NUM_CORES) {
-            maxThreads = numCores();
-        }
-
-        const int numRows = upTo.y - start.y;
-        const int numThreads = min(maxThreads, numRows);
-        const Vector2int32 stride(1, numThreads);
-        ThreadSet threadSet;
-        for (int t = 0; t < numThreads; ++t) {
-            threadSet.insert(new Worker(start + Vector2int32(0, t), upTo, object, method, stride));
-        }
-
-        // Run the threads, reusing the current thread and blocking until
-        // all complete
-        threadSet.start(USE_CURRENT_THREAD);
-        threadSet.waitForCompletion();
+    /** Like the other version of runConcurrently2D, but tells the
+        method the thread index that it is running on.  That enables
+        the caller to manage per-thread state.
+    */
+    template<class Class>
+    static void runConcurrently2D
+    (const Vector2int32& start, 
+     const Vector2int32& upTo, 
+     Class*              object,
+     void (Class::*method)(int x, int y, int threadID),
+     int                 maxThreads = NUM_CORES) {
+        runConcurrently2DHelper(start, upTo, object, object, NULL, method, maxThreads);
     }
 
 };

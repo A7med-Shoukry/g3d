@@ -22,6 +22,7 @@
 #include "G3D/GThread.h"
 #include "GLG3D/Shape.h"
 #include "GLG3D/Film.h"
+#include "GLG3D/Shape.h"
 
 namespace G3D {
 
@@ -30,18 +31,36 @@ class RenderDevice;
 class UserInput;
 class Log;
 
+/** Used with debugDraw. */
+typedef int DebugID;
+
 /**
  \brief Schedule a G3D::Shape for later rendering.
 
  Adds this shape and the specified information to the current G3D::GApp::debugShapeArray, 
  to be rendered at runtime for debugging purposes.
 
+ Sample usage is:
+ \code
+ debugDraw(new SphereShape(Sphere(center, radius)));
+ \endcode
+
  \beta
 
- \sa debugPrintf, logPrintf, screenPrintf
+ \param displayTime Real-world time in seconds to display the shape
+ for.  A shape always displays for at least one frame. 0 = one frame.
+ inf() = until explicitly removed by the GApp.
+
+ \return The ID of the shape, which can be used to clear it for shapes that are displayed "infinitely".
+
+ \sa debugPrintf, logPrintf, screenPrintf, GApp::drawDebugShapes, GApp::removeDebugShape, GApp::removeAllDebugShapes
  */
-void debugDraw(const ShapeRef& shape, const Color4& solidColor = Color3::white(), 
-               const Color4& wireColor = Color3::black(), const CFrame& frame = CFrame());
+DebugID debugDraw
+(const Shape::Ref& shape, 
+ float             displayTime = 0.0f,
+ const Color4&     solidColor  = Color3::white(), 
+ const Color4&     wireColor   = Color3::black(), 
+ const CFrame&     cframe      = CFrame());
 
 //  See @link guideapp @endlink for a discussion of GApp and GApplet. 
 /**
@@ -61,8 +80,8 @@ void debugDraw(const ShapeRef& shape, const Color4& solidColor = Color3::white()
  <li> GApp::onWait - tasks to process while waiting for the next frame to start
  <li> GApp::onGraphics - render the Surface and Surface2D arrays.  By default, this invokes two helper methods:
    <ul>
-   <li> GApp::onGraphics3D - render the Surface array and any immediate mode 3D 
-   <li> GApp::onGraphics2D - render the Surface2D array and any immediate mode 2D 
+    <li> GApp::onGraphics3D - render the Surface array and any immediate mode 3D 
+    <li> GApp::onGraphics2D - render the Surface2D array and any immediate mode 2D 
    </ul>
  </ul>
  
@@ -164,23 +183,46 @@ public:
         Color4          solidColor;
         Color4          wireColor;
         CFrame          frame;
+        DebugID         id;
+        /** Clear after this time (always draw before clearing) */
+        RealTime        endTime;
     };
 
-    /** @brief Shapes to be rendered each frame.  
+    /** Last DebugShape::id issued */
+    DebugID              m_lastDebugID;
+
+
+    /** \brief Shapes to be rendered each frame.  
+
         Added to by G3D::debugDraw.
         Rendered by drawDebugShapes();
         Automatically cleared once per frame.
       */
     Array<DebugShape>    debugShapeArray;
 
-    /** @brief Draw everything in debugShapeArray.
-        Subclasses should call from onGraphics().
+    /** \brief Draw everything in debugShapeArray.
+
+        Subclasses should call from onGraphics3D() or onGraphics().
         This will sort the debugShapeArray from back to front
         according to the current camera.
 
-        @beta
+        \sa debugDraw, Shape, DebugID, removeAllDebugShapes, removeDebugShape
      */
     void drawDebugShapes();
+
+    /** 
+        \brief Clears all debug shapes, regardless of their pending display time.
+
+        \sa debugDraw, Shape, DebugID, removeDebugShape, drawDebugShapes
+    */
+    void removeAllDebugShapes();
+
+    /** 
+        \brief Clears just this debug shape (if it exists), regardless of its pending display time.
+
+        \sa debugDraw, Shape, DebugID, removeAllDebugShapes, drawDebugShapes
+    */
+    void removeDebugShape(DebugID id);
 
 private:
 

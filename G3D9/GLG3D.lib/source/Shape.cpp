@@ -1,10 +1,10 @@
 /**
- @file GLG3D/Shape.cpp
+ \file GLG3D/Shape.cpp
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2005-08-30
- @edited  2005-08-30
+ \created 2005-08-30
+ \edited  2010-11-08
  */
 
 #include "GLG3D/Shape.h"
@@ -35,6 +35,23 @@ MeshShape::MeshShape(
     
     debugAssert(index.size() % 3 == 0);
     debugAssert(index.size() >= 0);
+}
+
+
+MeshShape::MeshShape(
+    const Array<Tri>& tri) : 
+    _hasTree(false) {
+
+    _vertexArray.resize(tri.size() * 3);
+    _indexArray.resize(tri.size() * 3);
+
+    int i = 0;
+    for (int t = 0; t < tri.size(); ++t) {
+        for (int v = 0; v < 3; ++v, ++i) {
+            _indexArray[i] = i;
+            _vertexArray[i] = tri[t].vertex(v);
+        }
+    }
 }
 
 
