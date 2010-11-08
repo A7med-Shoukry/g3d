@@ -94,24 +94,23 @@ namespace G3D {
 class CollisionDetection {
 private:
 
-	/**
-	 Default parameter if value passed to a function as reference is
-	 not to be calculated.  Must be explicitly supported by function.
-	 */
-	static Vector3 ignore;
-
-	/**
-	 Default parameter if value passed to a function as reference is
-	 not to be calculated.  Must be explicitly supported by function.
-	 */
+    /**
+       Default parameter if value passed to a function as reference is
+       not to be calculated.  Must be explicitly supported by function.
+    */
+    static Vector3 ignore;
+    
+    /**
+       Default parameter if value passed to a function as reference is
+       not to be calculated.  Must be explicitly supported by function.
+    */
     static bool    ignoreBool;
 
-	/**
-	 Default parameter if value passed to a function as reference is
-	 not to be calculated.  Must be explicitly supported by function.
-	 */
+    /**
+       Default parameter if value passed to a function as reference is
+       not to be calculated.  Must be explicitly supported by function.
+    */
     static Array<Vector3> ignoreArray;
-
 
     // Static class!
     CollisionDetection() {}

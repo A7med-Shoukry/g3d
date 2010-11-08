@@ -1629,15 +1629,15 @@ float CollisionDetection::collisionTimeForMovingSphereFixedPlane(
 }
 
 
-float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
-    const class Sphere&		sphere,
-    const Vector3&              velocity,
-    const Triangle&             triangle,
-    Vector3&                    outLocation,
-    float                       b[3]) {
+float CollisionDetection::collisionTimeForMovingSphereFixedTriangle
+(const Sphere&	             sphere,
+ const Vector3&              velocity,
+ const Triangle&             triangle,
+ Vector3&                    outLocation,
+ float                       b[3]) {
 
     Vector3 dummy;
-    float time = collisionTimeForMovingSphereFixedPlane(sphere, velocity, triangle.plane(), 
+    const float time = collisionTimeForMovingSphereFixedPlane(sphere, velocity, triangle.plane(), 
                                                         outLocation, dummy);
 
     if (time == finf()) {
@@ -1660,7 +1660,7 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
             debugAssertM(b[0] >= 0.0 && b[0] <= 1.0f, "Intersection is outside triangle.");
             debugAssertM(b[1] >= 0.0 && b[1] <= 1.0f, "Intersection is outside triangle.");
             debugAssertM(b[2] >= 0.0 && b[2] <= 1.0f, "Intersection is outside triangle.");
-            Vector3 blend = 
+            const Vector3& blend = 
                 b[0] * triangle.vertex(0) + 
                 b[1] * triangle.vertex(1) + 
                 b[2] * triangle.vertex(2);
