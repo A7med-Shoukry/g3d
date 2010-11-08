@@ -48,7 +48,7 @@ public:
 
     typedef ReferenceCountedPointer<Shape> Ref;
 
-    enum Type {NONE = 0, MESH = 1, BOX, CYLINDER, SPHERE, RAY, CAPSULE, PLANE, AXES, POINT, TRIANGLE};
+    enum Type {NONE = 0, MESH = 1, BOX, CYLINDER, SPHERE, RAY, ARROW, CAPSULE, PLANE, AXES, POINT, TRIANGLE};
 
     static std::string typeToString(Type t);
 
@@ -459,6 +459,68 @@ public:
         return geometry.origin() + geometry.direction() * uniformRandom(0, 1);
     }
 
+};
+
+
+class RayShape : public Shape {
+protected:
+
+    Point3              m_point;
+    Vector3             m_vector;
+
+public:
+
+    explicit inline ArrowShape(const Point3& point, const Vector3& vector) : m_point(point), m_vector(vector) {}
+
+    virtual void render(RenderDevice* rd, const CoordinateFrame& cframe, Color4 solidColor = Color4(.5,.5,0,.5), Color4 wireColor = Color3::black());
+
+    virtual Type type() const {
+        return ARROW;
+    }
+
+
+    virtual float area() const {
+        return 0.0f;
+    }
+
+    virtual float volume() const {
+        return 0.0f;
+    }
+
+    /** Set to point. */
+    virtual Vector3 center() const {
+        return m_point;
+    }
+
+    const Vector3& vector() const {
+        return m_vector;
+    }
+
+    const Point3& point() const {
+        return m_point;
+    }
+
+    /** Bounds the graphic representation of the arrow */
+    virtual Sphere boundingSphere() const {
+        return Sphere(m_point + m_vector / 2, m_vector.length() / 2);
+    }
+
+    virtual AABox boundingAABox() const {
+        static AABox aab(m_point);
+        aabb.merge(m_point + m_vector);
+        return aab;
+    }
+    
+    /** Returns a random point along the arrow */
+    virtual Vector3 randomInteriorPoint() const {
+        return m_point + m_vector * uniformRandom(0, 1);
+    }
+
+    /** Returns a point along the arrow.  The normal is NaN */
+    virtual void getRandomSurfacePoint(Vector3& P, Vector3& N = Vector3::ignore()) const {
+        P = randomInteriorPoint();
+        N = Vector3::nan();
+    }
 };
 
 

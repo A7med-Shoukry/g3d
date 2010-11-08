@@ -215,13 +215,13 @@ void Draw::axes(
 
 
 void Draw::arrow(
-    const Vector3&      start,
+    const Point3&       start,
     const Vector3&      direction,
     RenderDevice*       renderDevice,
     const Color4&       color,
     float               scale) {
 
-    Vector3 tip = start + direction;
+    Point3 tip = start + direction;
     // Create a coordinate frame at the tip
     Vector3 u = direction;
     Vector3 v;

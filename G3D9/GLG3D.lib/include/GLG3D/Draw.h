@@ -170,9 +170,11 @@ public:
         const Color4&       color = Color3::orange(),
         float               scale = 1);
     
+    /** \param vector Can be non-unit length. 
+     \param scale Magnify vector by this amount.*/
     static void arrow(
-        const Vector3&      start,
-        const Vector3&      direction,
+        const Point3&       start,
+        const Vector3&      vector,
         RenderDevice*       renderDevice,
         const Color4&       color = Color3::orange(),
         float               scale = 1.0f);

@@ -15,7 +15,7 @@ namespace G3D {
 
 std::string Shape::typeToString(Type t) {
     const static std::string name[] = 
-    {"NONE", "MESH", "BOX", "CYLINDER", "SPHERE", "RAY", "CAPSULE", "PLANE", "AXES", "POINT", "TRIANGLE"};
+    {"NONE", "MESH", "BOX", "CYLINDER", "SPHERE", "RAY", "ARROW", "CAPSULE", "PLANE", "AXES", "POINT", "TRIANGLE"};
 
     if (t <= TRIANGLE) {
         return name[t];
@@ -266,6 +266,15 @@ void RayShape::render(RenderDevice* rd, const CoordinateFrame& cframe, Color4 so
     CoordinateFrame cframe0 = rd->objectToWorldMatrix();
     rd->setObjectToWorldMatrix(cframe0 * cframe);
     Draw::ray(geometry, rd, solidColor);
+    rd->setObjectToWorldMatrix(cframe0);
+}
+
+
+void ArrowShape::render(RenderDevice* rd, const CoordinateFrame& cframe, Color4 solidColor, Color4 wireColor) {
+    (void)wireColor;
+    CoordinateFrame cframe0 = rd->objectToWorldMatrix();
+    rd->setObjectToWorldMatrix(cframe0 * cframe);
+    Draw::arrow(m_point, m_vector, rd, solidColor);
     rd->setObjectToWorldMatrix(cframe0);
 }
 
