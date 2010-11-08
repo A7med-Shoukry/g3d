@@ -236,7 +236,7 @@ public:
      Class*              object,
      void (Class::*method)(int x, int y),
      int                 maxThreads = NUM_CORES) {
-        runConcurrently2DHelper(start, upTo, object, object, method, NULL, maxThreads);
+        runConcurrently2DHelper(start, upTo, object, method, NULL, maxThreads);
     }
 
     /** Like the other version of runConcurrently2D, but tells the
@@ -250,7 +250,7 @@ public:
      Class*              object,
      void (Class::*method)(int x, int y, int threadID),
      int                 maxThreads = NUM_CORES) {
-        runConcurrently2DHelper(start, upTo, object, object, NULL, method, maxThreads);
+        runConcurrently2DHelper(start, upTo, object, NULL, method, maxThreads);
     }
 
 };
