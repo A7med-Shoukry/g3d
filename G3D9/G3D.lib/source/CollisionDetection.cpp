@@ -854,27 +854,27 @@ float CollisionDetection::collisionTimeForMovingPointFixedPlane(
     Vector3&        outNormal) {
 
     // Solve for the time at which normal.dot(point + velocity) + d == 0.
-    double d;
+    float d;
     Vector3 normal;
     plane.getEquation(normal, d);
     
-    float vdotN = velocity.dot(normal);
-    float pdotN = point.dot(normal);
+    const float vdotN = velocity.dot(normal);
+    const float pdotN = point.dot(normal);
 
-    if (fuzzyEq(pdotN + d, 0)) {
+    if (fuzzyEq(pdotN + d, 0.0f)) {
         // The point is *in* the plane.
         location = point;
         outNormal = normal;
         return 0;
     }
 
-    if (vdotN >= 0) {
+    if (vdotN >= 0.0f) {
         // no collision will occur
         location = Vector3::inf();
         return finf();
     }
 
-    float t = -(pdotN + d) / vdotN;
+    const float t = -(pdotN + d) / vdotN;
     if (t < 0) {
         location = Vector3::inf();
         return finf();
@@ -1595,14 +1595,15 @@ float CollisionDetection::collisionTimeForMovingSphereFixedPlane(
         return collisionTimeForMovingPointFixedPlane(sphere.center, velocity, plane, location, outNormal);
 	}
 
-    // The collision point on the sphere will be the point at
-    // center - (radius * normal).  Collisions only occur when
+    // The world-space collision point, which lies on the surface of the sphere, will be the point at
+    // center + velocity * time - (radius * planeNormal).  Collisions only occur when
     // the sphere is travelling into the plane.
 
-    double d;
+    float d;
     plane.getEquation(outNormal, d);
     
-    double vdotN = velocity.dot(outNormal);
+    // Rate at which the sphere is approaching the plane
+    const float vdotN = velocity.dot(outNormal);
 
     if (fuzzyGt(vdotN, 0)) {
         // No collision when the sphere is moving towards a backface.
@@ -1610,19 +1611,18 @@ float CollisionDetection::collisionTimeForMovingSphereFixedPlane(
         return (float)finf();
     }
 
-    float cdotN = sphere.center.dot(outNormal);
-
-    // Distance from the center to the plane
-    float distance = cdotN + (float)d;
-
-    // Where is the collision on the sphere?
-    Vector3 point = sphere.center - (sphere.radius * outNormal);
+    // Initial distance from the sphere center to the plane
+    const float distance = sphere.center.dot(outNormal) + d;
 
     if (fuzzyLe(G3D::abs(distance), sphere.radius)) {
         // Already interpenetrating
         location = sphere.center - distance * outNormal;
         return 0;
     } else {
+        // The point on the sphere (in world space) that will eventually first contact the plane
+        const Point3& point = sphere.center - (sphere.radius * outNormal);
+
+        // The problem is now reduced to finding when the point hits the plane
         return collisionTimeForMovingPointFixedPlane(point, velocity, plane, location, outNormal);
     }
 
@@ -1636,6 +1636,10 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle
  Vector3&                    outLocation,
  float                       b[3]) {
 
+    if (velocity.dot(triangle.normal()) > 0.0f) {
+        // No collision if moving towards a backface
+        return finf();
+    }
     Vector3 dummy;
     const float time = collisionTimeForMovingSphereFixedPlane(sphere, velocity, triangle.plane(), 
                                                         outLocation, dummy);

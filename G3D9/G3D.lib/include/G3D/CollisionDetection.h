@@ -19,8 +19,8 @@
   All rights reserved.
  */
 
-#ifndef G3D_COLLISIONDETECTION_H
-#define G3D_COLLISIONDETECTION_H
+#ifndef G3D_CollisionDetection_h
+#define G3D_CollisionDetection_h
 
 #include "G3D/platform.h"
 #include "G3D/Vector3.h"
@@ -784,16 +784,16 @@ public:
 	 Calculates time between the intersection of a moving sphere and a fixed
 	 triangle.
 
-	 @param sphere		Moving sphere.
-	 @param velocity	Sphere's velocity.
-	 @param triangle	Fixed Triangle.  (collisions can happen on the back side of the triangle)
+	 @param sphere		The moving sphere.
+	 @param velocity	The sphere's velocity.
+	 @param triangle	Single-sided fixed triangle. 
 	 @param outLocation	Location of collision, if collision occurs -- not center position of sphere
 	 					at the collision time. If there is interpenetration at the start, this point may be inside
                         the sphere.
      @param b           Barycentric coordinates. These are not valid unless collision occurs.
 
-	 @return Time til collision.  If there is no collision then the return
-	         value will be inf().
+	 @return Time until collision.  If there is no collision then the return
+	         value will be finf().
 	*/
     static float collisionTimeForMovingSphereFixedTriangle(
         const class Sphere&		sphere,
