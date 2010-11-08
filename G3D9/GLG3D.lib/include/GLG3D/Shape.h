@@ -462,7 +462,7 @@ public:
 };
 
 
-class RayShape : public Shape {
+class ArrowShape : public Shape {
 protected:
 
     Point3              m_point;
@@ -477,8 +477,7 @@ public:
     virtual Type type() const {
         return ARROW;
     }
-
-
+    
     virtual float area() const {
         return 0.0f;
     }
@@ -506,9 +505,9 @@ public:
     }
 
     virtual AABox boundingAABox() const {
-        static AABox aab(m_point);
+        static AABox aabb(m_point);
         aabb.merge(m_point + m_vector);
-        return aab;
+        return aabb;
     }
     
     /** Returns a random point along the arrow */
