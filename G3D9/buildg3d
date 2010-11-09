@@ -545,7 +545,7 @@ def sourceTarget():
     # .svn and ~ files
     dest ='build/source'
     mkdir(dest)
-    copyIfNewer('.', dest)
+    copyIfNewer(os.getcwd(), dest)
 
     return 1    
 
