@@ -722,6 +722,35 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
     By default, the Film's Framebuffer is bound and the output will be gamma corrected
     and bloomed.
 
+    A common task is rendering SuperSurface%s with your own shader, which can be done by:
+\code
+
+    rd->pushState();
+    rd->setShader(myShader)
+    for (int s = 0; s < surface3D.size(); ++s) {
+        const SuperSurface::Ref& surface = surface3D[s].downcast<SuperSurface>();
+        if (surface.notNull()) {
+            const SuperSurface::GPUGeom::Ref& geom = surface->gpuGeom();
+            const SuperBSDF::Ref& bsdf = geom->material->bsdf();
+            
+            rd->setObjectToWorldMatrix(surface->coordinateFrame());
+            
+            myShader->args.set("lambertianConstant", bsdf->lambertian().constant());
+            myShader->args.set("lambertianMap", Texture::whiteIfNull(bsdf->lambertian().texture()));
+            ...
+                
+            rd->beginIndexedPrimitives();
+            {
+                rd->setNormalArray(geom->normal);
+                rd->setVertexArray(geom->vertex);
+                rd->setTexCoordArray(0, geom->texCoord0);
+                rd->sendIndices(geom->primitive, geom->index);
+            }
+            rd->endIndexedPrimitives();
+        }
+    }
+    rd->popState();
+\endcode
    */
     virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface);
 
