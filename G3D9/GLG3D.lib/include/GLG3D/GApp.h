@@ -665,7 +665,7 @@ protected:
        is invoked.
 
        The default implementation calls onGraphics2D and onGraphics3D as follows:
-<pre>
+\code
 void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surface2DRef>& posed2D) {
     rd->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
 
@@ -702,7 +702,7 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
     }
     rd->pop2D();
 }
-</pre>
+\endcode
      */
     virtual void onGraphics(RenderDevice* rd, Array<Surface::Ref>& surface, 
                             Array<Surface2D::Ref>& surface2D);
@@ -715,9 +715,13 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
     virtual void onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& surface2D);
 
     /**
-       Called from the default onGraphics.
-       
+       \brief Called from the default onGraphics.
        Override and implement. 
+
+    The RenderDevice will already be cleared and the default camera set when this method is invoked.
+    By default, the Film's Framebuffer is bound and the output will be gamma corrected
+    and bloomed.
+
    */
     virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface);
 
