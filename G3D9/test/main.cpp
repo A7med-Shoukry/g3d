@@ -717,6 +717,7 @@ int main(int argc, char* argv[]) {
 
 #    ifndef _DEBUG
         printf("Performance analysis:\n\n");
+        perfTable();
 
         perfHashTrait();
         // Pause so that we can see the values in the debugger
@@ -730,7 +731,6 @@ int main(int argc, char* argv[]) {
 
         perfArray();
 
-        perfTable();
 
         printf("%s\n", System::mallocPerformance().c_str());
 

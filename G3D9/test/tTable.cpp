@@ -4,12 +4,28 @@ using G3D::uint32;
 using G3D::uint64;
 #include <map>
 
-#if defined(G3D_WIN32) && (_MSC_VER >= 1300)
+#if 1//defined(G3D_WIN32) && (_MSC_VER >= 1300)
 #   define HAS_HASH_MAP
 #endif
 
 #ifdef HAS_HASH_MAP
-#   include <hash_map>
+#    ifdef __GNUC__
+//     Tricks to make hash_map work as if it was part of stl on GCC
+#        include <ext/hash_map>
+         namespace std {
+             using namespace __gnu_cxx;
+
+         } // std
+             namespace __gnu_cxx {                                                                         
+                 template<> struct hash< std::string > { 
+                     size_t operator()( const std::string& x ) const {
+                         return hash< const char* >()( x.c_str() );                                              
+                     }                                                                                         
+                 };
+             } // __gnu_cxx
+#    else
+#        include <hash_map>
+#    endif
 #   if defined(_MSC_VER) && (_MSC_VER >= 1400)
         using stdext::hash_map;
 #   else
@@ -217,13 +233,12 @@ void perfTest(const char* description, const K* keys, const V* vals, int M) {
         // the values from the arrays.  Take this into account when
         // counting cycles.
         System::beginCycleCount(overhead);
-        {K k; V v;
+        K k; V v;
         for (int i = 0; i < M; ++i) {
             k = keys[i];
             v = vals[i];
         }
         System::endCycleCount(overhead);
-        }
 
         {Table<K, V> t;
         System::beginCycleCount(tableSet);
@@ -234,7 +249,7 @@ void perfTest(const char* description, const K* keys, const V* vals, int M) {
         
         System::beginCycleCount(tableGet);
         for (int i = 0; i < M; ++i) {
-            t[keys[i]];
+            v=t[keys[i]];
         }
         System::endCycleCount(tableGet);
 
@@ -256,7 +271,7 @@ void perfTest(const char* description, const K* keys, const V* vals, int M) {
         
         System::beginCycleCount(mapGet);
         for (int i = 0; i < M; ++i) {
-            t[keys[i]];
+            v=t[keys[i]];
         }
         System::endCycleCount(mapGet);
 
@@ -279,7 +294,7 @@ void perfTest(const char* description, const K* keys, const V* vals, int M) {
         
         System::beginCycleCount(hashMapGet);
         for (int i = 0; i < M; ++i) {
-            t[keys[i]];
+            v=t[keys[i]];
         }
         System::endCycleCount(hashMapGet);
 
@@ -322,7 +337,8 @@ void perfTest(const char* description, const K* keys, const V* vals, int M) {
 
 
 void perfTable() {
-    printf("                insert       fetch     remove    outcome\n");
+    printf("                          [times in cycles]\n");
+    printf("                   insert       fetch     remove    outcome\n");
 
     const int M = 300;
     {
