@@ -1,10 +1,10 @@
 /**
-  @file GLG3D/TriTree.cpp
+  \file GLG3D/TriTree.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2009-06-10
-  @edited  2010-06-20
+  \created 2009-06-10
+  \edited  2010-11-20
 */
 
 #include "G3D/AreaMemoryManager.h"
@@ -25,25 +25,22 @@ void TriTree::intersectSphere
 (const Sphere& sphere,
  Array<Tri>&   triArray) const {
 
-    for (int t = 0; t < m_size; ++t) {
-        const Tri& tri = m_triArray[t];
-        if ((tri.area() > 0) && CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
-            triArray.append(tri);
-        }
+    if (m_root) {
+        Set<Tri*> alreadyAdded;
+        m_root->intersectSphere(sphere, triArray, alreadyAdded);
     }
+
 }
 
 
 void TriTree::intersectBox
 (const AABox&  box,
  Array<Tri>&   triArray) const {
-
-    for (int t = 0; t < m_size; ++t) {
-        const Tri& tri = m_triArray[t];
-        if ((tri.area() > 0) && CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri.vertex(0), tri.vertex(1), tri.vertex(2)))) {
-            triArray.append(tri);
-        }
+    if (m_root) {
+        Set<Tri*> alreadyAdded;
+        m_root->intersectBox(box, triArray, alreadyAdded);
     }
+
 }
 
 
@@ -488,6 +485,60 @@ static void draw(RenderDevice* rd, const AABox& m_box, const Color4& color) {
     const Vector3& A = m_box.low() + epsilon;
     const Vector3& B = m_box.high() - epsilon;
     Draw::box(AABox(A.min(B), B.max(A)), rd, color, Color3::black());
+}
+
+
+void TriTree::Node::intersectSphere(const Sphere& sphere, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const {
+    if (! bounds.intersects(sphere)) {
+        return;
+    }
+
+    // Add the triangles at this node
+    if (valueArray && valueArray->bounds.intersects(sphere)) {
+        for (int v = 0; v < valueArray->size; ++v) {
+            Tri* tri = const_cast<Tri*>(valueArray->data[v]);
+            if (! alreadyAdded.contains(tri)) {
+                if ((tri->area() > 0) && CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri->vertex(0), tri->vertex(1), tri->vertex(2)))) {
+                    triArray.append(*tri);
+                    alreadyAdded.insert(tri);
+                }
+            }
+        }
+    }
+
+    // Recurse into children
+    if (! isLeaf()) {
+        for (int c = 0; c < 2; ++c) {
+            child(c).intersectSphere(sphere, triArray, alreadyAdded);
+        }
+    }
+}
+
+
+void TriTree::Node::intersectBox(const AABox& box, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const {
+    if (! bounds.intersects(box)) {
+        return;
+    }
+
+    // Add the triangles at this node
+    if (valueArray && valueArray->bounds.intersects(box)) {
+        for (int v = 0; v < valueArray->size; ++v) {
+            Tri* tri = const_cast<Tri*>(valueArray->data[v]);
+            if (! alreadyAdded.contains(tri)) {
+                if ((tri->area() > 0) && CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri->vertex(0), tri->vertex(1), tri->vertex(2)))) {
+                    triArray.append(*tri);
+                    alreadyAdded.insert(tri);
+                }
+            }
+        }
+    }
+
+    // Recurse into children
+    if (! isLeaf()) {
+        for (int c = 0; c < 2; ++c) {
+            child(c).intersectBox(box, triArray, alreadyAdded);
+        }
+    }
 }
 
 

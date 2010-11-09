@@ -406,6 +406,15 @@ private:
 
         void draw(RenderDevice* rd, int level, bool showBoxes, int minNodeSize) const;
 
+        /** Append all contained triangles that intersect this to triArray. Assumes that this node 
+            does intersect the box. 
+
+            \param alreadyAdded Since nodes do not have unique ownership of triangles, this set is needed
+            to avoid adding duplicates to the triArray.
+          */  
+        void intersectBox(const AABox& box, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const;
+        void intersectSphere(const Sphere& sphere, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const;
+
         void print(const std::string& indent) const;
 
         void getStats(Stats& s, int level, int valuesPerNode) const;
