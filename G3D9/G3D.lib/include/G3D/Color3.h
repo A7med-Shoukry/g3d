@@ -58,8 +58,10 @@ public:
         accepts "Power3" and "Radiance3" as a prefixes as well, e.g.,
         Power3(1,0,0).
         */
-    Color3(const Any& any);
+    explicit Color3(const Any& any);
     
+    Color3& operator=(const Any& a);
+
     /** Converts the Color3 to an Any. */
     operator Any() const;
 

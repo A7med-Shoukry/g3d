@@ -6,7 +6,7 @@
  @author Morgan McGuire, http://graphics.cs.williams.edu
 
  @created 2001-06-02
- @edited  2010-01-28
+ @edited  2010-11-28
  */
 
 #include "G3D/platform.h"
@@ -21,6 +21,12 @@
 #include "G3D/stringutils.h"
 
 namespace G3D {
+
+Color3& Color3::operator=(const Any& a) {
+    *this = Color3(a);
+    return *this;
+}
+
 
 Color3::Color3(const Any& any) {
     *this = Color3::zero();

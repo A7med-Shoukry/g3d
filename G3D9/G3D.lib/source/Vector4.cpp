@@ -4,7 +4,7 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
   
  @created 2001-07-09
- @edited  2010-07-05
+ @edited  2010-11-05
  */
 
 #include <stdlib.h>
@@ -20,6 +20,12 @@
 #include "G3D/Any.h"
 
 namespace G3D {
+
+Vector4& Vector4::operator=(const Any& a) {
+    *this = Vector4(a);
+    return *this;
+}
+
 
 Vector4::Vector4(const Any& any) {
     any.verifyName("Vector4");

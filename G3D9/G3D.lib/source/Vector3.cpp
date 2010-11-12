@@ -48,6 +48,13 @@ Vector3::Vector3(const Any& any) {
     }
 }
 
+
+Vector3& Vector3::operator=(const Any& a) {
+    *this = Vector3(a);
+    return *this;
+}
+
+
 Vector3::operator Any() const {
     Any any(Any::ARRAY, "Vector3");
     any.append(x, y, z);

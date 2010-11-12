@@ -79,7 +79,7 @@ public:
         this constructor accepts Point3(#, #, #), etc. as well.
         
      */
-    Vector3(const Any& any);
+    explicit Vector3(const Any& any);
     
     /** Converts the Vector3 to an Any. */
     operator Any() const;
@@ -122,6 +122,7 @@ public:
 
     // assignment and comparison
     Vector3& __fastcall operator= (const Vector3& rkVector);
+    Vector3& operator=(const Any& a);
     bool operator== (const Vector3& rkVector) const;
     bool operator!= (const Vector3& rkVector) const;
     size_t hashCode() const;

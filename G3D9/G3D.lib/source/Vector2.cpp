@@ -9,7 +9,7 @@
   at http://www.magic-software.com
  
  @created 2001-06-02
- @edited  2009-11-16
+ @edited  2010-11-16
  */
 
 #include "G3D/platform.h"
@@ -39,6 +39,12 @@ Vector2::Vector2(const Any& any) {
         x = any["x"];
         y = any["y"];
     }
+}
+
+
+Vector2& Vector2::operator=(const Any& a) {
+    *this = Vector2(a);
+    return *this;
 }
 
 

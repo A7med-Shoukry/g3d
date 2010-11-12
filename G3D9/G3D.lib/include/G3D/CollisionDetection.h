@@ -68,8 +68,8 @@ namespace G3D {
   <b>Static Collision Detection:</b> (Neither object is moving)
 
   <table>
-  <tr><td></td><td><b>Vector3</b></td><td><b>LineSegment</b></td><td><b>Ray *</b></td><td><b>Line</b></td><td><b>Plane</b></td><td><b>Triangle</b></td><td><b>Sphere</b></td><td><b>Cylinder</b></td><td><b>Capsule</b></td><td><b>AABox</b></td><td><b>Box</b></td></tr>
-  <tr><td><b>Vector3</b></td><td>\link Vector3::operator== V3::==\endlink \link Vector3::fuzzyEq V3::fuzzy \endlink \link G3D::distance distance \endlink</td><td bgcolor=#C0C0C0 colspan=10 ></td></tr>
+  <tr><td></td><td><b>Point3</b></td><td><b>LineSegment</b></td><td><b>Ray *</b></td><td><b>Line</b></td><td><b>Plane</b></td><td><b>Triangle</b></td><td><b>Sphere</b></td><td><b>Cylinder</b></td><td><b>Capsule</b></td><td><b>AABox</b></td><td><b>Box</b></td></tr>
+  <tr><td><b>Point3</b></td><td>\link Vector3::operator== P3::==\endlink \link Vector3::fuzzyEq V3::fuzzy \endlink \link G3D::distance distance \endlink</td><td bgcolor=#C0C0C0 colspan=10 ></td></tr>
   <tr><td><b>LineSegment</b></td><td>\link LineSegment::closestPoint LS::closestPoint\endlink \link LineSegment::distance LS::distance\endlink \link CollisionDetection::closestPointOnLineSegment CD\endlink</td><td></td><td bgcolor=#C0C0C0 colspan=9 ></td></tr>
   <tr><td><b>Ray *</b></td><td>Ray::closestPoint Ray::distance</td><td></td><td></td><td bgcolor=#C0C0C0 colspan=8 ></td></tr>
   <tr><td><b>Line</b></td><td>Line::closestPoint Line::distance</td><td></td><td>\link CollisionDetection::closestPointsBetweenLineAndLine CD\endlink</td><td></td><td bgcolor=#C0C0C0 colspan=7 ></td></tr>

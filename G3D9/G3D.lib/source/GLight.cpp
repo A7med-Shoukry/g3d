@@ -56,24 +56,24 @@ GLight::GLight(const Any& any) {
         }
     } else if (toLower(any.name()) == "glight::directional") {
 
-        *this = directional(any[0], any[1], 
-            (any.size() > 2) ? any[2] : Any(true));
+        *this = directional(Vector3(any[0]), Color3(any[1]), 
+                            (any.size() > 2) ? any[2] : Any(true));
 
     } else if (toLower(any.name()) == "glight::point") {
 
-        *this = point(any[0], any[1], 
-            (any.size() > 2) ? any[2] : Any(0.01f), 
-            (any.size() > 3) ? any[3] : Any(0), 
-            (any.size() > 4) ? any[4] : Any(1.0f), 
-            (any.size() > 5) ? any[5] : Any(true));
+        *this = point(Point3(any[0]), Power3(any[1]), 
+                      (any.size() > 2) ? any[2] : Any(0.01f), 
+                      (any.size() > 3) ? any[3] : Any(0), 
+                      (any.size() > 4) ? any[4] : Any(1.0f), 
+                      (any.size() > 5) ? any[5] : Any(true));
 
     } else if (toLower(any.name()) == "glight::spot") {
 
-        *this = spot(any[0], any[1], any[2], any[3],
-            (any.size() > 4) ? any[4] : Any(0.01f), 
-            (any.size() > 5) ? any[5] : Any(0.0f), 
-            (any.size() > 6) ? any[6] : Any(1.0f), 
-            (any.size() > 7) ? any[7] : Any(true));
+        *this = spot(Vector3(any[0]), Vector3(any[1]), any[2], Color3(any[3]),
+                     (any.size() > 4) ? any[4] : Any(0.01f),
+                     (any.size() > 5) ? any[5] : Any(0.0f), 
+                     (any.size() > 6) ? any[6] : Any(1.0f), 
+                     (any.size() > 7) ? any[7] : Any(true));
     } else {
         any.verify(false, "Unrecognized name");
     }

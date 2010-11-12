@@ -48,7 +48,7 @@ public:
     float y;
 
     /** \param any Must either Vector2(#, #) or Vector2 {x = #, y = #}*/
-    Vector2(const Any& any);
+    explicit Vector2(const Any& any);
     
     /** Converts the Vector2 to an Any. */
     operator Any() const;
@@ -62,6 +62,8 @@ public:
     Vector2(double coordinate[2]);
     Vector2(const Vector2& other);
     Vector2(const Vector2int16& other); 
+
+    Vector2& operator=(const Any& a);
 
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);

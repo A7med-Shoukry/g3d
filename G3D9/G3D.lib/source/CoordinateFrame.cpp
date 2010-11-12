@@ -46,7 +46,7 @@ CoordinateFrame::CoordinateFrame(const Any& any) {
 
     const std::string& n = toUpper(any.name());
 
-    if (beginsWith(n, "VECTOR3")) {
+    if (beginsWith(n, "VECTOR3") || beginsWith(n, "POINT3")) {
         translation = any;
     } else if (beginsWith(n, "MATRIX3")) {
         rotation = any;
