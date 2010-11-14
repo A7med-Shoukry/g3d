@@ -108,7 +108,7 @@ protected:
                 stride(stride),
                 object(object), 
                 method1(method1),
-                method1(method2) {}
+                method2(method2) {}
             
             virtual void threadMain() {
                 for (int y = start.y; y < upTo.y; y += stride.y) {
