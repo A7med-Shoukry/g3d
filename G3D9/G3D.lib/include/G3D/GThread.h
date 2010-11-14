@@ -74,7 +74,7 @@ protected:
     static int numCores();
 
     template<class Class>
-    void runConcurrently2DHelper
+    static void runConcurrently2DHelper
     (const Vector2int32& start, 
      const Vector2int32& upTo, 
      Class*              object,
