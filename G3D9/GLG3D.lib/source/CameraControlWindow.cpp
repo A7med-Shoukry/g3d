@@ -614,7 +614,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
             
             if (trackFileArray[trackFileIndex] != untitled) {
                 // Load the new spline
-                loadSpline(trackFileArray[trackFileIndex] + ".trk.any");
+                loadSpline(trackFileArray[trackFileIndex] + ".any");
 
                 // When we load, we lose our temporarily recorded spline,
                 // so remove that display from the menu.

@@ -139,7 +139,7 @@ UprightSpline::UprightSpline(const Any& any) {
 UprightSpline::operator Any() const {
     Any any(Any::TABLE, "UprightSpline");
 
-    any["cyclic"] = "cyclic";
+    any["cyclic"] = cyclic;
 
     Any controlsAny(Any::ARRAY);
     for (int controlIndex = 0; controlIndex < control.length(); ++controlIndex) {
