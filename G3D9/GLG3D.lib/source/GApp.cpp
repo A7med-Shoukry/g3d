@@ -9,7 +9,6 @@
 
 #include "G3D/platform.h"
 
-#include "G3D/AnyVal.h"
 #include "GLG3D/GApp.h"
 #include "G3D/GCamera.h"
 #include "G3D/fileutils.h"
