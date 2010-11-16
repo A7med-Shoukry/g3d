@@ -17,9 +17,6 @@
     <ClCompile Include="..\G3D.lib\source\Any.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\AnyVal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\G3D.lib\source\AreaMemoryManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -320,9 +317,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\Any.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\AnyVal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\AreaMemoryManager.h">

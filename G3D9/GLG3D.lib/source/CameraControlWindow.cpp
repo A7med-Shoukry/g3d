@@ -11,7 +11,6 @@
 #include "G3D/prompt.h"
 #include "G3D/Rect2D.h"
 #include "G3D/fileutils.h"
-#include "G3D/AnyVal.h"
 #include "GLG3D/CameraControlWindow.h"
 #include "GLG3D/FileDialog.h"
 #include "GLG3D/GuiPane.h"
@@ -313,7 +312,7 @@ CameraControlWindow::CameraControlWindow(
     // Resize the pane to include the drawer button so that it is not clipped
     pane->setSize(clientRect().wh());
 
-    setBookmarkFile("g3d-bookmarks.txt");        
+    setBookmarkFile("g3d-bookmarks.any");        
     if (m_bookmarkName.size() == 0) {
         // Make a default home bookmark
         m_bookmarkName.append("Home");
@@ -457,7 +456,7 @@ void CameraControlWindow::onBookmarkButton() {
 
 
 void CameraControlWindow::saveBookmarks() {
-    AnyVal all(AnyVal::TABLE);
+    Any all(Any::TABLE);
     for (int i = 0; i < m_bookmarkName.size(); ++i) {
         all[m_bookmarkName[i]] = m_bookmarkPosition[i];
     }
@@ -472,21 +471,19 @@ void CameraControlWindow::setBookmarkFile(const std::string& filename) {
 
     if (FileSystem::exists(m_bookmarkFilename)) {
         // Load bookmarks
-        AnyVal all;
+        Any all;
         try {
             all.load(m_bookmarkFilename);
-            if (all.type() != AnyVal::TABLE) {
-                throw std::string("Was not a table");
-            }
+            all.verifyType(Any::TABLE);
         } catch (...) {
             msgBox(m_bookmarkFilename + " is corrupt.");
             return;
         }
 
-        all.getKeys(m_bookmarkName);
+        all.table().getKeys(m_bookmarkName);
         m_bookmarkPosition.resize(m_bookmarkName.size());
         for (int i = 0; i < m_bookmarkName.size(); ++i) {
-            m_bookmarkPosition[i] = all.get(m_bookmarkName[i], CoordinateFrame()).coordinateFrame();
+            m_bookmarkPosition[i] = all[m_bookmarkName[i]];
         }
     }
 }
@@ -545,11 +542,11 @@ void CameraControlWindow::setRect(const Rect2D& r) {
 void CameraControlWindow::updateTrackFiles() {
     trackFileArray.fastClear();
     trackFileArray.append(noSpline);
-    FileSystem::getFiles("*.trk.any", trackFileArray);
+    FileSystem::getFiles("*.us.any", trackFileArray);
 
     // Element 0 is <unsaved>, so skip it
     for (int i = 1; i < trackFileArray.size(); ++i) {
-        trackFileArray[i] = FilePath::base(trackFileArray[i]);
+        trackFileArray[i] = FilePath::base(FilePath::base(trackFileArray[i]));
     }
     trackFileIndex = iMin(trackFileArray.size() - 1, trackFileIndex);
 }
@@ -614,7 +611,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
             
             if (trackFileArray[trackFileIndex] != untitled) {
                 // Load the new spline
-                loadSpline(trackFileArray[trackFileIndex] + ".any");
+                loadSpline(trackFileArray[trackFileIndex] + ".us.any");
 
                 // When we load, we lose our temporarily recorded spline,
                 // so remove that display from the menu.
@@ -671,7 +668,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
 
 void CameraControlWindow::saveSpline(const std::string& trackName) {
     Any any = trackManipulator->spline();
-    any.save(trackName + ".trk.any");
+    any.save(trackName + ".us.any");
 
     updateTrackFiles();
 

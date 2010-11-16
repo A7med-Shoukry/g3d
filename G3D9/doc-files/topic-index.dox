@@ -236,7 +236,6 @@ volumes and shadow maps.  %G3D supports both, on programmable and fixed function
 <tr><td></td><td>\link G3D::TextInput <b>TextInput</b>\endlink, \link G3D::TextOutput <b>TextOutput</b>\endlink</td><td></td></tr>
 <tr><td></td><td>\link G3D::getFiles getFiles\endlink, \link G3D::getDirs getDirs\endlink</td><td>Get a directory listing, including wildcards</td></tr>
 <tr><td></td><td>\link G3D::readWholeFile readWholefile\endlink, \link G3D::writeWholeFile writeWholeFile\endlink</td><td></td></tr>
-<tr><td></td><td>\link G3D::AnyVal AnyVal\endlink</td><td>Can hold any common value and read/write tables of named values.  Very useful for making configuration files</td></tr>
 <tr><td></td><td>\link G3D::copyFile copyFile\endlink</td><td></td></tr>
 <tr><td></td><td>\link G3D::createTempFile createTempFile\endlink</td><td></td></tr>
 

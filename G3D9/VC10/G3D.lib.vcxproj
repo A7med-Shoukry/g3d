@@ -93,7 +93,6 @@
   <ItemGroup>
     <ClCompile Include="..\G3D.lib\source\AABox.cpp" />
     <ClCompile Include="..\G3D.lib\source\Any.cpp" />
-    <ClCompile Include="..\G3D.lib\source\AnyVal.cpp" />
     <ClCompile Include="..\G3D.lib\source\AreaMemoryManager.cpp" />
     <ClCompile Include="..\G3D.lib\source\BinaryFormat.cpp" />
     <ClCompile Include="..\G3D.lib\source\BinaryInput.cpp" />
@@ -196,7 +195,6 @@
   <ItemGroup>
     <ClInclude Include="..\G3D.lib\include\G3D\AABox.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Any.h" />
-    <ClInclude Include="..\G3D.lib\include\G3D\AnyVal.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\AreaMemoryManager.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Array.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\AtomicInt32.h" />

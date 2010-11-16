@@ -420,9 +420,6 @@ int GApp::run() {
         } catch (const ParseError& e) {
             alwaysAssertM(false, e.formatFileInfo() + e.message);
             ret = -1;
-        } catch (const AnyVal::WrongType& e) {
-            alwaysAssertM(false, format("AnyVal::WrongType.  Expected %d, got %d.", e.expected, e.actual));
-            ret = -1;
         }
     } else {
         onRun();
