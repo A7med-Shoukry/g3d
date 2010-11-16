@@ -18,6 +18,7 @@
 
 namespace G3D {
 
+
 const AABox& AABox::maxFinite() {
     static const AABox b = AABox(Vector3::minFinite(), 
                                  Vector3::maxFinite());
@@ -280,6 +281,12 @@ bool AABox::culledBy(
     // None of the planes could cull this box
 	cullingPlane = -1;
     return false;
+}
+
+
+void AABox::getBounds(Sphere& s) const {
+    s.center = center();
+    s.radius = extent().length() / 2;
 }
 
 

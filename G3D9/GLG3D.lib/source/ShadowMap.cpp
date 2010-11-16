@@ -242,9 +242,13 @@ void ShadowMap::computeMatrices
     lightFrame.setCoordinateFrame(light.frame());
 
     if (light.position.w == 0) {
+        Point3 center = sceneBounds.center();
+        if (! center.isFinite()) {
+            center = Point3::zero();
+        }
         // Move directional light away from the scene.  It must be far enough to see all objects
         lightFrame.setPosition(lightFrame.coordinateFrame().translation * 
-            max(sceneBounds.extent().length() / 2.0f, lightProjNearMin, 30.0f) + sceneBounds.center());
+            min(1e6f, max(sceneBounds.extent().length() / 2.0f, lightProjNearMin, 30.0f)) + center);
     }
 
     const CFrame& f = lightFrame.coordinateFrame();
@@ -270,6 +274,8 @@ void ShadowMap::computeMatrices
     // Don't bother tracking shadows past the effective radius
     lightProjFar = min(light.effectSphere(intensityCutoff).radius, lightProjFar);
     lightProjFar = max(lightProjNear + 0.1f, min(lightProjFarMax, lightProjFar));
+
+    debugAssert(lightProjNear < lightProjFar);
 
     if (light.spotHalfAngle <= halfPi()) {
         // TODO: Square spot

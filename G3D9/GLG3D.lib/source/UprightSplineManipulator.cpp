@@ -25,8 +25,9 @@ private:
     UprightSpline* spline;
     Color3        color;
 
-    VertexRange           vertex;
+    VertexRange   vertex;
     int           numVertices;
+    AABox         boxBounds;
 
 public:
 
@@ -43,9 +44,15 @@ public:
             Array<Vector3> v;
             v.resize(numVertices);
             
+            AABox boxBounds;
             for (int i = 0; i < numVertices; ++i) {
                 float s = count * i / (float)(numVertices - 1);
                 v[i] = spline->evaluate(s).translation;
+                if (i == 0) {
+                    boxBounds = AABox(v[i]);
+                } else {
+                    boxBounds.merge(v[i]);
+                }
             }
             
             vertex = VertexRange(v, area);
@@ -58,7 +65,7 @@ public:
     
     virtual void render (RenderDevice* rd) const {
         rd->pushState();
-
+        
         // Draw control points
         if (spline->control.size() > 0) {
             Draw::sphere(Sphere(spline->control[0].translation, 0.1f), rd, Color3::green(), Color4::clear());
@@ -148,11 +155,11 @@ public:
     }
 
     virtual void getObjectSpaceBoundingBox(AABox& b) const {
-        b = AABox(Vector3::minFinite(), Vector3::maxFinite());
+        b = boxBounds;
     }
 
     virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
-        s = Sphere(Vector3::zero(), finf());
+        boxBounds.getBounds(s);
     }
 
     virtual void getObjectSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize = true) const {

@@ -259,6 +259,8 @@ public:
     void getBounds(AABox& out) const {
         out = *this;
     }
+
+    void getBounds(class Sphere& out) const;
 };
 
 }
