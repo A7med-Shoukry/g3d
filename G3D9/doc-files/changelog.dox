@@ -67,6 +67,7 @@
      <li> Fix: Correct loading of texture maps for 3DS files with incorrect case in them on OS X, support for 3DS reflection
      <li> Fix: VideoRecordDialog correctly inverts the Y axis on half-size video recording
      <li> Fix: G3D::Tri::area is now correct (was too large by a factor of 2x before)
+     <li> Fix: CarbonWindow icons now load correctly
     </ul>
 
      <b>Backwards Incompatible Changes</b>:
