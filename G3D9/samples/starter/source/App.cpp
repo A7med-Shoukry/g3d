@@ -10,8 +10,8 @@ int main(int argc, const char* argv[]) {
     
     // Change the window and other startup parameters by modifying the
     // settings class.  For example:
-    settings.window.width       = 1440; 
-    settings.window.height      = 600;
+    settings.window.width       = 1280; 
+    settings.window.height      = 720;
 
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {

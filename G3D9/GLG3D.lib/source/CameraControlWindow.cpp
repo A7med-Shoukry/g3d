@@ -27,14 +27,10 @@ const Vector2 CameraControlWindow::bigSize(286 + 16, 155 + FILM_PANE_SIZE);
 static const std::string noSpline = "< None >";
 static const std::string untitled = "< Unsaved >";
 
-#ifdef DELETE
-#    undef DELETE
-#endif
-
 typedef ReferenceCountedPointer<class BookmarkDialog> BookmarkDialogRef;
 class BookmarkDialog : public GuiWindow {
 public:
-    enum Result {OK, CANCEL, DELETE};
+    enum Result {RESULT_OK, RESULT_CANCEL, RESULT_DELETE};
 
     bool               ok;
 
@@ -105,20 +101,20 @@ public:
 
         if (e.type == GEventType::GUI_ACTION) {
             if (e.gui.control == m_okButton) {
-                close(OK);
+                close(RESULT_OK);
                 return true;
             } else if (e.gui.control == m_deleteButton) {
                 if (m_deleteButton->caption().text() == "Cancel") {
-                    close(CANCEL);
+                    close(RESULT_CANCEL);
                 } else {
-                    close(DELETE);
+                    close(RESULT_DELETE);
                 }
                 return true;
             }
         }
 
         if ((e.type == GEventType::KEY_DOWN) && (e.key.keysym.sym == GKey::ESCAPE)) {
-            close(CANCEL);
+            close(RESULT_CANCEL);
             return true;
         }
 
@@ -431,7 +427,7 @@ void CameraControlWindow::showBookmarkList() {
 
 void CameraControlWindow::onBookmarkButton() {
     std::string name;
-    BookmarkDialog::Result result = BookmarkDialog::CANCEL;
+    BookmarkDialog::Result result = BookmarkDialog::RESULT_CANCEL;
 
     BookmarkDialogRef dialog = 
         new BookmarkDialog(m_manager->window(), rect().center() + Vector2(0, 100), 
@@ -442,10 +438,10 @@ void CameraControlWindow::onBookmarkButton() {
     dialog = NULL;
 
     switch (result) {
-    case BookmarkDialog::CANCEL:
+    case BookmarkDialog::RESULT_CANCEL:
         break;
 
-    case BookmarkDialog::OK:
+    case BookmarkDialog::RESULT_OK:
         {
             CoordinateFrame frame;
             trackManipulator->camera()->getCoordinateFrame(frame);
@@ -453,7 +449,7 @@ void CameraControlWindow::onBookmarkButton() {
         }
         break;
 
-    case BookmarkDialog::DELETE:
+    case BookmarkDialog::RESULT_DELETE:
         removeBookmark(name);
         break;
     }
@@ -549,11 +545,11 @@ void CameraControlWindow::setRect(const Rect2D& r) {
 void CameraControlWindow::updateTrackFiles() {
     trackFileArray.fastClear();
     trackFileArray.append(noSpline);
-    FileSystem::getFiles("*.trk", trackFileArray);
+    FileSystem::getFiles("*.trk.any", trackFileArray);
 
     // Element 0 is <unsaved>, so skip it
     for (int i = 1; i < trackFileArray.size(); ++i) {
-        trackFileArray[i] = trackFileArray[i].substr(0, trackFileArray[i].length() - 4);
+        trackFileArray[i] = FilePath::base(trackFileArray[i]);
     }
     trackFileIndex = iMin(trackFileArray.size() - 1, trackFileIndex);
 }
@@ -618,7 +614,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
             
             if (trackFileArray[trackFileIndex] != untitled) {
                 // Load the new spline
-                loadSpline(trackFileArray[trackFileIndex] + ".trk");
+                loadSpline(trackFileArray[trackFileIndex] + ".trk.any");
 
                 // When we load, we lose our temporarily recorded spline,
                 // so remove that display from the menu.
@@ -659,17 +655,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
 
                 if (saveName != "") {
                     saveName = saveName.substr(0, saveName.length() - filenameExt(saveName).length());
-
-                    BinaryOutput b(saveName + ".trk", G3D_LITTLE_ENDIAN);
-                    trackManipulator->spline().serialize(b);
-                    b.commit();
-
-                    updateTrackFiles();
-
-                    // Select the one we just saved
-                    trackFileIndex = iMax(0, trackFileArray.findIndex(saveName));
-                    
-                    saveButton->setEnabled(false);
+                    saveSpline(saveName);
                 }
             }
         }
@@ -683,6 +669,17 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
     return false;
 }
 
+void CameraControlWindow::saveSpline(const std::string& trackName) {
+    Any any = trackManipulator->spline();
+    any.save(trackName + ".trk.any");
+
+    updateTrackFiles();
+
+    // Select the one we just saved
+    trackFileIndex = iMax(0, trackFileArray.findIndex(trackName));
+                    
+    saveButton->setEnabled(false);
+}
 
 void CameraControlWindow::loadSpline(const std::string& filename) {
     saveButton->setEnabled(false);
@@ -698,10 +695,10 @@ void CameraControlWindow::loadSpline(const std::string& filename) {
         return;
     }
 
-    UprightSpline spline;
+    Any any;
+    any.load(filename);
 
-    BinaryInput b(filename, G3D_LITTLE_ENDIAN);
-    spline.deserialize(b);
+    UprightSpline spline(any);
 
     trackManipulator->setSpline(spline);
     manualOperation = true;

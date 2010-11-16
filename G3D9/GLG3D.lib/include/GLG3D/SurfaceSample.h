@@ -123,7 +123,7 @@ public:
         the shadingNormal to the interpolatedNormal and the
         shadingLocation to the geometricLocation.
     */
-    void sampleBump(const BumpMap::Ref& bump);
+    void sampleBump(const BumpMap::Ref& bump, const Vector3& eye);
 
     /** Samples all fields. */
     void sample
@@ -133,7 +133,8 @@ public:
      const Vector3&  interpolatedNormal,
      const Vector2&  texCoord,
      const Vector3&  interpolatedTangent,
-     const Vector3&  interpolatedTangent2);
+     const Vector3&  interpolatedTangent2,
+     const Vector3&  eye);
 
     /** Samples all fields from a ray-triangle intersection. */
     void sample(const Tri::Intersector& intersector);

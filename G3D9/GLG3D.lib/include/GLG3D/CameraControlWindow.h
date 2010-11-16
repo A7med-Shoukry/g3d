@@ -133,6 +133,7 @@ protected:
 
     void sync();
 
+    void saveSpline(const std::string& filename);
     void loadSpline(const std::string& filename);
 
     /** Updates the trackFileArray from the list of track files */
