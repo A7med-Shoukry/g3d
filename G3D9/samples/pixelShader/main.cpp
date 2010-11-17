@@ -135,7 +135,7 @@ void App::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surface
         // Pose our model based on the manipulator axes
         Surface::Ref posedModel = model->pose(manipulator->frame());
         
-        // Enable the sahder
+        // Enable the shader
         configureShaderArgs(localLighting);
         rd->setShader(phongShader);
 
