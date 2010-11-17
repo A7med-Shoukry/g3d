@@ -16,10 +16,11 @@
 #define G3D_AABox_h
 
 #include "G3D/platform.h"
-#include "G3D/Vector3.h"
 #include "G3D/debug.h"
 #include "G3D/Array.h"
 #include "G3D/Plane.h"
+#include "G3D/Sphere.h"
+#include "G3D/Vector3.h"
 
 namespace G3D {
 
@@ -221,7 +222,7 @@ public:
 
     /** Returns true if there is any overlap.
         @cite Jim Arvo's algorithm from Graphics Gems II*/
-    bool intersects(const class Sphere& other) const;
+    bool intersects(const Sphere& other) const;
 
     /** Return the intersection of the two boxes */
     AABox intersect(const AABox& other) const {
@@ -260,7 +261,7 @@ public:
         out = *this;
     }
 
-    void getBounds(class Sphere& out) const;
+    void getBounds(Sphere& out) const;
 };
 
 }

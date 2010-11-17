@@ -290,7 +290,7 @@ void AABox::getBounds(Sphere& s) const {
 }
 
 
-bool AABox::intersects(const class Sphere& sphere) const {
+bool AABox::intersects(const Sphere& sphere) const {
     double d = 0; 
 
     //find the square of the distance
