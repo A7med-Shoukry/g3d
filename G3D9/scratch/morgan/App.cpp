@@ -66,6 +66,11 @@ public:
 
 int main(int argc, char** argv) {
 
+    Color3 v(1,2,3);
+    Color3 b;
+    
+    b = v;
+
     Image1::Ref im = Image1::fromFile("test.png", GImage::PNG16);
     im->save("foo.png", GImage::PNG);
     /*
