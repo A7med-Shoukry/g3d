@@ -684,14 +684,17 @@ bool Any::operator==(const Any& x) const {
         if (m_data->name != x.m_data->name) {
             return false;
         }
-        Table<std::string, Any>& cmptable  = *(  m_data->value.t);
-        Table<std::string, Any>& xcmptable = *(x.m_data->value.t);
-        for (Table<std::string,Any>::Iterator it1 = cmptable.begin(), it2 = xcmptable.begin();
-             it1 != cmptable.end() && it2 != xcmptable.end();
-             ++it1, ++it2) {
-             if (*it1 != *it2) {
+        const Table<std::string, Any>& table1 = table();
+        const Table<std::string, Any>& table2 = x.table();
+        for (Table<std::string, Any>::Iterator it = table1.begin(); it.hasMore(); ++it) {
+            const Any* p2 = table2.getPointer(it->key);
+            if (p2 == NULL) {
+                // Key not found
                 return false;
-             }
+            } else if (*p2 != it->value) {
+                // Different value
+                return false;
+            }                
         }
         return true;
     }
@@ -725,8 +728,6 @@ bool Any::operator==(const Any& x) const {
 
 
 bool Any::operator!=(const Any& x) const {
-    beforeRead();
-    x.beforeRead();
     return !operator==(x);
 }
 

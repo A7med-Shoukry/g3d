@@ -202,7 +202,16 @@ static void measureSerializerPerformance() {
 }
 
 
+/** Measures the overhead of using BinaryInput and 
+   testing for endian-ness, which in practice
+   is rarely used.*/
+static void measureOverhead() {
+//   BinaryInput 
+}
+
 void perfBinaryIO() {
+    measureOverhead();
+exit(-1); // TODO
     measureSerializerPerformance();
 }
 
