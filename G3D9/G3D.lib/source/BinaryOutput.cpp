@@ -117,10 +117,11 @@ void BinaryOutput::reallocBuffer(size_t bytes, size_t oldBufferLen) {
     uint8* newBuffer = NULL;
 
     if ((m_filename == "<memory>") || (newBufferLen < MAX_BINARYOUTPUT_BUFFER_SIZE)) {
-        // We're either writing to memory (in which case we *have* to try and allocate)
-        // or we've been asked to allocate a reasonable size buffer.
+        // We're either writing to memory (in which case we *have* to
+        // try and allocate) or we've been asked to allocate a
+        // reasonable size buffer.
 
-        //debugPrintf("  realloc(%d)\n", newBufferLen); 
+        // debugPrintf("  realloc(%d)\n", newBufferLen); 
         newBuffer = (uint8*)System::realloc(m_buffer, newBufferLen);
         if (newBuffer != NULL) {
             m_maxBufferLen = newBufferLen;
@@ -130,9 +131,11 @@ void BinaryOutput::reallocBuffer(size_t bytes, size_t oldBufferLen) {
     if ((newBuffer == NULL) && (bytes > 0)) {
         // Realloc failed; we're probably out of memory.  Back out
         // the entire call and try to dump some data to disk.
+        alwaysAssertM(m_filename != "<memory>", "Realloc failed while writing to memory.");
         m_bufferLen = oldBufferLen;
         reserveBytesWhenOutOfMemory(bytes);
     } else {
+        // Realloc succeeded
         m_buffer = newBuffer;
         debugAssert(isValidHeapPointer(m_buffer));
     }
@@ -160,6 +163,7 @@ void BinaryOutput::reserveBytesWhenOutOfMemory(size_t bytes) {
         //debugPrintf("Writing %d bytes to disk\n", writeBytes);
 
         const char* mode = (m_alreadyWritten > 0) ? "ab" : "wb";
+        alwaysAssertM(m_filename != "<memory>", "Writing memory file");
         FILE* file = FileSystem::fopen(m_filename.c_str(), mode);
         debugAssert(file);
 
@@ -316,6 +320,10 @@ void BinaryOutput::commit(bool flush) {
     m_committed = true;
     debugAssertM(m_beginEndBits == 0, "Missing endBits before commit");
 
+    if (m_filename == "<memory>") {
+        return;
+    }
+
     // Make sure the directory exists.
     std::string root, base, ext, path;
     Array<std::string> pathArray;
@@ -328,6 +336,7 @@ void BinaryOutput::commit(bool flush) {
 
     const char* mode = (m_alreadyWritten > 0) ? "ab" : "wb";
 
+    alwaysAssertM(m_filename != "<memory>", "Writing to memory file");
     FILE* file = FileSystem::fopen(m_filename.c_str(), mode);
 
     if (! file) {

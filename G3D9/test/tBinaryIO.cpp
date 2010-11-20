@@ -206,12 +206,40 @@ static void measureSerializerPerformance() {
    testing for endian-ness, which in practice
    is rarely used.*/
 static void measureOverhead() {
-//   BinaryInput 
+    static const int REPEAT = 10;
+    static const int N = 1024 * 10;
+    uint8 buffer[N * sizeof(float)];
+    BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
+
+    float f = 3.2f;
+    RealTime t0 = System::time();
+    for (int j = 0; j < REPEAT; ++j) {
+        bo.reset();
+        for (int i = 0; i < N; ++i) {
+            bo.writeFloat32(f);
+            f += 0.1f;
+        }
+    }
+    RealTime botime = System::time() - t0;
+
+
+    t0 = System::time();
+    for (int j = 0; j < REPEAT; ++j) {
+        uint8* b = buffer;
+        for (int i = 0; i < N; ++i) {
+            *(float*)(b) = f;
+            b += sizeof(float);
+            f += 0.1f;
+        }
+    }
+    RealTime buffertime = System::time() - t0;
+    printf("BinaryOutput::writeFloat32 x 1e6:     %f s\n", botime / (REPEAT * N) * 1e6);
+    printf("Raw memory buffer float write x 1e6:  %f s\n", buffertime / (REPEAT * N) * 1e6);
 }
+
 
 void perfBinaryIO() {
     measureOverhead();
-exit(-1); // TODO
     measureSerializerPerformance();
 }
 

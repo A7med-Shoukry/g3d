@@ -717,6 +717,8 @@ int main(int argc, char* argv[]) {
 
 #    ifndef _DEBUG
         printf("Performance analysis:\n\n");
+        perfBinaryIO();
+
         perfTable();
 
         perfHashTrait();
@@ -741,8 +743,6 @@ int main(int argc, char* argv[]) {
         perfTextOutput();
 
         perfSystemMemcpy();
-
-        perfBinaryIO();
 
         perfPointHashGrid();
 
