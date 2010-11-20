@@ -193,7 +193,7 @@ public:
 
         \deprecated
     */ // TODO: Remove
-    Vector3 convertFromUnitToNormal(const Vector3& in, const Rect2D& viewport) const;
+    Point3 convertFromUnitToNormal(const Point3& in, const Rect2D& viewport) const;
 
     /**
        Sets the field of view, in radians.  The 
@@ -233,9 +233,9 @@ public:
      down.  The resulting z value is 0 at the near plane, 1 at the far plane,
      and is a linear compression of unit cube projection.
 
-     If the point is behind the camera, Vector3::inf() is returned.
+     If the point is behind the camera, Point3::inf() is returned.
      */
-    Vector3 project(const G3D::Vector3& point,
+    Point3 project(const Point3& point,
                     const class Rect2D& viewport) const;
 
     /**
@@ -243,9 +243,9 @@ public:
      x,y,z values range between -1 and 1, where z is -1
      at the near plane and 1 at the far plane and varies hyperbolically in between.
 
-     If the point is behind the camera, Vector3::inf() is returned.
+     If the point is behind the camera, Point3::inf() is returned.
      */
-    Vector3 projectUnit(const G3D::Vector3& point,
+    Point3 projectUnit(const Point3& point,
                         const class Rect2D& viewport) const;
 
     /**
@@ -253,14 +253,14 @@ public:
        v.x is in pixels from the left, v.y is in pixels from
        the top, and v.z is on the range 0 (near plane) to 1 (far plane).
      */
-    Vector3 unproject(const Vector3& v, const Rect2D& viewport) const;
+    Point3 unproject(const Point3& v, const Rect2D& viewport) const;
 
      /**
        Gives the world-space coordinates of unit cube point v, where
        v varies from -1 to 1 on all axes.  The unproject first
        transforms the point into a pixel location for the viewport, then calls unproject
      */
-    Vector3 unprojectUnit(const Vector3& v, const Rect2D& viewport) const;
+    Point3 unprojectUnit(const Point3& v, const Rect2D& viewport) const;
 
     /**
      Returns the pixel area covered by a shape of the given
@@ -276,8 +276,8 @@ public:
      "left" and "right" are from the GCamera's perspective.
      */
     void getNearViewportCorners(const class Rect2D& viewport,
-                                Vector3& outUR, Vector3& outUL,
-                                Vector3& outLL, Vector3& outLR) const;
+                                Point3& outUR, Point3& outUL,
+                                Point3& outLL, Point3& outLR) const;
 
     /**
      Returns the world space 3D viewport corners under pinhole projection.  These
@@ -286,8 +286,8 @@ public:
      "left" and "right" are from the GCamera's perspective.
      */
     void getFarViewportCorners(const class Rect2D& viewport,
-                               Vector3& outUR, Vector3& outUL,
-                               Vector3& outLL, Vector3& outLR) const;
+                               Point3& outUR, Point3& outUL,
+                               Point3& outLL, Point3& outLR) const;
 
     /**
       Returns the world space ray passing through the center of pixel
@@ -358,14 +358,14 @@ public:
      */
     float nearPlaneViewportHeight(const class Rect2D& viewport) const;
 
-    void setPosition(const Vector3& t);
+    void setPosition(const Point3& t);
 
     /** Rotate the camera in place to look at the target.  Does not
         persistently look at that location when the camera moves;
         i.e., if you move the camera and still want it to look at the
         old target, you must call lookAt again after moving the
         camera.)*/
-    void lookAt(const Vector3& position, const Vector3& up = Vector3::unitY());
+    void lookAt(const Point3& position, const Vector3& up = Vector3::unitY());
 
     /**
        Returns the clipping planes of the frustum, in world space.  
