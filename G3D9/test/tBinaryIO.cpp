@@ -240,6 +240,7 @@ static void measureOverhead() {
 
 void perfBinaryIO() {
     measureOverhead();
+    exit(0);
     measureSerializerPerformance();
 }
 
