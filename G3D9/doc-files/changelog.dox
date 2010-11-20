@@ -68,6 +68,7 @@
      <li> Fix: VideoRecordDialog correctly inverts the Y axis on half-size video recording
      <li> Fix: G3D::Tri::area is now correct (was too large by a factor of 2x before)
      <li> Fix: CarbonWindow icons now load correctly
+     <li> Fix: BinaryOutput to memory now never creates a file on disk
     </ul>
 
      <b>Backwards Incompatible Changes</b>:
