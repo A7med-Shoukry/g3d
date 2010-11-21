@@ -996,9 +996,11 @@ def computeDataSize():
     fileCount = 0
     byteCount = 0
     
-    for v in os.walk('data-files'):
-        (path, subdirs, files) = v
-        if not path.endswith('.svn') and not path.endswith('CVS'):
+    for path, subdirs, files in os.walk('data-files'):
+        if (copyifnewer.excludeFromCopying.search(betterbasename(path)) != None):
+            # Don't recurse into subdirectories of excluded directories
+            del subdirs[:]
+        else:
             for file in files:
                 if not file.endswith('~') and not file.startswith('#'):
                     fileCount += 1

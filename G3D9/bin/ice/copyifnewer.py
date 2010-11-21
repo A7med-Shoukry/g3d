@@ -106,8 +106,8 @@ def copyIfNewer(source, dest, echoCommands = True, echoFilenames = True, actuall
     else:
         # Walk is a special iterator that visits all of the
         # children and executes the 2nd argument on them.  
-        for dirpath, dirnames, filenames in os.walk(source):
-              _copyIfNewerVisit([len(source), dest, echoCommands, echoFilenames, actuallyCopy], dirpath, dirnames + filenames)
+        for dirpath, subdirs, filenames in os.walk(source):
+              _copyIfNewerVisit([len(source), dest, echoCommands, echoFilenames, actuallyCopy], dirpath, filenames, subdirs)
 
     if len(_copyIfNewerCopiedAnything) == 0 and echoCommands:
         print(dest + ' is up to date with ' + source)
@@ -124,12 +124,12 @@ args is a list of:
  echo commands
  echo filenames]
 """
-def _copyIfNewerVisit(args, sourceDirname, names):
+def _copyIfNewerVisit(args, sourceDirname, files, subdirs):
     global _copyIfNewerCopiedAnything
 
     if (excludeFromCopying.search(betterbasename(sourceDirname)) != None):
         # Don't recurse into subdirectories of excluded directories
-        del names[:]
+        del subdirs[:]
         return
 
     prefixLen   = args[0]
@@ -148,11 +148,10 @@ def _copyIfNewerVisit(args, sourceDirname, names):
         mkdir(destDirname, echoCommands)
 
     # Iterate through the contents of this directory   
-    for name in names:
+    for name in files:
         source = pathConcat(sourceDirname, name)
 
-        if ((excludeFromCopying.search(name) == None) and 
-            (not os.path.isdir(source))):
+        if (excludeFromCopying.search(name) == None) :
             
             # Copy files if newer
             dest = pathConcat(destDirname, name)

@@ -907,7 +907,7 @@ def newestCompiler():
             # Search for all g++ binaries
             for path in binLocs:
                 for dirpath, dirnames, filenames in os.walk(path):
-                      _newestCompilerVisitor(best, dirpath, dirnames + filenames)
+                      _newestCompilerVisitor(best, dirpath, filenames)
 
             _newestCompilerFilename = best[0]
             _newestCompilerVersion  = best[1]
@@ -1068,7 +1068,7 @@ A regular expression matching files that should be excluded from compilation
 excludeFromCompilation = None
 _includeHeaders = False
 
-def _listCFilesVisitor(result, dirname, files):
+def _listCFilesVisitor(result, dirname, files, subdirectories):
     dir = dirname
 
     # Strip any unnecessary "./"
@@ -1078,7 +1078,7 @@ def _listCFilesVisitor(result, dirname, files):
     if ((excludeFromCompilation != None) and
         (excludeFromCompilation.search(dir) != None)):
         # Don't recurse into subdirectories of excluded directories
-        del files[:]
+        del subdirectories[:]
         return
 
     # We can't modify files while iterating through it, so
@@ -1122,8 +1122,8 @@ def listCFiles(dir = '', exclude = None, includeHeaders = False):
     excludeFromCompilation = exclude
     result = []
 
-    for dirpath, dirnames, filenames in os.walk(dir):
-          _listCFilesVisitor(result, dirpath, dirnames + filenames)
+    for dirpath, subdirectories, filenames in os.walk(dir):
+          _listCFilesVisitor(result, dirpath, filenames, subdirectories)
     return result
 
 ####################################################################
