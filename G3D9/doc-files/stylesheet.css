@@ -23,14 +23,14 @@ div.tabs li a {
 ul.tablist {
   white-space: nowrap;
 }
-
+/*
 .tablist li {
     background-image: url('tab_h.png');
 }
 
 .tablist a:hover {
     background-image: url('tab_a.png');
-}
+}*/
 
 /*****************************/
 
