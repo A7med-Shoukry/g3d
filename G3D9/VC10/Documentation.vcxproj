@@ -15,6 +15,7 @@
     <None Include="..\doc-files\contributors.dox" />
     <None Include="..\doc-files\data-index.dox" />
     <None Include="..\doc-files\error.dox" />
+    <None Include="..\doc-files\footer.html" />
     <None Include="..\doc-files\frequent.dox" />
     <None Include="..\doc-files\guide-concepts.dox" />
     <None Include="..\doc-files\guide-demos.dox" />
@@ -26,7 +27,9 @@
     <None Include="..\doc-files\guide-unix.dox" />
     <None Include="..\doc-files\guide-welcome.dox" />
     <None Include="..\doc-files\guide-win32.dox" />
+    <None Include="..\doc-files\header.html" />
     <None Include="..\doc-files\license.dox" />
+    <None Include="..\doc-files\stylesheet.css" />
     <None Include="..\doc-files\topic-index.dox" />
     <None Include="..\doc-files\upgrade.dox" />
     <None Include="..\Doxyfile" />
