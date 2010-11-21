@@ -10,12 +10,13 @@
 #  getLibrarySiblingDirs
 #  identifySiblingLibraryDependencies
 #  anyRelativeFilenameIn
+from __future__ import print_function
 
-from utils import *
-from variables import *
-from library import *
-from doticompile import *
-from help import *
+from .utils import *
+from .variables import *
+from .library import *
+from .doticompile import *
+from .help import *
 
 ###############################################################
 
@@ -47,7 +48,7 @@ def getOutOfDateFiles(state, cfiles, dependencies, files, timeStamp):
         # See if the object file is out of date because it is older than iCompile
         rebuild = (targetTime < icompileTime)
         if rebuild and (verbosity >= TRACE):
-            print 'iCompile is newer than ' + targetFile
+            print('iCompile is newer than ' + targetFile)
 
         # See if the object file is out of date because it is older than a dependency
         if not rebuild:
@@ -56,7 +57,7 @@ def getOutOfDateFiles(state, cfiles, dependencies, files, timeStamp):
                 dependencyTime = getTimeStampCached(dependencyFile, timeStamp)
                 if targetTime < dependencyTime:
                     if verbosity >= TRACE:
-                        print d + " is newer than " + targetFile
+                        print(d + " is newer than " + targetFile)
                     rebuild = 1
                     break
 
@@ -73,7 +74,7 @@ def getOutOfDateFiles(state, cfiles, dependencies, files, timeStamp):
 """
 def getObjectFilename(state, sourceFile):
     # strip the extension and replace it with .o
-    i = string.rfind(sourceFile, '.')
+    i = sourceFile.rfind('.')
     return state.objDir + sourceFile[len(state.rootDir):i] + '.o'
 
 #########################################################################
@@ -111,21 +112,21 @@ def _removeArch(oldList):
    timeStamp = table(filename, timestamp) that is updated as getDependencies runs   
 """
 def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
-    if verbosity >= VERBOSE: print '  ' + file
+    if verbosity >= VERBOSE: print('  ' + file)
     
     # dependencyCache: table(file, (timestamp at which dependencies were computed, dependency list))
     targetCache = state.getTargetCache()    
     dependencyCache = targetCache.dependencies
     
     # Assume that we can trust the cache, and try to prove otherwise
-    trustCache = dependencyCache.has_key(file)
+    trustCache = file in dependencyCache
     if trustCache:
         entry = dependencyCache[file]
         timeComputed = entry[0]
         if getTimeStampCached(file, timeStamp) > timeComputed:
             if verbosity >= SUPERTRACE:
-                print ('Cannot use cached dependency information for ' + file +
-                       ' because it has changed.')
+                print(('Cannot use cached dependency information for ' + file +
+                       ' because it has changed.'))
             # The file has changed since we checked dependencies
             trustCache = False
         else:
@@ -137,8 +138,8 @@ def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
                 
                 if getTimeStampCached(d, timeStamp) > timeComputed:
                     if verbosity >= TRACE:
-                        print ('Cannot use cached dependency information for ' + file +
-                        ' because ' + d + ' has changed.')
+                        print(('Cannot use cached dependency information for ' + file +
+                        ' because ' + d + ' has changed.'))
                     # One of the dependencies has itself changed since
                     # we checked dependencies, which means that there might
                     # be new dependencies for file
@@ -146,12 +147,12 @@ def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
                     break
     else:
         if verbosity >= SUPERTRACE:
-            print 'There is no cached dependency information for ' + file + '.'
+            print('There is no cached dependency information for ' + file + '.')
                     
     if trustCache:
         # The entry for this file is up to date.  If it is up to date,
         # it must also not need resolution.
-        if verbosity >= SUPERTRACE: print 'Using cached dependency information for ' + file        
+        if verbosity >= SUPERTRACE: print('Using cached dependency information for ' + file)        
         return (False, dependencies)
     
     # ...otherwise, dependency information for this file is out of date, so recompute it
@@ -169,11 +170,11 @@ def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
     raw = shell(state.compiler + ' -M -msse2 -MG ' + argsWithoutArchitecture + ' ' + file, verbosity >= TRACE)
     
     if verbosity >= SUPERTRACE:
-        print 'Raw output of dependency determination:'
-        print raw
+        print('Raw output of dependency determination:')
+        print(raw)
 
     if ' error:' in raw:
-        print raw
+        print(raw)
         sys.exit(-1)
 
     if raw.startswith('cc1plus: warning:'):
@@ -186,17 +187,17 @@ def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
         
         if iteration == 3:
             # Give up; we can't resolve the problem
-            print raw
+            print(raw)
             sys.exit(-1)
         
         if verbosity >= VERBOSE:
-            print ('\nThere were some errors computing dependencies.  ' +
-                   'Attempting to recover.('), iteration,')'
+            print(('\nThere were some errors computing dependencies.  ' +
+                   'Attempting to recover.('), iteration,')')
         
         # Generate a list of files and see if they are something we
         # know how to fix.
         noSuchFile = []
-        for line in string.split(raw, '\n'):
+        for line in raw.split('\n'):
             if line.endswith(': No such file or directory'):
                 x = line[:-len(': No such file or directory')]
                 j = x.rfind(': ')
@@ -205,12 +206,12 @@ def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
                 # x now has the filename
                 noSuchFile.append(betterbasename(x))
 
-        if verbosity >= NORMAL: print 'Files not found:', noSuchFile
+        if verbosity >= NORMAL: print('Files not found:' + str(noSuchFile))
         
         # Look for specific header files that we know how to handle
         for f in noSuchFile:
             if f == 'wx.h':
-                if verbosity >= NORMAL: print 'wxWindows detected.'
+                if verbosity >= NORMAL: print('wxWindows detected.')
                 copt = shell('wx-config --cxxflags', verbosity >= VERBOSE)
                 lopt = shell('wx-config --gl-libs --libs', verbosity >= VERBOSE)
                 targetCache.compilerOptions += copt
@@ -231,7 +232,7 @@ def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
             # gcc 3.4.2 likes to print the name of the file first, as in
             # """# 1 "/home/faculty/morgan/Projects/ice/tests/meta/helper.lib//""""
             if not line.startswith('# '):
-                result += string.split(line, ' ')
+                result += line.split(' ')
 
         # There is always at least one file in the raw file list,
         # since every file depends on itself.
@@ -249,7 +250,7 @@ def getDependencies(state, file, verbosity, timeStamp, iteration = 1):
         if needResolution:
             # Wipe the cache entry, since we're going to have to re-process
             # this file's dependencies
-            if dependencyCache.has_key(file): del dependencyCache[file]
+            if file in dependencyCache: del dependencyCache[file]
         else:
             # Update the cache entry.
             dependencyCache[file] = (time.time(), result)
@@ -326,7 +327,7 @@ def makeAbsolute(file, searchPath):
  parents is a dict. parents[file] is a list of all files that depend on file.
 """
 def getDependencyInformation(allCFiles, dependencySet, dependencies, parents, state, verbosity, timeStamp):
-    if verbosity >= TRACE: print 'Source files found:', allCFiles
+    if verbosity >= TRACE: print('Source files found:' + str(allCFiles))
 
     rerun = []
     missingHeaders = []
@@ -342,7 +343,7 @@ def getDependencyInformation(allCFiles, dependencySet, dependencies, parents, st
             # checking for sibling libraries
             if verbosity >= TRACE:
                 for d in dlist:
-                    if not os.path.isabs(d): print '    Header not found (yet): ' + d
+                    if not os.path.isabs(d): print('    Header not found (yet): ' + d)
                     
             rerun += [cfile]
         
@@ -422,7 +423,7 @@ def identifySiblingLibraryDependencies(files, parents, state):
                 found = os.path.exists(dirname + '/include/' + header)
 
                 if found:
-                    if verbosity >= TRACE: print "Found '" + header + "' in '" + dirname + "/include'."
+                    if verbosity >= TRACE: print("Found '" + header + "' in '" + dirname + "/include'.")
                     # We have identified a sibling library on which this project appears
                     # to depend.  
 
@@ -435,8 +436,8 @@ def identifySiblingLibraryDependencies(files, parents, state):
                         type = LIB
 
                     if isLibrary(type):
-                        if verbosity >= TRACE: print 'Need library "' + libname + '"'
-                        if not libraryTable.has_key(libname):
+                        if verbosity >= TRACE: print('Need library "' + libname + '"')
+                        if libname not in libraryTable:
                             newLib = Library(libname, type, libname, libname + 'd',  
                                              None,  None, [betterbasename(header)], [], [])
                             
@@ -450,8 +451,8 @@ def identifySiblingLibraryDependencies(files, parents, state):
                             state.usesLibrariesList.append(libname)
 
                         if not dirname in state.usesProjectsList:
-                            print ('Detected dependency on ' + dirname + ' from inclusion of ' + 
-                                   header + ' by'), shortname(state.rootDir, parents[header][0])
+                            print(('Detected dependency on ' + dirname + ' from inclusion of ' + 
+                                   header + ' by'), shortname(state.rootDir, parents[header][0]))
 
                             state.addUsesProject(dirname)
 

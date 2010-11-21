@@ -4,8 +4,13 @@
 # Build system for G3D.  Run 'buildg3d help' for options.
 #
 
-import os, platform, commands, sys, time, getopt, errno
-import urllib, tarfile, stat
+import os, platform, subprocess, sys, time, getopt, errno
+try:
+  import urllib.request as urllib_request
+except ImportError:
+  import urllib as urllib_request
+import tarfile, stat
+from functools import reduce
 
 # To get access to icompile routines
 sys.path.append('bin')
@@ -96,7 +101,7 @@ def initOS():
                 icompileConfig = []
 
         icompileConfig += ['--verbosity', verbosity]
-        print 'Adding iCompile options: ', icompileConfig
+        print('Adding iCompile options: ' + str(icompileConfig))
 
     if windows:
         platformName = 'win-i386-vc10'
@@ -165,7 +170,7 @@ def initOS():
         doInstall = False
 
     if doInstall:
-        print 'Setting installation directory to: ' + installDir
+        print(('Setting installation directory to: ' + installDir))
 
     if windows:
         libInstallDir = pathConcat(installDir, 'G3D')
@@ -204,7 +209,7 @@ initOS()
 def copyIfNewer(source, dest):
     if windows:
         # Use the binary
-        print 'copyifnewer', source, dest
+        print('copyifnewer %s %s' % (source, dest))
         return os.spawnv(os.P_WAIT, 'bin\\copyifnewer.exe', 
                    ['bin\\copyifnewer.exe', '--super-exclusions', source, dest])
     else:
@@ -250,8 +255,8 @@ def buildNativeFFmpeg():
             raise Exception('Compiling FFMPEG requires that environment variable TMPDIR refer to a writable directory.  Current value is $TMPDIR=' + TMPDIR)
 
     libs = ['libavutil.a', 'libavcodec.a', 'libavformat.a']
-    print '----------------------------------------------------\n'
-    print 'Building ' + ', '.join(libs)
+    print('----------------------------------------------------\n')
+    print(('Building ' + ', '.join(libs)))
 
     buildLibPath = pathConcat('build', 'lib')
 
@@ -277,7 +282,7 @@ def buildNativeFFmpeg():
     ffmpegName = tarObject.next().name
 
     if doClean:
-        print '\nExtracting tarfile'
+        print('\nExtracting tarfile')
         os.chdir(sourceDir)
         retVal = ice.utils.run('tar', ['--bzip2', '-xvf', pathConcat('../../..', tarname)], False)
         os.chdir('../../..')
@@ -285,7 +290,7 @@ def buildNativeFFmpeg():
         tarObject = None
 
         if retVal != 0:
-            print 'Tar command failed'
+            print('Tar command failed')
             return retVal
 
     # find gcc compiler to match iCompile configuration
@@ -322,7 +327,7 @@ def buildNativeFFmpeg():
     """ + make + """ install
     """
     
-    print 'Compiling...'
+    print('Compiling...')
 
     # FreeBSD uses the PWD from the previous interactive command, so
     # we have to explicitly set PWD to make the FFmpeg configure
@@ -339,7 +344,7 @@ def buildNativeFFmpeg():
             ice.copyifnewer.copyIfNewer(pathConcat(installDir, 'lib', lib),
                                         pathConcat(buildLibPath, lib))
 
-    print '----------------------------------------------------'
+    print('----------------------------------------------------')
     return retVal
 
 
@@ -410,7 +415,7 @@ def cleanTarget():
     run("../bin/icompile", icompileConfig + ['--clean'])
     os.chdir("..")
 
-    print 'viewer'
+    print('viewer')
     os.chdir("tools/viewer")
     run("../../bin/icompile", icompileConfig + ['--clean'])
     os.chdir("../..")
@@ -515,7 +520,7 @@ def updateTarget():
  Recursively zips the source into zipfile
 """
 def zip(source, zipfile):
-    print 'Creating ' + zipfile
+    print(('Creating ' + zipfile))
 
     if windows:
         run('PKZIP25', ['-add', '-rec', '-lev=9', '-path=relative', zipfile, source])
@@ -524,7 +529,7 @@ def zip(source, zipfile):
 
 def srczipTarget():
     if windows:
-        raise 'src target must be run on a Unix platform'
+        raise Exception('src target must be run on a Unix platform')
     
     # First copy everything to the temp directory to remove
     # .svn files
@@ -534,12 +539,12 @@ def srczipTarget():
     
     os.chdir('temp/src')
     # Now produce the zipfile
-    zip('G3D', '../../build/' + 'G3D' + '-' + g3dVersion.toString() + '-src.zip')
+    list(zip('G3D', '../../build/' + 'G3D' + '-' + g3dVersion.toString() + '-src.zip'))
     os.chdir('../..')
 
 def sourceTarget():
     if windows:
-        raise 'src target must be run on a Unix platform'
+        raise Exception('src target must be run on a Unix platform')
     
     # First copy everything to the temp directory to remove
     # .svn and ~ files
@@ -553,22 +558,22 @@ def sourceTarget():
 ##################################################################################
     
 def jarTarget():
-   print 'Testing for javac and jar...'
+   print('Testing for javac and jar...')
    if windows:
        javac = _findWindowsBinary('javac')
        jar = _findWindowsBinary('jar')
        if not javac or not jar:
-           print 'javac or jar not found on this machine, skipping .jar creation!'
+           print('javac or jar not found on this machine, skipping .jar creation!')
            return -1
    else:
        x = shell('javac', False)
        y = shell('jar', False)
        if len(x) < 200 or len(y) < 200:
-           print 'javac or jar not found on this machine, skipping .jar creation!'
+           print('javac or jar not found on this machine, skipping .jar creation!')
            return -1
        javac = 'javac'
 
-   print 'Building G3D.jar...'
+   print('Building G3D.jar...')
    mkdir('temp/G3D.jar/G3D')
    mkdir('build')
    
@@ -577,7 +582,7 @@ def jarTarget():
    ret = run('jar', ['-cf', 'build/G3D.jar', '-C', 'temp/G3D.jar', 'G3D'])
 
    if ret == 0:
-       print 'Built build/G3D.jar'
+       print('Built build/G3D.jar')
 
    return ret
 
@@ -586,14 +591,14 @@ def jarTarget():
 def getTarFile(tarUrl, downloadDir):
     tarName = tarUrl.split('/')[-1]
 
-    print 'Downloading ' + tarName + '...'
+    print(('Downloading ' + tarName + '...'))
 
     ice.utils.mkdir(downloadDir, False)
 
     tarPath = os.path.join(downloadDir, tarName)
-    urllib.urlretrieve(tarUrl, tarPath)
+    urllib_request.urlretrieve(tarUrl, tarPath)
 
-    print 'Completed.\n'
+    print('Completed.\n')
 
     return tarPath
 
@@ -601,7 +606,7 @@ def getTarFile(tarUrl, downloadDir):
 def extractTarFile(tarPath, extractDir):
     tarName = os.path.split(tarPath)[-1]
 
-    print 'Extracting ' + tarName + '...'
+    print(('Extracting ' + tarName + '...'))
 
     ice.utils.mkdir(extractDir, False)
 
@@ -613,7 +618,7 @@ def extractTarFile(tarPath, extractDir):
     tarObject.extractall(extractDir)
     tarObject.close()
 
-    print 'Completed.\n'
+    print('Completed.\n')
 
     return os.path.join(extractDir, topDir)
     
@@ -668,7 +673,7 @@ def ffmpegCCTarget():
     #(binutilsDir, gmpDir, gccDir) = (os.path.join(sourceDir, 'binutils-2.19.1'), os.path.join(sourceDir, 'gmp-4.2.4'), os.path.join(sourceDir, 'gcc-4.4.1'))
     
     # configure binutils
-    print 'Building binutils...'
+    print('Building binutils...')
     binutilsObjDir = os.path.join(sourceDir, 'binutils_obj')
     ice.utils.mkdir(binutilsObjDir, False)
     os.chdir(binutilsObjDir)
@@ -678,11 +683,11 @@ def ffmpegCCTarget():
     ice.utils.shell(make + ' CFLAGS="-fno-exceptions" LDFLAGS="-s"', False)
     ice.utils.shell(make + ' install', False)
     os.chdir(oldcwd)
-    print 'Completed.\n'
+    print('Completed.\n')
 
     # build gmp separate from gcc due to config issue running from python
     # configure gmp
-    print 'Building gmp...'
+    print('Building gmp...')
     gmpObjDir = os.path.join(sourceDir, 'gmp_obj')
     ice.utils.mkdir(gmpObjDir, False)
     os.chdir(gmpObjDir)
@@ -692,10 +697,10 @@ def ffmpegCCTarget():
     ice.utils.shell(make, False)
     ice.utils.shell(make + ' install', False)
     os.chdir(oldcwd)
-    print 'Completed.\n'
+    print('Completed.\n')
     
     # configure gcc core
-    print 'Building gcc...'
+    print('Building gcc...')
     gccObjDir = os.path.join(sourceDir, 'gcc_obj')
     ice.utils.mkdir(gccObjDir, False)
     os.chdir(gccObjDir)
@@ -705,9 +710,9 @@ def ffmpegCCTarget():
     ice.utils.shell(make, False)
     ice.utils.shell(make + ' install', False)
     os.chdir(oldcwd)
-    print 'Completed.'
+    print('Completed.')
 
-    print "Copying mingw32 gcc runtime libraries\n"
+    print("Copying mingw32 gcc runtime libraries\n")
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/gcc/mingw32/4.4.1/libgcc.a'), 'ffmpeg/lib/win32/gcc.lib', False)
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'mingw32/lib/libmingwex.a'), 'ffmpeg/lib/win32/mingwex.lib', False)
 
@@ -738,12 +743,12 @@ def ffmpegWinTarget():
     os.chdir(oldcwd)
 
     # copy the new .lib and header files to ffmpeg directory
-    print "Copying cross-compiled mingw32 FFmpeg libraries\n"
+    print("Copying cross-compiled mingw32 FFmpeg libraries\n")
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavutil.a'), 'ffmpeg/lib/win32/avutil.lib', False)
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavcodec.a'), 'ffmpeg/lib/win32/avcodec.lib', False)
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavformat.a'), 'ffmpeg/lib/win32/avformat.lib', False)
 
-    print "Copying FFmpeg headers since building mingw32 libraries should update include\n"
+    print("Copying FFmpeg headers since building mingw32 libraries should update include\n")
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavutil'), 'ffmpeg/include/libavutil', False)
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavcodec'), 'ffmpeg/include/libavcodec', False)
     ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavformat'), 'ffmpeg/include/libavformat', False)
@@ -753,7 +758,7 @@ def ffmpegWinTarget():
 ################################################################################
 
 def helpTarget():
-    print """
+    print(("""
 buildg3d - Automated build system for G3D.
 
 Syntax: 
@@ -821,7 +826,7 @@ ffmpegCC   Build MinGW cross-compiler used during ffmpegWin target
 
 The return code of buildg3d is the return code of the last process it
 launched (i.e., you can expect 0 on success).
-"""
+"""))
 
 ################################################################################
 
@@ -855,14 +860,14 @@ def dispatchOnTargets(targets, validTargets):
     for target in targets:
         found = False
         for v in validTargets:      
-            if target == v.func_name:
+            if target == v.__name__:
                 code = v()
                 found = True
                 if code != 0:
                     return code
 
         if not found:
-            print '"' + target[0:-6] + '" is not a valid build target (type "build help" to see all targets).'
+            print(('"' + target[0:-6] + '" is not a valid build target (type "build help" to see all targets).'))
             return -1
 
     return 0
@@ -885,6 +890,6 @@ if __name__ == "__main__":
         install()
         
     t1 = time.time()
-    print '%ds' % (t1 - t0)
+    print(('%ds' % (t1 - t0)))
 
     sys.exit(code)

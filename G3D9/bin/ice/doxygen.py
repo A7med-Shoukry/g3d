@@ -1,8 +1,9 @@
 # doxygen.py
 #
 # Doxygen Management
+from __future__ import print_function
 
-from utils import *
+from .utils import *
 import glob
 
 ##############################################################################
@@ -46,7 +47,7 @@ def createDoxyfile(state):
 
     # Rewrite the text by replacing any of the above properties
     newText = ""
-    for line in string.split(text,"\n"):
+    for line in text.split("\n"):
         newText += (doxyLineRewriter(line, propertyMapping) + "\n")
 
     # Write the file back out
@@ -58,15 +59,15 @@ def createDoxyfile(state):
 
 """ Called from createDoxyfile. """
 def doxyLineRewriter(lineStr, hash):
-    line = string.strip(lineStr) # remove leading and trailing whitespace
+    line = lineStr.strip() # remove leading and trailing whitespace
     if (line == ''): # it's a blank line
         return lineStr
     elif (line[0] == '#'): # it's a comment line
         return lineStr
     else : # here we know it's a property assignment
-        prop = string.strip(line[0:string.find(line, "=")])
-        if hash.has_key(prop):
-            print prop + ' = ' + hash[prop]
+        prop = line[0:line.find("=")].strip()
+        if prop in hash:
+            print(prop + ' = ' + hash[prop])
             return prop + ' = ' + hash[prop]
         else:
             return lineStr
@@ -94,11 +95,11 @@ class DoxygenRefLinkRemapper:
         sources = os.listdir(sourcePath)
         
         # discard non-class/struct documentation files
-        sources = filter(lambda filename: re.search('^class|^struct', filename), sources)
-        sources = filter(lambda filename: not re.search('-members.html$', filename), sources)
+        sources = [filename for filename in sources if re.search('^class|^struct', filename)]
+        sources = [filename for filename in sources if not re.search('-members.html$', filename)]
         
         # discard filenames with encoded spaces (implies templates) for now
-        sources = filter(lambda filename: not re.search('_01', filename), sources)
+        sources = [filename for filename in sources if not re.search('_01', filename)]
         
         # build the dictionary mapping valid ref names to their documentation
         for filename in sources:

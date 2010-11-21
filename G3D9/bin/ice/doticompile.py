@@ -1,12 +1,18 @@
 # doticompile.py
 # 
 # Manage .icompile files
+from __future__ import print_function
 
-import ConfigParser, string, os, copyifnewer, templateG3D, templateHello
-from utils import *
-from doxygen import *
-from variables import *
-from help import *
+import string, os
+try:
+  import configparser
+except ImportError:
+  import ConfigParser as configparser
+from . import copyifnewer, templateG3D, templateHello
+from .utils import *
+from .doxygen import *
+from .variables import *
+from .help import *
 
 # If True, the project will not be rebuilt if all dependencies
 # other than iCompile are up to date.  This is handy when
@@ -184,8 +190,8 @@ linkoptions:
 def configGet(state, config, section, name, exp = True):
     try:
         val = config.get(section, name)
-    except ConfigParser.InterpolationMissingOptionError:
-	maybeWarn('Variable \'' + name + '\' in ' + ' the [' + section + '] section of ' + 
+    except configparser.InterpolationMissingOptionError:
+        maybeWarn('Variable \'' + name + '\' in ' + ' the [' + section + '] section of ' + 
                   state.rootDir + 'ice.txt may have an illegal value.  If that ice.txt ' +
                   'file is from a previous version of iCompile you should delete it.\n', state)
         return ''
@@ -200,7 +206,7 @@ def configGet(state, config, section, name, exp = True):
             (compname, ver) = newestCompiler()
             val = val.replace('<NEWESTCOMPILER>', compname)
 
-        val = val.replace('<EXCLUDE>', string.join(copyifnewer._cppExcludePatterns + ['^CMakeFiles$'], '|'))
+        val = val.replace('<EXCLUDE>', '|'.join(copyifnewer._cppExcludePatterns + ['^CMakeFiles$']))
 
     val = os.path.expanduser(val)
         
@@ -216,7 +222,7 @@ class FakeFile:
 
     def __init__(self, contents):
         self._currentLine = 0
-        self._textLines = string.split(contents, '\n')
+        self._textLines = contents.split('\n')
 
     def readline(self):
         if (self._currentLine >= len(self._textLines)):
@@ -236,7 +242,7 @@ def _processDotICompile(state, config):
 
     # Process .icompile
     if os.path.exists(state.preferenceFile()):
-        if verbosity >= TRACE: print 'Processing ' + state.preferenceFile()
+        if verbosity >= TRACE: print('Processing ' + state.preferenceFile())
         config.read(state.preferenceFile())
     else:
         success = False
@@ -259,19 +265,19 @@ def _processDotICompile(state, config):
         # it matches the default, which we already read.
                            
         if not success and verbosity >= TRACE:
-            print ('No ' + preferenceFile + ' found and cannot write to '+ HOME)
+            print('No ' + preferenceFile + ' found and cannot write to '+ HOME)
 
 """ Process the project file and .icompile so that we can use configGet.
     Sets a handful of variables."""
 def processProjectFile(state, ignoreIceTxt = False):
 
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     _processDotICompile(state, config)
 
     if not ignoreIceTxt:
         # Process the project file
         projectFile = 'ice.txt'
-        if verbosity >= TRACE: print 'Processing ' + projectFile
+        if verbosity >= TRACE: print('Processing ' + projectFile)
         config.read(projectFile)
 
     # Don't expand '$' envvar in regular expressions since
@@ -283,11 +289,11 @@ def processProjectFile(state, ignoreIceTxt = False):
     L = ''
     try:
         L = configGet(state, config, 'GLOBAL', 'uses')
-    except ConfigParser.NoOptionError:
+    except configparser.NoOptionError:
         # Old files have no 'uses' section
         pass
 
-    for u in string.split(L, ':'):
+    for u in L.split(':'):
         if u.strip() != '':
             if os.path.exists(pathConcat(u, 'ice.txt')):
                 # This is another iCompile project
@@ -323,8 +329,8 @@ def processProjectFile(state, ignoreIceTxt = False):
 
     state.compiler = configGet(state, config, 'GLOBAL', 'compiler')
 
-    state.compilerOptions = string.split(configGet(state, config, state.target, 'compileoptions'), ' ')
-    state.linkerOptions   = string.split(configGet(state, config, state.target, 'linkoptions'), ' ')
+    state.compilerOptions = configGet(state, config, state.target, 'compileoptions').split(' ')
+    state.linkerOptions   = configGet(state, config, state.target, 'linkoptions').split(' ')
 
 
 #########################################################################
@@ -344,7 +350,7 @@ def getConfigurationState(args):
 
     state.template = ''
     if '--template' in args:
-        for i in xrange(0, len(args)):
+        for i in range(0, len(args)):
             if args[i] == '--template':
                 if i < len(args) - 1:
                     state.template = args[i + 1]
@@ -364,9 +370,9 @@ def getConfigurationState(args):
     state.rootDir  = os.getcwd() + "/"
 
     # Project name
-    state.projectName = string.split(state.rootDir, ('/'))[-2]
+    state.projectName = state.rootDir.split('/')[-2]
 
-    ext = string.lower(extname(state.projectName))
+    ext = extname(state.projectName).lower()
     state.projectName = rawfilename(state.projectName)
 
     # Binary type    
@@ -461,14 +467,14 @@ def checkForProjectFile(state, args):
     if not state.noPrompt:
 
         if '--clean' in args:
-            print
+            print()
             colorPrint('Nothing to clean (you have never run iCompile in ' +
                    os.getcwd() + ')', WARNING_COLOR)
-            print
+            print()
             # There's nothing to delete anyway, so just exit
             sys.exit(0)
 
-        print
+        print()
         inHomeDir = (os.path.realpath(os.getenv('HOME')) == os.getcwd())
 
         if inHomeDir:
@@ -481,8 +487,8 @@ def checkForProjectFile(state, args):
         else:        
             colorPrint('You have never run iCompile in this directory before.',
                        WARNING_COLOR)
-        print
-        print '  Current Directory: ' + os.getcwd()
+        print()
+        print('  Current Directory: ' + os.getcwd())
     
         # Don't show dot-files first if we can avoid it
         dirs = listDirs()
@@ -491,26 +497,26 @@ def checkForProjectFile(state, args):
         sl = shortlist(dirs)
     
         if (num > 1):
-            print '  Contains', num, 'directories (' + sl + ')'
+            print('  Contains %d directories (%s)' % (num, sl))
         elif (num > 0):
-            print '  Contains 1 directory (' + dirs[0] + ')'
+            print('  Contains 1 directory (' + dirs[0] + ')')
         else:
-            print '  Contains no subdirectories'
+            print('  Contains no subdirectories')
 
         cfiles = listCFiles()
         num = len(cfiles)
         sl = shortlist(cfiles)
     
         if (num > 1):
-            print '  Subdirectories contain', num, 'C++ files (' + sl + ')'
+            print('  Subdirectories contain %d C++ files (%s)' % (num, sl))
         elif (num > 0):
-            print '  Subdirectories contain 1 C++ file (' + cfiles[0] + ')'
+            print('  Subdirectories contain 1 C++ file (' + cfiles[0] + ')')
         else:
-            print '  Subdirectories contain no C++ files'    
+            print('  Subdirectories contain no C++ files')    
 
-        print
+        print()
     
-        dir = string.split(os.getcwd(), '/')[-1]
+        dir = os.getcwd().split('/')[-1]
         if inHomeDir:
             prompt = ('Are you sure you want to run iCompile '+
                       'in your home directory? (Y/N)')
@@ -519,17 +525,17 @@ def checkForProjectFile(state, args):
                       dir + "' project? (Y/N)")
         
         colorPrint(prompt, 'bold')
-        if string.lower(getch()) != 'y':
+        if getch().lower() != 'y':
             sys.exit(0)
 
         if (num == 0):
             prompt = ("Would you like to generate a set of starter files for the '" +
                       dir + "' project? (Y/N)")
             colorPrint(prompt, 'bold')
-            if string.lower(getch()) == 'y':
+            if getch().lower() == 'y':
                 prompt = "Select a project template:\n  [H]ello World\n  [G]3D\n"
                 colorPrint(prompt, 'bold')
-                if string.lower(getch()) == 'h':
+                if getch().lower() == 'h':
                     templateHello.generateStarterFiles(state)
                 else:
                     templateG3D.generateStarterFiles(state)
@@ -543,7 +549,7 @@ def checkForProjectFile(state, args):
             # Intentionally do nothing
             ''
         else:
-            print 'ERROR: illegal template'
+            print('ERROR: illegal template')
             
     writeFile(projectFile, defaultProjectFileContents);
 

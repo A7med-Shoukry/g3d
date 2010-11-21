@@ -1,11 +1,12 @@
 # variables.py
 #
 # Global variables for iCompile modules
+from __future__ import print_function
 
-import os, utils
-from utils import *
+import os
+from .utils import *
 from platform import machine
-from library import *
+from .library import *
 import multiprocessing
 
 ##############################################################################
@@ -40,7 +41,7 @@ def _pathAppend(plist, newPath, checkForExist = False):
         elif not ('/SDL11/' in newPath) and not ('/SDL/' in newPath) and not ('/X11R6/' in newPath):
             # Don't print warnings about SDL/X11; we need those to make
             # lots of different unix installs all work
-            print 'Path ' + newPath + ' specified in configuration file does not exist.'
+            print('Path ' + newPath + ' specified in configuration file does not exist.')
 
     return plist
 
@@ -157,7 +158,7 @@ class Depend:
         return ()
             
     def __getnewargs__(self):
-        return __getinitargs__(self)        
+        return self.__getinitargs__()
 
     def setPropertiesOn(self, state):
         if self.includePaths == None:
@@ -218,7 +219,7 @@ class Cache:
         return ()
     
     def __getnewargs__(self):
-        return __getinitargs__(self)
+        return self.__getinitargs__()
 
     def __init__(self):
         self.warnings = {}
@@ -238,7 +239,7 @@ class Cache:
     def setPropertiesOn(self, state):
         # Add libraries that are not already in the table
         for lib in self.customLibraryList:
-            print 'iterating through custom libraries'
+            print('iterating through custom libraries')
             if not lib.name in libraryTable:
                 defineLibrary(lib)
 
@@ -399,7 +400,7 @@ class State:
     def preferenceFile(self):
     
         if ('--config' in self.args):
-            for i in xrange(0, len(self.args)):
+            for i in range(0, len(self.args)):
                 if self.args[i] == '--config':
                     if i < len(self.args) - 1:
                         pref = self.args[i + 1]
@@ -438,43 +439,43 @@ class State:
         # Libraries were automatically updated inside
         # identifySiblingLibraryDependencies()
         
-        file = open(filename, 'w')
+        file = open(filename, 'wb')
         pickle.dump(self.cache, file)
         file.close()
-        if utils.verbosity >= TRACE:
-            print 'Saved cache:'
-            print self.cache
+        if verbosity >= TRACE:
+            print('Saved cache:')
+            print(self.cache)
 
     def loadCache(self, filename):
-        if utils.verbosity >= TRACE: print "Loading cache from " + filename + "\n"
+        if verbosity >= TRACE: print("Loading cache from " + filename + "\n")
 
         self.cache = Cache()
 
         if os.path.exists(filename) and (getTimeStamp(filename) >= self.icompileTime):
             # Cache exists and is newer than the project file
         
-            file = open(filename, 'r')
+            file = open(filename, 'rb')
             try:
                 self.cache = pickle.load(file);
                 if not isinstance(self.cache, Cache):
                     raise Exception('Cache format changed in version 0.5.5')
             
-            except Exception, e:
+            except Exception as e:
                 # The cache is corrupt; ignore (and delete) it
-                print e
+                print(e)
                 self.cache = Cache()
-                if utils.verbosity >= NORMAL: 
+                if verbosity >= NORMAL: 
                     colorPrint("Warning: Internal iCompile cache at '" + os.path.abspath(filename) +
                                "' is corrupt.", WARNING_COLOR)
                 os.remove(filename)
  
             file.close()
-        elif utils.verbosity >= TRACE: print 'No cache found, or cache is out of date'
+        elif verbosity >= TRACE: print('No cache found, or cache is out of date')
 
-        if utils.verbosity >= TRACE:
-            print 'Loaded Cache:'
-            print self.cache
-            print
+        if verbosity >= TRACE:
+            print('Loaded Cache:')
+            print(self.cache)
+            print()
 
         self.cache.setPropertiesOn(self)
         self.getTargetCache().setPropertiesOn(self)
@@ -535,7 +536,7 @@ def discoverPlatform(state):
     elif (os.uname()[0] == 'Darwin'):
         state.os = 'osx'
     else:
-        raise 'Error', ('iCompile only supports FreeBSD, Linux, ' + 
+        raise Exception('iCompile only supports FreeBSD, Linux, ' + 
           'OS X, and Windows')
 
     state.universalBinary = False#(state.os == 'osx') and (machine() == 'i386')

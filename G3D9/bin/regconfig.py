@@ -1,7 +1,8 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 # regconfig.py
-import _winreg
+import winreg
 import os.path as path
 
 class RegConfig:
@@ -52,26 +53,26 @@ class RegConfig:
                 key, tmp = path.split(key)
                 subkey = '\\'.join([tmp, subkey])              
             if key == 'HKEY_CLASSES_ROOT':
-                key = _winreg.HKEY_CLASSES_ROOT
+                key = winreg.HKEY_CLASSES_ROOT
             elif key == 'HKEY_CURRENT_CONFIG':
-                key = _winreg.HKEY_CURRENT_CONFIG
+                key = winreg.HKEY_CURRENT_CONFIG
             elif key == 'HKEY_CURRENT_USER':
-                key = _winreg.HKEY_CURRENT_USER
+                key = winreg.HKEY_CURRENT_USER
             elif key == 'HKEY_DYN_DATA':
-                key = _winreg.HKEY_DYN_DATA
+                key = winreg.HKEY_DYN_DATA
             elif key == 'HKEY_LOCAL_MACHINE':
-                key = _winreg.HKEY_LOCAL_MACHINE
+                key = winreg.HKEY_LOCAL_MACHINE
             elif key == 'HKEY_PERFORMANCE_DATA':
-                key = _winreg.HKEY_PERFORMANCE_DATA
+                key = winreg.HKEY_PERFORMANCE_DATA
             elif key == 'HKEY_USERS':
-                key = _winreg.HKEY_USERS
+                key = winreg.HKEY_USERS
             else:
                 raise TypeError('Invalid registry key (HKEY_)')
             try:
                 if forwriting:
-                    hkey = _winreg.CreateKey(key, subkey)
+                    hkey = winreg.CreateKey(key, subkey)
                 else:
-                    hkey = _winreg.OpenKey(key, subkey)
+                    hkey = winreg.OpenKey(key, subkey)
             except:
                 raise WindowsError('Cannot open registry path')
             else:
@@ -84,7 +85,7 @@ class RegConfig:
         if self.has_section(section):
             sectiondict = self._store[section]
             ret = []
-            for option in sectiondict.keys():
+            for option in list(sectiondict.keys()):
                 value, type = sectiondict[option]
                 ret.append((option, value))
             return ret
@@ -92,23 +93,23 @@ class RegConfig:
         
     def has_option(self, section, option):
         """ If the given section exists, and contains the given option. """
-        if self._store.has_key(section):
+        if section in self._store:
             sectiondict = self._store[section]
-            return sectiondict.has_key(option)
+            return option in sectiondict
     
     
     def has_section(self, section):
         """ Indicates whether the named section is present in the
             configuration. """
-        return self._store.has_key(section)
+        return section in self._store
         
         
     def options(self, section):
         """ Returns a list of options available in the specified section. """
-        if self._store.has_key(section):
+        if section in self._store:
             sectiondict = self._store[section]
             if sectiondict:
-                return sectiondict.keys()
+                return list(sectiondict.keys())
             
             
     def read(self, regpath=None):
@@ -122,7 +123,7 @@ class RegConfig:
                         self._read(self._get_default_regkey(rp))
                 else:
                     self._read(self._get_default_regkey(regpath))
-            except Exception, e:
+            except Exception as e:
                 if not self._autowrite: raise e
                 
     def _read(self, regkey=None):
@@ -131,7 +132,7 @@ class RegConfig:
             index = 0
             while 1:
                 try:
-                    section = _winreg.EnumKey(regkey, index)
+                    section = winreg.EnumKey(regkey, index)
                 except: 
                     break
                 else:
@@ -145,15 +146,15 @@ class RegConfig:
                 index = 0
                 while 1:
                     try:
-                        hkey = _winreg.OpenKey(regkey, section)   
-                        valuename, data, type = _winreg.EnumValue(hkey, index)
+                        hkey = winreg.OpenKey(regkey, section)   
+                        valuename, data, type = winreg.EnumValue(hkey, index)
                     except:
                         break
                     else:
                         self.set(section, valuename, (data, type), readop=True)
                         index += 1
-                        if hkey: _winreg.CloseKey(hkey)
-            if regkey: _winreg.CloseKey(regkey)
+                        if hkey: winreg.CloseKey(hkey)
+            if regkey: winreg.CloseKey(regkey)
                         
                         
     def remove_option(self, section, option):
@@ -168,7 +169,7 @@ class RegConfig:
 
     def sections(self):
         """ Return a list of the sections available. """
-        return self._store.keys()
+        return list(self._store.keys())
     
 
     def set(self, section, option, value, check=True, readop=False):
@@ -198,16 +199,16 @@ class RegConfig:
     def _valueregform(self, value):
         """ Converts values set by the user to a from to be stored in the
             registry. """
-        if isinstance(value, str) or isinstance(value, unicode):
-            value = (value, _winreg.REG_SZ)
+        if isinstance(value, str) or isinstance(value, str):
+            value = (value, winreg.REG_SZ)
         elif isinstance(value, int):
-            value = (value, _winreg.REG_DWORD)
+            value = (value, winreg.REG_DWORD)
         elif isinstance(value, list):
             for s in value:
-                if not isinstance(s, str) or isinstance(s, unicode):
+                if not isinstance(s, str) or isinstance(s, str):
                     raise TypeError(
                         "Values in list must be of type str or unicode.")
-            value = (value, _winreg.REG_MULTI_SZ)
+            value = (value, winreg.REG_MULTI_SZ)
         else:
             raise TypeError('Invalid value')
     
@@ -220,17 +221,17 @@ class RegConfig:
         if regpath:
             for section in self.sections():
                 sectiondict = self._store[section]
-                for option in sectiondict.keys():
-                    apply(self._write_reg, (regpath, section, option,
+                for option in list(sectiondict.keys()):
+                    self._write_reg(*(regpath, section, option,
                                             sectiondict[option]))
         
         
     def _write_reg(self, regpath, section, option, value):
         """ Writes to the registry path. """
-        hkey = _winreg.CreateKey(self._get_default_regkey(regpath, True),
+        hkey = winreg.CreateKey(self._get_default_regkey(regpath, True),
                                  section)
-        _winreg.SetValueEx(hkey, option, 0, value[1], value[0])
-        if hkey: _winreg.CloseKey(hkey)
+        winreg.SetValueEx(hkey, option, 0, value[1], value[0])
+        if hkey: winreg.CloseKey(hkey)
 
 
 if __name__ == '__main__':
@@ -248,14 +249,14 @@ if __name__ == '__main__':
     import pickle
     x = {'hi': 'im going to be pickled...' }
     pick = pickle.dumps(x, pickle.HIGHEST_PROTOCOL)
-    rc.set('pickle', 'pickleobject', (pick, _winreg.REG_BINARY))
+    rc.set('pickle', 'pickleobject', (pick, winreg.REG_BINARY))
     rc.write()
     
     #get sections and items
     for section in rc.sections():
-        print section
+        print(section)
         for item in rc.items(section):
-            print '\t', item
+            print('\t' + item)
             
     # Call this to write to registry path use it to configure different users..
     rc.write(r"HKEY_LOCAL_MACHINE\SOFTWARE\mysoftwareagain")
@@ -265,6 +266,6 @@ if __name__ == '__main__':
     
     # let unpickle the pickle
     pick = rc.get('pickle', 'pickleobject')
-    print pickle.loads(pick)
+    print(pickle.loads(pick))
 
 

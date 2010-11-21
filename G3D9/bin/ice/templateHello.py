@@ -1,8 +1,9 @@
 # templateHello.py
 #
+from __future__ import print_function
 
-from utils import *
-from variables import *
+from .utils import *
+from .variables import *
 
 defaultMainCppContents = """
 /** @file main.cpp

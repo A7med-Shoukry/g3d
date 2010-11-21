@@ -1,11 +1,11 @@
 /**
 @page contributors G3D Developer Credits
 
- <b>8.00 Release Team</b>
+ <b>9.00 Release Team</b>
  <br>Morgan McGuire [Williams College] - Project Manager
  <br>Corey Taylor [EA] - Assistant Project Manager
+ <br>Chuan Ji [Williams College] - Developer
  <br>Shawn Yarbrough [weaponizedgames.com] - Developer
- <br>Trevor O'Brien - Developer
 
  <b>Credits for Previous Contributors and Cited Sources</b> 
  
@@ -52,6 +52,7 @@
    <BR>Chris Kern
    <BR>Independent JPEG Group
    <BR>Darius Jazayeri, MIT
+   <br>Chuan Ji, Williams College
    <BR>Ben Landon*, Lincoln Labs
    <BR>Thomas G. Lane
    <BR>Ray Larabie

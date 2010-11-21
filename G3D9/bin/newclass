@@ -1,11 +1,16 @@
 #! /usr/bin/python
 #
+from __future__ import print_function
 
 import sys, os, datetime
 from socket import gethostname
+try:
+  from commands import getoutput
+except ImportError:
+  from subprocess import getoutput
 
 if (len(sys.argv) == 1) or (len(sys.argv) > 1 and sys.argv[1] == '--help'):
-   print """
+   print("""
 newclass [--help] [-r] [classname]
 
 Generates a new .cpp and .h template file for a class of the given name.
@@ -22,7 +27,7 @@ Written by Morgan McGuire
 http://cs.williams.edu/~morgan
 
 Edited 2009-01-06
-"""
+""")
    sys.exit(1)
 
 
@@ -104,10 +109,10 @@ class %(classname)s %(inherit)s{
     
 def writeFile(filename, contents):
     if os.path.exists(filename):
-        print 'Error: ' + filename + ' already exists.'
+        print('Error: ' + filename + ' already exists.')
         sys.exit(-1)
 
-    print filename
+    print(filename)
     f = open(filename, 'w')
     f.write(contents)
     f.close()
@@ -135,7 +140,8 @@ def getUser():
     elif williamsCollege:
         # look up the user in ph (http://www.vub.ac.be/tools/ph.1.html)
         try:
-            result = commands.getoutput('ph -m unix=' + user + ' return name email').split('\n')
+              try:
+                result = getoutput('ph -m unix=' + user + ' return name email').split('\n')
             # Format is:
             #----------------------------------------
             #     name: Ephriam Williams
@@ -151,7 +157,7 @@ def getUser():
             pass
 
     try:
-        result = commands.getoutput('finger -l').split('\n')
+        result = getoutput('finger -l').split('\n')
         name = result[0]
         i = name.find('Name: ')
         name = name[i + len('Name: '):]

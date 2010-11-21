@@ -1,11 +1,11 @@
 # templateG3D.py
 #
+from __future__ import print_function
 
-from utils import *
-from variables import *
-import copyifnewer
 import os
-import doticompile
+from .utils import *
+from .variables import *
+from . import copyifnewer
 import copy
 
 def findG3DStarter(state):
@@ -34,7 +34,7 @@ def generateStarterFiles(state):
                 
     starterPath = findG3DStarter(state)
     
-    print '\nCopying G3D starter files from ' + starterPath
+    print('\nCopying G3D starter files from ' + starterPath)
 
     mkdir('doc-files')
     for d in ['data-files', 'source']:

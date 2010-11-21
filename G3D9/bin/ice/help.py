@@ -1,29 +1,30 @@
 # help.py
 #
 # Help Information and Printing Routines for iCompile
+from __future__ import print_function
 
-from variables import *
-from utils import *
-import copyifnewer
+from .variables import *
+from .utils import *
+from . import copyifnewer
 
 ##############################################################################
 #                                  Version                                   #
 ##############################################################################
 
 def printVersion(version):
-    print "iCompile " + versionToString(version)
-    print "Copyright 2003-2009 Morgan McGuire"
-    print "All rights reserved"
-    print
-    print "http://ice.sf.net"
-    print
+    print("iCompile " + versionToString(version))
+    print("Copyright 2003-2009 Morgan McGuire")
+    print("All rights reserved")
+    print()
+    print("http://ice.sf.net")
+    print()
 
 ##############################################################################
 #                                    Help                                    #
 ##############################################################################
 
 def printHelp():
-    print ("""
+    print(("""
 iCompile: the zero-configuration build system
 
 icompile  [--doc] [--opt | --debug] [--clean] [--version]
@@ -120,7 +121,7 @@ will automatically step up to the parent directory before compilation.
 Edit ice.txt and ~/.icompile if your project has specific configuration needs.
 See manual.html or http://ice.sf.net for full information. iCompile was created
 by Morgan McGuire with additional programming by Robert Hunter and Corey Taylor.
-""")
+"""))
     sys.exit(0)
 
 
@@ -138,7 +139,7 @@ def maybeWarn(warning, state):
 
     if state == None or state.cache == None:
         # the cache has not been loaded yet
-	colorPrint(warning, WARNING_COLOR)
+        colorPrint(warning, WARNING_COLOR)
         return
 
     allWarnings = state.cache.warnings

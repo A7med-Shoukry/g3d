@@ -2,9 +2,9 @@
 #
 # Definition of C libraries available for linking
 
-from topsort import *
-from utils import *
-from variables import *
+from .topsort import *
+from .utils import *
+from .variables import *
 from platform import machine
 import os, glob
 
@@ -77,7 +77,7 @@ symbolToLibraryTable = {}
 def defineLibrary(lib):
     global libraryTable, headerToLibraryTable, symbolToLibraryTable
 
-    if (utils.verbosity >= TRACE): print 'defineLibrary() adding ' + str(lib) + ' to libraryTable.'
+    if (verbosity >= TRACE): print('defineLibrary() adding ' + str(lib) + ' to libraryTable.')
     
     if lib.name in libraryTable:
         colorPrint("ERROR: Library '" + lib.name + "' defined twice.", WARNING_COLOR)
@@ -172,7 +172,7 @@ def _makeLibOrder():
     L = topSort(E, V)
 
     order = {}
-    for i in xrange(0, len(L)):
+    for i in range(0, len(L)):
         order[L[i]] = i
 
     return order
@@ -183,8 +183,8 @@ _libOrder = None
 def _libSorter(x, y):
     global _libOrder
 
-    hasX = _libOrder.has_key(x)
-    hasY = _libOrder.has_key(y)
+    hasX = x in _libOrder
+    hasY = y in _libOrder
 
     if hasX and hasY:
         return _libOrder[x] - _libOrder[y]
@@ -205,6 +205,16 @@ def _libSorter(x, y):
        # (since we have no other metric!) to guarantee a stable sort
        return cmp(x, y)
 
+"""
+Converts a cmp= function into a key= function
+"""
+def cmp2key(cmpf):
+    class K:
+        def __init__(self, obj, *args):
+            self.obj = obj
+        def __lt__(self, other):
+            return (cmpf(self.obj, other.obj) < 0)
+    return K
 
 """
 Accepts a list of library canonical names and sorts it in place.
@@ -212,7 +222,7 @@ Accepts a list of library canonical names and sorts it in place.
 def sortLibraries(liblist):
     global _libOrder
     _libOrder = _makeLibOrder()
-    liblist.sort(_libSorter)
+    liblist.sort(key=cmp2key(_libSorter))
     _libOrder = None
     
 
@@ -247,7 +257,7 @@ def findLibrary(_lfile, type, libraryPaths):
             # Parse the version from the filename
             i = file.rfind('-', 0, -2)
             if i >= 0:
-	        version = file[(i+1):-3]
+                version = file[(i+1):-3]
 
                 try:
                     version = float(version)

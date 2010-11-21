@@ -1,9 +1,10 @@
 # copyifnewer.py
 #
 #
+from __future__ import print_function
 
 import re, string
-from utils import *
+from .utils import *
 
 _excludeDirPatterns = \
     ['^\.',\
@@ -59,7 +60,7 @@ _cppExcludePatterns = ['^test$', '^tests$', '^#.*#$', '~$', '^old$'] + _excludeF
 """
 A regular expression matching files that should be excluded from copying.
 """
-excludeFromCopying  = re.compile(string.join(_excludeFromCopyingPatterns, '|'))
+excludeFromCopying  = re.compile('|'.join(_excludeFromCopyingPatterns))
 
 """ Linked list of the source names that were copied """
 _copyIfNewerCopiedAnything = None
@@ -95,7 +96,7 @@ def copyIfNewer(source, dest, echoCommands = True, echoFilenames = True, actuall
         if echoCommands: 
             colorPrint('cp ' + source + ' ' + dest, COMMAND_COLOR)
         elif echoFilenames:
-            print source
+            print(source)
         
         if actuallyCopy:
             shutil.copyfile(source, dest)
@@ -105,11 +106,11 @@ def copyIfNewer(source, dest, echoCommands = True, echoFilenames = True, actuall
     else:
         # Walk is a special iterator that visits all of the
         # children and executes the 2nd argument on them.  
-        os.path.walk(source, _copyIfNewerVisit, 
-                     [len(source), dest, echoCommands, echoFilenames, actuallyCopy])
+        for dirpath, dirnames, filenames in os.walk(source):
+              _copyIfNewerVisit([len(source), dest, echoCommands, echoFilenames, actuallyCopy], dirpath, dirnames + filenames)
 
     if len(_copyIfNewerCopiedAnything) == 0 and echoCommands:
-        print dest + ' is up to date with ' + source
+        print(dest + ' is up to date with ' + source)
         
     return _copyIfNewerCopiedAnything
     
@@ -159,7 +160,7 @@ def _copyIfNewerVisit(args, sourceDirname, names):
                 if echoCommands:
                     colorPrint('cp ' + source + ' ' + dest, COMMAND_COLOR)
                 elif echoFilenames: 
-                    print name
+                    print(name)
                 _copyIfNewerCopiedAnything += [source]
                 if actuallyCopy:
                     shutil.copy(source, dest)

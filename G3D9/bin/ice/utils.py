@@ -2,9 +2,18 @@
 #
 # Morgan's Python Utility Functions
 #
+from __future__ import print_function
 
 import sys, string, os, os.path, fileinput, tempfile, shutil, re
-import commands, pickle, time, ConfigParser, subprocess
+import subprocess, pickle, time, subprocess
+try:
+  from subprocess import getoutput
+except ImportError:
+  from commands import getoutput
+try:
+  import configparser
+except ImportError:
+  import ConfigParser as configparser
 
 #############################################################################
 # Verbosity levels
@@ -66,7 +75,7 @@ useColor = 'Unknown'
 
 """
 def colorPrint(text, color = 'default'):
-    print colorize(text, color)
+    print(colorize(text, color))
     sys.stdout.flush()
     
 def colorize(text, color = 'default'):
@@ -75,7 +84,7 @@ def colorize(text, color = 'default'):
     if useColor == 'Unknown':
         # Figure out if this device supports color
         useColor = (os.name != 'nt' and
-                   (os.environ.has_key('TERM') and
+                   ('TERM' in os.environ and
                     ((os.environ['TERM'] == 'xterm') or 
                      (os.environ['TERM'] == 'xterm-color'))))
    
@@ -88,11 +97,11 @@ def colorize(text, color = 'default'):
         # Parse the color
 
         # First divide up into lower-case words
-        tokens = string.lower(color).split(' ')
+        tokens = color.lower().split(' ')
         if len(tokens) == 0:
             # Give up
-            print ('Warning: illegal icompile color specified ("' +
-                   color + '")\n\n')
+            print(('Warning: illegal icompile color specified ("' +
+                   color + '")\n\n'))
             useColor = False
             return text
 
@@ -100,7 +109,7 @@ def colorize(text, color = 'default'):
         foreColorString = ''
         backColorString = ''        
 
-        if ansiStyle.has_key(tokens[0]):
+        if tokens[0] in ansiStyle:
             styleString = tokens[0]
             tokens = tokens[1:]
 
@@ -114,8 +123,8 @@ def colorize(text, color = 'default'):
             if (tokens[0] != 'on') or (len(tokens) < 2):
                 # Give up
                 useColor = False
-                print ('Warning: illegal icompile background color' +
-                       ' specified ("' + color + '")\n\n')
+                print(('Warning: illegal icompile background color' +
+                       ' specified ("' + color + '")\n\n'))
                 return text
             backColorString = tokens[1]
 
@@ -129,10 +138,10 @@ def colorize(text, color = 'default'):
         if styleString != '':
             style     = ansiStyle[styleString]
 
-        if (foreColorString != '') and ansiColor.has_key(foreColorString):
+        if (foreColorString != '') and foreColorString in ansiColor:
             foreColor = foreDigit + ansiColor[foreColorString]
 
-        if (backColorString != '') and ansiColor.has_key(backColorString):
+        if (backColorString != '') and backColorString in ansiColor:
             backColor = backDigit + ansiColor[backColorString]
 
         featureString = ''
@@ -156,10 +165,10 @@ SECTION_COLOR = 'bold'
 COMMAND_COLOR = 'green'
 
 def printBar():
-    print "_______________________________________________________________________\n"
+    print("_______________________________________________________________________\n")
 
 def beep():
-    print '\a'
+    print('\a')
 
 ##############################################################################
 #                                 getch                                      #
@@ -271,9 +280,8 @@ def shell(cmd, printCmd = True):
         result = pipe.read()
         pipe.close()
         return result
-
     else:
-        return commands.getoutput(cmd)
+        return getoutput(cmd)
 
 ##############################################################################
         
@@ -319,7 +327,7 @@ def _findWindowsBinary(program):
 """Convert path separators to local style from Unix style.
    s is a string that contains a path name."""
 def toLocalPath(s):
-    return string.replace(s, '/', os.sep)
+    return s.replace('/', os.sep)
 
 #############################################################################
 
@@ -359,7 +367,7 @@ def run(program, args = [], echo = True, env = {}):
     newEnv.update(os.environ)
     newEnv.update(env)
 
-    if echo: colorPrint(string.join(newArgs), COMMAND_COLOR)
+    if echo: colorPrint(' '.join(newArgs), COMMAND_COLOR)
 
     if windows:
         # Windows doesn't support spawnvpe
@@ -391,7 +399,7 @@ def msdev(filename, configs):
   
     # Print the output to standard out
     for line in fileinput.input(logfile):
-        print line.rstrip('\n')
+        print(line.rstrip('\n'))
  
     return x
 
@@ -419,7 +427,7 @@ def devenv(filename, configs):
   
             # Print the output to standard out
             for line in fileinput.input(logfile):
-                print line.rstrip('\n')
+                print(line.rstrip('\n'))
 
             if x != 0:
                 # Abort-- a build failed
@@ -450,7 +458,7 @@ def VCExpress(filename, configs):
   
             # Print the output to standard out
             for line in fileinput.input(logfile):
-                print line.rstrip('\n')
+                print(line.rstrip('\n'))
 
             if x != 0:
                 # Abort-- a build failed
@@ -474,7 +482,7 @@ def VC10(filename, configs):
          return VCExpress(filename, configs)
          
      else:
-         print "Failed to find Visual Studio 2005 or 2008. Could not continue."
+         print("Failed to find Visual Studio 2005 or 2008. Could not continue.")
          return -1
 
 ###########################################################################
@@ -511,7 +519,7 @@ def runWithOutput(prog, args = [], echo = True, env = None):
     newArgs = [program] + args
 
     messages = ''
-    if echo: messages += colorize(string.join(newArgs), COMMAND_COLOR) + '\n'
+    if echo: messages += colorize(' '.join(newArgs), COMMAND_COLOR) + '\n'
 
     outPipe = subprocess.PIPE
     inPipe = None
@@ -568,7 +576,7 @@ def getTimeStamp(file):
 
 """ Like getTimeStamp, but uses the specified cache. """
 def getTimeStampCached(file, cache):
-    if not cache.has_key(file):
+    if file not in cache:
         cache[file] = getTimeStamp(file)
     return cache[file]
 
@@ -608,7 +616,7 @@ def removeQuotes(s):
 def findVersionInString(verInfo):
 
     # Look for a number followed by a period.
-    for i in xrange(1, len(verInfo) - 1):
+    for i in range(1, len(verInfo) - 1):
         if (verInfo[i] == '.' and 
            (verInfo[i - 1]).isdigit() and 
            (verInfo[i + 1]).isdigit()):
@@ -677,7 +685,7 @@ This restores it.
 """
 def betterbasename(filename):
     # Find the index of the last slash
-    i = max(string.rfind(filename, '/'), string.rfind(filename, '\\'))
+    i = max(filename.rfind('/'), filename.rfind('\\'))
 
     # Copy from there on (whole string if no slashes)
     return filename[(i + 1):]
@@ -686,7 +694,7 @@ def betterbasename(filename):
 """ Returns the part of a full filename after the path and before the last ext"""
 def rawfilename(filename):
     f = betterbasename(filename)
-    period = string.rfind(f, '.')
+    period = f.rfind('.')
 
     if period > 0:
         return f[0:period]
@@ -698,7 +706,7 @@ def rawfilename(filename):
 def extname(filename):
 
     f = betterbasename(filename)
-    period = string.rfind(f, '.')
+    period = f.rfind('.')
 
     if period > 0:
         return f[(period + 1):]
@@ -788,7 +796,7 @@ def getVersion(filename):
         # Unsupported
         return [0, 0, 0]
     
-    return findVersionInString(commands.getoutput(cmd))
+    return findVersionInString(getoutput(cmd))
 
 def maybeColorPrint(text, color = 'default'):
     if verbosity >= VERBOSE:
@@ -870,12 +878,12 @@ def newestCompiler():
               
             if not os.path.exists(_newestCompilerFilename):
                 # TODO: look at the PATH variable
-                print 'Error: could not find Visual Studio 8 Compiler at at \'' + _newestCompilerFilename + '\''
+                print('Error: could not find Visual Studio 8 Compiler at at \'' + _newestCompilerFilename + '\'')
                 sys.exit(-1)
 
-            if (not os.environ.has_key('VSINSTALLDIR') or
+            if ('VSINSTALLDIR' not in os.environ or
                 (os.path.normpath(os.environ['VSINSTALLDIR']) != os.path.normpath(vsDir))):
-                print 'Error: you must run vsvars32.bat before iCompile'
+                print('Error: you must run vsvars32.bat before iCompile')
                 sys.exit(-1)
 
             _newestCompilerVersion  = getVersion(_newestCompilerFilename)
@@ -884,10 +892,10 @@ def newestCompiler():
         else:
             # Unix-like system, use gcc
 
-            bin = commands.getoutput('which g++')
+            bin = getoutput('which g++')
     
             # Turn binLoc into just the directory, not the path to the file g++
-            binLocs = [bin[0:string.rfind(bin, '/')]]
+            binLocs = [bin[0:bin.rfind('/')]]
 
             #if os.path.exists('/opt/local/bin'):
             #    # Add macports g++
@@ -898,7 +906,8 @@ def newestCompiler():
 
             # Search for all g++ binaries
             for path in binLocs:
-                os.path.walk(path, _newestCompilerVisitor, best)
+                for dirpath, dirnames, filenames in os.walk(path):
+                      _newestCompilerVisitor(best, dirpath, dirnames + filenames)
 
             _newestCompilerFilename = best[0]
             _newestCompilerVersion  = best[1]
@@ -949,7 +958,7 @@ def getCompilerNickname(compilerFilename):
        if len(v) < 2:
            # Version number was short; add a 0 minor number
            v = v + 0
-       version = string.join(map(str, v), '.')
+       version = '.'.join(list(map(str, v)))
 
        if base.startswith('g++') or base.startswith('gcc'):
            base = base[0:3]
@@ -1030,7 +1039,7 @@ def shortname(prefix, cfile):
 
 """ Returns true if this is a cpp source filename. """
 def isCFile(file):
-    ext = string.lower(extname(file))
+    ext = extname(file).lower()
 
     isOSX = (os.name != 'nt') and (os.uname()[0] == 'Darwin')
 
@@ -1048,7 +1057,7 @@ def isCFile(file):
 
 """ Returns true if this is a cpp header filename (or doxygen file). """
 def isCHeader(file):
-    ext = string.lower(extname(file))
+    ext = extname(file).lower()
     return (ext == 'h') or (ext == 'hpp') or (ext == 'h++') or (ext == 'dox')
 
 #########################################################################
@@ -1079,7 +1088,7 @@ def _listCFilesVisitor(result, dirname, files):
     for f in files:
          if ((excludeFromCompilation != None) and
              (excludeFromCompilation.search(f) != None)):
-            if verbosity >= SUPERTRACE: print "  Ignoring '" + f + "'"
+            if verbosity >= SUPERTRACE: print("  Ignoring '" + f + "'")
             removelist.append(f)
             
          elif isCFile(f) or (_includeHeaders and isCHeader(f)):
@@ -1113,15 +1122,21 @@ def listCFiles(dir = '', exclude = None, includeHeaders = False):
     excludeFromCompilation = exclude
     result = []
 
-    os.path.walk(dir, _listCFilesVisitor, result)
+    for dirpath, dirnames, filenames in os.walk(dir):
+          _listCFilesVisitor(result, dirpath, dirnames + filenames)
     return result
 
 ####################################################################
 
 """ Reads an entire text file from disk """
 def readFile(filename):
-    f = file(filename, 'rt')
-    s = f.read()
+    f = open(filename, 'rt')
+    try:
+      s = f.read()
+    except UnicodeDecodeError:
+      f.close()
+      f = open(filename, 'rb')
+      s = f.read().decode('iso8859-1')
     f.close()
     return s
 
@@ -1129,7 +1144,7 @@ def readFile(filename):
 
 """ Writes an entire text file to disk """
 def writeFile(filename, contents):
-    f = file(filename, 'wt')
+    f = open(filename, 'wt')
     f.write(contents)
     f.close()
     
@@ -1137,7 +1152,7 @@ def writeFile(filename, contents):
 
 """ Appends new contents to existing file (creating it if it does not exist) """
 def appendFile(filename, contents):
-    f = file(filename, 'at')
+    f = open(filename, 'at')
     f.write(contents)
     f.close()
 
@@ -1189,7 +1204,7 @@ def expandvars(str):
         i = str.find('$')
         j = str.find(')', i)
         if (i > len(str) - 3) or (str[i + 1] != '(') or (j < 0):
-            raise 'Error', 'Environment variables must have the form $(var) or $(shell cmds)'
+            raise Exception('Environment variables must have the form $(var) or $(shell cmds)')
 
         varexpr = str[i:(j + 1)]
 
@@ -1199,7 +1214,7 @@ def expandvars(str):
             # Shell command
             cmd = varname[6:]
             value = shell(cmd, verbose)
-            if verbose: print value
+            if verbose: print(value)
         else:
             # Environment variable
             value = os.getenv(varname)

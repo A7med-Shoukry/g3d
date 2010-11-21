@@ -3,13 +3,14 @@
 #
 # Creates distributable files from the build
 #
+from __future__ import print_function
 
-import utils
+from . import utils
 import math
-from variables import *
-from utils import *
-from copyifnewer import copyIfNewer
-from library import libraryTable, FRAMEWORK
+from .variables import *
+from .utils import *
+from .copyifnewer import copyIfNewer
+from .library import libraryTable, FRAMEWORK
 
 def _makePList(appname, binaryName):
     return """<?xml version="1.0" encoding="UTF-8"?>
@@ -49,42 +50,42 @@ def _createApp(tmpDir, appDir, srcDir, state):
     macos      = contents + 'MacOS/'
 
     # Create directories
-    mkdir(appDir,     utils.verbosity >= VERBOSE)
-    mkdir(contents,   utils.verbosity >= VERBOSE)
-    mkdir(frameworks, utils.verbosity >= VERBOSE)
-    mkdir(resources,  utils.verbosity >= VERBOSE)
-    mkdir(macos,      utils.verbosity >= VERBOSE)
+    mkdir(appDir,     verbosity >= VERBOSE)
+    mkdir(contents,   verbosity >= VERBOSE)
+    mkdir(frameworks, verbosity >= VERBOSE)
+    mkdir(resources,  verbosity >= VERBOSE)
+    mkdir(macos,      verbosity >= VERBOSE)
 
     # Create Info.plist
-    if utils.verbosity >= NORMAL: colorPrint('\nWriting Info.plist and PkgInfo', SECTION_COLOR)
+    if verbosity >= NORMAL: colorPrint('\nWriting Info.plist and PkgInfo', SECTION_COLOR)
     writeFile(contents + 'Info.plist', _makePList(state.projectName, state.binaryName))
     writeFile(contents + 'PkgInfo', 'APPL' + state.binaryName[0:4] + '\n') 
 
     # Copy binary
-    if utils.verbosity >= NORMAL: colorPrint('\nCopying executable', SECTION_COLOR)
-    shell('cp ' + state.binaryDir + state.binaryName + ' ' + macos + state.binaryName, utils.verbosity >= VERBOSE) 
+    if verbosity >= NORMAL: colorPrint('\nCopying executable', SECTION_COLOR)
+    shell('cp ' + state.binaryDir + state.binaryName + ' ' + macos + state.binaryName, verbosity >= VERBOSE) 
 
     # Copy data-files to Resources
-    if utils.verbosity >= NORMAL: colorPrint('\nCopying data files', SECTION_COLOR)
-    copyIfNewer('data-files', resources, utils.verbosity >= VERBOSE, utils.verbosity == NORMAL)
-    if utils.verbosity >= VERBOSE: colorPrint('Done copying data files', SECTION_COLOR)
+    if verbosity >= NORMAL: colorPrint('\nCopying data files', SECTION_COLOR)
+    copyIfNewer('data-files', resources, verbosity >= VERBOSE, verbosity == NORMAL)
+    if verbosity >= VERBOSE: colorPrint('Done copying data files', SECTION_COLOR)
 
     # Copy frameworks
     for libName in state.libList():
-        if libraryTable.has_key(libName):
+        if libName in libraryTable:
             lib = libraryTable[libName]
             if lib.deploy and (lib.type == FRAMEWORK):
-                print 'Copying ' + lib.name + ' Framework'
+                print('Copying ' + lib.name + ' Framework')
                 fwk = lib.releaseFramework + '.framework'
                 src = '/Library/Frameworks/' + fwk
-                copyIfNewer(src, frameworks + fwk, utils.verbosity >= VERBOSE, utils.verbosity == NORMAL)
+                copyIfNewer(src, frameworks + fwk, verbosity >= VERBOSE, verbosity == NORMAL)
 
 
 def _createDmg(tmpDir, dmgName, projectName):
-    shell('hdiutil create -fs HFS+ -srcfolder ' + tmpDir + ' ' + dmgName + ' -volname "' + projectName + '"', utils.verbosity >= VERBOSE)
+    shell('hdiutil create -fs HFS+ -srcfolder ' + tmpDir + ' ' + dmgName + ' -volname "' + projectName + '"', verbosity >= VERBOSE)
 
 def _deployOSX(state):
-    print
+    print()
     srcDir = state.binaryDir
     tmpDir = state.tempDir + 'deploy'
     appDir = tmpDir + '/' + state.projectName + '.app/'
@@ -94,20 +95,20 @@ def _deployOSX(state):
     _createApp(tmpDir + '/', appDir, srcDir, state)
     _createDmg(tmpDir, dmgName, state.projectName)
     
-    if utils.verbosity >= VERBOSE:
-        print
-    print 'Deployable archive written to ' + dmgName
+    if verbosity >= VERBOSE:
+        print()
+    print('Deployable archive written to ' + dmgName)
 
 
 def _deployUnix(state):
-    print
+    print()
     tarfile = state.buildDir + state.projectName + '.tar'
-    shell('tar -cf ' + tarfile +' ' + state.installDir + '*', utils.verbosity >= VERBOSE)
-    shell('gzip -f ' + tarfile, utils.verbosity >= VERBOSE)
-    rm(tarfile, utils.verbosity >= VERBOSE)
-    if utils.verbosity >= VERBOSE:
-        print
-    print 'Deployable archive written to ' + state.buildDir + tarfile + '.gz'
+    shell('tar -cf ' + tarfile +' ' + state.installDir + '*', verbosity >= VERBOSE)
+    shell('gzip -f ' + tarfile, verbosity >= VERBOSE)
+    rm(tarfile, verbosity >= VERBOSE)
+    if verbosity >= VERBOSE:
+        print()
+    print('Deployable archive written to ' + state.buildDir + tarfile + '.gz')
 
 #
 # Create a deployment file

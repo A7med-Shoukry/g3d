@@ -1,6 +1,7 @@
 # topsort.py
 #
 # General Topological Sort
+from __future__ import print_function
 
 import sys
 
@@ -28,7 +29,7 @@ def _topSort(v, E, visited, sorted, sortedIndices):
             _topSort(w, E, visited, sorted, sortedIndices)
         else:
             if not sorted[w]:
-                print 'Cyclic dependency in links.'
+                print('Cyclic dependency in links.')
                 sys.exit(0)
     sorted[v] = 1
     sortedIndices.insert(0, v)
@@ -105,7 +106,7 @@ def pairsToVertexEdgeGraph(pairs):
 
     # Make a list of unique vertices.
     for x, y in pairs:
-	V.add(x)
+        V.add(x)
         V.add(y)
 
     # Convert the set to a list
