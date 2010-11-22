@@ -13,6 +13,7 @@ most OS X, Linux, and FreeBSD systems:
 To build the documentation target, the following are also required:
 
 * Doxygen 1.7.2 or later (http://www.doxygen.org)
+  - on OS X, add /Applications/Doxygen.app/Contents/Resources/ to your PATH variable
 * Latex (on Windows: http://miktex.org/)
 * Ghostscript (http://pages.cs.wisc.edu/~ghost/)
 
