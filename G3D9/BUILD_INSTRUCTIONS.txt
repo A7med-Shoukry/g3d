@@ -5,7 +5,8 @@ software.  It is all available for free and comes pre-installed on
 most OS X, Linux, and FreeBSD systems:
 
 * Python 2.4 or later (http://www.python.org) 
-* On OS X, Linux, or FreeBSD you will need gcc 4.0 or later
+* On OS X, Linux, or FreeBSD you will need g++ and gcc 4.0 or later.
+  - On OS X, get this by installing Xcode from http://developer.apple.com
 * On Windows you will need Visual Studio 2010,
    either the full or Express version (http://www.microsoft.com/express/downloads/#2010-Visual-CPP)
 
