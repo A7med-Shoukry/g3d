@@ -3,7 +3,7 @@
 
    \maintainer Morgan McGuire, http://graphics.cs.williams.edu
    \created 2008-07-01
-   \edited  2010-10-28
+   \edited  2010-11-28
 
    Copyright 2000-2010, Morgan McGuire.
    All rights reserved.
@@ -25,10 +25,14 @@
 namespace G3D {
 
 /** 
-    Storage of data in a sparse 3D grid of point-based data.  The
-    space cost for <I>n</I> elements is O(<I>n</I>).  For data with
+    \brief A sparse 3D grid of point-based data.  
+    
+    The space cost for <I>n</I> elements is O(<I>n</I>).  For data with
     approximately uniform density (with respect to the radius hint),
     the time cost of searching for neighbors is O(1).
+
+    You can move members of the data set by first removing them and then
+    adding them with a new location.
 
     <i>Value</i> must be supported by a G3D::PositionTrait and
     G3D::EqualsTrait.  Overloads are provided for
@@ -78,8 +82,7 @@ namespace G3D {
    };
 
    typedef PointHashGrid<Data, Data> DataGrid;
-   \endcode
-   
+   \endcode  
 
 */
 template<class Value,
@@ -169,13 +172,20 @@ private:
         return false;        
     }
 
-    /** Given a real-space position, returns the cell coord 
-        containing it.*/
+public:
+
+    /** \brief Compute the grid cell index of a real position. 
+        This is used extensively internally by PointHashGrid.
+        It is useful to calling code to determine when an object
+        is about to move between cells.
+     */
     inline void getCellCoord(const Vector3& pos, Vector3int32& cellCoord) const {
         for (int a = 0; a < 3; ++a) {
             cellCoord[a] = iFloor(pos[a] * m_invCellWidth);
         }
     }
+
+protected:
 
     /** Initializes m_offsetArray. */
     void initOffsetArray() {
