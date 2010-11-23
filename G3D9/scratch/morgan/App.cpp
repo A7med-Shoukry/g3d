@@ -65,13 +65,7 @@ public:
 };
 
 int main(int argc, char** argv) {
-    BinaryOutput b("<memory>", G3D_LITTLE_ENDIAN);
-    b.writeInt32(4);
-    exit(0);
-
-    Image1::Ref im = Image1::fromFile("test.png", GImage::PNG16);
-    im->save("foo.png", GImage::PNG);
-    /*
+#if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
     for (int y = 0; y < im->height(); ++y) {
         for (int x = 0; x < im->width(); ++x) {
@@ -79,19 +73,20 @@ int main(int argc, char** argv) {
         }
     }
     im->save("test.png", GImage::PNG16);
-    */
     debugPrintf("Done\n");
     return 0;
+#endif
 
     (void)argc; (void)argv;
     GApp::Settings settings;
     
-    debugPrintf("\n\n%d bytes\n\n", (int)sizeof(SmallArray<uint16, 2>));
-
     // Change the window and other startup parameters by modifying the
     // settings class.  For example:
     settings.window.width       = 960; 
     settings.window.height      = 600;
+    settings.film.preferredDepthFormats.clear();
+    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24());
+//    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24_STENCIL8());
 
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {
@@ -123,6 +118,14 @@ void App::onInit() {
     // not in the constructor so that common exceptions will be
     // automatically caught.
 
+    renderDevice->setFramebuffer(NULL);
+    m_frameBuffer->set(Framebuffer::STENCIL, Renderbuffer::createEmpty("", window()->width(), window()->height(), ImageFormat::STENCIL8()));
+    renderDevice->setFramebuffer(m_frameBuffer);
+    
+        std::string why;
+        debugAssertM(renderDevice->currentFramebufferComplete(why), why);
+    renderDevice->clear();
+    renderDevice->clear();
     // Turn on the developer HUD
     debugWindow->setVisible(true);
     developerWindow->cameraControlWindow->setVisible(true);

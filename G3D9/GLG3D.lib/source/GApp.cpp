@@ -202,6 +202,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
             logPrintf("Warning: Disabled GApp::Settings::film.enabled because it could not be supported on this GPU.");
         } else {
             const ImageFormat* colorFormat = GLCaps::firstSupportedTexture(m_settings.film.preferredColorFormats);
+
             if (colorFormat == NULL) {
                 // This GPU can't support the film class
                 *const_cast<bool*>(&m_useFilm) = false;
@@ -209,6 +210,8 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
             } else {
                 m_film = Film::create(colorFormat);
                 m_frameBuffer = Framebuffer::create("GApp::m_frameBuffer");
+
+                // The actual buffer allocation code:
                 resize(renderDevice->width(), renderDevice->height());
             }
         }

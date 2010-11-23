@@ -1996,10 +1996,37 @@ void RenderDevice::setStencilOp(
             }
 
         } else {
+#           ifdef G3D_DEBUG
+            {
+                int stencilBits = 0;
 
-            debugAssertM(glGetInteger(GL_STENCIL_BITS) > 0,
-                "Allocate stencil bits from RenderDevice::init before using the stencil buffer.");
+                if (framebuffer().isNull()) {
+                    stencilBits = glGetInteger(GL_STENCIL_BITS);
+                } else {
+                    // get render buffer and texture for depth or stencil buffer and find out if either one has some stencil bits.
+                    
+                    Framebuffer::Attachment::Ref d = framebuffer()->get(Framebuffer::DEPTH);
+                    Framebuffer::Attachment::Ref s = framebuffer()->get(Framebuffer::DEPTH);
 
+                    if (d.notNull()) {
+                        if (d->type() == Framebuffer::Attachment::TEXTURE) {
+                            stencilBits = max(stencilBits, d->texture()->format()->stencilBits);
+                        } else {
+                            stencilBits = max(stencilBits, d->renderbuffer()->format()->stencilBits);
+                        }
+                    }
+                    if (s.notNull()) {
+                        if (s->type() == Framebuffer::Attachment::TEXTURE) {
+                            stencilBits = max(stencilBits, s->texture()->format()->stencilBits);
+                        } else {
+                            stencilBits = max(stencilBits, s->renderbuffer()->format()->stencilBits);
+                        }
+                    }
+                }
+                debugAssertM(stencilBits > 0,
+                    "Allocate nonzero OSWindow.stencilBits in GApp constructor or RenderDevice::init before using the stencil buffer.");
+            }
+#           endif
             // Turn on writing.  We also need to turn on the
             // stencil test in this case.
 

@@ -148,7 +148,11 @@ public:
             Array<const ImageFormat*>   preferredColorFormats;
 
             /** Formats to attempt to use for the Film, in order of decreasing preference. 
-               NULL (or an empty list) indicates that no depth buffer should be allocated. */
+               NULL (or an empty list) indicates that no depth buffer should be allocated. 
+               
+               If you want separate depth and stencil attachments, you must explicitly allocate
+               the stencil buffer yourself and attach it to the depth buffer.
+              */
             Array<const ImageFormat*>   preferredDepthFormats;
 
             FilmSettings() : enabled(true), dimensions(-1, -1) {     

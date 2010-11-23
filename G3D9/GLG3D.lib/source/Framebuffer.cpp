@@ -233,7 +233,7 @@ void Framebuffer::sync() {
 
 void Framebuffer::attach(const Attachment::Ref& a) {
     int cIndex = findCurrent(a->point());
-    if (a->point() < DEPTH) {
+    if ((a->point() >= COLOR0) && (a->point() <= COLOR15)) {
         m_colorDrawBufferArray.insert(cIndex, GLenum(a->point()));
     }
     m_current.insert(cIndex, a);
@@ -243,7 +243,7 @@ void Framebuffer::attach(const Attachment::Ref& a) {
 
 void Framebuffer::detach(Attachment::Ref a) {
     int cIndex = findCurrent(a->point());
-    if (a->point() < DEPTH) {
+    if ((a->point() >= COLOR0) && (a->point() <= COLOR15)) {
         m_colorDrawBufferArray.remove(cIndex);
     }
     m_current.remove(cIndex);

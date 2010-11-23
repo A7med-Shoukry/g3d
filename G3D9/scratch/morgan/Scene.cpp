@@ -3,44 +3,7 @@
 using namespace G3D::units;
 
 
-Entity::Entity
-(const std::string& n, const PhysicsFrameSpline& frameSpline, 
- const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
- const MD2Model::Ref& md2Model,
- const MD3Model::Ref& md3Model) : GEntity(n, frameSpline, artModel, artPoseSpline, md2Model, md3Model) {
-}
-
-
-Entity::Ref Entity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline) {
-    Entity::Ref e = new Entity(n, frameSpline, m, poseSpline, NULL, NULL);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-Entity::Ref Entity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD2Model::Ref& m) {
-    Entity::Ref e = new Entity(n, frameSpline, NULL, ArticulatedModel::PoseSpline(), m, NULL);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-Entity::Ref Entity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m) {
-    Entity::Ref e = new Entity(n, frameSpline, NULL, ArticulatedModel::PoseSpline(), NULL, m);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-////////////////////////////////////////////////////////////////////////
-
-void Scene::onSimulation(RealTime deltaTime) {
+void Scene::onSimulation(GameTime deltaTime) {
     m_time += deltaTime;
     for (int i = 0; i < m_entityArray.size(); ++i) {
         m_entityArray[i]->onSimulation(m_time, deltaTime);
@@ -64,19 +27,32 @@ static Table<std::string, std::string>& filenameTable() {
 
         FileSystem::list("*.scn.any", filenameArray, settings);
 
-        logPrintf("Found scenes:\n");
+        logLazyPrintf("Found scenes:\n");
         for (int i = 0; i < filenameArray.size(); ++i) {
             Any a;
-            a.load(filenameArray[i]);
+            std::string msg;
+            try {
+                a.load(filenameArray[i]);
+                
+                const std::string& name = a["name"].string();
+                alwaysAssertM(! filenameTable.containsKey(name),
+                              "Duplicate scene names in " + filenameArray[i] + " and " +
+                              filenameTable[name]);
+                
+                msg = format("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
+                filenameTable.set(name, filenameArray[i]);
+            } catch (const ParseError& e) {
+                msg = format("  <Parse error at %s:%d(%d): %s>\n", e.filename.c_str(), e.line, e.character, e.message.c_str());
+            } catch (...) {
+                msg = format("  <Error while loading %s>\n", filenameArray[i].c_str());
+            }
 
-            std::string name = a["name"].string();
-            alwaysAssertM(! filenameTable.containsKey(name),
-                "Duplicate scene names in " + filenameArray[i] + " and " +
-                filenameTable["name"]);
-            
-            logPrintf("  \"%s\" (%s)\n", name.c_str(), filenameArray[i].c_str());
-            filenameTable.set(name, filenameArray[i]);
+            if (! msg.empty()) {
+                logLazyPrintf("%s", msg.c_str());
+                debugPrintf("%s", msg.c_str());
+            }
         }
+        logPrintf("");
     }
 
     return filenameTable;
@@ -84,11 +60,17 @@ static Table<std::string, std::string>& filenameTable() {
 
 
 Array<std::string> Scene::sceneNames() {
-    return filenameTable().getKeys();
+    Array<std::string> a;
+    filenameTable().getKeys(a);
+    a.sort();
+    return a;
 }
 
 
 Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
+    if (scene == "") {
+        return NULL;
+    }
 
     Scene::Ref s = new Scene();
 
@@ -129,45 +111,52 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     Any entities = any["entities"];
     for (Table<std::string, Any>::Iterator it = entities.table().begin(); it.hasMore(); ++it) {
         const std::string& name = it->key;
-        const Any& modelArgs = it->value;
 
-        modelArgs.verifyType(Any::ARRAY);
-        const ModelRef* model = modelTable.getPointer(modelArgs.name());
-        modelArgs.verify((model != NULL), 
-            "Can't instantiate undefined model named " + modelArgs.name() + ".");
-
-        PhysicsFrameSpline frameSpline;
-        ArticulatedModel::PoseSpline poseSpline;
-        if (modelArgs.size() >= 1) {
-            frameSpline = modelArgs[0];
-            if (modelArgs.size() >= 2) {
-                // Poses 
-                poseSpline = modelArgs[1];
-            }
-        }
-
-        ArticulatedModel::Ref artModel = model->downcast<ArticulatedModel>();
-        MD2Model::Ref         md2Model = model->downcast<MD2Model>();
-        MD3Model::Ref         md3Model = model->downcast<MD3Model>();
-
-        if (artModel.notNull()) {
-            s->m_entityArray.append(Entity::create(name, frameSpline, artModel, poseSpline));
-        } else if (md2Model.notNull()) {
-            s->m_entityArray.append(Entity::create(name, frameSpline, md2Model));
-        } else if (md3Model.notNull()) {
-            s->m_entityArray.append(Entity::create(name, frameSpline, md3Model));
-        }
+        AnyTableReader propertyTable(it->value);
+        if (it->value.nameEquals("Entity")) {
+            s->m_entityArray.append(Entity::create(name, propertyTable, modelTable));
+        } /* else if (it->value.nameEquals("...")) {  TODO: add your own subclasses here! } */
+        
+        propertyTable.verifyDone();
     }
 
     // Load the camera
     camera = any["camera"];
 
-    if (any.containsKey("skybox")) {
-        s->m_skyBox = Texture::create(any["skybox"]);
+    if (any.containsKey("skyBox")) {
+        Any sky = any["skyBox"];
+		sky.verifyType(Any::TABLE);
+		sky.verifyName("");
+        s->m_skyBoxConstant = sky.get("constant", 1.0f);
+        if (sky.containsKey("texture")) {
+            s->m_skyBoxTexture = Texture::create(sky["texture"]);
+        }
     } else {
-        s->m_skyBox = s->m_lighting->environmentMapTexture;
+        s->m_skyBoxTexture = s->m_lighting->environmentMapTexture;
+        s->m_skyBoxConstant = s->m_lighting->environmentMapConstant;
+    }
+
+    // Default to using the skybox as an environment map if none is specified.
+    if (s->m_skyBoxTexture.notNull() && s->m_lighting->environmentMapTexture.isNull()) {
+        s->m_lighting->environmentMapTexture  = s->m_skyBoxTexture;
+        s->m_lighting->environmentMapConstant = s->m_skyBoxConstant;
+    }
+
+    if ((s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP) && 
+        (s->m_skyBoxTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
+        throw std::string("skyBox texture must be a cube map.");
     }
     
+    if ((s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP) && 
+        (s->m_lighting->environmentMapTexture->dimension() != Texture::DIM_CUBE_MAP_NPOT)) {
+        throw std::string("environmentMap texture must be a cube map.");
+    }
+
+    // Set the initial positions
+    for (int e = 0; e < s->m_entityArray.size(); ++e) {
+        s->m_entityArray[e]->onSimulation(0, 0);
+    }
+
     return s;
 }
 
@@ -176,4 +165,24 @@ void Scene::onPose(Array<Surface::Ref>& surfaceArray) {
     for (int e = 0; e < m_entityArray.size(); ++e) {
         m_entityArray[e]->onPose(surfaceArray);
     }
+}
+
+
+Entity::Ref Scene::intersectBounds(const Ray& ray, const Array<Entity::Ref>& exclude) {
+    Entity::Ref closest = NULL;
+#if 0
+    float distance = finf();
+    
+    for (int e = 0; e < m_entityArray.size(); ++e) {
+        const Entity::Ref& entity = m_entityArray[e];
+        if (! exclude.contains(entity)) {
+            float intersection = entity->intersectBounds(ray, distance);
+            if (intersection < distance) {
+                closest = entity;
+                distance = intersection;
+            }
+        }
+    }
+# endif
+    return closest;
 }

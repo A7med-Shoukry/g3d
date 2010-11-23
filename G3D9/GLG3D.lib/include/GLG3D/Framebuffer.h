@@ -1,16 +1,13 @@
 /**
- @file Framebuffer.h
+ \file Framebuffer.h
 
- @maintainer Morgan McGuire
- @cite Initial implementation by Daniel Hilferty, djhilferty@users.sourceforge.net
+ \maintainer Morgan McGuire
 
- Notes:
- <UL>
- <LI>http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
- </UL>
+ \cite Initial implementation by Daniel Hilferty, djhilferty@users.sourceforge.net
+ \cite http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
 
- @created 2006-01-07
- @edited  2009-09-17
+ \created 2006-01-07
+ \edited  2010-11-17
 */
 
 #ifndef GLG3D_Framebuffer_h
@@ -29,7 +26,7 @@ namespace G3D {
 typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
 
 /**
- @brief Holds a set of G3D::Textures or G3D::Renderbuffers for use as draw targets.
+ \brief Holds a set of G3D::Textures or G3D::Renderbuffers for use as draw targets.
  
  Abstraction of OpenGL's Framebuffer Object.  This is an efficient way
  of rendering to Textures. 
@@ -59,7 +56,7 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
 
  Framebuffer Example:
 
- <PRE>
+ \code
     // Create Texture
 	static Texture::Ref tex = Texture::createEmpty(256, 256, "Rendered Texture", ImageFormat::RGB8, Texture::CLAMP, Texture::NEAREST_NO_MIPMAP, Texture::DIM_2D);
 
@@ -102,7 +99,7 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
 		rd->setTexture(0, tex);
 		Draw::rect2D(Rect2D::xywh(10,10,256,256), rd);
 	app->renderDevice->pop2D();
-  </PRE>
+ \endcode
 
  In addition to Textures, Renderbuffers may also be bound to the
  Framebuffer.  This is done in a very similar manner to the Texture
@@ -135,7 +132,7 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
  OpenGL sense, however you will receive a completeness error because
  the glDrawBuffer and glReadBuffer attached to that Framebuffer have
  incorrect defaults.  To fix this, call
- <code>glDrawBuffer(GL_NONE);glReadBuffer(GL_NONE);</code>
+ <code>glDrawBuffer(GL_NONE); glReadBuffer(GL_NONE);</code>
  <b>after</b> binding the Framebuffer to the RenderDevice but before
  rendering.
 */
@@ -172,6 +169,8 @@ public:
         DEPTH = GL_DEPTH_ATTACHMENT,
 
         STENCIL = GL_STENCIL_ATTACHMENT,
+        
+        DEPTH_AND_STENCIL = GL_DEPTH_STENCIL_ATTACHMENT,
     };
 
     class Attachment : public ReferenceCountedObject {
@@ -362,7 +361,7 @@ public:
     /** The draw array for use with glDrawBuffers. This is not up to
         date until bind() is invoked.
 
-        Note that DEPTH and STENCIL are never included in this list.
+        Note that DEPTH, STENCIL, and DEPTH_AND_STENCIL are never included in this list.
 
         RenderDevice automatically uses this.*/
     inline const Array<GLenum>& openGLDrawArray() const {
@@ -384,9 +383,8 @@ public:
        to NULL or call clear() to unset.  Auto-mipmap will
        automatically be disabled on set.
        
-       Do not use a texture that is bound to the *current* Framebuffer
-       as a source texture, however, you can render a surface using a
-       Texture that is bound on a different Framebuffer.  In general,
+       Results are undefined if a texture that is bound to the <b>current</b> Framebuffer
+       as a source texture while it is being read from.  In general,
        create one Framebuffer per set of textures you wish to render 
        to and just leave them bound at all times.
 
@@ -440,5 +438,5 @@ public:
 
 } //  G3D
 
-#endif // GLG3D_FRAMEBUFFER_H
+#endif // GLG3D_Framebuffer_h
 

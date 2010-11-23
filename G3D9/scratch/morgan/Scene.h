@@ -2,23 +2,8 @@
 #define Scene_h
 
 #include <G3D/G3DAll.h>
+#include "Entity.h"
 
-class Entity : public GEntity {
-private:
-    Entity();
-
-    Entity(const std::string& n, const PhysicsFrameSpline& frameSpline, 
-        const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
-        const MD2Model::Ref& md2Model,
-        const MD3Model::Ref& md3Model);
-
-public:
-    typedef ReferenceCountedPointer<Entity> Ref;
-
-    static Entity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline);
-    static Entity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD2Model::Ref& m);
-    static Entity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m);
-};
 
 /** Sample scene graph.
 
@@ -34,10 +19,14 @@ protected:
     /** Current time */
     GameTime                    m_time;
     Lighting::Ref               m_lighting;
-    Texture::Ref                m_skyBox;
+    Texture::Ref                m_skyBoxTexture;
+    float                       m_skyBoxConstant;
     Array<Entity::Ref>          m_entityArray;
-	
-    Scene() : m_time(0) {}
+
+    Scene() : 
+        m_time(0), 
+        m_skyBoxTexture(Texture::whiteCube()), 
+        m_skyBoxConstant(1.0f) {}
 
 public:
 
@@ -57,12 +46,25 @@ public:
         return m_time;
     }
 
-    Texture::Ref skyBox() const {
-        return m_skyBox;
+    Texture::Ref skyBoxTexture() const {
+        return m_skyBoxTexture;
+    }
+
+    float skyBoxConstant() const {
+        return m_skyBoxConstant;
     }
 
     /** Enumerate the names of all available scenes. */
     static Array<std::string> sceneNames();
+
+	/** Returns the Entity whose conservative bounds are first
+	    intersected by \a ray, excluding Entitys in \a exclude.  
+		Useful for mouse selection.  Returns NULL if none are intersected.
+
+		Note that this may not return the closest Entity if another's bounds
+		project in front of it.
+     */	  
+	Entity::Ref intersectBounds(const Ray& ray, const Array<Entity::Ref>& exclude = Array<Entity::Ref>());
 };
 
 #endif

@@ -75,11 +75,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\scratch\morgan\App.h" />
+    <ClInclude Include="..\scratch\morgan\Entity.h" />
     <ClInclude Include="..\scratch\morgan\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\morgan\App.cpp" />
+    <ClCompile Include="..\scratch\morgan\Entity.cpp" />
     <ClCompile Include="..\scratch\morgan\Scene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\scratch\morgan\crates.scn.any" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,6 +17,9 @@
     <ClInclude Include="..\scratch\morgan\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\scratch\morgan\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\morgan\Scene.cpp">
@@ -25,5 +28,11 @@
     <ClCompile Include="..\scratch\morgan\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\scratch\morgan\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\scratch\morgan\crates.scn.any" />
   </ItemGroup>
 </Project>
