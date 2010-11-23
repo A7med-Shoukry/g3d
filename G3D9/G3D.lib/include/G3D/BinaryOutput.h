@@ -138,8 +138,10 @@ public:
 
         Cannot be used for huge files (ones where the data
         was already written to disk)-- will throw char*.
+
+        \param level Compression level.  0 = fast, low compression; 9 = slow, high compression
      */
-    void compress();
+    void compress(int level = 9);
 
     /** True if no errors have been encountered.*/
     bool ok() const;

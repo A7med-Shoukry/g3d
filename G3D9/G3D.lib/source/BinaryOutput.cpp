@@ -273,45 +273,48 @@ bool BinaryOutput::ok() const {
 }
 
 
-void BinaryOutput::compress() {
+void BinaryOutput::compress(int level) {
     if (m_alreadyWritten > 0) {
         throw "Cannot compress huge files (part of this file has already been written to disk).";
     }
+    debugAssertM(! m_committed, "Cannot compress after committing.");
 
-    // Old buffer size
-    int L = m_bufferLen;
-    uint8* convert = (uint8*)&L;
+    // This is the worst-case size, as mandated by zlib
+    unsigned long compressedSize = iCeil(m_bufferLen * 1.001) + 12;
 
-    // Zlib requires the output buffer to be this big
-    unsigned long newSize = iCeil(m_bufferLen * 1.01) + 12;
-    uint8* temp = (uint8*)System::malloc(newSize);
-    int result = compress2(temp, &newSize, m_buffer, m_bufferLen, 9); 
+    // Save the old buffer and reallocate to the worst-case size
+    const uint8* src     = m_buffer;
+    const uint32 srcSize = m_bufferLen;
+
+    // add space for the 4-byte header
+    m_maxBufferLen = compressedSize + 4;
+    m_buffer = (uint8*)System::malloc(m_maxBufferLen);
+    
+    // Write the header containing the old buffer size, which is needed for decompression
+    {
+        const uint8* convert = (const uint8*)&srcSize;
+        if (m_swapBytes) {
+            m_buffer[0] = convert[3];
+            m_buffer[1] = convert[2];
+            m_buffer[2] = convert[1];
+            m_buffer[3] = convert[0];
+        } else {
+            m_buffer[0] = convert[0];
+            m_buffer[1] = convert[1];
+            m_buffer[2] = convert[2];
+            m_buffer[3] = convert[3];
+        }
+    }
+
+    // Compress and write after the header
+    int result = compress2(m_buffer + 4, &compressedSize, src, srcSize, iClamp(level, 0, 9));
 
     debugAssert(result == Z_OK); (void)result;
-
-    // Write the header
-    if (m_swapBytes) {
-        m_buffer[0] = convert[3];
-        m_buffer[1] = convert[2];
-        m_buffer[2] = convert[1];
-        m_buffer[3] = convert[0];
-    } else {
-        m_buffer[0] = convert[0];
-        m_buffer[1] = convert[1];
-        m_buffer[2] = convert[2];
-        m_buffer[3] = convert[3];
-    }
-
-    // Write the data
-    if ((int64)newSize + 4 > (int64)m_maxBufferLen) {
-        m_maxBufferLen = newSize + 4;
-        m_buffer = (uint8*)System::realloc(m_buffer, m_maxBufferLen);
-    }
-    m_bufferLen = newSize + 4;
-    System::memcpy(m_buffer + 4, temp, newSize);
+    m_bufferLen = compressedSize + 4;
     m_pos = m_bufferLen;
 
-    System::free(temp);
+    // Free the old data
+    System::free((void*)src);
 }
 
 
