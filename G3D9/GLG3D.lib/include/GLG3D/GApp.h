@@ -23,6 +23,7 @@
 #include "GLG3D/Shape.h"
 #include "GLG3D/Film.h"
 #include "GLG3D/Shape.h"
+#include "GLG3D/Renderbuffer.h"
 
 namespace G3D {
 
@@ -295,8 +296,14 @@ protected:
     /** Always bound to m_frameBuffer FrameBuffer::COLOR0. */
     Texture::Ref            m_colorBuffer0;
 
-    /** Always bound to m_frameBuffer FrameBuffer::DEPTH. */
+    /** Always bound to m_frameBuffer FrameBuffer::DEPTH. If NULL, the
+        preferred depth format may not be supported by a Texture.  In
+        that case, check m_depthRenderBuffer.*/
     Texture::Ref            m_depthBuffer;
+
+    /** Always bound to m_frameBuffer FrameBuffer::DEPTH. This is used if
+     the preferred depth format is not supported for Texture%s.*/
+    Renderbuffer::Ref       m_depthRenderBuffer;
 
     /** Used to track how much onWait overshot its desired target during the previous frame. */
     RealTime                m_lastFrameOverWait;

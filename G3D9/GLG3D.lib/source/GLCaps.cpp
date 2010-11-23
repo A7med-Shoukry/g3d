@@ -918,6 +918,28 @@ const class ImageFormat* GLCaps::firstSupportedTexture(const Array<const class I
 }
 
 
+const class ImageFormat* GLCaps::firstSupportedTextureOrRenderBuffer(const Array<const class ImageFormat*>& prefs) {
+    for (int i = 0; i < prefs.size(); ++i) {
+        if (supportsTexture(prefs[i]) || supportsRenderBuffer(prefs[i])) {
+            return prefs[i];
+        }
+    }
+
+    return NULL;
+}
+
+
+const class ImageFormat* GLCaps::firstSupportedRenderBuffer(const Array<const class ImageFormat*>& prefs) {
+    for (int i = 0; i < prefs.size(); ++i) {
+        if (supportsRenderBuffer(prefs[i])) {
+            return prefs[i];
+        }
+    }
+
+    return NULL;
+}
+
+
 bool GLCaps::supportsG3D9(std::string& explanation) {
     bool supported = false;
     

@@ -686,22 +686,29 @@ void GApp::resize(int w, int h) {
         m_frameBuffer->clear();
 
         const ImageFormat* colorFormat = GLCaps::firstSupportedTexture(m_settings.film.preferredColorFormats);
-        const ImageFormat* depthFormat = GLCaps::firstSupportedTexture(m_settings.film.preferredDepthFormats);
+        const ImageFormat* depthFormat = GLCaps::firstSupportedTextureOrRenderBuffer(m_settings.film.preferredDepthFormats);
 
         m_colorBuffer0 = Texture::createEmpty("GApp::m_colorBuffer0", w, h, 
             colorFormat, Texture::DIM_2D_NPOT, Texture::Settings::video(), 1);
 
-        if (depthFormat) {
-            m_depthBuffer  = Texture::createEmpty("GApp::m_depthBuffer", w, h, 
-                depthFormat, Texture::DIM_2D_NPOT, Texture::Settings::video(), 1);
-        }
-        
         m_frameBuffer->set(Framebuffer::COLOR0, m_colorBuffer0);
+
         if (depthFormat) {
-            m_frameBuffer->set(Framebuffer::DEPTH, m_depthBuffer);
+            // Prefer creating a texture if we can
+            if (GLCaps::supportsTexture(depthFormat)) {
+                m_depthBuffer  = Texture::createEmpty
+                    ("GApp::m_depthBuffer", w, h, 
+                     depthFormat, Texture::DIM_2D_NPOT, Texture::Settings::video(), 1);
+                m_frameBuffer->set(Framebuffer::DEPTH, m_depthBuffer);
+            } else {
+                m_depthRenderBuffer  = Renderbuffer::createEmpty
+                    ("GApp::m_depthRenderBuffer", w, h, depthFormat);
+                m_frameBuffer->set(Framebuffer::DEPTH, m_depthRenderBuffer);
+            }
         }
     }
 }
+
 
 void GApp::oneFrame() {
     for (int repeat = 0; repeat < max(1, m_renderPeriod); ++repeat) {

@@ -4,9 +4,9 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  @created 2004-03-28
- @edited  2009-12-31
+ @edited  2010-11-31
 
- Copyright 2000-2009, Morgan McGuire.
+ Copyright 2000-2010, Morgan McGuire.
  All rights reserved.
 */
 
@@ -197,11 +197,24 @@ public:
 
     static bool supports(const std::string& extName);
 
-    /** Returns true if the given texture format is supported on this device for Textures.*/
+    /** Returns true if the given texture format is supported on this
+        device for Textures.*/
     static bool supportsTexture(const class ImageFormat* fmt);
 
-    /** Returns the first element of \a prefs for which supportsTexture() returns true. Returns NULL if none are supported.*/
+    /** Returns the first element of \a prefs for which
+        supportsTexture() returns true. Returns NULL if none are
+        supported.*/
     static const class ImageFormat* firstSupportedTexture(const Array<const class ImageFormat*>& prefs);
+
+    /** Returns the first element of \a prefs for which
+        supportsRenderBuffer() returns true. Returns NULL if none are
+        supported.*/
+    static const class ImageFormat* firstSupportedRenderBuffer(const Array<const class ImageFormat*>& prefs);
+
+    /** Returns the first element of \a prefs for which
+        supportsRenderBuffer() or supportsTexture() returns
+        true. Returns NULL if none are supported.*/
+    static const class ImageFormat* firstSupportedTextureOrRenderBuffer(const Array<const class ImageFormat*>& prefs);
 
     /** Returns true if the given texture format is supported on this device for RenderBuffers.*/
     static bool supportsRenderBuffer(const class ImageFormat* fmt);
