@@ -46,7 +46,12 @@ bool App::onEvent(const GEvent& e) {
     return false;
 }
 
-void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {}
+void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
+    Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
+
+    // Call to make the GApp show the output of debugDraw
+    drawDebugShapes();
+}
 
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
