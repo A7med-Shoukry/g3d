@@ -4,7 +4,7 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
  @created 2001-07-08
- @edited  2010-04-03
+ @edited  2010-11-23
  */
 
 #include "G3D/platform.h"
@@ -439,19 +439,19 @@ void RenderDevice::setVideoMode() {
 
 
 int RenderDevice::width() const {
-    if (m_state.framebuffer.isNull()) {
+    if (m_state.drawFramebuffer.isNull()) {
         return m_window->width();
     } else {
-        return m_state.framebuffer->width();
+        return m_state.drawFramebuffer->width();
     }
 }
 
 
 int RenderDevice::height() const {
-    if (m_state.framebuffer.isNull()) {
+    if (m_state.drawFramebuffer.isNull()) {
         return m_window->height();
     } else {
-        return m_state.framebuffer->height();
+        return m_state.drawFramebuffer->height();
     }
 }
 
@@ -509,7 +509,7 @@ void RenderDevice::push2D() {
 
 
 void RenderDevice::push2D(const Rect2D& viewport) {
-    push2D(m_state.framebuffer, viewport);
+    push2D(m_state.drawFramebuffer, viewport);
 }
 
 
@@ -525,7 +525,7 @@ void RenderDevice::push2D(const FramebufferRef& fb) {
 void RenderDevice::push2D(const FramebufferRef& fb, const Rect2D& viewport) {
     pushState();
 
-    setFramebuffer(fb);
+    setDrawFramebuffer(fb);
     setDepthWrite(false);
     setDepthTest(DEPTH_ALWAYS_PASS);
     disableLighting();
@@ -564,7 +564,8 @@ RenderDevice::RenderState::RenderState(int width, int height, int htutc) :
     alphaTest(ALPHA_ALWAYS_PASS),
     alphaReference(0.0) {
 
-    framebuffer = NULL;
+    drawFramebuffer = NULL;
+    readFramebuffer = NULL;
 
     lights.twoSidedLighting =    false;
 
@@ -833,8 +834,8 @@ void RenderDevice::setState(
     // new state explicitly.
     
     // Set framebuffer first, since it can affect the viewport
-    if (m_state.framebuffer != newState.framebuffer) {
-        setFramebuffer(newState.framebuffer);
+    if (m_state.drawFramebuffer != newState.drawFramebuffer) {
+        setDrawFramebuffer(newState.drawFramebuffer);
         debugAssertGLOk();
         
         // Intentionally corrupt the viewport, forcing renderdevice to
@@ -842,6 +843,16 @@ void RenderDevice::setState(
         m_state.viewport = Rect2D::xywh(-1, -1, -1, -1);
     }
     debugAssertGLOk();
+
+    if (m_state.readFramebuffer != newState.readFramebuffer) {
+        setReadFramebuffer(newState.readFramebuffer);
+        debugAssertGLOk();
+    }
+
+    if (m_state.readFramebuffer != newState.readFramebuffer) {
+        setReadFramebuffer(newState.readFramebuffer);
+        debugAssertGLOk();
+    }
     
     setViewport(newState.viewport);
 
@@ -1000,15 +1011,15 @@ void RenderDevice::disableTwoSidedLighting() {
 
 
 void RenderDevice::syncDrawBuffer(bool alreadyBound) {
-    if (m_state.framebuffer.isNull()) {
+    if (m_state.drawFramebuffer.isNull()) {
         return;
     }
 
-    if (m_state.framebuffer->bind(alreadyBound)) {
+    if (m_state.drawFramebuffer->bind(alreadyBound, Framebuffer::MODE_DRAW)) {
         debugAssertGLOk();
         
         // Apply the bindings from this framebuffer
-        const Array<GLenum>& array = m_state.framebuffer->openGLDrawArray();
+        const Array<GLenum>& array = m_state.drawFramebuffer->openGLDrawArray();
         if (array.size() > 0) {
             debugAssertM(array.size() <= glGetInteger(GL_MAX_DRAW_BUFFERS),
                          format("This graphics card only supports %d draw buffers.",
@@ -1030,11 +1041,58 @@ void RenderDevice::syncDrawBuffer(bool alreadyBound) {
     }
 }
 
+static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref& fbo) {
+
+    switch (b) {
+    case RenderDevice::READ_NONE:
+        return GL_NONE;
+
+    case RenderDevice::READ_FRONT:
+    case RenderDevice::READ_BACK:
+    case RenderDevice::READ_FRONT_LEFT:
+    case RenderDevice::READ_FRONT_RIGHT:
+    case RenderDevice::READ_BACK_LEFT:
+    case RenderDevice::READ_BACK_RIGHT:
+    case RenderDevice::READ_LEFT:
+    case RenderDevice::READ_RIGHT:
+        if (fbo->has(Framebuffer::COLOR0)) {
+            return GL_COLOR_ATTACHMENT0;
+        } else {
+            return GL_NONE;
+        }
+        
+    default:
+        // The specification and various pieces of documentation are
+        // unclear on what arguments glReadBuffer may have.
+        // http://www.opengl.org/wiki/Framebuffer_Object#Multiple_Render_Targets
+        // and the extension specification indicate that COLOR0 is a valid argument
+        // even though the OpenGL 4.0 spec does not.
+        if (fbo->has(Framebuffer::AttachmentPoint(b))) {
+            return GLenum(b);
+        } else {
+            return GL_NONE;
+        }
+    }
+}
+
+
+void RenderDevice::syncReadBuffer(bool alreadyBound) {
+    if (m_state.readFramebuffer.isNull()) {
+        return;
+    }
+
+    if (m_state.readFramebuffer->bind(alreadyBound, Framebuffer::MODE_READ)) {
+        debugAssertGLOk();
+        glReadBuffer(toFBOReadBuffer(m_state.readBuffer, m_state.readFramebuffer));
+    }
+}
+
 
 void RenderDevice::beforePrimitive() {
     debugAssertM(! m_inRawOpenGL, "Cannot make RenderDevice calls while inside beginOpenGL...endOpenGL");
 
     syncDrawBuffer(true);
+    syncReadBuffer(true);
 
     if (! m_state.shader.isNull()) {
         debugAssert(! m_inShader);
@@ -1146,7 +1204,7 @@ void RenderDevice::setDrawBuffer(DrawBuffer b) {
         return;
     }
 
-    if (m_state.framebuffer.isNull()) {
+    if (m_state.drawFramebuffer.isNull()) {
         alwaysAssertM
             (!( (b >= DRAW_COLOR0) && (b <= DRAW_COLOR15)), 
              "Drawing to a color buffer is only supported by application-created framebuffers!");
@@ -1155,7 +1213,7 @@ void RenderDevice::setDrawBuffer(DrawBuffer b) {
     if (b != m_state.drawBuffer) {
         minGLStateChange();
         m_state.drawBuffer = b;
-        if (m_state.framebuffer.isNull()) {
+        if (m_state.drawFramebuffer.isNull()) {
             // Only update the GL state if there is no framebuffer bound.
             glDrawBuffer(GLenum(m_state.drawBuffer));
         }
@@ -1170,16 +1228,16 @@ void RenderDevice::setReadBuffer(ReadBuffer b) {
         return;
     }
 
-    if (m_state.framebuffer.isNull()) {
-        alwaysAssertM
-            (!( (b >= READ_COLOR0) && (b <= READ_COLOR15)), 
-             "Drawing to a color buffer is only supported by application-created framebuffers!");
-    }
-
     if (b != m_state.readBuffer) {
         minGLStateChange();
         m_state.readBuffer = b;
-        glReadBuffer(GLenum(m_state.readBuffer));
+        if (m_state.readFramebuffer.notNull()) {
+            glReadBuffer(toFBOReadBuffer(m_state.readBuffer, m_state.readFramebuffer));
+            debugAssertGLOk();
+        } else {
+            glReadBuffer(GLenum(m_state.readBuffer));
+            debugAssertGLOk();
+        }
     }
 }
 
@@ -1220,6 +1278,7 @@ void RenderDevice::pushState() {
     m_state.highestTextureUnitThatChanged = -1;
 
     m_stats.pushStates += 1;
+    debugAssertGLOk();
 }
 
 
@@ -1237,11 +1296,12 @@ void RenderDevice::popState() {
 void RenderDevice::clear(bool clearColor, bool clearDepth, bool clearStencil) {
     debugAssert(! m_inPrimitive);
     syncDrawBuffer(true);
+    syncReadBuffer(true);
 
 #   ifdef G3D_DEBUG
     {
         std::string why;
-        debugAssertM(currentFramebufferComplete(why), why);
+        debugAssertM(currentDrawFramebufferComplete(why), why);
     }
 #   endif
     majStateChange();
@@ -1513,14 +1573,40 @@ void RenderDevice::pushState(const FramebufferRef& fb) {
 }
 
 
-void RenderDevice::setFramebuffer(const FramebufferRef& fbo) {
-    if (fbo != m_state.framebuffer) {
+void RenderDevice::setReadFramebuffer(const FramebufferRef& fbo) {
+    if (fbo != m_state.readFramebuffer) {
         majGLStateChange();
 
         // Set Framebuffer
         if (fbo.isNull()) {
-            m_state.framebuffer = NULL;
-            Framebuffer::bindWindowBuffer();
+            m_state.readFramebuffer = NULL;
+            Framebuffer::bindWindowBuffer(Framebuffer::MODE_READ);
+            debugAssertGLOk();
+
+            // Restore the buffer that was in use before the framebuffer was attached
+            glReadBuffer(GLenum(m_state.readBuffer));
+            debugAssertGLOk();
+        } else {
+            debugAssertM(GLCaps::supports_GL_ARB_framebuffer_object(), 
+                "Framebuffer Object not supported!");
+            m_state.readFramebuffer = fbo;
+            syncReadBuffer(false);
+
+            // The read enables for this framebuffer will be set during beforePrimitive()            
+        }
+        debugAssertGLOk();
+    }
+}
+
+
+void RenderDevice::setDrawFramebuffer(const FramebufferRef& fbo) {
+    if (fbo != m_state.drawFramebuffer) {
+        majGLStateChange();
+
+        // Set Framebuffer
+        if (fbo.isNull()) {
+            m_state.drawFramebuffer = NULL;
+            Framebuffer::bindWindowBuffer(Framebuffer::MODE_DRAW);
             debugAssertGLOk();
 
             // Restore the buffer that was in use before the framebuffer was attached
@@ -1529,24 +1615,13 @@ void RenderDevice::setFramebuffer(const FramebufferRef& fbo) {
         } else {
             debugAssertM(GLCaps::supports_GL_ARB_framebuffer_object(), 
                 "Framebuffer Object not supported!");
-            m_state.framebuffer = fbo;
+            m_state.drawFramebuffer = fbo;
             syncDrawBuffer(false);
 
-            if (m_state.readBuffer != READ_NONE) {
-                if (! fbo->has(static_cast<Framebuffer::AttachmentPoint>(m_state.readBuffer))) {
-                    // Switch to color0 or none
-                    if (fbo->has(Framebuffer::COLOR0)) {
-                        setReadBuffer(READ_COLOR0);
-                    } else {
-                        setReadBuffer(READ_NONE);
-                    }
-                }
-            }
-
-            // The enables for this framebuffer will be set during beforePrimitive()            
+            // The draw enables for this framebuffer will be set during beforePrimitive()            
         }
 
-        const bool newInvertY = m_state.framebuffer.isNull();
+        const bool newInvertY = m_state.drawFramebuffer.isNull();
         const bool invertYChanged = (m_state.matrices.invertY != newInvertY);
         if (invertYChanged) {
             m_state.matrices.invertY = newInvertY;
@@ -1849,7 +1924,7 @@ void RenderDevice::copyTextureFromScreen(const Texture::Ref& texture, const Rect
         format = texture->format();
     }
 
-    bool invertY = framebuffer().notNull();
+    bool invertY = readFramebuffer().notNull();
 
     int y = 0;
     if (invertY) {
@@ -2000,13 +2075,15 @@ void RenderDevice::setStencilOp(
             {
                 int stencilBits = 0;
 
-                if (framebuffer().isNull()) {
+                if (drawFramebuffer().isNull()) {
                     stencilBits = glGetInteger(GL_STENCIL_BITS);
                 } else {
-                    // get render buffer and texture for depth or stencil buffer and find out if either one has some stencil bits.
+                    // get render buffer and texture for depth or
+                    // stencil buffer and find out if either one has
+                    // some stencil bits.
                     
-                    Framebuffer::Attachment::Ref d = framebuffer()->get(Framebuffer::DEPTH);
-                    Framebuffer::Attachment::Ref s = framebuffer()->get(Framebuffer::DEPTH);
+                    Framebuffer::Attachment::Ref d = drawFramebuffer()->get(Framebuffer::DEPTH);
+                    Framebuffer::Attachment::Ref s = drawFramebuffer()->get(Framebuffer::DEPTH);
 
                     if (d.notNull()) {
                         if (d->type() == Framebuffer::Attachment::TEXTURE) {
@@ -2394,7 +2471,7 @@ void RenderDevice::setTextureMatrix(
 
 
 const ImageFormat* RenderDevice::colorFormat() const {
-    Framebuffer::Ref fbo = framebuffer();
+    Framebuffer::Ref fbo = drawFramebuffer();
     if (fbo.isNull()) {
         OSWindow::Settings settings;
         window()->getSettings(settings);
@@ -2613,7 +2690,7 @@ void RenderDevice::sendVertex(const Vector4& vertex) {
 void RenderDevice::beginPrimitive(Primitive p) {
     debugAssertM(! m_inPrimitive, "Already inside a primitive");
     std::string why;
-    debugAssertM( currentFramebufferComplete(why), why);
+    debugAssertM( currentDrawFramebufferComplete(why), why);
 
     beforePrimitive();
     
@@ -2743,8 +2820,8 @@ double RenderDevice::getDepthBufferValue(
     GLfloat depth = 0;
     debugAssertGLOk();
 
-    if (m_state.framebuffer.notNull()) {
-        debugAssertM(m_state.framebuffer->has(Framebuffer::DEPTH),
+    if (m_state.readFramebuffer.notNull()) {
+        debugAssertM(m_state.readFramebuffer->has(Framebuffer::DEPTH),
             "No depth attachment");
     }
 
@@ -3206,7 +3283,7 @@ void RenderDevice::sendIndices
  int numInstances, bool useInstances) {
 
     std::string why;
-    debugAssertM(currentFramebufferComplete(why), why);
+    debugAssertM(currentDrawFramebufferComplete(why), why);
 
     if (indexVAR.m_numElements == 0) {
         // There's nothing in this index array, so don't bother rendering.
@@ -3295,8 +3372,8 @@ bool RenderDevice::supportsVertexProgramNV2() const {
 }
 
 
-bool RenderDevice::checkFramebuffer(std::string& whyNot) const {
-    GLenum status = static_cast<GLenum>(glCheckFramebufferStatus(GL_FRAMEBUFFER));
+static bool checkFramebuffer(GLenum which, std::string& whyNot) {
+    GLenum status = static_cast<GLenum>(glCheckFramebufferStatus(which));
 
     switch(status) {
     case GL_FRAMEBUFFER_COMPLETE:
@@ -3327,6 +3404,16 @@ bool RenderDevice::checkFramebuffer(std::string& whyNot) const {
     }
 
     return false;    
+}
+
+
+bool RenderDevice::checkDrawFramebuffer(std::string& whyNot) const {
+    return checkFramebuffer(GL_DRAW_FRAMEBUFFER, whyNot);
+}
+
+
+bool RenderDevice::checkReadFramebuffer(std::string& whyNot) const {
+    return checkFramebuffer(GL_READ_FRAMEBUFFER, whyNot);
 }
 
 

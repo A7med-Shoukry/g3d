@@ -630,7 +630,7 @@ void Surface::renderTranslucent
     } else {
         Framebuffer::Attachment::Ref screen = fbo->get(Framebuffer::COLOR0);
         debugAssertM(screen.notNull(), "No color attachment on framebuffer");
-        rd->setReadBuffer(RenderDevice::READ_COLOR0);
+        rd->setReadBuffer(RenderDevice::READ_FRONT);
     }
     debugAssertGLOk();
 

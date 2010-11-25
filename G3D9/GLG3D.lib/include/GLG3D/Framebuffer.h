@@ -173,6 +173,13 @@ public:
         DEPTH_AND_STENCIL = GL_DEPTH_STENCIL_ATTACHMENT,
     };
 
+    /** \sa bind() */
+    enum Mode {
+        MODE_READ      = GL_READ_FRAMEBUFFER,
+        MODE_DRAW      = GL_DRAW_FRAMEBUFFER,
+        MODE_READ_DRAW = GL_FRAMEBUFFER
+    };
+
     class Attachment : public ReferenceCountedObject {
     public:
         friend class Framebuffer;
@@ -336,7 +343,7 @@ public:
 
         \return True if openGLDrawArray() was changed by this call
     */
-    bool bind(bool alreadyBound = false);
+    bool bind(bool alreadyBound = false, Mode m = MODE_READ_DRAW);
 
     /** Bind the current context's default Framebuffer, instead of an
         application-created one. 
@@ -344,7 +351,7 @@ public:
         <b>Primarily used by RenderDevice.  Developers should not need
         to explicitly call this method or glDrawBuffers.</b>
     */
-    static void bindWindowBuffer();
+    static void bindWindowBuffer(Mode m = MODE_READ_DRAW);
 
     /** Returns the attachment currently at ap, or NULL if there is
      not one.  \sa has()*/

@@ -35,6 +35,7 @@
      <li> G3D::ShadowMap::updateDepth now allows small negative values
      <li> G3D::MD2Model::Specification::negateNormals
      <li> G3D::SurfaceSample
+     <li> G3D::RenderDevice::setReadFramebuffer, setDrawFramebuffer
      <li> G3D::PointHashGrid::Iterator::hasMore
      <li> G3D::GLight::castsShadows
      <li> G3D::GLight::power
@@ -75,7 +76,8 @@
 
      <b>Backwards Incompatible Changes</b>:
      <ul>
-	 <li> Removed G3D::AnyVal (use G3D::Any now)
+     <li> Removed G3D::AnyVal (use G3D::Any now)
+     <li> Removed AUX RenderDevice::ReadBuffer options (deprecated from OpenGL)
      <li> G3D::GuiTextureBox::Settings &rarr; G3D::Texture::Visualization
      <li> Removed incident power arguments from SuperBSDF::evaluate
      <li> G3D::Film::exposure &rarr; G3D::Film::sensitivity

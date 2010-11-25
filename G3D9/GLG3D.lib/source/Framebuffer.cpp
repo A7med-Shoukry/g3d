@@ -148,9 +148,9 @@ Framebuffer::Attachment::Ref Framebuffer::get(AttachmentPoint ap) const {
 }
 
 
-bool Framebuffer::bind(bool alreadyBound) {
+    bool Framebuffer::bind(bool alreadyBound, Mode m) {
     if (! alreadyBound) {
-        glBindFramebuffer(GL_FRAMEBUFFER, openGLID());
+        glBindFramebuffer(GLenum(m), openGLID());
     }
 
     if (m_currentOutOfSync) {
@@ -162,8 +162,8 @@ bool Framebuffer::bind(bool alreadyBound) {
 }
 
 
-void Framebuffer::bindWindowBuffer() {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+void Framebuffer::bindWindowBuffer(Mode m) {
+    glBindFramebuffer(GLenum(m), 0);
 }
 
 

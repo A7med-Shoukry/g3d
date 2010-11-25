@@ -287,11 +287,14 @@ private:
     /** Returns true if the frame buffer is complete, or a string in 
         whyIncomplete explaining the problem.
         Potentially slow. */
-    bool checkFramebuffer(std::string& whyIncomplete = dummyString) const;
+    bool checkDrawFramebuffer(std::string& whyIncomplete = dummyString) const;
+    bool checkReadFramebuffer(std::string& whyIncomplete = dummyString) const;
 
-    /** Sets the glDrawBuffersARB to match the current FBO's 
-        capabilities.  Called from clear() and beforePrimitive(). */
+    /** Sets the glDrawBuffersARB to match the currently bound
+        drawFramebuffer's capabilities.  Called from clear() and
+        beforePrimitive(). */
     void syncDrawBuffer(bool alreadyBound);
+    void syncReadBuffer(bool alreadyBound);
 
 public:
     
@@ -359,23 +362,23 @@ public:
 protected:
 
     /** Time at which the previous endFrame() was called */
-    RealTime            m_lastTime;
+    RealTime                    m_lastTime;
 
-    Stats               m_stats;
+    Stats                       m_stats;
 
     /** Storage for setVARs.  Cleared by endIndexedPrimitives. */
     Array<VertexRange>          m_tempVAR;
 
     class VARState {
     public:
-        int             highestEnabledTexCoord;
+        int                     highestEnabledTexCoord;
 
         VARState() : highestEnabledTexCoord(-1) {}
     };
     
     /** Note: note backed up by push/pop, since push/pop can't be
         called inside indexed primitives */
-    VARState            m_varState;
+    VARState                    m_varState;
 
 public:
 
@@ -523,28 +526,28 @@ public:
         READ_FRONT = GL_FRONT, 
         READ_BACK = GL_BACK, 
         READ_LEFT = GL_LEFT,
-        READ_RIGHT = GL_RIGHT, 
-        READ_AUX0 = GL_AUX0, 
-        READ_AUX1 = GL_AUX1, 
-        READ_AUX2 = GL_AUX2, 
-        READ_AUX3 = GL_AUX3,
+        READ_RIGHT = GL_RIGHT,
 
-        READ_COLOR0 = GL_COLOR_ATTACHMENT0, 
-        READ_COLOR1 = GL_COLOR_ATTACHMENT1, 
-        READ_COLOR2 = GL_COLOR_ATTACHMENT2, 
-        READ_COLOR3 = GL_COLOR_ATTACHMENT3, 
-        READ_COLOR4 = GL_COLOR_ATTACHMENT4, 
-        READ_COLOR5 = GL_COLOR_ATTACHMENT5, 
-        READ_COLOR6 = GL_COLOR_ATTACHMENT6, 
-        READ_COLOR7 = GL_COLOR_ATTACHMENT7, 
-        READ_COLOR8 = GL_COLOR_ATTACHMENT8, 
-        READ_COLOR9 = GL_COLOR_ATTACHMENT9, 
-        READ_COLOR10 = GL_COLOR_ATTACHMENT10, 
-        READ_COLOR11 = GL_COLOR_ATTACHMENT11, 
-        READ_COLOR12 = GL_COLOR_ATTACHMENT12, 
-        READ_COLOR13 = GL_COLOR_ATTACHMENT13, 
-        READ_COLOR14 = GL_COLOR_ATTACHMENT14, 
+        READ_COLOR0 = GL_COLOR_ATTACHMENT0,
+        READ_COLOR1 = GL_COLOR_ATTACHMENT1,
+        READ_COLOR2 = GL_COLOR_ATTACHMENT2,
+        READ_COLOR3 = GL_COLOR_ATTACHMENT3,
+        READ_COLOR4 = GL_COLOR_ATTACHMENT4,
+        READ_COLOR5 = GL_COLOR_ATTACHMENT5,
+        READ_COLOR6 = GL_COLOR_ATTACHMENT6,
+        READ_COLOR7 = GL_COLOR_ATTACHMENT7,
+        READ_COLOR8 = GL_COLOR_ATTACHMENT8,
+        READ_COLOR9 = GL_COLOR_ATTACHMENT9,
+        READ_COLOR10 = GL_COLOR_ATTACHMENT10,
+        READ_COLOR11 = GL_COLOR_ATTACHMENT11,
+        READ_COLOR12 = GL_COLOR_ATTACHMENT12,
+        READ_COLOR13 = GL_COLOR_ATTACHMENT13,
+        READ_COLOR14 = GL_COLOR_ATTACHMENT14,
         READ_COLOR15 = GL_COLOR_ATTACHMENT15,
+
+        READ_DEPTH = GL_DEPTH_ATTACHMENT,
+        READ_STENCIL = GL_STENCIL_ATTACHMENT,
+
         READ_CURRENT
     };
     
@@ -1204,7 +1207,7 @@ public:
     template<class T>
     void sendIndices
     (RenderDevice::Primitive primitive, int numIndices, const T* index) {
-        debugAssertM(currentFramebufferComplete(), "Incomplete Framebuffer");
+        debugAssertM(currentDrawFramebufferComplete(), "Incomplete Framebuffer");
         internalSendIndices(primitive, sizeof(T), numIndices, index, 1, false);
         
         // Mark all active arrays as busy.
@@ -1500,7 +1503,7 @@ private:
             Matrix4                     projectionMatrix;
 
             /** True when inverting from the G3D coordinate system to the OpenGL one.
-                Set automatically in RenderDevice::setFramebuffer(). */
+                Set automatically in RenderDevice::setDrawFramebuffer(). */
             bool                        invertY;
             bool                        changed;
 
@@ -1526,7 +1529,8 @@ private:
         DrawBuffer                  drawBuffer;
         ReadBuffer                  readBuffer;
 
-        FramebufferRef              framebuffer;
+        FramebufferRef              drawFramebuffer;
+        FramebufferRef              readFramebuffer;
         
         DepthTest                   depthTest;
         AlphaTest                   alphaTest;
@@ -1683,40 +1687,70 @@ public:
      Sets the framebuffer to render to.  Use NULL to set the desired rendering 
      target to the windowing system display.
 
-	 Note that if the new framebuffer has different dimensions than the current one
-	 the projectionMatrix and viewport will likely be incorrect. 
+     Note that if the new framebuffer has different dimensions than
+     the current one the projectionMatrix and viewport will likely be
+     incorrect. Call RenderDevice::setProjectionAndCamera matrix again
+     to update them.
 
      See RenderDevice::pushState and push2D for a way to set the frame buffer and viewport
      simultaneously.
 
-     If the current readBuffer() is not legal for \a fbo, it will be changed to READ_COLOR0
-     or READ_NONE if there is no color0 attachment.
-
      @param fbo Framebuffer to render to.
     */
-    void setFramebuffer(const Framebuffer::Ref &fbo);
+    void setDrawFramebuffer(const Framebuffer::Ref &fbo);
 
+    /*
+     If the current readBuffer() is not legal for \a fbo, it will be changed to READ_COLOR0
+     or READ_NONE if there is no color0 attachment.
+    */
+    void setReadFramebuffer(const Framebuffer::Ref &fbo);
+
+    /** \brief Sets both the draw and read framebuffers */
+    void setFramebuffer(const Framebuffer::Ref &fbo) {
+        setDrawFramebuffer(fbo);
+        setReadFramebuffer(fbo);
+    }
+
+    /** \deprecated Use drawFramebuffer() or readFramebuffer() */
     Framebuffer::Ref framebuffer() const {
-        return m_state.framebuffer;
+        debugAssertM(m_state.drawFramebuffer == m_state.readFramebuffer, 
+                      "Invoked deprecated framebuffer() method with different draw and read buffers bound.");
+        return m_state.drawFramebuffer;
+    }
+
+    /** Returns the framebuffer currently bound for drawing. */
+    Framebuffer::Ref drawFramebuffer() const {
+        return m_state.drawFramebuffer;
+    }
+
+    /** Returns the framebuffer currently bound for reading. */
+    Framebuffer::Ref readFramebuffer() const {
+        return m_state.readFramebuffer;
     }
 
     /**
-     Checks to ensure that the current framebuffer is complete and error free.  
+     Checks to ensure that the currently bound drawing framebuffer is complete and error free.  
 
-     @return false On Incomplete Framebuffer Error
-     @return true On Complete Framebuffer
+     \return false On Incomplete Framebuffer Error
+     \return true On Complete Framebuffer
     */
-    inline bool currentFramebufferComplete(std::string& whyIncomplete = dummyString) const {
-        return m_state.framebuffer.isNull() || 
-			   checkFramebuffer(whyIncomplete);
+    inline bool currentDrawFramebufferComplete(std::string& whyIncomplete = dummyString) const {
+        return m_state.drawFramebuffer.isNull() || 
+            checkDrawFramebuffer(whyIncomplete);
+    }
+
+    inline bool currentReadFramebufferComplete(std::string& whyIncomplete = dummyString) const {
+        return m_state.readFramebuffer.isNull() || 
+            checkReadFramebuffer(whyIncomplete);
     }
 
     void push2D();
 
-	/** 
-	 Pushes all state, switches to the new framebuffer, and resizes the viewport and projection matrix accordingly.
-	 */
-    void push2D(const FramebufferRef& fb);
+    /** 
+        Pushes all state, switches to the new framebuffer, and resizes
+        the viewport and projection matrix accordingly.
+    */
+    void push2D(const FramebufferRef& drawFramebuffer);
 
     /**
      Set up for traditional 2D rendering (origin = upper left, y increases downwards).
@@ -1754,9 +1788,9 @@ public:
         return m_state.shadeMode;
     }
 
-	/**
-	 Shuts down the system.  This should be the last call you make.
-	 */
+    /**
+       Shuts down the rendering context.  This should be the last call you make.
+    */
     void cleanup();
 
     /** Returns the format of the backbuffer/COLOR0 buffer (NULL if there isn't such a buffer). */
