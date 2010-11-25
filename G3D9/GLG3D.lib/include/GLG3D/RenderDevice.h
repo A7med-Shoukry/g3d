@@ -1,14 +1,14 @@
 /**
-  @file RenderDevice.h
+  \file RenderDevice.h
 
   Graphics hardware abstraction layer (wrapper for OpenGL).
 
   You can freely mix OpenGL calls with RenderDevice, just make sure you put
   the state back the way you found it or you will confuse RenderDevice.
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2001-05-29
-  @edited  2009-12-29
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2001-05-29
+  \edited  2010-11-29
 
   Copyright 2000-2010, Morgan McGuire
 */
@@ -39,15 +39,14 @@ class VertexRange;
 
 
 /**
- \brief Abstraction of a graphics rendering context.  
+ \brief Abstraction of a graphics rendering context (GPU).  
  
- Implemented with an
- OpenGL context, but designed so that it can support other APIs
- (e.g., OpenGL ES, DirectX) as back ends.
+ Implemented with an OpenGL context, but designed so that it can
+ support other APIs (e.g., OpenGL ES, DirectX) as back ends.
 
  Unlike OpenGL, in release mode, no RenderDevice call will trigger a
  pipeline flush, and all redundant state calls are automatically
- detected and optimized out.  This includes querries: reading any
+ detected and optimized out.  This includes queries: reading any
  RenderDevice state is instantaneous and does not flush the GPU
  (unlike glGet*).
 
@@ -73,14 +72,9 @@ class VertexRange;
      is enabled by default.  You may be able to get a slight speed increase
      by disabling GL_NORMALIZE or using GL_SCALE_NORMAL instead.
 
- <P> For stereo rendering, set <CODE>OSWindow::Settings::stereo = true</CODE>
-     and use RenderDevice::setDrawBuffer to switch which eye is being rendered.  Only
-     use RenderDevice::beginFrame/RenderDevice::endFrame once per frame,
-     but do clear both buffers separately.
-
- <P> The only OpenGL calls <B>NOT</B> abstracted by RenderDevice are
-     fog and texture coordinate generation.  For everything else, use
-     RenderDevice.
+ <p> Fixed-function code is currently being phased out of the G3D API as
+ it is deprecated in OpenGL.  Shader and VertexArray code is the preferred
+ rendering path.
 
  <P>
  Example
@@ -91,7 +85,7 @@ class VertexRange;
 
   <P>
   Example 2 (textured quad)
-  <PRE>
+  \code
     RenderDevice* renderDevice = new RenderDevice();
     renderDevice->init(640, 480);
 
@@ -124,7 +118,7 @@ class VertexRange;
     while (true);
 
     renderDevice->cleanup();
-    </PRE>
+  \endcode
 
   <P>
 
@@ -132,6 +126,11 @@ class VertexRange;
 
   <P>
  <B>Stereo Rendering</B>
+ <P> For stereo rendering, set <CODE>OSWindow::Settings::stereo = true</CODE>
+     and use RenderDevice::setDrawBuffer to switch which eye is being rendered.  Only
+     use RenderDevice::beginFrame/RenderDevice::endFrame once per frame,
+     but do clear both buffers separately.
+
   You can render in stereo (on a stereo capable card) by rendering twice,
   once for each eye's buffer:
 
@@ -170,10 +169,17 @@ public:
 
     typedef PrimitiveType Primitive;
    	
-    /** RENDER_CURRENT = preserve whatever the render mode is currently set to.  */
-    enum RenderMode {RENDER_SOLID, RENDER_WIREFRAME, RENDER_POINTS, RENDER_CURRENT};
+    /** \sa RenderDevice::setRenderMode */
+    enum RenderMode {
+        RENDER_SOLID, 
+        RENDER_WIREFRAME, 
+        RENDER_POINTS, 
+        /** preserve whatever the render mode is currently set to.  */
+        RENDER_CURRENT
+    };
     
-    enum {MAX_LIGHTS = 8};
+    /** Maximum fixed-function lights supported. \deprecated Use a Shader */
+    enum {MAX_LIGHTS = 4};
 
     /** Maximum number of fixed-function texture units RenderDevice can use or
         track with pushed/popped render states.  This affects texture combine,
@@ -182,8 +188,10 @@ public:
         The maximum number of tracked units may be lower than hardware limits
         due to the cost of tracking and restoring the state. Most users will not
         use more, but increasing this value is the only necessary change.
+
+        \deprecated
      */
-    enum {MAX_TRACKED_TEXTURE_UNITS = 8};
+    enum {MAX_TRACKED_TEXTURE_UNITS = 4};
 
     /** Maximum number of programmable pipeline texture image units RenderDevice
         can use or track with pushed/popped states.  These are typically more than
@@ -206,9 +214,9 @@ private:
     OSWindow*                    m_window;
 
     /** Should the destructor delete m_window?*/
-    bool                        m_deleteWindow;
+    bool                         m_deleteWindow;
 
-	void setVideoMode();
+    void setVideoMode();
 
     /**
      For counting the number of beginFrame/endFrames.
@@ -1560,7 +1568,7 @@ private:
         Vector3                     normal;
 
         /** Index of the highest texture unit that changed since pushState,
-            used for short-circuiting work in popstate */
+            used for short-circuiting work in popState() */
         int                         highestTextureUnitThatChanged;
         TextureUnit                 textureUnits[MAX_TRACKED_TEXTURE_UNITS];
         TextureImageUnit            textureImageUnits[MAX_TRACKED_TEXTURE_IMAGE_UNITS];

@@ -983,6 +983,8 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
         REQUIRE("GL_ARB_geometry_shader4", "GL_EXT_geometry_shader4");
         REQUIRE("GL_ARB_sync", "");
         REQUIRE("GL_ARB_draw_buffers_blend", "");
+        REQUIRE("GL_EXT_framebuffer_blit", "");
+
 #       ifdef G3D_WIN32
             if (wglGetProcAddress("wglCreateContextAttribsARB") == NULL) {
                 REQUIRE("WGL_ARB_create_context", "");
