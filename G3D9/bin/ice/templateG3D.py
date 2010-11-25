@@ -9,7 +9,7 @@ from . import copyifnewer
 import doticompile
 import copy
 
-def findG3DStarter(state):
+def findG3DStarter(state, name):
 
     # load the default .icompile
     fakeState = copy.copy(state)
@@ -21,19 +21,19 @@ def findG3DStarter(state):
         '/usr/local/G3D/']
     
     for path in locations:
-        f = pathConcat(path, 'samples/starter')
+        f = pathConcat(path, 'samples/' + name)
         if os.path.exists(f):
             return f
 
     raise Exception('Could not find G3D installation in ' + '\n'.join(locations))
 
 """ Generates an empty project. """
-def generateStarterFiles(state):
+def generateStarterFiles(state, name):
     if isLibrary(state.binaryType):
         colorPrint("ERROR: G3D template cannot be used with a library", ERROR_COLOR)
         sys.exit(-232)
                 
-    starterPath = findG3DStarter(state)
+    starterPath = findG3DStarter(state, name)
     
     print('\nCopying G3D starter files from ' + starterPath)
 

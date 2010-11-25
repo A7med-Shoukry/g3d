@@ -533,18 +533,23 @@ def checkForProjectFile(state, args):
                       dir + "' project? (Y/N)")
             colorPrint(prompt, 'bold')
             if getch().lower() == 'y':
-                prompt = "Select a project template:\n  [H]ello World\n  [G]3D\n"
+                prompt = "Select a project template:\n  [H]ello World\n  [G]3D Starter\n  [T]iny G3D Starter\n"
                 colorPrint(prompt, 'bold')
-                if getch().lower() == 'h':
+                c = getch().lower()
+                if c == 'h':
                     templateHello.generateStarterFiles(state)
+                elif c == 'g':
+                    templateG3D.generateStarterFiles(state, 'starter')
                 else:
-                    templateG3D.generateStarterFiles(state)
+                    templateG3D.generateStarterFiles(state, 'tinyStarter')
 
     if state.noPrompt and state.template != '':
         if state.template == 'hello':
             templateHello.generateStarterFiles(state)
         elif state.template == 'G3D':
-            templateG3D.generateStarterFiles(state)
+            templateG3D.generateStarterFiles(state, 'starter')
+        elif state.template == 'tinyG3D':
+            templateG3D.generateStarterFiles(state, 'tinyStarter')
         elif state.template == 'empty':
             # Intentionally do nothing
             ''
