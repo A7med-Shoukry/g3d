@@ -6,6 +6,7 @@ import os
 from .utils import *
 from .variables import *
 from . import copyifnewer
+import doticompile
 import copy
 
 def findG3DStarter(state):
