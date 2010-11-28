@@ -38,6 +38,20 @@ std::string Any::resolveStringAsFilename() const {
 }
 
 
+void Any::remove(const std::string& key) {
+    verifyType(TABLE);
+    ensureMutable();
+    m_data->value.t->remove(key);
+}
+
+
+void Any::remove(int i) {
+    verifyType(ARRAY);
+    ensureMutable();
+    m_data->value.a->remove(i);
+}
+
+
 bool Any::nameBeginsWith(const std::string& s) const {
     return nameBeginsWith(s.c_str());
 }

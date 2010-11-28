@@ -643,6 +643,13 @@ public:
 
     const Source& source() const;
 
+    /** Removes this key from the Any, which must be a table. */
+    void remove(const std::string& key);
+
+    /** Removes this key from the Any, which must be an array, and
+        shifts other elements down to maintain order. */
+    void remove(int index);
+
     /** Throws a ParseError if \a value is false.  Useful for quickly
         creating parse rules in classes that deserialize from Any.
     */
