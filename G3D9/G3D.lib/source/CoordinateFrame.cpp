@@ -89,7 +89,7 @@ CoordinateFrame::operator Any() const {
     float x, y, z, yaw, pitch, roll;
     getXYZYPRDegrees(x, y, z, yaw, pitch, roll); 
     Any a(Any::ARRAY, "CFrame::fromXYZYPRDegrees");
-    a.append(x, y, z, yaw);
+    a.append(x, y, z);
     if ( ! G3D::fuzzyEq(yaw, 0.0f) || ! G3D::fuzzyEq(pitch, 0.0f) || ! G3D::fuzzyEq(roll, 0.0f)) {
         a.append(yaw);
         if (! G3D::fuzzyEq(pitch, 0.0f) || ! G3D::fuzzyEq(roll, 0.0f)) {

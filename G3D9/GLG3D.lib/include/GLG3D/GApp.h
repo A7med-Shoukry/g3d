@@ -63,7 +63,6 @@ DebugID debugDraw
  const Color4&     wireColor   = Color3::black(), 
  const CFrame&     cframe      = CFrame());
 
-//  See @link guideapp @endlink for a discussion of GApp and GApplet. 
 /**
  \brief Optional base class for quickly creating 3D applications.
 
