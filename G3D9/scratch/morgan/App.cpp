@@ -84,9 +84,12 @@ int main(int argc, char** argv) {
     // settings class.  For example:
     settings.window.width       = 960; 
     settings.window.height      = 600;
+    settings.window.stencilBits = 8;
+
     settings.film.preferredDepthFormats.clear();
-    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24());
-//    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24_STENCIL8());
+//    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24());
+    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24_STENCIL8());
+//    settings.film.enabled = false;
 
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {
@@ -117,15 +120,7 @@ void App::onInit() {
     // Called before the application loop beings.  Load data here and
     // not in the constructor so that common exceptions will be
     // automatically caught.
-
-    renderDevice->setFramebuffer(NULL);
-    m_frameBuffer->set(Framebuffer::STENCIL, Renderbuffer::createEmpty("", window()->width(), window()->height(), ImageFormat::STENCIL8()));
-    renderDevice->setFramebuffer(m_frameBuffer);
     
-        std::string why;
-        debugAssertM(renderDevice->currentFramebufferComplete(why), why);
-    renderDevice->clear();
-    renderDevice->clear();
     // Turn on the developer HUD
     debugWindow->setVisible(true);
     developerWindow->cameraControlWindow->setVisible(true);
@@ -150,7 +145,7 @@ void App::onInit() {
 
     m_shadowMap = ShadowMap::create();
 
-    loadScene();
+//    loadScene();
     
     //show(Image3::createEmpty(600, 300));
     //show(Image3::createEmpty(600, 300));
@@ -182,7 +177,7 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     (void)idt; (void)sdt; (void)rdt;
     // Add physical simulation here.  You can make your time
     // advancement based on any of the three arguments.
-    m_scene->onSimulation(sdt);
+//    m_scene->onSimulation(sdt);
 }
 
 
@@ -211,13 +206,13 @@ void App::onUserInput(UserInput* ui) {
 
 void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
     // Append any models to the arrays that you want to later be rendered by onGraphics()
-    m_scene->onPose(surfaceArray);
+//    m_scene->onPose(surfaceArray);
     (void)surface2D;
 }
 
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-    if (m_scene->lighting()->environmentMapTexture.notNull()) {
+/*    if (m_scene->lighting()->environmentMapTexture.notNull()) {
         Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     }
 
@@ -225,7 +220,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     // elements of posed3D directly to customize rendering.  Pass a
     // ShadowMap as the final argument to create shadows.)
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
-
+    */
 
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
@@ -242,6 +237,22 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
+
+    rd->push2D();
+    {
+        rd->setColorClearValue(Color3::white());
+        rd->setStencilClearValue(0);    
+        rd->clear(true, true, true);
+
+        rd->setStencilConstant(1);
+        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_REPLACE);
+        Draw::rect2D(Rect2D::xywh(100, 100, 100, 100), rd, Color3::red());
+
+        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP);
+        rd->setStencilTest(RenderDevice::STENCIL_EQUAL);
+        Draw::rect2D(rd->viewport(), rd, Color3::blue());
+    }
+    rd->pop2D();
     Surface2D::sortAndRender(rd, posed2D);
 }
 
