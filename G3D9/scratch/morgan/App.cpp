@@ -224,6 +224,22 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
+    
+    rd->push2D();
+    {
+        rd->setColorClearValue(Color3::white());
+        //rd->setStencilClearValue(0);    
+        rd->clear(true, true, true);
+
+        rd->setStencilConstant(1);
+        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_REPLACE);
+        Draw::rect2D(Rect2D::xywh(100, 100, 100, 100), rd, Color3::red());
+
+        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP);
+        rd->setStencilTest(RenderDevice::STENCIL_EQUAL);
+        Draw::rect2D(rd->viewport(), rd, Color3::blue());
+    }
+    rd->pop2D();
 
     
     /*
@@ -239,22 +255,6 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
-
-    rd->push2D();
-    {
-        rd->setColorClearValue(Color3::white());
-        //rd->setStencilClearValue(0);    
-        rd->clear(true, true, true);
-
-        //rd->setStencilConstant(1);
-        //        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_REPLACE);
-        Draw::rect2D(Rect2D::xywh(100, 100, 100, 100), rd, Color3::red());
-
-        //        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP);
-        //rd->setStencilTest(RenderDevice::STENCIL_EQUAL);
-        Draw::rect2D(rd->viewport(), rd, Color3::blue());
-    }
-    rd->pop2D();
 
     Surface2D::sortAndRender(rd, posed2D);
 }

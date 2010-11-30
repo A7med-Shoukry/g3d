@@ -698,15 +698,17 @@ void GApp::resize(int w, int h) {
 
         if (depthFormat) {
             // Prefer creating a texture if we can
+
+            const Framebuffer::AttachmentPoint p = (depthFormat->stencilBits > 0) ? Framebuffer::DEPTH_AND_STENCIL : Framebuffer::DEPTH;
             if (GLCaps::supportsTexture(depthFormat)) {
                 m_depthBuffer  = Texture::createEmpty
-                    ("GApp::m_depthBuffer", w, h, 
+                    ("GApp::m_depthBuffer", w, h,
                      depthFormat, Texture::DIM_2D_NPOT, Texture::Settings::video(), 1);
-                m_frameBuffer->set(Framebuffer::DEPTH, m_depthBuffer);
+                m_frameBuffer->set(p, m_depthBuffer);
             } else {
                 m_depthRenderBuffer  = Renderbuffer::createEmpty
                     ("GApp::m_depthRenderBuffer", w, h, depthFormat);
-                m_frameBuffer->set(Framebuffer::DEPTH, m_depthRenderBuffer);
+                m_frameBuffer->set(p, m_depthRenderBuffer);
             }
         }
     }
