@@ -63,6 +63,7 @@
 #include "G3D/FileSystem.h"
 #include "G3D/Set.h"
 #include "G3D/GUniqueID.h"
+#include "G3D/RayGridIterator.h"
 #include "G3D/BinaryFormat.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"

@@ -270,6 +270,7 @@ simulates photons moving around a scene).
 <tr><td></td><td>\link G3D::Intersect <b>Intersect</b>\endlink</td><td>\copybrief G3D::Intersect</td></tr>
 <tr><td></td><td>\link G3D::CollisionDetection <b>CollisionDetection</b>\endlink</td><td>Moving and fixed collisions between many kinds of primitives</td></tr>
 <tr><td></td><td>\link G3D::Ray <b>Ray</b>\endlink,
+<tr><td></td><td>\link G3D::RayGridIterator <b>RayGridIterator</b>\endlink</td><td>\copybrief G3D::RayGridIterator</td></tr>
 \link G3D::Sphere <b>Sphere</b>\endlink,
 \link G3D::Plane <b>Plane</b>\endlink,
 \link G3D::Box <b>Box</b>\endlink,

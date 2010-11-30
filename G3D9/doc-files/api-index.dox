@@ -205,6 +205,7 @@ href="classes.html">Classes</a>.
     \link G3D::PhysicsFrameSpline PhysicsFrameSpline\endlink,
     \link G3D::Plane Plane\endlink,
     \link G3D::Ray Ray\endlink,
+    \link G3D::RayGridIterator RayGridIterator\endlink,
     \link G3D::RealTime RealTime\endlink,
     \link G3D::Rect2D Rect2D\endlink,
     \link G3D::Sphere Sphere\endlink,

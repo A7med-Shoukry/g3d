@@ -23,6 +23,7 @@
      <li> Lighting::Specification::operator Any()
      <li> G3D::Vector2int32
      <li> G3D::Texture::Visualization, G3D::Texture::visualization
+     <li> G3D::RayGridIterator
      <li> Improved error reporting from Any and ParseError
      <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
      <li> G3D::GCamera::exposureTime 
