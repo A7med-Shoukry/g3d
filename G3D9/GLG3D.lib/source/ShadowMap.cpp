@@ -152,8 +152,9 @@ void ShadowMap::updateDepth
     renderDevice->pushState(m_framebuffer);
     {
         if (m_framebuffer.notNull()) {
+            int i = glGetInteger(GL_READ_BUFFER);
             renderDevice->setDrawBuffer(RenderDevice::DRAW_NONE);
-            renderDevice->setReadBuffer(RenderDevice::READ_NONE);
+            renderDevice->setReadBuffer(RenderDevice::READ_FRONT);
         } else {
             debugAssert(rect.height() <= renderDevice->height());
             debugAssert(rect.width() <= renderDevice->width());

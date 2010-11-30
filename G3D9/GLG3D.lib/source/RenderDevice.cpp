@@ -277,7 +277,7 @@ void RenderDevice::init(OSWindow* window) {
         // Test which texture and render buffer formats are supported by this card
         logLazyPrintf("Supported Formats:\n");
         logLazyPrintf("%20s  %s %s\n", "Format", "Texture", "RenderBuffer");
-	
+        
         for (int code = 0; code < ImageFormat::CODE_NUM; ++code) {
             if ((code == ImageFormat::CODE_DEPTH24_STENCIL8) && 
                 (GLCaps::enumVendor() == GLCaps::MESA)) {
@@ -1044,9 +1044,6 @@ void RenderDevice::syncDrawBuffer(bool alreadyBound) {
 static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref& fbo) {
 
     switch (b) {
-    case RenderDevice::READ_NONE:
-        return GL_NONE;
-
     case RenderDevice::READ_FRONT:
     case RenderDevice::READ_BACK:
     case RenderDevice::READ_FRONT_LEFT:
@@ -1055,11 +1052,12 @@ static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref
     case RenderDevice::READ_BACK_RIGHT:
     case RenderDevice::READ_LEFT:
     case RenderDevice::READ_RIGHT:
-        if (fbo->has(Framebuffer::COLOR0)) {
+//        if (fbo->has(Framebuffer::COLOR0)) {
             return GL_COLOR_ATTACHMENT0;
+            /*
         } else {
-            return GL_NONE;
-        }
+            return GL_FRONT;
+        }*/
         
     default:
         // The specification and various pieces of documentation are
@@ -1070,7 +1068,7 @@ static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref
         if (fbo->has(Framebuffer::AttachmentPoint(b))) {
             return GLenum(b);
         } else {
-            return GL_NONE;
+            return GL_COLOR_ATTACHMENT0;
         }
     }
 }

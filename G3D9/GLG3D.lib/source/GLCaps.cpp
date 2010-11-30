@@ -507,8 +507,13 @@ bool GLCaps::supportsTexture(const ImageFormat* fmt) {
                 glGetErrors();
                 // 2D texture, level of detail 0 (normal), internal format, x size from image, y size from image, 
                 // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
-                glTexImage2D(GL_TEXTURE_2D, 0, fmt->openGLFormat, 8, 8, 0, 
-                             fmt->openGLBaseFormat, GL_UNSIGNED_BYTE, NULL);
+                glTexImage2D
+                    (GL_TEXTURE_2D, 
+                    0, 
+                    fmt->openGLFormat, 8, 8, 0, 
+                    fmt->openGLBaseFormat, 
+                    fmt->openGLDataFormat,
+                    NULL);
 
                 supportsFormat = (glGetError() == GL_NO_ERROR);
 
