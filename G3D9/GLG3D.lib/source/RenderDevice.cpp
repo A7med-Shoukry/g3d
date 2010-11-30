@@ -1052,12 +1052,7 @@ static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref
     case RenderDevice::READ_BACK_RIGHT:
     case RenderDevice::READ_LEFT:
     case RenderDevice::READ_RIGHT:
-//        if (fbo->has(Framebuffer::COLOR0)) {
-            return GL_COLOR_ATTACHMENT0;
-            /*
-        } else {
-            return GL_FRONT;
-        }*/
+        return GL_COLOR_ATTACHMENT0;
         
     default:
         // The specification and various pieces of documentation are
