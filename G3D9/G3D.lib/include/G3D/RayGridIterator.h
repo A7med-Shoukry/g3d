@@ -170,7 +170,6 @@ public:
 
     /** Increment the iterator, moving to the next grid cell */
     RayGridIterator& operator++() {
-        screenPrintf("%d, %d, %d \n", m_index.x, m_index.y, m_index.z);
         // Find the axis of the closest partition along the ray
         if (m_exitDistance.x < m_exitDistance.y) { 
             if (m_exitDistance.x < m_exitDistance.z) {
