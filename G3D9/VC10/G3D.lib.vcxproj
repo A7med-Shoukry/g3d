@@ -166,6 +166,7 @@
     <ClCompile Include="..\G3D.lib\source\Quat.cpp" />
     <ClCompile Include="..\G3D.lib\source\Random.cpp" />
     <ClCompile Include="..\G3D.lib\source\Ray.cpp" />
+    <ClCompile Include="..\G3D.lib\source\RayGridIterator.cpp" />
     <ClCompile Include="..\G3D.lib\source\Rect2D.cpp" />
     <ClCompile Include="..\G3D.lib\source\ReferenceCount.cpp" />
     <ClCompile Include="..\G3D.lib\source\RegistryUtil.cpp" />
@@ -279,6 +280,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Queue.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Random.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Ray.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\RayGridIterator.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Rect2D.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ReferenceCount.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\RegistryUtil.h" />
