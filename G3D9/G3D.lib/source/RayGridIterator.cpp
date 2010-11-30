@@ -1,6 +1,7 @@
 #include "G3D/platform.h"
 #include "G3D/AABox.h"
 #include "G3D/RayGridIterator.h"
+#include "G3D/CollisionDetection.h"
 
 namespace G3D {
 
