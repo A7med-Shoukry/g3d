@@ -322,7 +322,10 @@ protected:
     void detach(Attachment::Ref a);
 
 public:
-    
+
+    /** Returns the number of stencil bits for currently attached STENCIL and DEPTH_AND_STENCIL attachments.*/
+    int stencilBits() const;
+
     /** Creates a Framebuffer object.
        
        \param name Name of framebuffer, for debugging purposes. */

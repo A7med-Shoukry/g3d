@@ -35,6 +35,37 @@ Framebuffer::~Framebuffer () {
 }
 
 
+int Framebuffer::stencilBits() const {
+    Framebuffer::Attachment::Ref d = get(Framebuffer::DEPTH);
+    Framebuffer::Attachment::Ref s = get(Framebuffer::STENCIL);
+    Framebuffer::Attachment::Ref ds = get(Framebuffer::DEPTH_AND_STENCIL);
+
+    int stencilBits = 0;
+    if (d.notNull()) {
+        if (d->type() == Framebuffer::Attachment::TEXTURE) {
+            stencilBits = max(stencilBits, d->texture()->format()->stencilBits);
+        } else {
+            stencilBits = max(stencilBits, d->renderbuffer()->format()->stencilBits);
+        }
+    }
+    if (s.notNull()) {
+        if (s->type() == Framebuffer::Attachment::TEXTURE) {
+            stencilBits = max(stencilBits, s->texture()->format()->stencilBits);
+        } else {
+            stencilBits = max(stencilBits, s->renderbuffer()->format()->stencilBits);
+        }
+    }
+    if (ds.notNull()) {
+        if (ds->type() == Framebuffer::Attachment::TEXTURE) {
+            stencilBits = max(stencilBits, ds->texture()->format()->stencilBits);
+        } else {
+            stencilBits = max(stencilBits, ds->renderbuffer()->format()->stencilBits);
+        }
+    }
+    return stencilBits;
+}
+
+
 FramebufferRef Framebuffer::create(const std::string& _name) {
     GLuint _framebufferID;
     

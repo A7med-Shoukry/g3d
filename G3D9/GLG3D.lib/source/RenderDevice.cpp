@@ -2076,27 +2076,7 @@ void RenderDevice::setStencilOp(
                 if (drawFramebuffer().isNull()) {
                     stencilBits = glGetInteger(GL_STENCIL_BITS);
                 } else {
-                    // get render buffer and texture for depth or
-                    // stencil buffer and find out if either one has
-                    // some stencil bits.
-                    
-                    Framebuffer::Attachment::Ref d = drawFramebuffer()->get(Framebuffer::DEPTH);
-                    Framebuffer::Attachment::Ref s = drawFramebuffer()->get(Framebuffer::DEPTH);
-
-                    if (d.notNull()) {
-                        if (d->type() == Framebuffer::Attachment::TEXTURE) {
-                            stencilBits = max(stencilBits, d->texture()->format()->stencilBits);
-                        } else {
-                            stencilBits = max(stencilBits, d->renderbuffer()->format()->stencilBits);
-                        }
-                    }
-                    if (s.notNull()) {
-                        if (s->type() == Framebuffer::Attachment::TEXTURE) {
-                            stencilBits = max(stencilBits, s->texture()->format()->stencilBits);
-                        } else {
-                            stencilBits = max(stencilBits, s->renderbuffer()->format()->stencilBits);
-                        }
-                    }
+                    stencilBits = drawFramebuffer()->stencilBits();
                 }
                 debugAssertM(stencilBits > 0,
                     "Allocate nonzero OSWindow.stencilBits in GApp constructor or RenderDevice::init before using the stencil buffer.");
