@@ -16,7 +16,7 @@
 namespace G3D {
 
 GLight::GLight(const Any& any) {
-    any.verifyName("GLight");
+    any.verifyNameBeginsWith("GLight");
 
     if (any.type() == Any::TABLE) {
         *this = GLight();
@@ -26,16 +26,16 @@ GLight::GLight(const Any& any) {
             const std::string& key = toLower(it->key);
             if (key == "position") {
                 position = it->value;
-            } else if (key == "rightdirection") {
+            } else if (key == "rightDirection") {
                 rightDirection = it->value;
-            } else if (key == "spotdirection") {
+            } else if (key == "spotDirection") {
                 spotDirection = Vector3(it->value).directionOrZero();
-            } else if (key == "spottarget") {
+            } else if (key == "spotTarget") {
                 spotTarget = it->value;
                 hasSpotTarget = true;
-            } else if (key == "spothalfangle") {
+            } else if (key == "spotHalfAngle") {
                 spotHalfAngle = it->value.number();
-            } else if (key == "spotsquare") {
+            } else if (key == "spotSquare") {
                 spotSquare = it->value.boolean();
             } else if (key == "attenuation") {
                 attenuation[0] = it->value[0].number();
@@ -45,7 +45,7 @@ GLight::GLight(const Any& any) {
                 color = it->value;
             } else if (key == "enabled") {
                 enabled = it->value.boolean();
-            } else if (key == "castsshadows") {
+            } else if (key == "castShadows") {
                 castsShadows = it->value.boolean();
             } else {
                 any.verify(false, "Illegal key: " + it->key);
@@ -54,12 +54,12 @@ GLight::GLight(const Any& any) {
         if (hasSpotTarget) {
             spotDirection = (spotTarget - position.xyz()).direction();
         }
-    } else if (toLower(any.name()) == "glight::directional") {
+    } else if (any.name() == "GLight::directional") {
 
         *this = directional(Vector3(any[0]), Color3(any[1]), 
                             (any.size() > 2) ? any[2] : Any(true));
 
-    } else if (toLower(any.name()) == "glight::point") {
+    } else if (any.name() == "GLight::point") {
 
         *this = point(Point3(any[0]), Power3(any[1]), 
                       (any.size() > 2) ? any[2] : Any(0.01f), 
@@ -67,7 +67,7 @@ GLight::GLight(const Any& any) {
                       (any.size() > 4) ? any[4] : Any(1.0f), 
                       (any.size() > 5) ? any[5] : Any(true));
 
-    } else if (toLower(any.name()) == "glight::spot") {
+    } else if (any.name() == "GLight::spot") {
 
         *this = spot(Vector3(any[0]), Vector3(any[1]), any[2], Color3(any[3]),
                      (any.size() > 4) ? any[4] : Any(0.01f),

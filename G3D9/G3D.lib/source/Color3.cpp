@@ -30,7 +30,7 @@ Color3& Color3::operator=(const Any& a) {
 
 Color3::Color3(const Any& any) {
     *this = Color3::zero();
-    any.verifyName("Color3", "Power3", "Radiance3", "Irradiance3");
+    any.verifyNameBeginsWith("Color3", "Power3", "Radiance3", "Irradiance3");
 
     switch (any.type()) {
     case Any::TABLE:
@@ -51,7 +51,7 @@ Color3::Color3(const Any& any) {
 
     case Any::ARRAY:
         {   
-            const std::string& name = toLower(any.name());
+            const std::string& name = any.name();
             std::string factoryName;
             int i = name.find("::");
             if (i != -1 && i > 1) {
@@ -73,7 +73,7 @@ Color3::Color3(const Any& any) {
             } else if (factoryName == "zero") {
                 any.verifySize(0);
                 *this = zero();
-            } else if (factoryName == "fromargb") {
+            } else if (factoryName == "fromARGB") {
                 *this = Color3::fromARGB((int)any[0].number());
             } else {
                 any.verify(false, "Expected Color3 constructor");

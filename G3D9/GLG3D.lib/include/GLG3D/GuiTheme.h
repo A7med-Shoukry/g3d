@@ -765,11 +765,11 @@ public:
         because most people will want to use pre-existing skins
         (making a theme is a time-consuming artistic process!)
 
-        @param sourceDir Must end in a slash. 
+        @param sourceDir Directory containing the whiteName, blackName and coordsFile files.
         @param whiteName Image of controls on a white background, must be in sourceDir
         @param blackName Image of controls on a black background, must be in sourceDir
         @param coordsFile Text file describing the location of controls
-        @param destFile Output .gtm file, not relative to sourceDir
+        @param destFile Output filename for the built gui theme (should use .gtm extension)
     */
     static void makeThemeFromSourceFiles(
               const std::string& sourceDir,

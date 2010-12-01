@@ -656,21 +656,37 @@ public:
     void verify(bool value, const std::string& message = "") const;
 
 
-    /** Verifies that the name <i>begins with</i> identifier \a n (case insensitive). 
+    /** Verifies that the name is identifier \a n (case sensitive). 
         It may contain identifier operators after this */
     void verifyName(const std::string& n) const;
 
-    /** Verifies that the name <i>begins with</i> identifier \a n or \a m (case insensitive). 
+    /** Verifies that the name is identifier \a n or \a m (case sensitive). 
         It may contain identifier operators after this */
     void verifyName(const std::string& n, const std::string& m) const;
 
-    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p (case insensitive). 
+    /** Verifies that the name is identifier \a n or \a m or \a p (case sensitive). 
         It may contain identifier operators after this */
     void verifyName(const std::string& n, const std::string& m, const std::string& p) const;
 
-    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p or \a q (case insensitive). 
+    /** Verifies that the name is identifier \a n or \a m or \a p or \a q (case sensitive). 
         It may contain identifier operators after this */
     void verifyName(const std::string& n, const std::string& m, const std::string& p, const std::string& q) const;
+
+    /** Verifies that the name <i>begins with</i> identifier \a n (case sensitive). 
+        It may contain identifier operators after this */
+    void verifyNameBeginsWith(const std::string& n) const;
+
+    /** Verifies that the name <i>begins with</i> identifier \a n or \a m (case sensitive). 
+        It may contain identifier operators after this */
+    void verifyNameBeginsWith(const std::string& n, const std::string& m) const;
+
+    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p (case sensitive). 
+        It may contain identifier operators after this */
+    void verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p) const;
+
+    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p or \a q (case sensitive). 
+        It may contain identifier operators after this */
+    void verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q) const;
 
     /** Verifies that the type is \a t. */
     void verifyType(Type t) const;

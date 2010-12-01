@@ -865,16 +865,15 @@ Rect2D GuiTheme::clientToPaneBounds(const Rect2D& bounds, const GuiText& caption
 }
 
 
-void GuiTheme::makeThemeFromSourceFiles
-(
- const std::string& sourceDir,
- const std::string& whiteName,
- const std::string& blackName,
- const std::string& coordsFile,
- const std::string& destFile) {
+void GuiTheme::makeThemeFromSourceFiles(
+  const std::string& sourceDir,
+  const std::string& whiteName,
+  const std::string& blackName,
+  const std::string& coordsFile,
+  const std::string& destFile) {
 
-    Image3Ref white = Image3::fromFile(pathConcat(sourceDir, whiteName));
-    Image3Ref black = Image3::fromFile(pathConcat(sourceDir, blackName));
+    Image3Ref white = Image3::fromFile(FilePath::concat(sourceDir, whiteName));
+    Image3Ref black = Image3::fromFile(FilePath::concat(sourceDir, blackName));
     GImage out(white->width(), white->height(), 4);
 
     for (int y = 0; y < (int)out.height(); ++y) {
@@ -900,7 +899,7 @@ void GuiTheme::makeThemeFromSourceFiles
         }
     }
 
-    std::string coords = readWholeFile(pathConcat(sourceDir, coordsFile));
+    std::string coords = readWholeFile(FilePath::concat(sourceDir, coordsFile));
 
     BinaryOutput b(destFile, G3D_LITTLE_ENDIAN);
     
@@ -951,7 +950,7 @@ void GuiTheme::popClientRect() {
 /////////////////////////////////////////////
 
 void GuiTheme::Pane::load(const Any& any) {
-    any.verifyName("");
+    any.verifyName("Pane");
 
     // Custom text styles are optional
     if (any.containsKey("font")) {

@@ -205,41 +205,41 @@ bool Texture::Preprocess::operator==(const Preprocess& other) const {
 
 Texture::Preprocess::Preprocess(const Any& any) {
     *this = Preprocess::defaults();
-    any.verifyName("Texture::Preprocess");
+    any.verifyNameBeginsWith("Texture::Preprocess");
     if (any.type() == Any::TABLE) {
         for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-            const std::string& key = toLower(it->key);
+            const std::string& key = it->key;
             if (key == "modulate") {
                 modulate = Color4(it->value);
-            } else if (key == "gammaadjust") {
+            } else if (key == "gammaAdjust") {
                 gammaAdjust = it->value;
-            } else if (key == "scalefactor") {
+            } else if (key == "scaleFactor") {
                 scaleFactor = it->value;
-            } else if (key == "computeminmaxmean") {
+            } else if (key == "computeMinMaxMean") {
                 computeMinMaxMean = it->value;
-            } else if (key == "computenormalmap") {
+            } else if (key == "computeNormalMap") {
                 computeNormalMap = it->value;
-            } else if (key == "bumpmappreprocess") {
+            } else if (key == "bumpMapPreprocess") {
                 bumpMapPreprocess = it->value;
             } else {
                 any.verify(false, "Illegal key: " + it->key);
             }
         }
     } else {
-        const std::string& n = toLower(any.name());
-        if (n == "texture::preprocess::defaults") {
+        const std::string& n = any.name();
+        if (n == "Texture::Preprocess::defaults") {
             any.verifySize(0);
             // Done!
-        } else if (n == "texture::preprocess::gamma") {
+        } else if (n == "Texture::Preprocess::gamma") {
             any.verifySize(1);
             *this = Texture::Preprocess::gamma(any[0]);
-        } else if (n == "texture::preprocess::none") {
+        } else if (n == "Texture::preprocess::none") {
             any.verifySize(0);
             *this = Texture::Preprocess::none();
-        } else if (n == "texture::preprocess::quake") {
+        } else if (n == "Texture::Preprocess::quake") {
             any.verifySize(0);
             *this = Texture::Preprocess::quake();
-        } else if (n == "texture::preprocess::normalmap") {
+        } else if (n == "Texture::Preprocess::normalMap") {
             any.verifySize(0);
             *this = Texture::Preprocess::normalMap();
         } else {
@@ -2408,12 +2408,12 @@ Texture::Specification::Specification(const Any& any) {
             settings = Texture::Settings::cubeMap();
         }
     } else {
-        any.verifyName("Texture::Specification");
+        any.verifyNameBeginsWith("Texture::Specification");
         for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-            const std::string& key = toLower(it->key);
+            const std::string& key = it->key;
             if (key == "filename") {
                 filename = it->value.resolveStringAsFilename();
-            } else if (key == "desiredformat") {
+            } else if (key == "desiredFormat") {
                 desiredFormat = ImageFormat::fromString(it->value.string());
             } else if (key == "dimension") {
                 dimension = toDimension(it->value);
@@ -2541,23 +2541,23 @@ Texture::Settings::operator Any() const {
 
 Texture::Settings::Settings(const Any& any) {
     *this = Settings::defaults();
-    any.verifyName("Texture::Settings");
+    any.verifyNameBeginsWith("Texture::Settings");
     if (any.type() == Any::TABLE) {
         for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
             const std::string& key = toLower(it->key);
-            if (key == "automipmap") {
+            if (key == "autoMipMap") {
                 autoMipMap = it->value;
-            } else if (key == "depthreadmode") {
+            } else if (key == "depthReadMode") {
                 depthReadMode = toDepthReadMode(it->value);
-            } else if (key == "interpolatemode") {
+            } else if (key == "interpolatMmode") {
                 interpolateMode = toInterpolateMode(it->value);
-            } else if (key == "maxanisotropy") {
+            } else if (key == "maxAnisotropy") {
                 maxAnisotropy = it->value;
-            } else if (key == "maxmipmap") {
+            } else if (key == "maxMipMap") {
                 maxMipMap = it->value;
-            } else if (key == "minmipmap") {
+            } else if (key == "minMipMap") {
                 minMipMap = it->value;
-            } else if (key == "wrapmode") {
+            } else if (key == "wrapMode") {
                 wrapMode = WrapMode(it->value.string());
             } else {
                 any.verify(false, "Illegal key: " + it->key);
@@ -2565,16 +2565,16 @@ Texture::Settings::Settings(const Any& any) {
         }
     } else {
         any.verifySize(0);
-        const std::string& n = toLower(any.name());
-        if (n == "texture::settings::defaults") {
+        const std::string& n = any.name();
+        if (n == "Texture::Settings::defaults") {
             // Done!
-        } else if (n == "texture::settings::buffer") {
+        } else if (n == "Texture::Settings::buffer") {
             *this = Texture::Settings::buffer();
-        } else if (n == "texture::settings::cubemap") {
+        } else if (n == "Texture::Settings::cubeMap") {
             *this = Texture::Settings::cubeMap();
-        } else if (n == "texture::settings::shadow") {
+        } else if (n == "Texture::Settings::shadow") {
             *this = Texture::Settings::shadow();
-        } else if (n == "texture::settings::video") {
+        } else if (n == "Texture::Settings::video") {
             *this = Texture::Settings::video();
         } else {
             any.verify(false, "Unrecognized name for Texture::Settings constructor or factory method.");

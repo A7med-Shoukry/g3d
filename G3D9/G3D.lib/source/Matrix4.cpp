@@ -24,11 +24,11 @@ namespace G3D {
 
     
 Matrix4::Matrix4(const Any& any) {
-    any.verifyName("Matrix4");
+    any.verifyNameBeginsWith("Matrix4");
     any.verifyType(Any::ARRAY);
 
-    const std::string& name = toLower(any.name());
-    if (name == "matrix4") {
+    const std::string& name = any.name();
+    if (name == "Matrix4") {
         any.verifySize(16);
 
         for (int r = 0; r < 4; ++r) {
@@ -36,7 +36,7 @@ Matrix4::Matrix4(const Any& any) {
                 elt[r][c] = any[r * 4 + c];
             }
         }
-    } else if (name == "matrix4::scale") {
+    } else if (name == "Matrix4::scale") {
         if (any.size() == 1) {
             *this = scale(any[0].number());
         } else if (any.size() == 3) {
@@ -44,16 +44,16 @@ Matrix4::Matrix4(const Any& any) {
         } else {
             any.verify(false, "Matrix4::scale() takes either 1 or 3 arguments");
         }
-    } else if (name == "matrix4::translation") {
+    } else if (name == "Matrix4::translation") {
         if (any.size() == 3) {
             *this = translation(any[0], any[1], any[2]);
         } else {
             any.verify(false, "Matrix4::translation() requires 3 arguments");
         }    
-    } else if (name == "matrix4::diagonal") {
+    } else if (name == "Matrix4::diagonal") {
         any.verifySize(4);
         *this = diagonal(any[0], any[1], any[2], any[3]);
-    } else if (name == "matrix4::identity") {
+    } else if (name == "Matrix4::identity") {
         *this = identity();
     } else {
         any.verify(false, "Expected Matrix4 constructor");

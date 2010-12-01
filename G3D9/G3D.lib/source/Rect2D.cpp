@@ -33,13 +33,12 @@ void Rect2D::deserialize(class BinaryInput& b) {
 
 /** \param any Must either Rect2D::xywh(#, #, #, #) or Rect2D::xyxy(#, #, #, #)*/
 Rect2D::Rect2D(const Any& any) {
-    any.verifyName("Rect2D");
+    any.verifyName("Rect2D::xyxy", "Rect2D::xywh");
     any.verifyType(Any::ARRAY);
     any.verifySize(4);
-    if (toUpper(any.name()) == "RECT2D::XYWH") {
+    if (any.name() == "Rect2D::xywh") {
         *this = Rect2D::xywh(any[0], any[1], any[2], any[3]);
     } else {
-        any.verifyName("Rect2D::xyxy");
         *this = Rect2D::xyxy(any[0], any[1], any[2], any[3]);
     }
 }
