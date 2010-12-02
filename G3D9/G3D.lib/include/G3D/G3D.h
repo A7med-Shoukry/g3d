@@ -1,15 +1,15 @@
 /**
- @file G3D.h
+ \file G3D.h
 
  This header includes all of the G3D libraries in
  appropriate namespaces.
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2001-08-25
- @edited  2010-03-20
+ \created 2001-08-25
+ \edited  2010-12-01
 
- Copyright 2000-2010, Morgan McGuire.
+ Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
 
@@ -25,6 +25,7 @@
 #endif
 
 #include "G3D/platform.h"
+#include "G3D/BIN.h"
 #include "G3D/units.h"
 #include "G3D/ParseError.h"
 #include "G3D/Random.h"

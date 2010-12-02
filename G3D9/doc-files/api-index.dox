@@ -232,6 +232,10 @@ href="classes.html">Classes</a>.
     \link G3D::Color4uint8 Color4uint8\endlink
       
   <LI><B>Integer math</B> &nbsp; &nbsp;
+    \link BIN8() BIN8\endlink, 
+    \link BIN11() BIN11\endlink,
+    \link BIN16() BIN16\endlink, 
+    \link BIN32() BIN32\endlink,
     \link G3D::ceilPow2 ceilPow2\endlink,
     \link G3D::highestBit highestBit\endlink,
     \link G3D::iAbs iAbs\endlink,
@@ -324,7 +328,7 @@ href="classes.html">Classes</a>.
         \link G3D::toLower toLower\endlink,
         \link G3D::NEWLINE NEWLINE\endlink,
         \link G3D::trimWhitespace trimWhitespace\endlink,
-        STR
+        \link STR() STR\endlink
 
      <LI><B>Data structures</B> &nbsp; &nbsp;
         \link G3D::Any Any\endlink,

@@ -42,6 +42,7 @@
      <li> G3D::GLight::power
      <li> G3D::Point2 typedef
      <li> G3D::Noise
+     <li> BIN8, BIN11, BIN16, BIN32
      <li> GApp will now create a G3D::RenderBuffer if the preferred depth format cannot be satisfied by a texture, e.g., because it contains stencil bits
      <li> G3D::GuiPane::setNewChildSize(), GuiPane::beginRow()...GuiPane::endRow()
      <li> G3D::PointHashGrid::getIntersectingMembers()

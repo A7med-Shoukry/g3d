@@ -13,6 +13,7 @@
 #define G3D_platform_h
 
 /**
+ \def G3D_VER
  The version number of G3D in the form: MmmBB -> 
  version M.mm [beta BB]
  */
@@ -37,7 +38,9 @@
 #   define G3D_DEBUG
 #endif
 
-/** These control the version of Winsock used by G3D.
+/** 
+\def G3D_WINSOCK_MAJOR_VERSION
+These control the version of Winsock used by G3D.
     Version 2.0 is standard for G3D 6.09 and later.
     Version 1.1 is standard for G3D 6.08 and earlier.
  */
@@ -48,6 +51,11 @@
 /// Fast call is a register-based optimized calling convention supported only by Visual C++
 #define __fastcall
 #endif
+
+/** \def G3D_WIN32*/
+/** \def G3D_FREEBSD2*/
+/** \def G3D_LINUX*/
+/** \def G3D_OSX */
 
 #ifdef _MSC_VER 
     #define G3D_WIN32
@@ -65,6 +73,9 @@
 #else
     #error Unknown platform 
 #endif
+
+/** \def G3D_64BIT */
+/** \def G3D_32BIT */
 
 // Detect 64-bit under various compilers
 #if (defined(_M_X64) || defined(_WIN64) || defined(__LP64__) || defined(_LP64))
