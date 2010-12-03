@@ -281,9 +281,7 @@ protected:
         is concerned. */
     Array<Attachment::Ref>          m_current;
 
-    /** The GL buffer names of the m_currentAttachment, in increasing
-        number order (parallel array to m_currentAttachment). Needed by
-        RenderDevice for synchronizing the glDrawBuffers.*/
+    /** The GL buffer names of the m_currentAttachment.*/
     Array<GLenum>                   m_colorDrawBufferArray;
 
     /** OpenGL Object ID */
