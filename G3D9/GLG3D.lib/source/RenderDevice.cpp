@@ -1052,12 +1052,12 @@ static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref
     case RenderDevice::READ_BACK_RIGHT:
     case RenderDevice::READ_LEFT:
     case RenderDevice::READ_RIGHT:
-//        if (fbo->has(Framebuffer::COLOR0)) {
-        return GL_COLOR_ATTACHMENT0;
-            /*
+        if (fbo->has(Framebuffer::COLOR0)) {
+            return GL_COLOR_ATTACHMENT0;
         } else {
-            return GL_FRONT;
-        }*/
+            return GL_NONE;
+            //return GL_FRONT;
+        }
         
     default:
         // The specification and various pieces of documentation are
@@ -1068,7 +1068,7 @@ static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref
         if (fbo->has(Framebuffer::AttachmentPoint(b))) {
             return GLenum(b);
         } else {
-            return GL_COLOR_ATTACHMENT0;
+            return GL_NONE;//GL_COLOR_ATTACHMENT0;
         }
     }
 }
@@ -1082,6 +1082,7 @@ void RenderDevice::syncReadBuffer(bool alreadyBound) {
     if (m_state.readFramebuffer->bind(alreadyBound, Framebuffer::MODE_READ)) {
         debugAssertGLOk();
         glReadBuffer(toFBOReadBuffer(m_state.readBuffer, m_state.readFramebuffer));
+        debugAssertGLOk();
     }
 }
 
