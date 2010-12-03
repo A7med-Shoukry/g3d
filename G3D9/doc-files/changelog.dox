@@ -52,6 +52,7 @@
      <li> G3D::Crypto::md5 is now static
      <li> G3D::Rect2D::serialize and deserialize
      <li> Upgraded to libpng 1.4.4
+     <li> Added compatibility profile clipping support to SuperShader [Hai Zhou]
      <li> Made documentation page titles not begin with "G3D..." for ease of use in tabbed browsing
      <li> Tuned Vector4, Vector3, uint64, uint128 hash codes for performance instead of quality
      <li> iCompile can now use ICE_EXTRA_SOURCE environment variable to find G3D sources if you move

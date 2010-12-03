@@ -1334,14 +1334,15 @@ void Any::verifyName(const std::string& n, const std::string& m, const std::stri
            x == q, "Name must be " + n + ", " + m + ", " + p + ", or " + q);
 }
 
+
 void Any::verifyNameBeginsWith(const std::string& n) const {
     beforeRead();
     verify(beginsWith(name(), n), "Name must begin with " + n);
 }
 
+
 void Any::verifyNameBeginsWith(const std::string& n, const std::string& m) const {
     beforeRead();
-    const std::string& x = name();
     verify(beginsWith(name(), n) ||
            beginsWith(name(), m), "Name must be " + n + " or " + m);
 }
@@ -1349,7 +1350,6 @@ void Any::verifyNameBeginsWith(const std::string& n, const std::string& m) const
 
 void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p) const {
     beforeRead();
-    const std::string& x = name();
     verify(beginsWith(name(), n) ||
            beginsWith(name(), m) ||
            beginsWith(name(), p), "Name must be " + n + ", " + m + ", or " + p);
@@ -1358,12 +1358,12 @@ void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const
 
 void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q) const {
     beforeRead();
-    const std::string& x = name();
     verify(beginsWith(name(), n) ||
            beginsWith(name(), m) ||
            beginsWith(name(), p) ||
            beginsWith(name(), q), "Name must be " + n + ", " + m + ", " + p + ", or " + q);
 }
+
 
 void Any::verifyType(Type t) const {
     beforeRead();
