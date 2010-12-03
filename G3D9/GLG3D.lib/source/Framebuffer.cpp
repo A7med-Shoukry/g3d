@@ -265,6 +265,7 @@ void Framebuffer::sync() {
 void Framebuffer::attach(const Attachment::Ref& a) {
     int cIndex = findCurrent(a->point());
     if ((a->point() >= COLOR0) && (a->point() <= COLOR15)) {
+        debugPrintf("Attaching f[%d] =%0x%x\n", cIndex, a->point());
         m_colorDrawBufferArray.insert(cIndex, GLenum(a->point()));
     }
     m_current.insert(cIndex, a);

@@ -371,7 +371,8 @@ public:
     /** The draw array for use with glDrawBuffers. This is not up to
         date until bind() is invoked.
 
-        Note that DEPTH, STENCIL, and DEPTH_AND_STENCIL are never included in this list.
+        Note that DEPTH, STENCIL, and DEPTH_AND_STENCIL are never
+        included in this list.
 
         RenderDevice automatically uses this.*/
     inline const Array<GLenum>& openGLDrawArray() const {
@@ -393,10 +394,11 @@ public:
        to NULL or call clear() to unset.  Auto-mipmap will
        automatically be disabled on set.
        
-       Results are undefined if a texture that is bound to the <b>current</b> Framebuffer
-       as a source texture while it is being read from.  In general,
-       create one Framebuffer per set of textures you wish to render 
-       to and just leave them bound at all times.
+       Results are undefined if a texture that is bound to the
+       <b>current</b> Framebuffer as a source texture while it is
+       being read from.  In general, create one Framebuffer per set of
+       textures you wish to render to and just leave them bound at all
+       times.
 
        All set() calls are lazy because OpenGL provides no mechanism
        for efficiently pushing and popping the Framebuffer. Thus all
