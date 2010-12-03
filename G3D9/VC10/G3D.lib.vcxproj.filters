@@ -679,5 +679,8 @@
     <ClInclude Include="..\G3D.lib\include\G3D\RayGridIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\BIN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

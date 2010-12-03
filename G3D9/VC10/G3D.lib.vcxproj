@@ -199,6 +199,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\AreaMemoryManager.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Array.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\AtomicInt32.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\BIN.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\BinaryFormat.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\BinaryInput.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\BinaryOutput.h" />
