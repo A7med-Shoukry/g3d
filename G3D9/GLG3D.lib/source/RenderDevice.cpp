@@ -1056,7 +1056,6 @@ static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref
             return GL_COLOR_ATTACHMENT0;
         } else {
             return GL_NONE;
-            //return GL_FRONT;
         }
         
     default:
@@ -1068,7 +1067,7 @@ static GLenum toFBOReadBuffer(RenderDevice::ReadBuffer b, const Framebuffer::Ref
         if (fbo->has(Framebuffer::AttachmentPoint(b))) {
             return GLenum(b);
         } else {
-            return GL_NONE;//GL_COLOR_ATTACHMENT0;
+            return GL_NONE;
         }
     }
 }
