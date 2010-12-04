@@ -82,18 +82,18 @@ GLight::GLight(const Any& any) {
 
 GLight::operator Any() const {
     Any a(Any::TABLE, "GLight");
-    a.set("position", position.operator Any());
-    a.set("rightDirection", rightDirection.operator Any());
-    a.set("spotDirection", spotDirection.operator Any());
-    a.set("spotHalfAngle", spotHalfAngle);
-    a.set("spotSquare", spotSquare);
+    a["position"]       = position;
+    a["rightDirection"] = rightDirection;;
+    a["spotDirection"]  = spotDirection;;
+    a["spotHalfAngle"]  = spotHalfAngle;
+    a["spotSquare"]     = spotSquare;
 
     Any att(Any::ARRAY);
-    att.append(attenuation[0], attenuation[1], attenuation[2]);
-    a.set("attenuation", att);
-    a.set("color", color.operator Any());
-    a.set("enabled", enabled);
-    a.set("castsShadows", castsShadows);
+    att.append(Any(attenuation[0]), Any(attenuation[1]), Any(attenuation[2]));
+    a["attenuation"]  = att;
+    a["color"]        = color;
+    a["enabled"]      = enabled;
+    a["castsShadows"] = castsShadows;
 
     return a;
 }

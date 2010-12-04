@@ -149,7 +149,7 @@ UprightSpline::operator Any() const {
 
     Any timesAny(Any::ARRAY);
     for (int timeIndex = 0; timeIndex < time.length(); ++timeIndex) {
-        timesAny.append(time[timeIndex]);
+        timesAny.append(Any(time[timeIndex]));
     }
     any["times"] = timesAny;
 

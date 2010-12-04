@@ -329,6 +329,13 @@ private:
     bool isPlaceholder() const {
         return ! m_placeholderName.empty();
     }
+    
+    void _append(const Any& v0);
+    void _append(const Any& v0, const Any& v1);
+    void _append(const Any& v0, const Any& v1, const Any& v2);
+    void _append(const Any& v0, const Any& v1, const Any& v2, const Any& v3);
+    const Any& _get(const std::string& key, const Any& defaultVal) const;
+    void _set(const std::string& key, const Any& val);
 
 public:
     /** Thrown by operator[] when a key is not present in a const table. */
@@ -370,11 +377,11 @@ public:
     Any(const Any& x);
 
     /** NUMBER constructor */
-    Any(double x);
+    explicit Any(double x);
 
 #ifdef G3D_32BIT
     /** NUMBER constructor */
-    Any(int64 x);
+    explicit Any(int64 x);
 #endif    // G3D_32BIT
 
 #if 0
@@ -383,25 +390,25 @@ public:
 #endif    // 0
 
     /** NUMBER constructor */
-    Any(long x);
+    explicit Any(long x);
 
     /** NUMBER constructor */
-    Any(int x);
+    explicit Any(int x);
 
     /** NUMBER constructor */
-    Any(short x);
+    explicit Any(short x);
 
     /** BOOLEAN constructor */
-    Any(bool x);
+    explicit Any(bool x);
 
     /** STRING constructor */
-    Any(const std::string& x);
+    explicit Any(const std::string& x);
 
     /** STRING constructor */
-    Any(const char* x);
+    explicit Any(const char* x);
 
     /** \a t must be ARRAY or TABLE */
-    Any(Type t, const std::string& name = "");
+    explicit Any(Type t, const std::string& name = "");
     
     ~Any();
 
@@ -525,10 +532,26 @@ public:
 
     /** Directly exposes the underlying data structure for an ARRAY. */
     const Array<Any>& array() const;
-    void append(const Any& v0);
-    void append(const Any& v0, const Any& v1);
-    void append(const Any& v0, const Any& v1, const Any& v2);
-    void append(const Any& v0, const Any& v1, const Any& v2, const Any& v3);
+
+    template<class T0>
+    void append(const T0& v0) {
+        _append(Any(v0));
+    }
+
+    template<class T0, class T1>
+    void append(const T0& v0, const T1& v1) {
+        _append(Any(v0), Any(v1));
+    }
+
+    template<class T0, class T1, class T2>
+    void append(const T0& v0, const T1& v1, const T2& v2) {
+        _append(Any(v0), Any(v1), Any(v2));
+    }
+
+    template<class T0, class T1, class T2, class T3>
+    void append(const T0& v0, const T1& v1, const T2& v2, const T3& v3) {
+        _append(Any(v0), Any(v1), Any(v2), Any(v3));
+    }
 
     /** Directly exposes the underlying data structure for table.
     \sa G3D::AnyTableReader*/
@@ -577,13 +600,19 @@ public:
     
     /** For a table, returns the element for key \a x and \a
         defaultVal if it does not exist. */
-    const Any& get(const std::string& key, const Any& defaultVal) const;
+    template<class T>
+    const Any& get(const std::string& key, const T& defaultVal) const {
+        return _get(key, Any(defaultVal));
+    }
 
     /** Returns true if this key is in the TABLE.  Illegal to call on an object that is not a TABLE. */
     bool containsKey(const std::string& key) const;
     
     /** For a table, assigns the element for key k. */
-    void set(const std::string& key, const Any& val);
+    template<class T>
+    void set(const std::string& key, const T& val) {
+        _set(key, Any(val));
+    }
 
     /** for an ARRAY, resizes and returns the last element */
     Any& next();
@@ -595,7 +624,40 @@ public:
 
     /** True if the Anys are exactly equal, ignoring comments.  Applies deeply on arrays and tables. */
     bool operator==(const Any& x) const;
+
+    bool operator==(const std::string& s) const {
+        return *this == Any(s);
+    }
+
+    bool operator==(const double& v) const {
+        return *this == Any(v);
+    }
+
+    bool operator==(int v) const {
+        return *this == Any(v);
+    }
+
+    bool operator==(bool v) const {
+        return *this == Any(v);
+    }
+
     bool operator!=(const Any& x) const;
+
+    bool operator!=(const std::string& s) const {
+        return *this != Any(s);
+    }
+
+    bool operator!=(const double& v) const {
+        return *this != Any(v);
+    }
+
+    bool operator!=(int v) const {
+        return *this != Any(v);
+    }
+
+    bool operator!=(bool v) const {
+        return *this != Any(v);
+    }
 
     operator int() const;
     operator uint32() const;

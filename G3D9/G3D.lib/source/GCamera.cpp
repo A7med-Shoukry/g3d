@@ -64,15 +64,15 @@ GCamera::GCamera(const Any& any) {
 GCamera::operator Any() const {
     Any any(Any::TABLE, "GCamera");
 
-    any.set("fovDirection", std::string((m_direction == HORIZONTAL) ? "HORIZONTAL" : "VERTICAL"));
-    any.set("fovDegrees", toDegrees(m_fieldOfView));
-    any.set("nearPlaneZ", nearPlaneZ());
-    any.set("farPlaneZ", farPlaneZ());
-    any.set("coordinateFrame", coordinateFrame());
-    any.set("pixelOffset", pixelOffset());
-    any.set("focusPlaneZ", m_focusPlaneZ);
-    any.set("lensRadius", m_lensRadius);
-    any.set("exposureTime", m_exposureTime);
+    any["fovDirection"]     = std::string((m_direction == HORIZONTAL) ? "HORIZONTAL" : "VERTICAL");
+    any["fovDegrees"]       = toDegrees(m_fieldOfView);
+    any["nearPlaneZ"]       = nearPlaneZ();
+    any["farPlaneZ"]        = farPlaneZ();
+    any["coordinateFrame"]  = coordinateFrame();
+    any["pixelOffset"]      = pixelOffset();
+    any["focusPlaneZ"]      = m_focusPlaneZ;
+    any["lensRadius"]       = m_lensRadius;
+    any["exposureTime"]     = m_exposureTime;
 
     return any;
 }

@@ -183,45 +183,45 @@ Lighting::Specification::Specification(const Any& any) {
     *this = Specification();
     any.verifyName("Lighting::Specification");
 
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-        const std::string& key = toLower(it->key);
-        if (key == "emissivescale") {
-            emissiveScale = it->value;
-        } else if (key == "environmentmap") {
-            environmentMapConstant = it->value.get("constant", 1.0f);
+    AnyTableReader r(any);
 
-            if (it->value.containsKey("texture")) {
-                Any t = it->value["texture"];
-                environmentMapTexture = t;
-                if (it->value.type() == Any::STRING) {
-                    // Cube map defaults
-                    environmentMapTexture.dimension = Texture::DIM_CUBE_MAP;
-                    environmentMapTexture.settings = Texture::Settings::cubeMap();
-                }
+    r.getIfPresent("emissiveScale", emissiveScale);
+    Any evt;
+    if (r.getIfPresent("environmentMap", evt)) {
+        environmentMapConstant = evt.get("constant", 1.0);
+        if (evt.containsKey("texture")) {
+            Any t = evt["texture"];
+            environmentMapTexture = t;
+            if (t.type() == Any::STRING) {
+                // Cube map defaults
+                environmentMapTexture.dimension = Texture::DIM_CUBE_MAP;
+                environmentMapTexture.settings = Texture::Settings::cubeMap();
             }
-        } else if (key == "lightarray") {
-            const Any& array = it->value;
-            array.verifyType(Any::ARRAY);
-            lightArray.resize(array.size());
-            for (int i = 0; i < array.size(); ++i) {
-                lightArray[i] = array[i];
-            }
-        } else {
-            any.verify(false, "Illegal key: " + it->key);
         }
     }
+
+    Any lt;
+    if (r.getIfPresent("lightArray", lt)) {
+        lt.verifyType(Any::ARRAY);
+        lightArray.resize(lt.size());
+        for (int i = 0; i < lt.size(); ++i) {
+            lightArray[i] = lt[i];
+        }
+    }
+
+    r.verifyDone();
 }
 
 
 Lighting::Specification::operator Any() const {
-    Any a(Any::TABLE, "lighting");
-    a["emissiveScale"] = emissiveScale;
-        
     Any b(Any::TABLE);
-    b["constant"] = environmentMapConstant;
-    b["texture"] = environmentMapTexture;
+    b["constant"]       = environmentMapConstant;
+    b["texture"]        = environmentMapTexture;
+
+    Any a(Any::TABLE, "lighting");
+    a["emissiveScale"]  = emissiveScale;
     a["environmentMap"] = b; 
-    a["lightArray"] = lightArray;
+    a["lightArray"]     = lightArray;
 
     return a;
 }

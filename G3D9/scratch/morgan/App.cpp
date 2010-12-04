@@ -65,6 +65,7 @@ public:
 };
 
 int main(int argc, char** argv) {
+
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
     for (int y = 0; y < im->height(); ++y) {

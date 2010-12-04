@@ -571,7 +571,7 @@ const Array<Any>& Any::array() const {
 }
 
 
-void Any::append(const Any& x0) {
+void Any::_append(const Any& x0) {
     beforeRead();
     verifyType(ARRAY);
     debugAssert(m_data != NULL);
@@ -579,14 +579,14 @@ void Any::append(const Any& x0) {
 }
 
 
-void Any::append(const Any& x0, const Any& x1) {
+void Any::_append(const Any& x0, const Any& x1) {
     beforeRead();
     append(x0);
     append(x1);
 }
 
 
-void Any::append(const Any& x0, const Any& x1, const Any& x2) {
+void Any::_append(const Any& x0, const Any& x1, const Any& x2) {
     beforeRead();
     append(x0);
     append(x1);
@@ -594,7 +594,7 @@ void Any::append(const Any& x0, const Any& x1, const Any& x2) {
 }
 
 
-void Any::append(const Any& x0, const Any& x1, const Any& x2, const Any& x3) {
+void Any::_append(const Any& x0, const Any& x1, const Any& x2, const Any& x3) {
     beforeRead();
     append(x0);
     append(x1);
@@ -648,7 +648,7 @@ Any& Any::operator[](const std::string& key) {
 }
 
 
-void Any::set(const std::string& k, const Any& v) {
+void Any::_set(const std::string& k, const Any& v) {
     beforeRead();
     v.beforeRead();
     verifyType(TABLE);
@@ -658,7 +658,7 @@ void Any::set(const std::string& k, const Any& v) {
 }
 
 
-const Any& Any::get(const std::string& x, const Any& defaultVal) const {
+const Any& Any::_get(const std::string& x, const Any& defaultVal) const {
     beforeRead();
     defaultVal.beforeRead();
     try {
@@ -1174,7 +1174,7 @@ void Any::deserializeBody(TextInput& ti, Token& token) {
         }
 
         // Pointer the value being read
-        Any a = NULL;
+        Any a;
         std::string key;
         
         if (m_type == TABLE) {

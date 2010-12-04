@@ -53,7 +53,7 @@ static Material::Ref makeWeaponMaterial(const std::string& path) {
             for (int e = 0; ext[e] != NULL; ++e) {
                 if (le == ext[e]) {
                     // This is an image
-                    return makeQuakeMaterial(f);
+                    return makeQuakeMaterial(Any(f));
                 }
             }
         }
@@ -93,7 +93,7 @@ MD2Model::Specification::Specification(const std::string& trisFilename)
             for (int p = 0; (p < 5) && material.isNull(); ++p) {
                 if (toLower(s) == prefix[p]) {
                     // This is a legal prefix
-                    material = makeQuakeMaterial(fileArray[f]);
+                    material = makeQuakeMaterial(Any(fileArray[f]));
                 }
             }
         }
