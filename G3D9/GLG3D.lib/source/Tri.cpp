@@ -105,6 +105,9 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
         return;
     }
 
+    // Cache off eye direction
+    eye = ray.direction();
+
     const Vector3& v0 = tri.v0;
     const Vector3& e1 = tri.e1;
     const Vector3& e2 = tri.e2;

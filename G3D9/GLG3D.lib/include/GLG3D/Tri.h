@@ -234,6 +234,9 @@ public:
          "input"*/
         float           alphaThreshold;
 
+        /** Eye direction (ray direction from functor) */
+        Vector3         eye;
+
         Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f) {}
 
         virtual ~Intersector() {}
