@@ -1,16 +1,16 @@
 /**
- @file Plane.h
+ \file Plane.h
 
  Plane class
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2001-06-02
- @edited  2004-07-18
+ \created 2001-06-02
+ \edited  2010-12-04
 */
 
-#ifndef G3D_PLANE_H
-#define G3D_PLANE_H
+#ifndef G3D_Plane_h
+#define G3D_Plane_h
 
 #include "G3D/platform.h"
 #include "G3D/Vector3.h"
@@ -43,26 +43,26 @@ public:
     /**
      Constructs a plane from three points.
      */
-    Plane(
-        const Vector3&      point0,
-        const Vector3&      point1,
-        const Vector3&      point2);
+    Plane
+     (const Point3&      point0,
+      const Point3&      point1,
+      const Point3&      point2);
 
     /**
      Constructs a plane from three points, where at most two are
      at infinity (w = 0, not xyz = inf).
      */
     Plane(
-        Vector4             point0,
-        Vector4             point1,
-        Vector4             point2);
+        Vector4         point0,
+        Vector4         point1,
+        Vector4         point2);
 
     /**
      The normal will be unitized.
      */
-    Plane(
-        const Vector3&      __normal,
-        const Vector3&      point);
+    Plane
+     (const Vector3&     normal,
+      const Point3&      point);
 
     static Plane fromEquation(float a, float b, float c, float d);
 
@@ -76,7 +76,7 @@ public:
      Returns true if point is on the side the normal points to or 
      is in the plane.
      */
-    inline bool halfSpaceContains(Vector3 point) const {
+    inline bool halfSpaceContains(Point3 point) const {
         // Clamp to a finite range for testing
         point = point.clamp(Vector3::minFinite(), Vector3::maxFinite());
 
@@ -101,7 +101,7 @@ public:
      Returns true if point is on the side the normal points to or 
      is in the plane.  Only call on finite points.  Faster than halfSpaceContains.
      */
-    inline bool halfSpaceContainsFinite(const Vector3& point) const {
+    inline bool halfSpaceContainsFinite(const Point3& point) const {
         debugAssert(point.isFinite());
         return _normal.dot(point) >= _distance;
     }
@@ -109,7 +109,7 @@ public:
     /**
      Returns true if the point is nearly in the plane.
      */
-    inline bool fuzzyContains(const Vector3 &point) const {
+    inline bool fuzzyContains(const Point3& point) const {
         return fuzzyEq(point.dot(_normal), _distance);
     }
 
@@ -124,7 +124,7 @@ public:
         return (_normal.dot(x) - _distance);
     }
 
-    inline Vector3 closestPoint(const Vector3& x) const {
+    inline Point3 closestPoint(const Point3& x) const {
         return x + (_normal * (-distance(x)));
     }
 
@@ -144,8 +144,8 @@ public:
 
       <CODE>normal.Dot(Vector3(<I>x</I>, <I>y</I>, <I>z</I>)) + d = 0</CODE>
      */
-    void getEquation(Vector3 &normal, double& d) const;
-    void getEquation(Vector3 &normal, float& d) const;
+    void getEquation(Vector3& normal, double& d) const;
+    void getEquation(Vector3& normal, float& d) const;
 
     /**
       ax + by + cz + d = 0
