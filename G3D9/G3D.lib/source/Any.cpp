@@ -1343,25 +1343,28 @@ void Any::verifyNameBeginsWith(const std::string& n) const {
 
 void Any::verifyNameBeginsWith(const std::string& n, const std::string& m) const {
     beforeRead();
-    verify(beginsWith(name(), n) ||
-           beginsWith(name(), m), "Name must be " + n + " or " + m);
+    const std::string& x = name();
+    verify(beginsWith(x, n) ||
+           beginsWith(x, m), "Name must be " + n + " or " + m);
 }
 
 
 void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p) const {
     beforeRead();
-    verify(beginsWith(name(), n) ||
-           beginsWith(name(), m) ||
-           beginsWith(name(), p), "Name must be " + n + ", " + m + ", or " + p);
+    const std::string& x = name();
+    verify(beginsWith(x, n) ||
+           beginsWith(x, m) ||
+           beginsWith(x, p), "Name must be " + n + ", " + m + ", or " + p);
 }
 
 
 void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q) const {
     beforeRead();
-    verify(beginsWith(name(), n) ||
-           beginsWith(name(), m) ||
-           beginsWith(name(), p) ||
-           beginsWith(name(), q), "Name must be " + n + ", " + m + ", " + p + ", or " + q);
+    const std::string& x = name();
+    verify(beginsWith(x, n) ||
+           beginsWith(x, m) ||
+           beginsWith(x, p) ||
+           beginsWith(x, q), "Name must be " + n + ", " + m + ", " + p + ", or " + q);
 }
 
 

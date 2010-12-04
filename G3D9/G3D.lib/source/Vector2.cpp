@@ -50,7 +50,7 @@ Vector2& Vector2::operator=(const Any& a) {
 
 Vector2::operator Any() const {
     Any any(Any::ARRAY, "Vector2");
-    any.append(Any(x), Any(y));
+    any.append(x, y);
     return any;
 }
 

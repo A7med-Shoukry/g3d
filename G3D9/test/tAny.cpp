@@ -64,67 +64,67 @@ static void testRefCount2() {
 static void testConstruct() {
 
     {
-        Any x = char(3);
+        Any x(char(3));
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = short(3);
+        Any x(short(3));
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = int(3);
+        Any x(int(3));
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = long(3);
+        Any x(long(3));
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = int32(3);
+        Any x(int32(3));
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = int64(3);
+        Any x(int64(3));
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = 3.1;
+        Any x(3.1);
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = 3.1f;
+        Any x(3.1f);
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = NULL;
+        Any x(NULL);
         debugAssertM(x.type() == Any::NUMBER, Any::toString(x.type())+" when expecting NUMBER");
     }
 
     {
-        Any x = true;
+        Any x(true);
         debugAssertM(x.type() == Any::BOOLEAN, Any::toString(x.type())+" when expecting BOOLEAN");
     }
 
     {
-        Any x = "hello";
+        Any x("hello");
         debugAssertM(x.type() == Any::STRING, Any::toString(x.type())+" when expecting STRING");
     }
 
     {
-        Any x = std::string("hello");
+        Any x(std::string("hello"));
         debugAssertM(x.type() == Any::STRING, Any::toString(x.type())+" when expecting STRING");
     }
 
     {
-        Any y = "hello";
+        Any y("hello");
         Any x = y;
         debugAssertM(x.type() == Any::STRING, Any::toString(x.type())+" when expecting STRING");
     }
@@ -133,32 +133,32 @@ static void testConstruct() {
 
 static void testCast() {
     {
-        Any a = 3;
+        Any a(3);
         int x = int(a.number());
         debugAssert(x == 3);
     }
     {
-        Any a = 3;
+        Any a(3);
         int x = a;
         debugAssert(x == 3);
     }
     {
-        Any a = 3.1;
+        Any a(3.1);
         double x = a;
         debugAssert(x == 3.1);
     }
     {
-        Any a = 3.1f;
+        Any a(3.1f);
         float x = a;
         debugAssert(fuzzyEq(x, 3.1f));
     }
     {
-        Any a = true;
+        Any a(true);
         bool x = a;
         debugAssert(x == true);
     }
     {
-        Any a = "hello";
+        Any a("hello");
         std::string x = a;
         debugAssert(x == "hello");
     }
