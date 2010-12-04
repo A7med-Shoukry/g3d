@@ -1,10 +1,10 @@
 /**
-  @file CameraControlWindow.h
+  \file CameraControlWindow.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2002-07-28
-  @edited  2008-07-14
+  \created 2002-07-28
+  \edited  2008-07-14
 */
 #ifndef G3D_CAMERACONTROLWINDOW_H
 #define G3D_CAMERACONTROLWINDOW_H
@@ -40,8 +40,8 @@ public:
 
 protected:
 
-    static const Vector2        smallSize;
-    static const Vector2        bigSize;
+    static const Vector2 sDefaultWindowSize;
+    static const Vector2 sExpendedWindowSize;
 
     /** Returns a prettyprinted position*/
     std::string cameraLocation() const;
@@ -61,53 +61,53 @@ protected:
     Array<CoordinateFrame>      m_bookmarkPosition;
 
     /** Array of all .trk files in the current directory */
-    Array<std::string>          trackFileArray;
+    Array<std::string>          m_trackFileArray;
 
     /** Index into trackFileArray */
-    int                         trackFileIndex;
+    int                         m_trackFileIndex;
 
-    GuiDropDownList*            trackList;
+    GuiDropDownList*            m_trackList;
 
     enum {NO_BOOKMARK = -1};
 
     /** Selected bookmark.  When not NO_BOOKMARK, move to this location */
     int                         m_bookmarkSelection;
 
-    GuiMenu::Ref                  m_menu;
+    GuiMenu::Ref                m_menu;
 
     /** Allows the user to override the current camera position */
-    GuiTextBox*                 cameraLocationTextBox;
+    GuiTextBox*                 m_cameraLocationTextBox;
 
-    GuiRadioButton*             playButton;
-    GuiRadioButton*             stopButton;
-    GuiRadioButton*             recordButton;
+    GuiRadioButton*             m_playButton;
+    GuiRadioButton*             m_stopButton;
+    GuiRadioButton*             m_recordButton;
 
     /** The manipulator from which the camera is copying its frame */
-    Pointer<Manipulator::Ref>   cameraManipulator;
+    Pointer<Manipulator::Ref>   m_cameraManipulator;
 
-    FirstPersonManipulatorRef   manualManipulator;
-    UprightSplineManipulatorRef trackManipulator;
+    FirstPersonManipulatorRef   m_manualManipulator;
+    UprightSplineManipulatorRef m_trackManipulator;
 
-    GuiCheckBox*                visibleCheckBox;
-    GuiCheckBox*                cyclicCheckBox;
+    GuiCheckBox*                m_visibleCheckBox;
+    GuiCheckBox*                m_cyclicCheckBox;
 
     /** Button to expand and contract additional manual controls. */
-    GuiButton*                  drawerButton;
+    GuiButton*                  m_drawerButton;
 
     /** The button must be in its own pane so that it can float over
         the expanded pane. */
-    GuiPane*                    drawerButtonPane;
-    GuiText                     drawerExpandCaption;
-    GuiText                     drawerCollapseCaption;
+    GuiPane*                    m_drawerButtonPane;
+    GuiText                     m_drawerExpandCaption;
+    GuiText                     m_drawerCollapseCaption;
 
-    GuiButton*                  saveButton;
+    GuiButton*                  m_saveButton;
 
-    GuiLabel*                   helpLabel;
+    GuiLabel*                   m_helpLabel;
 
-    GuiText                     manualHelpCaption;
-    GuiText                     autoHelpCaption;
-    GuiText                     recordHelpCaption;
-    GuiText                     playHelpCaption;
+    GuiText                     m_manualHelpCaption;
+    GuiText                     m_autoHelpCaption;
+    GuiText                     m_recordHelpCaption;
+    GuiText                     m_playHelpCaption;
 
     GuiButton*                  m_showBookmarksButton;
 
@@ -116,7 +116,7 @@ protected:
 
     /** True when the user has chosen to override program control of
         the camera. */
-    bool                        manualOperation;
+    bool                        m_manualOperation;
 
     CameraControlWindow(
         const FirstPersonManipulatorRef&    manualManipulator, 
@@ -181,8 +181,8 @@ public:
     /** True if either the manual manipulator or the spline playback manipulator is currently
      driving the camera */
     bool manipulatorActive() const {
-        return manualManipulator->active() ||
-            (trackManipulator->mode() == UprightSplineManipulator::PLAY_MODE);
+        return m_manualManipulator->active() ||
+            (m_trackManipulator->mode() == UprightSplineManipulator::PLAY_MODE);
     }
 
 

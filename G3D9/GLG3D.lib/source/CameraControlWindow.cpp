@@ -20,8 +20,8 @@
 namespace G3D {
 
 enum {FILM_PANE_SIZE = 102};
-const Vector2 CameraControlWindow::smallSize(286 + 16, 46);
-const Vector2 CameraControlWindow::bigSize(286 + 16, 155 + FILM_PANE_SIZE);
+const Vector2 CameraControlWindow::sDefaultWindowSize(286 + 16, 46);
+const Vector2 CameraControlWindow::sExpendedWindowSize(286 + 16, 155 + FILM_PANE_SIZE);
 
 static const std::string noSpline = "< None >";
 static const std::string untitled = "< Unsaved >";
@@ -135,17 +135,17 @@ CameraControlWindow::CameraControlWindow(
               Rect2D::xywh(5, 54, 200, 0),
               GuiTheme::TOOL_WINDOW_STYLE,
               GuiWindow::HIDE_ON_CLOSE),
-    trackFileIndex(0),
+    m_trackFileIndex(0),
     m_bookmarkSelection(NO_BOOKMARK),
-    cameraManipulator(cameraManipulator),
-    manualManipulator(manualManipulator),
-    trackManipulator(trackManipulator),
-    drawerButton(NULL),
-    drawerButtonPane(NULL),
+    m_cameraManipulator(cameraManipulator),
+    m_manualManipulator(manualManipulator),
+    m_trackManipulator(trackManipulator),
+    m_drawerButton(NULL),
+    m_drawerButtonPane(NULL),
     m_expanded(false)
 {
 
-    manualOperation = manualManipulator->active();
+    m_manualOperation = m_manualManipulator->active();
 
     updateTrackFiles();
 
@@ -167,12 +167,12 @@ CameraControlWindow::CameraControlWindow(
         pane->addLabel(GuiText("q q", greekFont, 12))->setRect(Rect2D::xywh(19, 6, 10, 15));
         pane->addLabel(GuiText("y  x", NULL, 9))->setRect(Rect2D::xywh(24, 12, 10, 9));
     }
-    cameraLocationTextBox = 
+    m_cameraLocationTextBox = 
         pane->addTextBox("xyz",
         Pointer<std::string>(this, &CameraControlWindow::cameraLocation, 
                                    &CameraControlWindow::setCameraLocation));
-    cameraLocationTextBox->setRect(Rect2D::xywh(0, 2, 246 + (hasRoll ? 20.0f : 0.0f), 24));
-    cameraLocationTextBox->setCaptionWidth(38 + (hasRoll ? 12.0f : 0.0f));
+    m_cameraLocationTextBox->setRect(Rect2D::xywh(0, 2, 246 + (hasRoll ? 20.0f : 0.0f), 24));
+    m_cameraLocationTextBox->setCaptionWidth(38 + (hasRoll ? 12.0f : 0.0f));
 
     // Change to black "r" (x) for remove
     GuiButton* bookMarkButton = 
@@ -180,7 +180,7 @@ CameraControlWindow::CameraControlWindow(
             GuiControl::Callback(this, &CameraControlWindow::onBookmarkButton),
             GuiTheme::TOOL_BUTTON_STYLE);
     bookMarkButton->setSize(w, h);
-    bookMarkButton->moveRightOf(cameraLocationTextBox);
+    bookMarkButton->moveRightOf(m_cameraLocationTextBox);
     bookMarkButton->moveBy(-2, 2);
 
     m_showBookmarksButton = pane->addButton(GuiText(DOWN, iconFont, 18), 
@@ -206,108 +206,109 @@ CameraControlWindow::CameraControlWindow(
     GuiPane* manualPane = pane->addPane();
     manualPane->moveBy(-8, 0);
 
-    manualPane->addCheckBox("Manual Control (F2)", &manualOperation)->moveBy(-2, 3);
+    manualPane->addCheckBox("Manual Control (F2)", &m_manualOperation)->moveBy(-2, 3);
 
     manualPane->beginRow();
     {
-        trackList = manualPane->addDropDownList("Path", trackFileArray, &trackFileIndex);
-        trackList->setRect(Rect2D::xywh(Vector2(0, trackList->rect().y1() - 25), Vector2(180, trackList->rect().height())));
-        trackList->setCaptionWidth(34);
+        m_trackList = manualPane->addDropDownList("Path", m_trackFileArray, &m_trackFileIndex);
+        m_trackList->setRect(Rect2D::xywh(Vector2(0, m_trackList->rect().y1() - 25), Vector2(180, m_trackList->rect().height())));
+        m_trackList->setCaptionWidth(34);
 
-        visibleCheckBox = manualPane->addCheckBox("Visible", 
+        m_visibleCheckBox = manualPane->addCheckBox("Visible", 
             Pointer<bool>(trackManipulator, 
                           &UprightSplineManipulator::showPath, 
                           &UprightSplineManipulator::setShowPath));
 
-        visibleCheckBox->moveBy(6, 0);
+        m_visibleCheckBox->moveBy(6, 0);
     }
     manualPane->endRow();
     
     manualPane->beginRow();
     {
         Vector2 buttonSize = Vector2(20, 20);
-        recordButton = manualPane->addRadioButton
+        m_recordButton = manualPane->addRadioButton
             (GuiText::Symbol::record(), 
              UprightSplineManipulator::RECORD_KEY_MODE, 
              trackManipulator.pointer(),
              &UprightSplineManipulator::mode,
              &UprightSplineManipulator::setMode,
              GuiTheme::TOOL_RADIO_BUTTON_STYLE);
-        recordButton->moveBy(32, 2);
-        recordButton->setSize(buttonSize);
+        m_recordButton->moveBy(32, 2);
+        m_recordButton->setSize(buttonSize);
     
-        playButton = manualPane->addRadioButton
+        m_playButton = manualPane->addRadioButton
             (GuiText::Symbol::play(), 
              UprightSplineManipulator::PLAY_MODE, 
              trackManipulator.pointer(),
              &UprightSplineManipulator::mode,
              &UprightSplineManipulator::setMode,
              GuiTheme::TOOL_RADIO_BUTTON_STYLE);
-        playButton->setSize(buttonSize);
+        m_playButton->setSize(buttonSize);
 
-        stopButton = manualPane->addRadioButton
+        m_stopButton = manualPane->addRadioButton
             (GuiText::Symbol::stop(), 
              UprightSplineManipulator::INACTIVE_MODE, 
              trackManipulator.pointer(),
              &UprightSplineManipulator::mode,
              &UprightSplineManipulator::setMode,
              GuiTheme::TOOL_RADIO_BUTTON_STYLE);
-        stopButton->setSize(buttonSize);
+        m_stopButton->setSize(buttonSize);
 
-        saveButton = manualPane->addButton("Save...");
-        saveButton->setSize(saveButton->rect().wh() - Vector2(20, 1));
-        saveButton->moveBy(20, -3);
-        saveButton->setEnabled(false);
+        m_saveButton = manualPane->addButton("Save...");
+        m_saveButton->setSize(m_saveButton->rect().wh() - Vector2(20, 1));
+        m_saveButton->moveBy(20, -3);
+        m_saveButton->setEnabled(false);
 
-        cyclicCheckBox = manualPane->addCheckBox("Cyclic", 
+        m_cyclicCheckBox = manualPane->addCheckBox("Cyclic", 
             Pointer<bool>(trackManipulator, 
                           &UprightSplineManipulator::cyclic, 
                           &UprightSplineManipulator::setCyclic));
 
-        cyclicCheckBox->setPosition(visibleCheckBox->rect().x0(), saveButton->rect().y0() + 1);
+        m_cyclicCheckBox->setPosition(m_visibleCheckBox->rect().x0(), m_saveButton->rect().y0() + 1);
     }
     manualPane->endRow();
     /*
     static float m_playbackSpeed = 1.0f;
     GuiNumberBox<float>* speedBox = manualPane->addNumberBox("Speed", &m_playbackSpeed, "x", GuiTheme::LOG_SLIDER, 0.1f, 10.0f);
-    speedBox->setPosition(stopButton->rect().x0(), speedBox->rect().y0());
+    speedBox->setPosition(m_stopButton->rect().x0(), speedBox->rect().y0());
     speedBox->setCaptionSize(40);
     speedBox->setWidth(130);
     */
 
 #   ifdef G3D_OSX
-        manualHelpCaption = GuiText("W,A,S,D and right (or shift+left) mouse to move.", NULL, 10);
+        m_manualHelpCaption = GuiText("W,A,S,D and right (or shift+left) mouse to move.", NULL, 10);
 #   else
-        manualHelpCaption = GuiText("W,A,S,D and right mouse to move.", NULL, 10);
+        m_manualHelpCaption = GuiText("W,A,S,D and right mouse to move.", NULL, 10);
 #   endif
 
-    autoHelpCaption = "";
-    playHelpCaption = "";
+    m_autoHelpCaption = "";
+    m_playHelpCaption = "";
 
-    recordHelpCaption = GuiText("Spacebar to place a control point.", NULL, 10);
+    m_recordHelpCaption = GuiText("Spacebar to place a control point.", NULL, 10);
 
-    helpLabel = manualPane->addLabel(manualHelpCaption);
-    helpLabel->moveBy(0, 2);
+    m_helpLabel = manualPane->addLabel(m_manualHelpCaption);
+    m_helpLabel->moveBy(0, 2);
 
     manualPane->pack();
     filmPane->setWidth(manualPane->rect().width());
     pack();
-    // Set the width here so that the client rect is correct below
-    setRect(Rect2D::xywh(rect().x0y0(), bigSize));
+
+    // Set width to max expanded size so client size is correct when adding drawer items below
+    setRect(Rect2D::xywh(rect().x0y0(), sExpendedWindowSize));
 
     // Make the pane width match the window width
     manualPane->setPosition(0, manualPane->rect().y0());
     manualPane->setSize(clientRect().width(), manualPane->rect().height());
 
-    // Have to create the drawerButton last, otherwise the setRect
+    // Have to create the m_drawerButton last, otherwise the setRect
     // code for moving it to the bottom of the window will cause
     // layout to become broken.
-    drawerCollapseCaption = GuiText("5", iconFont);
-    drawerExpandCaption = GuiText("6", iconFont);
-    drawerButtonPane = pane->addPane("", GuiTheme::NO_PANE_STYLE);
-    drawerButton = drawerButtonPane->addButton(drawerExpandCaption, GuiTheme::TOOL_BUTTON_STYLE);
-    drawerButton->setRect(Rect2D::xywh(0, 0, 12, 10));
-    drawerButtonPane->setSize(12, 10);
+    m_drawerCollapseCaption = GuiText("5", iconFont);
+    m_drawerExpandCaption = GuiText("6", iconFont);
+    m_drawerButtonPane = pane->addPane("", GuiTheme::NO_PANE_STYLE);
+    m_drawerButton = m_drawerButtonPane->addButton(m_drawerExpandCaption, GuiTheme::TOOL_BUTTON_STYLE);
+    m_drawerButton->setRect(Rect2D::xywh(0, 0, 12, 10));
+    m_drawerButtonPane->setSize(12, 10);
     
     // Resize the pane to include the drawer button so that it is not clipped
     pane->setSize(clientRect().wh());
@@ -319,7 +320,8 @@ CameraControlWindow::CameraControlWindow(
         m_bookmarkPosition.append(CoordinateFrame::fromXYZYPRDegrees(0,1,7,0,-15,0));
     }
 
-    setRect(Rect2D::xywh(rect().x0y0(), smallSize));
+    // Collapse the window back down to default size
+    setRect(Rect2D::xywh(rect().x0y0(), sDefaultWindowSize));
     sync();
 }
 
@@ -347,7 +349,7 @@ void CameraControlWindow::setManager(WidgetManager* manager) {
 
 std::string CameraControlWindow::cameraLocation() const {
     CoordinateFrame cframe;
-    trackManipulator->camera()->getCoordinateFrame(cframe);
+    m_trackManipulator->camera()->getCoordinateFrame(cframe);
     UprightFrame uframe(cframe);
     
     // \xba is the character 186, which is the degree symbol
@@ -359,7 +361,7 @@ std::string CameraControlWindow::cameraLocation() const {
 
 std::string CameraControlWindow::cameraLocationCode() const {
     CoordinateFrame cframe;
-    trackManipulator->camera()->getCoordinateFrame(cframe);
+    m_trackManipulator->camera()->getCoordinateFrame(cframe);
     return cframe.toXYZYPRDegreesString();
 }
 
@@ -400,8 +402,8 @@ void CameraControlWindow::setCameraLocation(const std::string& s) {
         }        
         CoordinateFrame cframe = uframe;
 
-        trackManipulator->camera()->setCoordinateFrame(cframe);
-        manualManipulator->setFrame(cframe);
+        m_trackManipulator->camera()->setCoordinateFrame(cframe);
+        m_manualManipulator->setFrame(cframe);
 
     } catch (const TextInput::TokenException& e) {
         // Ignore the incorrectly formatted value
@@ -419,7 +421,7 @@ void CameraControlWindow::showBookmarkList() {
     if (m_bookmarkName.size() > 0) {
         m_menu = GuiMenu::create(theme(), &m_bookmarkName, &m_bookmarkSelection);
         manager()->add(m_menu);
-        m_menu->show(manager(), this, NULL, cameraLocationTextBox->toOSWindowCoords(cameraLocationTextBox->clickRect().x0y1() + Vector2(45, 8)), false);
+        m_menu->show(manager(), this, NULL, m_cameraLocationTextBox->toOSWindowCoords(m_cameraLocationTextBox->clickRect().x0y1() + Vector2(45, 8)), false);
     }
 }
 
@@ -443,7 +445,7 @@ void CameraControlWindow::onBookmarkButton() {
     case BookmarkDialog::RESULT_OK:
         {
             CoordinateFrame frame;
-            trackManipulator->camera()->getCoordinateFrame(frame);
+            m_trackManipulator->camera()->getCoordinateFrame(frame);
             setBookmark(name, frame);
         }
         break;
@@ -532,42 +534,42 @@ CoordinateFrame CameraControlWindow::bookmark
 
 void CameraControlWindow::setRect(const Rect2D& r) {
     GuiWindow::setRect(r);
-    if (drawerButtonPane) {
+    if (m_drawerButtonPane) {
         const Rect2D& r = clientRect();
-        drawerButtonPane->setPosition((r.width() - drawerButtonPane->rect().width()) / 2.0f, r.height() - drawerButtonPane->rect().height());
+        m_drawerButtonPane->setPosition((r.width() - m_drawerButtonPane->rect().width()) / 2.0f, r.height() - m_drawerButtonPane->rect().height());
     }
 }
 
 
 void CameraControlWindow::updateTrackFiles() {
-    trackFileArray.fastClear();
-    trackFileArray.append(noSpline);
-    FileSystem::getFiles("*.us.any", trackFileArray);
+    m_trackFileArray.fastClear();
+    m_trackFileArray.append(noSpline);
+    FileSystem::getFiles("*.us.any", m_trackFileArray);
 
     // Element 0 is <unsaved>, so skip it
-    for (int i = 1; i < trackFileArray.size(); ++i) {
-        trackFileArray[i] = FilePath::base(FilePath::base(trackFileArray[i]));
+    for (int i = 1; i < m_trackFileArray.size(); ++i) {
+        m_trackFileArray[i] = FilePath::base(FilePath::base(m_trackFileArray[i]));
     }
-    trackFileIndex = iMin(trackFileArray.size() - 1, trackFileIndex);
+    m_trackFileIndex = iMin(m_trackFileArray.size() - 1, m_trackFileIndex);
 }
 
 
 void CameraControlWindow::onUserInput(UserInput* ui) {
     GuiWindow::onUserInput(ui);
 
-    if (manualOperation && (trackManipulator->mode() == UprightSplineManipulator::PLAY_MODE)) {
+    if (m_manualOperation && (m_trackManipulator->mode() == UprightSplineManipulator::PLAY_MODE)) {
         // Keep the FPS controller in sync with the spline controller
         CoordinateFrame cframe;
-        trackManipulator->getFrame(cframe);
-        manualManipulator->setFrame(cframe);
-        trackManipulator->camera()->setCoordinateFrame(cframe);
+        m_trackManipulator->getFrame(cframe);
+        m_manualManipulator->setFrame(cframe);
+        m_trackManipulator->camera()->setCoordinateFrame(cframe);
     }
 
     if (m_bookmarkSelection != NO_BOOKMARK) {
         // Clicked on a bookmark
         const CoordinateFrame& cframe = m_bookmarkPosition[m_bookmarkSelection];
-        trackManipulator->camera()->setCoordinateFrame(cframe);
-        manualManipulator->setFrame(cframe);
+        m_trackManipulator->camera()->setCoordinateFrame(cframe);
+        m_manualManipulator->setFrame(cframe);
 
         m_bookmarkSelection = NO_BOOKMARK;
         // TODO: change "bookmark" caption to "edit"
@@ -584,7 +586,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
     
     // Accelerator key for toggling camera control.  Active even when the window is hidden.
     if ((event.type == GEventType::KEY_DOWN) && (event.key.keysym.sym == GKey::F2)) {
-        manualOperation = ! manualOperation;
+        m_manualOperation = ! m_manualOperation;
         sync();
         return true;
     }
@@ -600,49 +602,49 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
         if ((control == m_showBookmarksButton) && (m_menu.isNull() || ! m_menu->visible())) {
             showBookmarkList();
             return true;
-        } else if (control == drawerButton) {
+        } else if (control == m_drawerButton) {
 
             // Change the window size
             m_expanded = ! m_expanded;
-            morphTo(Rect2D::xywh(rect().x0y0(), m_expanded ? bigSize : smallSize));
-            drawerButton->setCaption(m_expanded ? drawerCollapseCaption : drawerExpandCaption);
+            morphTo(Rect2D::xywh(rect().x0y0(), m_expanded ? sExpendedWindowSize : sDefaultWindowSize));
+            m_drawerButton->setCaption(m_expanded ? m_drawerCollapseCaption : m_drawerExpandCaption);
 
-        } else if (control == trackList) {
+        } else if (control == m_trackList) {
             
-            if (trackFileArray[trackFileIndex] != untitled) {
+            if (m_trackFileArray[m_trackFileIndex] != untitled) {
                 // Load the new spline
-                loadSpline(trackFileArray[trackFileIndex] + ".us.any");
+                loadSpline(m_trackFileArray[m_trackFileIndex] + ".us.any");
 
                 // When we load, we lose our temporarily recorded spline,
                 // so remove that display from the menu.
-                if (trackFileArray.last() == untitled) {
-                    trackFileArray.remove(trackFileArray.size() - 1);
+                if (m_trackFileArray.last() == untitled) {
+                    m_trackFileArray.remove(m_trackFileArray.size() - 1);
                 }
             }
 
-        } else if (control == playButton) {
+        } else if (control == m_playButton) {
 
             // Take over manual operation
-            manualOperation = true;
+            m_manualOperation = true;
             // Restart at the beginning of the path
-            trackManipulator->setTime(0);
+            m_trackManipulator->setTime(0);
 
-        } else if ((control == recordButton) || (control == cameraLocationTextBox)) {
+        } else if ((control == m_recordButton) || (control == m_cameraLocationTextBox)) {
 
             // Take over manual operation and reset the recording
-            manualOperation = true;
-            trackManipulator->clear();
-            trackManipulator->setTime(0);
+            m_manualOperation = true;
+            m_trackManipulator->clear();
+            m_trackManipulator->setTime(0);
 
             // Select the untitled path
-            if ((trackFileArray.size() == 0) || (trackFileArray.last() != untitled)) {
-                trackFileArray.append(untitled);
+            if ((m_trackFileArray.size() == 0) || (m_trackFileArray.last() != untitled)) {
+                m_trackFileArray.append(untitled);
             }
-            trackFileIndex = trackFileArray.size() - 1;
+            m_trackFileIndex = m_trackFileArray.size() - 1;
 
-            saveButton->setEnabled(true);
+            m_saveButton->setEnabled(true);
 
-        } else if (control == saveButton) {
+        } else if (control == m_saveButton) {
 
             // Save
             std::string saveName;
@@ -658,7 +660,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
         }
         sync();
 
-    } else if (trackManipulator->mode() == UprightSplineManipulator::RECORD_KEY_MODE) {
+    } else if (m_trackManipulator->mode() == UprightSplineManipulator::RECORD_KEY_MODE) {
         // Check if the user has added a point yet
         sync();
     }
@@ -667,28 +669,28 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
 }
 
 void CameraControlWindow::saveSpline(const std::string& trackName) {
-    Any any = trackManipulator->spline();
+    Any any = m_trackManipulator->spline();
     any.save(trackName + ".us.any");
 
     updateTrackFiles();
 
     // Select the one we just saved
-    trackFileIndex = iMax(0, trackFileArray.findIndex(trackName));
+    m_trackFileIndex = iMax(0, m_trackFileArray.findIndex(trackName));
                     
-    saveButton->setEnabled(false);
+    m_saveButton->setEnabled(false);
 }
 
 void CameraControlWindow::loadSpline(const std::string& filename) {
-    saveButton->setEnabled(false);
-    trackManipulator->setMode(UprightSplineManipulator::INACTIVE_MODE);
+    m_saveButton->setEnabled(false);
+    m_trackManipulator->setMode(UprightSplineManipulator::INACTIVE_MODE);
 
     if (filename == noSpline) {
-        trackManipulator->clear();
+        m_trackManipulator->clear();
         return;
     }
 
     if (! FileSystem::exists(filename)) {
-        trackManipulator->clear();
+        m_trackManipulator->clear();
         return;
     }
 
@@ -697,55 +699,55 @@ void CameraControlWindow::loadSpline(const std::string& filename) {
 
     UprightSpline spline(any);
 
-    trackManipulator->setSpline(spline);
-    manualOperation = true;
+    m_trackManipulator->setSpline(spline);
+    m_manualOperation = true;
 }
 
 
 void CameraControlWindow::sync() {
 
     if (m_expanded) {
-        bool hasTracks = trackFileArray.size() > 0;
-        trackList->setEnabled(hasTracks);
+        bool hasTracks = m_trackFileArray.size() > 0;
+        m_trackList->setEnabled(hasTracks);
 
-        bool hasSpline = trackManipulator->splineSize() > 0;
-        visibleCheckBox->setEnabled(hasSpline);
-        cyclicCheckBox->setEnabled(hasSpline);
-        playButton->setEnabled(hasSpline);
+        bool hasSpline = m_trackManipulator->splineSize() > 0;
+        m_visibleCheckBox->setEnabled(hasSpline);
+        m_cyclicCheckBox->setEnabled(hasSpline);
+        m_playButton->setEnabled(hasSpline);
 
-        if (manualOperation) {
-            switch (trackManipulator->mode()) {
+        if (m_manualOperation) {
+            switch (m_trackManipulator->mode()) {
             case UprightSplineManipulator::RECORD_KEY_MODE:
             case UprightSplineManipulator::RECORD_INTERVAL_MODE:
-                helpLabel->setCaption(recordHelpCaption);
+                m_helpLabel->setCaption(m_recordHelpCaption);
                 break;
 
             case UprightSplineManipulator::PLAY_MODE:
-                helpLabel->setCaption(playHelpCaption);
+                m_helpLabel->setCaption(m_playHelpCaption);
                 break;
 
             case UprightSplineManipulator::INACTIVE_MODE:
-                helpLabel->setCaption(manualHelpCaption);
+                m_helpLabel->setCaption(m_manualHelpCaption);
             }
         } else {
-            helpLabel->setCaption(autoHelpCaption);
+            m_helpLabel->setCaption(m_autoHelpCaption);
         }
     }
 
-    if (manualOperation) {
+    if (m_manualOperation) {
         // User has control
-        bool playing = trackManipulator->mode() == UprightSplineManipulator::PLAY_MODE;
-        manualManipulator->setActive(! playing);
+        bool playing = m_trackManipulator->mode() == UprightSplineManipulator::PLAY_MODE;
+        m_manualManipulator->setActive(! playing);
         if (playing) {
-            *cameraManipulator = trackManipulator;
+            *m_cameraManipulator = m_trackManipulator;
         } else {
-            *cameraManipulator = manualManipulator;
+            *m_cameraManipulator = m_manualManipulator;
         }
     } else {
         // Program has control
-        manualManipulator->setActive(false);
-        *cameraManipulator = Manipulator::Ref(NULL);
-        trackManipulator->setMode(UprightSplineManipulator::INACTIVE_MODE);
+        m_manualManipulator->setActive(false);
+        *m_cameraManipulator = Manipulator::Ref(NULL);
+        m_trackManipulator->setMode(UprightSplineManipulator::INACTIVE_MODE);
     }
 }
 
