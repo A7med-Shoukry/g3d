@@ -41,7 +41,7 @@ public:
 protected:
 
     static const Vector2 sDefaultWindowSize;
-    static const Vector2 sExpendedWindowSize;
+    static const Vector2 sExpandedWindowSize;
 
     /** Returns a prettyprinted position*/
     std::string cameraLocation() const;

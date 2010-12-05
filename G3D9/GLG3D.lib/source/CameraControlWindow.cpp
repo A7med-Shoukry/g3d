@@ -21,7 +21,7 @@ namespace G3D {
 
 enum {FILM_PANE_SIZE = 102};
 const Vector2 CameraControlWindow::sDefaultWindowSize(286 + 16, 46);
-const Vector2 CameraControlWindow::sExpendedWindowSize(286 + 16, 155 + FILM_PANE_SIZE);
+const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 155 + FILM_PANE_SIZE);
 
 static const std::string noSpline = "< None >";
 static const std::string untitled = "< Unsaved >";
@@ -294,7 +294,7 @@ CameraControlWindow::CameraControlWindow(
     pack();
 
     // Set width to max expanded size so client size is correct when adding drawer items below
-    setRect(Rect2D::xywh(rect().x0y0(), sExpendedWindowSize));
+    setRect(Rect2D::xywh(rect().x0y0(), sExpandedWindowSize));
 
     // Make the pane width match the window width
     manualPane->setPosition(0, manualPane->rect().y0());
@@ -606,7 +606,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
 
             // Change the window size
             m_expanded = ! m_expanded;
-            morphTo(Rect2D::xywh(rect().x0y0(), m_expanded ? sExpendedWindowSize : sDefaultWindowSize));
+            morphTo(Rect2D::xywh(rect().x0y0(), m_expanded ? sExpandedWindowSize : sDefaultWindowSize));
             m_drawerButton->setCaption(m_expanded ? m_drawerCollapseCaption : m_drawerExpandCaption);
 
         } else if (control == m_trackList) {
