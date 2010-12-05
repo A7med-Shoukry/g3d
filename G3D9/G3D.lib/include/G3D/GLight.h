@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2003-11-12
-  @edited  2010-09-01
+  @edited  2010-12-01
 */
 
 #ifndef G3D_GLight_h
@@ -120,9 +120,10 @@ public:
    
     /** Accepted forms:
         - GLight::directional( vector3, color3, [bool])
-        - GLight::spot(vector3, vector3, #, color3, [#, [#, [#, [#, [bool]]])
-        - GLight::point(vector3, color3, [#, [#, [#, [#, [bool]]])
-        - GLight { [all fields] }
+        - GLight::spot(Point3, vector3, #, color3, [#, [#, [#, [#, [bool]]])
+        - GLight::spotTarget(Point3, Point3, #, color3, [#, [#, [#, [#, [bool]]])
+        - GLight::point(Point3, color3, [#, [#, [#, [#, [bool]]])
+        - GLight { [all fields + optional "spotTarget"] }
     */
     GLight(const Any& any);
 
@@ -137,7 +138,7 @@ public:
     /** @param toLight will be normalized */
     static GLight directional(const Vector3& toLight, const Radiance3& color, bool castsShadows = true);
 
-    static GLight point(const Vector3& pos, const Power3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f, bool castsShadows = true);
+    static GLight point(const Point3& pos, const Power3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f, bool castsShadows = true);
 
     /** @param pointDirection Will be normalized.  Points in the
         direction that light propagates.
@@ -147,15 +148,15 @@ public:
         cone.  I.e., a value of pi() / 4 produces a light with a pi() / 2-degree 
         cone of view.
     */
-    static GLight spot(const Vector3& pos, const Vector3& pointDirection, float halfAngleRadians, 
+    static GLight spot(const Point3& pos, const Vector3& pointDirection, float halfAngleRadians, 
                        const Color3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f,
                        bool castsShadows = true);
 
     /** Creates a spot light that looks at a specific point (by calling spot() ) */
-    static GLight spotTarget(const Vector3& pos, const Vector3& target, float halfAngleRadians, 
-                       const Color3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f,
+    static GLight spotTarget(const Point3& pos, const Point3& target, float halfAngleRadians, 
+                             const Color3& color, float constAtt = 0.01f, float linAtt = 0, float quadAtt = 1.0f,
                        bool castsShadows = true) {
-           return spot(pos, target - pos, halfAngleRadians, color, constAtt, linAtt, quadAtt, castsShadows);
+        return spot(pos, target - pos, halfAngleRadians, color, constAtt, linAtt, quadAtt, castsShadows);
     }
 
     /** Returns the sphere within which this light has some noticable effect.  May be infinite.

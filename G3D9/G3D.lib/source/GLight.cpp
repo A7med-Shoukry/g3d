@@ -23,7 +23,7 @@ GLight::GLight(const Any& any) {
         Vector3 spotTarget;
         bool hasSpotTarget = false;
         for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-            const std::string& key = toLower(it->key);
+            const std::string& key = it->key;
             if (key == "position") {
                 position = it->value;
             } else if (key == "rightDirection") {
@@ -69,7 +69,15 @@ GLight::GLight(const Any& any) {
 
     } else if (any.name() == "GLight::spot") {
 
-        *this = spot(Vector3(any[0]), Vector3(any[1]), any[2], Color3(any[3]),
+        *this = spot(Point3(any[0]), Vector3(any[1]), any[2], Color3(any[3]),
+                     (any.size() > 4) ? any[4] : Any(0.01f),
+                     (any.size() > 5) ? any[5] : Any(0.0f), 
+                     (any.size() > 6) ? any[6] : Any(1.0f), 
+                     (any.size() > 7) ? any[7] : Any(true));
+
+    } else if (any.name() == "GLight::spotTarget") {
+
+        *this = spotTarget(Point3(any[0]), Vector3(any[1]), any[2], Color3(any[3]),
                      (any.size() > 4) ? any[4] : Any(0.01f),
                      (any.size() > 5) ? any[5] : Any(0.0f), 
                      (any.size() > 6) ? any[6] : Any(1.0f), 
