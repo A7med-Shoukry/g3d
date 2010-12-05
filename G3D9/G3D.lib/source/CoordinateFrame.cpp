@@ -57,16 +57,10 @@ CoordinateFrame::CoordinateFrame(const Any& any) {
             rotation    = any[0];
             translation = any[1];
         } else {
-            for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-                const std::string& n = toLower(it->key);
-                if (n == "translation") {
-                    translation = Vector3(it->value);
-                } else if (n == "rotation") {
-                    rotation = Matrix3(it->value);
-                } else {
-                    any.verify(false, "Illegal table key: " + it->key);
-                }
-            }
+            AnyTableReader r(any);
+            r.getIfPresent("translation", translation);
+            r.getIfPresent("rotation", rotation);
+            r.verifyDone();
         }
     } else if (beginsWith(n, "PHYSICSFRAME") || beginsWith(n, "PFRAME")) {
         *this = PhysicsFrame(any);
