@@ -65,6 +65,14 @@ public:
 };
 
 int main(int argc, char** argv) {
+    //Any any(Any::TABLE);
+    //    Color3 c(any.get("color", G3D::Color3::white()));
+
+    Vector3 v3;
+    Vector4 v4(v3);
+
+    v4 = v3;
+    exit(0);
 
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);

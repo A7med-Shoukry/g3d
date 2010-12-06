@@ -23,7 +23,9 @@ void SurfaceSample::sampleBSDF(const SuperBSDF::Ref& bsdf) {
     glossyExponent     = SuperBSDF::unpackSpecularExponent(packG.a);
     
     transmit = bsdf->transmissive().sample(texCoord);
-    
+
+    etaTransmit = bsdf->etaTransmit();
+    etaReflect = bsdf->etaReflect();
     extinctionReflect = bsdf->extinctionReflect();
     extinctionTransmit = bsdf->extinctionTransmit();
 }

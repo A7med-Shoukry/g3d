@@ -357,8 +357,9 @@ def libTarget():
         x = VC10('VC10/G3D.sln', ['jpeg.lib', 'png.lib', 'zlib.lib', 'zip.lib', 'G3D.lib', 'GLG3D.lib']);
              
     else:
-        if (osx and not os.path.exists('/usr/X11/include/png.h')) or (ice.utils.shell("locate libpng.a") == ''):
-            if x == 0: x = runicompile('png.lib')
+        # OS X ships with an old version of libpng
+        #if (osx and not os.path.exists('/usr/X11/include/png.h')) or (ice.utils.shell("locate libpng.a") == ''):
+        #    if x == 0: x = runicompile('png.lib')
 
         if osx or (ice.utils.shell("locate libjpeg.a") == ''):
             if x == 0: x = runicompile('jpeg.lib')

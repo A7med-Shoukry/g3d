@@ -221,6 +221,27 @@ void SuperSurface::renderNonShadowed(
 }
 
 
+/** Swaps the definition of "Front" and "back" if the original culling face was backwards. */
+static void setCullFace(RenderDevice* rd, RenderDevice::CullFace newCull, RenderDevice::CullFace original) {
+    if (original == RenderDevice::CULL_BACK) {
+        switch (newCull) {
+        case RenderDevice::CULL_FRONT:
+            rd->setCullFace(RenderDevice::CULL_BACK);
+            break;
+
+        case RenderDevice::CULL_BACK:
+            rd->setCullFace(RenderDevice::CULL_FRONT);
+            break;
+            
+        default:
+            rd->setCullFace(newCull);
+        }
+    } else {
+        rd->setCullFace(newCull);
+    }
+}
+
+
 void SuperSurface::renderShadowMappedLightPass
 (const Array<Surface::Ref>&     posedArray, 
  RenderDevice*                  rd, 
@@ -232,19 +253,18 @@ void SuperSurface::renderShadowMappedLightPass
         return;
     }
 
-    RenderDevice::CullFace oldCullFace = RenderDevice::CULL_NONE;
+    const RenderDevice::CullFace oldCullFace = rd->cullFace();
     RenderDevice::BlendFunc oldSrcBlendFunc = RenderDevice::BLEND_ONE, oldDstBlendFunc = RenderDevice::BLEND_ONE;
     RenderDevice::BlendEq oldBlendEq = RenderDevice::BLENDEQ_MIN;
     if (preserveState) {
         rd->pushState();
     } else {
-        oldCullFace = rd->cullFace();
         rd->getBlendFunc(oldSrcBlendFunc, oldDstBlendFunc, oldBlendEq);
     }
     {
         rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
 
-        rd->setCullFace(RenderDevice::CULL_BACK);
+        setCullFace(rd, RenderDevice::CULL_BACK, oldCullFace);
 
         for (int i = 0; i < posedArray.size(); ++i) {
             const SuperSurface::Ref&    posed    = posedArray[i].downcast<SuperSurface>();
@@ -263,30 +283,30 @@ void SuperSurface::renderShadowMappedLightPass
             case FIXED_FUNCTION:
                 if (posed->m_gpuGeom->twoSided) {
                     rd->enableTwoSidedLighting();
-                    rd->setCullFace(RenderDevice::CULL_NONE);
+                    setCullFace(rd, RenderDevice::CULL_NONE, oldCullFace);
                 }
 
                 posed->renderFFShadowMappedLightPass(rd, light, shadowMap);
 
                 if (posed->m_gpuGeom->twoSided) {
                     rd->disableTwoSidedLighting();
-                    rd->setCullFace(RenderDevice::CULL_BACK);
+                    setCullFace(rd, RenderDevice::CULL_BACK, oldCullFace);
                 }
                 break;
 
             case PS20:
                 // Even if back face culling is reversed, for two-sided objects 
                 // we always draw the front first.
-                rd->setCullFace(RenderDevice::CULL_BACK);
+                setCullFace(rd, RenderDevice::CULL_BACK, oldCullFace);
 
                 posed->renderPS20ShadowMappedLightPass(rd, light, shadowMap);
 
                 if (posed->m_gpuGeom->twoSided) {
                     // The GLSL built-in gl_FrontFacing does not work on most cards, so we have to draw 
                     // two-sided objects twice since there is no way to distinguish them in the shader.
-                    rd->setCullFace(RenderDevice::CULL_FRONT);
+                    setCullFace(rd, RenderDevice::CULL_FRONT, oldCullFace);
                     posed->renderPS20ShadowMappedLightPass(rd, light, shadowMap);
-                    rd->setCullFace(RenderDevice::CULL_BACK);
+                    setCullFace(rd, RenderDevice::CULL_BACK, oldCullFace);
                 }
                 break;
 

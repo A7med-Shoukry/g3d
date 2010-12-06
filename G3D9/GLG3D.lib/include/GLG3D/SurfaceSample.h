@@ -88,7 +88,7 @@ public:
     /** Sampled from BSDF */
     Color3     glossyReflect;
 
-    /** Sampled from BSDF */
+    /** Sampled from BSDF.  This is the packed value on the range [0, 1] */
     float      glossyExponent;
 
     /** Sampled from BSDF */
@@ -100,10 +100,16 @@ public:
     /** Sampled from BSDF */
     Color3     extinctionTransmit;
 
+    /** Sampled from BSDF */
+    float      etaTransmit;
+
+    /** Sampled from BSDF */
+    float      etaReflect;
+
     /** Sampled from the emission map. */
     Radiance3  emit;
 
-    SurfaceSample() : coverage(0.0f), glossyExponent(0.0f) {}
+    SurfaceSample() : coverage(0.0f), glossyExponent(0.0f), etaTransmit(1.0f), etaReflect(1.0f) {}
 
     SurfaceSample(const Tri::Intersector& intersector);
     

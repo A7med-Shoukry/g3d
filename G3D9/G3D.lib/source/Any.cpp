@@ -658,7 +658,7 @@ void Any::_set(const std::string& k, const Any& v) {
 }
 
 
-const Any& Any::_get(const std::string& x, const Any& defaultVal) const {
+Any Any::_get(const std::string& x, const Any& defaultVal) const {
     beforeRead();
     defaultVal.beforeRead();
     try {

@@ -334,7 +334,7 @@ private:
     void _append(const Any& v0, const Any& v1);
     void _append(const Any& v0, const Any& v1, const Any& v2);
     void _append(const Any& v0, const Any& v1, const Any& v2, const Any& v3);
-    const Any& _get(const std::string& key, const Any& defaultVal) const;
+    Any  _get(const std::string& key, const Any& defaultVal) const;
     void _set(const std::string& key, const Any& val);
 
 public:
@@ -601,7 +601,7 @@ public:
     /** For a table, returns the element for key \a x and \a
         defaultVal if it does not exist. */
     template<class T>
-    const Any& get(const std::string& key, const T& defaultVal) const {
+    Any get(const std::string& key, const T& defaultVal) const {
         return _get(key, Any(defaultVal));
     }
 
