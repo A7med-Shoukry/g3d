@@ -223,7 +223,7 @@ void SuperSurface::renderNonShadowed(
 
 /** Swaps the definition of "Front" and "back" if the original culling face was backwards. */
 static void setCullFace(RenderDevice* rd, RenderDevice::CullFace newCull, RenderDevice::CullFace original) {
-    if (original == RenderDevice::CULL_BACK) {
+    if (original == RenderDevice::CULL_FRONT) {
         switch (newCull) {
         case RenderDevice::CULL_FRONT:
             rd->setCullFace(RenderDevice::CULL_BACK);
@@ -360,18 +360,19 @@ void SuperSurface::render(RenderDevice* rd) const {
 }
 
 
-bool SuperSurface::renderSuperShaderPass(
-    RenderDevice* rd, 
-    const SuperShader::PassRef& pass) const {
+bool SuperSurface::renderSuperShaderPass
+(RenderDevice*                rd, 
+ const SuperShader::PassRef&  pass,
+ RenderDevice::CullFace       originalCullFace) const {
 
     if (m_gpuGeom->twoSided) {
         // We're going to render the front and back faces separately.
-        rd->setCullFace(RenderDevice::CULL_FRONT);
+        setCullFace(rd, RenderDevice::CULL_FRONT, originalCullFace);
         rd->setShader(pass->getConfiguredShader(*m_gpuGeom->material, rd->cullFace()));
         sendGeometry2(rd);
     }
 
-    rd->setCullFace(RenderDevice::CULL_BACK);
+    setCullFace(rd, RenderDevice::CULL_BACK, originalCullFace);
     rd->setShader(pass->getConfiguredShader(*m_gpuGeom->material, rd->cullFace()));
     sendGeometry2(rd);
 

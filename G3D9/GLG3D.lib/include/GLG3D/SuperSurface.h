@@ -353,9 +353,15 @@ public:
 
     virtual const Array<Vector4>& objectSpacePackedTangents() const;
    
-    virtual bool renderSuperShaderPass(
-        RenderDevice* rd, 
-        const SuperShader::PassRef& pass) const;
+    /** \param originalCullFace When rendering with an opposite
+     winding direction (e.g., for mirrors), renderSuperShaderPass
+     needs to be able to invert its culling direction.  Pass CULL_BACK
+     to use "regular" culling and CULL_FRONT to invert the culling sense.
+    */
+    virtual bool renderSuperShaderPass
+    (RenderDevice* rd, 
+     const SuperShader::PassRef& pass,
+     RenderDevice::CullFace originalCullFace = RenderDevice::CULL_BACK) const;
 
     static void sortFrontToBack(Array<SuperSurface::Ref>& a, const Vector3& v);
 };
