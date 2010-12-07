@@ -193,11 +193,17 @@ protected:
         const GLight&                   light,
         const ShadowMap::Ref&           shadowMap) const;
 
-    void renderPS20ShadowMappedLightPass(
-        RenderDevice*                   rd,
-        const GLight&                   light,
-        const ShadowMap::Ref&           shadowMap) const;
-
+    /** \param originalCullFace When rendering with an opposite
+     winding direction (e.g., for mirrors), renderSuperShaderPass
+     needs to be able to invert its culling direction.  Pass CULL_BACK
+     to use "regular" culling and CULL_FRONT to invert the culling sense.
+    */
+    void renderPS20ShadowMappedLightPass
+    (RenderDevice*                   rd,
+     const GLight&                   light,
+     const ShadowMap::Ref&           shadowMap,
+     RenderDevice::CullFace          originalCullFace) const;
+    
 public:
 
     /** For use by classes that pose objects on the CPU and need a

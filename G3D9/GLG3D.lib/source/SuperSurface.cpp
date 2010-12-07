@@ -299,13 +299,13 @@ void SuperSurface::renderShadowMappedLightPass
                 // we always draw the front first.
                 setCullFace(rd, RenderDevice::CULL_BACK, oldCullFace);
 
-                posed->renderPS20ShadowMappedLightPass(rd, light, shadowMap);
+                posed->renderPS20ShadowMappedLightPass(rd, light, shadowMap, oldCullFace);
 
                 if (posed->m_gpuGeom->twoSided) {
                     // The GLSL built-in gl_FrontFacing does not work on most cards, so we have to draw 
                     // two-sided objects twice since there is no way to distinguish them in the shader.
                     setCullFace(rd, RenderDevice::CULL_FRONT, oldCullFace);
-                    posed->renderPS20ShadowMappedLightPass(rd, light, shadowMap);
+                    posed->renderPS20ShadowMappedLightPass(rd, light, shadowMap, oldCullFace);
                     setCullFace(rd, RenderDevice::CULL_BACK, oldCullFace);
                 }
                 break;
@@ -695,13 +695,14 @@ void SuperSurface::renderShadowMappedLightPass(
 }
 
 
-void SuperSurface::renderPS20ShadowMappedLightPass(
-    RenderDevice*       rd,
-    const GLight&       light, 
-    const ShadowMap::Ref& shadowMap) const {
+void SuperSurface::renderPS20ShadowMappedLightPass
+(RenderDevice*          rd,
+ const GLight&          light, 
+ const ShadowMap::Ref&  shadowMap,
+ RenderDevice::CullFace originalCullFace) const {
 
     SuperShader::ShadowedPass::instance()->setLight(light, shadowMap);
-    renderSuperShaderPass(rd, SuperShader::ShadowedPass::instance());
+    renderSuperShaderPass(rd, SuperShader::ShadowedPass::instance(), originalCullFace);
 }
 
 
