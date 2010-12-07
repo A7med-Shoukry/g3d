@@ -50,6 +50,7 @@
      <li> G3D::Surface::sendGeometry
      <li> G3D::Material::Specification(Color3)
      <li> G3D::Matrix3::diagonal, G3D::Matrix4::diagonal
+     <li> G3D::Vector2::directionOrZero
      <li> G3D::Crypto::md5 is now static
      <li> G3D::Rect2D::serialize and deserialize
      <li> Upgraded to libpng 1.4.4
@@ -100,6 +101,7 @@
      <li> Removed ToneMap (use Film)
 	 <li> G3D::GCamera::viewportWidth &rarr; G3D::GCamera::nearPlaneViewportWidth
 	 <li> G3D::GCamera::viewportHeight &rarr; G3D::GCamera::nearPlaneViewportHeight
+     <li> Removed G3D::Vector2::unitize, G3D::Vector2::unitize and G3D::Vector3::generateOrthonormalBasis
    </ul>
 
    Changes in 8.01:

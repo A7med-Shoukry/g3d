@@ -600,7 +600,7 @@ void MeshAlg::computeTangentSpaceBasis(
         float r = te1.x * te2.y - te1.y * te2.x;
         if (r == 0.0) {
             // degenerate case
-            Vector3::generateOrthonormalBasis(t, b, n, true);
+            n.getTangents(t, b);
         } else {
             r = 1.0f / r;        
             t = (te2.y * ve1 - te1.y * ve2) * r;

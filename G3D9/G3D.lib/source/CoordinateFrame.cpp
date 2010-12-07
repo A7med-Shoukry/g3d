@@ -370,11 +370,11 @@ void CoordinateFrame::lookAt(
     }
 
     up -= look * look.dot(up);
-    up.unitize();
+    up = up.direction();
 
     Vector3 z = -look;
     Vector3 x = -z.cross(up);
-    x.unitize();
+    x = x.direction();
 
     Vector3 y = z.cross(x);
 

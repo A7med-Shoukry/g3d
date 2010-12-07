@@ -421,8 +421,7 @@ inline Color3 Color3::cross (const Color3& rkVector) const {
 inline Color3 Color3::unitCross (const Color3& rkVector) const {
     Color3 kCross(g*rkVector.b - b*rkVector.g, b*rkVector.r - r*rkVector.b,
                   r*rkVector.g - g*rkVector.r);
-    kCross.unitize();
-    return kCross;
+    return kCross.direction();
 }
 
 

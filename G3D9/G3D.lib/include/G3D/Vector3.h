@@ -165,7 +165,8 @@ public:
     float magnitude() const;
     
     /**
-     The result is a nan vector if the length is almost zero.
+     Returns a unit-length version of this vector.
+     Returns nan if length is almost zero.
      */
     Vector3 direction() const;
 
@@ -275,8 +276,6 @@ public:
 	
     float __fastcall dot(const Vector3& rkVector) const;
     
-    float unitize(float tolerance = 1e-06);
-
     /** Cross product.  Note that two cross products in a row
         can be computed more cheaply: v1 x (v2 x v3) = (v1 dot v3) v2  - (v1 dot v2) v3.
       */
@@ -376,14 +375,6 @@ public:
       \image html vector3-hemirandom.png
      */
     static Vector3 hemiRandom(const Vector3& normal, Random& r = Random::common());
-
-    /** Input W must be initialize to a nonzero vector, output is {U,V,W}
-        an orthonormal basis.  A hint is provided about whether or not W
-        is already unit length. 
-        @deprecated Use getTangents
-    */
-    static void generateOrthonormalBasis (Vector3& rkU, Vector3& rkV,
-                                          Vector3& rkW, bool bUnitLengthW = true);
 
     inline float sum() const {
         return x + y + z;
@@ -757,8 +748,7 @@ inline Vector3 Vector3::cross (const Vector3& rkVector) const {
 inline Vector3 Vector3::unitCross (const Vector3& rkVector) const {
     Vector3 kCross(y*rkVector.z - z*rkVector.y, z*rkVector.x - x*rkVector.z,
                    x*rkVector.y - y*rkVector.x);
-    kCross.unitize();
-    return kCross;
+    return kCross.direction();
 }
 
 //----------------------------------------------------------------------------

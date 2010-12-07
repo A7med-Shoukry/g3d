@@ -134,8 +134,7 @@ void testCollisionDetection() {
 
     {
         Vector3 pos(2.0f, 0.0f, 2.5f); 
-        Vector3 dir(-1.0f, 0.0f, -1.0f); 
-        dir.unitize(); 
+        Vector3 dir = Vector3(-1.0f, 0.0f, -1.0f).direction(); 
 
         Box myBox(G3D::Vector3(-1,-1,-1), G3D::Vector3(1,1,1)); 
         Vector3 loc, normal;

@@ -1346,11 +1346,16 @@ static int findRayCapsuleIntersectionAux(
 	Vector3 capsuleDirection = rkCapsule.point(1) - rkCapsule.point(0);
 
     // set up quadratic Q(t) = a*t^2 + 2*b*t + c
-    Vector3 kU, kV, kW = capsuleDirection;
-    float fWLength = kW.unitize();
-    Vector3::generateOrthonormalBasis(kU, kV, kW);
+    Vector3 kW = capsuleDirection;
+    float fWLength = kW.length();
+    kW = kW.direction();
+
+    Vector3 kU, kV;
+    kW.getTangents(kU, kV);
     Vector3 kD(kU.dot(rkDirection), kV.dot(rkDirection), kW.dot(rkDirection));
-    float fDLength = kD.unitize();
+
+    float fDLength = kD.length();
+    kD = kD.direction();
 
     float fEpsilon = 1e-6f;
 
@@ -1858,7 +1863,7 @@ Vector3 CollisionDetection::bounceDirection(
     if (fuzzyEq(normal.squaredMagnitude(), 0)) {
         normal = collisionNormal;
     } else {
-        normal.unitize();
+        normal = normal.direction();
     }
 
     Vector3 direction       = velocity.direction();

@@ -151,9 +151,7 @@ Vector2 Vector2::random(G3D::Random& r) {
 
     } while (result.squaredLength() >= 1.0f);
 
-    result.unitize();
-
-    return result;
+    return result.direction();
 }
 
 
@@ -167,20 +165,6 @@ Vector2& Vector2::operator/= (float k) {
     return *this;
 }
 
-//----------------------------------------------------------------------------
-float Vector2::unitize (float fTolerance) {
-	float fLength = length();
-
-    if (fLength > fTolerance) {
-		float fInvLength = 1.0f / fLength;
-        x *= fInvLength;
-        y *= fInvLength;
-    } else {
-        fLength = 0.0;
-    }
-
-    return fLength;
-}
 
 //----------------------------------------------------------------------------
 

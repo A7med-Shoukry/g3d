@@ -224,8 +224,7 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
 
     {
         // Translation direction
-        Vector2 direction(m_userInput->getX(), m_userInput->getY());
-        direction.unitize();
+        Vector2 direction = Vector2(m_userInput->getX(), m_userInput->getY()).directionOrZero();
 
         // Translate forward
         m_translation += (lookVector() * direction.y + frame().rightVector() * direction.x) *

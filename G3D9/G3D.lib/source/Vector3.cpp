@@ -189,22 +189,6 @@ Vector3 Vector3::random(Random& r) {
 }
 
 
-float Vector3::unitize(float fTolerance) {
-    float fMagnitude = magnitude();
-
-    if (fMagnitude > fTolerance) {
-        float fInvMagnitude = 1.0f / fMagnitude;
-        x *= fInvMagnitude;
-        y *= fInvMagnitude;
-        z *= fInvMagnitude;
-    } else {
-        fMagnitude = 0.0f;
-    }
-
-    return fMagnitude;
-}
-
-
 Vector3 Vector3::reflectAbout(const Vector3& normal) const {
     Vector3 out;
 
@@ -321,40 +305,20 @@ void Vector3::orthonormalize (Vector3 akVector[3]) {
     // product of vectors A and B.
 
     // compute u0
-    akVector[0].unitize();
+    akVector[0] = akVector[0].direction();
 
     // compute u1
 	float fDot0 = akVector[0].dot(akVector[1]);
     akVector[1] -= akVector[0] * fDot0;
-    akVector[1].unitize();
+    akVector[1] = akVector[1].direction();
 
     // compute u2
 	float fDot1 = akVector[1].dot(akVector[2]);
     fDot0 = akVector[0].dot(akVector[2]);
     akVector[2] -= akVector[0] * fDot0 + akVector[1] * fDot1;
-    akVector[2].unitize();
+    akVector[2] = akVector[2].direction();
 }
 
-//----------------------------------------------------------------------------
-void Vector3::generateOrthonormalBasis (Vector3& rkU, Vector3& rkV,
-                                        Vector3& rkW, bool bUnitLengthW) {
-    if ( !bUnitLengthW )
-        rkW.unitize();
-
-    if ( G3D::abs(rkW.x) >= G3D::abs(rkW.y)
-            && G3D::abs(rkW.x) >= G3D::abs(rkW.z) ) {
-        rkU.x = -rkW.y;
-        rkU.y = + rkW.x;
-        rkU.z = 0.0;
-    } else {
-        rkU.x = 0.0;
-        rkU.y = + rkW.z;
-        rkU.z = -rkW.y;
-    }
-
-    rkU.unitize();
-    rkV = rkW.cross(rkU);
-}
 
 //----------------------------------------------------------------------------
 

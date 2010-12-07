@@ -198,11 +198,9 @@ void Tri::Intersector::getResult
                u * tri->m_texCoord[1] +
                v * tri->m_texCoord[2];
 
-    normal   = w * tri->m_normal[0] + 
-               u * tri->m_normal[1] +
-               v * tri->m_normal[2];
-
-    normal.unitize();
+    normal   = ( w * tri->m_normal[0] + 
+                 u * tri->m_normal[1] +
+                 v * tri->m_normal[2] ).direction();
 }
 
 
@@ -221,10 +219,9 @@ void Tri::Intersector::getResult
         tangent1 = Vector3::zero();
         tangent2 = Vector3::zero();
     } else {
-        tangent1  = w * tri->m_packedTangent[0].xyz() + 
-                    u * tri->m_packedTangent[1].xyz() +
-                    v * tri->m_packedTangent[2].xyz();
-        tangent1.unitize();
+        tangent1  = ( w * tri->m_packedTangent[0].xyz() + 
+                      u * tri->m_packedTangent[1].xyz() +
+                      v * tri->m_packedTangent[2].xyz() ).direction();
 
         tangent2 = normal.cross(tangent1);
     }

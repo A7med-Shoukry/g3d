@@ -1292,7 +1292,7 @@ void Matrix3::toAxisAngle (Vector3& rkAxis, float& rfRadians) const {
             rkAxis.x = elt[2][1] - elt[1][2];
             rkAxis.y = elt[0][2] - elt[2][0];
             rkAxis.z = elt[1][0] - elt[0][1];
-            rkAxis.unitize();
+            rkAxis = rkAxis.direction();
         } else {
             // angle is PI
             float fHalfInverse;
