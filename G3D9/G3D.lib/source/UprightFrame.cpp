@@ -109,9 +109,11 @@ void UprightFrame::deserialize(class BinaryInput& b) {
     yaw = b.readFloat32();
 }
 
-UprightSpline::UprightSpline() : Spline<UprightFrame>() {
+///////////////////////////////////////////////////////////////////////////////////////////
 
+UprightSpline::UprightSpline() : Spline<UprightFrame>() {
 }
+
 
 UprightSpline::UprightSpline(const Any& any) {
     any.verifyName("UprightSpline");
@@ -119,7 +121,7 @@ UprightSpline::UprightSpline(const Any& any) {
 
     cyclic = any["cyclic"];
 
-    const Any& controlsAny = any["controls"];
+    const Any& controlsAny = any["control"];
     controlsAny.verifyType(Any::ARRAY);
 
     control.resize(controlsAny.length());
@@ -127,7 +129,7 @@ UprightSpline::UprightSpline(const Any& any) {
         control[controlIndex] = controlsAny[controlIndex];
     }
 
-    const Any& timesAny = any["times"];
+    const Any& timesAny = any["time"];
     timesAny.verifyType(Any::ARRAY);
 
     time.resize(timesAny.length());
@@ -135,6 +137,7 @@ UprightSpline::UprightSpline(const Any& any) {
         time[timeIndex] = timesAny[timeIndex];
     }
 }
+
 
 UprightSpline::operator Any() const {
     Any any(Any::TABLE, "UprightSpline");
@@ -145,21 +148,23 @@ UprightSpline::operator Any() const {
     for (int controlIndex = 0; controlIndex < control.length(); ++controlIndex) {
         controlsAny.append(control[controlIndex]);
     }
-    any["controls"] = controlsAny;
+    any["control"] = controlsAny;
 
     Any timesAny(Any::ARRAY);
     for (int timeIndex = 0; timeIndex < time.length(); ++timeIndex) {
         timesAny.append(Any(time[timeIndex]));
     }
-    any["times"] = timesAny;
+    any["time"] = timesAny;
 
     return any;
 }
+
 
 UprightSpline& UprightSpline::operator=(const Any& any) {
     *this = UprightSpline(any);
     return *this;
 }
+
 
 void UprightSpline::serialize(class BinaryOutput& b) const {
     b.writeBool8(cyclic);

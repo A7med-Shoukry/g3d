@@ -4,11 +4,11 @@
   @maintainer Corey Taylor
 
   @created 2008-08-01
-  @edited  2008-08-01
+  @edited  2010-12-06
  */
 
-#ifndef G3D_VIDEOINPUT_H
-#define G3D_VIDEOINPUT_H
+#ifndef G3D_VideoInput_h
+#define G3D_VideoInput_h
 
 #include <string>
 #include "G3D/ReferenceCount.h"
@@ -35,6 +35,35 @@ class GImage;
 
     Reading frames in non-sequential order can decrease performance due 
     to seek times.
+
+    Example using VideoInput and VideoOutput on the CPU to concatenate 
+    two videos:
+
+\code
+#include <G3D/G3DAll.h>
+
+int main(int argc, const char* argv[]) {
+    if (argc < 3) {
+        printf("Syntax: videoconcat <infile1> <infile2> <outfile>\n");
+        return -1;
+    }
+    VideoInput::Ref  in1 = VideoInput::fromFile(argv[1]);
+    VideoInput::Ref  in2 = VideoInput::fromFile(argv[2]);
+
+    if (! in1->sameResolution(in2)) {
+        printf("Error...videos must have the same dimensions.\n");
+        return -2;
+    }
+
+    VideoOutput::Ref out = VideoOutput::create(argv[3], VideoOutput::Settings::MPEG4(in1->width(), in1->height()));
+
+    out->append(in1);
+    out->append(in2);
+
+    out->commit();
+    return 0;
+}
+\endcode
  */
 class VideoInput : public ReferenceCountedObject {
 public:
@@ -140,6 +169,11 @@ public:
     int         index() const;
 
     bool        finished() const    { return m_finished; }
+
+    /** Convenient shorthand for checking that the width and height of two videos is the same. */
+    bool sameResolution(const Ref& other) const {
+        return width() == other->width() && height() == other->height();
+    }
 
 private:
 

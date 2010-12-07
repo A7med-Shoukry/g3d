@@ -30,6 +30,7 @@
      <li> G3D::ArrowShape
      <li> G3D::Any::operator=(Array<T>)
      <li> G3D::debugDraw now allows specification of the display time
+     <li> G3D::VideoOutput::append(VideoInput)
      <li> G3D::GApp::removeDebugShape, G3D::GApp::removeAllDebugShapes
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default
      <li> G3D::GApp::show

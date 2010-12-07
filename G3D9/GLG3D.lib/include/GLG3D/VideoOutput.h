@@ -329,6 +329,9 @@ public:
      */
     void append(class RenderDevice* rd, bool useBackBuffer = false); 
 
+    /** Appends all frames from \a in, which must have the same dimensions as this.*/
+    void append(ReferenceCountedPointer<class VideoInput> in);
+
     /** Reserved for future use */
     void append(const Image1uint8::Ref& frame); 
 

@@ -6,6 +6,7 @@
 #include "G3D/platform.h"
 #include <cstdio>
 #include "GLG3D/VideoOutput.h"
+#include "GLG3D/VideoInput.h"
 #include "GLG3D/RenderDevice.h"
 
 extern "C" {
@@ -300,6 +301,17 @@ void VideoOutput::append(const Texture::Ref& frame, bool invertY) {
 
     frame->getImage(m_temp, TextureFormat::RGB8());
     encodeFrame(const_cast<uint8*>(m_temp.byte()), ImageFormat::RGB8(), invertY);
+}
+
+
+void VideoOutput::append(VideoInput::Ref in) {
+    debugAssert(in->width() == m_settings.width);
+    debugAssert(in->height() == m_settings.height);
+    GImage temp;
+    for (int i = 0; i < in->numFrames(); ++i) {
+        in->readFromIndex(i, temp);
+        append(temp);
+    }
 }
 
 
