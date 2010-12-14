@@ -266,6 +266,7 @@ void System::init() {
                 r[strlen(r) - 1] = '\0';
             }
             fclose(f);
+            f = NULL;
 
             m_operatingSystem = r;
             ::free(r);
@@ -731,6 +732,7 @@ std::string System::currentProgramFilename() {
         int s = fread(filename, 1, sizeof(filename), fd);
         // filename will contain a newline.  Overwrite it:
         filename[s - 1] = '\0';
+        pclose(fd);
     }
 #   else
     {

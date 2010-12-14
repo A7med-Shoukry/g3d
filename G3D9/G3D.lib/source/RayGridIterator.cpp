@@ -20,7 +20,7 @@ RayGridIterator::RayGridIterator
     // See if the ray begins inside the box
     const AABox gridBounds(Vector3::zero(), Vector3(numCells) * cellSize);
 
-    bool startsOutside;
+    bool startsOutside = false;
     bool inside = false;
     Vector3 startLocation = ray.origin();
 
