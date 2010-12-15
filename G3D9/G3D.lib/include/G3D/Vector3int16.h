@@ -118,6 +118,7 @@ public:
 }
 G3D_END_PACKED_CLASS(2)
 
+typedef Vector3int16 Point3int16;
 }
 
 template <> struct HashTrait<G3D::Vector3int16> {

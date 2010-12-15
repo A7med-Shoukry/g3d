@@ -128,6 +128,7 @@ public:
 }
 G3D_END_PACKED_CLASS(4)
 
+typedef Vector3int32 Point3int32;
 
 Vector3int32 iFloor(const Vector3&);
 }

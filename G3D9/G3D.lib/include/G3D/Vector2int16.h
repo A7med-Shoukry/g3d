@@ -10,8 +10,8 @@
   All rights reserved.
  */
 
-#ifndef VECTOR2INT16_H
-#define VECTOR2INT16_H
+#ifndef Vector2int16_h
+#define Vector2int16_h
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
@@ -117,6 +117,8 @@ public:
     void deserialize(class BinaryInput& bi);
 }
 G3D_END_PACKED_CLASS(2)
+
+typedef Vector2int16 Point2int16;    
 
 }
 

@@ -9,20 +9,20 @@ SurfaceSample::SurfaceSample(const Tri::Intersector& intersector) {
     
 
 void SurfaceSample::sampleEmit(const Component3& emitMap) {
-    emit = emitMap.sample(texCoord);
+    emit = emitMap.sample(interpolated.texCoord);
 }
 
 
 void SurfaceSample::sampleBSDF(const SuperBSDF::Ref& bsdf) {
-    const Color4& packD = bsdf->lambertian().sample(texCoord);
+    const Color4& packD = bsdf->lambertian().sample(interpolated.texCoord);
     coverage           = packD.a;
     lambertianReflect  = packD.rgb();
     
-    const Color4& packG = bsdf->specular().sample(texCoord);
+    const Color4& packG = bsdf->specular().sample(interpolated.texCoord);
     glossyReflect      = packG.rgb();
     glossyExponent     = SuperBSDF::unpackSpecularExponent(packG.a);
     
-    transmit = bsdf->transmissive().sample(texCoord);
+    transmit = bsdf->transmissive().sample(interpolated.texCoord);
 
     etaTransmit = bsdf->etaTransmit();
     etaReflect = bsdf->etaReflect();
@@ -88,9 +88,9 @@ void SurfaceSample::sampleBump(const BumpMap::Ref& bump, const Vector3& eye) {
     // Shading location is same as geometric location
     shading.location = shadingLocation = geometricLocation;
 #else
-    shading.normal = shadingNormal = interpolatedNormal;
-    shading.location = shadingLocation = geometricLocation;
-    shading.texCoord = texCoord;
+    shading.normal = interpolated.normal;
+    shading.location = geometric.location;
+    shading.texCoord = interpolated.texCoord;
 #endif
 }
 
@@ -105,12 +105,12 @@ void SurfaceSample::sample
  const Vector3&  interpolatedTangent2,
  const Vector3&  eye) {
     this->material        = material;
-    interpolated.texCoord = this->texCoord = texCoord;
-    geometric.location    = this->geometricLocation = geometricLocation;
-    geometric.normal      = this->geometricNormal = geometricNormal;
-    interpolated.normal   = this->interpolatedNormal = interpolatedNormal;
-    interpolated.tangent  = this->interpolatedTangent = interpolatedTangent;
-    interpolated.tangent2 = this->interpolatedTangent2 = interpolatedTangent2;
+    interpolated.texCoord = texCoord;
+    geometric.location    = geometricLocation;
+    geometric.normal      = geometricNormal;
+    interpolated.normal   = interpolatedNormal;
+    interpolated.tangent  = interpolatedTangent;
+    interpolated.tangent2 = interpolatedTangent2;
     
     sampleEmit(material->emissive());
     sampleBSDF(material->bsdf());

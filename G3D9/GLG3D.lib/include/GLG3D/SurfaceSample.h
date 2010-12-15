@@ -1,3 +1,14 @@
+/**
+  \file SurfaceSample.h
+  
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+  \created 2009-01-01
+  \edited  2010-12-20
+
+  Copyright 2000-2011, Morgan McGuire.
+  All rights reserved.
+ */
 #ifndef GLG3D_SurfaceSample_h
 #define GLG3D_SurfaceSample_h
 
@@ -9,12 +20,21 @@ namespace G3D {
 /** A sample of a surface at a point, describing the material
     and geometric properties needed for shading.
     
-    The current implementation does not actually sample the
-    bump/normal map */
+    This class abstracts the inputs to shading and scattering computations
+    to simplify the implementation of a software renderer such as a 
+    rasterizer, ray tracer, photon mapper, MLT, or path tracer.
+
+    You can either create a SurfaceSample from a Tri::Intersector or
+    create an uninitialized one and fill out the fields yourself if not
+    using SuperBSDF directly.
+
+    \sa SuperBSDF, SuperSurface
+    */
 class SurfaceSample {
 public:
+    /** May be NULL */
     Material::Ref material;
-
+#if 0
     /** Location after bump map is applied. \deprecated */
     Point3     shadingLocation;
     
@@ -39,6 +59,7 @@ public:
 
     /** Texture coordinate \deprecated*/
     Vector2    texCoord;
+#endif
 
     /** Post-bump map shading information. This is probably what you
         want to use if you're writing the shading code for a ray
