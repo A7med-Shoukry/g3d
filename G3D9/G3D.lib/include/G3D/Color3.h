@@ -44,6 +44,9 @@ public:
      */
     Color3() : r(0), g(0), b(0) {}
 
+    bool nonZero() const {
+        return (r != 0) && (g != 0) && (b != 0);
+    }
 
     /** \param any Must be in one of the following forms: 
         - Color3(#, #, #)

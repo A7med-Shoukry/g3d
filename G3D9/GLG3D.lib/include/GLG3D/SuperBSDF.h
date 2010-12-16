@@ -171,19 +171,6 @@ protected:
         m_eta_r(1.0f), 
         m_extinction_r(Color3::zero()){}
 
-    /**
-       \param g Glossy exponent
-       \param n Surface normal (world space)
-
-       \return the intensity scale (nominally 1, but may be adjusted to take into account non-ideal importance sampling)
-    */
-    float glossyScatter
-    (const Vector3& w_i,
-     float          g,
-     const Vector3& n,
-     G3D::Random&   r,
-     Vector3&       w_o) const;
-
 public: 
     static float ignoreFloat;
 
@@ -253,44 +240,7 @@ public:
     const Component4& specular() const {
         return m_specular;
     }
-
-    /** \brief Evaluate the finite portion of the BSDF: \f$(f_L + f_g)\f$. 
-
-        Used for direct illumination.  Ignores impulses (delta
-        functions) because for a random pair of directions, there is
-        zero probability of sampling the delta function at a non-zero
-        location, and an the infinite result would not be useful anyway.
-
-        \param n \f$\hat{n}\f$ unit surface normal. 
-
-        \param w_i \f$\hat{\omega}_i = \hat{\omega}_\mathrm{light}\f$ unit vector pointing to where
-        the photon came from (often a the light source)
-
-        \param w_o \f$\hat{\omega}_{o} = \hat{\omega}_{\mathrm{eye}}\f$ unit vector pointing forward
-        towards where the photon is going (typically, the viewer)
-
-        \param texCoord Texture coordinate on the surface at which to
-        sample from.
-
-        \param maxShininess Clamp specular exponent to this value.  For direct illumination, 1024 is recommended
-        so that point lights create a visible highlight on mirrored surfaces.  For indirect illumination
-        (e.g., in photon mapping), G3D::finf() is recommended so that sparse illumination samples
-        do not result in bright haloed speckles on mirrors.
-
-        \return Resulting radiance, with the alpha channel copied from
-        the coverage mask.  Note that this does NOT factor the
-        geometric \f$\hat{\omega}_\mathrm{i} \cdot \hat{n}\f$ term
-        into the result.  Unmultipled alpha.
-
-        \beta
-    */
-    virtual Color4 evaluate
-    (const Vector3&   n,
-     const Point2&    texCoord,
-     const Vector3&   w_i,
-     const Vector3&   w_o,
-     const float      maxShininess = 1024.0f) const;
-
+    
     /** \brief Move or copy data to CPU or GPU.  
         Called from G3DMaterial::setStorage(). */
     virtual void setStorage(ImageStorage s) const;
@@ -310,116 +260,7 @@ public:
         return ! m_lambertian.isBlack() ||
                ! m_specular.isBlack();
     }
-
-    /**
-       \brief Sample outgoing photon direction \f$\vec{\omega}_o\f$ from the 
-       distribution \f$f(\vec{\omega}_i, \vec{\omega}_o)\cos \theta_i\f$.
-
-       Used in forward photon tracing.  The extra cosine term handles the 
-       projected area effect.
-       
-       The probability of different kinds of scattering are given by:
-
-       \f{eqnarray}
-       \nonumber\rho_L &=& \int_\cap f_L (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cap \frac{1}{\pi} \rho_{L0} F_{L}(\vec{\omega}_i) (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i =
-\rho_{L0} F_{L}(\vec{\omega}_i) \\
-       \nonumber\rho_g &=& \int_\cap f_g (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cap \frac{s + 8}{8 \pi} F_r(\vec{\omega}_i)\max(0, \vec{n} \cdot \vec{\omega}_h)^{s} (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = F_r(\vec{\omega}_i)\\
-       \nonumber\rho_m &=& \int_\cap f_m (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cap F_r(\vec{\omega}_i) \delta(\vec{\omega}_o, \vec{\omega}_m) / (\vec{\omega}_i \cdot \vec{n}) (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = F_r(\vec{\omega}_i)\\
-       \nonumber\rho_L &=& \int_\cup f_t (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cup F_t(\vec{\omega}_i) T_0 \delta(\vec{\omega}_o, \vec{\omega}_t) / (\vec{\omega}_i \cdot \vec{n}) (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = F_t(\vec{\omega}_i) T_0
-       \f}
-
-       Note that at most one of the glossy and mirror probabilities may be non-zero.
-
-       Not threadsafe unless \link setStorage() setStorage\endlink(<code>COPY_TO_CPU</code>) has been called first.
-
-       \param lowFreq If true, sample from the average texture color instead of at each texel.  This can
-       improve performance by increasing memory coherence.
-
-       \param eta_other Index of refraction on the side of the normal (i.e., material that is being exited to enter the 
-         object whose surface this BSDF describes)
-
-       @beta
-
-       @return false if the photon was absorbed, true if it scatters. */
-    virtual bool scatter
-    (const Vector3& n,
-     const Vector2& texCoord,
-     const Vector3& w_i,
-     const Color3&  power_i,
-     Vector3&       w_o,
-     Color3&        power_o,
-     float&         eta_o,
-     Color3&        extinction_o,
-     Random&        r = Random::common(),
-     bool           lowFreq = false,
-     float&         density = ignoreFloat) const;
-
-
-    /** Infinite peak in the BSDF.  For use with getImpulses.*/
-    class Impulse {
-    public:
-        /** Unit direction vector.  This points away from the
-            intersection. */
-        Vector3   w;
-
-        /** \f$ f(\hat{\omega}_\mathrm{i}, \hat{\omega}_\mathrm{o})
-            \mbox{max}(\hat{\omega}_\mathrm{i} \cdot \hat{n}, 0) /
-            \delta(\hat{\omega}_\mathrm{o}, \hat{\omega}_\mathrm{o})
-            \f$ for the impulse; the integral of the BSDF over a small
-            area.  This is the factor to multiply scattered
-            illumination by.
-
-            For backwards recursive ray tracing, this is the
-            coefficient on the recursive path's radiance. Do not
-            multiply this by a cosine factor; that has already been
-            factored in if necessary.*/
-        Color3    coefficient;
-
-        /** For use under refraction */
-        float     eta;
-
-        /** For use under refraction */
-        Color3    extinction;
-    };
-
-    /** 
-        \brief Get the infinite peaks of the BSDF (usually refraction
-        and mirror reflection).
-
-        Used for Whitted backwards ray tracing with a small number of
-        samples, where w_o = w_eye (pointing away from the
-        intersection).  Distribution (stochastic) ray tracers should
-        use the scatter() method instead.
-
-        \param n Unit surface normal at the intersection point
-
-        \param impulseArray Impulses are appended to this (it is <i>not</u>
-        cleared first)
-
-        \param lowFreq If true, sample from the average texture color
-        instead of at each texel.  This can improve performance by
-        increasing memory coherence.
-     */
-    virtual void getImpulses
-    (const Vector3&  n,
-     const Vector2&  texCoord,
-     const Vector3&  w_o,
-     SmallArray<Impulse, 3>& impulseArray,
-     bool            lowFreq = false) const;
-
-    /** Convenience overload */
-    virtual void getImpulses
-    (const Vector3&  n,
-     const Vector2&  texCoord,
-     const Vector3&  w_o,
-     Array<Impulse>& impulseArray,
-     bool            lowFreq = false) const;
-
-
+    
     /** True if this absorbs all light */
     inline bool isZero() const {
         return m_lambertian.isBlack() && 

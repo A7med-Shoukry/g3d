@@ -2,27 +2,38 @@
 
 namespace G3D {
 
+#define INV_PI  (0.318309886f)
+#define INV_8PI (0.0397887358f)
 
 SurfaceSample::SurfaceSample(const Tri::Intersector& intersector) {
-    sample(intersector);
+    debugAssert(intersector.tri != NULL);
+
+    Point3 P;
+    Vector3 n;
+    Vector2 texCoord;
+    Vector3 t1, t2;
+    intersector.getResult(P, n, interpolated.texCoord, t1, t2);
+    set(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2, intersector.eye);
 }
     
 
-void SurfaceSample::sampleEmit(const Component3& emitMap) {
-    emit = emitMap.sample(interpolated.texCoord);
+void SurfaceSample::setEmit(const Component3& emitMap) {
+    emit = emitMap.sample(shading.texCoord);
 }
 
 
-void SurfaceSample::sampleBSDF(const SuperBSDF::Ref& bsdf) {
-    const Color4& packD = bsdf->lambertian().sample(interpolated.texCoord);
+SurfaceSample::BSDFSample::BSDFSample(const SuperBSDF::Ref& bsdf, const Point2& texCoord, bool loqFreq) {
+    const Color4& packD = bsdf->lambertian().sample(texCoord);
     coverage           = packD.a;
     lambertianReflect  = packD.rgb();
-    
-    const Color4& packG = bsdf->specular().sample(interpolated.texCoord);
+
+    // TODO: implement low frequency option
+
+    const Color4& packG = bsdf->specular().sample(texCoord);
     glossyReflect      = packG.rgb();
     glossyExponent     = SuperBSDF::unpackSpecularExponent(packG.a);
     
-    transmit = bsdf->transmissive().sample(interpolated.texCoord);
+    transmit = bsdf->transmissive().sample(texCoord);
 
     etaTransmit = bsdf->etaTransmit();
     etaReflect = bsdf->etaReflect();
@@ -31,7 +42,7 @@ void SurfaceSample::sampleBSDF(const SuperBSDF::Ref& bsdf) {
 }
     
 
-void SurfaceSample::sampleBump(const BumpMap::Ref& bump, const Vector3& eye) {
+void SurfaceSample::setBump(const BumpMap::Ref& bump, const Vector3& eye) {
 #if 0
     // Disabled until Morgan adjusts SuperBSDF to handle surface normals pointing away from eye
     if (bump.notNull()) {
@@ -88,14 +99,14 @@ void SurfaceSample::sampleBump(const BumpMap::Ref& bump, const Vector3& eye) {
     // Shading location is same as geometric location
     shading.location = shadingLocation = geometricLocation;
 #else
-    shading.normal = interpolated.normal;
+    shading.normal   = interpolated.normal;
     shading.location = geometric.location;
     shading.texCoord = interpolated.texCoord;
 #endif
 }
 
 
-void SurfaceSample::sample
+void SurfaceSample::set
 (const Material::Ref& material,
  const Point3&   geometricLocation,
  const Point3&   geometricNormal,
@@ -108,25 +119,379 @@ void SurfaceSample::sample
     interpolated.texCoord = texCoord;
     geometric.location    = geometricLocation;
     geometric.normal      = geometricNormal;
-    interpolated.normal   = interpolatedNormal;
-    interpolated.tangent  = interpolatedTangent;
-    interpolated.tangent2 = interpolatedTangent2;
     
-    sampleEmit(material->emissive());
-    sampleBSDF(material->bsdf());
-    sampleBump(material->bump(), eye);
+    setBump(material->bump(), eye);
+    setEmit(material->emissive());
+    bsdf = BSDFSample(material->bsdf(), shading.texCoord);
 }
     
+   
+Color3 SurfaceSample::evaluateBSDF
+(const Vector3& w_i,
+ const Vector3& w_o,
+ const float    maxShininess) const {
     
-void SurfaceSample::sample(const Tri::Intersector& intersector) {
-    debugAssert(intersector.tri != NULL);
+    const Vector3& n = shading.normal;
+    const float cos_i = abs(w_i.dot(n));
+    
+    Color3 S(Color3::zero());
+    Color3 F(Color3::zero());
+    if ((bsdf.glossyExponent != 0) && (bsdf.glossyReflect.nonZero())) {
+        // Glossy
 
-    Point3 P;
-    Vector3 n;
-    Vector2 texCoord;
-    Vector3 t1, t2;
-    intersector.getResult(P, n, interpolated.texCoord, t1, t2);
-    sample(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2, intersector.eye);
+        // Half-vector
+        const Vector3& w_h = (w_i + w_o).direction();
+        const float cos_h = max(0.0f, w_h.dot(n));
+        
+        const float s = min(bsdf.glossyExponent, bsdf.glossyExponent);
+        
+        F = computeF(bsdf.glossyReflect, cos_i);
+        if (s == finf()) {
+            S = Color3::zero();
+        } else {
+            S = F * (powf(cos_h, s) * (s + 8.0f) * INV_8PI);
+        }
+    }
+
+    const Color3& D = (bsdf.lambertianReflect * INV_PI) * (Color3(1.0f) - F);
+
+    Color3 f;
+    if ((w_i.dot(n) >= 0) == (w_o.dot(n) >= 0)) {
+        // Rays are on the same side of the normal
+        f += S + D;
+    }
+
+    return f;
+}
+
+
+void SurfaceSample::getBSDFImpulses
+(const Vector3&  w_i,
+ Array<Impulse>& impulseArray) const {
+    SmallArray<Impulse, 3> temp;
+    getBSDFImpulses(w_i, temp);
+    impulseArray.resize(temp.size());
+    for (int i = 0; i < impulseArray.size(); ++i) {
+        impulseArray[i] = temp[i];
+    }
+}
+
+
+void SurfaceSample::getBSDFImpulses
+(const Vector3&  w_i,
+ SmallArray<Impulse, 3>& impulseArray) const {
+
+    const Vector3& n = shading.normal;
+    debugAssert(w_i.isUnit());
+    debugAssert(n.isUnit());
+
+    Color3 F(0,0,0);
+    bool Finit = false;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    if (bsdf.glossyReflect.nonZero()) {
+        // Cosine of the angle of incidence, for computing F
+        const float cos_i = max(0.001f, w_i.dot(n));
+        F = computeF(bsdf.glossyReflect, cos_i);
+        Finit = true;
+            
+        if (bsdf.glossyExponent == inf()) {
+            // Mirror                
+            Impulse& imp     = impulseArray.next();
+            imp.w            = w_i.reflectAbout(n);
+            imp.coefficient  = F;
+            imp.eta          = bsdf.etaReflect;
+            imp.extinction   = bsdf.extinctionReflect;
+            debugAssert(imp.w.isUnit());
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    if (bsdf.transmit.nonZero()) {
+        // Fresnel transmissive coefficient
+        Color3 F_t;
+
+        if (Finit) {
+            F_t = (Color3::one() - F);
+        } else {
+            // Cosine of the angle of incidence, for computing F
+            const float cos_i = max(0.001f, w_i.dot(n));
+            // F = lerp(0, 1, pow5(1.0f - cos_i)) = pow5(1.0f - cos_i)
+            // F_t = 1 - F
+            F_t.r = F_t.g = F_t.b = 1.0f - pow5(1.0f - cos_i);
+        }
+
+        // Sample transmissive
+        const Color3& T0 = bsdf.transmit;
+        const Color3& p_transmit  = F_t * T0;
+       
+        debugAssert(w_i.dot(n) > 0);
+        Impulse& imp     = impulseArray.next();
+
+        imp.coefficient  = p_transmit;
+        imp.w            = (-w_i).refractionDirection(n, bsdf.etaTransmit, bsdf.etaReflect);
+        imp.eta          = bsdf.etaTransmit;
+        imp.extinction   = bsdf.extinctionTransmit;
+        if (imp.w.isZero()) {
+            // Total internal refraction
+            impulseArray.popDiscard();
+        } else {
+            debugAssert(imp.w.isUnit());
+        }
+    }
+}
+
+
+float SurfaceSample::glossyScatter
+(const Vector3& w_i,
+ float          g,
+ G3D::Random&   r,
+ Vector3&       w_o) const {
+
+    const Vector3& n = shading.normal;
+
+    // Notation translator from the jgt paper:
+    //
+    //      n_u = n_v = g
+    //      k1 = w_i
+    //      k2 = w_o
+    //      h  = w_h
+    float intensity;
+/*
+    // TODO: remove (hack to be diffuse)
+    w_o = Vector3::cosHemiRandom(n, r);
+    return 1.0f;
+
+    // Rejection sampling:
+    do {
+        w_o = Vector3::cosHemiRandom(n, r);
+        Vector3 w_h = (w_i + w_o).direction();
+        intensity = powf(w_h.dot(n), g);
+    } while (r.uniform() > intensity);
+    return 1.0f;
+*/
+    do {
+        // Eq. 6 and 10 (eq. 9 cancels for isotropic)
+        // Generate a cosine distributed half-vector:
+        const Vector3& w_h = Vector3::cosPowHemiRandom(n, g, r);
+
+        // Now transform to the output vector: (eq. 7)
+        w_o = w_i.reflectAbout(w_h);
+
+        // The output vector has three problems (with solutions used in
+        // this implementation):
+        //
+        //   1. Distribution is off because measures in w_h and w_o space
+        //        don't line up (Rejection sample by discrepancy)
+        //
+        //   2. May be below the surface of the plane (Loop until a sample
+        //        is found above; the scatter function's choice of glossy
+        //        scattering means that this method is conditioned on a
+        //        bounce occuring).  Since when w_h = n, w_o = mirror
+        //        reflection vector, there always exists some probability
+        //        distribution above the plane.
+        //
+        //   3. Does not account for the n.dot(w_o) probability (Rejection
+        //        sample by discrepancy)
+
+        // Adjust for the measure difference between w_o and w_h spaces (eq. 8)
+        intensity = 4.0f * w_i.dot(w_h);
+        if (intensity <= 0.0f) {
+            // Because shading normals are different from geometric normals, we might
+            // end up with negative intensity.
+            return 0.0f;
+        }
+
+    } while (r.uniform() > w_o.dot(n));
+
+    return intensity;
+}
+
+#if 0
+    // Let phi be the angle about the normal
+    const float phi = r.uniform(0, G3D::twoPi());
+    const float cos_phi = cos(phi);
+    const float sin_phi = sin(phi);
+
+    // Rejection sampling of angle relative to normal
+    while (true) {
+        const float cos_theta = pow(r.uniform(0.0f, 1.0f), 1.0f / (g + 1.0f));
+        const float sin_theta = sqrtf(1.0f - square(cos_theta));
+        
+        // In the reference frame of the surface
+        const Vector3 h_tangentSpace(cos_phi * sin_theta, sin_phi * sin_theta, cos_theta);
+        
+        const Vector3& h = h_tangentSpace;//TODO;
+        
+        // Set the attenuation to ps from the paper, computed based on
+        // the monte carlo section of the paper
+        const Vector3& k1 = w_i;
+        const float hdotk = h.dot(k1);
+        
+        if (hdotk > 0.0f) {
+            // On the front side of the specular lobe; we can continue        
+            Vector3 k2 = (-w_i + 2.0f * hdotk * h).direction();
+        
+            // Ensure that we're above the plane of the surface
+            if (k2.dot(n) > 0.0f) {
+
+                // Compute the density of the perturbed ray
+                const float hdotn = n.dot(h);
+                const float factor1 = (g + 1.0f) / G3D::twoPi();
+                const float factor2 = pow(hdotn, g);
+                
+                const float inv_actual_density = (4.0 * hdotk) / (factor1 * factor2);
+                
+                // Compute the density of what we actually want (from the BRDF)
+                float brdf;
+                //AshikminShirleyAnisotropicPhongBRDF::ComputeDiffuseSpecularFactors( diffuseFactor, brdf, k2, ri, NU, NV, Rs );
+                
+                // Now we need to correct for the fact that we sampled against
+                // the wrong distribution by a factor of N dot L.
+                float specFactor = inv_actual_density * brdf;
+                
+                //specular.ray.Set( ri.ptIntersection, k2 );
+            }
+        }
+    }
+
+    return true;
+}
+#endif
+
+bool SurfaceSample::scatter
+(const Vector3& w_i,
+ const Color3&  power_i,
+ Vector3&       w_o,
+ Color3&        power_o,
+ float&         eta_o,
+ Color3&        extinction_o,
+ Random&        random,
+ float&         density) const {
+
+    const Vector3& n = shading.normal;
+
+    if (false) {  
+        // TODO: Remove
+        // Testing code to generate Russian roulette scattering
+        w_o = Vector3::cosHemiRandom(n, random);
+        power_o = evaluateBSDF(w_i, w_o).rgb() * power_i;
+        if (power_o.average() > random.uniform()) {
+            power_o /= power_o.average();
+            debugAssert(power_o.r >= 0.0f);
+            return true;
+        } else {
+            return false;
+        }
+     }
+
+    // Choose a random number on [0, 1], then reduce it by each kind of
+    // scattering's probability until it becomes negative (i.e., scatters).
+    float r = random.uniform();
+
+    ////////////////////////////////////////////////////////////////////////////////
+    if (bsdf.lambertianReflect.nonZero()) {
+        
+        alwaysAssertM(bsdf.coverage > 0.0f, "Scattered from an alpha masked location");
+        float p_LambertianAvg = bsdf.lambertianReflect.average();
+        
+        r -= p_LambertianAvg;
+        
+        if (r < 0.0f) {
+            // Lambertian scatter
+            
+            // (Cannot hit division by zero because the if prevents this
+            // case when p_LambertianAvg = 0)
+            power_o         = power_i * bsdf.lambertianReflect / p_LambertianAvg;
+            w_o             = Vector3::cosHemiRandom(n, random);
+            density         = p_LambertianAvg * 0.01f;
+            eta_o           = bsdf.etaReflect;
+            extinction_o    = bsdf.extinctionReflect;
+            debugAssert(power_o.r >= 0.0f);
+
+            return true;
+        }
+    }
+
+    Color3 F(0, 0, 0);
+    bool Finit = false;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    if (bsdf.glossyReflect.nonZero()) {
+            
+        // Cosine of the angle of incidence, for computing F
+        const float cos_i = max(0.001f, w_i.dot(n));
+        F = computeF(bsdf.glossyReflect, cos_i);
+        Finit = true;
+
+        const Color3& p_specular = F;
+        const float p_specularAvg = p_specular.average();
+
+        r -= p_specularAvg;
+        if (r < 0.0f) {
+            if (bsdf.glossyExponent != finf()) {
+                // Glossy
+                float intensity = (glossyScatter(w_i, bsdf.glossyExponent, random, w_o) / p_specularAvg);
+                if (intensity <= 0.0f) {
+                    // Absorb
+                    return false;
+                }
+                power_o = p_specular * power_i * intensity;
+                density = p_specularAvg * 0.1f;
+
+            } else {
+                // Mirror
+
+                w_o = w_i.reflectAbout(n);
+                power_o = p_specular * power_i * (1.0f / p_specularAvg);
+                density = p_specularAvg;
+            }
+            debugAssert(power_o.r >= 0.0f);
+
+            eta_o = bsdf.etaReflect;
+            extinction_o = bsdf.extinctionReflect;
+            return true;
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    if (bsdf.transmit.nonZero()) {
+        // Fresnel transmissive coefficient
+        Color3 F_t;
+
+        if (Finit) {
+            F_t = (Color3::one() - F);
+        } else {
+            // Cosine of the angle of incidence, for computing F
+            const float cos_i = max(0.001f, w_i.dot(n));
+            // F = lerp(0, 1, pow5(1.0f - cos_i)) = pow5(1.0f - cos_i)
+            // F_t = 1 - F
+            F_t.r = F_t.g = F_t.b = 1.0f - pow5(1.0f - cos_i);
+        }
+
+        const Color3& T0          = bsdf.transmit;
+        
+        const Color3& p_transmit  = F_t * T0;
+        const float p_transmitAvg = p_transmit.average();
+        
+        r -= p_transmitAvg;
+        if (r < 0.0f) {
+            power_o      = p_transmit * power_i * (1.0f / p_transmitAvg);
+            w_o          = (-w_i).refractionDirection(n, bsdf.etaTransmit, bsdf.etaReflect);
+            density      = p_transmitAvg;
+            eta_o        = bsdf.etaTransmit;
+            extinction_o = bsdf.extinctionTransmit;
+
+            debugAssert(w_o.isZero() || ((w_o.dot(n) < 0) && w_o.isUnit()));
+            debugAssert(power_o.r >= 0.0f);
+
+            // w_o is zero on total internal refraction
+            return ! w_o.isZero();
+        }
+    }
+
+    // Absorbed
+    return false;
 }
 
 } // G3D
