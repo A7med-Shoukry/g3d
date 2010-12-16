@@ -121,7 +121,7 @@ F_r(\vec{\omega}_i) ~ \delta(\vec{\omega}_o, \vec{\omega}_m) ~/ ~(\vec{\omega}_i
 
   \beta SuperBSDF is scheduled to be merged into G3D::Material in December 2010.
 
-  \sa G3D::Material, G3D::Component, G3D::BumpMap, G3D::GMaterial, G3D::Texture
+  \sa G3D::Material, G3D::SurfaceSample, G3D::Component, G3D::BumpMap, G3D::GMaterial, G3D::Texture
 */
 class SuperBSDF : public ReferenceCountedObject {
 public:
@@ -272,6 +272,11 @@ public:
         \param texCoord Texture coordinate on the surface at which to
         sample from.
 
+        \param maxShininess Clamp specular exponent to this value.  For direct illumination, 1024 is recommended
+        so that point lights create a visible highlight on mirrored surfaces.  For indirect illumination
+        (e.g., in photon mapping), G3D::finf() is recommended so that sparse illumination samples
+        do not result in bright haloed speckles on mirrors.
+
         \return Resulting radiance, with the alpha channel copied from
         the coverage mask.  Note that this does NOT factor the
         geometric \f$\hat{\omega}_\mathrm{i} \cdot \hat{n}\f$ term
@@ -281,9 +286,10 @@ public:
     */
     virtual Color4 evaluate
     (const Vector3&   n,
-     const Vector2&   texCoord,
+     const Point2&    texCoord,
      const Vector3&   w_i,
-     const Vector3&   w_o) const;
+     const Vector3&   w_o,
+     const float      maxShininess = 1024.0f) const;
 
     /** \brief Move or copy data to CPU or GPU.  
         Called from G3DMaterial::setStorage(). */
@@ -446,10 +452,14 @@ public:
         sources produce some visible highlights.
         */
     static inline float unpackSpecularExponent(float e) {
-        return square((clamp(e, 0.0f, 1.0f) * 255.0f - 1.0f) * (1.0f /253.0f)) * 1024.0f + 1.0f;
+        if (e >= 1.0) {
+            return finf();
+        } else {
+            return square((clamp(e, 0.0f, 1.0f) * 255.0f - 1.0f) * (1.0f /253.0f)) * 1024.0f + 1.0f;
+        }
     }
 
-    /** Packing is \f$\frac{ \sqrt{ \frac{x - 1}{1024} } * 253 + 1}{255} \f$ */
+    /** Packing is \f$\frac{ \sqrt{ \frac{x - 1}{1024} } * 253 + 1}{255} \f$; infinity is packed to 1.0f */
     static inline float packSpecularExponent(float x) {
         debugAssert(x > 0);
         // Never let the exponent go above the max representable non-mirror value in a uint8

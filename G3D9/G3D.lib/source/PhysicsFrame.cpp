@@ -34,8 +34,8 @@ PhysicsFrame::PhysicsFrame(const Any& a) {
     const std::string& n = toLower(a.name());
     *this = PhysicsFrame();
 
-    if (beginsWith(n, "vector3")) {
-        *this = PhysicsFrame(Vector3(a));
+    if (beginsWith(n, "vector3") || beginsWith(n, "point3")) {
+        *this = PhysicsFrame(Point3(a));
     } else if (beginsWith(n, "matrix3")) {        
         *this = PhysicsFrame(Matrix3(a));
     } else if (beginsWith(n, "cframe") || beginsWith(n, "coordinateframe")) {        

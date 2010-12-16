@@ -39,7 +39,8 @@ Color4 SuperBSDF::evaluate
 (const Vector3& n,
  const Vector2& texCoord,
  const Vector3& w_i,
- const Vector3& w_o) const {
+ const Vector3& w_o,
+ const float    maxShininess) const {
     
     // Lambertian coefficients
     const Color4& diffuse = m_lambertian.sample(texCoord);
@@ -63,10 +64,14 @@ Color4 SuperBSDF::evaluate
         const Vector3& w_h = (w_i + w_o).direction();
         const float cos_h = max(0.0f, w_h.dot(n));
         
-        const float s = unpackSpecularExponent(sigma);
+        const float s = min(maxShininess, unpackSpecularExponent(sigma));
         
         F = computeF(specular.rgb(), cos_i);
-        S = F * (powf(cos_h, s) * (s + 8.0f) * INV_8PI);
+        if (s == finf()) {
+            S = Color3::zero();
+        } else {
+            S = F * (powf(cos_h, s) * (s + 8.0f) * INV_8PI);
+        }
     }
 
     const Color3& D = (diffuse.rgb() * INV_PI) * (Color3(1.0f) - F);
