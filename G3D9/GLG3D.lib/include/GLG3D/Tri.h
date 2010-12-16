@@ -203,7 +203,7 @@ public:
         You can also create your own intersection loops for use with
         an intersector.
 
-        \sa Ray, SurfaceSample, CollisionDetection
+        \sa Ray, SurfaceElement, CollisionDetection
     */
     class Intersector {
     public:
@@ -253,7 +253,7 @@ public:
 
           An explicit intersection loop for an array of triangles:          
           <pre>
-            SurfaceSample s;
+            SurfaceElement s;
             Intersector hit;
             float distance = finf();
             for (int t = 0; t < array.size(); ++t) {
@@ -261,7 +261,7 @@ public:
             }
 
             if (hit.tri != NULL) {
-                SurfaceSample s(hit);
+                SurfaceElement s(hit);
                 ... shading ...
             }
           </pre>
@@ -275,7 +275,7 @@ public:
           tree.intersectRay(ray, hit, distance);  
 
           if (hit.tri != NULL) {
-              SurfaceSample s(hit);
+              SurfaceElement s(hit);
               ... shading ...
           }
           </pre>

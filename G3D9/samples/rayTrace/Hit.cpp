@@ -7,7 +7,7 @@ Hit::Hit() : position(Vector3::inf()), material(NULL) {
 void Hit::setFromIntersector(const Tri::Intersector& intersector) {
     if (intersector.tri != NULL) {
         
-        SurfaceSample sample(intersector);
+        SurfaceElement sample(intersector);
 
         position = sample.shading.location;
         normal = sample.shading.normal;

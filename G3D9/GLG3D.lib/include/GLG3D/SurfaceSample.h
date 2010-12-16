@@ -1,5 +1,5 @@
 /**
-  \file SurfaceSample.h
+  \file SurfaceElement.h
   
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
@@ -9,8 +9,8 @@
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
-#ifndef GLG3D_SurfaceSample_h
-#define GLG3D_SurfaceSample_h
+#ifndef GLG3D_SurfaceElement_h
+#define GLG3D_SurfaceElement_h
 
 #include "GLG3D/Tri.h"
 #include "GLG3D/Material.h"
@@ -24,13 +24,12 @@ namespace G3D {
     to simplify the implementation of a software renderer such as a 
     rasterizer, ray tracer, photon mapper, MLT, or path tracer.
 
-    You can either create a SurfaceSample from a Tri::Intersector or
-    create an uninitialized one and fill out the fields yourself if not
-    using SuperBSDF directly.
+    You can either create a SurfaceElement from a Tri::Intersector or
+    create an uninitialized one and fill out the fields yourself.
 
-    \sa SuperBSDF, SuperSurface
+    \sa SuperBSDF, SuperSurface, Material
     */
-class SurfaceSample {
+class SurfaceElement {
 public:
 
     /** Infinite peak in the BSDF.  For use with getBSDFImpulses.*/
@@ -59,10 +58,7 @@ public:
         /** For use under refraction */
         Color3    extinction;
     };
-
-    /** May be NULL */
-    Material::Ref material;
-
+    
     /** Post-bump map shading information. This is probably what you
         want to use if you're writing the shading code for a ray
         tracer or software renderer.*/
@@ -103,9 +99,12 @@ public:
     /** Screen space derivative of the texture coordinate.  \beta Currently unused. */
     Vector2    dTexCoorddY;
 
-    /** Sampled from BSDF */
-    class BSDFSample {
+    /** Sampled from the BSDF and emissive properties of a Material */
+    class MaterialElement {
     public:
+        /** May be NULL */
+        Material::Ref  source;
+
         Color3     lambertianReflect;
 
         Color3     glossyReflect;
@@ -126,19 +125,19 @@ public:
         /** Partial coverage on the range [0, 1]; "alpha" value */
         float      coverage;
     
-        BSDFSample() : glossyExponent(0.0f), etaTransmit(1.0f), etaReflect(1.0f), coverage(0.0f) {}
+        /** Sampled from the emission map. */
+        Radiance3  emit;
+
+        MaterialElement() : glossyExponent(0.0f), etaTransmit(1.0f), etaReflect(1.0f), coverage(0.0f) {}
 
         /**
             \param lowFreq If true, sample from the average texture color
             instead of at each texel.  This can improve performance by
             increasing memory coherence. */
-        BSDFSample(const SuperBSDF::Ref& bsdf, const Point2& texCoord, bool lowFreq = false);
+        MaterialElement(const SuperBSDF::Ref& bsdf, const Component3& emitMap, const Point2& texCoord, bool lowFreq = false);
 
-    } bsdf;
-
-    /** Sampled from the emission map. */
-    Radiance3  emit;
-
+    } material;
+    
 private:
 
     /**
@@ -153,6 +152,20 @@ private:
      G3D::Random&   r,
      Vector3&       w_o) const;
 
+    /** Samples just the emission using the existing texCoord, leaving
+        other fields unchanged. Called from set(Tri::Intersector, ...).*/
+    void setEmit();
+    
+    /** Sets the SurfaceElement::shading fields, using the existing SurfaceElement::interpolated fields.
+
+        Called from Called from set(Tri::Intersector, ...).
+
+        \beta Current Implementation assumes a flat bump map, setting
+        the shadingNormal to the interpolatedNormal and the
+        shadingLocation to the geometricLocation.
+    */
+    void setBump(const BumpMap::Ref& bump, const Vector3& eye);
+
 public:
 
     /** Computes F_r, given the cosine of the angle of incidence and 
@@ -161,25 +174,11 @@ public:
         return SuperBSDF::computeF(F0, cos_i);
     }
 
-    SurfaceSample() {}
+    SurfaceElement() {}
 
-    SurfaceSample(const Tri::Intersector& intersector);
+    SurfaceElement(const Tri::Intersector& intersector);
     
-    /** Samples just the emission using the existing texCoord, leaving
-        other fields unchanged. Called from the SurfaceSample(Tri::Intersector) constructor.*/
-    void setEmit(const Component3& emitMap);
-    
-    /** Sets the SurfaceSample::shading fields, using the existing SurfaceSample::interpolated fields.
-
-        Called from the SurfaceSample(Tri::Intersector) constructor.
-
-        \beta Current Implementation assumes a flat bump map, setting
-        the shadingNormal to the interpolatedNormal and the
-        shadingLocation to the geometricLocation.
-    */
-    void setBump(const BumpMap::Ref& bump, const Vector3& eye);
-
-    /** Sets all fields. Called from the SurfaceSample(Tri::Intersector) constructor.*/
+    /** Sets all fields. Called from the SurfaceElement(Tri::Intersector) constructor.*/
     void set
     (const Material::Ref& material,
      const Point3&   geometricLocation,

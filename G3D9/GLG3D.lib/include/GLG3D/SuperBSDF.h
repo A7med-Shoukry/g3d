@@ -121,7 +121,7 @@ F_r(\vec{\omega}_i) ~ \delta(\vec{\omega}_o, \vec{\omega}_m) ~/ ~(\vec{\omega}_i
 
   \beta SuperBSDF is scheduled to be merged into G3D::Material in December 2010.
 
-  \sa G3D::Material, G3D::SurfaceSample, G3D::Component, G3D::BumpMap, G3D::GMaterial, G3D::Texture
+  \sa G3D::Material, G3D::SurfaceElement, G3D::Component, G3D::BumpMap, G3D::GMaterial, G3D::Texture
 */
 class SuperBSDF : public ReferenceCountedObject {
 public:

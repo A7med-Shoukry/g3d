@@ -1,3 +1,14 @@
+/**
+  \file SurfaceElement.h
+  
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+  \created 2009-01-01
+  \edited  2010-12-20
+
+  Copyright 2000-2011, Morgan McGuire.
+  All rights reserved.
+ */
 #include "GLG3D/SurfaceSample.h"
 
 namespace G3D {
@@ -5,7 +16,7 @@ namespace G3D {
 #define INV_PI  (0.318309886f)
 #define INV_8PI (0.0397887358f)
 
-SurfaceSample::SurfaceSample(const Tri::Intersector& intersector) {
+SurfaceElement::SurfaceElement(const Tri::Intersector& intersector) {
     debugAssert(intersector.tri != NULL);
 
     Point3 P;
@@ -16,13 +27,7 @@ SurfaceSample::SurfaceSample(const Tri::Intersector& intersector) {
     set(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2, intersector.eye);
 }
     
-
-void SurfaceSample::setEmit(const Component3& emitMap) {
-    emit = emitMap.sample(shading.texCoord);
-}
-
-
-SurfaceSample::BSDFSample::BSDFSample(const SuperBSDF::Ref& bsdf, const Point2& texCoord, bool loqFreq) {
+SurfaceElement::MaterialElement::MaterialElement(const SuperBSDF::Ref& bsdf, const Component3& emitMap, const Point2& texCoord, bool loqFreq) {
     const Color4& packD = bsdf->lambertian().sample(texCoord);
     coverage           = packD.a;
     lambertianReflect  = packD.rgb();
@@ -39,10 +44,12 @@ SurfaceSample::BSDFSample::BSDFSample(const SuperBSDF::Ref& bsdf, const Point2& 
     etaReflect = bsdf->etaReflect();
     extinctionReflect = bsdf->extinctionReflect();
     extinctionTransmit = bsdf->extinctionTransmit();
+
+    emit = emitMap.sample(texCoord);
 }
     
 
-void SurfaceSample::setBump(const BumpMap::Ref& bump, const Vector3& eye) {
+void SurfaceElement::setBump(const BumpMap::Ref& bump, const Vector3& eye) {
 #if 0
     // Disabled until Morgan adjusts SuperBSDF to handle surface normals pointing away from eye
     if (bump.notNull()) {
@@ -106,7 +113,7 @@ void SurfaceSample::setBump(const BumpMap::Ref& bump, const Vector3& eye) {
 }
 
 
-void SurfaceSample::set
+void SurfaceElement::set
 (const Material::Ref& material,
  const Point3&   geometricLocation,
  const Point3&   geometricNormal,
@@ -115,18 +122,18 @@ void SurfaceSample::set
  const Vector3&  interpolatedTangent,
  const Vector3&  interpolatedTangent2,
  const Vector3&  eye) {
-    this->material        = material;
+    this->material.source = material;
     interpolated.texCoord = texCoord;
+    interpolated.normal   = interpolatedNormal;
     geometric.location    = geometricLocation;
     geometric.normal      = geometricNormal;
     
     setBump(material->bump(), eye);
-    setEmit(material->emissive());
-    bsdf = BSDFSample(material->bsdf(), shading.texCoord);
+    this->material = MaterialElement(material->bsdf(), material->emissive(), shading.texCoord);
 }
     
    
-Color3 SurfaceSample::evaluateBSDF
+Color3 SurfaceElement::evaluateBSDF
 (const Vector3& w_i,
  const Vector3& w_o,
  const float    maxShininess) const {
@@ -136,16 +143,16 @@ Color3 SurfaceSample::evaluateBSDF
     
     Color3 S(Color3::zero());
     Color3 F(Color3::zero());
-    if ((bsdf.glossyExponent != 0) && (bsdf.glossyReflect.nonZero())) {
+    if ((material.glossyExponent != 0) && (material.glossyReflect.nonZero())) {
         // Glossy
 
         // Half-vector
         const Vector3& w_h = (w_i + w_o).direction();
         const float cos_h = max(0.0f, w_h.dot(n));
         
-        const float s = min(bsdf.glossyExponent, bsdf.glossyExponent);
+        const float s = min(material.glossyExponent, material.glossyExponent);
         
-        F = computeF(bsdf.glossyReflect, cos_i);
+        F = computeF(material.glossyReflect, cos_i);
         if (s == finf()) {
             S = Color3::zero();
         } else {
@@ -153,7 +160,7 @@ Color3 SurfaceSample::evaluateBSDF
         }
     }
 
-    const Color3& D = (bsdf.lambertianReflect * INV_PI) * (Color3(1.0f) - F);
+    const Color3& D = (material.lambertianReflect * INV_PI) * (Color3(1.0f) - F);
 
     Color3 f;
     if ((w_i.dot(n) >= 0) == (w_o.dot(n) >= 0)) {
@@ -165,7 +172,7 @@ Color3 SurfaceSample::evaluateBSDF
 }
 
 
-void SurfaceSample::getBSDFImpulses
+void SurfaceElement::getBSDFImpulses
 (const Vector3&  w_i,
  Array<Impulse>& impulseArray) const {
     SmallArray<Impulse, 3> temp;
@@ -177,7 +184,7 @@ void SurfaceSample::getBSDFImpulses
 }
 
 
-void SurfaceSample::getBSDFImpulses
+void SurfaceElement::getBSDFImpulses
 (const Vector3&  w_i,
  SmallArray<Impulse, 3>& impulseArray) const {
 
@@ -189,25 +196,25 @@ void SurfaceSample::getBSDFImpulses
     bool Finit = false;
 
     ////////////////////////////////////////////////////////////////////////////////
-    if (bsdf.glossyReflect.nonZero()) {
+    if (material.glossyReflect.nonZero()) {
         // Cosine of the angle of incidence, for computing F
         const float cos_i = max(0.001f, w_i.dot(n));
-        F = computeF(bsdf.glossyReflect, cos_i);
+        F = computeF(material.glossyReflect, cos_i);
         Finit = true;
             
-        if (bsdf.glossyExponent == inf()) {
+        if (material.glossyExponent == inf()) {
             // Mirror                
             Impulse& imp     = impulseArray.next();
             imp.w            = w_i.reflectAbout(n);
             imp.coefficient  = F;
-            imp.eta          = bsdf.etaReflect;
-            imp.extinction   = bsdf.extinctionReflect;
+            imp.eta          = material.etaReflect;
+            imp.extinction   = material.extinctionReflect;
             debugAssert(imp.w.isUnit());
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    if (bsdf.transmit.nonZero()) {
+    if (material.transmit.nonZero()) {
         // Fresnel transmissive coefficient
         Color3 F_t;
 
@@ -222,16 +229,17 @@ void SurfaceSample::getBSDFImpulses
         }
 
         // Sample transmissive
-        const Color3& T0 = bsdf.transmit;
+        const Color3& T0 = material.transmit;
         const Color3& p_transmit  = F_t * T0;
        
-        debugAssert(w_i.dot(n) > 0);
+        // Disabled; interpolated normals can be arbitrarily far out
+        //debugAssertM(w_i.dot(n) >= -0.001, format("w_i dot n = %f", w_i.dot(n)));
         Impulse& imp     = impulseArray.next();
 
         imp.coefficient  = p_transmit;
-        imp.w            = (-w_i).refractionDirection(n, bsdf.etaTransmit, bsdf.etaReflect);
-        imp.eta          = bsdf.etaTransmit;
-        imp.extinction   = bsdf.extinctionTransmit;
+        imp.w            = (-w_i).refractionDirection(n, material.etaTransmit, material.etaReflect);
+        imp.eta          = material.etaTransmit;
+        imp.extinction   = material.extinctionTransmit;
         if (imp.w.isZero()) {
             // Total internal refraction
             impulseArray.popDiscard();
@@ -242,7 +250,7 @@ void SurfaceSample::getBSDFImpulses
 }
 
 
-float SurfaceSample::glossyScatter
+float SurfaceElement::glossyScatter
 (const Vector3& w_i,
  float          g,
  G3D::Random&   r,
@@ -359,7 +367,7 @@ float SurfaceSample::glossyScatter
 }
 #endif
 
-bool SurfaceSample::scatter
+bool SurfaceElement::scatter
 (const Vector3& w_i,
  const Color3&  power_i,
  Vector3&       w_o,
@@ -390,10 +398,10 @@ bool SurfaceSample::scatter
     float r = random.uniform();
 
     ////////////////////////////////////////////////////////////////////////////////
-    if (bsdf.lambertianReflect.nonZero()) {
+    if (material.lambertianReflect.nonZero()) {
         
-        alwaysAssertM(bsdf.coverage > 0.0f, "Scattered from an alpha masked location");
-        float p_LambertianAvg = bsdf.lambertianReflect.average();
+        alwaysAssertM(material.coverage > 0.0f, "Scattered from an alpha masked location");
+        float p_LambertianAvg = material.lambertianReflect.average();
         
         r -= p_LambertianAvg;
         
@@ -402,11 +410,11 @@ bool SurfaceSample::scatter
             
             // (Cannot hit division by zero because the if prevents this
             // case when p_LambertianAvg = 0)
-            power_o         = power_i * bsdf.lambertianReflect / p_LambertianAvg;
+            power_o         = power_i * material.lambertianReflect / p_LambertianAvg;
             w_o             = Vector3::cosHemiRandom(n, random);
             density         = p_LambertianAvg * 0.01f;
-            eta_o           = bsdf.etaReflect;
-            extinction_o    = bsdf.extinctionReflect;
+            eta_o           = material.etaReflect;
+            extinction_o    = material.extinctionReflect;
             debugAssert(power_o.r >= 0.0f);
 
             return true;
@@ -417,11 +425,11 @@ bool SurfaceSample::scatter
     bool Finit = false;
 
     ////////////////////////////////////////////////////////////////////////////////
-    if (bsdf.glossyReflect.nonZero()) {
+    if (material.glossyReflect.nonZero()) {
             
         // Cosine of the angle of incidence, for computing F
         const float cos_i = max(0.001f, w_i.dot(n));
-        F = computeF(bsdf.glossyReflect, cos_i);
+        F = computeF(material.glossyReflect, cos_i);
         Finit = true;
 
         const Color3& p_specular = F;
@@ -429,9 +437,9 @@ bool SurfaceSample::scatter
 
         r -= p_specularAvg;
         if (r < 0.0f) {
-            if (bsdf.glossyExponent != finf()) {
+            if (material.glossyExponent != finf()) {
                 // Glossy
-                float intensity = (glossyScatter(w_i, bsdf.glossyExponent, random, w_o) / p_specularAvg);
+                float intensity = (glossyScatter(w_i, material.glossyExponent, random, w_o) / p_specularAvg);
                 if (intensity <= 0.0f) {
                     // Absorb
                     return false;
@@ -448,14 +456,14 @@ bool SurfaceSample::scatter
             }
             debugAssert(power_o.r >= 0.0f);
 
-            eta_o = bsdf.etaReflect;
-            extinction_o = bsdf.extinctionReflect;
+            eta_o = material.etaReflect;
+            extinction_o = material.extinctionReflect;
             return true;
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
-    if (bsdf.transmit.nonZero()) {
+    if (material.transmit.nonZero()) {
         // Fresnel transmissive coefficient
         Color3 F_t;
 
@@ -469,7 +477,7 @@ bool SurfaceSample::scatter
             F_t.r = F_t.g = F_t.b = 1.0f - pow5(1.0f - cos_i);
         }
 
-        const Color3& T0          = bsdf.transmit;
+        const Color3& T0          = material.transmit;
         
         const Color3& p_transmit  = F_t * T0;
         const float p_transmitAvg = p_transmit.average();
@@ -477,10 +485,10 @@ bool SurfaceSample::scatter
         r -= p_transmitAvg;
         if (r < 0.0f) {
             power_o      = p_transmit * power_i * (1.0f / p_transmitAvg);
-            w_o          = (-w_i).refractionDirection(n, bsdf.etaTransmit, bsdf.etaReflect);
+            w_o          = (-w_i).refractionDirection(n, material.etaTransmit, material.etaReflect);
             density      = p_transmitAvg;
-            eta_o        = bsdf.etaTransmit;
-            extinction_o = bsdf.extinctionTransmit;
+            eta_o        = material.etaTransmit;
+            extinction_o = material.extinctionTransmit;
 
             debugAssert(w_o.isZero() || ((w_o.dot(n) < 0) && w_o.isUnit()));
             debugAssert(power_o.r >= 0.0f);

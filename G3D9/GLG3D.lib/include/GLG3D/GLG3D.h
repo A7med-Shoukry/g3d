@@ -87,7 +87,7 @@
 #include "GLG3D/Tri.h"
 #include "GLG3D/TriTree.h"
 #include "GLG3D/Profiler.h"
-#include "GLG3D/SurfaceSample.h"
+#include "GLG3D/SurfaceElement.h"
 
 #include "GLG3D/GuiTheme.h"
 #include "GLG3D/GuiButton.h"

@@ -41,7 +41,7 @@ href="classes.html">Classes</a>.
     \link G3D::MD3Model MD3Model\endlink,
     \link G3D::Surface Surface\endlink,
     \link G3D::Surface2D Surface2D\endlink,
-    \link G3D::SurfaceSample SurfaceSample\endlink,
+    \link G3D::SurfaceElement SurfaceElement\endlink,
     \link G3D::Tri Tri\endlink,
     \link G3D::Tri::Intersector Tri::Intersector\endlink,
     \link G3D::TriTree TriTree\endlink,
