@@ -75,12 +75,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\samples\rayTrace\App.h" />
-    <ClInclude Include="..\samples\rayTrace\Hit.h" />
     <ClInclude Include="..\samples\rayTrace\World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\samples\rayTrace\App.cpp" />
-    <ClCompile Include="..\samples\rayTrace\Hit.cpp" />
     <ClCompile Include="..\samples\rayTrace\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

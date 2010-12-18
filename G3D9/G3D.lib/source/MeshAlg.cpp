@@ -600,6 +600,9 @@ void MeshAlg::computeTangentSpaceBasis(
         float r = te1.x * te2.y - te1.y * te2.x;
         if (r == 0.0) {
             // degenerate case
+            if (! n.isFinite() || n.isZero()) {
+                n = Vector3::unitY();
+            }
             n.getTangents(t, b);
         } else {
             r = 1.0f / r;        

@@ -42,11 +42,11 @@ public:
        \param distance On input, the maximum distance to trace to.  On
        output, the distance to the closest surface.
 
-       \param hit Will be initialized by the routine.
+       \param surfel Will be initialized by the routine.
 
        \return True if anything was hit
      */
-    bool intersect(const Ray& ray, float& distance, class Hit& hit) const;
+    bool intersect(const Ray& ray, float& distance, class SurfaceElement& surfel) const;
 };
 
 #endif

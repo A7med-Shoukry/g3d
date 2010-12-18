@@ -1,5 +1,4 @@
 #include "World.h"
-#include "Hit.h"
 
 World::World() : m_mode(TRACE) {
     begin();
@@ -105,14 +104,14 @@ bool World::lineOfSight(const Vector3& v0, const Vector3& v1) const {
 }
 
 
-bool World::intersect(const Ray& ray, float& distance, Hit& hit) const {
+bool World::intersect(const Ray& ray, float& distance, SurfaceElement& surfel) const {
     debugAssert(m_mode == TRACE);
 
     Tri::Intersector intersector;
-
-    m_triTree.intersectRay(ray, intersector, distance);
-
-    // Resolve the intersection data into an actual Hit
-    hit.setFromIntersector(intersector);
-    return hit.exists();
+    if (m_triTree.intersectRay(ray, intersector, distance)) {
+        surfel = SurfaceElement(intersector);
+        return true;
+    } else {
+        return false;
+    }
 }

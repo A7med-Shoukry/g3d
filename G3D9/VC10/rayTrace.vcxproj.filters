@@ -18,18 +18,12 @@
     <ClInclude Include="..\samples\rayTrace\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\samples\rayTrace\Hit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\samples\rayTrace\World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\samples\rayTrace\App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\samples\rayTrace\Hit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\samples\rayTrace\World.cpp">

@@ -3,7 +3,6 @@
  */
 #include "App.h"
 #include "World.h"
-#include "Hit.h"
 
 G3D_START_AT_MAIN();
 
@@ -95,55 +94,53 @@ static G3D::Random rnd(0xF018A4D2, false);
 Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i, int bounce) {
     Radiance3 radiance = Radiance3::zero();
 
-    Hit hit;
+    SurfaceElement surfel;
     float dist = inf();
-    if (world->intersect(ray, dist, hit)) {
-        const SuperBSDF::Ref& bsdf = hit.material->bsdf();
-
+    if (world->intersect(ray, dist, surfel)) {
         // Shade this point (direct illumination)
         for (int L = 0; L < world->lightArray.size(); ++L) {
             const GLight& light = world->lightArray[L];
 
             // Shadow rays
-            if (world->lineOfSight(hit.position + hit.normal * 0.0001f, light.position.xyz())) {
-                Vector3 w_L = light.position.xyz() - hit.position;
-                const float distance2 = w_L.squaredLength();
-                w_L /= sqrt(distance2);
+            if (world->lineOfSight(surfel.geometric.location + surfel.geometric.normal * 0.0001f, light.position.xyz())) {
+                Vector3 w_i = light.position.xyz() - surfel.shading.location;
+                const float distance2 = w_i.squaredLength();
+                w_i /= sqrt(distance2);
 
                 // Attenduated radiance
                 const Irradiance3& E_i = light.color / (4.0f * pif() * distance2);
 
                 radiance += 
-                    bsdf->evaluate(hit.normal, hit.texCoord, w_L, -ray.direction()).rgb() * 
+                    surfel.evaluateBSDF(w_i, -ray.direction()) * 
                     E_i *
-                    max(0.0f, w_L.dot(hit.normal));
+                    max(0.0f, w_i.dot(surfel.shading.normal));
+
                 debugAssert(radiance.isFinite());
             }
         }
-
         // Indirect illumination
         switch (m_mode) {
         case MODE_RECURSIVE:
             // Whitted ray tracer:
 
             // Ambient
-            radiance += bsdf->lambertian().sample(hit.texCoord).rgb() * world->ambient;
+            radiance += surfel.material.lambertianReflect * world->ambient;
 
             if (bounce < m_maxBounces) {
                 // Perfect reflection and refraction
-                SmallArray<SuperBSDF::Impulse, 3> impulseArray;
-                bsdf->getImpulses(hit.normal, hit.texCoord, -ray.direction(), impulseArray);
+                SmallArray<SurfaceElement::Impulse, 3> impulseArray;
+                surfel.getBSDFImpulses(-ray.direction(), impulseArray);
                 
                 for (int i = 0; i < impulseArray.size(); ++i) {
-                    const SuperBSDF::Impulse& impulse = impulseArray[i];
-                    Ray secondaryRay = Ray::fromOriginAndDirection(hit.position, impulse.w).bump(0.001f);
+                    const SurfaceElement::Impulse& impulse = impulseArray[i];
+                    Ray secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location, impulse.w).bump(0.001f);
 					debugAssert(secondaryRay.direction().isFinite());
                     radiance += rayTrace(secondaryRay, world, impulse.extinction, bounce + 1) * impulse.coefficient;
 					debugAssert(radiance.isFinite());
                 }
             }
             break;
-
+#if 0
         case MODE_DISTRIBUTION:
         case MODE_PATH:
 
@@ -161,6 +158,7 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i
                 }
             }
             break;
+#endif
         }
     } else {
         // Hit the sky
@@ -214,14 +212,9 @@ Image3::Ref App::rayTraceImage(float scale, int numRays) {
     
     m_currentImage = Image3::createEmpty(width, height); 
     m_currentRays = numRays;
-    GThread::runConcurrently2D(Vector2int32(0, 0), Vector2int32(width, height), this, &App::trace);
-    /*
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            trace(x, y);
-        }
-        }*/
-
+    GThread::runConcurrently2D(Point2int32(0, 0), Point2int32(width, height), this, &App::trace);
+  
+    // TODO : upload and bloom
     m_result = 
         Texture::fromMemory("Result", m_currentImage->getCArray(), m_currentImage->format(), 
                             m_currentImage->width(), m_currentImage->height(), 1, 
