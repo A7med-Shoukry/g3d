@@ -15,7 +15,7 @@ public:
 protected:
 
     int                         m_width;
-    Array<typename Image::Ref>     m_imageArray;
+    Array<typename Image::Ref>  m_imageArray;
 
     CubeMap() {}
 
@@ -24,9 +24,9 @@ protected:
         debugAssert(imageArray.size() == 6);
         m_width = m_imageArray[0]->width();
         for (int i = 0; i < 6; ++i) {
-            debugAssert(m_imageArray[i]->width() == m_width);
+            debugAssert(m_imageArray[i]->width()  == m_width);
             debugAssert(m_imageArray[i]->height() == m_width);
-        }    
+        }
     }
 
 public:
@@ -36,6 +36,7 @@ public:
         return NULL;
     }
 
+    /** Retains references to the underlying images. */
     static Ref create(const Array<typename Image::Ref>& imageArray) {
         Ref c = new CubeMap<Image>();
         c->init(imageArray);
@@ -64,14 +65,108 @@ public:
 
 };
 
+
+class TAny {
+private:
+    TAny* child;
+public:
+
+    TAny() {}
+
+    explicit TAny(const char* s) {}
+
+    template<class T>
+    explicit TAny(const T& v) {
+        *this = v.toAny();
+    }
+
+    template<class T>
+    TAny& operator=(const T& v) {
+        *this = TAny(v);
+        return *this;
+    }
+    
+    TAny& operator[](const std::string& s) {
+        return *child;
+    }
+
+    const TAny& operator[](const std::string& s) const {
+        return *child;
+    }
+
+    template<class C>
+    void append(const C& v) {
+        *child = TAny(v);
+    }
+};
+
+
+class X {
+public:
+
+    X() {}
+    explicit X(const TAny& a) {}
+
+    X& operator=(const TAny& a) {
+        *this = X(a);
+        return *this;
+    }
+
+    TAny toAny() const {
+        return TAny("X");
+    }
+};
+
+class Y {
+public:
+    Y() {}
+    explicit Y(const TAny& a) {}
+
+    TAny toAny() const {
+        return TAny("Y");
+    }
+};
+
+class G {};
+
 int main(int argc, char** argv) {
+
+    X x;
+    Y y;
+    TAny a;
+
+    // The following should work:
+    x = a;
+    a = x;
+    
+    a["hello"] = x;
+    x = a["hello"];
+    a.append(x);
+
+    Y z(a);
+    TAny b(y);
+
+    // The following should be compiler errors:
+    x = y;
+    //X p(y);
+    //G g; a = g;
+    
+
+    /*
+
     //Any any(Any::TABLE);
     //    Color3 c(any.get("color", G3D::Color3::white()));
 
     Vector3 v3;
+
+    // Should be a compiler error
     Vector4 v4(v3);
 
-    v4 = v3;
+    // Should be a compiler error
+    //v4 = v3;
+    Color3 c;
+    c = v3;
+    */
     exit(0);
 
 #if 0
@@ -93,12 +188,7 @@ int main(int argc, char** argv) {
     // settings class.  For example:
     settings.window.width       = 960; 
     settings.window.height      = 600;
-    settings.window.stencilBits = 8;
 
-    settings.film.preferredDepthFormats.clear();
-//    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24());
-    settings.film.preferredDepthFormats.append(ImageFormat::DEPTH24_STENCIL8());
-//    settings.film.enabled = false;
 
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {
