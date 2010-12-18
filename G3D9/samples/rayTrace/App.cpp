@@ -8,18 +8,18 @@ G3D_START_AT_MAIN();
 
 int main(int argc, char** argv) {
     GApp::Settings settings;
-    settings.window.caption     = "G3D Ray Trace Demo";
+    settings.window.caption     = "G3D Ray Trace Sample";
     settings.window.width       = 960; 
     settings.window.height      = 640;
-    settings.film.enabled       = false;
 
     return App(settings).run();
 }
 
 
 App::App(const GApp::Settings& settings) : 
-    GApp(settings), m_mode(MODE_RECURSIVE), 
-    m_maxBounces(3), m_raysPerPixel(1), 
+    GApp(settings),
+    m_maxBounces(3), 
+    m_raysPerPixel(1), 
     m_world(NULL) {
 }
 
@@ -47,10 +47,6 @@ void App::makeGUI() {
     pane->addLabel("Use WASD keys + right mouse to move");
     pane->addButton("Render High Res.", this, &App::onRender);
     
-    pane->addRadioButton("Recursive ray trace (Whitted 80)", MODE_RECURSIVE, &m_mode);
-    pane->addRadioButton("Distribution ray trace (Cook et al. 84)", MODE_DISTRIBUTION, &m_mode);
-    pane->addRadioButton("Path trace (Kajiya 86)", MODE_PATH, &m_mode);
-
     pane->addNumberBox("Rays per pixel", &m_raysPerPixel, "", GuiTheme::LINEAR_SLIDER, 1, 16, 1);
     pane->addNumberBox("Max bounces", &m_maxBounces, "", GuiTheme::LINEAR_SLIDER, 1, 16, 1);
     window->pack();
@@ -60,13 +56,10 @@ void App::makeGUI() {
 }
 
 
-void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
+void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& surface3D, Array<Surface2D::Ref>& surface2D) {
+    // Update the preview image only while moving
     if (! m_prevCFrame.fuzzyEq(defaultCamera.coordinateFrame())) {
-        // Update the preview image only while moving
-        Mode m = m_mode;
-        m_mode = MODE_RECURSIVE;
         rayTraceImage(0.2f, 1);
-        m_mode = m;
         m_prevCFrame = defaultCamera.coordinateFrame();
     }
 
@@ -79,7 +72,7 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& posed3D, Array<Surfa
         rd->pop2D();
     }
 
-    PosedModel2D::sortAndRender(rd, posed2D);
+    PosedModel2D::sortAndRender(rd, surface2D);
 }
 
 
@@ -118,47 +111,24 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i
                 debugAssert(radiance.isFinite());
             }
         }
+
         // Indirect illumination
-        switch (m_mode) {
-        case MODE_RECURSIVE:
-            // Whitted ray tracer:
+        // Ambient
+        radiance += surfel.material.lambertianReflect * world->ambient;
 
-            // Ambient
-            radiance += surfel.material.lambertianReflect * world->ambient;
-
-            if (bounce < m_maxBounces) {
-                // Perfect reflection and refraction
-                SmallArray<SurfaceElement::Impulse, 3> impulseArray;
-                surfel.getBSDFImpulses(-ray.direction(), impulseArray);
+        // Specular
+        if (bounce < m_maxBounces) {
+            // Perfect reflection and refraction
+            SmallArray<SurfaceElement::Impulse, 3> impulseArray;
+            surfel.getBSDFImpulses(-ray.direction(), impulseArray);
                 
-                for (int i = 0; i < impulseArray.size(); ++i) {
-                    const SurfaceElement::Impulse& impulse = impulseArray[i];
-                    Ray secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location, impulse.w).bump(0.001f);
-					debugAssert(secondaryRay.direction().isFinite());
-                    radiance += rayTrace(secondaryRay, world, impulse.extinction, bounce + 1) * impulse.coefficient;
-					debugAssert(radiance.isFinite());
-                }
+            for (int i = 0; i < impulseArray.size(); ++i) {
+                const SurfaceElement::Impulse& impulse = impulseArray[i];
+                Ray secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location, impulse.w).bump(0.001f);
+				debugAssert(secondaryRay.direction().isFinite());
+                radiance += rayTrace(secondaryRay, world, impulse.extinction, bounce + 1) * impulse.coefficient;
+				debugAssert(radiance.isFinite());
             }
-            break;
-#if 0
-        case MODE_DISTRIBUTION:
-        case MODE_PATH:
-
-            // Distribution or path ray tracer
-            if (bounce < m_maxBounces) {
-                static const int numSamples = (m_mode == MODE_PATH) ? 1 : 20;
-                for (int i = 0; i < numSamples; ++i) {
-                    Vector3 w_o;
-                    Color3 P_o;
-                    float eta_o;
-                    Color3 extinction_o;
-                    if (bsdf->scatter(hit.normal, hit.texCoord, -ray.direction(), Color3::white(), w_o, P_o, eta_o, extinction_o, rnd)) {
-                        radiance += rayTrace(Ray::fromOriginAndDirection(hit.position - w_o * 0.0001f, w_o), world, extinction_o, bounce + 1) * P_o / numSamples;
-                    }
-                }
-            }
-            break;
-#endif
         }
     } else {
         // Hit the sky
@@ -186,9 +156,10 @@ void App::onRender() {
     message("Rendering...");
 
     Stopwatch timer;
-    Image3::Ref im = rayTraceImage(1.0f, m_raysPerPixel);
+    rayTraceImage(1.0f, m_raysPerPixel);
     timer.after("Trace");
-    im->save("result.png");
+    debugPrintf("%f s\n", timer.elapsedTime());
+    m_result->toImage3uint8()->save("result.png");
 }
 
 
@@ -205,20 +176,21 @@ void App::trace(int x, int y) {
 }
 
 
-Image3::Ref App::rayTraceImage(float scale, int numRays) {
+void App::rayTraceImage(float scale, int numRays) {
 
-    int width = window()->width() * scale;
+    int width  = window()->width()  * scale;
     int height = window()->height() * scale;
     
-    m_currentImage = Image3::createEmpty(width, height); 
+    if (m_currentImage.isNull() || (m_currentImage->width() != width) || (m_currentImage->height() != height)) {
+        m_currentImage = Image3::createEmpty(width, height);
+    }
     m_currentRays = numRays;
     GThread::runConcurrently2D(Point2int32(0, 0), Point2int32(width, height), this, &App::trace);
-  
-    // TODO : upload and bloom
-    m_result = 
-        Texture::fromMemory("Result", m_currentImage->getCArray(), m_currentImage->format(), 
-                            m_currentImage->width(), m_currentImage->height(), 1, 
-                            GLCaps::supportsTexture(ImageFormat::RGB32F()) ? ImageFormat::RGB32F() : ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
-    
-    return m_currentImage;
+
+    // Post-process
+    Texture::Ref src = Texture::fromImage("Source", m_currentImage);
+    if (m_result.notNull()) {
+        m_result->resize(width, height);
+    }
+    m_film->exposeAndRender(renderDevice, src, m_result);
 }

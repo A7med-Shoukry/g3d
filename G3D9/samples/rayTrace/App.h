@@ -16,10 +16,7 @@ class World;
 
 class App : public GApp {
 private:
-
-    enum Mode {MODE_RECURSIVE, MODE_DISTRIBUTION, MODE_PATH} m_mode;
-
-
+    
     int                 m_maxBounces;
     int                 m_raysPerPixel;
 
@@ -42,7 +39,7 @@ private:
     Radiance3 rayTrace(const Ray& ray, World* world, const Color3& extinction_i = Color3::zero(), int bounces = 1);
 
     /** Trace a whole image. */
-    Image3::Ref rayTraceImage(float scale, int numRays);
+    void rayTraceImage(float scale, int numRays);
 
     /** Show a full-screen message */
     void message(const std::string& msg) const;
