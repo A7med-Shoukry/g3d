@@ -127,6 +127,21 @@ public:
     
         /** Sampled from the emission map. */
         Radiance3  emit;
+        
+        /** Scales all elements by \a f.
+           Useful for blending multiple surface elements together, e.g.:
+
+           \code
+              surfel.material = surfel1.material * 0.3f + surfel2.material * 0.6f + surfel3.material * 0.1f;
+           \endcode
+        */
+        MaterialElement operator*(float f) const;
+
+        /** Adds all elements. 
+           Useful for blending multiple surface elements together.
+           The <code>source</code> field is NULL.
+           */
+        MaterialElement operator+(const MaterialElement& m) const;
 
         MaterialElement() : glossyExponent(0.0f), etaTransmit(1.0f), etaReflect(1.0f), coverage(0.0f) {}
 

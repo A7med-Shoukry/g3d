@@ -26,6 +26,7 @@ SurfaceElement::SurfaceElement(const Tri::Intersector& intersector) {
     intersector.getResult(P, n, interpolated.texCoord, t1, t2);
     set(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2, intersector.eye);
 }
+
     
 SurfaceElement::MaterialElement::MaterialElement(const SuperBSDF::Ref& bsdf, const Component3& emitMap, const Point2& texCoord, bool loqFreq) {
     const Color4& packD = bsdf->lambertian().sample(texCoord);
@@ -48,6 +49,39 @@ SurfaceElement::MaterialElement::MaterialElement(const SuperBSDF::Ref& bsdf, con
     emit = emitMap.sample(texCoord);
 }
     
+
+SurfaceElement::MaterialElement SurfaceElement::MaterialElement::operator*(float f) const {
+    MaterialElement e;
+
+    e.coverage           = coverage * f;
+    e.emit               = emit * f;
+    e.etaReflect         = etaReflect * f;
+    e.etaTransmit        = etaTransmit * f;
+    e.extinctionReflect  = extinctionReflect * f;
+    e.extinctionTransmit = extinctionTransmit * f;
+    e.glossyExponent     = glossyExponent * f;
+    e.glossyReflect      = glossyReflect * f;
+    e.lambertianReflect  = lambertianReflect * f;
+
+    return e;
+}
+
+
+SurfaceElement::MaterialElement SurfaceElement::MaterialElement::operator+(const MaterialElement& m) const {
+    MaterialElement e;
+
+    e.coverage           = coverage           + m.coverage;
+    e.emit               = emit               + m.emit;
+    e.etaReflect         = etaReflect         + m.etaReflect;
+    e.etaTransmit        = etaTransmit        + m.etaTransmit;
+    e.extinctionReflect  = extinctionReflect  + m.extinctionReflect;
+    e.extinctionTransmit = extinctionTransmit + m.extinctionTransmit;
+    e.glossyExponent     = glossyExponent     + m.glossyExponent;
+    e.glossyReflect      = glossyReflect      + m.glossyReflect;
+    e.lambertianReflect  = lambertianReflect  + m.lambertianReflect;
+
+    return e;
+}
 
 void SurfaceElement::setBump(const BumpMap::Ref& bump, const Vector3& eye) {
 #if 0

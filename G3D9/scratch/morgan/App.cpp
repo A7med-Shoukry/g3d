@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
     TAny b(y);
 
     // The following should be compiler errors:
-    x = y;
+    //x = y;
     //X p(y);
     //G g; a = g;
     
