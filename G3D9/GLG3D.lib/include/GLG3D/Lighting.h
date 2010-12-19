@@ -143,7 +143,7 @@ public:
         }
 
         Specification(const class Any&);
-        operator Any() const;
+        Any toAny() const;
     };
 
 private:

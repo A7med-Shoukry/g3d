@@ -55,7 +55,7 @@ Vector3& Vector3::operator=(const Any& a) {
 }
 
 
-Vector3::operator Any() const {
+Any Vector3::toAny() const {
     Any any(Any::ARRAY, "Vector3");
     any.append(x, y, z);
     return any;

@@ -170,7 +170,7 @@ public:
         }
 
         Settings(const Any& any);
-        operator Any() const;
+        Any toAny() const;
     };
 
 
@@ -580,7 +580,7 @@ public:
 
     public:
         Preprocess(const Any& any);
-        operator Any() const;
+        Any toAny() const;
 
         void setMaterialOverride(const Material::Specification& m) {
             m_hasMaterialOverride = true;
@@ -618,7 +618,7 @@ public:
         Specification();
 
         Specification(const Any& any);
-        operator Any() const;
+        Any toAny() const;
     };
         
 

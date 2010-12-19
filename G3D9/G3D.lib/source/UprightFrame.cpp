@@ -28,7 +28,8 @@ UprightFrame::UprightFrame(const Any& any) {
     yaw = any["yaw"];
 }
 
-UprightFrame::operator Any() const {
+
+Any UprightFrame::toAny() const {
     Any any(Any::TABLE, "UprightFrame");
 
     any["translation"] = translation;
@@ -139,7 +140,7 @@ UprightSpline::UprightSpline(const Any& any) {
 }
 
 
-UprightSpline::operator Any() const {
+Any UprightSpline::toAny() const {
     Any any(Any::TABLE, "UprightSpline");
 
     any["cyclic"] = cyclic;

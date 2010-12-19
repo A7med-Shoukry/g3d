@@ -51,7 +51,7 @@ public:
     
     Vector4& operator=(const Any& a);
     /** Converts the Vector4 to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     // construction
     Vector4();

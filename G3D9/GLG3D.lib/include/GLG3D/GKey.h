@@ -504,7 +504,7 @@ public:
 #define Classname GKey
 
 
-    operator Any() const {\
+    Any toAny() const {\
         return Any(toString());\
     }\
 \

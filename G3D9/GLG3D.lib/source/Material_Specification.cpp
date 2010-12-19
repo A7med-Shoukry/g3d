@@ -136,7 +136,7 @@ Material::Specification::Specification(const Any& any) {
 }
 
 
-Material::Specification::operator Any() const {
+Any Material::Specification::toAny() const {
     Any a(Any::TABLE, "Material::Specification");
     // TODO
     debugAssertM(false, "Unimplemented");

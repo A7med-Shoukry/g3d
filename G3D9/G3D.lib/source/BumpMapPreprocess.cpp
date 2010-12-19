@@ -32,7 +32,7 @@ BumpMapPreprocess::BumpMapPreprocess(const Any& any) {
 }
 
 
-BumpMapPreprocess::operator Any() const {
+Any BumpMapPreprocess::toAny() const {
     Any any(Any::TABLE, "BumpMapPreprocess");
     any["lowPassFilter"] = lowPassFilter;
     any["zExtentPixels"] = zExtentPixels;

@@ -379,6 +379,8 @@ public:
     /** NUMBER constructor */
     explicit Any(double x);
 
+    explicit Any(float x);
+
 #ifdef G3D_32BIT
     /** NUMBER constructor */
     explicit Any(int64 x);
@@ -396,6 +398,9 @@ public:
     explicit Any(int x);
 
     /** NUMBER constructor */
+    explicit Any(char x);
+
+    /** NUMBER constructor */
     explicit Any(short x);
 
     /** BOOLEAN constructor */
@@ -410,25 +415,16 @@ public:
     /** \a t must be ARRAY or TABLE */
     explicit Any(Type t, const std::string& name = "");
     
+    /** Extensible constructor: call the toAny() method of any class. */
+    template<class T>
+    explicit Any(const T& v) {
+        *this = v.toAny();
+    }
+
     ~Any();
 
     /** Removes the comment and name */
     Any& operator=(const Any& x);
-
-    /** Removes the comment and name */
-    Any& operator=(double x);
-
-    /** Removes the comment and name */
-    Any& operator=(int x);
-
-    /** Removes the comment and name */
-    Any& operator=(bool x);
-
-    /** Removes the comment and name */
-    Any& operator=(const std::string& x);
-
-    /** Removes the comment and name */
-    Any& operator=(const char* x);
 
     /** \a t must be ARRAY, TABLE, or NONE. Removes the comment and name */
     Any& operator=(Type t);
@@ -441,6 +437,13 @@ public:
         for (int i = 0; i < array.size(); ++i) {
             this->operator [](i) = array[i];
         }
+        return *this;
+    }
+
+    /** Removes the comment and name */
+    template<class T>
+    Any& operator=(const T& v) {
+        *this = Any(v);
         return *this;
     }
 

@@ -47,7 +47,7 @@ public:
     */
     explicit UprightFrame(const Any& any);
     
-    operator Any() const;
+    Any toAny() const;
 
     UprightFrame& operator=(const Any& any);
 
@@ -103,7 +103,7 @@ public:
     */
     explicit UprightSpline(const Any& any);
 
-    operator Any() const;
+    Any toAny() const;
 
     UprightSpline& operator=(const Any& any);
 

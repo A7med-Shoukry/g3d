@@ -66,7 +66,7 @@ public:
     Color3& operator=(const Any& a);
 
     /** Converts the Color3 to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     explicit Color3(class BinaryInput& bi);
 

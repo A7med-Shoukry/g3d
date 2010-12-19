@@ -669,7 +669,7 @@ bool CameraControlWindow::onEvent(const GEvent& event) {
 }
 
 void CameraControlWindow::saveSpline(const std::string& trackName) {
-    Any any = m_trackManipulator->spline();
+    Any any(m_trackManipulator->spline());
     any.save(trackName + ".us.any");
 
     updateTrackFiles();

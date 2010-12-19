@@ -277,7 +277,7 @@ public:
         */
         Visualization(const Any& a);
 
-        operator Any() const;
+        Any toAny() const;
 
         bool operator==(const Visualization& v) const {
             return
@@ -486,7 +486,7 @@ public:
         */
         Settings(const Any& any);
 
-        operator Any() const;
+        Any toAny() const;
 
         static const Settings& defaults();
 
@@ -587,7 +587,7 @@ public:
         */
         Preprocess(const Any& a);
 
-        operator Any() const;
+        Any toAny() const;
 
         /** Defaults + gamma adjust set to g*/
         static Preprocess gamma(float g);
@@ -675,7 +675,7 @@ public:
             return !(*this == s);
         }
 
-        operator Any() const;
+        Any toAny() const;
     };
 
     static Ref create(const Specification& s);

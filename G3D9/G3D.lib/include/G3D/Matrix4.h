@@ -60,7 +60,7 @@ public:
     */
     Matrix4(const Any& any);
 
-    operator Any() const;
+    Any toAny() const;
 
     Matrix4(
         float r1c1, float r1c2, float r1c3, float r1c4,

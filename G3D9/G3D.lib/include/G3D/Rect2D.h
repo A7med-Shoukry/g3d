@@ -123,7 +123,7 @@ public:
     Rect2D(const Any& any);
     
     /** Converts the Rect2D to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     Rect2D() : min(0, 0), max(0, 0) {}
 

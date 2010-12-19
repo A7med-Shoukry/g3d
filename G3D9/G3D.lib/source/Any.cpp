@@ -283,6 +283,14 @@ Any::Any(double x) : m_type(NUMBER), m_simpleValue(x), m_data(NULL) {
 }
 
 
+Any::Any(float x) : m_type(NUMBER), m_simpleValue(double(x)), m_data(NULL) {
+}
+
+
+Any::Any(char x) : m_type(NUMBER), m_simpleValue(double(x)), m_data(NULL) {
+}
+
+
 #ifdef G3D_32BIT
 Any::Any(int64 x) : m_type(NUMBER), m_simpleValue((double)x), m_data(NULL) {
 }
@@ -361,35 +369,6 @@ Any& Any::operator=(const Any& x) {
         m_data = x.m_data;
     }
 
-    return *this;
-}
-
-
-Any& Any::operator=(double x) {
-    *this = Any(x);
-    return *this;
-}
-
-
-Any& Any::operator=(int x) {
-    return (*this = Any(x));
-}
-
-
-Any& Any::operator=(bool x) {
-    *this = Any(x);
-    return *this;
-}
-
-
-Any& Any::operator=(const std::string& x) {
-    *this = Any(x);
-    return *this;
-}
-
-
-Any& Any::operator=(const char* x) {
-    *this = Any(x);
     return *this;
 }
 

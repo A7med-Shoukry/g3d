@@ -46,7 +46,7 @@ public:
 
     BumpMapPreprocess(const Any& any);
 
-    operator Any() const;
+    Any toAny() const;
 
     bool operator==(const BumpMapPreprocess& other) const {
         return 

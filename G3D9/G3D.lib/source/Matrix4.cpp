@@ -61,7 +61,7 @@ Matrix4::Matrix4(const Any& any) {
 }
 
 
-Matrix4::operator Any() const {
+Any Matrix4::toAny() const {
     Any any(Any::ARRAY, "Matrix4");
     any.resize(16);
     for (int r = 0; r < 4; ++r) {

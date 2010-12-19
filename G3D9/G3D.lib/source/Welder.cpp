@@ -413,7 +413,8 @@ Welder::Settings::Settings(const Any& any) {
     }
 }
 
-Welder::Settings::operator Any() const {
+
+Any Welder::Settings::toAny() const {
     Any a(Any::TABLE, "Welder::Settings");
     a["normalSmoothingAngle"]   = normalSmoothingAngle;
     a["vertexWeldRadius"]       = vertexWeldRadius;

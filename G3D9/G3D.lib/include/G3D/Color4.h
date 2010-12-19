@@ -48,7 +48,7 @@ public:
     Color4(const Any& any);
     
     /** Converts the Color4 to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     /**
      Initializes to all zero

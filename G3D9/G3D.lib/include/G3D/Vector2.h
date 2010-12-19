@@ -51,7 +51,7 @@ public:
     explicit Vector2(const Any& any);
     
     /** Converts the Vector2 to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     /** Creates the zero vector */
     Vector2();

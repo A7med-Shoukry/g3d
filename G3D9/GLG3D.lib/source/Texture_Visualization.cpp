@@ -25,7 +25,7 @@ static Texture::Visualization::Channels toChannels(const std::string& s) {
 }
 
 
-Texture::Visualization::operator Any() const {
+Any Texture::Visualization::toAny() const {
     Any a(Any::TABLE, "Texture::Visualization");
     a["channels"] = channelsToString(channels);
     a["documentGamma"] = documentGamma;

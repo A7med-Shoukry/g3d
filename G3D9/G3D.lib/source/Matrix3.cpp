@@ -50,7 +50,7 @@ Matrix3::Matrix3(const Any& any) {
 }
 
 
-Matrix3::operator Any() const {
+Any Matrix3::toAny() const {
     Any any(Any::ARRAY, "Matrix3");
     any.resize(9);
     for (int r = 0; r < 3; ++r) {

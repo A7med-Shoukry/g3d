@@ -46,7 +46,8 @@ Vector4::Vector4(const Any& any) {
     }
 }
 
-Vector4::operator Any() const {
+
+Any Vector4::toAny() const {
     Any any(Any::ARRAY, "Vector4");
     any.append(x, y, z, w);
     return any;

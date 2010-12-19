@@ -87,7 +87,7 @@ Color3::Color3(const Any& any) {
 }
    
 
-Color3::operator Any() const {
+Any Color3::toAny() const {
     Any a(Any::ARRAY, "Color3");
     a.append(r, g, b);
     return a;

@@ -164,7 +164,7 @@ public:
         Specification(const Color3& lambertian);
 
         bool operator==(const Specification& s) const;
-        operator Any() const;
+        Any toAny() const;
 
         bool operator!=(const Specification& s) const {
             return !((*this) == s);

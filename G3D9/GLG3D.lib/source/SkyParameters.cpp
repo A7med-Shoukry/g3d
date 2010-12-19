@@ -213,7 +213,7 @@ Lighting::Specification::Specification(const Any& any) {
 }
 
 
-Lighting::Specification::operator Any() const {
+Any Lighting::Specification::toAny() const {
     Any b(Any::TABLE);
     b["constant"]       = environmentMapConstant;
     b["texture"]        = environmentMapTexture;

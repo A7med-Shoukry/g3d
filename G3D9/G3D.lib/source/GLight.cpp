@@ -88,7 +88,7 @@ GLight::GLight(const Any& any) {
 }
 
 
-GLight::operator Any() const {
+Any GLight::toAny() const {
     Any a(Any::TABLE, "GLight");
     a["position"]       = position;
     a["rightDirection"] = rightDirection;;

@@ -94,7 +94,7 @@ public:
     */
     GCamera(const Any& any);
 
-    operator Any() const;
+    Any toAny() const;
 
     class Frustum {
     public:

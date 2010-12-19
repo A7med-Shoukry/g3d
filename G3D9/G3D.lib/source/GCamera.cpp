@@ -61,7 +61,7 @@ GCamera::GCamera(const Any& any) {
 }
 
 
-GCamera::operator Any() const {
+Any GCamera::toAny() const {
     Any any(Any::TABLE, "GCamera");
 
     any["fovDirection"]     = std::string((m_direction == HORIZONTAL) ? "HORIZONTAL" : "VERTICAL");

@@ -133,7 +133,7 @@ public:
     Power3 power() const;
     
     /** Converts the Color3 to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     /** @param toLight will be normalized */
     static GLight directional(const Vector3& toLight, const Radiance3& color, bool castsShadows = true);

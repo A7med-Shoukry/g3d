@@ -79,7 +79,7 @@ CoordinateFrame::CoordinateFrame(const Any& any) {
 }
 
 
-CoordinateFrame::operator Any() const {
+Any CoordinateFrame::toAny() const {
     float x, y, z, yaw, pitch, roll;
     getXYZYPRDegrees(x, y, z, yaw, pitch, roll); 
     Any a(Any::ARRAY, "CFrame::fromXYZYPRDegrees");

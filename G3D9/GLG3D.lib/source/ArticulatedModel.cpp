@@ -40,7 +40,8 @@ ArticulatedModel::Specification::Specification(const Any& any) {
     }
 }
 
-ArticulatedModel::Specification::operator Any() const {
+
+Any ArticulatedModel::Specification::toAny() const {
     Any a(Any::TABLE, "ArticulatedModel::Specification");
     a.set("filename", filename);
     a.set("preprocess", preprocess);
@@ -89,7 +90,7 @@ ArticulatedModel::Preprocess::Preprocess(const Any& any) {
 }
 
 
-ArticulatedModel::Preprocess::operator Any() const {
+Any ArticulatedModel::Preprocess::toAny() const {
     Any a(Any::TABLE, "ArticulatedModel::Preprocess");
     a.set("stripMaterials", stripMaterials);
 
@@ -97,12 +98,12 @@ ArticulatedModel::Preprocess::operator Any() const {
         a.set("materialOverride", m_materialOverride);
     }
     // a["textureDimension"] = TODO
-    a.set("addBumpMaps", addBumpMaps);
-    a.set("xform", xform.operator Any());
-    a.set("parallaxSteps", parallaxSteps);
-    a.set("bumpMapScale", bumpMapScale);
+    a.set("addBumpMaps",    addBumpMaps);
+    a.set("xform",          xform);
+    a.set("parallaxSteps",  parallaxSteps);
+    a.set("bumpMapScale",   bumpMapScale);
     a.set("normalMapWhiteHeightInPixels", normalMapWhiteHeightInPixels);
-    a.set("replaceTwoSidedWithGeometry", replaceTwoSidedWithGeometry);
+    a.set("replaceTwoSidedWithGeometry",  replaceTwoSidedWithGeometry);
     
     Any t(Any::TABLE);
     for (Table<std::string, Material::Specification>::Iterator it = materialSubstitution.begin(); it.hasMore(); ++it) {
@@ -128,11 +129,12 @@ ArticulatedModel::Settings::Settings(const Any& any) {
     }
 }
 
-ArticulatedModel::Settings::operator Any() const {
+Any ArticulatedModel::Settings::toAny() const {
     Any a(Any::TABLE, "ArticulatedModel::Settings");
     a.set("weld", weld);
     return a;
 }
+
 //////////////////////////////////////////////////////////
 
 ArticulatedModel::Ref ArticulatedModel::createHeightfield

@@ -34,9 +34,10 @@ GEntity::GEntity
         m_modelType = MD3_MODEL;
     }
 
-    // Create a default value
-    m_frameSpline = CFrame();
-    propertyTable.getIfPresent("position", m_frameSpline);
+    if (! propertyTable.getIfPresent("position", m_frameSpline)) {
+        // Create a default value
+        m_frameSpline.append(CFrame());
+    }
 }
 
 

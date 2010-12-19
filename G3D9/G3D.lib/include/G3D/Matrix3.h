@@ -55,7 +55,7 @@ public:
     */
     Matrix3(const Any& any);
 
-    operator Any() const;
+    Any toAny() const;
 
     /** Initial values are undefined for performance. 
         \sa Matrix3::zero, Matrix3::identity, Matrix3::fromAxisAngle, etc.*/

@@ -82,7 +82,7 @@ public:
     explicit Vector3(const Any& any);
     
     /** Converts the Vector3 to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     /** Divides by 127 */
     Vector3(const Vector4int8&);

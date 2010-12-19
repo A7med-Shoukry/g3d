@@ -81,7 +81,7 @@ public:\
         fromString(a.string());\
     }\
 \
-    operator Any() const {\
+    Any toAny() const {\
         return Any(toString());\
     }\
 \

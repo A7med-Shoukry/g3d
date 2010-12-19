@@ -45,7 +45,7 @@ Rect2D::Rect2D(const Any& any) {
 
 
 /** Converts the Rect2D to an Any. */
-Rect2D::operator Any() const {
+Any Rect2D::toAny() const {
     Any any(Any::ARRAY, "Rect2D::xywh");
     any.append(Any(x0()), Any(y0()), Any(width()), Any(height()));
     return any;

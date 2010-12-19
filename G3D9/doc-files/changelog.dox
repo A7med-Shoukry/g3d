@@ -20,7 +20,7 @@
      <li> Matrix3::fromUnitAxisAngle
      <li> Made alpha-testing optional in TriTree
      <li> Extended G3D::GCamera to have lens parameters
-     <li> Lighting::Specification::operator Any()
+     <li> Lighting::Specification::Any toAny()
      <li> G3D::Vector2int32
      <li> G3D::Texture::Visualization, G3D::Texture::visualization
      <li> G3D::RayGridIterator

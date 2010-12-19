@@ -180,7 +180,7 @@ const Texture::CubeMapInfo& Texture::cubeMapInfo(CubeMapConvention convention) {
 }
 
 
-Texture::Preprocess::operator Any() const {
+Any Texture::Preprocess::toAny() const {
     Any a(Any::TABLE, "Texture::Preprocess");
     a["modulate"] = modulate;
     a["gammaAdjust"] = gammaAdjust;
@@ -2374,7 +2374,7 @@ static void modulateImage(ImageFormat::Code fmt, void* _byte, int n, const Color
 
 
 /////////////////////////////////////////////////////
-Texture::Specification::operator Any() const {
+Any Texture::Specification::toAny() const {
     Any a = Any(Any::TABLE, "Texture::Specification");
     a["filename"] = filename;
     a["desiredFormat"] = desiredFormat ? desiredFormat->name() : "AUTO";
@@ -2527,10 +2527,10 @@ Texture::InterpolateMode Texture::toInterpolateMode(const std::string& s) {
 }
 
 
-Texture::Settings::operator Any() const {
+Any Texture::Settings::toAny() const {
     Any a(Any::TABLE);
     a["interpolateMode"] = toString(interpolateMode);
-    a["wrapMode"] = wrapMode.operator Any();
+    a["wrapMode"] = wrapMode.toAny();
     a["maxAnisotropy"] = maxAnisotropy;
     a["autoMipMap"] = autoMipMap;
     a["maxMipMap"] = maxMipMap;

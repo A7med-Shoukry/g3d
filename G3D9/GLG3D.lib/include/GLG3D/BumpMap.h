@@ -45,7 +45,7 @@ public:
 
         Settings(const Any& any);
 
-        operator Any() const;
+        Any toAny() const;
 
         bool operator==(const Settings& s) const;
     

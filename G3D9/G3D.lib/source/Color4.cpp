@@ -55,7 +55,7 @@ Color4::Color4(const Any& any) {
 }
    
 
-Color4::operator Any() const {
+Any Color4::toAny() const {
     Any any(Any::ARRAY, "Color4");
     any.append(r, g, b, a);
     return any;

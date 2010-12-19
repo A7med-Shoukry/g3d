@@ -88,7 +88,7 @@ BumpMap::Settings::Settings(const Any& any) {
 }
 
 
-BumpMap::Settings::operator Any() const {
+Any BumpMap::Settings::toAny() const {
     Any any(Any::TABLE, "BumpMap::Settings");
     any["scale"] = scale;
     any["bias"] = bias;

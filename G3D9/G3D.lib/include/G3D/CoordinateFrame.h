@@ -74,7 +74,7 @@ public:
     CoordinateFrame(const Any& any);
     
     /** Converts the CFrame to an Any. */
-    operator Any() const;
+    Any toAny() const;
 
     inline bool operator==(const CoordinateFrame& other) const {
         return (translation == other.translation) && (rotation == other.rotation);

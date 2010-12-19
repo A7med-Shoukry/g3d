@@ -48,7 +48,7 @@ Vector2& Vector2::operator=(const Any& a) {
 }
 
 
-Vector2::operator Any() const {
+Any Vector2::toAny() const {
     Any any(Any::ARRAY, "Vector2");
     any.append(x, y);
     return any;
