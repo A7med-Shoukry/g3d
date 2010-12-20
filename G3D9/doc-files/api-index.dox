@@ -186,17 +186,11 @@ href="classes.html">Classes</a>.
     \link G3D::CoordinateFrame CoordinateFrame\endlink,
     \link G3D::CFrame CFrame (CoordinateFrame)\endlink,
     \link G3D::Cylinder Cylinder\endlink,
-    \link G3D::GameTime GameTime\endlink,
     \link G3D::GCamera GCamera\endlink,
     \link G3D::Intersect Intersect\endlink,
-    \link G3D::Irradiance3 Irradiance3\endlink,
     \link G3D::Line Line\endlink,
     \link G3D::LineSegment LineSegment\endlink,
     \link G3D::LineSegment2D LineSegment2D\endlink,
-    \link G3D::Matrix Matrix\endlink,
-    \link G3D::Matrix2 Matrix2\endlink,
-    \link G3D::Matrix3 Matrix3\endlink,
-    \link G3D::Matrix4 Matrix4\endlink,
     \link G3D::MeshAlg MeshAlg\endlink,
     \link G3D::MeshAlg::Geometry MeshAlg::Geometry\endlink,
     \link G3D::MeshBuilder MeshBuilder\endlink,
@@ -218,7 +212,13 @@ href="classes.html">Classes</a>.
     \link G3D::Spline Spline\endlink,
     \link G3D::Triangle Triangle\endlink,
     \link G3D::tesselateComplexPolygon tesselateComplexPolygon\endlink,
-    \link G3D::toSeconds toSeconds\endlink, 
+    \link G3D::Welder Welder\endlink
+
+    <li><b>Linear Algebra</b>  &nbsp;&nbsp;
+    \link G3D::Matrix Matrix\endlink,
+    \link G3D::Matrix2 Matrix2\endlink,
+    \link G3D::Matrix3 Matrix3\endlink,
+    \link G3D::Matrix4 Matrix4\endlink,
     \link G3D::Vector2 Vector2\endlink,
     \link G3D::Vector2int16 Vector2int16\endlink,
     \link G3D::Vector2int32 Vector2int16\endlink,
@@ -227,12 +227,14 @@ href="classes.html">Classes</a>.
     \link G3D::Vector3int32 Vector3int32\endlink,
     \link G3D::Vector4 Vector4\endlink,
     \link G3D::Vector4int8 Vector4int8\endlink,
-    \link G3D::Welder Welder\endlink
 
   <li><b>Radiometry</b>  &nbsp;&nbsp;
     \link G3D::Color1 Color1\endlink,
     \link G3D::Color1uint8 Color1uint8\endlink,
-    \link G3D::Color3 Color3\endlink (\link G3D::Power3 Power3\endlink, \link G3D::Radiance3 Radiance3\endlink, \link G3D::Irradiance3 Irradiance3\endlink),
+    \link G3D::Color3 Color3\endlink,
+    \link G3D::Power3 Power3\endlink, 
+    \link G3D::Radiance3 Radiance3\endlink, 
+    \link G3D::Irradiance3 Irradiance3\endlink,
     \link G3D::Color3uint8 Color3uint8\endlink,
     \link G3D::Color4 Color4\endlink,
     \link G3D::Color4uint8 Color4uint8\endlink
@@ -459,6 +461,8 @@ href="classes.html">Classes</a>.
         G3D_DECLARE_ENUM_CLASS_HASHCODE()
 
      <li><b>Units (in \link G3D::units units\endlink namespace)</b>&nbsp; &nbsp;
+     \link G3D::GameTime GameTime\endlink,
+    \link G3D::toSeconds toSeconds\endlink, 
      \link G3D::units::nanometers nanometers\endlink,
      \link G3D::units::micrometers micrometers\endlink,
      \link G3D::units::millimeters millimeters\endlink,
@@ -478,6 +482,7 @@ href="classes.html">Classes</a>.
      \link G3D::units::hours hours\endlink,
      \link G3D::units::days days\endlink,
      \link G3D::units::years years\endlink
+
         
      <li><b>Platform Abstraction Macros</b> &nbsp; &nbsp;
      G3D_WIN32, G3D_OSX, G3D_LINUX, G3D_FREEBSD,     

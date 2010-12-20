@@ -325,6 +325,10 @@ public:
         return (*this)[size() - 1];
     }
 
+    bool empty() const {
+        return size() == 0;
+    }
+
     /**
      Returns true if the given element is in the queue.
      */
