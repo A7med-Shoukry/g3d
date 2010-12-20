@@ -40,6 +40,11 @@ public:
     Vector2int16(G3D::int16 _x, G3D::int16 _y) : x(_x), y(_y){}
     explicit Vector2int16(const class Vector2& v);
     explicit Vector2int16(class BinaryInput& bi);
+    explicit Vector2int16(const class Any& a);
+
+    Any toAny() const;
+    
+    Vector2int16& operator=(const Any& a);
 
     inline G3D::int16& operator[] (int i) {
         debugAssert(((unsigned int)i) <= 1);
