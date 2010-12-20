@@ -842,6 +842,11 @@ public:
         }
     }
 
+    /** Return the underlying Any. */
+    const Any& any() const {
+        return m_any;
+    }
+
 #if 0
     /** Returns the current key */
     const std::string& key() const;
