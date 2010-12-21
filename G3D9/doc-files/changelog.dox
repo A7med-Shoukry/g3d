@@ -78,6 +78,7 @@
      <li> Fix: G3D::Tri::area is now correct (was too large by a factor of 2x before)
      <li> Fix: CarbonWindow icons now load correctly
      <li> Fix: BinaryOutput to memory now never creates a file on disk
+     <li> Fix: GuiWindow now consumes mouse motion events while being dragged.
     </ul>
 
      <b>Backwards Incompatible Changes</b>:

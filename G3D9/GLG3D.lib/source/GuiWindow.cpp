@@ -203,7 +203,7 @@ static GEvent makeRelative(const GEvent& e, const Vector2& clientOrigin) {
 }
 
 
-bool GuiWindow::onEvent(const GEvent &event) {
+bool GuiWindow::onEvent(const GEvent& event) {
     if (! m_mouseVisible || ! m_visible) {
         // Can't be using the GuiWindow if the mouse isn't visible or the gui isn't visible
         return false;
@@ -211,6 +211,10 @@ bool GuiWindow::onEvent(const GEvent &event) {
 
     if (! m_enabled) {
         return false;
+    }
+
+    if (inDrag && (event.type == GEventType::MOUSE_MOTION)) {
+        return true;
     }
 
     bool consumed = false;
