@@ -25,12 +25,14 @@
 #endif
 */
 
-
+// Prevent carbon typedef from leaking into the G3D namespace
+#define Cell CarbonCell
 #include <IOKit/hid/IOHIDKeys.h>
 #include <IOKit/IOKitLib.h>
 #include <Kernel/IOKit/hidsystem/IOHIDUsageTables.h>
 #include <IOKit/hid/IOHIDLib.h>
 #include <IOKit/IOCFPlugIn.h>
+
 /*
 #ifdef G3D_64BIT
 #    define __LP64__
@@ -40,6 +42,7 @@
 #define Random CarbonRandom
 #include <AGL/agl.h>
 #undef Random
+#undef Cell
 
 namespace G3D {
 
