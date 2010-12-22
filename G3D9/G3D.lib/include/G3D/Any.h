@@ -417,7 +417,7 @@ public:
     
     /** Extensible constructor: call the toAny() method of any class. */
     template<class T>
-    explicit Any(const T& v) {
+    explicit Any(const T& v) : m_type(NONE), m_data(NULL) {
         *this = v.toAny();
     }
 
