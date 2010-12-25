@@ -39,7 +39,8 @@ public:
 
     Vector3int32() : x(0), y(0), z(0) {}
     Vector3int32(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
-
+    Vector3int32(const class Vector2int32& v, int _z);
+    Vector3int32(const class Vector2int16& v, int _z);
     Vector3int32(const class Vector3int16& v);
 
     /** Rounds to the nearest int */

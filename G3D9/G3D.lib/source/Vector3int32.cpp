@@ -27,6 +27,10 @@ Vector3int32::Vector3int32(const class Vector3& v) {
     z = (int32)(v.z + 0.5);
 }
 
+Vector3int32::Vector3int32(const class Vector2int32& v, int _z) : x(v.x), y(v.y), z(_z) {}
+
+Vector3int32::Vector3int32(const class Vector2int16& v, int _z) : x(v.x), y(v.y), z(_z) {}
+
 
 Vector3int32 Vector3int32::truncate(const class Vector3& v) {
     return Vector3int32(int32(v.x), int32(v.y), int32(v.z));
