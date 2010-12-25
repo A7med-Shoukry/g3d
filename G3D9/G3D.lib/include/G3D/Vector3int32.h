@@ -48,6 +48,10 @@ public:
 
     static Vector3int32 truncate(const class Vector3& v);
 
+    bool nonZero() const {
+        return (x != 0) || (y != 0) || (z != 0);
+    }
+
     void serialize(class BinaryOutput& bo) const;
     void deserialize(class BinaryInput& bi);
 

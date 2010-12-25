@@ -6,7 +6,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2001-06-02
-  \edited  2010-09-01
+  \edited  2010-12-25
 
   Copyright 2000-2010, Morgan McGuire.
   All rights reserved.
@@ -111,6 +111,10 @@ public:
     // (2) the data packed in a 3*sizeof(float) memory block
     const float& __fastcall operator[] (int i) const;
     float& operator[] (int i);
+
+    bool nonZero() const {
+        return (x != 0) || (y != 0) || (z != 0);    
+    }
 
     enum Axis {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, DETECT_AXIS=-1};
 
