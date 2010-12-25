@@ -69,4 +69,16 @@ std::string Vector3int32::toString() const {
     return G3D::format("(%d, %d, %d)", x, y, z);
 }
 
+//----------------------------------------------------------------------------
+// 2-char swizzles
+
+Vector2int32 Vector3int32::xx() const  { return Vector2int32       (x, x); }
+Vector2int32 Vector3int32::yx() const  { return Vector2int32       (y, x); }
+Vector2int32 Vector3int32::zx() const  { return Vector2int32       (z, x); }
+Vector2int32 Vector3int32::xy() const  { return Vector2int32       (x, y); }
+Vector2int32 Vector3int32::yy() const  { return Vector2int32       (y, y); }
+Vector2int32 Vector3int32::zy() const  { return Vector2int32       (z, y); }
+Vector2int32 Vector3int32::xz() const  { return Vector2int32       (x, z); }
+Vector2int32 Vector3int32::yz() const  { return Vector2int32       (y, z); }
+Vector2int32 Vector3int32::zz() const  { return Vector2int32       (z, z); }
 }

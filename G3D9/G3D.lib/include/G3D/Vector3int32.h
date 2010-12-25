@@ -130,6 +130,19 @@ public:
     }
 
     std::string toString() const;
+
+
+    // 2-char swizzles
+
+    Vector2int32 xx() const;
+    Vector2int32 yx() const;
+    Vector2int32 zx() const;
+    Vector2int32 xy() const;
+    Vector2int32 yy() const;
+    Vector2int32 zy() const;
+    Vector2int32 xz() const;
+    Vector2int32 yz() const;
+    Vector2int32 zz() const;
 }
 G3D_END_PACKED_CLASS(4)
 
