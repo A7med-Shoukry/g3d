@@ -15,6 +15,9 @@
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
 #include "G3D/format.h"
+#include "G3D/Vector2int32.h"
+#include "G3D/Vector2int16.h"
+
 
 namespace G3D {
 Vector3int32 iFloor(const Vector3& v) {
