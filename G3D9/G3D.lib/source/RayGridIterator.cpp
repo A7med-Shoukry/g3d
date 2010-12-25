@@ -89,8 +89,8 @@ RayGridIterator::RayGridIterator
 
     if (gridOriginIndex.nonZero()) {
         // Offset the grid coordinates
-        m_boundaryIndex -= gridOriginIndex;
-        m_index -= gridOriginIndex;
+        m_boundaryIndex += gridOriginIndex;
+        m_index += gridOriginIndex;
     }
 
 
