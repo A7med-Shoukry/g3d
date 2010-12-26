@@ -38,7 +38,8 @@ namespace G3D {
 inline bool isValidHeapPointer(const void* x) {
     #ifdef _MSC_VER
         return 
-            (x != (void*)0xcccccccc) && (x != (void*)0xdeadbeef) && (x != (void*)0xfeeefeee);
+            (x != (void*)0xcccccccc) && (x != (void*)0xdeadbeef) && (x != (void*)0xfeeefeee) &&
+            (x != (void*)0xabababab) && (x != (void*)0xfdfdfdfd);
     #else
         return x != NULL;
     #endif
