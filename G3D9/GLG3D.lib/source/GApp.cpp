@@ -25,6 +25,7 @@
 #include "G3D/FileSystem.h"
 #include "GLG3D/GuiTextureBox.h"
 #include "GLG3D/GuiPane.h"
+#include "G3D/units.h"
 #include <time.h>
 
 namespace G3D {
@@ -502,32 +503,19 @@ void GApp::renderDebugInfo() {
                 pos.y += size * 1.5;
 
                 {
-                float g = m_graphicsWatch.smoothElapsedTime();
-                float n = m_networkWatch.smoothElapsedTime();
-                float s = m_simulationWatch.smoothElapsedTime();
-                float L = m_logicWatch.smoothElapsedTime();
-                float u = m_userInputWatch.smoothElapsedTime();
-                float w = m_waitWatch.smoothElapsedTime();
+                    int g = iRound(m_graphicsWatch.smoothElapsedTime() * units::milliseconds());
+                    int n = iRound(m_networkWatch.smoothElapsedTime() * units::milliseconds());
+                    int s = iRound(m_simulationWatch.smoothElapsedTime() * units::milliseconds());
+                    int L = iRound(m_logicWatch.smoothElapsedTime() * units::milliseconds());
+                    int u = iRound(m_userInputWatch.smoothElapsedTime() * units::milliseconds());
+                    int w = iRound(m_waitWatch.smoothElapsedTime() * units::milliseconds());
 
-                float swapTime = renderDevice->swapBufferTimer().smoothElapsedTime();
-                float total = g + n + s + L + u + w + swapTime;
+                    int swapTime = iRound(renderDevice->swapBufferTimer().smoothElapsedTime() * units::milliseconds());
 
-                float norm = 100.0f / total;
-
-
-                // Normalize the numbers
-                g *= norm;
-                swapTime *= norm;
-                n *= norm;
-                s *= norm;
-                L *= norm;
-                u *= norm;
-                w *= norm;
-
-                const std::string& str = 
-                    format("Time:%3.0f%% Gfx,%3.0f%% Swap,%3.0f%% Sim,%3.0f%% AI,%3.0f%% Net,%3.0f%% UI,%3.0f%% idle", 
-                        g, swapTime, s, L, n, u, w);
-                debugFont->send2DQuads(renderDevice, str, pos, size, statColor);
+                    const std::string& str = 
+                        format("Time:%4dms Gfx,%4dms Swap,%4dms Sim,%4dms AI,%4dms Net,%4dms UI,%4dms idle", 
+                               g, swapTime, s, L, n, u, w);
+                    debugFont->send2DQuads(renderDevice, str, pos, size, statColor);
                 }
 
                 pos.x = x;
