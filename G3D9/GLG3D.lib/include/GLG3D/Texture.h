@@ -164,7 +164,7 @@ public:
 
         \sa defaultDimension */
     enum Dimension {
-		DIM_2D = 2, 
+		 DIM_2D = 2, 
          DIM_3D = 3, 
          DIM_2D_RECT = 4, 
          DIM_CUBE_MAP = 5,
@@ -654,7 +654,7 @@ public:
         /** Defaults to ImageFormat::AUTO() */
         const class ImageFormat*  desiredFormat;
 
-        /** Defaults to ImageFormat::DIM_2D_NPOT on cards that support
+        /** Defaults to Texture::DIM_2D_NPOT on cards that support
             it, DIM_2D otherwise. */
         Dimension                 dimension;
 

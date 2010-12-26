@@ -2530,11 +2530,11 @@ Texture::InterpolateMode Texture::toInterpolateMode(const std::string& s) {
 Any Texture::Settings::toAny() const {
     Any a(Any::TABLE);
     a["interpolateMode"] = toString(interpolateMode);
-    a["wrapMode"] = wrapMode.toAny();
-    a["maxAnisotropy"] = maxAnisotropy;
-    a["autoMipMap"] = autoMipMap;
-    a["maxMipMap"] = maxMipMap;
-    a["minMipMap"] = minMipMap;
+    a["wrapMode"]        = wrapMode.toAny();
+    a["maxAnisotropy"]   = maxAnisotropy;
+    a["autoMipMap"]      = autoMipMap;
+    a["maxMipMap"]       = maxMipMap;
+    a["minMipMap"]       = minMipMap;
     return a;
 }
 
@@ -2543,26 +2543,21 @@ Texture::Settings::Settings(const Any& any) {
     *this = Settings::defaults();
     any.verifyNameBeginsWith("Texture::Settings");
     if (any.type() == Any::TABLE) {
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-            const std::string& key = toLower(it->key);
-            if (key == "autoMipMap") {
-                autoMipMap = it->value;
-            } else if (key == "depthReadMode") {
-                depthReadMode = toDepthReadMode(it->value);
-            } else if (key == "interpolatMmode") {
-                interpolateMode = toInterpolateMode(it->value);
-            } else if (key == "maxAnisotropy") {
-                maxAnisotropy = it->value;
-            } else if (key == "maxMipMap") {
-                maxMipMap = it->value;
-            } else if (key == "minMipMap") {
-                minMipMap = it->value;
-            } else if (key == "wrapMode") {
-                wrapMode = WrapMode(it->value.string());
-            } else {
-                any.verify(false, "Illegal key: " + it->key);
-            }
+        AnyTableReader r(any);
+
+        r.getIfPresent("autoMipMap", autoMipMap);
+        Any temp;
+        if (r.getIfPresent("depthReadMode", temp)) {
+            depthReadMode = toDepthReadMode(temp);
         }
+        if (r.getIfPresent("interpolateMode", temp)) {
+            interpolateMode = toInterpolateMode(temp);
+        }
+        r.getIfPresent("maxAnisotropy", maxAnisotropy);
+        r.getIfPresent("maxMipMap", maxMipMap);
+        r.getIfPresent("minMipMap", minMipMap);
+        r.getIfPresent("wrapMode", wrapMode);
+        r.verifyDone();
     } else {
         any.verifySize(0);
         const std::string& n = any.name();
