@@ -503,17 +503,17 @@ void GApp::renderDebugInfo() {
                 pos.y += size * 1.5;
 
                 {
-                    int g = iRound(m_graphicsWatch.smoothElapsedTime() * units::milliseconds());
-                    int n = iRound(m_networkWatch.smoothElapsedTime() * units::milliseconds());
-                    int s = iRound(m_simulationWatch.smoothElapsedTime() * units::milliseconds());
-                    int L = iRound(m_logicWatch.smoothElapsedTime() * units::milliseconds());
-                    int u = iRound(m_userInputWatch.smoothElapsedTime() * units::milliseconds());
-                    int w = iRound(m_waitWatch.smoothElapsedTime() * units::milliseconds());
+                    int g = iRound(m_graphicsWatch.smoothElapsedTime() / units::milliseconds());
+                    int n = iRound(m_networkWatch.smoothElapsedTime() / units::milliseconds());
+                    int s = iRound(m_simulationWatch.smoothElapsedTime() / units::milliseconds());
+                    int L = iRound(m_logicWatch.smoothElapsedTime() / units::milliseconds());
+                    int u = iRound(m_userInputWatch.smoothElapsedTime() / units::milliseconds());
+                    int w = iRound(m_waitWatch.smoothElapsedTime() / units::milliseconds());
 
-                    int swapTime = iRound(renderDevice->swapBufferTimer().smoothElapsedTime() * units::milliseconds());
+                    int swapTime = iRound(renderDevice->swapBufferTimer().smoothElapsedTime() / units::milliseconds());
 
                     const std::string& str = 
-                        format("Time:%4dms Gfx,%4dms Swap,%4dms Sim,%4dms AI,%4dms Net,%4dms UI,%4dms idle", 
+                        format("Time:%4d ms Gfx,%4d ms Swap,%4d ms Sim,%4d ms AI,%4d ms Net,%4d ms UI,%4d ms idle", 
                                g, swapTime, s, L, n, u, w);
                     debugFont->send2DQuads(renderDevice, str, pos, size, statColor);
                 }
