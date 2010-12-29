@@ -293,6 +293,18 @@ public:
                                         reinterpret_cast<void (T::*)(int)>(set)), style);
     }
 
+    template<typename EnumOrInt, class T>
+    GuiRadioButton* addRadioButton(const GuiText& text, int myID,  
+        ReferenceCountedPointer<T> object,
+        EnumOrInt (T::*get)() const,
+        void (T::*set)(EnumOrInt), 
+        GuiTheme::RadioButtonStyle style) {
+        
+            return addRadioButton(text, myID, Pointer<int>(object, 
+                                        reinterpret_cast<int (T::*)() const>(get), 
+                                        reinterpret_cast<void (T::*)(int)>(set)), style);
+    }
+
     /** Provide the default clamp bounds for addNumberBox.*/
     static int minVal(int x) { (void)x;return INT_MIN; }
     /** Provide the default clamp bounds for addNumberBox.*/
