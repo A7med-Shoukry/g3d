@@ -46,7 +46,7 @@ inline float meters() {
 
 /** 1000 m */
 inline float kilometers() {
-    return 100.0f;
+    return 1000.0f;
 }
 
 /** 0.0254 m */
