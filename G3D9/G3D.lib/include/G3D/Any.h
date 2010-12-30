@@ -414,7 +414,7 @@ public:
 
     /** \a t must be ARRAY or TABLE */
     explicit Any(Type t, const std::string& name = "");
-    
+
     /** Extensible constructor: call the toAny() method of any class. */
     template<class T>
     explicit Any(const T& v) : m_type(NONE), m_data(NULL) {
@@ -765,6 +765,27 @@ public:
     /** Verifies that the size is exactly \a s */
     void verifySize(int s) const;
 
+    /** Assumes that Any(T) is well-defined, e.g., by T defining a
+        T::toAny() method. */
+    template<class T>
+    explicit Any(const Array<T>& array, const std::string& name = "") : m_type(ARRAY), m_data(NULL) {
+        setName(name);
+        resize(array.size());
+        for (int i = 0; i < array.size(); ++i) {
+            (*this)[i] = Any(array[i]);
+        }
+    }
+
+    /** Assumes that T defines T(const Any&) */
+    template<class T>
+    void getArray(Array<T>& array) const {
+        verifyType(ARRAY);
+        array.resize(size());
+        for (int i = 0; i < array.size(); ++i) {
+            array[i] = T((*this)[i]);
+        }
+    }
+
 private:
 
     void deserializeTable(TextInput& ti);
@@ -925,6 +946,7 @@ public:
     bool containsUnread(const std::string& s) const {
         return m_any.containsKey(s) && ! m_alreadyRead.contains(toLower(s));
     }
+
 };
 
 }    // namespace G3D
