@@ -896,10 +896,11 @@ Matrix Matrix::pseudoInverse(float tolerance) const {
     Public function for testing purposes only. Use pseudoInverse(), as it contains optimizations for 
     nonsingular matrices with at least one small (<5) dimension.
 */
+// See http://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse
 Matrix Matrix::svdPseudoInverse(float tolerance) const {
-   	if (cols() > rows()) {
-		return transpose().svdPseudoInverse(tolerance).transpose();
-	}
+    if (cols() > rows()) {
+        return transpose().svdPseudoInverse(tolerance).transpose();
+    }
 
     // Matrices from SVD
     Matrix U, V;
@@ -907,32 +908,32 @@ Matrix Matrix::svdPseudoInverse(float tolerance) const {
     // Diagonal elements
     Array<T> d;
 
-	svd(U, d, V);
+    svd(U, d, V);
 
     if (rows() == 1) {
         d.resize(1, false);
     }
 
-	if (tolerance < 0) {
-		// TODO: Should be eps(d[0]), which is the largest diagonal
-		tolerance = G3D::max(rows(), cols()) * 0.0001f;
-	}
+    if (tolerance < 0) {
+        // TODO: Should be eps(d[0]), which is the largest diagonal
+        tolerance = G3D::max(rows(), cols()) * 0.0001f;
+    }
 
-	Matrix X;
-
-	int r = 0;
-	for (int i = 0; i < d.size(); ++i) {
-		if (d[i] > tolerance) {
-			d[i] = Matrix::T(1) / d[i];
-			++r;
-		}
-	}
-
-	if (r == 0) {
-		// There were no non-zero elements
-		X = zero(cols(), rows());
-	} else {
-		// Use the first r columns
+    Matrix X;
+    
+    int r = 0;
+    for (int i = 0; i < d.size(); ++i) {
+        if (d[i] > tolerance) {
+            d[i] = Matrix::T(1) / d[i];
+            ++r;
+        }
+    }
+    
+    if (r == 0) {
+        // There were no non-zero elements
+        X = zero(cols(), rows());
+    } else {
+        // Use the first r columns
         
         // Test code (the rest is below)
         /*
@@ -1003,7 +1004,8 @@ Matrix Matrix::svdPseudoInverse(float tolerance) const {
         debugAssert(n < 0.0001);
         */
     }
-	return X;
+
+    return X;
 }
 
 // Computes pseudoinverse for a vector
