@@ -99,6 +99,9 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
     // See RTR3 p.746 (RTR2 ch. 13.7) for the basic algorithm.
     static const float EPS = 1e-12f;
 
+    // How much to grow the edges of triangles by to allow for small roundoff.
+    static const float conservative = 1e-8f;
+
     // Test for backfaces first because this eliminates 50% of all triangles.
     if (tri.n.dot(ray.direction()) >= -EPS) {
         // Backface or nearly parallel
@@ -122,7 +125,7 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
 
     // Note: (ua > a) == (u > 1). Delaying the division by a until
     // after all u-v tests have passed gives a 6% speedup.
-    if ((ua < 0.0f) || (ua > a)) {
+    if ((ua < -conservative) || (ua > a + conservative)) {
         // We hit the plane of the triangle, but outside the triangle
         return;
     }
@@ -130,7 +133,7 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
     const Vector3& q = s.cross(e1);
     const float va = ray.direction().dot(q);
 
-    if ((va < 0.0f) || ((ua + va) > a)) {
+    if ((va < -conservative) || ((ua + va) > a + conservative)) {
         // We hit the plane of the triangle, but outside the triangle.
         return;
     }
