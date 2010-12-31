@@ -15,6 +15,7 @@
 
 namespace G3D {
 
+
 const char* TriTree::algorithmName(SplitAlgorithm s) {
     const char* n[] = {"Mean extent", "Median area", "Median count", "SAH"};
     return n[s];
@@ -96,7 +97,6 @@ void TriTree::Node::setValueArray(const Array<Poly>& src, const MemoryManager::R
         hi = hi.max(t.high());
     }
     
-    // Invoke the bounds constructor
     valueArray->bounds = AABox(lo, hi);
 }
 

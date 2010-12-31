@@ -66,71 +66,127 @@ public:
 };
 
 TriTree tree;
-int main(int argc, char** argv) {
-     {
-    Array<Point3> vertex;
-    Array<int> index;
-    Array<Tri> triArray;
 
- Array<Triangle> _triArray;
+static void generateDirections() {
+    Array<Triangle> triArray;
     
     // Start with an octahedron, which guarantees points along the axes
- /*
     {
         Array<int> index;
         Array<Point3> vertex;
         Array<Point2> texCoord;
         std::string name;
-        IFSModel::load(System::findDataFile("octa.ifs"), name, index, vertex, texCoord);
-        for (int i = 0; i < index.size(); i += 3) {
-            _triArray.append(Triangle(vertex[index[i]].direction(), vertex[index[i + 1]].direction(), vertex[index[i + 2]].direction()));
+        // G3D's octa.ifs is oriented the wrong way, so we create one explicitly
+//        IFSModel::load(System::findDataFile("cube.ifs"/*"octa.ifs"*/), name, index, vertex, texCoord);
+//        for (int i = 0; i < index.size(); i+=3) {
+//            triArray.append(Triangle(vertex[index[i]].direction(), vertex[index[i + 1]].direction(), vertex[index[i + 2]].direction()));
+//        }
+
+        const Point3 X(1, 0, 0);
+        const Point3 Y(0, 1, 0);
+        const Point3 Z(0, 0, 1);
+
+        // Top
+        triArray.append
+            (Triangle( X, Y,  Z),
+             Triangle( Z, Y, -X),
+             Triangle(-X, Y, -Z),
+             Triangle(-Z, Y,  X));
+        /*
+        // Bottom
+        triArray.append
+            (Triangle( Z, -Y,  X),
+             Triangle(-X, -Y,  Z),
+             Triangle(-Z, -Y, -X),
+             Triangle( X, -Y, -Z));
+             */
+    }
+
+    const int numSubdivisions = 2;
+    // Add midpoints and subdivide
+    for (int i = 0; i < numSubdivisions; ++i) {
+        Array<Triangle> old = triArray;
+        triArray.clear();
+        for (int t = 0; t < old.size(); ++t) {
+            const Triangle& tri = old[t];
+
+            //             A           .
+            //            /\           .
+            //         AB/__\ CA       .
+            //          /\  /\         .
+            //         /__\/__\        .
+            //        B   BC   C 
+
+            Point3 A = tri.vertex(0).direction();
+            Point3 B = tri.vertex(1).direction();
+            Point3 C = tri.vertex(2).direction();
+            
+            Point3 AB = ((A + B) / 2).direction();
+            Point3 BC = ((B + C) / 2).direction();
+            Point3 CA = ((C + A) / 2).direction();
+
+            triArray.append(Triangle(A, AB, CA),
+                            Triangle(AB, B, BC),
+                            Triangle(AB, BC, CA),
+                            Triangle(CA, BC, C));
         }
     }
-    */
- 
-        const Point3 X(1,0,0);
-        const Point3 Y(-1,1,-1);
-        const Point3 Z(0,0,1);
-        /*
-        // Top
-        _triArray.append(Triangle(X, Y, Z),
-                Triangle(Z, Y, -X),
-                Triangle(-X, Y, -Z),
-                Triangle(Y, X, -Z));
-        // Bottom
-        _triArray.append(Triangle(-Y, X, Z));
-
-  
 
     // Project and merge into an indexed triangle list
     MeshBuilder b(false, false);
     b.setWeldRadius(0.05f);
-    for (int t = 0; t < _triArray.size(); ++t) {
-        b.addTriangle(_triArray[t]);
+    for (int t = 0; t < triArray.size(); ++t) {
+        b.addTriangle(triArray[t]);
     }
 
+    Array<Point3> vertex;
+    Array<int> index;
     std::string ignore;
     b.commit(ignore, index, vertex);
 
+    // Save
+    TextOutput to("octa-sphere2.off");
+    to.writeSymbol("OFF");
+    to.writeNewline();
+    to.writeNumber(vertex.size());
+    to.writeNumber(index.size() / 3);
+    to.writeNumber(0);
+    to.writeNewline();
+    for (int i = 0; i < vertex.size(); ++i) {
+        const Point3& v = vertex[i];
+        debugAssertM(v.isUnit(), "Vertex should have been on the unit sphere.");
+        for (int j = 0; j < 3; ++j) {
+            to.writeNumber(v[j]);
+        }
+        to.writeNewline();
+    }
+
+    for (int i = 0; i < index.size(); i += 3) {
+        to.writeNumber(3);
+        for (int j = 0; j < 3; ++j) {
+            to.writeNumber(index[i + j]);
+        }
+        to.writeNewline();
+    }
+    to.commit();
+
+#   ifdef G3D_DEBUG
+    // Debug checks
+    {    
+        Array<Tri> triArray;
         for (int i = 0; i < index.size(); i+=3) {
             triArray.append(Tri(vertex[index[i + 2]], vertex[index[i + 1]], vertex[index[i]],
                 Vector3::unitY(), Vector3::unitY(), Vector3::unitY()));
         }       
-        */
-        triArray.append(
-            Tri(Y, X, Z),
-            Tri(X, -Y, Z));
-
-        // TriTree misses this intersection but a simple array search finds it
-        TriTree::Settings settings;
-        settings.valuesPerLeaf = 1;
-        tree.setContents(triArray, settings);
-        const Ray R(Point3::zero(), Vector3(1,0,1).direction());
+//        TriTree tree;
+        tree.setContents(triArray);
+        Ray R(Point3::zero(), Vector3::unitY());
         Tri::Intersector intersector;
-        float distance = finf();
-        // This fails!
+        float distance = inf();
         tree.intersectRay(R, intersector, distance);
+        
         debugAssert(intersector.tri != NULL);
+
 
         // This succeeds
         for (int t = 0; t < tree.size(); ++t) {
@@ -140,6 +196,11 @@ int main(int argc, char** argv) {
 
         debugAssert(intersector.tri != NULL);
     }
+#   endif
+}
+int main(int argc, char** argv) {
+    generateDirections();
+
 
 
 
