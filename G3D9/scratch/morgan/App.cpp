@@ -119,16 +119,13 @@ int main(int argc, char** argv) {
         */
         triArray.append(
             Tri(Y, X, Z),
-            Tri(Y, Z, -X),
-            Tri(Y, -X, -Z),
-            Tri(X, Y, -Z));
-        triArray.append(
             Tri(X, -Y, Z));
 
         // TriTree misses this intersection but a simple array search finds it
-
-        tree.setContents(triArray);
-        const Ray R(Point3::zero(), Vector3(0,1,0).direction());
+        TriTree::Settings settings;
+        settings.valuesPerLeaf = 1;
+        tree.setContents(triArray, settings);
+        const Ray R(Point3::zero(), Vector3(1,0,1).direction());
         Tri::Intersector intersector;
         float distance = finf();
         // This fails!
