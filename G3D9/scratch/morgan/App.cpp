@@ -65,108 +65,93 @@ public:
 
 };
 
-
-class TAny {
-private:
-    TAny* child;
-public:
-
-    TAny() {}
-
-    explicit TAny(const char* s) {}
-
-    template<class T>
-    explicit TAny(const T& v) {
-        *this = v.toAny();
-    }
-
-    template<class T>
-    TAny& operator=(const T& v) {
-        *this = TAny(v);
-        return *this;
-    }
-    
-    TAny& operator[](const std::string& s) {
-        return *child;
-    }
-
-    const TAny& operator[](const std::string& s) const {
-        return *child;
-    }
-
-    template<class C>
-    void append(const C& v) {
-        *child = TAny(v);
-    }
-};
-
-
-class X {
-public:
-
-    X() {}
-    explicit X(const TAny& a) {}
-
-    X& operator=(const TAny& a) {
-        *this = X(a);
-        return *this;
-    }
-
-    TAny toAny() const {
-        return TAny("X");
-    }
-};
-
-class Y {
-public:
-    Y() {}
-    explicit Y(const TAny& a) {}
-
-    TAny toAny() const {
-        return TAny("Y");
-    }
-};
-
-class G {};
-
 int main(int argc, char** argv) {
-
-    X x;
-    Y y;
-    TAny a;
-
-    // The following should work:
-    x = a;
-    a = x;
+     {
+ Array<Triangle> _triArray;
     
-    a["hello"] = x;
-    x = a["hello"];
-    a.append(x);
+    // Start with an octahedron, which guarantees points along the axes
+    {
+        Array<int> index;
+        Array<Point3> vertex;
+        Array<Point2> texCoord;
+        std::string name;
+        IFSModel::load(System::findDataFile("tetra.ifs"/*"octa.ifs"*/), name, index, vertex, texCoord);
+        for (int i = 0; i < index.size(); i+=3) {
+            _triArray.append(Triangle(vertex[index[i]], vertex[index[i + 1]], vertex[index[i + 2]]));
+        }
+    }
 
-    Y z(a);
-    TAny b(y);
+    int numSubdivisions = 0; // 2
+    // Add midpoints and subdivide
+    for (int i = 0; i < numSubdivisions; ++i) {
+        Array<Triangle> old = _triArray;
+        _triArray.clear();
+        for (int t = 0; t < old.size(); ++t) {
+            const Triangle& tri = old[t];
 
-    // The following should be compiler errors:
-    //x = y;
-    //X p(y);
-    //G g; a = g;
-    
+            //             A           .
+            //            /\           .
+            //         AB/__\ CA       .
+            //          /\  /\         .
+            //         /__\/__\        .
+            //        B   BC   C 
 
-    /*
+            Point3 A = tri.vertex(0);
+            Point3 B = tri.vertex(1);
+            Point3 C = tri.vertex(2);
+            
+            Point3 AB = (A + B) / 2;
+            Point3 BC = (B + C) / 2;
+            Point3 CA = (C + A) / 2;
 
-    //Any any(Any::TABLE);
-    //    Color3 c(any.get("color", G3D::Color3::white()));
+            _triArray.append(Triangle(A, AB, CA),
+                            Triangle(AB, B, BC),
+                            Triangle(AB, BC, CA),
+                            Triangle(CA, BC, C));
+        }
+    }
 
-    Vector3 v3;
+    // Project and merge into an indexed triangle list
+    MeshBuilder b;
+    b.setWeldRadius(0.05f);
+    for (int t = 0; t < _triArray.size(); ++t) {
+        b.addTriangle
+            (_triArray[t].vertex(0).direction(), 
+             _triArray[t].vertex(1).direction(), 
+             _triArray[t].vertex(2).direction());
+    }
 
-    // Should be a compiler error
-    Vector4 v4(v3);
+    Array<Point3> vertex;
+    Array<int> index;
+    std::string ignore;
+    b.commit(ignore, index, vertex);
 
-    // Should be a compiler error
-    //v4 = v3;
-    Color3 c;
-    c = v3;
-    */
+     /*
+        Array<int> index;
+        Array<Point3> vertex;
+        Array<Point2> texCoord;
+        std::string name;
+        IFSModel::load(System::findDataFile("tetra.ifs"), name, index, vertex, texCoord);
+        */
+
+        Array<Tri> triArray;
+        for (int i = 0; i < index.size(); i+=3) {
+            triArray.append(Tri(vertex[index[i + 2]], vertex[index[i + 1]], vertex[index[i]],
+                Vector3::unitY(), Vector3::unitY(), Vector3::unitY()));
+        }       
+
+
+        TriTree tree;
+        tree.setContents(triArray);
+        const Ray R(Point3::zero(), Vector3::unitY());
+        Tri::Intersector intersector;
+        float distance = finf();
+        tree.intersectRay(R, intersector, distance);
+
+        debugAssert(intersector.tri != NULL);
+    }
+
+
     exit(0);
 
 #if 0

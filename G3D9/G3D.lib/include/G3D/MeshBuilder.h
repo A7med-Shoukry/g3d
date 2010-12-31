@@ -34,6 +34,8 @@ private:
     typedef Array<int> List;
    
     std::string                 name;
+
+    bool                        scaleAndCenter;
     
     /**
      All of the triangles, as a long triangle list.
@@ -50,7 +52,7 @@ private:
 
 public:
 
-	inline MeshBuilder(bool twoSided = false) : _twoSided(twoSided), close(AUTO_WELD) {}
+	inline MeshBuilder(bool twoSided = false, bool scaleAndCenter = true) : _twoSided(twoSided), close(AUTO_WELD), scaleAndCenter(scaleAndCenter) {}
 
     /** Writes the model to the arrays, which can then be used with
         G3D::IFSModel::save and G3D::MeshAlg */

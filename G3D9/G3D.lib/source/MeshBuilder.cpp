@@ -62,19 +62,21 @@ void MeshBuilder::centerTriList() {
 
     computeBounds(vmin, vmax);
 
-    Vector3 diagonal = vmax - vmin;
-    double scale = max(max(diagonal.x, diagonal.y), diagonal.z) / 2;
+    const Vector3 diagonal = vmax - vmin;
+    float scale = max(max(diagonal.x, diagonal.y), diagonal.z) / 2.0f;
     debugAssert(scale > 0);
 
-    Vector3 translation = vmin + diagonal / 2;
+    const Vector3 translation = vmin + diagonal / 2.0f;
 
     // Center and scale all vertices in the input list
     int v;
 
-    //Matrix3 rot90 = Matrix3::fromAxisAngle(Vector3::UNIT_Y, toRadians(180)) * Matrix3::fromAxisAngle(Vector3::UNIT_X, toRadians(90));
-    for (v = 0; v < triList.size(); ++v) {
-        triList[v] = (triList[v] - translation) / scale;
-        //triList[v] = rot90 * triList[v];
+    if (scaleAndCenter) {
+        //Matrix3 rot90 = Matrix3::fromAxisAngle(Vector3::UNIT_Y, toRadians(180)) * Matrix3::fromAxisAngle(Vector3::UNIT_X, toRadians(90));
+        for (v = 0; v < triList.size(); ++v) {
+            triList[v] = (triList[v] - translation) / scale;
+            //triList[v] = rot90 * triList[v];
+        }
     }
 }
 
