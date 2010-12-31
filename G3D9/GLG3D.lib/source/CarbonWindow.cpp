@@ -1,9 +1,10 @@
 /**
-  @file CarbonWindow.h
+   \file GLG3D/CarbonWindow.h
   
-  @maintainer Casey O'Donnell, caseyodonnell@gmail.com
-  @created 2006-08-24
-  @edited  2008-07-15
+  \maintainer Morgan McGuire
+  \author Casey O'Donnell, caseyodonnell@gmail.com
+  \created 2006-08-24
+  \edited  2010-12-31
 */
 
 #include "G3D/platform.h"
@@ -1114,8 +1115,6 @@ void CarbonWindow::getOSEvents(Queue<GEvent>& events) {
         if (_windowActive) {
             switch (eventKind) {
             case kEventRawKeyDown:
-            case kEventRawKeyModifiersChanged:
-            case kEventRawKeyRepeat:
                 e.key.type = GEventType::KEY_DOWN;
                 e.key.state = SDL_PRESSED;
                 {
@@ -1125,6 +1124,17 @@ void CarbonWindow::getOSEvents(Queue<GEvent>& events) {
                 events.pushBack(e);
                 break;
                 
+            case kEventRawKeyRepeat:
+            case kEventRawKeyModifiersChanged:
+                e.key.type = GEventType::KEY_REPEAT;
+                e.key.state = SDL_PRESSED;
+                {
+                    int i = makeKeyEvent(theEvent, e);
+                    _keyboardButtons[i] = (e.key.state == SDL_PRESSED);
+                }
+                events.pushBack(e);
+                break;
+
             case kEventRawKeyUp:
                 e.key.type = GEventType::KEY_UP;
                 e.key.state = SDL_RELEASED;

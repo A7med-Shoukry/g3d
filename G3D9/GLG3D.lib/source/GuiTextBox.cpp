@@ -207,6 +207,7 @@ bool GuiTextBox::onEvent(const GEvent& event) {
 
     switch (event.type) {
     case GEventType::KEY_DOWN:
+    case GEventType::KEY_REPEAT:
         switch (event.key.keysym.sym) {
         case GKey::ESCAPE:
             // Stop editing and revert

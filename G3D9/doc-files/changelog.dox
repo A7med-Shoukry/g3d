@@ -37,6 +37,7 @@
      <li> G3D::ShadowMap::updateDepth now allows small negative values
      <li> G3D::MD2Model::Specification::negateNormals
      <li> G3D::SurfaceElement
+     <li> G3D::GEventType::KEY_REPEAT
      <li> G3D::RenderDevice::setReadFramebuffer, setDrawFramebuffer
      <li> G3D::PointHashGrid::Iterator::hasMore
      <li> G3D::GLight::castsShadows

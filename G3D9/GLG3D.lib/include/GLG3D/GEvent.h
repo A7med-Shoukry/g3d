@@ -1,12 +1,12 @@
 /**
-  @file GEvent.h
+  \file G3D/GEvent.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2006-10-20
-  @edited  2008-07-14
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2006-10-20
+  \edited  2010-12-31
 */
-#ifndef G3D_GEVENT_H
-#define G3D_GEVENT_H
+#ifndef G3D_GEvent_h
+#define G3D_GEvent_h
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
@@ -184,42 +184,43 @@ public:
 class GEventType {
 public:
     enum Value { 
-       NONE = 0,	        /* Unused (do not remove) */
-       ACTIVE,	        	/* Application loses/gains visibility */
-       KEY_DOWN,	        /* Keys pressed */
-       KEY_UP,	            /* Keys released */
-       MOUSE_MOTION,		/* Mouse moved */
-       MOUSE_BUTTON_DOWN,	/* Mouse button pressed */
-       MOUSE_BUTTON_UP,		/* Mouse button released */
-       JOY_AXIS_MOTION,		/* Joystick axis motion */
-       JOY_BALL_MOTION,		/* Joystick trackball motion */
-       JOY_HAT_MOTION,		/* Joystick hat position change */
-       JOY_BUTTON_DOWN,		/* Joystick button pressed */
-       JOY_BUTTON_UP,		/* Joystick button released */
-       QUIT,		        /* User-requested quit */
-       SYSWMEVENT,	        /* System specific event */
-       EVENT_RESERVEDA,		/* Reserved for future use.. */
-       EVENT_RESERVEDB,		/* Reserved for future use.. */
-       VIDEO_RESIZE,		/* User resized video mode */
-       VIDEO_EXPOSE,		/* Screen needs to be redrawn */
-       EVENT_RESERVED2,		/* Reserved for future use.. */
-       EVENT_RESERVED3,		/* Reserved for future use.. */
-       EVENT_RESERVED4,		/* Reserved for future use.. */
-       EVENT_RESERVED5,		/* Reserved for future use.. */
-       EVENT_RESERVED6,		/* Reserved for future use.. */
-       EVENT_RESERVED7,		/* Reserved for future use.. */
-       GUI_DOWN,            /* GuiControl button, etc. pressed. */
-       GUI_UP,              /* GuiControl button, etc. released. */
-       GUI_ACTION,          /* Commit action: Button fire, enter pressed in a text box, slider released, menu selecion. */
-       GUI_CHANGE,          /* Continuous changing (e.g., typing in text box, slider dragged.) */
-       GUI_CANCEL,          /* Esc pressed in a text box or menu */
-       GUI_CLOSE,           /* GuiWindow close button pressed. */
-       FILE_DROP,           /* Signifies that files have been dropped onto the program. Call 
+       NONE = 0,	        /** Unused (do not remove) */
+       ACTIVE,	        	/** Application loses/gains visibility */
+       KEY_DOWN,	        /** Keys pressed */
+       KEY_UP,	                /** Keys released */
+       MOUSE_MOTION,		/** Mouse moved */
+       MOUSE_BUTTON_DOWN,	/** Mouse button pressed */
+       MOUSE_BUTTON_UP,		/** Mouse button released */
+       JOY_AXIS_MOTION,		/** Joystick axis motion */
+       JOY_BALL_MOTION,		/** Joystick trackball motion */
+       JOY_HAT_MOTION,		/** Joystick hat position change */
+       JOY_BUTTON_DOWN,		/** Joystick button pressed */
+       JOY_BUTTON_UP,		/** Joystick button released */
+       QUIT,		        /** User-requested quit */
+       SYSWMEVENT,	        /** System specific event */
+       EVENT_RESERVEDA,		/** Reserved for future use. */
+       EVENT_RESERVEDB,		/** Reserved for future use. */
+       VIDEO_RESIZE,		/** User resized video mode */
+       VIDEO_EXPOSE,		/** Screen needs to be redrawn */
+       EVENT_RESERVED2,		/** Reserved for future use. */
+       EVENT_RESERVED3,		/** Reserved for future use. */
+       EVENT_RESERVED4,		/** Reserved for future use. */
+       EVENT_RESERVED5,		/** Reserved for future use. */
+       EVENT_RESERVED6,		/** Reserved for future use. */
+       EVENT_RESERVED7,		/** Reserved for future use. */
+       GUI_DOWN,            /** GuiControl button, etc. pressed. */
+       GUI_UP,              /** GuiControl button, etc. released. */
+       GUI_ACTION,          /** Commit action: Button fire, enter pressed in a text box, slider released, menu selecion. */
+       GUI_CHANGE,          /** Continuous changing (e.g., typing in text box, slider dragged.) */
+       GUI_CANCEL,          /** Esc pressed in a text box or menu */
+       GUI_CLOSE,           /** GuiWindow close button pressed. */
+       FILE_DROP,           /** Signifies that files have been dropped onto the program. Call 
                                OSWindow.getDroppedFilenames to receive the actual data.*/
-       MOUSE_SCROLL_2D,     /* A 2D scroll event has occured */
-       MOUSE_BUTTON_CLICK,  /* A 2D button click (in addition to mouse released event).  Uses MouseButtonEvent. */
+       MOUSE_SCROLL_2D,     /** A 2D scroll event has occured */
+       MOUSE_BUTTON_CLICK,  /** A 2D button click (in addition to mouse released event).  Uses MouseButtonEvent. */
+       KEY_REPEAT,          /** Operating system virtual key press from the key being held down. This is not fired on the physical key press.*/
 
-       /* This last event is only for bounding internal arrays
+       /** This last event is only for bounding internal arrays
   	     It is the number of bits in the event mask datatype -- uint32 */
        NUMEVENTS
     };
@@ -260,8 +261,10 @@ private:
                                OSWindow.getDroppedFilenames to receive the actual data.*/
        "MOUSE_SCROLL_2D",     /* A 2D scroll event has occured */
        "MOUSE_BUTTON_CLICK",  /* A 2D button click (in addition to mouse released event).  Uses MouseButtonEvent. */
-         "NUMEVENTS", NULL};
-        static const Value val[] = {NONE,	        /* Unused (do not remove) */
+       "KEY_REPEAT",/** Operating system virtual key press from the key being held down. This is not fired on the physical key press.*/
+
+        "NUMEVENTS", NULL};
+       static const Value val[] = {NONE,	        /* Unused (do not remove) */
        ACTIVE,	        	/* Application loses/gains visibility */
        KEY_DOWN,	        /* Keys pressed */
        KEY_UP,	            /* Keys released */
@@ -295,6 +298,7 @@ private:
                                OSWindow.getDroppedFilenames to receive the actual data.*/
        MOUSE_SCROLL_2D,     /* A 2D scroll event has occured */
        MOUSE_BUTTON_CLICK,  /* A 2D button click (in addition to mouse released event).  Uses MouseButtonEvent. */
+       KEY_REPEAT,
          NUMEVENTS};
 
         const char* s = str[i];
@@ -318,9 +322,9 @@ namespace G3D {
 
 #ifndef SDL_APPMOUSEFOCUS
 /* The available application states */
-#define SDL_APPMOUSEFOCUS	0x01		/* The app has mouse coverage */
-#define SDL_APPINPUTFOCUS	0x02		/* The app has input focus */
-#define SDL_APPACTIVE		0x04		/* The application is active */
+#define SDL_APPMOUSEFOCUS	0x01		/** \def SDL_APPMOUSEFOCUS The app has mouse coverage */
+#define SDL_APPINPUTFOCUS	0x02		/** \def SDL_APPINPUTFOCUS The app has input focus */
+#define SDL_APPACTIVE		0x04		/** \def SDL_APPACTIVE  The application is active */
 #endif
 
 /** Application visibility event structure */
@@ -340,13 +344,13 @@ public:
 /** Keyboard event structure */
 class KeyboardEvent {
 public:
-    /** GEventType::KEY_DOWN or GEventType::KEY_UP */
+    /** GEventType::KEY_DOWN, GEventType::KEY_UP, or GEVentType::KEY_REPEAT */
     uint8           type;
 
     /** The keyboard device index */
     uint8           which;
 
-    /** GButtonState::PRESSED or GButtonState::RELEASED */
+    /** GButtonState::PRESSED or GButtonState::RELEASED.  GEventType::KEY_REPEAT will generate multiple PRESSED values. */
     uint8           state;
 
     GKeySym         keysym;
