@@ -65,94 +65,86 @@ public:
 
 };
 
+TriTree tree;
 int main(int argc, char** argv) {
      {
+    Array<Point3> vertex;
+    Array<int> index;
+    Array<Tri> triArray;
+
  Array<Triangle> _triArray;
     
     // Start with an octahedron, which guarantees points along the axes
+ /*
     {
         Array<int> index;
         Array<Point3> vertex;
         Array<Point2> texCoord;
         std::string name;
-        IFSModel::load(System::findDataFile("tetra.ifs"/*"octa.ifs"*/), name, index, vertex, texCoord);
-        for (int i = 0; i < index.size(); i+=3) {
-            _triArray.append(Triangle(vertex[index[i]], vertex[index[i + 1]], vertex[index[i + 2]]));
+        IFSModel::load(System::findDataFile("octa.ifs"), name, index, vertex, texCoord);
+        for (int i = 0; i < index.size(); i += 3) {
+            _triArray.append(Triangle(vertex[index[i]].direction(), vertex[index[i + 1]].direction(), vertex[index[i + 2]].direction()));
         }
     }
+    */
+ 
+        const Point3 X(1,0,0);
+        const Point3 Y(-1,1,-1);
+        const Point3 Z(0,0,1);
+        /*
+        // Top
+        _triArray.append(Triangle(X, Y, Z),
+                Triangle(Z, Y, -X),
+                Triangle(-X, Y, -Z),
+                Triangle(Y, X, -Z));
+        // Bottom
+        _triArray.append(Triangle(-Y, X, Z));
 
-    int numSubdivisions = 0; // 2
-    // Add midpoints and subdivide
-    for (int i = 0; i < numSubdivisions; ++i) {
-        Array<Triangle> old = _triArray;
-        _triArray.clear();
-        for (int t = 0; t < old.size(); ++t) {
-            const Triangle& tri = old[t];
-
-            //             A           .
-            //            /\           .
-            //         AB/__\ CA       .
-            //          /\  /\         .
-            //         /__\/__\        .
-            //        B   BC   C 
-
-            Point3 A = tri.vertex(0);
-            Point3 B = tri.vertex(1);
-            Point3 C = tri.vertex(2);
-            
-            Point3 AB = (A + B) / 2;
-            Point3 BC = (B + C) / 2;
-            Point3 CA = (C + A) / 2;
-
-            _triArray.append(Triangle(A, AB, CA),
-                            Triangle(AB, B, BC),
-                            Triangle(AB, BC, CA),
-                            Triangle(CA, BC, C));
-        }
-    }
+  
 
     // Project and merge into an indexed triangle list
-    MeshBuilder b;
+    MeshBuilder b(false, false);
     b.setWeldRadius(0.05f);
     for (int t = 0; t < _triArray.size(); ++t) {
-        b.addTriangle
-            (_triArray[t].vertex(0).direction(), 
-             _triArray[t].vertex(1).direction(), 
-             _triArray[t].vertex(2).direction());
+        b.addTriangle(_triArray[t]);
     }
 
-    Array<Point3> vertex;
-    Array<int> index;
     std::string ignore;
     b.commit(ignore, index, vertex);
 
-     /*
-        Array<int> index;
-        Array<Point3> vertex;
-        Array<Point2> texCoord;
-        std::string name;
-        IFSModel::load(System::findDataFile("tetra.ifs"), name, index, vertex, texCoord);
-        */
-
-        Array<Tri> triArray;
         for (int i = 0; i < index.size(); i+=3) {
             triArray.append(Tri(vertex[index[i + 2]], vertex[index[i + 1]], vertex[index[i]],
                 Vector3::unitY(), Vector3::unitY(), Vector3::unitY()));
         }       
+        */
+        triArray.append(
+            Tri(Y, X, Z),
+            Tri(Y, Z, -X),
+            Tri(Y, -X, -Z),
+            Tri(X, Y, -Z));
+        triArray.append(
+            Tri(X, -Y, Z));
 
+        // TriTree misses this intersection but a simple array search finds it
 
-        TriTree tree;
         tree.setContents(triArray);
-        const Ray R(Point3::zero(), Vector3::unitY());
+        const Ray R(Point3::zero(), Vector3(0,1,0).direction());
         Tri::Intersector intersector;
         float distance = finf();
+        // This fails!
         tree.intersectRay(R, intersector, distance);
+        debugAssert(intersector.tri != NULL);
+
+        // This succeeds
+        for (int t = 0; t < tree.size(); ++t) {
+            const Tri& tri = tree[t];
+            intersector(R, tri, distance);         
+        }
 
         debugAssert(intersector.tri != NULL);
     }
 
 
-    exit(0);
 
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
@@ -306,24 +298,12 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
     */
 
+    tree.draw(rd, 10, true, 0);
+    Draw::axes(rd);
+
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
     
-    rd->push2D();
-    {
-        rd->setColorClearValue(Color3::white());
-        //rd->setStencilClearValue(0);    
-        rd->clear(true, true, true);
-
-        rd->setStencilConstant(1);
-        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_REPLACE);
-        Draw::rect2D(Rect2D::xywh(100, 100, 100, 100), rd, Color3::red());
-
-        rd->setStencilOp(RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP, RenderDevice::STENCIL_KEEP);
-        rd->setStencilTest(RenderDevice::STENCIL_EQUAL);
-        Draw::rect2D(rd->viewport(), rd, Color3::blue());
-    }
-    rd->pop2D();
 
     
     /*

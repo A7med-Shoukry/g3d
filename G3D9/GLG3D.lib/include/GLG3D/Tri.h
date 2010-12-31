@@ -86,6 +86,8 @@ public:
         const Vector2& t0 = Vector2::zero(), const Vector2& t1 = Vector2::zero(), const Vector2& t2 = Vector2::zero(),
         const Vector4& tan0 = Vector4::zero(), const Vector4& tan1 = Vector4::zero(), const Vector4& tan2 = Vector4::zero());
 
+    Tri(const Vector3& v0, const Vector3& v1, const Vector3& v2);
+
     /** Cast to Triangle */
     operator Triangle() const;
 

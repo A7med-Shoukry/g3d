@@ -18,6 +18,20 @@ Tri::Tri() : m_data(NULL) {}
 Tri::~Tri() {}
 
 Tri::Tri
+(const Vector3& v0, const Vector3& v1, const Vector3& v2) :
+    v0(v0), e1(v1 - v0), e2(v2 - v0),
+    m_material(NULL),
+    m_data(NULL) {
+    
+    n = e1.cross(e2).directionOrZero();
+
+    m_normal[0] = n;
+    m_normal[1] = n;
+    m_normal[2] = n;
+}
+
+
+Tri::Tri
 (const Vector3& v0, const Vector3& v1, const Vector3& v2, 
  const Vector3& n0, const Vector3& n1, const Vector3& n2,
  void* data,
