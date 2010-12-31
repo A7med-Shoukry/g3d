@@ -391,6 +391,11 @@ private:
                 } else if (direction > 0) {
                     // ...and goes to the large side
                     firstChild = 1;
+                } else {
+                    // ...and travels in the splitting plane.  The order is
+                    // arbitrary
+                    firstChild  = 0;
+                    secondChild = 1;
                 }
             }
         }

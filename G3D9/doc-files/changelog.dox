@@ -79,6 +79,7 @@
      <li> Fix: CarbonWindow icons now load correctly
      <li> Fix: BinaryOutput to memory now never creates a file on disk
      <li> Fix: GuiWindow now consumes mouse motion events while being dragged.
+     <li> Fix: G3D::TriTree now finds ray intersections even when the ray lies entirely within a splitting plane
     </ul>
 
      <b>Backwards Incompatible Changes</b>:
