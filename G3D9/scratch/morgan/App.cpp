@@ -199,7 +199,7 @@ static void generateDirections() {
 #   endif
 }
 int main(int argc, char** argv) {
-    generateDirections();
+    //    generateDirections();
 
 
 

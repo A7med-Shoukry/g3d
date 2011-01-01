@@ -1,3 +1,4 @@
+// -*- c++ -*-
 /**
    \file GLG3D/CarbonWindow.h
   
@@ -1206,22 +1207,43 @@ unsigned char CarbonWindow::makeKeyEvent(EventRef theEvent, GEvent& e) {
     unsigned char * keyBytes;
     enum {
         /* modifier keys (TODO: need to determine right command key value) */
-        kVirtualLShiftKey = 0x038,
+        kVirtualLShiftKey   = 0x038,
         kVirtualLControlKey = 0x03B,
-        kVirtualLOptionKey = 0x03A,
-        kVirtualRShiftKey = 0x03C,
+        kVirtualLOptionKey  = 0x03A,
+        kVirtualRShiftKey   = 0x03C,
         kVirtualRControlKey = 0x03E,
-        kVirtualROptionKey = 0x03D,
-        kVirtualCommandKey = 0x037
+        kVirtualROptionKey  = 0x03D,
+        kVirtualCommandKey  = 0x037
     };
     
+    //GetEventParameter(theEvent, kEventParamTextInputSendText, typeUnicodeText, NULL, sizeof(uc), NULL, &uc);
+
+    // The direct unicode char is unreliable; kEventParamTextInputSendText gives better results
     GetEventParameter(theEvent, kEventParamKeyUnicodes, typeUnicodeText, NULL, sizeof(uc), NULL, &uc);
+
     GetEventParameter(theEvent, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(c), NULL, &c);
     GetEventParameter(theEvent, kEventParamKeyCode, typeUInt32, NULL, sizeof(key), NULL, &key);
     GetEventParameter(theEvent, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(modifiers), NULL, &modifiers);
 
     GetKeys(keyMap);
     keyBytes = (unsigned char *)keyMap;
+
+
+    if ((modifiers & controlKey) && (c != 0)) {
+        // We can't trust the code in c or uc in this case (http://developer.apple.com/library/mac/#qa/qa2005/qa1446.html)
+        // so correct their values
+
+        UInt32 keyType = 0;
+        GetEventParameter(theEvent, kEventParamKeyboardType, typeUInt32, NULL, sizeof(keyType), NULL, &keyType);
+
+        // http://developer.apple.com/library/mac/#documentation/Carbon/Reference/Unicode_Utilities_Ref/Reference/reference.html
+        long smv = GetScriptManagerVariable(smKeyScript);
+        Handle uchrHandle = GetResource('uchr', GetScriptVariable(smv, smScriptKeys));
+        UInt32 dummy = 0;
+        UCKeyTranslate((UCKeyboardLayout*)*uchrHandle, key, kUCKeyActionDisplay,
+                       (modifiers & ~controlKey) >> 8, keyType, kUCKeyTranslateNoDeadKeysMask, &dummy, 1, &dummy, &uc);
+        c = uc;
+    }
     
     e.key.keysym.scancode = key;
     e.key.keysym.unicode = uc;
@@ -1294,7 +1316,7 @@ unsigned char CarbonWindow::makeKeyEvent(EventRef theEvent, GEvent& e) {
     // versions of keys.  In all other cases, we have a "normal" key.
 
     if (c != 0) {
-        //debugPrintf("\nRaw code = %d\n", key);
+        // debugPrintf("\nRaw code = %d, %d\n", key, c);
         // Non-modifier key
         switch(key) {
         case 122: e.key.keysym.sym = GKey::F1;    break;
@@ -1324,6 +1346,7 @@ unsigned char CarbonWindow::makeKeyEvent(EventRef theEvent, GEvent& e) {
                 // Capital letter; make canonically lower case
                 e.key.keysym.sym = (GKey::Value)(c - 'A' + 'a');
             } else {
+                // Other normal symbol
                 e.key.keysym.sym = (GKey::Value)c;
             }
         }

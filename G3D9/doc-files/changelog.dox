@@ -82,6 +82,7 @@
      <li> Fix: GuiWindow now consumes mouse motion events while being dragged.
      <li> Fix: G3D::TriTree now finds ray intersections even when the ray lies entirely within a splitting plane
      <li> Fix: G3D::Intersect::rayAABox had some bad logic for a few cases due to falling through a SWITCH-CASE.  These are now fixed.
+     <li> Fix: CarbonWindow now returns correct key codes when Ctrl+letter are held down
     </ul>
 
      <b>Backwards Incompatible Changes</b>:
