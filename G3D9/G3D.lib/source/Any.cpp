@@ -876,13 +876,18 @@ void Any::serialize(TextOutput& to) const {
         } else {
             to.writeSymbol("(");
         }
-        to.writeNewline();
+        const Array<Any>& array = *(m_data->value.a);
+        const bool longForm = (array.size() > 0) && ((array[0].type() == ARRAY) || (array[0].type() == TABLE));
+
+        if (longForm) {
+            to.writeNewline();
+        }
+
         to.pushIndent();
-        Array<Any>& array = *(m_data->value.a);
         for (int ii = 0; ii < size(); ++ii) {
             array[ii].serialize(to);
             if (ii < size() - 1) {
-                if ((array[0].type() == ARRAY) || (array[0].type() == TABLE)) {
+                if (longForm) {
                     // Probably a long-form array
                     to.writeSymbol(";");
                     to.writeNewline();
