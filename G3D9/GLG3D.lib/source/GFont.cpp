@@ -336,7 +336,7 @@ Vector2 GFont::send2DQuadsWordWrap(
         Vector2 extent = send2DQuads(renderDevice, first, p, size, color, border, xalign, yalign, spacing);
         bounds.x = max(bounds.x, extent.x);
         bounds.y += extent.y;
-        p.y += iCeil(extent.y * 0.9f);
+        p.y += iCeil(extent.y * 0.8f);
     }
 
     return bounds;
