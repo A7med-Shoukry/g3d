@@ -397,6 +397,10 @@ public:
     
     /** @param xalign Horizontal alignment of text within the rect of the label 
         @param yalign Vertical alignment of text within the rect of the label 
+
+        The label will wordwrap, but only allocates vertical layout space based
+        on the size of the control.  If you would like to change the layout space,
+        call GuiControl::setHeight on it.
     */
     GuiLabel* addLabel(const GuiText& text, GFont::XAlign xalign = GFont::XALIGN_LEFT,
                        GFont::YAlign yalign = GFont::YALIGN_CENTER);

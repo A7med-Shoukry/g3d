@@ -331,6 +331,19 @@ public:
         YAlign              yalign  = YALIGN_TOP,
         Spacing             spacing = PROPORTIONAL_SPACING) const;
 
+    /** For high-performance rendering of substantial amounts of text.
+    \beta */
+    Vector2 send2DQuadsWordWrap(
+        RenderDevice*       renderDevice,
+        float               wrapWidth,
+        const std::string&  s,
+        const Point2&       pos2D,
+        float               size    = 12,
+        const Color4&       color   = Color3::black(),
+        const Color4&       outline = Color4::clear(),
+        XAlign              xalign  = XALIGN_LEFT,
+        YAlign              yalign  = YALIGN_TOP,
+        Spacing             spacing = PROPORTIONAL_SPACING) const;
 };
 
 }

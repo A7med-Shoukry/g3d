@@ -309,6 +309,39 @@ void GFont::end2DQuads(RenderDevice* renderDevice) const {
 // Used for vertex array storage
 static Array<Vector2> array;
 
+
+Vector2 GFont::send2DQuadsWordWrap(
+    RenderDevice*               renderDevice,
+    float                       maxWidth,
+    const std::string&          s,
+    const Vector2&              pos2D,
+    float                       size,
+    const Color4&               color,
+    const Color4&               border,
+    XAlign                      xalign,
+    YAlign                      yalign,
+    Spacing                     spacing) const {
+
+    if (maxWidth == finf()) {
+        return send2DQuads(renderDevice, s, pos2D, size, color, border, xalign, yalign, spacing);
+    }
+
+    Vector2 bounds = Vector2::zero();
+    Point2 p = pos2D;
+    std::string rest = s;
+    std::string first = "";
+
+    while (! rest.empty()) {
+        wordWrapCut(maxWidth, rest, first, size, spacing);
+        Vector2 extent = send2DQuads(renderDevice, first, p, size, color, border, xalign, yalign, spacing);
+        bounds.x = max(bounds.x, extent.x);
+        bounds.y += extent.y;
+        p.y += iCeil(extent.y * 0.9f);
+    }
+
+    return bounds;
+}
+
 Vector2 GFont::send2DQuads(
     RenderDevice*               renderDevice,
     const std::string&          s,
@@ -574,24 +607,15 @@ Vector2 GFont::draw2DWordWrap(
 
     Vector2 bounds;
     renderDevice->pushState();
+    {
         renderDevice->disableLighting();
 
         begin2DQuads(renderDevice);
 
-        bounds = Vector2::zero();
-        Point2 p = pos2D;
-        std::string rest = s;
-        std::string first = "";
-
-        while (! rest.empty()) {
-            wordWrapCut(maxWidth, rest, first, size, spacing);
-            Vector2 extent = send2DQuads(renderDevice, first, p, size, color, border, xalign, yalign, spacing);
-            bounds.x = max(bounds.x, extent.x);
-            bounds.y += extent.y;
-            p.y += iCeil(extent.y * 0.9f);
-        }
+        bounds = send2DQuadsWordWrap(renderDevice, maxWidth, s, pos2D, size, color, border, xalign, yalign, spacing);
 
         end2DQuads(renderDevice);
+    }
     renderDevice->popState();
     debugAssertGLOk();
 

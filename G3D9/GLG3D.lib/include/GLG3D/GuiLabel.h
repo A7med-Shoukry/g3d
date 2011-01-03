@@ -28,11 +28,27 @@ private:
     GFont::XAlign m_xalign;
     GFont::YAlign m_yalign;
     
-    GuiLabel(GuiContainer*,const GuiText&, GFont::XAlign, GFont::YAlign);
+    GuiLabel(GuiContainer*, const GuiText&, GFont::XAlign, GFont::YAlign);
 
     void render(RenderDevice* rd, const GuiThemeRef&) const;
 
 public:
+
+    void setXAlign(GFont::XAlign a) {
+        m_xalign = a;
+    }
+
+    GFont::XAlign xAlign() const {
+        return m_xalign;
+    }
+
+    void setYAlign(GFont::YAlign a) {
+        m_yalign = a;
+    }
+
+    GFont::YAlign yAlign() const {
+        return m_yalign;
+    }
 };
 
 } // G3D

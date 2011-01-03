@@ -295,23 +295,24 @@ void GuiTheme::drawCheckable
 
 
 void GuiTheme::addDelayedText
-(const GuiText& text, 
+(const GuiText&             text, 
  const GuiTheme::TextStyle& defaults,
- const Vector2& position, 
- GFont::XAlign xalign,
- GFont::YAlign yalign) const {
+ const Vector2&             position, 
+ GFont::XAlign              xalign,
+ GFont::YAlign              yalign,
+ float                      wordWrapWidth) const {
     if (text.numElements() == 0) {
         return;
     }
     
     const GuiText::Element& element = text.element(0);
 
-    float size = element.size(defaults.size);
-    const GFont::Ref& font = element.font(defaults.font);
-    const Color4& color = element.color(defaults.color);
-    const Color4& outlineColor = element.outlineColor(defaults.outlineColor);
+    float size                  = element.size(defaults.size);
+    const GFont::Ref& font      = element.font(defaults.font);
+    const Color4& color         = element.color(defaults.color);
+    const Color4& outlineColor  = element.outlineColor(defaults.outlineColor);
  
-    addDelayedText(font, element.text(), position, size, color, outlineColor, xalign, yalign);
+    addDelayedText(font, element.text(), position, size, color, outlineColor, xalign, yalign, wordWrapWidth);
 }
 
 
@@ -690,7 +691,7 @@ void GuiTheme::renderHorizontalSlider
 }
 
 
-void GuiTheme::renderLabel(const Rect2D& bounds, const GuiText& text, GFont::XAlign xalign, GFont::YAlign yalign, bool enabled) const {
+void GuiTheme::renderLabel(const Rect2D& bounds, const GuiText& text, GFont::XAlign xalign, GFont::YAlign yalign, bool enabled, bool wordWrap) const {
     debugAssert(m_inRendering);
 
     if (text.numElements() > 0) {
@@ -723,7 +724,7 @@ void GuiTheme::renderLabel(const Rect2D& bounds, const GuiText& text, GFont::XAl
 
         const TextStyle& style = enabled ? m_textStyle : m_disabledTextStyle;
 
-        addDelayedText(text, style, pos, xalign, yalign);
+        addDelayedText(text, style, pos, xalign, yalign, wordWrap ? bounds.width() : finf());
     }
 }
 
@@ -758,7 +759,7 @@ void GuiTheme::drawDelayedText() const {
                 // Render the text in this font
                 for (int t = 0; t < label.size(); ++t) {
                     const Text& text = label[t];
-                    thisFont->send2DQuads(m_rd, text.text, text.position, text.size, text.color, 
+                    thisFont->send2DQuadsWordWrap(m_rd, text.wrapWidth, text.text, text.position, text.size, text.color, 
                                           text.outlineColor, text.xAlign, text.yAlign);
                 }
                 thisFont->end2DQuads(m_rd);
@@ -788,7 +789,8 @@ void GuiTheme::addDelayedText
  const Color4&      color, 
  const Color4&      outlineColor,
  GFont::XAlign      xalign,
- GFont::YAlign      yalign) const {
+ GFont::YAlign      yalign,
+ float              wordWrapWidth) const {
 
     if (font.isNull()) {
         font = m_textStyle.font;
@@ -813,6 +815,7 @@ void GuiTheme::addDelayedText
     text.xAlign     = xalign;
     text.yAlign     = yalign;
     text.size       = size;
+    text.wrapWidth  = wordWrapWidth;
 
     if (color.a < 0) {
         text.color = m_textStyle.color;

@@ -182,6 +182,8 @@ private:
         float               size;
         Color4              color;
         Color4              outlineColor;
+        float               wrapWidth;
+        Text() : size(0), wrapWidth(finf()) {}
     };
 
     /** Delayed text, organized by the associated font.*/
@@ -204,10 +206,10 @@ private:
     */
     void addDelayedText(GFont::Ref font, const std::string& text, const Vector2& position, float size, 
                         const Color4& color, const Color4& outlineColor, GFont::XAlign xalign, 
-                        GFont::YAlign yalign = GFont::YALIGN_CENTER) const;
+                        GFont::YAlign yalign = GFont::YALIGN_CENTER, float wordWrapWidth = finf()) const;
 
     void addDelayedText(const GuiText& text, const TextStyle& defaults, const Vector2& position, 
-                        GFont::XAlign xalign, GFont::YAlign yalign = GFont::YALIGN_CENTER) const;
+                        GFont::XAlign xalign, GFont::YAlign yalign = GFont::YALIGN_CENTER, float wordWrapWidth = finf()) const;
 
 
     enum {TEXTURE_UNIT = 0};
@@ -755,7 +757,7 @@ public:
     /** Only call between beginRendering and endRendering */
     void renderLabel(const Rect2D& bounds, const GuiText& text, 
                      GFont::XAlign xalign, GFont::YAlign yalign,
-                     bool enabled) const;
+                     bool enabled, bool wordWrap = false) const;
 
     void renderPane(const Rect2D& fullBounds, const GuiText& caption, PaneStyle paneStyle) const;
     
