@@ -373,14 +373,13 @@ void GuiWindow::pack() {
     increaseBounds(m_rootPane->rect().wh());
 }
 
+void GuiWindow::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
+    if (m_morph.active) {
+        m_morph.update(this);
+    }    
+}
 
 void GuiWindow::render(RenderDevice* rd) const {
-    GuiWindow* me = const_cast<GuiWindow*>(this);
-
-    if (m_morph.active) {
-        me->m_morph.update(me);
-    }
-    
     m_skin->beginRendering(rd);
     {
         bool hasClose = m_closeAction != NO_CLOSE;

@@ -341,9 +341,7 @@ public:
 
     virtual void onNetwork() {}
 
-    virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
-        (void)rdt;(void)sdt;(void)idt;
-    }
+    virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt);
 
     virtual void onUserInput(UserInput* ui);
 
