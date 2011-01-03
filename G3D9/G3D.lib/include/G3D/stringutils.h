@@ -75,6 +75,8 @@ bool endsWith(
  the line is broken at the latest space before the
  column limit.)  Platform specific NEWLINEs
  are inserted to wrap.
+
+ \sa G3D::GFont::wordWrapCut, G3D::TextOutput::Settings::WordWrapMode
  */
 std::string wordWrap(
     const std::string&          input,

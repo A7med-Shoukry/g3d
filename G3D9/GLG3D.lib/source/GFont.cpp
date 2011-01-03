@@ -557,6 +557,101 @@ Vector2 GFont::draw3D(
 
     return bounds;
 }
+    
+Vector2 GFont::draw2DWordWrap(
+    RenderDevice*               renderDevice,
+    float                       maxWidth,
+    const std::string&          s,
+    const Vector2&              pos2D,
+    float                       size,
+    const Color4&               color,
+    const Color4&               border,
+    XAlign                      xalign,
+    YAlign                      yalign,
+    Spacing                     spacing) const {
+
+    debugAssert(renderDevice != NULL);
+
+    Vector2 bounds;
+    renderDevice->pushState();
+        renderDevice->disableLighting();
+
+        begin2DQuads(renderDevice);
+
+        bounds = Vector2::zero();
+        Point2 p = pos2D;
+        std::string rest = s;
+        std::string first = "";
+
+        while (! rest.empty()) {
+            wordWrapCut(maxWidth, rest, first, size, spacing);
+            Vector2 extent = send2DQuads(renderDevice, first, p, size, color, border, xalign, yalign, spacing);
+            bounds.x = max(bounds.x, extent.x);
+            bounds.y += extent.y;
+            p.y += iCeil(extent.y * 0.9f);
+        }
+
+        end2DQuads(renderDevice);
+    renderDevice->popState();
+    debugAssertGLOk();
+
+    return bounds;
+}
+
+    
+int GFont::wordWrapCut(
+    float               maxWidth,
+    std::string&        s,
+    std::string&        firstPart,
+    float               size,
+    Spacing             spacing) const {
+    debugAssert(maxWidth > 0);
+    int n = s.length();
+
+    const float h = size * 1.5;
+    const float w = h * charWidth / charHeight;
+    const float propW = w / charWidth;
+    float x = 0;
+
+    // Current character number
+    int i = 0;
+
+    // Walk forward until we hit the end of the string or the maximum width
+    while ((x <= maxWidth) && (i < n)) {
+        const unsigned char c = s[i] & (charsetSize - 1);
+        if (spacing == PROPORTIONAL_SPACING) {
+            x += propW * subWidth[(int)c];
+        } else {
+            x += propW * subWidth[(int)'M'] * 0.85;
+        }
+        ++i;
+    }
+
+    if (i == n) {
+        // We made it to the end
+        firstPart = s;
+        s = "";
+        return n;
+    }
+
+    --i;
+
+    // Search backwards for a space.  Only look up to 25% of maxWidth
+    while ((i > 1) && ! isWhiteSpace(s[i]) && (x > maxWidth * 0.25f)) {
+        const unsigned char c = s[i] & (charsetSize - 1);
+        if (spacing == PROPORTIONAL_SPACING) {
+            x -= propW * subWidth[(int)c];
+        } else {
+            x -= propW * subWidth[(int)'M'] * 0.85;
+        }
+        --i;
+    }
+
+    firstPart = s.substr(0, i);
+    s = trimWhitespace(s.substr(i));
+
+    return i;
+}
 
 
 Vector2 GFont::bounds(

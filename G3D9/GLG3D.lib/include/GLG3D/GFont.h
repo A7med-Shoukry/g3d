@@ -209,6 +209,19 @@ public:
         YAlign              yalign  = YALIGN_TOP,
         Spacing             spacing = PROPORTIONAL_SPACING) const;
 
+    /** Wordwraps at \a maxWidth */
+    Vector2 draw2DWordWrap(
+        RenderDevice*       renderDevice,
+        float               maxWidth,
+        const std::string&  s,
+        const Point2&       pos2D,
+        float               size    = 12,
+        const Color4&       color   = Color3::black(),
+        const Color4&       outline = Color4::clear(),
+        XAlign              xalign  = XALIGN_LEFT,
+        YAlign              yalign  = YALIGN_TOP,
+        Spacing             spacing = PROPORTIONAL_SPACING) const;
+    
 
     /**
      Renders flat text on a plane in 3D, obeying the z-buffer.
@@ -262,6 +275,28 @@ public:
      */
     Vector2 bounds(
         const std::string&  s,
+        float               size = 12,
+        Spacing             spacing = PROPORTIONAL_SPACING) const;
+
+    /**
+
+    \param s The original string.  This will be modified to contain
+     the remainder after word wrapping, with leading and trailing whitespace
+     removed.
+
+    \param firstLine This will be filled with the first line of text.  It is
+    guaranteed to have width less than \a maxWidth.
+
+    \param maxWidth In pixels
+
+    \return The character in the original s where the cut occured.
+
+    \sa G3D::wordWrap, G3D::TextOutput::Settings::WordWrapMode
+    */
+    int wordWrapCut(
+        float               maxWidth,
+        std::string&        s,
+        std::string&        firstLine,
         float               size = 12,
         Spacing             spacing = PROPORTIONAL_SPACING) const;
 

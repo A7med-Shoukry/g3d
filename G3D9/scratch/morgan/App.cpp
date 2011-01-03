@@ -242,11 +242,8 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
 
-    float y = 0;
-    for (int i = 1; i < 100; ++i) {
-        float s = i * 0.25f;
-        y += m_font->draw2D(rd, format("%f   ABCDabcdEMIO12345", s), Point2(20, y), s).y;
-    }
+    Draw::rect2DBorder(Rect2D::xywh(100,100,200,100), rd);
+    m_font->draw2DWordWrap(rd, 200, "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.", Point2(100,100), 12);
     Surface2D::sortAndRender(rd, posed2D);
 }
 
