@@ -854,7 +854,7 @@ void Any::serialize(TextOutput& to) const {
             table[keys[i]].serialize(to);
 
             if (i < keys.size() - 1) {
-                to.writeSymbol(",");
+                to.writeSymbol(";");
             }
             to.writeNewline();
 
@@ -869,6 +869,7 @@ void Any::serialize(TextOutput& to) const {
 
     case ARRAY: {
         debugAssert(m_data != NULL);
+        
         if (! m_data->name.empty()) {
             // For arrays, leave no trailing space between the name and the paren
             to.writeSymbol(format("%s(", m_data->name.c_str()));
@@ -881,8 +882,14 @@ void Any::serialize(TextOutput& to) const {
         for (int ii = 0; ii < size(); ++ii) {
             array[ii].serialize(to);
             if (ii < size() - 1) {
-                to.writeSymbol(",");
-                to.writeNewline();
+                if ((array[0].type == ARRAY) || (array[0].type == TABLE)) {
+                    // Probably a long-form array
+                    to.writeSymbol(";");
+                    to.writeNewline();
+                } else {
+                    // Probably a short-form array
+                    to.writeSymbol(",");
+                }
             }
             
             // Put the close paren on an array right behind the last element
