@@ -104,7 +104,7 @@ class GuiWindow : public Widget {
     friend class GuiTextBox;
     friend class GuiDropDownList;
 
-private:
+protected:
     enum {CONTROL_WIDTH = 180};
 public:
     typedef ReferenceCountedPointer<GuiWindow> Ref;
@@ -198,9 +198,7 @@ protected:
 
     Array<GuiDrawer*>   m_drawerArray;
     GuiPane*            m_rootPane;
-
-protected:
-
+    
     GuiWindow(const GuiText& text, GuiTheme::Ref skin, const Rect2D& rect, GuiTheme::WindowStyle style, CloseAction closeAction);
 
     /** Creates a non-functional window.  Useful for subclasses that
