@@ -882,7 +882,7 @@ void Any::serialize(TextOutput& to) const {
         for (int ii = 0; ii < size(); ++ii) {
             array[ii].serialize(to);
             if (ii < size() - 1) {
-                if ((array[0].type == ARRAY) || (array[0].type == TABLE)) {
+                if ((array[0].type() == ARRAY) || (array[0].type() == TABLE)) {
                     // Probably a long-form array
                     to.writeSymbol(";");
                     to.writeNewline();
