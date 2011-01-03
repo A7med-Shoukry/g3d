@@ -302,9 +302,10 @@ def processProjectFile(state, ignoreIceTxt = False):
                 state.addUsesLibrary(u, False)
 
     state.buildDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'builddir', True))
-
     state.workDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'workdir', True))
-    if not os.path.exists(state.workDir):
+
+    # Libraries don't need a working directory so don't throw an erroneous warning for them
+    if not isLibrary(state.binaryType) and not os.path.exists(state.workDir):
        maybeWarn("Working directory '" + state.workDir + "' does not exist; changing to '.'." +
           " Edit ice.txt to configure this permanently.", state) 
        state.workDir = '.'
