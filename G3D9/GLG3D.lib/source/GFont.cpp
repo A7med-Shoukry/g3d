@@ -93,7 +93,7 @@ GFont::GFont(const std::string& filename, BinaryInput& b) : m_texture(NULL) {
 
 	Texture::Settings fontSettings;
 	fontSettings.wrapMode = WrapMode::CLAMP;
-    fontSettings.interpolateMode = Texture::BILINEAR_MIPMAP;
+    fontSettings.interpolateMode = Texture::TRILINEAR_MIPMAP;
     Texture::Preprocess preprocess;
     preprocess.computeMinMaxMean = false;
 
@@ -275,6 +275,9 @@ void GFont::begin2DQuads(RenderDevice* renderDevice) const {
 
     renderDevice->setTextureMatrix(0, m_textureMatrix);
     renderDevice->setTexture(0, m_texture);
+    // Apply bias to sharpen the MIP mapping
+    glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, -0.6f);
+    debugAssertGLOk();
     
     renderDevice->setTextureCombineMode(0, RenderDevice::TEX_MODULATE);
         
@@ -296,7 +299,8 @@ void GFont::begin2DQuads(RenderDevice* renderDevice) const {
 
 void GFont::end2DQuads(RenderDevice* renderDevice) const {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);    
+    glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, 0.0f);
 
     renderDevice->afterPrimitive();
 }

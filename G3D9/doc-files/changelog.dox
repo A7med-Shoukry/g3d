@@ -50,6 +50,7 @@
      <li> G3D::GuiPane::setNewChildSize(), GuiPane::beginRow()...GuiPane::endRow()
      <li> G3D::PointHashGrid::getIntersectingMembers()
      <li> G3D::Surface::sendGeometry
+     <li> Substantially sharpened GFont text rendering
      <li> G3D::Material::Specification(Color3)
      <li> G3D::Matrix3::diagonal, G3D::Matrix4::diagonal
      <li> G3D::Vector2::directionOrZero

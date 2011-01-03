@@ -21,6 +21,8 @@ class App : public GApp {
     Shader::Ref         m_shader;
     ArticulatedModel::Ref m_sphere;
 
+    GFont::Ref          m_font;
+
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
 

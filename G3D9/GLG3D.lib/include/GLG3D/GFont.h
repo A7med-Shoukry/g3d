@@ -1,14 +1,14 @@
 /**
- @file GFont.h
+ \file G3D/GFont.h
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2002-11-02
- @edited  2010-02-07
+ \created 2002-11-02
+ \edited  2011-01-02
  */
 
-#ifndef G3D_GFONT_H
-#define G3D_GFONT_H
+#ifndef G3D_GFont_h
+#define G3D_GFont_h
 
 #include "GLG3D/Texture.h"
 #include "G3D/BinaryInput.h"
@@ -23,15 +23,18 @@ typedef ReferenceCountedPointer<class GFont> GFontRef;
  Font class for use with RenderDevice.  Renders variable size and color 
  fonts from high-resolution bitmaps.
 
- Font rendering is (inherently) slow-- you can achieve better performance
- for static text by creating bitmap textures with whole words and 
- sentences on them.
+ Although GFont optimizes text rendering as much as possible for fully 
+ dynamic strings, text rendering is (inherently) slow.  You can achieve 
+ better performance for static text by creating bitmap textures with whole words 
+ and sentences on them.
  <P>
 
- The following fonts are provided with G3D in the
+ Some fonts are provided with G3D in the
  <CODE>data/font</CODE> directory.  See the <CODE>copyright.txt</CODE>
  file in that directory for information about the source of these
  files and rules for distribution. 
+
+ You can make new fonts with the GFont::makeFont static function.
  */
 class GFont : public ReferenceCountedObject {
 public:
@@ -198,8 +201,8 @@ public:
     Vector2 draw2D(
         RenderDevice*       renderDevice,
         const std::string&  s,
-        const Vector2&      pos2D,
-        float              size    = 12,
+        const Point2&       pos2D,
+        float               size    = 12,
         const Color4&       color   = Color3::black(),
         const Color4&       outline = Color4::clear(),
         XAlign              xalign  = XALIGN_LEFT,
@@ -225,7 +228,7 @@ public:
         RenderDevice*               renderDevice,
         const std::string&          s,
         const CoordinateFrame&      pos3D,
-        float              size     = 0.1f,
+        float               size    = 0.1f,
         const Color4&       color   = Color3::black(),
         const Color4&       outline = Color4::clear(),
         XAlign              xalign  = XALIGN_LEFT,
@@ -245,7 +248,7 @@ public:
     Vector2 draw3DBillboard(
         RenderDevice*               renderDevice,
         const std::string&          s,
-        const Vector3&              pos3D,
+        const Point3&               pos3D,
         float                       size    = 0.1f,
         const Color4&               color   = Color3::black(),
         const Color4&               outline = Color4::clear(),
@@ -254,6 +257,7 @@ public:
         Spacing                     spacing = PROPORTIONAL_SPACING) const;
 		
     /**
+     \brief Computes the bounding extent of \a s at the given font size.
      Useful for drawing centered text and boxes around text.
      */
     Vector2 bounds(
@@ -265,7 +269,7 @@ public:
        For high performance when rendering substantial amounts of text,
        call:
 
-       <pre>
+       \code
        rd->pushState();
           font->begin2DQuads(rd);
           for (...) {
@@ -273,7 +277,7 @@ public:
           }
           font->end2DQuads(rd);
        rd->popState();
-       </pre>
+       \endcode
 
        This amortizes the cost of the font setup across multiple calls.
      */
@@ -284,8 +288,8 @@ public:
     Vector2 send2DQuads(
         RenderDevice*       renderDevice,
         const std::string&  s,
-        const Vector2&      pos2D,
-        float              size    = 12,
+        const Point2&       pos2D,
+        float               size    = 12,
         const Color4&       color   = Color3::black(),
         const Color4&       outline = Color4::clear(),
         XAlign              xalign  = XALIGN_LEFT,

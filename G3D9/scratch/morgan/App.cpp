@@ -65,144 +65,7 @@ public:
 
 };
 
-TriTree tree;
-
-static void generateDirections() {
-    Array<Triangle> triArray;
-    
-    // Start with an octahedron, which guarantees points along the axes
-    {
-        Array<int> index;
-        Array<Point3> vertex;
-        Array<Point2> texCoord;
-        std::string name;
-        // G3D's octa.ifs is oriented the wrong way, so we create one explicitly
-//        IFSModel::load(System::findDataFile("cube.ifs"/*"octa.ifs"*/), name, index, vertex, texCoord);
-//        for (int i = 0; i < index.size(); i+=3) {
-//            triArray.append(Triangle(vertex[index[i]].direction(), vertex[index[i + 1]].direction(), vertex[index[i + 2]].direction()));
-//        }
-
-        const Point3 X(1, 0, 0);
-        const Point3 Y(0, 1, 0);
-        const Point3 Z(0, 0, 1);
-
-        // Top
-        triArray.append
-            (Triangle( X, Y,  Z),
-             Triangle( Z, Y, -X),
-             Triangle(-X, Y, -Z),
-             Triangle(-Z, Y,  X));
-        /*
-        // Bottom
-        triArray.append
-            (Triangle( Z, -Y,  X),
-             Triangle(-X, -Y,  Z),
-             Triangle(-Z, -Y, -X),
-             Triangle( X, -Y, -Z));
-             */
-    }
-
-    const int numSubdivisions = 2;
-    // Add midpoints and subdivide
-    for (int i = 0; i < numSubdivisions; ++i) {
-        Array<Triangle> old = triArray;
-        triArray.clear();
-        for (int t = 0; t < old.size(); ++t) {
-            const Triangle& tri = old[t];
-
-            //             A           .
-            //            /\           .
-            //         AB/__\ CA       .
-            //          /\  /\         .
-            //         /__\/__\        .
-            //        B   BC   C 
-
-            Point3 A = tri.vertex(0).direction();
-            Point3 B = tri.vertex(1).direction();
-            Point3 C = tri.vertex(2).direction();
-            
-            Point3 AB = ((A + B) / 2).direction();
-            Point3 BC = ((B + C) / 2).direction();
-            Point3 CA = ((C + A) / 2).direction();
-
-            triArray.append(Triangle(A, AB, CA),
-                            Triangle(AB, B, BC),
-                            Triangle(AB, BC, CA),
-                            Triangle(CA, BC, C));
-        }
-    }
-
-    // Project and merge into an indexed triangle list
-    MeshBuilder b(false, false);
-    b.setWeldRadius(0.05f);
-    for (int t = 0; t < triArray.size(); ++t) {
-        b.addTriangle(triArray[t]);
-    }
-
-    Array<Point3> vertex;
-    Array<int> index;
-    std::string ignore;
-    b.commit(ignore, index, vertex);
-
-    // Save
-    TextOutput to("octa-sphere2.off");
-    to.writeSymbol("OFF");
-    to.writeNewline();
-    to.writeNumber(vertex.size());
-    to.writeNumber(index.size() / 3);
-    to.writeNumber(0);
-    to.writeNewline();
-    for (int i = 0; i < vertex.size(); ++i) {
-        const Point3& v = vertex[i];
-        debugAssertM(v.isUnit(), "Vertex should have been on the unit sphere.");
-        for (int j = 0; j < 3; ++j) {
-            to.writeNumber(v[j]);
-        }
-        to.writeNewline();
-    }
-
-    for (int i = 0; i < index.size(); i += 3) {
-        to.writeNumber(3);
-        for (int j = 0; j < 3; ++j) {
-            to.writeNumber(index[i + j]);
-        }
-        to.writeNewline();
-    }
-    to.commit();
-
-#   ifdef G3D_DEBUG
-    // Debug checks
-    {    
-        Array<Tri> triArray;
-        for (int i = 0; i < index.size(); i+=3) {
-            triArray.append(Tri(vertex[index[i + 2]], vertex[index[i + 1]], vertex[index[i]],
-                Vector3::unitY(), Vector3::unitY(), Vector3::unitY()));
-        }       
-//        TriTree tree;
-        tree.setContents(triArray);
-        Ray R(Point3::zero(), Vector3::unitY());
-        Tri::Intersector intersector;
-        float distance = inf();
-        tree.intersectRay(R, intersector, distance);
-        
-        debugAssert(intersector.tri != NULL);
-
-
-        // This succeeds
-        for (int t = 0; t < tree.size(); ++t) {
-            const Tri& tri = tree[t];
-            intersector(R, tri, distance);         
-        }
-
-        debugAssert(intersector.tri != NULL);
-    }
-#   endif
-}
 int main(int argc, char** argv) {
-    //    generateDirections();
-
-
-
 
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
@@ -221,8 +84,8 @@ int main(int argc, char** argv) {
     
     // Change the window and other startup parameters by modifying the
     // settings class.  For example:
-    settings.window.width       = 960; 
-    settings.window.height      = 600;
+    settings.window.width       = 1100; 
+    settings.window.height      = 1100;
 
 
 #   ifdef G3D_WIN32
@@ -234,7 +97,7 @@ int main(int argc, char** argv) {
             chdir("../samples/starter/data-files");
         }
 #   endif
-
+    debugPrintf("Running in %s\n", FileSystem::currentDirectory().c_str());
         //CubeMap<Image3>::Ref im = CubeMap<Image3>::create(System::findDataFile("test/testcube_*.jpg"));
     
 
@@ -277,7 +140,9 @@ void App::onInit() {
     // Start wherever the developer HUD last marked as "Home"
     defaultCamera.setCoordinateFrame(bookmark("Home"));
 
+    renderDevice->setColorClearValue(Color3::white());
     m_shadowMap = ShadowMap::create();
+    m_font = GFont::fromFile(System::findDataFile("arial.fnt"));
 
 //    loadScene();
     
@@ -356,7 +221,6 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
     */
 
-    tree.draw(rd, 10, true, 0);
     Draw::axes(rd);
 
     // Call to make the GApp show the output of debugDraw
@@ -378,6 +242,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
 
+    float y = 0;
+    for (int i = 1; i < 100; ++i) {
+        float s = i * 0.25f;
+        y += m_font->draw2D(rd, format("%f   ABCDabcdEMIO12345", s), Point2(20, y), s).y;
+    }
     Surface2D::sortAndRender(rd, posed2D);
 }
 
