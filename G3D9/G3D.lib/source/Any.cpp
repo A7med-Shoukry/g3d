@@ -853,9 +853,10 @@ void Any::serialize(TextOutput& to) const {
             to.writeSymbol("=");
             table[keys[i]].serialize(to);
 
-            if (i < keys.size() - 1) {
-                to.writeSymbol(";");
-            }
+            //if (i < keys.size() - 1) {
+            // Always write a trailing semi-colon
+            to.writeSymbol(";");
+            //}
             to.writeNewline();
 
             // Skip a line between table entries
