@@ -386,6 +386,7 @@ void CarbonWindow::init(WindowRef window, bool creatingShareWindow /*= false*/) 
 }
 
 void CarbonWindow::createShareWindow(OSWindow::Settings s) {
+    alwaysAssertM(false, "");
     static bool initialized = false;
     
     if (initialized) {
@@ -528,7 +529,14 @@ CarbonWindow::CarbonWindow
         attributes &= ~(kWindowFullZoomAttribute | kWindowResizableAttribute);
     }
 
-    osErr = CreateNewWindow(kDocumentWindowClass, attributes, &rWin, &_window);
+    int windowClass = kDocumentWindowClass;
+
+    if (! m_settings.framed && ! m_settings.fullScreen) {
+        // Causes CreateNewWindow to fail
+        //    windowClass = kPlainWindowClass;
+    }
+
+    osErr = CreateNewWindow(windowClass, attributes, &rWin, &_window);
     
     alwaysAssertM(_window != NULL, "Could Not Create Window.");
 
