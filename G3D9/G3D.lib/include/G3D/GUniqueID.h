@@ -8,10 +8,11 @@
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
 #include "G3D/Table.h"
-#include "G3D/Any.h"
 
 namespace G3D {
-
+     
+class Any;
+    
 /** Globally unique identifiers. The probability of two different
     programs generating the same value from UniqueID::create is
     vanishingly small.
@@ -29,27 +30,14 @@ public:
     /** \sa create */
     GUniqueID() : id(0) {}
 
-    GUniqueID& operator=(const Any& a) {
-        a.verifyName("GUniqueID");
-        a.verifyType(Any::ARRAY);
-        a.verifySize(4);
-        id = (uint64(a[3].number()) << 48) | (uint64(a[2].number()) << 32) | (uint64(a[1].number()) << 16) | uint64(a[0].number());
-        return *this;
-    }
+    GUniqueID& operator=(const Any& a);
 
     /** \sa create */
     GUniqueID(const Any& a) {
         *this = a;
     }
 
-    Any toAny() const {
-        Any a(Any::ARRAY, "GUniqueID");
-        a.resize(4);
-        for (int i = 0; i < 4; ++i) {
-            a[i] = Any(float(uint16(id >> (i * 16))));
-        }
-        return a;
-    }
+    Any toAny() const;
 
     /** Returns a 16-character string equivalent to this GUniqueID's uint64 value. */
     std::string toString16() const;

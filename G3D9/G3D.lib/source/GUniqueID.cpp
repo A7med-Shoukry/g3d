@@ -8,8 +8,27 @@
 #include "G3D/BinaryOutput.h"
 #include "G3D/TextOutput.h"
 #include "G3D/NetworkDevice.h"
+#include "G3D/Any.h"
 
 namespace G3D {
+    
+GUniqueID& GUniqueID::operator=(const Any& a) {
+    a.verifyName("GUniqueID");
+    a.verifyType(Any::ARRAY);
+    a.verifySize(1);
+    std::string s = a[0];
+    a.verify(s.length() == 16);
+    id = GUniqueID::fromString16(s);
+    return *this;
+}
+
+
+Any GUniqueID::toAny() const {
+    Any a(Any::ARRAY, "GUniqueID");
+    a.append(toString16());
+    return a;
+}
+
 
 void GUniqueID::serialize(BinaryOutput& b) const {
     b.writeUInt64(id);
