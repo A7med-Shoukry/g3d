@@ -26,6 +26,7 @@ private:
 
 public:
 
+    /** \sa create */
     GUniqueID() : id(0) {}
 
     GUniqueID& operator=(const Any& a) {
@@ -36,6 +37,7 @@ public:
         return *this;
     }
 
+    /** \sa create */
     GUniqueID(const Any& a) {
         *this = a;
     }
