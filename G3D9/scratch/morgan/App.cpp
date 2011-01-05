@@ -66,7 +66,12 @@ public:
 };
 
 int main(int argc, char** argv) {
+    GUniqueID i = GUniqueID::create(37);
+    std::string s = i.toString16();
+    debugPrintf("%s\n", s.c_str());
+    GUniqueID j = GUniqueID::fromString16(s);
 
+    return 0;
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
     for (int y = 0; y < im->height(); ++y) {

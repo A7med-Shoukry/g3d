@@ -51,6 +51,11 @@ public:
         return a;
     }
 
+    /** Returns a 16-character string equivalent to this GUniqueID's uint64 value. */
+    std::string toString16() const;
+
+    static GUniqueID fromString16(const std::string& s);
+
     /** Returns the ID that has the specified tag (so that it is not uninitialized), but
         which is a common sentinel "none" value. */
     static GUniqueID NONE(uint16 tag);

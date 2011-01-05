@@ -42,6 +42,25 @@ GUniqueID GUniqueID::NONE(uint16 tag) {
 }
 
 
+std::string GUniqueID::toString16() const {
+    return format("%08x%08", uint32(id >> 32), uint32(id & 0xFFFFFFFF));
+}
+
+
+GUniqueID GUniqueID::fromString16(const std::string& s) {
+    if (s.length() != 16) {
+        debugAssertM(false, "Corrupt 16-character string");
+        return GUniqueID();
+    }
+    
+    uint32 high = 0, low = 0;
+    sscanf(s.c_str(), "%08x%08", &high, &low);
+    GUniqueID i;
+    i.id = (uint64(high) << 32) | low;
+    return i;
+}
+
+
 GUniqueID GUniqueID::create(uint16 tag) {
     static uint64 counter = 0;
     static uint64 systemID = 0;
