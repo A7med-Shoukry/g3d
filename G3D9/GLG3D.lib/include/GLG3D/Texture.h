@@ -365,6 +365,12 @@ public:
         or future calls will return the mutated texture as well. */
     static Texture::Ref opaqueBlack();
 
+    /** @brief Returns a small opaque all-black (0,0,0,1) texture.  
+    
+        The result is memoized and shared. Do not mutate this texture
+        or future calls will return the mutated texture as well. */
+    static Texture::Ref opaqueBlackCube();
+
     /** @brief Returns a small, all zero Color4(0,0,0,0) texture.  
     
         The result is memoized and shared. Do not mutate this texture

@@ -383,6 +383,29 @@ Texture::Ref Texture::white() {
     return t;
 }
 
+TextureRef Texture::opaqueBlackCube() {
+    static WeakReferenceCountedPointer<Texture> cache;
+
+    TextureRef t = cache.createStrongPtr();
+    if (t.isNull()) {
+        // Cache is empty
+        GImage im(4, 4, 3);
+        System::memset(im.byte(), 0x00, im.width() * im.height() * im.channels());
+        Array< Array<const void*> > bytes;
+        Array<const void*>& cubeFace = bytes.next();
+        for (int i = 0; i < 6; ++i)  {
+            cubeFace.append(im.pixel4());
+        }
+        t = Texture::fromMemory("Opaque black cube", bytes, ImageFormat::RGB8(), im.width(), im.height(), 1, ImageFormat::RGB8(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
+
+        // Store in cache
+        cache = t;
+    }
+
+    return t;
+}
+
+
 TextureRef Texture::whiteCube() {
     static WeakReferenceCountedPointer<Texture> cache;
 
@@ -404,7 +427,6 @@ TextureRef Texture::whiteCube() {
 
     return t;
 }
-
 
 TextureRef Texture::zero() {
     static WeakReferenceCountedPointer<Texture> cache;
