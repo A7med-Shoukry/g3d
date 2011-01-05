@@ -53,11 +53,7 @@ public:
 
     /** Returns the ID that has the specified tag (so that it is not uninitialized), but
         which is a common sentinel "none" value. */
-    static GUniqueID NONE(uint16 tag) {
-        GUniqueID i;
-        i.id = (tag << 54);
-        return i;
-    }
+    static GUniqueID NONE(uint16 tag);
 
     bool uninitialized() const {
         return id == 0;

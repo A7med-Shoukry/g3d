@@ -117,7 +117,7 @@ void TextOutput::writeBoolean(bool b) {
 }
 
 void TextOutput::writeNumber(double n) {
-    this->printf("%f ", n);
+    this->printf("%g ", n);
 }
 
 

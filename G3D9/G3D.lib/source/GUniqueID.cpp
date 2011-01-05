@@ -34,6 +34,14 @@ void GUniqueID::deserialize(TextInput& t) {
 }
 
 
+GUniqueID GUniqueID::NONE(uint16 tag) {
+    GUniqueID i;
+    uint64 t = tag;
+    i.id = (t << 54);
+    return i;
+}
+
+
 GUniqueID GUniqueID::create(uint16 tag) {
     static uint64 counter = 0;
     static uint64 systemID = 0;
