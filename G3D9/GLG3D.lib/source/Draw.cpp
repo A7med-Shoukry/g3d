@@ -101,7 +101,7 @@ void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, float
              uniform float       gammaAdjust;
              
              void main() {
-                 gl_FragColor.rgb = pow(textureCube(skyBox, direction).rgb, gammaAdjust) * radianceScale;
+                 gl_FragColor.rgb = pow(textureCube(skyBox, direction).rgb, vec3(gammaAdjust)) * radianceScale;
              }));
          
     shader->args.set("skyBox", cubeMap);
