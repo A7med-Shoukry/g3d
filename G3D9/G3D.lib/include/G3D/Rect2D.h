@@ -39,7 +39,7 @@ class Any;
  */
 class Rect2D {
 private:
-    Vector2 min, max;
+    Point2 min, max;
 
     /**
      Returns true if the whole polygon is clipped.
@@ -137,9 +137,13 @@ public:
         max = a.max.max(b.max);
     }
 
+    Vector2 extent() const {
+        return max - min;
+    }
+
     /** @brief Uniformly random point on the interior */
-    Vector2 randomPoint() const {
-        return Vector2(uniformRandom(0, max.x - min.x) + min.x,
+    Point2 randomPoint() const {
+        return Point2(uniformRandom(0, max.x - min.x) + min.x,
                        uniformRandom(0, max.y - min.y) + min.y);
     }
 
@@ -168,20 +172,20 @@ public:
     }
 
     /** Min, min corner */
-    Vector2 x0y0() const {
+    Point2 x0y0() const {
         return min;
     }
 
-    Vector2 x1y0() const {
-        return Vector2(max.x, min.y);
+    Point2 x1y0() const {
+        return Point2(max.x, min.y);
     }
 
-    Vector2 x0y1() const {
-        return Vector2(min.x, max.y);
+    Point2 x0y1() const {
+        return Point2(min.x, max.y);
     }
 
     /** Max,max corner */
-    Vector2 x1y1() const {
+    Point2 x1y1() const {
         return max;
     }
 
@@ -190,7 +194,7 @@ public:
         return max - min;
     }
 
-    Vector2 center() const {
+    Point2 center() const {
         return (max + min) * 0.5;
     }
 
@@ -222,7 +226,7 @@ public:
         return r;
     }
 
-    static Rect2D xyxy(const Vector2& v0, const Vector2& v1) {
+    static Rect2D xyxy(const Point2& v0, const Point2& v1) {
         Rect2D r;
 
         r.min = v0.min(v1);
@@ -235,7 +239,7 @@ public:
         return xyxy(x, y, x + w, y + h);
     }
 
-    static Rect2D xywh(const Vector2& v, const Vector2& w) {
+    static Rect2D xywh(const Point2& v, const Vector2& w) {
         return xyxy(v.x, v.y, v.x + w.x, v.y + w.y);
     }
 
@@ -246,7 +250,7 @@ public:
         return xyxy(Vector2::inf(), Vector2::inf());
     }
 
-    bool contains(const Vector2& v) const {
+    bool contains(const Point2& v) const {
         return (v.x >= min.x) && (v.y >= min.y) && (v.x <= max.x) && (v.y <= max.y);
     }
 
@@ -302,20 +306,20 @@ public:
     void deserialize(class BinaryInput& b);
 
     /** Returns the corners in the order: (min,min), (max,min), (max,max), (min,max). */
-    Vector2 corner(int i) const {
+    Point2 corner(int i) const {
         debugAssert(i >= 0 && i < 4);
         switch (i & 3) {
         case 0:
-            return Vector2(min.x, min.y);
+            return Point2(min.x, min.y);
         case 1:
-            return Vector2(max.x, min.y);
+            return Point2(max.x, min.y);
         case 2:
-            return Vector2(max.x, max.y);
+            return Point2(max.x, max.y);
         case 3:
-            return Vector2(min.x, max.y);
+            return Point2(min.x, max.y);
         default:
             // Should never get here
-            return Vector2(0, 0);
+            return Point2(0, 0);
         }
     }
 
