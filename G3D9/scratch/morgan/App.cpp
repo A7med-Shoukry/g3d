@@ -155,8 +155,71 @@ public:
 };
 
 Texture::Ref sky;
+Texture::Ref tex;
+
+void loadt2D() {    
+    Stopwatch stopwatch;
+
+    // Load an image from disk.  It is 2048^2 x 3
+    GImage image("D:/morgan/g3d/data/cubemap/sky_skylab_01/sky_skylab_01bk.png");
+    stopwatch.after("Load from disk");
+
+    // Create an empty texture in bilinear-nearest-nearest mode, with MIP-map generation disabled
+    tex = Texture::createEmpty("tex", 0, 0, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+    stopwatch.after("Create GL texture");
+
+    // Create a pbo
+    GLuint pbo;
+    glGenBuffers(1, &pbo);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    stopwatch.after("Create GL PBO");
+
+    // Allocate memory on the GPU
+    const size_t size = image.width() * image.height() * 3;
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, size, NULL, GL_STREAM_DRAW);
+    stopwatch.after("Allocate PBO space");
+
+    // Map the memory to the CPU
+    GLvoid* ptr = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+    stopwatch.after("Map PBO");
+
+    // Copy data to the mapped memory (using SIMD wide loads and stores)
+    System::memcpy(ptr, image.byte(), size);
+    stopwatch.after("Memcpy");
+
+    // Unmap the memory
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+    ptr = NULL;
+    stopwatch.after("Unmap PBO");
+
+    // Even if we sleep after unmapping the PBO, the following glTexImage2D still takes 0.14 s
+    // System::sleep(1);
+    // stopwatch.after("sleep");
+
+    // Copy the PBO to the texture
+    glBindTexture(tex->openGLTextureTarget(), tex->openGLID());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image.width(), image.height(), 0, GL_RGB, GL_BYTE, 0);
+    glBindTexture(tex->openGLTextureTarget(), GL_NONE);
+    stopwatch.after("glTexImage2D");
+
+    // Unbind PBO
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, GL_NONE);
+    stopwatch.after("Unbind PBO");
+
+    // Delete the PBO
+    glDeleteBuffers(1, &pbo);
+    pbo = GL_NONE;
+    stopwatch.after("Delete PBO");
+}
+
+
 void App::onInit() {
     Stopwatch stopwatch;
+
+
+    loadt2D();
+    ::exit(0);
+
     stopwatch.tick();
 
     Texture::Settings settings = Texture::Settings::cubeMap();
@@ -207,6 +270,7 @@ void App::onInit() {
     */
     stopwatch.tock();
     debugPrintf("Elapsed time: %fs\n", stopwatch.elapsedTime());
+    ::exit(0);
 
 
     // Called before the application loop beings.  Load data here and
