@@ -75,7 +75,7 @@ inline static void skyVertex
 }
 
 
-void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, float radianceScale) {
+void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, float radianceScale, float gammaAdjust) {
 	debugAssert((cubeMap->dimension() == Texture::DIM_CUBE_MAP) || (cubeMap->dimension() == Texture::DIM_CUBE_MAP_NPOT));
 
 	enum Direction {UP = 0, LT = 1, RT = 2, BK = 3, FT = 4, DN = 5};
@@ -98,13 +98,15 @@ void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, float
          STR(varying vec3 direction;
              uniform samplerCube skyBox;
              uniform float       radianceScale;
+             uniform float       gammaAdjust;
              
              void main() {
-                 gl_FragColor.rgb = textureCube(skyBox, direction).rgb * radianceScale;
+                 gl_FragColor.rgb = pow(textureCube(skyBox, direction).rgb, gammaAdjust) * radianceScale;
              }));
          
     shader->args.set("skyBox", cubeMap);
     shader->args.set("radianceScale", radianceScale);
+    shader->args.set("gammaAdjust", gammaAdjust);
     renderDevice->setShader(shader);
 
     float s = 1;
