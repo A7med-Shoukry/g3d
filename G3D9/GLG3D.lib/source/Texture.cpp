@@ -394,7 +394,7 @@ TextureRef Texture::opaqueBlackCube() {
         Array< Array<const void*> > bytes;
         Array<const void*>& cubeFace = bytes.next();
         for (int i = 0; i < 6; ++i)  {
-            cubeFace.append(im.pixel4());
+            cubeFace.append(im.pixel3());
         }
         t = Texture::fromMemory("Opaque black cube", bytes, ImageFormat::RGB8(), im.width(), im.height(), 1, ImageFormat::RGB8(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
 
