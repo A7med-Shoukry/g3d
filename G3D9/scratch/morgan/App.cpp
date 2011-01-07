@@ -405,18 +405,18 @@ void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
     Vector3 cellSize(20, 20, 1);
     Point3 gridOriginLocation(150, 50, 0);
-    Vector3int32 gridOriginIndex(0,-1,0);
+    Vector3int32 gridOriginIndex(0,-2,0);
     Vector3int32 numCells(10, 10, 1);
 
     rd->setColor(Color3::black());
     rd->beginPrimitive(PrimitiveType::LINES);
     for (int x = 0; x < numCells.x; ++x) {
-        rd->sendVertex((Point3(x, 0, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
-        rd->sendVertex((Point3(x, numCells.y - 1, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
+        rd->sendVertex((Point3(x, 0, 0)  ) * cellSize + gridOriginLocation);
+        rd->sendVertex((Point3(x, numCells.y - 1, 0)) * cellSize + gridOriginLocation);
     }
     for (int y = 0; y < numCells.y; ++y) {
-        rd->sendVertex((Point3(0, y, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
-        rd->sendVertex((Point3(numCells.x - 1, y, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
+        rd->sendVertex((Point3(0, y, 0)) * cellSize + gridOriginLocation);
+        rd->sendVertex((Point3(numCells.x - 1, y, 0)) * cellSize + gridOriginLocation);
     }
 
     const Ray R(Point3(0, 0, 0), Vector3(userInput->mouseXY(), 0).direction());
@@ -429,9 +429,11 @@ void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
 
     rd->setPointSize(10);
     rd->beginPrimitive(PrimitiveType::POINTS);
-    for (RayGridIterator it(R, numCells, cellSize, gridOriginLocation, -gridOriginIndex); it.insideGrid(); ++it) {
+    for (RayGridIterator it(R, numCells, cellSize, gridOriginLocation, gridOriginIndex); it.insideGrid(); ++it) {
         rd->setColor(Color3::red());
-        rd->sendVertex((Point3(it.index() + gridOriginIndex) + Vector3(0.5f, 0.5f, 0)) * cellSize + gridOriginLocation);
+        Point3 P = (Point3(it.index() - gridOriginIndex) + Vector3(0.5f, 0.5f, 0)) * cellSize + gridOriginLocation;
+        rd->sendVertex(P);
+        screenPrintf("%d, %d  -> %f, %f, %f\n", it.index().x, it.index().y, P.x, P.y, P.z);
 
         rd->setColor(Color3::blue());
         rd->sendVertex(it.enterPoint());
