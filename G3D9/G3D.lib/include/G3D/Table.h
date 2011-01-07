@@ -455,9 +455,10 @@ public:
 
             index = 0;
             node = m_bucket[index];
-            debugAssert(isValidHeapPointer(node));
+            debugAssert((node == NULL) || isValidHeapPointer(node));
             isDone = false;
             findNext();
+            debugAssert((node == NULL) || isValidHeapPointer(node));
         }
 
         /**
