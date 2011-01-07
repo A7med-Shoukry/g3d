@@ -441,10 +441,10 @@ public:
             isDone = true;
         }
 
-        Iterator(size_t m_numBuckets, Node** m_bucket) :
+        Iterator(size_t numBuckets, Node** m_bucket) :
             index(0), 
             node(NULL),
-            m_numBuckets(m_numBuckets),
+            m_numBuckets(numBuckets),
             m_bucket(m_bucket) {
             
             if (m_numBuckets == 0) {
@@ -452,6 +452,12 @@ public:
                 isDone = true;
                 return;
             }
+
+#           ifdef G3D_DEBUG
+                for (unsigned int i = 0; i < m_numBuckets; ++i) {
+                    debugAssert((m_bucket[i] == NULL) || isValidHeapPointer(m_bucket[i]));
+                }
+#           endif
 
             index = 0;
             node = m_bucket[index];
@@ -503,6 +509,7 @@ public:
             debugAssert(node != NULL);
             debugAssert(isValidHeapPointer(node));
             node = node->next;
+            debugAssert((node == NULL) || isValidHeapPointer(node));
             findNext();
             debugAssert(isDone || isValidHeapPointer(node));
             return *this;
