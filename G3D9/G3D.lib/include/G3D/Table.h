@@ -475,7 +475,7 @@ public:
                     return;
                 } else {
                     node = m_bucket[index];
-                    debugAssert(isValidHeapPointer(node));
+                    debugAssert((node == NULL) || isValidHeapPointer(node));
                 }
             }
             debugAssert(isValidHeapPointer(node));
