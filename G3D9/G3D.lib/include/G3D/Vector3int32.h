@@ -129,6 +129,10 @@ public:
         return Vector3int32(iMin(x, v.x), iMin(y, v.y), iMin(z, v.z));
     }
 
+    Vector3int32 operator-() const {
+        return Vector3int32(-x, -y, -z);
+    }
+
     std::string toString() const;
 
 

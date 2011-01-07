@@ -216,10 +216,10 @@ void loadt2D() {
 void App::onInit() {
     Stopwatch stopwatch;
 
-
+#if 0
     loadt2D();
     ::exit(0);
-
+#endif
     stopwatch.tick();
 
     Texture::Settings settings = Texture::Settings::cubeMap();
@@ -261,7 +261,6 @@ void App::onInit() {
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, GL_NONE);
         glBindTexture(sky->openGLTextureTarget(), GL_NONE);
     }
-#endif
 
     /*
     Texture::Settings settings  = Texture::Settings::cubeMap();
@@ -271,6 +270,7 @@ void App::onInit() {
     stopwatch.tock();
     debugPrintf("Elapsed time: %fs\n", stopwatch.elapsedTime());
     ::exit(0);
+#endif
 
 
     // Called before the application loop beings.  Load data here and
@@ -372,7 +372,7 @@ void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surfa
 
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-    Draw::skyBox(rd, sky, 1.0, 1.0);
+//    Draw::skyBox(rd, sky, 1.0, 1.0);
 /*    if (m_scene->lighting()->environmentMapTexture.notNull()) {
         Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     }
@@ -403,9 +403,41 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
+    Vector3 cellSize(20, 20, 1);
+    Point3 gridOriginLocation(150, 50, 0);
+    Vector3int32 gridOriginIndex(0,-1,0);
+    Vector3int32 numCells(10, 10, 1);
 
-    Draw::rect2DBorder(Rect2D::xywh(100,100,200,100), rd);
-    m_font->draw2DWordWrap(rd, 200, "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.", Point2(100,100), 12);
+    rd->setColor(Color3::black());
+    rd->beginPrimitive(PrimitiveType::LINES);
+    for (int x = 0; x < numCells.x; ++x) {
+        rd->sendVertex((Point3(x, 0, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
+        rd->sendVertex((Point3(x, numCells.y - 1, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
+    }
+    for (int y = 0; y < numCells.y; ++y) {
+        rd->sendVertex((Point3(0, y, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
+        rd->sendVertex((Point3(numCells.x - 1, y, 0) + gridOriginIndex) * cellSize + gridOriginLocation);
+    }
+
+    const Ray R(Point3(0, 0, 0), Vector3(userInput->mouseXY(), 0).direction());
+
+    rd->setColor(Color3::green() * 0.5f);
+    rd->sendVertex(R.origin());
+    rd->sendVertex(R.origin() + R.direction() * 300);
+
+    rd->endPrimitive();
+
+    rd->setPointSize(10);
+    rd->beginPrimitive(PrimitiveType::POINTS);
+    for (RayGridIterator it(R, numCells, cellSize, gridOriginLocation, -gridOriginIndex); it.insideGrid(); ++it) {
+        rd->setColor(Color3::red());
+        rd->sendVertex((Point3(it.index() + gridOriginIndex) + Vector3(0.5f, 0.5f, 0)) * cellSize + gridOriginLocation);
+
+        rd->setColor(Color3::blue());
+        rd->sendVertex(it.enterPoint());
+    }
+    rd->endPrimitive();
+
     Surface2D::sortAndRender(rd, posed2D);
 }
 
