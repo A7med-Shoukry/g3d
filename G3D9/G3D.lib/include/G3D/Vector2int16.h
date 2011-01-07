@@ -19,6 +19,7 @@
 
 namespace G3D {
 
+class Any;
 /**
  \class Vector2int16 
  A Vector2 that packs its fields into G3D::int16 s.
