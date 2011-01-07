@@ -405,7 +405,7 @@ void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
     Vector3 cellSize(20, 20, 1);
     Point3 gridOriginLocation(150, 50, 0);
-    Vector3int32 gridOriginIndex(0,-2,0);
+    Vector3int32 gridOriginIndex(-2,0,0);
     Vector3int32 numCells(10, 10, 1);
 
     rd->setColor(Color3::black());

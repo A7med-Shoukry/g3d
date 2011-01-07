@@ -29,7 +29,7 @@ RayGridIterator::RayGridIterator
 
     bool startsOutside = false;
     bool inside = false;
-    Vector3 startLocation = ray.origin();
+    Point3 startLocation = ray.origin();
 
     const bool passesThroughGrid =
         CollisionDetection::rayAABox
