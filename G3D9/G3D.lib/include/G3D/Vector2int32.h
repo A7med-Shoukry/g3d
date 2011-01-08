@@ -120,7 +120,8 @@ public:
 G3D_END_PACKED_CLASS(2)
 
 typedef Vector2int32 Point2int32;
-}
+
+} // namespace G3D
 
 template<> struct HashTrait<G3D::Vector2int32> {
     static size_t hashCode(const G3D::Vector2int32& key) { return static_cast<size_t>(key.x ^ ((int)key.y << 1)); }

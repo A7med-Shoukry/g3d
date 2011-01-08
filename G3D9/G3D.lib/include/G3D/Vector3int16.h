@@ -119,7 +119,8 @@ public:
 G3D_END_PACKED_CLASS(2)
 
 typedef Vector3int16 Point3int16;
-}
+
+} // namespace G3D
 
 template <> struct HashTrait<G3D::Vector3int16> {
     static size_t hashCode(const G3D::Vector3int16& key) { return static_cast<size_t>(key.x + ((int)key.y << 5) + ((int)key.z << 10)); }

@@ -153,7 +153,8 @@ G3D_END_PACKED_CLASS(4)
 typedef Vector3int32 Point3int32;
 
 Vector3int32 iFloor(const Vector3&);
-}
+
+} // namespace G3D
 
 template <> struct HashTrait<G3D::Vector3int32> {
     static size_t hashCode(const G3D::Vector3int32& key) {

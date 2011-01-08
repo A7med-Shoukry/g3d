@@ -132,11 +132,6 @@ href="classes.html">Classes</a>.
     \link G3D::VertexRange VertexRange\endlink,
     \link G3D::VertexBuffer VertexBuffer\endlink, 
     \link G3D::Shader Shader\endlink
-  <br>
-  <br>Backwards compatability to 6.xx:
-    \link G3D::PixelProgram PixelProgram\endlink,
-    \link G3D::VertexProgram VertexProgram\endlink,
-    \link G3D::VertexAndPixelShader VertexAndPixelShader\endlink,
 
   <LI><B>Extensions to base OpenGL</B> &nbsp; &nbsp;
     \link debugAssertGLOk() debugAssertGLOk\endlink,
@@ -157,7 +152,7 @@ href="classes.html">Classes</a>.
     \link G3D::glGetCurrentContext glGetCurrentContext\endlink, 
     \link G3D::glMakeCurrent glMakeCurrent\endlink,     
     \link G3D::glGetProcAddress glGetProcAddress\endlink,
-    \link G3D::getOpenGLState getOpenGlState\endlink,
+    \link G3D::getOpenGLState getOpenGLState\endlink,
     \link G3D::glGetInteger glGetInteger\endlink, 
     \link G3D::glGetBoolean glGetBoolean\endlink,
     \link G3D::glGetDouble glGetDouble\endlink, 
@@ -198,12 +193,12 @@ href="classes.html">Classes</a>.
     \link G3D::PhysicsFrame PhysicsFrame\endlink (\link G3D::PhysicsFrame PFrame\endlink),
     \link G3D::PhysicsFrameSpline PhysicsFrameSpline\endlink,
     \link G3D::Plane Plane\endlink,
-\link G3D::Point2 Point2\endlink,
-\link G3D::Point2int16 Point2int16\endlink,
-\link G3D::Point2int32 Point2int32\endlink,
-\link G3D::Point3 Point3\endlink,
-\link G3D::Point3int16 Point3int16\endlink,
-\link G3D::Point3int32 Point3int32\endlink,
+    \link G3D::Point2 Point2\endlink,
+    \link G3D::Point2int16 Point2int16\endlink,
+    \link G3D::Point2int32 Point2int32\endlink,
+    \link G3D::Point3 Point3\endlink,
+    \link G3D::Point3int16 Point3int16\endlink,
+    \link G3D::Point3int32 Point3int32\endlink,
     \link G3D::Ray Ray\endlink,
     \link G3D::RayGridIterator RayGridIterator\endlink,
     \link G3D::RealTime RealTime\endlink,
@@ -221,7 +216,7 @@ href="classes.html">Classes</a>.
     \link G3D::Matrix4 Matrix4\endlink,
     \link G3D::Vector2 Vector2\endlink,
     \link G3D::Vector2int16 Vector2int16\endlink,
-    \link G3D::Vector2int32 Vector2int16\endlink,
+    \link G3D::Vector2int32 Vector2int32\endlink,
     \link G3D::Vector3 Vector3\endlink,
     \link G3D::Vector3int16 Vector3int16\endlink,
     \link G3D::Vector3int32 Vector3int32\endlink,
@@ -424,7 +419,7 @@ href="classes.html">Classes</a>.
     <li><b>Hash Functions</b> &nbsp; &nbsp;
        \link G3D::Crypto Crypto\endlink,
        \link G3D::superFastHash superFastHash\endlink,
-       \link G3D::HashTrait HashTrait\endlink
+       \link HashTrait HashTrait\endlink
 
     <LI><B>Time and Threads</B> &nbsp; &nbsp;
         \link G3D::AtomicInt32 AtomicInt32\endlink,
