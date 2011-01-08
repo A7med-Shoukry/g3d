@@ -133,10 +133,12 @@ private:
         // Private to require use of the allocator
         Node(const Key& k, const Value& v, size_t h, Node* n) 
             : entry(k, v), hashCode(h), next(n) {
+                debugAssert((next == NULL) || isValidHeapPointer(next));
         }
 
         Node(const Key& k, size_t h, Node* n) 
             : entry(k), hashCode(h), next(n) {
+                debugAssert((next == NULL) || isValidHeapPointer(next));
         }
 
     public:
@@ -508,8 +510,8 @@ public:
             debugAssert(! isDone);
             debugAssert(node != NULL);
             debugAssert(isValidHeapPointer(node));
+            debugAssert((node->next == NULL) || isValidHeapPointer(node->next));
             node = node->next;
-            debugAssert((node == NULL) || isValidHeapPointer(node));
             findNext();
             debugAssert(isDone || isValidHeapPointer(node));
             return *this;
@@ -597,20 +599,21 @@ private:
         if (m_numBuckets == 0) {
             return false;
         }
-       size_t code = HashFunc::hashCode(key);
-       size_t b = code % m_numBuckets;
+       
+        const size_t code = HashFunc::hashCode(key);
+        const size_t b = code % m_numBuckets;
 
-       // Go to the m_bucket
-       Node* n = m_bucket[b];
+        // Go to the m_bucket
+        Node* n = m_bucket[b];
 
-       if (n == NULL) {
-           return false;
-       }
+        if (n == NULL) {
+            return false;
+        }
 
-       Node* previous = NULL;
+        Node* previous = NULL;
       
-       // Try to find the node
-       do {
+        // Try to find the node
+        do {
           if ((code == n->hashCode) && EqualsFunc::equals(n->entry.key, key)) {
               // This is the node; remove it
 
@@ -628,6 +631,8 @@ private:
               // Delete the node
               Node::destroy(n, m_memoryManager);
               --m_size;
+
+              //checkIntegrity();
               return true;
           }
 
@@ -635,8 +640,8 @@ private:
           n = n->next;
       } while (n != NULL);
 
+      //checkIntegrity();
       return false;
-      //alwaysAssertM(false, "Tried to remove a key that was not in the table.");
    }
 
 public:
@@ -677,7 +682,7 @@ private:
            node = node->next;
        }
 
-        return NULL;
+       return NULL;
    }
 
 public:
@@ -752,7 +757,6 @@ public:
    }
 
 
-
     /** Called by getCreate() and set() 
         
         \param created Set to true if the entry was created by this method.
@@ -775,6 +779,7 @@ public:
             m_bucket[b] = Node::create(key, code, NULL, m_memoryManager);
             ++m_size;
             created = true;
+            //checkIntegrity();
             return m_bucket[b]->entry;
         }
 
@@ -791,6 +796,7 @@ public:
 
             if ((code == n->hashCode) && EqualsFunc::equals(n->entry.key, key)) {
                // This is the a pre-existing node
+               //checkIntegrity();
                return n->entry;
             }
 
@@ -826,6 +832,8 @@ public:
         m_bucket[b] = Node::create(key, code, m_bucket[b], m_memoryManager);
         ++m_size;
         created = true;
+
+        //checkIntegrity();
         return m_bucket[b]->entry;
     }
 
@@ -907,6 +915,7 @@ public:
            Node* node = m_bucket[i];
            while (node != NULL) {
                delete node->entry.key;
+               node->entry.key = NULL;
                node = node->next;
            }
        }
