@@ -1,10 +1,10 @@
 /**
- @file Vector2int16.cpp
+ \file G3D/Vector2int16.cpp
  
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
   
- @created 2003-08-09
- @edited  2006-01-29
+ \created 2003-08-09
+ \edited  2011-01-06
  */
 
 #include "G3D/platform.h"
@@ -14,9 +14,11 @@
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
 #include "G3D/Any.h"
+#include "G3D/Vector2int32.h"
 
 namespace G3D {
 
+Vector2int16::Vector2int16(const class Vector2int32& v) : x(v.x), y(v.y) {}
 
 Vector2int16::Vector2int16(const Any& any) {
     any.verifyName("Vector2int16", "Point2int16");

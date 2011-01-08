@@ -42,6 +42,7 @@ public:
     explicit Vector2int16(const class Vector2& v);
     explicit Vector2int16(class BinaryInput& bi);
     explicit Vector2int16(const class Any& a);
+    explicit Vector2int16(const class Vector2int32& v);
 
     Any toAny() const;
     
