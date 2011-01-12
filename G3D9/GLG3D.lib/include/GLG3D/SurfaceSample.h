@@ -276,7 +276,7 @@ public:
 
        Note that at most one of the glossy and mirror probabilities may be non-zero.
 
-       Not threadsafe unless \link setStorage() setStorage\endlink(<code>COPY_TO_CPU</code>) has been called first.
+       Not threadsafe unless \link Material::setStorage() setStorage\endlink(<code>COPY_TO_CPU</code>) has been called first.
 
        \param lowFreq If true, sample from the average texture color instead of at each texel.  This can
        improve performance by increasing memory coherence.

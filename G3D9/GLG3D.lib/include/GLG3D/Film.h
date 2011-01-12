@@ -61,7 +61,6 @@ namespace G3D {
    Film instance for each size of input for maximum performance.
 
    Requires shaders.
-   @beta To be merged with ToneMap
 */
 class Film : public ReferenceCountedObject {
 public:

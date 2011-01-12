@@ -42,7 +42,7 @@ shader-driven GPU rendering and CPU ray tracing.
 <tr><td width=5% ></td><td width=30% ></td><td width=65%></td></tr>
 <tr><td></td><td>\link G3D::ArticulatedModel <b>ArticulatedModel</b>\endlink</td><td>Load 3DS, IFS, PLY2, and OFF files, or construct models from code</td></tr>
 <tr><td></td><td>\indent\link G3D::Material Material\endlink</td><td> </td></tr>
-<tr><td></td><td>\indent\indent\link G3D::Material::Settings Material::Settings\endlink</td><td> </td></tr>
+<tr><td></td><td>\indent\indent\link G3D::Material::Specification Material::Specification\endlink</td><td> </td></tr>
 <tr><td></td><td>\indent\indent\link G3D::SuperBSDF SuperBSDF\endlink</td><td> </td></tr>
 <tr valign=top ><td></td><td>\indent\indent\link G3D::Component Component\endlink</td><td>
 (See also \link G3D::MapComponent MapComponent\endlink,
@@ -203,7 +203,7 @@ volumes and shadow maps.  %G3D supports both, on programmable and fixed function
 <tr><td></td><td>\link G3D::WrapMode WrapMode\endlink</td><td>Specifies how out-of-bounds image locations are treated for Texture, Map2D, and Image classes</td></tr>
 <tr><td></td><td>\link G3D::gaussian1D gaussian1D\endlink</td><td>Generate 1D blur filter coefficients</td></tr>
 <tr><td></td><td>\link G3D::GaussianBlur GaussianBlur\endlink</td><td>Fast GPU 1D blur</td></tr>
-<tr><td></td><td>\link G3D::ToneMap ToneMap\endlink</td><td>Gamma correct, adaptation, and bloom for realistic lighting</td></tr>
+<tr><td></td><td>\link G3D::Film Film\endlink</td><td>Gamma correct, adaptation, and bloom for realistic lighting</td></tr>
 </table>
 
 @section strings String Processing
@@ -234,22 +234,10 @@ volumes and shadow maps.  %G3D supports both, on programmable and fixed function
 <tr><td></td><td>\link G3D::Any <b>Any</b>\endlink</td><td>\copybrief G3D::Any</td></tr>
 <tr><td></td><td>\link G3D::BinaryInput <b>BinaryInput</b>\endlink, \link G3D::BinaryOutput <b>BinaryOutput</b>\endlink</td><td></td></tr>
 <tr><td></td><td>\link G3D::TextInput <b>TextInput</b>\endlink, \link G3D::TextOutput <b>TextOutput</b>\endlink</td><td></td></tr>
-<tr><td></td><td>\link G3D::getFiles getFiles\endlink, \link G3D::getDirs getDirs\endlink</td><td>Get a directory listing, including wildcards</td></tr>
+<tr><td></td><td>\link G3D::FileSystem FileSystem\endlink</td><td></td></tr>
+<tr><td></td><td>\link G3D::filenameContainsWildcards filenameContainsWildcards\endlink</td><td></td></tr>
 <tr><td></td><td>\link G3D::readWholeFile readWholefile\endlink, \link G3D::writeWholeFile writeWholeFile\endlink</td><td></td></tr>
-<tr><td></td><td>\link G3D::copyFile copyFile\endlink</td><td></td></tr>
 <tr><td></td><td>\link G3D::createTempFile createTempFile\endlink</td><td></td></tr>
-
-<tr><td></td><td>\link G3D::filenameContainsWildcards filenameContainsWildcards\endlink,
-        \link G3D::filenameBaseExt filenameBaseExt\endlink,
-        \link G3D::filenameExt filenameExt\endlink,
-        \link G3D::filenamePath filenamePath\endlink,
-        \link G3D::pathConcat pathConcat\endlink,
-        \link G3D::parseFilename parseFilename\endlink</td><td>Filename parsing and manipulation</td></tr>
-<tr><td></td><td>
-        \link G3D::isDirectory isDirectory\endlink,
-        \link G3D::fileIsNewer fileIsNewer\endlink,
-        \link G3D::fileExists fileExists\endlink, 
-        \link G3D::fileLength fileLength\endlink</td><td>File testing and comparison</td></tr>
 </table>
 
 @section raytrace Ray Tracing and Physics
