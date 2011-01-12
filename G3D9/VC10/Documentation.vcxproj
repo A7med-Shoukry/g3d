@@ -31,7 +31,6 @@
     <None Include="..\doc-files\license.dox" />
     <None Include="..\doc-files\stylesheet.css" />
     <None Include="..\doc-files\topic-index.dox" />
-    <None Include="..\doc-files\upgrade.dox" />
     <None Include="..\Doxyfile" />
     <None Include="..\Doxyfile-java" />
     <None Include="..\README.TXT" />
