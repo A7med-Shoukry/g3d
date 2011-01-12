@@ -38,8 +38,7 @@ namespace G3D {
  */
 
 G3D_BEGIN_PACKED_CLASS(1)
-
-class Color3uint8 {
+Color3uint8 {
 private:
     // Hidden operators
     bool operator<(const Color3uint8&) const;

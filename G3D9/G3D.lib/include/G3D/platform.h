@@ -302,16 +302,29 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #    define PRAGMA(x) _Pragma(#x)
 #endif
 
-/** @def G3D_BEGIN_PACKED_CLASS(byteAlign)
-    Switch to tight alignment
+/** \def G3D_BEGIN_PACKED_CLASS(byteAlign)
+    Switch to tight alignment.
+    
+    \code
+    G3D_BEGIN_PACKED_CLASS(1)
+    ThreeBytes {
+    public:
+        uint8 a, b, c;
+    }
+    G3D_END_PACKED_CLASS(1)
+    \endcode
+
+
     See G3D::Color3uint8 for an example.*/
 #ifdef _MSC_VER
-#    define G3D_BEGIN_PACKED_CLASS(byteAlign)  PRAGMA( pack(push, byteAlign) )
+#    define G3D_BEGIN_PACKED_CLASS(byteAlign)  PRAGMA( pack(push, byteAlign) ) class
+#elif defined(__GNUC__)
+#    define G3D_BEGIN_PACKED_CLASS(byteAlign)  class __attribute((__packed__))
 #else
-#    define G3D_BEGIN_PACKED_CLASS(byteAlign)
+#    define G3D_BEGIN_PACKED_CLASS(byteAlign)  class
 #endif
 
-/** @def G3D_END_PACKED_CLASS(byteAlign)
+/** \def G3D_END_PACKED_CLASS(byteAlign)
     End switch to tight alignment
     See G3D::Color3uint8 for an example.*/
 #ifdef _MSC_VER

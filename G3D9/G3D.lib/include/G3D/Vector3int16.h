@@ -4,13 +4,13 @@
   @maintainer Morgan McGuire, matrix@brown.edu
 
   @created 2003-04-07
-  @edited  2003-06-24
-  Copyright 2000-2004, Morgan McGuire.
+  @edited  2011-01-24
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 
-#ifndef VECTOR3INT16_H
-#define VECTOR3INT16_H
+#ifndef G3D_VECTOR3INT16_H
+#define G3D_VECTOR3INT16_H
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
@@ -30,7 +30,7 @@ namespace G3D {
  A Vector3 that packs its fields into uint16s.
  */
 G3D_BEGIN_PACKED_CLASS(2)
-class Vector3int16 {
+Vector3int16 {
 private:
     // Hidden operators
     bool operator<(const Vector3int16&) const;

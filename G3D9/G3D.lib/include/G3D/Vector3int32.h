@@ -1,16 +1,16 @@
 /**
-  @file Vector3int32.h
+  @file G3D/Vector3int32.h
   
   @maintainer Morgan McGuire, matrix@brown.edu
 
   @created 2008-07-01
-  @edited  2008-07-01
+  @edited  2011-01-01
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 
-#ifndef Vector3int32_h
-#define Vector3int32_h
+#ifndef G3D_Vector3int32_h
+#define G3D_Vector3int32_h
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
@@ -24,7 +24,7 @@ namespace G3D {
  A Vector3 that packs its fields into uint32s.
  */
 G3D_BEGIN_PACKED_CLASS(4)
-class Vector3int32 {
+Vector3int32 {
 private:
     // Hidden operators
     bool operator<(const Vector3int32&) const;

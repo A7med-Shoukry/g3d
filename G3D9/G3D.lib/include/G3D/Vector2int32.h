@@ -1,5 +1,5 @@
 /**
-  @file Vector2int32.h
+  @file G3D/Vector2int32.h
   
   @maintainer Morgan McGuire, matrix@brown.edu
 
@@ -10,8 +10,8 @@
   All rights reserved.
  */
 
-#ifndef Vector2int32_h
-#define Vector2int32_h
+#ifndef G3D_Vector2int32_h
+#define G3D_Vector2int32_h
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
@@ -24,7 +24,7 @@ namespace G3D {
  A Vector2 that packs its fields into int32s.
  */
 G3D_BEGIN_PACKED_CLASS(2)
-class Vector2int32 {
+Vector2int32 {
 private:
     // Hidden operators
     bool operator<(const Vector2int32&) const;

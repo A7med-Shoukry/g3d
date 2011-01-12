@@ -43,6 +43,7 @@
      <li> G3D::PointHashGrid::Iterator::hasMore
      <li> G3D::GLight::castsShadows
      <li> G3D::GLight::power
+     <li> G3D::FileSystem::markFileUsed, G3D::FileSystem::usedFiles
      <li> G3D::Point2 typedef
      <li> G3D::Noise
      <li> Extended G3D::SuperSurface to work with inverted cameras for planar mirror rendering
@@ -85,6 +86,7 @@
      <li> Fix: G3D::TriTree now finds ray intersections even when the ray lies entirely within a splitting plane
      <li> Fix: G3D::Intersect::rayAABox had some bad logic for a few cases due to falling through a SWITCH-CASE.  These are now fixed.
      <li> Fix: CarbonWindow now returns correct key codes when Ctrl+letter are held down
+     <li> Fix: G3D_BEGIN_PACKED_CLASS now uses correct syntax on Unix (the macro is not backwards compatible to 8.xx, however)
     </ul>
 
      <b>Backwards Incompatible Changes</b>:

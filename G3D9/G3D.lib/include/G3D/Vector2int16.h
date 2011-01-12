@@ -25,7 +25,7 @@ class Any;
  A Vector2 that packs its fields into G3D::int16 s.
  */
 G3D_BEGIN_PACKED_CLASS(2)
-class Vector2int16 {
+Vector2int16 {
 private:
     // Hidden operators
     bool operator<(const Vector2int16&) const;

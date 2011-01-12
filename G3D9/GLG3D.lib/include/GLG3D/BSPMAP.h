@@ -249,7 +249,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////
 G3D_BEGIN_PACKED_CLASS(1)
-class LightVolume {
+LightVolume {
 public:
     /** Ambient color component. RGB.  */
     Color3uint8              ambient;
