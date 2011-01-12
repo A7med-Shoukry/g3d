@@ -8,7 +8,7 @@
   @created 2004-01-10
   @edited  2010-09-10
 
-  Copyright 2000-2010, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 

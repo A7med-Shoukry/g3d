@@ -16,7 +16,7 @@
   \created 2002-05-27
   \edited  2010-01-04
 
-  Copyright 2000-2010, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 

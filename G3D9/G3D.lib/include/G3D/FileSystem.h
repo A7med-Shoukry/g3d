@@ -4,7 +4,7 @@
  \author Morgan McGuire, http://graphics.cs.williams.edu
  
  \author  2002-06-06
- \edited  2010-10-27
+ \edited  2011-01-10
  */
 #ifndef G3D_FileSystem_h
 #define G3D_FileSystem_h
@@ -12,6 +12,7 @@
 #include "G3D/platform.h"
 #include "G3D/Array.h"
 #include "G3D/Table.h"
+#include "G3D/Set.h"
 
 namespace G3D {
 
@@ -398,6 +399,14 @@ public:
     static void getDirectories(const std::string& spec, Array<std::string>& result, bool includeParentPath = false) {
         return instance()._getDirectories(spec, result, includeParentPath);
     }
+
+    /** Adds \a filename to usedFiles().  This is called automatically by open() and all 
+      G3D routines that open files. */
+    static void markFileUsed(const std::string& filename);
+
+    /** All files that have been marked by markFileUsed().  GApp automatically prints this list to log.txt.  It is useful
+        for finding the dependencies of your program automatically.*/
+    static const Set<std::string>& usedFiles();
 };
 
 
@@ -484,6 +493,9 @@ public:
       Returns true if \a path matches \a pattern, with standard filesystem wildcards.
      */
     static bool matches(const std::string& path, const std::string& pattern, bool caseSensitive = true);
+
+    /** Replaces characters that are illegal in a filename with legal equivalents.*/
+    static std::string makeLegalFilename(const std::string& f, int maxLength = 100000);
 };
 
 } // namespace G3D

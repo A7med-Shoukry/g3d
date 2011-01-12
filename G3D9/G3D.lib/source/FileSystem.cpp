@@ -316,6 +316,8 @@ FILE* FileSystem::_fopen(const char* _filename, const char* mode) {
             break;
         }
     }
+
+    markFileUsed(filename);
     return ::fopen(filename.c_str(), mode);
 }
 
@@ -514,6 +516,18 @@ std::string FileSystem::_currentDirectory() {
 
     _getcwd(buffer, N);
     return std::string(buffer);
+}
+
+
+static Set<std::string> _filesUsed;
+
+void FileSystem::markFileUsed(const std::string& filename) {
+    _filesUsed.insert(filename);
+}
+
+
+const Set<std::string>& FileSystem::usedFiles() {
+    return _filesUsed;
 }
 
 
@@ -933,6 +947,23 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
     }
 
     return result;
+}
+
+
+/** Generate a unique filename based on the provided hint */
+std::string FilePath::makeLegalFilename(const std::string& f, int maxLength) {
+    std::string tentative;
+    
+    for (unsigned int i = 0; i < iMin(maxLength, f.size()); ++i) {
+        const char c = f[i];
+        if (isLetter(c) || isDigit(c) || (c == '-') || (c == '+') || (c == '=') || (c == '(') || (c == ')')) {
+            tentative += c;
+        } else {
+            tentative += "_";
+        }
+    }
+
+    return tentative;
 }
 
 }

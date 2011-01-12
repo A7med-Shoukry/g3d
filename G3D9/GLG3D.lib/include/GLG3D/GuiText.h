@@ -1,7 +1,7 @@
 /**
   @file GuiText.h
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  Copyright 2000-2010, Morgan McGuire
+  Copyright 2000-2011, Morgan McGuire
  */
 
 #ifndef G3D_GuiText_h

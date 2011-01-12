@@ -9,7 +9,7 @@
  @edited  2010-01-03
 
  G3D Library
- Copyright 2002-2010, Morgan McGuire.
+ Copyright 2002-2011, Morgan McGuire.
  All rights reserved.
 */
 

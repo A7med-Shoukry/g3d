@@ -4,9 +4,9 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
  @author  2002-06-06
- @edited  2010-03-06
+ @edited  2011-03-06
 
- Copyright 2000-2010, Morgan McGuire.
+ Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
  */
 
@@ -26,16 +26,10 @@
 #endif
 
 namespace G3D {
-
-    namespace _internal {
-        extern Set<std::string> currentFilesUsed;
-    }
-
-/** Returns all the files used by G3D and GLG3D during the current execution. */
-Array<std::string> filesUsed();
-    
-std::string readWholeFile(
-    const std::string&          filename);
+ 
+/** Returns the contents of a text file as a single string */
+std::string readWholeFile
+(const std::string&          filename);
 
 
 /** Reads from a zip file and decompresses the desired contents
@@ -45,9 +39,10 @@ std::string readWholeFile(
 	@param file the path, of the format C:\\...\\something.zip\\...\\desiredfile.ext
 	@param data a pointer to the memory where the file will be stored
 	@param length the size of the file decompressed to memory */
-void zipRead(const std::string& file,
-			 void*& data,
-			 size_t& length);
+void zipRead
+(const std::string& file,
+ void*&             data,
+ size_t&            length);
 
 
 /** Closes the contents of a zip file that had been decompressed to

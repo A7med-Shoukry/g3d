@@ -5,7 +5,7 @@
   @created 2004-11-20
   @edited  2009-02-20
 
-  Copyright 2001-2010, Morgan McGuire
+  Copyright 2001-2011, Morgan McGuire
  */
 #include "G3D/Log.h"
 #include "GLG3D/SuperSurface.h"

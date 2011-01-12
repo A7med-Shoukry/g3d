@@ -2,7 +2,7 @@
  @file BinaryOutput.cpp
  
  @author Morgan McGuire, http://graphics.cs.williams.edu
- Copyright 2002-2010, Morgan McGuire, All rights reserved.
+ Copyright 2002-2011, Morgan McGuire, All rights reserved.
  
  @created 2002-02-20
  @edited  2010-03-17

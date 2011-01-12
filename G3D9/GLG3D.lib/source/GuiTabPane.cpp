@@ -4,7 +4,7 @@
  @created 2010-03-01
  @edited  2010-03-01
 
- Copyright 2000-2010, Morgan McGuire, http://graphics.cs.williams.edu
+ Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
  All rights reserved.
 */
 #include "GLG3D/GuiTabPane.h"

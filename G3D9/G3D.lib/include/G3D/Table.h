@@ -6,7 +6,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
   @created 2001-04-22
   @edited  2010-01-28
-  Copyright 2000-2010, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 

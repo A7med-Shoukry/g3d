@@ -98,12 +98,11 @@ bool zipfileExists(const std::string& filename) {
 std::string readWholeFile(
     const std::string& filename) {
 
-    _internal::currentFilesUsed.insert(filename);
-
     std::string s;
 
     debugAssert(filename != "");
     debugAssertM(FileSystem::exists(filename), filename + " not found");
+    FileSystem::markFileUsed(filename);
 
     if (! FileSystem::inZipfile(filename)) {
         int64 length = FileSystem::size(filename);
@@ -146,6 +145,9 @@ void zipRead(const std::string& file,
     std::string zip, desiredFile;
     
     if (zipfileExists(file, zip, desiredFile)) {
+        FileSystem::markFileUsed(file);
+        FileSystem::markFileUsed(zip);
+
         struct zip *z = zip_open( zip.c_str(), ZIP_CHECKCONS, NULL );
         {
             struct zip_stat info;
@@ -914,13 +916,6 @@ bool fileIsNewer(const std::string& src, const std::string& dst) {
     bool dexists = _stat(dst.c_str(), &dts) != -1;
 
     return sexists && ((! dexists) || (sts.st_mtime > dts.st_mtime));
-}
-
-
-Array<std::string> filesUsed() {
-    Array<std::string> f;
-    _internal::currentFilesUsed.getMembers(f);
-    return f;
 }
 
 }

@@ -1,7 +1,7 @@
 /**
   \file GImage.cpp
   \author Morgan McGuire, http://graphics.cs.williams.edu
-  Copyright 2002-2010, Morgan McGuire
+  Copyright 2002-2011, Morgan McGuire
 
   \created 2002-05-27
   \edited  2010-01-04

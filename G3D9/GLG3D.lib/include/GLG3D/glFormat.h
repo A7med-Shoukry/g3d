@@ -6,7 +6,7 @@
  \created 2002-08-07
  \edited  2010-09-24
 
- Copyright 2002-2010, Morgan McGuire.
+ Copyright 2002-2011, Morgan McGuire.
  All rights reserved.
 */
 #ifndef GLFORMAT_H
