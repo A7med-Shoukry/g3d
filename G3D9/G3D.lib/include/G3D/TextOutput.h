@@ -156,6 +156,9 @@ private:
     /** the newline character(s) */
     std::string             newline;
 
+    /** Starts at 1 */
+    int                     m_currentLine;
+
     void setOptions(const Settings& _opt);
 
     /** Converts to the desired newlines.  Called from vprintf */
@@ -174,6 +177,11 @@ public:
 
     /** Constructs a text output that can later be commited to a string instead of a file.*/
     explicit TextOutput(const Settings& options = Settings());
+
+    /** Returns one plus the number of newlines written since the output was created. */
+    int line() const {
+        return m_currentLine;
+    }
 
     /** Commit to the filename specified on the constructor. 
          <B>Not</B> called from the destructor; you must call

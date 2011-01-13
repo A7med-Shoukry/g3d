@@ -805,7 +805,6 @@ static bool needsQuotes(const std::string& s) {
 }
 
 
-// TODO: if the output will fit on one line, compress tables and arrays into a single line
 void Any::serialize(TextOutput& to) const {
     beforeRead();
     if (m_data && ! m_data->comment.empty()) {
@@ -849,17 +848,18 @@ void Any::serialize(TextOutput& to) const {
 
         for (int i = 0; i < keys.size(); ++i) {
 
+            int prevLine = to.line();
             to.writeSymbol(keys[i]);
             to.writeSymbol("=");
             table[keys[i]].serialize(to);
 
-            //if (i < keys.size() - 1) {
-            // Always write a trailing semi-colon
             to.writeSymbol(";");
-            //}
-            to.writeNewline();
 
-            // Skip a line between table entries
+            // Skip an extra line between table entries that are longer than a line
+            if (prevLine != to.line()) {
+                to.writeNewline();
+            }
+
             to.writeNewline();
         }
 

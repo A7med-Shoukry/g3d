@@ -21,7 +21,8 @@ TextOutput::TextOutput(const TextOutput::Settings& opt) :
     currentColumn(0),
 	inDQuote(false),
 	filename(""),
-	indentLevel(0)
+	indentLevel(0),
+    m_currentLine(0)
 {
     setOptions(opt);
 }
@@ -32,7 +33,8 @@ TextOutput::TextOutput(const std::string& fil, const TextOutput::Settings& opt) 
     currentColumn(0),
 	inDQuote(false),
 	filename(fil),
-	indentLevel(0) 
+	indentLevel(0),
+    m_currentLine(0)
 {
 
     setOptions(opt);
@@ -378,6 +380,7 @@ void TextOutput::indentAppend(char c) {
     startingNewLine = (c == '\n');
     if (startingNewLine) {
         currentColumn = 0;
+        ++m_currentLine;
     }
 }
 
