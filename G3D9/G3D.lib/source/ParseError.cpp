@@ -13,7 +13,7 @@ std::string ParseError::formatFileInfo() const {
             return format("%s:%d: ", filename.c_str(), line);
         }
     } else if (byte != UNKNOWN) {
-        return format("%s:(%d): ", filename.c_str(), byte);
+        return format("%s:(%lld): ", filename.c_str(), byte);
     } else if (filename.empty()) {
         return "";
     } else {

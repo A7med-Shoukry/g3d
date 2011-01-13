@@ -954,7 +954,7 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
 std::string FilePath::makeLegalFilename(const std::string& f, int maxLength) {
     std::string tentative;
     
-    for (unsigned int i = 0; i < iMin(maxLength, f.size()); ++i) {
+    for (int i = 0; i < iMin(maxLength, f.size()); ++i) {
         const char c = f[i];
         if (isLetter(c) || isDigit(c) || (c == '-') || (c == '+') || (c == '=') || (c == '(') || (c == ')')) {
             tentative += c;
