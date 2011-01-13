@@ -57,12 +57,13 @@ private: \
 \
         do {\
             s = toString(i, v);\
+            if (s == NULL) { return; /** Needed to get correct compilation on gcc */ } \
             if (x == s) {\
                 value = v;\
                 return;\
             }\
             ++i;\
-        } while (s);\
+        } while (true);\
     }\
 \
 public:\
