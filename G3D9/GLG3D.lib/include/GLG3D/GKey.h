@@ -512,6 +512,10 @@ public:
         *this = fromString(a.string());
     }
 
+    const GKey& operator=(const Any& a) {
+        return *this = GKey(a);
+    }
+
     Classname(char v) : value((Value)v) {}
 
     Classname() : value((Value)0) {}
