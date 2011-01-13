@@ -165,7 +165,7 @@ void loadt2D() {
     stopwatch.after("Load from disk");
 
     // Create an empty texture in bilinear-nearest-nearest mode, with MIP-map generation disabled
-    tex = Texture::createEmpty("tex", 0, 0, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+    tex = Texture::createEmpty("tex", image.width(), image.height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
     stopwatch.after("Create GL texture");
 
     // Create a pbo
@@ -191,14 +191,14 @@ void loadt2D() {
     glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
     ptr = NULL;
     stopwatch.after("Unmap PBO");
-
     // Even if we sleep after unmapping the PBO, the following glTexImage2D still takes 0.14 s
     // System::sleep(1);
     // stopwatch.after("sleep");
 
     // Copy the PBO to the texture
     glBindTexture(tex->openGLTextureTarget(), tex->openGLID());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image.width(), image.height(), 0, GL_RGB, GL_BYTE, 0);
+//    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width(), image.height(), GL_RGB, GL_BYTE, (GLvoid*)0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image.width(), image.height(), 0, GL_RGB, GL_BYTE, (GLvoid*)0);
     glBindTexture(tex->openGLTextureTarget(), GL_NONE);
     stopwatch.after("glTexImage2D");
 
@@ -216,10 +216,12 @@ void loadt2D() {
 void App::onInit() {
     Stopwatch stopwatch;
 
-#if 0
+
     loadt2D();
-    ::exit(0);
-#endif
+
+#if 0
+//    ::exit(0);
+
     stopwatch.tick();
 
     Texture::Settings settings = Texture::Settings::cubeMap();
@@ -261,6 +263,7 @@ void App::onInit() {
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, GL_NONE);
         glBindTexture(sky->openGLTextureTarget(), GL_NONE);
     }
+#endif
 
     /*
     Texture::Settings settings  = Texture::Settings::cubeMap();
@@ -270,9 +273,8 @@ void App::onInit() {
     stopwatch.tock();
     debugPrintf("Elapsed time: %fs\n", stopwatch.elapsedTime());
     ::exit(0);
+
 #endif
-
-
     // Called before the application loop beings.  Load data here and
     // not in the constructor so that common exceptions will be
     // automatically caught.
@@ -403,43 +405,12 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
-    Vector3 cellSize(20, 20, 1);
-    Point3 gridOriginLocation(150, 50, 0);
-    Vector3int32 gridOriginIndex(-2,0,0);
-    Vector3int32 numCells(10, 10, 1);
 
-    rd->setColor(Color3::black());
-    rd->beginPrimitive(PrimitiveType::LINES);
-    for (int x = 0; x < numCells.x; ++x) {
-        rd->sendVertex((Point3(x, 0, 0)  ) * cellSize + gridOriginLocation);
-        rd->sendVertex((Point3(x, numCells.y - 1, 0)) * cellSize + gridOriginLocation);
-    }
-    for (int y = 0; y < numCells.y; ++y) {
-        rd->sendVertex((Point3(0, y, 0)) * cellSize + gridOriginLocation);
-        rd->sendVertex((Point3(numCells.x - 1, y, 0)) * cellSize + gridOriginLocation);
-    }
+    rd->setTexture(0, tex);
+    Draw::rect2D(Rect2D::xywh(0,0,400,400), rd);
 
-    const Ray R(Point3(0, 0, 0), Vector3(userInput->mouseXY(), 0).direction());
-
-    rd->setColor(Color3::green() * 0.5f);
-    rd->sendVertex(R.origin());
-    rd->sendVertex(R.origin() + R.direction() * 300);
-
-    rd->endPrimitive();
-
-    rd->setPointSize(10);
-    rd->beginPrimitive(PrimitiveType::POINTS);
-    for (RayGridIterator it(R, numCells, cellSize, gridOriginLocation, gridOriginIndex); it.insideGrid(); ++it) {
-        rd->setColor(Color3::red());
-        Point3 P = (Point3(it.index() - gridOriginIndex) + Vector3(0.5f, 0.5f, 0)) * cellSize + gridOriginLocation;
-        rd->sendVertex(P);
-        screenPrintf("%d, %d  -> %f, %f, %f\n", it.index().x, it.index().y, P.x, P.y, P.z);
-
-        rd->setColor(Color3::blue());
-        rd->sendVertex(it.enterPoint());
-    }
-    rd->endPrimitive();
-
+    Draw::rect2DBorder(Rect2D::xywh(100,100,200,100), rd);
+    m_font->draw2DWordWrap(rd, 200, "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.", Point2(100,100), 12);
     Surface2D::sortAndRender(rd, posed2D);
 }
 
