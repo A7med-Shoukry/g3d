@@ -217,17 +217,15 @@ void App::onInit() {
     Stopwatch stopwatch;
 
 
-    loadt2D();
-
-#if 0
-//    ::exit(0);
+//    loadt2D();
 
     stopwatch.tick();
 
     Texture::Settings settings = Texture::Settings::cubeMap();
     settings.interpolateMode = Texture::BILINEAR_NO_MIPMAP;
     sky = Texture::createEmpty("cubemap", 0, 0, ImageFormat::RGB8(), Texture::DIM_CUBE_MAP, settings);
-#if 0
+
+
     // Using multiple threads cuts the load time from disk from 0.9s to 0.6s.
     // Using PBO and multiple threads for DMA has no measurable impact on performance over single-threaded glTexImage2D from
     // the CPU memory--both take about 1.5s.
@@ -247,7 +245,16 @@ void App::onInit() {
 
         // Run the threads, reusing the current thread and blocking until
         // all complete
-        threadSet.start(USE_CURRENT_THREAD);
+        threadSet.start();
+
+        // On the main thread, resize the textures while uploading happens on the other threads
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, GL_NONE);
+        glBindTexture(sky->openGLTextureTarget(), sky->openGLID());
+        for (int i = 0; i < 6; ++i) {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i, 0, GL_RGB8, w, w, 0, GL_RGB, GL_BYTE, (GLvoid*)0);
+        }
+        glBindTexture(sky->openGLTextureTarget(), GL_NONE);
+
         threadSet.waitForCompletion();
 
         for (int i = 0; i < 6; ++i) {
@@ -258,12 +265,12 @@ void App::onInit() {
         glBindTexture(sky->openGLTextureTarget(), sky->openGLID());
         for (int i = 0; i < 6; ++i) {
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, image[i]->pbo);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i, 0, GL_RGB8, w, w, 0, GL_RGB, GL_BYTE, 0);
+            glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i, 0, 0, 0, w, w, GL_RGB, GL_BYTE, (GLvoid*)0);
         }
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, GL_NONE);
         glBindTexture(sky->openGLTextureTarget(), GL_NONE);
     }
-#endif
+
 
     /*
     Texture::Settings settings  = Texture::Settings::cubeMap();
@@ -271,10 +278,15 @@ void App::onInit() {
     Texture::Ref t = Texture::fromFile("D:/morgan/g3d/data/cubemap/sky_skylab_01/sky_skylab_01*.png", ImageFormat::AUTO(), Texture::DIM_CUBE_MAP, settings, skyprocess);
     */
     stopwatch.tock();
-    debugPrintf("Elapsed time: %fs\n", stopwatch.elapsedTime());
-    ::exit(0);
+    debugPrintf("PBO thread: %fs\n", stopwatch.elapsedTime());
+    /*
+    stopwatch.tick();
+    sky = Texture::fromFile("D:/morgan/g3d/data/cubemap/sky_skylab_01/sky_skylab_01*.png", ImageFormat::RGB8(), Texture::DIM_CUBE_MAP, settings);
+    stopwatch.tock();
+    debugPrintf("Texture: %fs\n", stopwatch.elapsedTime());
+    */
+//    ::exit(0);
 
-#endif
     // Called before the application loop beings.  Load data here and
     // not in the constructor so that common exceptions will be
     // automatically caught.
@@ -374,7 +386,7 @@ void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surfa
 
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-//    Draw::skyBox(rd, sky, 1.0, 1.0);
+    Draw::skyBox(rd, sky, 1.0, 1.0);
 /*    if (m_scene->lighting()->environmentMapTexture.notNull()) {
         Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     }
