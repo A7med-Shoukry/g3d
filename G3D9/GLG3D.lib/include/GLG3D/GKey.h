@@ -3,7 +3,7 @@
 
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
   @created 2006-10-20
-  @edited  2010-05-27
+  @edited  2011-05-27
 */
 #ifndef GLG3D_GKey_h
 #define GLG3D_GKey_h
@@ -504,27 +504,26 @@ public:
 #define Classname GKey
 
 
-    Any toAny() const {\
-        return Any(toString());\
-    }\
-\
-    Classname(char v) : value((Value)v) {}\
-\
-    Classname() : value((Value)0) {}\
-\
-    Classname(const Value v) : value(v) {}\
-\
-    explicit Classname(int v) : value((Value)v) {}\
-\
-    /** Support cast back to the Value type, which is needed to allow implicit assignment inside unions. */\
-    /*inline operator Value() const {
-        return value;
-	}*/\
-\
-    operator int() const {\
-        return (int)value;\
-    }\
-\
+    Any toAny() const {
+        return Any(toString());
+    }
+
+    explicit GKey(const Any& a) {
+        *this = fromString(a.string());
+    }
+
+    Classname(char v) : value((Value)v) {}
+
+    Classname() : value((Value)0) {}
+
+    Classname(const Value v) : value(v) {}
+
+    explicit Classname(int v) : value((Value)v) {}
+
+    operator int() const {
+        return (int)value;
+    }
+
     bool operator== (const Classname other) const {\
         return value == other.value;\
     }\
