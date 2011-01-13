@@ -167,17 +167,18 @@ class DoxygenRefLinkRemapper:
         # ref links found in non-struct/class files will be matched as-is
         
         # note: this would have to be redone if multiple source directories is implemented
-        
+
         if match.group(2) in self.validRefs:
             return 'href="' + self.validRefs[match.group(2)] + '">' + match.group(2) + match.group(3)
         elif re.search('class|struct', self.currentRemapFilename):
             # get list of scopes from current filename
             qualifiedScopes = self.__buildScopes(self.currentRemapFilename)
             
-            # build a prefix including all of the scopes except for current one (should be class/struct)
+            # search for the reference in all qualified scopes
             for numScopes in range(0, len(qualifiedScopes)):
                 qualifiedPrefix = ''
-                for scope in qualifiedScopes[:-numScopes]:
+                # build a scope that includes all qualified scopes first and then reduces by one until the top-level scope is tested
+                for scope in qualifiedScopes[:len(qualifiedScopes) - numScopes]:
                     qualifiedPrefix += scope + '::'
                 
                 qualifiedRef = qualifiedPrefix + match.group(2)
