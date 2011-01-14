@@ -214,6 +214,15 @@ void loadt2D() {
 
 
 void App::onInit() {
+
+    VideoInput::Ref in = VideoInput::fromFile("/Volumes/McGuire/Projects/games/ste/data-files/data/gui/sun.mp4");
+    VideoOutput::Ref out = VideoOutput::create("/Volumes/McGuire/Projects/games/ste/data-files/data/gui/sun-out.mp4", 
+                                               VideoOutput::Settings::MPEG4(in->width(), in->height()));
+
+    out->append(in);
+    out->commit();
+    ::exit(0);
+
     Stopwatch stopwatch;
 
 
