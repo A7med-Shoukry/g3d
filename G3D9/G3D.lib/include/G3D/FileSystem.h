@@ -280,6 +280,14 @@ private:
     to acknowledge the new file on a write operation. */
     FILE* _fopen(const char* filename, const char* mode);
 
+    /**
+       \brief Delete this file. 
+        No effect if \a path does not exist.
+
+        \param path May contain wildcards.  May not be inside a zipfile.
+     */
+    void _removeFile(const std::string& path);
+
 public:
 
     /** Create the common instance. */
@@ -314,8 +322,14 @@ public:
         ::fclose(f);
     }
 
+    /** \copydoc _inZipfile */
     static bool inZipfile(const std::string& path) {
         return instance()._inZipfile(path);
+    }
+
+    /** \copydoc _removeFile */
+    static void removeFile(const std::string& path) {
+        instance()._removeFile(path);
     }
 
     /** \copydoc isZipfile */

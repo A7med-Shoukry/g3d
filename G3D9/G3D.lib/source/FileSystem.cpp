@@ -476,6 +476,22 @@ bool FileSystem::_isDirectory(const std::string& _filename) {
 }
 
 
+void FileSystem::_removeFile(const std::string& path) {
+    alwaysAssertM(! inZipfile(path), "Cannot invoke removeFile() on files inside zipfiles.");
+    Array<std::string> files;
+    getFiles(path, files, true);
+
+    for (int i = 0; i < files.size(); ++i) {
+        const std::string& filename = files[i];
+        int retval = ::remove(filename.c_str());
+        (void)retval;
+    }
+    
+    // Remove from cache
+    _clearCache(FilePath::parent(path));
+}
+
+
 std::string FileSystem::_resolve(const std::string& _filename, const std::string& _cwd) {
     const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
     const std::string& cwd = FilePath::expandEnvironmentVariables(_cwd);
