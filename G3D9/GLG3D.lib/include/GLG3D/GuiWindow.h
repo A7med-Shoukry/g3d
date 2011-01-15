@@ -2,7 +2,7 @@
  \file GLG3D/GuiWindow.h
 
  \created 2006-05-01
- \edited  2010-10-21
+ \edited  2011-01-21
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
@@ -109,6 +109,9 @@ protected:
 public:
     typedef ReferenceCountedPointer<GuiWindow> Ref;
 
+    /** Controls rendering of the screen behind the window when this is a modal dialog */
+    enum ModalEffect {MODAL_EFFECT_NONE, MODAL_EFFECT_DARKEN, MODAL_EFFECT_DESATURATE, MODAL_EFFECT_LIGHTEN};
+
     /**
       Controls the behavior when the close button is pressed (if there
       is one).  
@@ -148,7 +151,9 @@ protected:
         /** The dialog that is running */
         GuiWindow*          dialog;
 
-        Modal(OSWindow* osWindow);
+        ModalEffect         m_modalEffect;
+
+        Modal(OSWindow* osWindow, ModalEffect e);
         /** Run an event loop until the window closes */
         void run(GuiWindow::Ref dialog);
         /** Callback for OSWindow loop body */
@@ -198,7 +203,7 @@ protected:
 
     Array<GuiDrawer*>   m_drawerArray;
     GuiPane*            m_rootPane;
-    
+
     GuiWindow(const GuiText& text, GuiTheme::Ref skin, const Rect2D& rect, GuiTheme::WindowStyle style, CloseAction closeAction);
 
     /** Creates a non-functional window.  Useful for subclasses that
@@ -227,9 +232,9 @@ public:
         Blocks until the dialog is closed (visible = false).  Do not call between
         RenderDevice::beginFrame and RenderDevice::endFrame.
      */
-    void showModal(OSWindow* osWindow);
+    void showModal(OSWindow* osWindow, ModalEffect m = MODAL_EFFECT_DESATURATE);
 
-    void showModal(GuiWindow::Ref parent);
+    void showModal(GuiWindow::Ref parent, ModalEffect m = MODAL_EFFECT_DESATURATE);
 
     /** Is this window in focus on the WidgetManager? */
     inline bool focused() const {

@@ -3,9 +3,10 @@
  
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2007-06-02
- @edited  2009-09-25
+ \created 2007-06-02
+ \edited  2011-01-20
  */
+
 #include "G3D/platform.h"
 #include "GLG3D/GuiWindow.h"
 #include "GLG3D/GuiControl.h"
@@ -432,20 +433,20 @@ void GuiWindow::moveToCenter() {
 ////////////////////////////////////////////////////////////
 // Modal support
 
-void GuiWindow::showModal(OSWindow* osWindow) {
-    modal = new Modal(osWindow);
+void GuiWindow::showModal(OSWindow* osWindow, ModalEffect e) {
+    modal = new Modal(osWindow, e);
     modal->run(this);
     delete modal;
     modal = NULL;
 }
 
 
-void GuiWindow::showModal(GuiWindow::Ref parent) {
-    showModal(parent->window());
+void GuiWindow::showModal(GuiWindow::Ref parent, ModalEffect e) {
+    showModal(parent->window(), e);
 }
 
 
-GuiWindow::Modal::Modal(OSWindow* osWindow) : osWindow(osWindow) {
+GuiWindow::Modal::Modal(OSWindow* osWindow, ModalEffect e) : osWindow(osWindow), m_modalEffect(e) {
     manager = WidgetManager::create(osWindow);
     renderDevice = osWindow->renderDevice();
     userInput = new UserInput(osWindow);
@@ -530,12 +531,32 @@ void GuiWindow::Modal::oneFrame() {
                                                           0,  0,  1,  0,
                                                           0,  0,  0,  1));
             }
-            Draw::rect2D(viewport, renderDevice, Color3::white() * 0.5f);
-            
-            // Desaturate the image by drawing white over it
-            renderDevice->setTexture(0, NULL);
-            renderDevice->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
-            Draw::fastRect2D(viewport, renderDevice, Color3::white() * 0.3f);            
+
+            switch (m_modalEffect) {
+            case MODAL_EFFECT_NONE:
+                Draw::rect2D(viewport, renderDevice);
+                break;
+
+            case MODAL_EFFECT_DARKEN:
+                Draw::rect2D(viewport, renderDevice, Color3::white() * 0.5f);
+                break;
+
+            case MODAL_EFFECT_DESATURATE:
+                Draw::rect2D(viewport, renderDevice, Color3::white() * 0.6f);
+                // Desaturate the image by drawing white over it
+                renderDevice->setTexture(0, NULL);
+                renderDevice->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
+                Draw::fastRect2D(viewport, renderDevice, Color3::white() * 0.3f);            
+                break;
+
+            case MODAL_EFFECT_LIGHTEN:
+                Draw::rect2D(viewport, renderDevice);
+                // Desaturate the image by drawing white over it
+                renderDevice->setTexture(0, NULL);
+                renderDevice->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
+                Draw::fastRect2D(viewport, renderDevice, Color3::white() * 0.4f);            
+                break;
+            }
         }
         renderDevice->pop2D();
 
