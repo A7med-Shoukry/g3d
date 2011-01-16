@@ -135,10 +135,11 @@ public:
     static GFontRef fromMemory(const std::string& name, const uint8* bytes, const int size);
 
     /**
-     Converts an 8-bit RAW font texture and INI file as produced by
-     the Bitmap Font Builder program to a G3D FNT font.  inFile
-     should have no extension-- .raw and .ini will be appended to it.
-     outfile should end with ".FNT" or be "" for the default.  <P>
+     \brief Converts an 8-bit font texture and INI file as produced by
+     the Bitmap Font Builder program to a G3D FNT font.  
+     
+     
+     outfile should end with ".fnt" or be "" for the default.  <P>
 
       The Bitmap Font Builder program can be downloaded from http://www.lmnopc.com/bitmapfontbuilder/
 
@@ -154,17 +155,22 @@ public:
 	                  "d:/graphics3d/book/cpp/data/font/news.fnt"); 
       </PRE> 
 
-      @param charsetSize Must be 128 or 256; indicates whether the "extended" characters
+
+      \param charsetSize Must be 128 or 256; indicates whether the "extended" characters
       should be represented in the final texture.
 
-      @param infileBase The name of the raw/ini files @param outfile Defaults
-	  to infileBase + ".fnt"
+      \param infileBase The name of the texture and font metrics files, with no extension.
+      The texture filename must be .tga.  The font metrics filename must end in .ini.
+      The input texture must be a power of two in each dimension.  Intensity is treated
+      as the alpha value in this image.  The input texture must be a 16x16 or 16x8 grid
+      of characters
 
+      \param outfile Defaults to \a infileBase + ".fnt"
      */
-    static void makeFont(
-        int charsetSize,
-		const std::string& infileBase, 
-		std::string outfile = "");
+    static void makeFont
+       (int                 charsetSize,
+	    const std::string&  infileBase, 
+		std::string         outfile = "");
 
 
     /** Returns the natural character width and height of this font. */

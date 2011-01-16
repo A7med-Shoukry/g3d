@@ -1,10 +1,10 @@
 /**
- @file GFont.cpp
+ \file GFont.cpp
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2002-11-02
- @edited  2009-11-31
+ \created 2002-11-02
+ \edited  2011-01-20
  */
 
 #include "GLG3D/GFont.h"
@@ -705,7 +705,8 @@ Vector2 GFont::bounds(
 
 
 void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string outfile) {
-    debugAssert(FileSystem::exists(infileBase + ".raw"));
+
+    debugAssert(FileSystem::exists(infileBase + ".tga"));
     debugAssert(FileSystem::exists(infileBase + ".ini"));
     debugAssert(charsetSize == 128 || charsetSize == 256);
 
@@ -713,7 +714,11 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
         outfile = infileBase + ".fnt";
     }
 
-    BinaryInput  pixel(infileBase + ".raw", G3D_LITTLE_ENDIAN);
+    GImage image(infileBase + ".tga");
+    debugAssert(isPow2(image.width()));
+    debugAssert(isPow2(image.height()));
+    image.convertToL8();
+
     TextInput    ini(infileBase + ".ini");
     BinaryOutput out(outfile, G3D_LITTLE_ENDIAN);
 
@@ -728,7 +733,6 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
     // Number of characters
     out.writeInt32(charsetSize);
 
-
     // Character widths
     for (int i = 0; i < charsetSize; ++i) {
         int n = (int)ini.readNumber();
@@ -738,18 +742,16 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
         int cw = (int)ini.readNumber();
         out.writeInt16(cw);
     }
-
-    int width = (int)sqrt((float)pixel.size());
     
     // Autodetect baseline from capital E
     {
         // Size of a character, in texels
-        int          w        = width / 16;
+        int          w        = image.width() / 16;
 
         int          x0       = ('E' % 16) * w;
         int          y0       = ('E' / 16) * w;
         
-        const uint8* p        = pixel.getCArray();
+        const uint8* p        = image.byte();
         bool         done     = false;
         int          baseline = w * 2 / 3;
     
@@ -766,36 +768,8 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
     }
 
     // Texture width
-    out.writeUInt16(width);
-
-    // The input may not be a power of 2, so size it up
-    int width2  = ceilPow2(width);
-    int height = width / 2;
-    if (charsetSize == 256) {
-        height = width;
-    }
-    int height2 = ceilPow2(height);
-
-    if ((width2 == width) && (height2 == height)) {
-        // Texture
-        int num = width * height;
-        out.writeBytes(pixel.getCArray(), num);
-    } else {
-        // Pad
-        const uint8* ptr = pixel.getCArray();
-    
-        for (int y = 0; y < height2; ++y) {
-            // Write the row
-            out.writeBytes(ptr, width);
-            ptr += width;
-
-            // Write the horizontal padding
-            out.skip(width2 - width);
-        }
-
-        // Write the vertical padding
-        out.skip((height2 - height) * width2);
-    }
+    out.writeUInt16(image.width());
+    out.writeBytes(image.byte(), square(image.width()) * 256 / charsetSize);
  
     out.compress();
     out.commit(false);
