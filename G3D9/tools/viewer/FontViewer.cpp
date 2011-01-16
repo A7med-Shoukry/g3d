@@ -73,7 +73,7 @@ void FontViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& light
                                 size/2.0, color, outline, GFont::XALIGN_CENTER, GFont::YALIGN_CENTER ); 
 
             // Character number
-            m_basefont->draw2D( rd, format("%d", i), Vector2( x* windowBounds.width()/16.0 + windowBounds.width()/20.0, 
+            m_basefont->draw2D( rd, format("\\x%x", i), Vector2( x* windowBounds.width()/16.0 + windowBounds.width()/20.0-size * 0.5f, 
                                                               y* windowBounds.height()/16.0 + windowBounds.height()/20.0), 
                                 size/2.0, color, outline, GFont::XALIGN_CENTER, GFont::YALIGN_CENTER );
 
