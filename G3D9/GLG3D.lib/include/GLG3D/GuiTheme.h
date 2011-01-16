@@ -6,8 +6,8 @@
   All rights reserved
  */
 
-#ifndef G3D_GuiTheme_H
-#define G3D_GuiTheme_H
+#ifndef G3D_GuiTheme_h
+#define G3D_GuiTheme_h
 
 #include "G3D/platform.h"
 #include "G3D/Rect2D.h"
