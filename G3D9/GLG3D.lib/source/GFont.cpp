@@ -29,6 +29,50 @@ static WeakCache<std::string, GFontRef>& fontCache() {
 }
 
 
+/** Copies blocks of src so that they are centered in the corresponding squares of dst.  Assumes each is a 16x16 grid.*/
+void GFont::recenterGlyphs(const GImage& src, GImage& dst) {
+    // Set dst to all black
+    debugAssert(src.channels() == 3);
+    debugAssert(dst.channels() == 3);
+    debugAssert(dst.width()  >= src.width());
+    debugAssert(dst.height() >= src.height());
+
+    System::memset(dst.byte(), 0, dst.width() * dst.height() * 3);
+
+    // Block sizes
+    const int srcWidth  = src.width()  / 16;
+    const int srcHeight = src.height() / 16;
+    const int dstWidth  = dst.width()  / 16;
+    const int dstHeight = dst.height() / 16;
+
+    const int dstOffsetX = (dstWidth  - srcWidth) / 2;
+    const int dstOffsetY = (dstHeight - srcHeight) / 2;
+
+    for (int y = 0; y < 16; ++y) {
+        for (int x = 0; x < 16; ++x) {
+            GImage::pasteSubImage(dst, src, x * dstWidth + dstOffsetX, y * dstHeight + dstOffsetY, x * srcWidth, y * srcHeight, srcWidth, srcHeight);
+        }
+    }
+}
+
+
+void GFont::adjustINIWidths(const std::string& srcFile, const std::string& dstFile, float scale) {
+    TextInput in(srcFile);
+    TextOutput out(dstFile);
+    in.readSymbols("[", "Char", "Widths", "]");
+    out.printf("[Char Widths]\n");
+    for (int i = 0; i <= 255; ++i) {
+        in.readNumber();
+        in.readSymbol("=");
+
+        int w = in.readNumber();
+        w = iRound(w * scale);
+        out.printf("%d=%d\n", i, w);
+    }
+    out.commit();
+}
+
+
 GFontRef GFont::fromFile(const std::string& filename) {
 
     if (! FileSystem::exists(filename)) {

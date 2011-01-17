@@ -166,11 +166,27 @@ public:
       of characters
 
       \param outfile Defaults to \a infileBase + ".fnt"
+
+      \sa adjustINIWidths, recenterGlyphs
      */
     static void makeFont
        (int                 charsetSize,
-	    const std::string&  infileBase, 
-		std::string         outfile = "");
+        const std::string&  infileBase, 
+        std::string         outfile = "");
+
+    /** \brief Adjusts the pre-computed widths in an .INI file in
+        preparation for invoking makeFont on a scaled image.
+        
+        \sa makeFont, recenterGlyphs
+     */
+    static void adjustINIWidths(const std::string& srcFile, const std::string& dstFile, float scale);
+
+    /** \brief Copies blocks of src so that they are centered in the
+     corresponding squares of dst.  Assumes each is a 16x16 grid.
+     Useful when you have shrunk a font texture prior to invoking
+     makeFont and want to use the original resolution to obtain good
+     MIP-boundaries.*/
+    static void recenterGlyphs(const GImage& src, GImage& dst);
 
 
     /** Returns the natural character width and height of this font. */
