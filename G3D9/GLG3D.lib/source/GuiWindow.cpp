@@ -425,9 +425,8 @@ void GuiWindow::moveTo(const Vector2& position) {
 
 
 void GuiWindow::moveToCenter() {
-    if (window() != NULL) {
-        setRect(Rect2D::xywh((window()->dimensions().wh() - rect().wh()) / 2.0f, rect().wh()));
-    }
+    const OSWindow* w = (window() != NULL) ? window() : OSWindow::current();
+    setRect(Rect2D::xywh((w->dimensions().wh() - rect().wh()) / 2.0f, rect().wh()));
 }
 
 ////////////////////////////////////////////////////////////
