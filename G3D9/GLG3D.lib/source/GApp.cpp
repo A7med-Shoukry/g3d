@@ -197,7 +197,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 
     if (m_useFilm) {
         if (! GLCaps::supports_GL_ARB_shading_language_100() || ! GLCaps::supports_GL_ARB_texture_non_power_of_two() ||
-            ! GLCaps::supports_GL_ARB_framebuffer_object()) {
+            (! GLCaps::supports_GL_ARB_framebuffer_object() && ! GLCaps::supports_GL_EXT_framebuffer_object())) {
             // This GPU can't support the film class
             *const_cast<bool*>(&m_useFilm) = false;
             logPrintf("Warning: Disabled GApp::Settings::film.enabled because it could not be supported on this GPU.");

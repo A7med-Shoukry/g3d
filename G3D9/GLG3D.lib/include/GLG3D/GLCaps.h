@@ -72,6 +72,7 @@ namespace G3D {
     <LI>GL_ARB_frambuffer_sRGB
     <LI>GL_SGIS_generate_mipmap
     <LI>GL_EXT_texture_mirror_clamp
+    <LI> GL_EXT_framebuffer_object
 	</UL>
 
   These methods do not appear in the documentation because they
@@ -161,6 +162,7 @@ private:
     DECLARE_EXT(GL_ARB_framebuffer_sRGB);
     DECLARE_EXT(GL_SGIS_generate_mipmap);
     DECLARE_EXT(GL_EXT_texture_mirror_clamp);
+    DECLARE_EXT(GL_EXT_framebuffer_object);     
     
 #undef DECLARE_EXT
 

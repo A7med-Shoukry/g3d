@@ -79,7 +79,7 @@ void ShadowMap::setSize(int desiredSize, const Texture::Settings& textureSetting
         return;
     }
     
-    if (! GLCaps::supports_GL_ARB_framebuffer_object()) {
+    if (! GLCaps::supports_GL_ARB_framebuffer_object() && ! GLCaps::supports_GL_EXT_framebuffer_object()) {
         // Restrict to screen size
         desiredSize = 512;
     }

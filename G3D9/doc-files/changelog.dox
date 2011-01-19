@@ -74,6 +74,7 @@
      <li> G3D::System::findDataFile now takes an optional caseSensitive argument
      <li> G3D::FileSystem::exists now takes an optional caseSensitive argument
      <li> G3D::GFont::makeFontFile now requires .tga input
+     <li> Added support for obsolete GL_EXT_framebuffer_object so that Film and ShadowMap will work on MacBooks with Intel GPUs
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
      <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
      <li> Fix: SuperBSDF::evaluate now computes the same result as SuperShader for glossy terms

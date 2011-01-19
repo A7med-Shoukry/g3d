@@ -274,6 +274,7 @@ void GLCaps::init() {
     DECLARE_EXT(GL_ARB_framebuffer_sRGB);
     DECLARE_EXT(GL_SGIS_generate_mipmap);
 	DECLARE_EXT(GL_EXT_texture_mirror_clamp);
+	DECLARE_EXT(GL_EXT_framebuffer_object);
 #undef DECLARE_EXT
 
 
@@ -354,6 +355,7 @@ void GLCaps::loadExtensions(Log* debugLog) {
             DECLARE_EXT_GL3(GL_ARB_framebuffer_sRGB);
             DECLARE_EXT(GL_SGIS_generate_mipmap);
         	DECLARE_EXT(GL_EXT_texture_mirror_clamp);
+        	DECLARE_EXT(GL_EXT_framebuffer_object);
 #       undef DECLARE_EXT_GL3
 #       undef DECLARE_EXT_GL2
 #       undef DECLARE_EXT
@@ -539,7 +541,7 @@ bool GLCaps::supportsRenderBuffer(const ImageFormat* fmt) {
 
         bool supportsFormat = false;
 
-        if (! supports_GL_ARB_framebuffer_object()) {
+        if (! supports_GL_ARB_framebuffer_object() && ! supports_GL_EXT_framebuffer_object()) {
             // No frame buffers
             supportsFormat = false;
 
