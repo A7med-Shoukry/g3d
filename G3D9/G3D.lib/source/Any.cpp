@@ -52,6 +52,20 @@ void Any::remove(int i) {
 }
 
 
+Any Any::fromFile(const std::string& filename) {
+    Any a;
+    a.load(filename);
+    return a;
+}
+
+
+void Any::loadIfExists(const std::string& filename) {
+    if (FileSystem::exists(filename)) {
+        load(filename);
+    }
+}
+
+
 bool Any::nameBeginsWith(const std::string& s) const {
     return nameBeginsWith(s.c_str());
 }

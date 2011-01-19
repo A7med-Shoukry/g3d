@@ -695,8 +695,15 @@ public:
     void clear();
 
     /** Parse from a file.
-     \sa deserialize, parse */
+     \sa deserialize, parse, fromFile, loadIfExists
+     */
     void load(const std::string& filename);
+
+    /** Load a new Any from \a filename. \sa load, save, loadIfExists */
+    static Any fromFile(const std::string& filename);
+
+    /** Load \a filename file if it exists, otherwise do not modify this */
+    void loadIfExists(const std::string& filename);
 
     /** Uses the serialize method. */
     void save(const std::string& filename) const;
