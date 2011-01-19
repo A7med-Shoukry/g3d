@@ -218,19 +218,19 @@ public:
     void add(const Widget::Ref& m);
 
     /**
-       If a lock is in effect the remove will be delayed until the unlock.
+       If a lock is in effect, then the remove will be delayed until the unlock.
      */
     void remove(const Widget::Ref& m);
 
-    /** If this widget is currently visible (note: as of the last lock) */
+    /** If this widget has been added to the WidgetManager, or has a pending add (but not a subsequent pending remove) while in a lock.*/
     bool contains(const Widget::Ref& m) const;
 
     /**
-     Removes all.
+     Removes all widgets on this manager.
      */
     void clear();
 
-    /** Number of installed modules */
+    /** Number of installed widgets */
     int size() const;
 
     /** Queues an event on the window associated with this manager. */

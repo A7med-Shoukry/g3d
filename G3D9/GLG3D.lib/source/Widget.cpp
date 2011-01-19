@@ -107,6 +107,7 @@ void WidgetManager::endLock() {
 
 
 void WidgetManager::remove(const Widget::Ref& m) {
+    debugAssertM(contains(m), "Tried to remove a Widget that was not in the manager.");
     if (m_locked) {
         m_delayedEvent.append(DelayedEvent(DelayedEvent::REMOVE, m));
     } else {
@@ -125,7 +126,19 @@ void WidgetManager::remove(const Widget::Ref& m) {
 
 
 bool WidgetManager::contains(const Widget::Ref& m) const {
-    return m_moduleArray.contains(m);
+    // See if there is a delayed event
+    bool found = false;
+    for (int i = 0; i < m_delayedEvent.size(); ++i) {
+        if ((m_delayedEvent[i].type == DelayedEvent::ADD) &&
+            (m_delayedEvent[i].module == m)) {
+            found = true;
+        }
+        if ((m_delayedEvent[i].type == DelayedEvent::REMOVE) &&
+            (m_delayedEvent[i].module == m)) {
+            found = false;
+        }
+    }
+    return found || m_moduleArray.contains(m);
 }
 
 
