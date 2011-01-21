@@ -253,7 +253,7 @@ void MeshAlg::identifyBackfaces(
 
     backface.resize(faceArray.size());
 
-    if (fuzzyEq(HP.w, 0.0)) {
+    if (fuzzyEq(HP.w, 0.0f)) {
         // Infinite case
         for (int f = faceArray.size() - 1; f >= 0; --f) {
             const MeshAlg::Face& face = faceArray[f];
@@ -294,7 +294,7 @@ void MeshAlg::identifyBackfaces(
 
     backface.resize(faceArray.size());
 
-    if (fuzzyEq(HP.w, 0.0)) {
+    if (fuzzyEq(HP.w, 0.0f)) {
         // Infinite case
         for (int f = faceArray.size() - 1; f >= 0; --f) {
             const Vector3& N = faceNormals[f];
@@ -488,7 +488,7 @@ void MeshAlg::computeBounds(
             maxspan = zspan;
     	    dia1    = zmin;
             dia2    = zmax;
-	    }
+        }
     }
 
 

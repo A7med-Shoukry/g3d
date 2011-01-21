@@ -27,7 +27,7 @@ ConvexPolygon::ConvexPolygon(const Vector3& v0, const Vector3& v1, const Vector3
 
 
 bool ConvexPolygon::isEmpty() const {
-    return (_vertex.length() == 0) || (getArea() <= fuzzyEpsilon);
+    return (_vertex.length() == 0) || (getArea() <= fuzzyEpsilon32);
 }
 
 
@@ -252,7 +252,7 @@ float ConvexPolyhedron::getVolume() const {
 }
 
 bool ConvexPolyhedron::isEmpty() const {
-    return (face.length() == 0) || (getVolume() <= fuzzyEpsilon);
+    return (face.length() == 0) || (getVolume() <= fuzzyEpsilon32);
 }
 
 void ConvexPolyhedron::cut(const Plane& plane, ConvexPolyhedron &above, ConvexPolyhedron &below) {

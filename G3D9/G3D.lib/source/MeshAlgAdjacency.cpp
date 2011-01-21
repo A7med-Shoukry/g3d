@@ -620,7 +620,7 @@ void MeshAlg::weldAdjacency(
     Array<Face>&          faceArray,
     Array<Edge>&          edgeArray,
     Array<Vertex>&        vertexArray,
-    double                radius) {
+    float                 radius) {
 
     // Num vertices
     const int n = originalGeometry.size();

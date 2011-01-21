@@ -132,7 +132,7 @@ void GuiTheme::loadTheme(BinaryInput& b) {
 void GuiTheme::loadCoords(const Any& any) {
     float version = any["format"];
     (void)version;
-    debugAssertM(fuzzyEq(version, 1.0), format("Only version 1.0 is supported (version = %f)", version));
+    debugAssertM(fuzzyEq(version, 1.0f), format("Only version 1.0 is supported (version = %f)", version));
 
     m_textStyle.load(any["font"]);
     m_disabledTextStyle = m_textStyle;

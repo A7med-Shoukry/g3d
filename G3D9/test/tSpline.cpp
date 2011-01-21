@@ -9,7 +9,7 @@ static void unitTests() {
     spline.cyclic = false;
 
     float d = spline.duration();
-    debugAssert(fuzzyEq(d, 1.0));
+    debugAssert(fuzzyEq(d, 1.0f));
     debugAssert(spline.size() == 2);
     
     int i;
@@ -21,7 +21,7 @@ static void unitTests() {
 
     spline.computeIndex(0.5, i, u);
     debugAssert(i == 0);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 
     spline.computeIndex(1, i, u);
     debugAssert(i == 1);
@@ -33,7 +33,7 @@ static void unitTests() {
 
     spline.computeIndex(-0.5, i, u);
     debugAssert(i == -1);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 
     // Cyclic tests
     spline.cyclic = true;
@@ -44,7 +44,7 @@ static void unitTests() {
 
     spline.computeIndex(0.5, i, u);
     debugAssert(i == 0);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 
     spline.computeIndex(1, i, u);
     debugAssert(i == 1);
@@ -56,7 +56,7 @@ static void unitTests() {
 
     spline.computeIndex(1.5, i, u);
     debugAssert(i == 1);
-    debugAssert(u == 0.5);
+    debugAssert(u == 0.5f);
 
     spline.computeIndex(-1, i, u);
     debugAssert(i == -1);
@@ -64,7 +64,7 @@ static void unitTests() {
 
     spline.computeIndex(-0.5, i, u);
     debugAssert(i == -1);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 }
 
 
@@ -76,7 +76,7 @@ static void nonunitTests() {
     spline.cyclic = false;
 
     float d = spline.duration();
-    debugAssert(fuzzyEq(d, 2.0));
+    debugAssert(fuzzyEq(d, 2.0f));
     debugAssert(spline.size() == 2);
     
     int i;
@@ -88,7 +88,7 @@ static void nonunitTests() {
 
     spline.computeIndex(2, i, u);
     debugAssert(i == 0);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 
     spline.computeIndex(3, i, u);
     debugAssert(i == 1);
@@ -100,7 +100,7 @@ static void nonunitTests() {
 
     spline.computeIndex(0, i, u);
     debugAssert(i == -1);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 
     // Cyclic case
     spline.cyclic = true;
@@ -110,7 +110,7 @@ static void nonunitTests() {
 
     spline.computeIndex(2, i, u);
     debugAssert(i == 0);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 
     spline.computeIndex(3, i, u);
     debugAssert(i == 1);
@@ -125,7 +125,7 @@ static void nonunitTests() {
 
     spline.computeIndex(0, i, u);
     debugAssert(i == -1);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 }
 
 // Hard case: irregular intervals, cyclic spline
@@ -166,7 +166,7 @@ static void irregularTests() {
 
     spline.computeIndex(0.25, i, u);
     debugAssert(i == -1);
-    debugAssert(fuzzyEq(u, 0.5));
+    debugAssert(fuzzyEq(u, 0.5f));
 
 }
 
@@ -196,7 +196,7 @@ static void linearTest() {
         
         float v = spline.evaluate(t);
         
-        debugAssert(fuzzyEq(v, 1.0));
+        debugAssert(fuzzyEq(v, 1.0f));
     }
 
 
@@ -208,7 +208,7 @@ static void linearTest() {
         
         float v = spline.evaluate(t);
         
-        debugAssert(fuzzyEq(v, 1.0));
+        debugAssert(fuzzyEq(v, 1.0f));
     }
 }
 
@@ -224,7 +224,7 @@ static void curveTest() {
     float t, v;
     t = 1.0;    
     v = spline.evaluate(t);
-    debugAssert(fuzzyEq(v, 1.0));
+    debugAssert(fuzzyEq(v, 1.0f));
 
     t = 1.5;
     v = spline.evaluate(t);

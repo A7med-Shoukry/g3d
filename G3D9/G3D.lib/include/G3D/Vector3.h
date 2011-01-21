@@ -767,7 +767,7 @@ inline Vector3 Vector3::max(const Vector3 &v) const {
 
 //----------------------------------------------------------------------------
 inline bool Vector3::isZero() const {
-    return G3D::fuzzyEq(squaredMagnitude(), 0.0f);
+    return G3D::fuzzyEq(fabsf(x) + fabsf(y) + fabsf(z), 0.0f);
 }
 
 //----------------------------------------------------------------------------

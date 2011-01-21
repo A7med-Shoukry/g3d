@@ -161,10 +161,10 @@ void testMatrix() {
 
         Matrix C = A.inverse();
 
-        debugAssert(fuzzyEq(C.get(0, 0), -0.2));
-        debugAssert(fuzzyEq(C.get(0, 1), 0.3));
-        debugAssert(fuzzyEq(C.get(1, 0), 0.4));
-        debugAssert(fuzzyEq(C.get(1, 1), -0.1));
+        debugAssert(fuzzyEq(C.get(0, 0), -0.2f));
+        debugAssert(fuzzyEq(C.get(0, 1), 0.3f));
+        debugAssert(fuzzyEq(C.get(1, 0), 0.4f));
+        debugAssert(fuzzyEq(C.get(1, 1), -0.1f));
     }
 
     {

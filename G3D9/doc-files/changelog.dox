@@ -90,6 +90,7 @@
      <li> Fix: CarbonWindow now returns correct key codes when Ctrl+letter are held down
      <li> Fix: G3D_BEGIN_PACKED_CLASS now uses correct syntax on Unix (the macro is not backwards compatible to 8.xx, however)
      <li> Fix: Color4::fromARGB now works correctly inside Any deserialization
+     <li> Fix: increased the precision of Vector3::isZero, Vector2::isZero
     </ul>
 
      <b>Backwards Incompatible Changes</b>:

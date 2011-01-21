@@ -489,7 +489,7 @@ void VideoInput::setIndex(int index) {
     m_currentTime = index / fps();
 
     // calculate timestamp in stream time base units
-    m_seekTimestamp = static_cast<int64>(fuzzyEpsilon + m_currentTime / av_q2d(m_avFormatContext->streams[m_avVideoStreamIdx]->time_base)) + m_avFormatContext->streams[m_avVideoStreamIdx]->start_time;
+    m_seekTimestamp = static_cast<int64>(fuzzyEpsilon32 + m_currentTime / av_q2d(m_avFormatContext->streams[m_avVideoStreamIdx]->time_base)) + m_avFormatContext->streams[m_avVideoStreamIdx]->start_time;
 
     // tell decoding thread to clear buffers and start at this position
     m_clearBuffersAndSeek = true;

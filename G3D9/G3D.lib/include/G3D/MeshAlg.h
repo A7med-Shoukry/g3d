@@ -444,7 +444,7 @@ public:
         Array<Vector3>&       newVertexPositions,
         Array<int>&           toNew,
         Array<int>&           toOld,
-        double                radius = fuzzyEpsilon);
+        float                 radius = fuzzyEpsilon32);
 
     /**
      Modifies the face, edge, and vertex arrays in place so that
@@ -479,7 +479,7 @@ public:
         Array<Face>&          faceArray,
         Array<Edge>&          edgeArray,
         Array<Vertex>&        vertexArray,
-        double                radius = fuzzyEpsilon);
+        float                 radius = fuzzyEpsilon32);
 
 
     /**

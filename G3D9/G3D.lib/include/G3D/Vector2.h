@@ -437,13 +437,13 @@ inline bool Vector2::isFinite() const {
 
 
 inline bool Vector2::isZero() const {
-    return (x == 0.0f) && (y == 0.0f);
+    return G3D::fuzzyEq(fabsf(x) + fabsf(y), 0.0f);
 }
 
 
 
 inline bool Vector2::isUnit() const {
-    return squaredLength() == 1.0f;
+    return G3D::fuzzyEq(squaredLength(), 1.0f);
 }
 
 typedef Vector2 Point2;

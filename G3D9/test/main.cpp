@@ -222,6 +222,15 @@ void testWildcards() {
 	debugAssert(filenameContainsWildcards("?ile1.exe"));
 }
 
+void testFuzzy() {
+    printf("Fuzzy Comparisons\n");
+    Vector3 v(0.00124764, -0.000569403, 0.002096);
+    debugAssert(! v.isZero());
+
+    Vector3 z(0.00000001, -0.000000001, 0.0000000001);
+    debugAssert(z.isZero());
+}
+
 
 void testBox() {
     printf("Box\n");
@@ -567,7 +576,7 @@ void testCoordinateFrame() {
         CoordinateFrame c;
         c.lookAt(Vector3(-1, 0, -1));
         float h = c.getHeading();
-        debugAssert(fuzzyEq(h, G3D::pi() / 4));
+        debugAssert(fuzzyEq(h, G3D::pif() / 4));
         (void)h;
     }
 
@@ -869,6 +878,8 @@ int main(int argc, char* argv[]) {
     
     testRandom();
 
+    testFuzzy();
+    printf("  passed\n");
 
     testBox();
     printf("  passed\n");
