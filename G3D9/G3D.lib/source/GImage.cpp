@@ -114,6 +114,22 @@ void GImage::RGBtoBGRA(
 }
 
 
+void GImage::RGBAtoBGRA(
+    const uint8*    in,
+    uint8*          out,
+    int                     numPixels) {
+
+    for (int i = 0; i < numPixels; ++i) {
+        int i4 = i * 4;
+
+        out[i4 + 0] = in[i4 + 2]; 
+        out[i4 + 1] = in[i4 + 1]; 
+        out[i4 + 2] = in[i4 + 0]; 
+        out[i4 + 3] = in[i4 + 3]; 
+    }
+}
+
+
 
 void GImage::RGBtoBGR(
     const uint8*    in,

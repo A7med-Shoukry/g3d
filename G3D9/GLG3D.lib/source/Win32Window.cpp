@@ -554,57 +554,50 @@ bool Win32Window::requiresMainLoop() const {
 }
 
 
-void Win32Window::setIcon(const GImage& image) {
-    alwaysAssertM((image.channels() == 3) ||
-        (image.channels() == 4), 
+void Win32Window::setIcon(const GImage& src) {
+    alwaysAssertM((src.channels() == 3) ||
+        (src.channels() == 4), 
         "Icon image must have at least 3 channels.");
 
-    alwaysAssertM((image.width() == 32) && (image.height() == 32),
-        "Icons must be 32x32 on windows.");
+//    alwaysAssertM((src.width() == 32) && (src.height() == 32),
+//        "Icons must be 32x32 on windows.");
 
-    uint8 bwMaskData[128];
-    uint8 colorMaskData[1024*4];
-
-    GImage icon;
-    if (image.channels() == 3) {
-        GImage alpha(image.width(), image.height(), 1);
-        System::memset(alpha.byte(), 255, (image.width() * image.height()));
-        image.insertRedAsAlpha(alpha, icon);
+    // Convert to Windows BGRA format
+    Array<uint8> colorData;
+    colorData.resize(src.width() * src.height() * 4);
+    Array<uint8> binaryMaskData;
+    binaryMaskData.resize(iCeil(src.width() * src.height() / 8.0f));
+    if (src.channels() == 3) {
+        GImage::RGBtoBGRA(src.byte(), colorData.getCArray(), src.width() * src.height());
     } else {
-        icon = image;
+        GImage::RGBAtoBGRA(src.byte(), colorData.getCArray(), src.width() * src.height());
     }
 
-    int colorMaskIdx = 0;
-    System::memset(bwMaskData, 0x00, 128);
-    for (int y = 0; y < 32; ++y) {
-        for (int x = 0; x < 32; ++x) {
-            bwMaskData[ (y * 4) + (x / 8) ] |= ((icon.pixel4(x, y).a > 127) ? 1 : 0) << (x % 8);
-
-            // Windows icon images are BGRA like a lot of windows image data
-            colorMaskData[colorMaskIdx] = icon.pixel4()[y * 32 + x].b;
-            colorMaskData[colorMaskIdx + 1] = icon.pixel4()[y * 32 + x].g;
-            colorMaskData[colorMaskIdx + 2] = icon.pixel4()[y * 32 + x].r;
-            colorMaskData[colorMaskIdx + 3] = icon.pixel4()[y * 32 + x].a;
-            colorMaskIdx += 4;
+    // Create the binary mask by shifting in the appropriate bits
+    System::memset(binaryMaskData.getCArray(), 0, binaryMaskData.size());
+    for (int y = 0; y < src.height(); ++y) {
+        for (int x = 0; x < src.width(); ++x) {
+            uint8 bit = (colorData[(x + y*src.width()) * 4 + 3] > 127 ? 1 : 0) << (x % 8);
+            binaryMaskData[(y * (src.width() / 8)) + (x / 8)] |= bit;
         }
     }
 
-    HBITMAP bwMask = ::CreateBitmap(32, 32, 1, 1, bwMaskData);  
-    HBITMAP colorMask = ::CreateBitmap(32, 32, 1, 32, colorMaskData);
+    HBITMAP bwMask = ::CreateBitmap(src.width(), src.height(), 1, 1, binaryMaskData.getCArray());  
+    HBITMAP color  = ::CreateBitmap(src.width(), src.height(), 1, 32, colorData.getCArray());
 
     ICONINFO iconInfo;
     iconInfo.xHotspot = 0;
     iconInfo.yHotspot = 0;
-    iconInfo.hbmColor = colorMask;
+    iconInfo.hbmColor = color;
     iconInfo.hbmMask = bwMask;
     iconInfo.fIcon = true;
 
     HICON hicon = ::CreateIconIndirect(&iconInfo);
     m_usedIcons.insert((int)hicon);
 
-    // Purposely leak any icon created indirectly like hicon becase we don't know.
+    // Purposely leak any icon created indirectly like hicon becase we don't know whether to save it or not.
     HICON hsmall = (HICON)::SendMessage(this->m_window, WM_SETICON, (WPARAM)ICON_SMALL, (LPARAM)hicon);
-    HICON hlarge = (HICON)::SendMessage(this->m_window, WM_SETICON, (WPARAM)ICON_BIG, (LPARAM)hicon);
+    HICON hlarge = (HICON)::SendMessage(this->m_window, WM_SETICON, (WPARAM)ICON_BIG,   (LPARAM)hicon);
 
     if (m_usedIcons.contains((int)hsmall)) {
         ::DestroyIcon(hsmall);
@@ -617,7 +610,7 @@ void Win32Window::setIcon(const GImage& image) {
     }
 
     ::DeleteObject(bwMask);
-    ::DeleteObject(colorMask);
+    ::DeleteObject(color);
 }
 
 

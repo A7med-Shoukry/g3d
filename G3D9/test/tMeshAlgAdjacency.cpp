@@ -54,7 +54,7 @@ void testAdjacency() {
         MeshAlg::debugCheckConsistency(faceArray, edgeArray, vertexArray);
 
         // Severely weld, creating a degenerate face
-        MeshAlg::weldAdjacency(geometry.vertexArray, faceArray, edgeArray, vertexArray, 1.1);
+        MeshAlg::weldAdjacency(geometry.vertexArray, faceArray, edgeArray, vertexArray, 1.1f);
 
         MeshAlg::debugCheckConsistency(faceArray, edgeArray, vertexArray);
         debugAssert(! faceArray[0].containsVertex(0));

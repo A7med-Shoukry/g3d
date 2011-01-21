@@ -525,6 +525,14 @@ public:
         uint8*                  out,
         int                     numPixels);
 
+    /**
+    Win32 32-bit HDC format.
+    */
+    static void RGBAtoBGRA(
+        const uint8*            in,
+        uint8*                  out,
+        int                     numPixels);
+
     static void RGBAtoRGB(
         const uint8*            in,
         uint8*                  out,

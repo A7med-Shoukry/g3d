@@ -85,6 +85,7 @@ int main(int argc, char** argv) {
     // settings class.  For example:
     settings.window.width       = 1100; 
     settings.window.height      = 1100;
+    settings.window.defaultIconFilename = "32x32.png";
 
 
 #   ifdef G3D_WIN32
@@ -214,15 +215,6 @@ void loadt2D() {
 
 
 void App::onInit() {
-
-    VideoInput::Ref in = VideoInput::fromFile("/Volumes/McGuire/Projects/games/ste/data-files/data/gui/sun.mp4");
-    VideoOutput::Ref out = VideoOutput::create("/Volumes/McGuire/Projects/games/ste/data-files/data/gui/sun-out.mp4", 
-                                               VideoOutput::Settings::MPEG4(in->width(), in->height()));
-
-    out->append(in);
-    out->commit();
-    ::exit(0);
-
     Stopwatch stopwatch;
 
 
