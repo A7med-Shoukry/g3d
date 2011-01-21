@@ -92,7 +92,7 @@
 
 compiler: %(defaultcompiler)s
 
-include: %(defaultinclude)s;../ffmpeg/include
+include: %(defaultinclude)s;../temp/ffmpeg/native/install/include
 
 library: %(defaultlibrary)s
 

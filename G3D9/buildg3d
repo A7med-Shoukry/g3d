@@ -254,7 +254,7 @@ def buildNativeFFmpeg():
         except:
             raise Exception('Compiling FFMPEG requires that environment variable TMPDIR refer to a writable directory.  Current value is $TMPDIR=' + TMPDIR)
 
-    libs = ['libavutil.a', 'libavcodec.a', 'libavformat.a']
+    libs = ['libavutil.a', 'libavcodec.a', 'libavformat.a', 'libswscale.a']
     print('----------------------------------------------------\n')
     print(('Building ' + ', '.join(libs)))
 
@@ -277,7 +277,7 @@ def buildNativeFFmpeg():
 
     # extract ffmpeg sources
     ice.utils.mkdir(sourceDir, False)
-    tarname = 'ffmpeg/source/ffmpeg_source.tar.bz2'
+    tarname = 'ffmpeg/source/ffmpeg-0.6.1.tar.bz2'
     tarObject = tarfile.open(tarname)
     ffmpegName = tarObject.next().name
 
@@ -340,6 +340,7 @@ def buildNativeFFmpeg():
         ice.utils.mkdir(buildLibPath)
  
         # copy the static libraries to the build directory
+        print('Copying libraries...')
         for lib in libs:
             ice.copyifnewer.copyIfNewer(pathConcat(installDir, 'lib', lib),
                                         pathConcat(buildLibPath, lib))
@@ -637,10 +638,10 @@ def downloadMinGW(downloadDir, sourceDir, installDir):
     w32apiDir = extractTarFile(w32apiTar, os.path.join(installDir, 'mingw32'))
 
     # download gmp and mpfr
-    gmpTar = getTarFile('ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-4.2.4.tar.bz2', downloadDir)
+    gmpTar = getTarFile('ftp://ftp.gnu.org/gnu/gmp/gmp-4.2.4.tar.bz2', downloadDir)
     gmpDir = extractTarFile(gmpTar, sourceDir)
 
-    mpfrTar = getTarFile('ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-2.4.1.tar.bz2', downloadDir)
+    mpfrTar = getTarFile('ftp://ftp.gnu.org/gnu/mpfr/mpfr-2.4.1.tar.bz2', downloadDir)
     mpfrDir = extractTarFile(mpfrTar, sourceDir)
 
     # download gcc core

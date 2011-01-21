@@ -462,15 +462,15 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
                        m_settings.width, 
                        m_settings.height);
 
-        int convertRet = img_convert(reinterpret_cast<AVPicture*>(m_avInputFrame), 
-                                     m_avStream->codec->pix_fmt, 
-                                     reinterpret_cast<AVPicture*>(convFrame),
-                                     matchingPixelFormat, 
-                                     m_settings.width, 
-                                     m_settings.height);
+        //int convertRet = img_convert(reinterpret_cast<AVPicture*>(m_avInputFrame), 
+        //                             m_avStream->codec->pix_fmt, 
+        //                             reinterpret_cast<AVPicture*>(convFrame),
+        //                             matchingPixelFormat, 
+        //                             m_settings.width, 
+        //                             m_settings.height);
 
         av_free(convFrame);
-        throwException(convertRet >= 0, ("Unable to add frame of this format."));
+        //throwException(convertRet >= 0, ("Unable to add frame of this format."));
 
     } else {
         // otherwise just setup the input frame without conversion

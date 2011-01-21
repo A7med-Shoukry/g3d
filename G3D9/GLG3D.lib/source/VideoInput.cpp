@@ -11,7 +11,9 @@
 extern "C" {
 #include "libavformat/avformat.h"
 #include "libavcodec/avcodec.h"
+#include "libavcodec/opt.h"
 #include "libavutil/avutil.h"
+#include "libswscale/swscale.h"
 #include <errno.h>
 }
 
@@ -42,6 +44,7 @@ VideoInput::VideoInput() :
     m_avFormatContext(NULL),
     m_avCodecContext(NULL),
     m_avVideoCodec(NULL),
+    m_avResizeContext(NULL),
     m_avVideoStreamIdx(-1) {
 
 }
@@ -130,6 +133,10 @@ void VideoInput::initialize(const std::string& filename, const Settings& setting
         m_emptyBuffers.enqueue(buffer);
     }
 
+    // Create resize context since the parameters shouldn't change throughout the video
+    m_avResizeContext = sws_getContext(m_avCodecContext->width, m_avCodecContext->height, m_avCodecContext->pix_fmt, m_avCodecContext->width, m_avCodecContext->height, PIX_FMT_RGB24, SWS_BILINEAR, NULL, NULL, NULL);
+    debugAssert(m_avResizeContext);
+    
     // everything is setup and ready to be decoded
     m_decodingThread = GThread::create("VideoInput::m_bufferThread", VideoInput::decodingThreadProc, this);
     m_decodingThread->start();
@@ -590,8 +597,9 @@ void VideoInput::decodingThreadProc(void* param) {
                 if (completedFrame != 0) {
 
                     // Convert the image from its native format to RGB
-                    img_convert((AVPicture*)emptyBuffer->m_frame, PIX_FMT_RGB24, (AVPicture*)decodingFrame, vi->m_avCodecContext->pix_fmt, vi->m_avCodecContext->width, vi->m_avCodecContext->height);
-
+                    //img_convert((AVPicture*)emptyBuffer->m_frame, PIX_FMT_RGB24, (AVPicture*)decodingFrame, vi->m_avCodecContext->pix_fmt, vi->m_avCodecContext->width, vi->m_avCodecContext->height);
+                    sws_scale(vi->m_avResizeContext, decodingFrame->data, decodingFrame->linesize, 0, vi->m_avCodecContext->height, emptyBuffer->m_frame->data, emptyBuffer->m_frame->linesize);
+                    
                     // calculate start time based off of presentation time stamp
                     emptyBuffer->m_pos = packet.dts * av_q2d(vi->m_avCodecContext->time_base);
 

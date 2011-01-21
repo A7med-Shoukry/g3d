@@ -22,6 +22,7 @@ struct AVFormatContext;
 struct AVCodecContext;
 struct AVCodec;
 struct AVPacket;
+struct SwsContext;
 
 namespace G3D {
 
@@ -213,6 +214,7 @@ private:
     AVFormatContext*    m_avFormatContext;
     AVCodecContext*     m_avCodecContext;
     AVCodec*            m_avVideoCodec;
+    SwsContext*         m_avResizeContext;
     int                 m_avVideoStreamIdx;
 };
 

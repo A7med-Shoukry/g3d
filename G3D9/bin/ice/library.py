@@ -112,7 +112,7 @@ else:
     maybeFwk    = FRAMEWORK
 
 
-GLG3DDepend = ['G3D', 'OpenGL', 'GLU', 'FFMPEG-util', 'FFMPEG-codec', 'FFMPEG-format'] + maybeG3DSDL + maybeAppleGL
+GLG3DDepend = ['G3D', 'OpenGL', 'GLU', 'FFMPEG-util', 'FFMPEG-codec', 'FFMPEG-format', 'FFMPEG-swscale'] + maybeG3DSDL + maybeAppleGL
 
 # OS X frameworks are automatically ignored on linux
 for lib in [
@@ -142,6 +142,7 @@ Library('OpenCV-Core', STATIC,    'cxcore',  'cxcore',   None,       None,    []
 Library('FFMPEG-util', STATIC,    'avutil',  'avutil',   None,       None,    ['avutil.h'],     ['av_malloc'],                                 []),
 Library('FFMPEG-codec', STATIC,   'avcodec', 'avcodec',  None,       None,    ['avcodec.h'],    ['avcodec_open'],                              ['zlib']),
 Library('FFMPEG-format', STATIC,  'avformat','avformat', None,       None,    ['avformat.h'],   ['av_register_all'],                           ['FFMPEG-util']),
+Library('FFMPEG-swscale', STATIC, 'swscale', 'swscale', None, None, ['swscale.h'], ['sws_scale'], ['FFMPEG-util']),
 Library('FMOD',        DYNAMIC,   'fmodex',  'fmodex',   None,       None,    ['fmod.hpp', 'fmod.h'], [],                                      ['FFMPEG-codec', 'FFPMEG-util']),
 Library('mongoose',    STATIC,    'mongoose', 'mongoose', None,      None,    ['mongoose.h'],   [], []),
 Library('irrKlang',    DYNAMIC,   'irrklang','irrklang', None,       None,    ['irrKlang.h'],   ['createIrrKlangDevice'],                                            [])]:
