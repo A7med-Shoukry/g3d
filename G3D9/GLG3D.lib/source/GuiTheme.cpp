@@ -167,6 +167,7 @@ void GuiTheme::loadCoords(const Any& any) {
     // Skip the no-style window
     for (int i = 0; i < WINDOW_STYLE_COUNT - 1; ++i) {
         m_window[i].textStyle = m_textStyle;
+        m_window[i].defocusedTextStyle = m_textStyle;
         m_window[i].load(any[windowStyleName[i]]);
     }
 
