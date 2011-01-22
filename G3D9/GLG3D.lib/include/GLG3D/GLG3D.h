@@ -31,6 +31,7 @@
 #   pragma comment(lib, "avutil")
 #   pragma comment(lib, "avcodec")
 #   pragma comment(lib, "avformat")
+#   pragma comment(lib, "swscale")
 
 #   ifdef _DEBUG
 #		pragma comment(lib, "GLG3Dd")

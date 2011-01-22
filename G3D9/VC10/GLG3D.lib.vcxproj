@@ -45,13 +45,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\ffmpeg\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(SolutionDir)..\GLG3D.lib\source\c99;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\ffmpeg\win32\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(SolutionDir)..\GLG3D.lib\source\c99;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\ffmpeg\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(SolutionDir)..\GLG3D.lib\source\c99;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\ffmpeg\win32\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(SolutionDir)..\GLG3D.lib\source\c99;$(IncludePath)</IncludePath>
     <TargetName>GLG3D</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -59,14 +59,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;__STDC_CONSTANT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
       <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\include $(OutDir)\..\include
-"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\ffmpeg\lib\win32 $(OutDir)
+"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\ffmpeg\win32\lib $(OutDir)
 </Command>
     </PreBuildEvent>
     <PreBuildEvent>
@@ -79,7 +79,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;__STDC_CONSTANT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>

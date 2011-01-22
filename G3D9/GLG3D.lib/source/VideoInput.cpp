@@ -15,7 +15,14 @@ extern "C" {
 #include "libavutil/avutil.h"
 #include "libswscale/swscale.h"
 #include <errno.h>
+    
+#ifdef G3D_WIN32
+    // Define functions for ffmpeg since we don't link in gcc's c library
+    extern int strncasecmp(const char *string1, const char *string2, size_t count) { return _strnicmp(string1, string2, count); }
+    extern int strcasecmp(const char *string1, const char *string2) { return _stricmp(string1, string2); }
+#endif
 }
+
 
 namespace G3D {
 
@@ -73,6 +80,10 @@ VideoInput::~VideoInput() {
         av_free(buffer->m_frame->data[0]);
         av_free(buffer->m_frame);
         delete buffer;
+    }
+
+    if (m_avResizeContext) {
+        av_free(m_avResizeContext);
     }
 }
 
@@ -597,7 +608,6 @@ void VideoInput::decodingThreadProc(void* param) {
                 if (completedFrame != 0) {
 
                     // Convert the image from its native format to RGB
-                    //img_convert((AVPicture*)emptyBuffer->m_frame, PIX_FMT_RGB24, (AVPicture*)decodingFrame, vi->m_avCodecContext->pix_fmt, vi->m_avCodecContext->width, vi->m_avCodecContext->height);
                     sws_scale(vi->m_avResizeContext, decodingFrame->data, decodingFrame->linesize, 0, vi->m_avCodecContext->height, emptyBuffer->m_frame->data, emptyBuffer->m_frame->linesize);
                     
                     // calculate start time based off of presentation time stamp

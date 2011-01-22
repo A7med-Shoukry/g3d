@@ -13,6 +13,7 @@ extern "C" {
 #include "libavformat/avformat.h"
 #include "libavcodec/avcodec.h"
 #include "libavutil/avutil.h"
+#include "libswscale/swscale.h"
 }
 
 namespace G3D {
@@ -462,15 +463,14 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
                        m_settings.width, 
                        m_settings.height);
 
-        //int convertRet = img_convert(reinterpret_cast<AVPicture*>(m_avInputFrame), 
-        //                             m_avStream->codec->pix_fmt, 
-        //                             reinterpret_cast<AVPicture*>(convFrame),
-        //                             matchingPixelFormat, 
-        //                             m_settings.width, 
-        //                             m_settings.height);
+        // Create resize context since the parameters shouldn't change throughout the video
+        SwsContext* resizeContext = sws_getContext(m_settings.width, m_settings.height, matchingPixelFormat, m_settings.width, m_settings.height, m_avStream->codec->pix_fmt, SWS_BILINEAR, NULL, NULL, NULL);
+        debugAssert(resizeContext);
+
+        sws_scale(resizeContext, convFrame->data, convFrame->linesize, 0, m_settings.height, m_avInputFrame->data, m_avInputFrame->linesize);
 
         av_free(convFrame);
-        //throwException(convertRet >= 0, ("Unable to add frame of this format."));
+        av_free(resizeContext);
 
     } else {
         // otherwise just setup the input frame without conversion
