@@ -122,7 +122,7 @@ void GuiTheme::loadTheme(BinaryInput& b) {
     p.computeMinMaxMean = false;
     
     // Load theme texture
-    m_texture = Texture::fromGImage(b.getFilename(), image, ImageFormat::RGBA8(), Texture::DIM_2D, Texture::Settings::video(), p);
+    m_texture = Texture::fromGImage(b.getFilename(), image, ImageFormat::RGBA8(), Texture::DIM_2D_NPOT, Texture::Settings::video(), p);
 
     toGLMatrix(Matrix4(1.0f / m_texture->width(), 0, 0, 0,
                        0, 1.0f / m_texture->height(), 0, 0,
