@@ -697,7 +697,7 @@ int GFont::wordWrapCut
 
         if (c == '\n') {
             // Hit a new line; force us past the line end
-            x == maxWidth + 1;
+            break;
         }
         ++i;
     }
