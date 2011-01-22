@@ -224,10 +224,10 @@ void testWildcards() {
 
 void testFuzzy() {
     printf("Fuzzy Comparisons\n");
-    Vector3 v(0.00124764, -0.000569403, 0.002096);
+    Vector3 v(0.00124764f, -0.000569403f, 0.002096f);
     debugAssert(! v.isZero());
 
-    Vector3 z(0.00000001, -0.000000001, 0.0000000001);
+    Vector3 z(0.00000001f, -0.000000001f, 0.0000000001f);
     debugAssert(z.isZero());
 }
 
