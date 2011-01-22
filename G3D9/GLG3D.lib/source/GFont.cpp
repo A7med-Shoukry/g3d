@@ -667,12 +667,13 @@ Vector2 GFont::draw2DWordWrap(
 }
 
     
-int GFont::wordWrapCut(
-    float               maxWidth,
+int GFont::wordWrapCut
+   (float               maxWidth,
     std::string&        s,
     std::string&        firstPart,
     float               size,
     Spacing             spacing) const {
+
     debugAssert(maxWidth > 0);
     int n = s.length();
 
@@ -687,10 +688,16 @@ int GFont::wordWrapCut(
     // Walk forward until we hit the end of the string or the maximum width
     while ((x <= maxWidth) && (i < n)) {
         const unsigned char c = s[i] & (charsetSize - 1);
+
         if (spacing == PROPORTIONAL_SPACING) {
             x += propW * subWidth[(int)c];
         } else {
             x += propW * subWidth[(int)'M'] * 0.85;
+        }
+
+        if (c == '\n') {
+            // Hit a new line; force us past the line end
+            x == maxWidth + 1;
         }
         ++i;
     }
@@ -745,6 +752,28 @@ Vector2 GFont::bounds(
     }
 
     return Vector2(x, y);
+}
+
+
+Vector2 GFont::boundsWordWrap
+(float               maxWidth,
+ const std::string&  s,
+ float               size,
+ Spacing             spacing) const {
+
+     std::string rest = s;
+     std::string first;
+
+     Vector2 wrapBounds;
+
+     while (! rest.empty()) {
+         GFont::wordWrapCut(maxWidth, rest, first, size, spacing);
+         Vector2 b = bounds(first, size, spacing);
+         wrapBounds.x = max(b.x, wrapBounds.x);
+         wrapBounds.y += b.y;
+     }
+
+     return wrapBounds;
 }
 
 

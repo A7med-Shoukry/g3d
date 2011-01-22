@@ -300,6 +300,11 @@ public:
         float               size = 12,
         Spacing             spacing = PROPORTIONAL_SPACING) const;
 
+    Vector2 boundsWordWrap(
+        float               maxWidth,
+        const std::string&  s,
+        float               size = 12,
+        Spacing             spacing = PROPORTIONAL_SPACING) const;
     /**
 
     \param s The original string.  This will be modified to contain
