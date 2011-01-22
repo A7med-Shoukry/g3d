@@ -116,20 +116,7 @@ Vector3::Vector3(const Any& any) {
 }
 </pre>
 
-It is often convenient to iterate through the table portion:
-
-<pre>
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-        const std::string& k = toLower(it->key);
-        if (key == "hello") {
-           ...
-        } else if (key == "goodbye") {
-           ...
-        } else {
-           any.verify(false, "Unsupported key: " + it->key);
-        }
-    }
-</pre>
+It is often convenient to iterate through the table portion using G3D::AnyTableReader.
 
 \section BNF
 Serialized format BNF:

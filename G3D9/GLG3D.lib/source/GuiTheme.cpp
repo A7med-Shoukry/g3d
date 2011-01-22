@@ -105,7 +105,9 @@ void GuiTheme::loadTheme(BinaryInput& b) {
 
     // Read specification file
     std::string coords = b.readString32();
-    TextInput t(TextInput::FROM_STRING, coords);
+    TextInput::Settings settings;
+    settings.sourceFileName = b.getFilename();
+    TextInput t(TextInput::FROM_STRING, coords, settings);
 
     // Load theme specification
     Any any;
