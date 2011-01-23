@@ -416,7 +416,7 @@ public:
     /** \a t must be ARRAY, TABLE, or NONE. Removes the comment and name */
     Any& operator=(Type t);
 
-    /** Removes the comment and name */
+    /** Assigns from an array.  Assumes that T can be converted to Any.  Removes the comment and name */
     template<class T>
     Any& operator=(const Array<T>& array) {
         *this = Any::ARRAY;
@@ -875,19 +875,26 @@ public:
     /** \copydoc get(const std::string& s, ValueType& v) */
     void get(const std::string& s, std::string& v) {
         v = m_any[s].string();
-        m_alreadyRead.insert(toLower(s));
+        m_alreadyRead.insert(s);
     }
 
     /** \copydoc get(const std::string& s, ValueType& v) */
     void get(const std::string& s, uint8& v) {
         v = uint8(m_any[s].number());
-        m_alreadyRead.insert(toLower(s));
+        m_alreadyRead.insert(s);
     }
 
     /** \copydoc get(const std::string& s, ValueType& v) */
     void get(const std::string& s, uint16& v) {
         v = uint16(m_any[s].number());
-        m_alreadyRead.insert(toLower(s));
+        m_alreadyRead.insert(s);
+    }
+
+    /** Read an entire array at once.*/
+    template<class T>
+    void get(const std::string& s, Array<T>& v) {
+        m_any[s].getArray(v);
+        m_alreadyRead.insert(s);
     }
     
     /** If key \s appears in the any, reads its value into \a v and 
@@ -902,12 +909,12 @@ public:
     template<class ValueType>
     void get(const std::string& s, ValueType& v) {
         v = m_any[s];
-        m_alreadyRead.insert(toLower(s));
+        m_alreadyRead.insert(s);
     }
 
     /** Same as get() */
     const Any& operator[](const std::string& s) {
-        m_alreadyRead.insert(toLower(s));
+        m_alreadyRead.insert(s);
         return m_any[s];
     }
 
@@ -926,7 +933,7 @@ public:
     template<class ValueType>
     bool getIfPresent(const std::string& s, ValueType& v) {
         if (m_any.containsKey(s)) {
-            debugAssertM(! m_alreadyRead.contains(toLower(s)), "read twice");
+            debugAssertM(! m_alreadyRead.contains(s), "read twice");
 
             get(s, v);
             return true;
@@ -938,7 +945,7 @@ public:
     /** \return True if \a s is in the table and has not yet been read
         using get() or getIfPresent(). */
     bool containsUnread(const std::string& s) const {
-        return m_any.containsKey(s) && ! m_alreadyRead.contains(toLower(s));
+        return m_any.containsKey(s) && ! m_alreadyRead.contains(s);
     }
 
 };
