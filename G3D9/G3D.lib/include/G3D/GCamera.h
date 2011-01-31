@@ -228,15 +228,17 @@ public:
     
 
     /**
-       Pinhole projects a world space point onto a width x height screen.  The
+     Pinhole projects a world space point onto a width x height screen.  The
      returned coordinate uses pixmap addressing: x = right and y =
      down.  The resulting z value is 0 at the near plane, 1 at the far plane,
      and is a linear compression of unit cube projection.
 
      If the point is behind the camera, Point3::inf() is returned.
+
+     \sa RenderDevice::invertY
      */
     Point3 project(const Point3& point,
-                    const class Rect2D& viewport) const;
+                   const class Rect2D& viewport) const;
 
     /**
        Pinhole projects a world space point onto a unit cube.  The resulting

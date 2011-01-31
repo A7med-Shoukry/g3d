@@ -213,8 +213,8 @@ protected:
 
     virtual void render(RenderDevice* rd) const;
 
-    /** Take the specified close action */
-    void close();
+    /** Take the specified close action.  May be overriden. */
+    virtual void close();
 
     /**
       Called when tab is pressed.

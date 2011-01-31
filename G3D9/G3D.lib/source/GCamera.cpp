@@ -300,11 +300,11 @@ Vector3 GCamera::projectUnit(const Vector3& point, const Rect2D& viewport) const
     return Vector3(screenSpacePoint.xyz() / screenSpacePoint.w);
 }
 
-Vector3 GCamera::project(const Vector3& point,
-                          const Rect2D&  viewport) const {
+
+Vector3 GCamera::project(const Vector3& point, const Rect2D&  viewport) const {
 
     // Find the point in the homogeneous cube
-    const Vector3& cube = projectUnit(point, viewport);
+    const Point3& cube = projectUnit(point, viewport);
 
     return convertFromUnitToNormal(cube, viewport);
 }
@@ -588,7 +588,7 @@ void GCamera::deserialize(BinaryInput& bi) {
 
 
 Vector3 GCamera::convertFromUnitToNormal(const Vector3& in, const Rect2D& viewport) const{
-    return (in + Vector3(1,1,1)) * 0.5 * Vector3(viewport.width(), -viewport.height(), 1) + 
-           Vector3(viewport.x0(), viewport.y1(), 0);
+    return (in + Vector3(1.0f, 1.0f, 1.0f)) * 0.5f * Vector3(viewport.width(), viewport.height(), 1.0f) + 
+            Vector3(viewport.x0(), viewport.y0(), 0.0f);
 }
 } // namespace
