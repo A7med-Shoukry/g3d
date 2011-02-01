@@ -1,0 +1,109 @@
+EXPORTS
+    bgr8torgb8 @1
+    dither_4x4_16 @2 DATA
+    dither_8x8_220 @3 DATA
+    dither_8x8_32 @4 DATA
+    dither_8x8_73 @5 DATA
+    ff_M24A @6 DATA
+    ff_M24B @7 DATA
+    ff_M24C @8 DATA
+    ff_bgr2UCoeff @9 DATA
+    ff_bgr2UVOffset @10 DATA
+    ff_bgr2VCoeff @11 DATA
+    ff_bgr2YCoeff @12 DATA
+    ff_bgr2YOffset @13 DATA
+    ff_dither4 @14 DATA
+    ff_dither8 @15 DATA
+    ff_getSwsFunc @16
+    ff_get_unscaled_swscale @17
+    ff_hardcodedcpuflags @18
+    ff_w1111 @19 DATA
+    ff_yuv2rgb_c_init_tables @20
+    ff_yuv2rgb_coeffs @21 DATA
+    ff_yuv2rgb_get_func_ptr @22
+    ff_yuv2rgb_init_mmx @23
+    interleaveBytes @24 DATA
+    palette8tobgr16 @25
+    palette8topacked24 @26
+    palette8topacked32 @27
+    palette8torgb16 @28
+    planar2x @29 DATA
+    rgb15to16 @30 DATA
+    rgb15to24 @31
+    rgb15to32 @32 DATA
+    rgb15tobgr15 @33
+    rgb15tobgr16 @34
+    rgb15tobgr24 @35 DATA
+    rgb15tobgr32 @36
+    rgb16to15 @37 DATA
+    rgb16to24 @38
+    rgb16to32 @39 DATA
+    rgb16tobgr15 @40
+    rgb16tobgr16 @41
+    rgb16tobgr24 @42 DATA
+    rgb16tobgr32 @43
+    rgb24to15 @44 DATA
+    rgb24to16 @45 DATA
+    rgb24to32 @46
+    rgb24tobgr15 @47 DATA
+    rgb24tobgr16 @48 DATA
+    rgb24tobgr24 @49 DATA
+    rgb24tobgr32 @50 DATA
+    rgb24toyv12 @51 DATA
+    rgb32to15 @52 DATA
+    rgb32to16 @53 DATA
+    rgb32to24 @54
+    rgb32tobgr15 @55 DATA
+    rgb32tobgr16 @56 DATA
+    rgb32tobgr24 @57 DATA
+    rgb32tobgr32 @58 DATA
+    shuffle_bytes_0321 @59
+    shuffle_bytes_1230 @60
+    shuffle_bytes_2103 @61
+    shuffle_bytes_3012 @62
+    shuffle_bytes_3210 @63
+    sws_addVec @64
+    sws_allocVec @65
+    sws_cloneVec @66
+    sws_context_class @67 DATA
+    sws_convVec @68
+    sws_convertPalette8ToPacked24 @69
+    sws_convertPalette8ToPacked32 @70
+    sws_format_name @71
+    sws_freeContext @72
+    sws_freeFilter @73
+    sws_freeVec @74
+    sws_getCachedContext @75
+    sws_getCoefficients @76
+    sws_getColorspaceDetails @77
+    sws_getConstVec @78
+    sws_getContext @79
+    sws_getDefaultFilter @80
+    sws_getGaussianVec @81
+    sws_getIdentityVec @82
+    sws_isSupportedInput @83
+    sws_isSupportedOutput @84
+    sws_normalizeVec @85
+    sws_printVec @86
+    sws_printVec2 @87
+    sws_rgb2rgb_init @88
+    sws_scale @89
+    sws_scaleVec @90
+    sws_scale_ordered @91
+    sws_setColorspaceDetails @92
+    sws_shiftVec @93
+    sws_subVec @94
+    swscale_configuration @95
+    swscale_license @96
+    swscale_version @97
+    uyvytoyuv420 @98 DATA
+    uyvytoyuv422 @99 DATA
+    vu9_to_vu12 @100 DATA
+    yuv422ptouyvy @101 DATA
+    yuv422ptoyuy2 @102 DATA
+    yuy2toyv12 @103 DATA
+    yuyvtoyuv420 @104 DATA
+    yuyvtoyuv422 @105 DATA
+    yv12touyvy @106 DATA
+    yv12toyuy2 @107 DATA
+    yvu9_to_yuy2 @108 DATA

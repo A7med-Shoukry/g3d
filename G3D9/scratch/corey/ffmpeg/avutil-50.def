@@ -1,0 +1,102 @@
+EXPORTS
+    _get_output_format @1
+    av_add_q @2
+    av_adler32_update @3
+    av_aes_crypt @4
+    av_aes_init @5
+    av_aes_size @6 DATA
+    av_base64_decode @7
+    av_base64_encode @8
+    av_bmg_get @9
+    av_compare_ts @10
+    av_crc @11
+    av_crc_get_table @12
+    av_crc_init @13
+    av_d2q @14
+    av_d2str @15
+    av_dbl2ext @16
+    av_dbl2int @17
+    av_des_crypt @18
+    av_des_init @19
+    av_div_q @20
+    av_evaluate_lls @21
+    av_ext2dbl @22
+    av_fifo_alloc @23
+    av_fifo_drain @24
+    av_fifo_free @25
+    av_fifo_generic_read @26
+    av_fifo_generic_write @27
+    av_fifo_realloc2 @28
+    av_fifo_reset @29
+    av_fifo_size @30
+    av_fifo_space @31
+    av_find_nearest_q_idx @32
+    av_flt2int @33
+    av_free @34
+    av_freep @35
+    av_gcd @36
+    av_get_bits_per_pixel @37
+    av_get_pix_fmt @38
+    av_init_lls @39
+    av_int2dbl @40
+    av_int2flt @41
+    av_lfg_init @42
+    av_log @43
+    av_log_default_callback @44
+    av_log_get_level @45
+    av_log_level @46 DATA
+    av_log_set_callback @47
+    av_log_set_level @48
+    av_lzo1x_decode @49
+    av_malloc @50
+    av_mallocz @51
+    av_md5_final @52
+    av_md5_init @53
+    av_md5_size @54 DATA
+    av_md5_sum @55
+    av_md5_update @56
+    av_memcpy_backptr @57
+    av_mul_q @58
+    av_nearer_q @59
+    av_pix_fmt_descriptors @60 DATA
+    av_rc4_crypt @61
+    av_rc4_init @62
+    av_realloc @63
+    av_reduce @64
+    av_rescale @65
+    av_rescale_q @66
+    av_rescale_rnd @67
+    av_reverse @68 DATA
+    av_sha1_final @69
+    av_sha1_init @70
+    av_sha1_size @71 DATA
+    av_sha1_update @72
+    av_sha_final @73
+    av_sha_init @74
+    av_sha_size @75 DATA
+    av_sha_update @76
+    av_solve_lls @77
+    av_strdup @78
+    av_strerror @79
+    av_stristart @80
+    av_stristr @81
+    av_strlcat @82
+    av_strlcatf @83
+    av_strlcpy @84
+    av_strstart @85
+    av_sub_q @86
+    av_tree_destroy @87
+    av_tree_enumerate @88
+    av_tree_find @89
+    av_tree_insert @90
+    av_tree_node_size @91 DATA
+    av_update_lls @92
+    av_vlog @93
+    avutil_configuration @94
+    avutil_license @95
+    avutil_version @96
+    ff_log2_tab @97 DATA
+    ff_random_get_seed @98
+    ff_sqrt_tab @99 DATA
+    read_line @100
+    write_line @101
