@@ -165,6 +165,7 @@ void ShadowMap::updateDepth
         //renderDevice->setColorClearValue(Color3::white());
         bool debugShadows = false;
         renderDevice->setColorWrite(debugShadows);
+        renderDevice->setAlphaWrite(false);
         renderDevice->setDepthWrite(true);
         renderDevice->clear(true, true, false);
 
