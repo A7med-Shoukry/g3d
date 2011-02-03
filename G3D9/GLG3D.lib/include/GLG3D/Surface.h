@@ -354,11 +354,17 @@ public:
      with previous ones.
 
      @return True if state was preserved, false if the renderdevice is in a different state than when called.
-     @beta
+    
+     \param originalCullFace When rendering with an opposite
+     winding direction (e.g., for mirrors), renderSuperShaderPass
+     needs to be able to invert its culling direction.  Pass CULL_BACK
+     to use "regular" culling and CULL_FRONT to invert the culling sense.
+    @beta
      */
     virtual bool renderSuperShaderPass(
         RenderDevice* rd, 
-        const SuperShader::PassRef& pass) const {
+        const SuperShader::PassRef& pass,
+        RenderDevice::CullFace originalCullFace = RenderDevice::CULL_BACK) const {
         (void) rd;
         (void) pass;
         return true;
