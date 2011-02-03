@@ -45,10 +45,10 @@ GLight::GLight(const Any& any) {
                 color = it->value;
             } else if (key == "enabled") {
                 enabled = it->value.boolean();
-            } else if (key == "castShadows") {
+            } else if (key == "castsShadows") {
                 castsShadows = it->value.boolean();
             } else {
-                any.verify(false, "Illegal key: " + it->key);
+                any.verify(false, "Illegal key: " + key);
             }
         }
         if (hasSpotTarget) {
