@@ -40,6 +40,13 @@ public:
     Plane() : _normal(Vector3::unitY()), _distance(0) {
     }
 
+    /** Format is:
+        - Plane(normal, point)
+    */
+    explicit Plane(const class Any& a);
+
+    Any toAny() const;
+
     /**
      Constructs a plane from three points.
      */
@@ -66,10 +73,11 @@ public:
 
     static Plane fromEquation(float a, float b, float c, float d);
 
-	Plane(class BinaryInput& b);
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
+    Plane(class BinaryInput& b);
 
+    void serialize(class BinaryOutput& b) const;
+    void deserialize(class BinaryInput& b);
+    
     virtual ~Plane() {}
 
     /**

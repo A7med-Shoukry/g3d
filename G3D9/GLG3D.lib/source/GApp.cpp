@@ -657,7 +657,7 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
 void GApp::addWidget(const Widget::Ref& module, bool setFocus) {
     m_widgetManager->add(module);
     
-	if (setFocus) {
+    if (setFocus) {
         m_widgetManager->setFocusedWidget(module);
     }
 }
