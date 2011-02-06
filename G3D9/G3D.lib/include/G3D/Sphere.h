@@ -1,16 +1,16 @@
 /**
- @file Sphere.h
+ \file G3D/Sphere.h
  
  Sphere class
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2001-06-02
- @edited  2008-10-07
+ \created 2001-06-02
+ \edited  2011-02-07
  */
 
-#ifndef G3D_SPHERE_H
-#define G3D_SPHERE_H
+#ifndef G3D_Sphere_h
+#define G3D_Sphere_h
 
 #include "G3D/platform.h"
 #include "G3D/Vector3.h"
@@ -33,9 +33,19 @@ public:
     Sphere() : center(Point3::zero()), radius(0) {
     }
 
+    explicit Sphere(float radius) : radius(radius) {}
+
     Sphere(class BinaryInput& b);
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);
+
+    /** Format is one of:
+        - Sphere(point, radius)
+        - Sphere(radius)
+    */
+    explicit Sphere(const class Any& a);
+
+    Any toAny() const;
 
     Sphere
     (const Point3&  center,

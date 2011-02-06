@@ -32,6 +32,13 @@ AABox::AABox(const Any& a) {
 }
 
 
+Any AABox::toAny() const {
+    Any a(Any::ARRAY, "AABox");
+    a.append(lo, hi);
+    return a;
+}
+
+
 const AABox& AABox::maxFinite() {
     static const AABox b = AABox(Vector3::minFinite(), 
                                  Vector3::maxFinite());

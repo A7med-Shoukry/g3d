@@ -1,12 +1,12 @@
 /**
- @file Sphere.cpp
+   \file G3D.lib/source/Sphere.cpp
  
  Sphere class
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2001-04-17
- @edited  2010-09-10
+ \created 2001-04-17
+ \edited  2011-02-10
  */
 
 #include "G3D/platform.h"
@@ -16,10 +16,36 @@
 #include "G3D/BinaryInput.h"
 #include "G3D/AABox.h"
 #include "G3D/Plane.h"
+#include "G3D/Any.h"
 
 namespace G3D {
 
 int32 Sphere::dummy;
+
+Sphere::Sphere(const Any& a) : radius(0) {
+    a.verifyName("Sphere");
+    a.verifyType(Any::ARRAY);
+    if (a.size() == 1) {
+        radius = a[0];
+    } else if (a.size() == 2) {
+        center = a[0];
+        radius = a[1];
+    } else {
+        a.verify(false, "Sphere must recieve exactly 1 or two arguments.");
+    }
+}
+
+
+Any Sphere::toAny() const {
+    Any a(Any::ARRAY, "Sphere");
+    if (center != Point3::zero()) {
+        a.append(center);
+    }
+
+    a.append(radius);
+    return a;
+}
+
 
 Sphere::Sphere(class BinaryInput& b) {
     deserialize(b);
