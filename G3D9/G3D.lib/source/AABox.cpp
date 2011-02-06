@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2004-01-10
-  @edited  2006-01-11
+  @edited  2011-02-11
 */
 
 #include "G3D/platform.h"
@@ -14,9 +14,22 @@
 #include "G3D/Sphere.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
+#include "G3D/Any.h"
 
 
 namespace G3D {
+
+AABox::AABox(const Any& a) {
+    a.verifyName("AABox");
+    a.verifyType(Any::ARRAY);
+    if (a.size() == 1) {
+        *this = AABox(Point3(a[0]));
+    } else if (a.size() == 2) {
+        set(Point3(a[0]), Point3(a[1]));
+    } else {
+        a.verify(false, "AABox must recieve exactly 1 or two arguments.");
+    }
+}
 
 
 const AABox& AABox::maxFinite() {

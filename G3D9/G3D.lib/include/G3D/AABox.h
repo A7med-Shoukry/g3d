@@ -6,7 +6,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
   @created 2004-01-10
-  @edited  2010-09-10
+  @edited  2011-02-10
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
@@ -48,6 +48,14 @@ public:
     explicit AABox(const Point3& v) {
         lo = hi = v;
     }
+
+    /** Format is one of:
+       - AABox(lowpoint, highpoint)
+       - AABox(point)
+    */
+    explicit AABox(const class Any& a);
+
+    Any toAny() const;
 
     /** Assumes that low is less than or equal to high along each dimension.
         To have this automatically enforced, use
