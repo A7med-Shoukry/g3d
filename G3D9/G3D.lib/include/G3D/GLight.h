@@ -120,9 +120,9 @@ public:
    
     /** Accepted forms:
         - GLight::directional( vector3, color3, [bool])
-        - GLight::spot(Point3, vector3, #, color3, [#, [#, [#, [#, [bool]]])
-        - GLight::spotTarget(Point3, Point3, #, color3, [#, [#, [#, [#, [bool]]])
-        - GLight::point(Point3, color3, [#, [#, [#, [#, [bool]]])
+        - GLight::spot(Point3, vector3, #, color3, [#, [#, [#, [bool]]]])
+        - GLight::spotTarget(Point3, Point3, #, color3, [#, [#, [#, [bool]]]])
+        - GLight::point(Point3, color3, [#, [#, [#, [bool]]]])
         - GLight { [all fields + optional "spotTarget"] }
     */
     GLight(const Any& any);
