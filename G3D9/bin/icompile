@@ -3,7 +3,7 @@
 #
 # See manual.html for documentation.  http://ice.sf.net
 #
-# Copyright 2003-2010 Morgan McGuire
+# Copyright 2003-2011 Morgan McGuire
 # All rights reserved.
 #
 # morgan@cs.williams.edu
@@ -15,10 +15,10 @@
 #**********************************************************************
 from __future__ import print_function
 
-version = [0, 5, 13]
+version = [0, 5, 14]
 
 import sys, string, os, os.path, fileinput, tempfile, shutil, re
-import subprocess, pickle, time, copy, threading, platform
+import subprocess, pickle, time, copy, threading, platform, csv
 
 from platform import machine
 
@@ -925,9 +925,9 @@ def processStatistics(state):
     logfile = 'ice-stats.csv'
 
     if not os.path.exists(logfile):
-        writeFile(logfile, '"Date","Source Files","Statements","Lines","Comment Lines","Documentation Lines","Data Files","Data Bytes","User"\n')
+        writeFile(logfile, '"Date","Source Files","Statements","Lines","Comment Lines","Documentation Lines","Data Files","Data Bytes","User","Note"\n')
 
-    info = '%s,%d,%d,%d,%d,%d,%d,%d,"%s"\n' % (stats.dateTime, stats.numFiles, stats.statementCount, stats.lineCount, stats.commentLines, stats.documentationLines, stats.numDataFiles, stats.dataBytes, stats.user)
+    info = '%s,%d,%d,%d,%d,%d,%d,%d,"%s"' % (stats.dateTime, stats.numFiles, stats.statementCount, stats.lineCount, stats.commentLines, stats.documentationLines, stats.numDataFiles, stats.dataBytes, stats.user)
 
     # See if the logfile ends with the current date
     oldLog = readFile(logfile).strip().split('\n')
@@ -937,9 +937,17 @@ def processStatistics(state):
     lastDate = lastDate[0]
     if lastDate != stats.dateTime[0:len(lastDate)]:
         # Today is a new day, append our info
-        appendFile(logfile, info)
+        appendFile(logfile, info + ',""\n')
     else:
-        # Overwrite
+        note = ''
+        if len(oldLog) > 1:
+            # Read the note from the last row
+            lastLine = csv.reader([oldLog[-1]], skipinitialspace=True).next()
+            if len(lastLine) >= 10:
+                note = lastLine[9]
+        info += ',"' + note + '"\n'
+        
+        # Overwrite the last line of the file
         oldLog[-1] = info
         writeFile(logfile, '\n'.join(oldLog))
 
