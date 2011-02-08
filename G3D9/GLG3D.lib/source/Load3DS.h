@@ -928,7 +928,7 @@ Vector3 Load3DS::readLin3Track() {
 
     // Number of key frames
     int keys = b->readInt32();
-    debugAssertM(keys == 1, "Can only read 1 frame of animation");
+    debugAssertM(keys <= 1, "Can only read 1 frame of animation");
 
     Vector3 vector;
 
