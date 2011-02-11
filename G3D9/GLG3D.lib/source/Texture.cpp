@@ -1008,12 +1008,11 @@ Texture::Ref Texture::fromMemory(
                      "DIM_3D textures do not support mipmaps");
         debugAssertM(_bytes.size() == 1,                    
                      "DIM_3D textures do not support mipmaps");
-    } else {
-        debugAssertM(depth == 1, "Depth must be 1 for all textures that are not DIM_3D");
+    } else if (dimension != DIM_3D_NPOT) {
+        debugAssertM(depth == 1, "Depth must be 1 for all textures that are not DIM_3D or DIM_3D_NPOT");
     }
 
     if ((preprocess.modulate != Color4::one()) || (preprocess.gammaAdjust != 1.0f)) {
-
         debugAssert((bytesFormat->code == ImageFormat::CODE_RGB8) ||
             (bytesFormat->code == ImageFormat::CODE_RGBA8));
 
