@@ -19,6 +19,7 @@
 #ifdef _MSC_VER
 // Turn off "conditional expression is constant" warning; MSVC generates this
 // for debug assertions in inlined methods.
+#pragma warning (push)
 #pragma warning (disable : 4127)
 #endif
 
@@ -125,5 +126,10 @@ typedef Vector3int16 Point3int16;
 template <> struct HashTrait<G3D::Vector3int16> {
     static size_t hashCode(const G3D::Vector3int16& key) { return static_cast<size_t>(key.x + ((int)key.y << 5) + ((int)key.z << 10)); }
 };
+
+
+#ifdef G3D_WIN32
+#pragma warning( pop )
+#endif
 
 #endif

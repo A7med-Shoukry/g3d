@@ -23,6 +23,7 @@
 #ifdef G3D_WIN32
 // Turn off "conditional expression is constant" warning; MSVC generates this
 // for debug assertions in inlined methods.
+#pragma warning( push )
 #pragma warning (disable : 4127)
 #endif
 
@@ -679,5 +680,11 @@ protected:
         int i0, int i1, int f, double area);
 };
 }
+
+
+#ifdef G3D_WIN32
+#pragma warning( pop )
+#endif
+
 #endif
 
