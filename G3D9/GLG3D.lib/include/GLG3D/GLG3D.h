@@ -1,20 +1,20 @@
 /**
- @file GLG3D.h
+ \file GLG3D/GLG3D.h
 
  This header includes all of the GLG3D libraries in 
  appropriate namespaces.
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2002-08-07
- @edited  2010-04-04
+ \created 2002-08-07
+ \edited  2011-02-04
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
 
-#ifndef G3D_GLG3D_H
-#define G3D_GLG3D_H
+#ifndef G3D_GLG3D_h
+#define G3D_GLG3D_h
 
 #include "G3D/G3D.h"
 
@@ -26,12 +26,19 @@
 #   pragma comment(lib, "glu32")
 #   pragma comment(lib, "shell32") // for drag drop
 
-// FFMPEG:
-#   pragma comment(lib, "mingwrt")
-#   pragma comment(lib, "avutil")
-#   pragma comment(lib, "avcodec")
-#   pragma comment(lib, "avformat")
-#   pragma comment(lib, "swscale")
+#   define G3D_FFMPEG_AS_DLL
+#   ifdef G3D_FFMPEG_AS_DLL
+#       pragma comment(lib, "avutil-50")
+#       pragma comment(lib, "avcodec-52")
+#       pragma comment(lib, "avformat-52")
+#       pragma comment(lib, "swscale-0")
+#   else
+#       pragma comment(lib, "mingwrt")
+#       pragma comment(lib, "avutil")
+#       pragma comment(lib, "avcodec")
+#       pragma comment(lib, "avformat")
+#       pragma comment(lib, "swscale")
+#   endif
 
 #   ifdef _DEBUG
 #		pragma comment(lib, "GLG3Dd")
