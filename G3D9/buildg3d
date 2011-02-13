@@ -357,7 +357,7 @@ def libTarget():
 
     if windows:
         x = VC10('VC10/G3D.sln', ['jpeg.lib', 'png.lib', 'zlib.lib', 'zip.lib', 'G3D.lib', 'GLG3D.lib']);
-        copyifnewer('ffmpeg/win32/bin/*', 'build/bin/')
+        copyIfNewer('ffmpeg/win32/bin/*', 'build/bin/')
 
     else:
         # OS X ships with an old version of libpng
