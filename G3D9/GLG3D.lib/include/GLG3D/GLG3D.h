@@ -26,7 +26,7 @@
 #   pragma comment(lib, "glu32")
 #   pragma comment(lib, "shell32") // for drag drop
 
-#   define G3D_FFMPEG_AS_DLL
+#   define G3D_FFMPEG_AS_DLL 1
 #   ifdef G3D_FFMPEG_AS_DLL
 #       pragma comment(lib, "avutil-50")
 #       pragma comment(lib, "avcodec-52")

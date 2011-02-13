@@ -153,7 +153,7 @@ void ShadowMap::updateDepth
     debugAssertGLOk();
     renderDevice->pushState(m_framebuffer);
     {
-        rd->setAlphaWrite(false);
+        renderDevice->setAlphaWrite(false);
         if (m_framebuffer.notNull()) {
             //int i = glGetInteger(GL_READ_BUFFER); debugPrintf("GL_READ_BUFFER = 0x%x\n", i);
             renderDevice->setDrawBuffer(RenderDevice::DRAW_NONE);
@@ -165,7 +165,6 @@ void ShadowMap::updateDepth
         }
 
         debugAssertGLOk();
-        //renderDevice->setColorClearValue(Color3::white());
         bool debugShadows = false;
         renderDevice->setColorWrite(debugShadows);
         renderDevice->setAlphaWrite(false);
@@ -191,11 +190,6 @@ void ShadowMap::updateDepth
         renderDevice->setAlphaTest(RenderDevice::ALPHA_GREATER, 0.5);
 
         renderDepthOnly(renderDevice, shadowCaster, cullFace);
-        /* Debug:
-renderDevice->push2D();
-Draw::rect2D(renderDevice->viewport(), renderDevice);
-renderDevice->pop2D();
-*/
     }
     renderDevice->popState();
 

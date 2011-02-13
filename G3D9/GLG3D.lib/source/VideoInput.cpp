@@ -16,7 +16,7 @@ extern "C" {
 #include "libswscale/swscale.h"
 #include <errno.h>
     
-#ifdef G3D_WIN32
+#if defined(G3D_WIN32) && !defined(G3D_FFMPEG_AS_DLL)
     // Define functions for ffmpeg since we don't link in gcc's c library
     extern int strncasecmp(const char *string1, const char *string2, size_t count) { return _strnicmp(string1, string2, count); }
     extern int strcasecmp(const char *string1, const char *string2) { return _stricmp(string1, string2); }
