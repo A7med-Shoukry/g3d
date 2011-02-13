@@ -1,4 +1,4 @@
-/** @page guidewin32 Installing %G3D on Windows
+/** \page guidewin32 Installing %G3D on Windows
 
 The following sections give step-by-step instructions for installing
 the 9.00 version of %G3D on Windows XP, Vista, and 7.
@@ -10,6 +10,7 @@ the 9.00 version of %G3D on Windows XP, Vista, and 7.
 <li> Unzip <a
 href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.00-win32.zip</a> and configure Visual Studio's Include and Library paths.
 <li> Set your G3D9DATA environment variable to the G3D/data directory.
+<li> Add G3D/bin to your PATH environment variable (or remember to put the DLLs in each project, or rebuild G3D to statically link FFMPEG)
 <li> See <code><a href="../samples/starter">G3D\demos\starter</a></code> for a simple application framework.
 </ol>
 \endhtmlonly
@@ -100,7 +101,8 @@ where <code>%USERNAME%</code> is your Windows login name.
 <li><p>Push <b>Ok</b> to close the <b>Options</b> dialog.</p>
 
 <li><p>Quit Visual Studio to ensure that your changes are saved.</p>
-<li><p>Set the G3D9DATA environment variable to the directory containing the G3D data files (e.g., c:\G3D9\data).  For instructions on setting environment variables
+<li><p>Set the G3D9DATA environment variable to the directory containing the G3D data files (e.g., c:\G3D9\data).  Add
+the G3D\bin directory to your PATH environment variable. For instructions on setting environment variables
 for different versions of Windows, see:
 <ul>
  <li> <a href="http://support.microsoft.com/kb/311843">Windows 2000</a>
