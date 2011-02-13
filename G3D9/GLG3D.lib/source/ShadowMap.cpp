@@ -153,6 +153,7 @@ void ShadowMap::updateDepth
     debugAssertGLOk();
     renderDevice->pushState(m_framebuffer);
     {
+        rd->setAlphaWrite(false);
         if (m_framebuffer.notNull()) {
             //int i = glGetInteger(GL_READ_BUFFER); debugPrintf("GL_READ_BUFFER = 0x%x\n", i);
             renderDevice->setDrawBuffer(RenderDevice::DRAW_NONE);

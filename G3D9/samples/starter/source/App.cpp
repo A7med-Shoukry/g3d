@@ -155,6 +155,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     if (m_scene.isNull()) {
         return;
     }
+    rd->setAlphaWrite(false);
 
     Draw::skyBox(rd, m_scene->skyBoxTexture(), m_scene->skyBoxConstant());
 
