@@ -70,7 +70,9 @@ in the current directory, it the library tries to look around and find that data
 </p>
 
 <li><p>   When you're ready to deploy your program, look in the log.txt file that is written when it runs.  At the bottom is a list of all files
-   your program loaded.  If any of those are not in your program's directory, copy them into that directory for deployment.
+   your program loaded.  If any of those are not in your program's directory, copy them into that directory for deployment. Unless you 
+   defined the G3D_STATIC_LINK_FFMPEG macro before including GLG3D, you also need to distribute the FFMPEG dll's from the bin dirtory of the G3D
+   installation.
    </p> 
 </ol>
 \endhtmlonly
