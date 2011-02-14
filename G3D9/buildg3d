@@ -607,12 +607,17 @@ def getTarFile(tarUrl, downloadDir):
     return tarPath
 
 ################################################################################
-def extractTarFile(tarPath, extractDir):
+def extractTarFile(tarPath, extractDir, isLzma = False):
     tarName = os.path.split(tarPath)[-1]
 
     print(('Extracting ' + tarName + '...'))
 
     ice.utils.mkdir(extractDir, False)
+
+    if isLzma:
+        # uncompress .lzma file to raw .tar first since tar doesn't natively support lzma
+        ice.utils.shell('lzma_alone d ' + tarPath + ' ' + tarPath[:-5])
+        tarPath = tarPath[:-5]
 
     tarObject = tarfile.open(tarPath, 'r')
 
@@ -629,33 +634,42 @@ def extractTarFile(tarPath, extractDir):
 ################################################################################
 def downloadMinGW(downloadDir, sourceDir, installDir):
     # download binutils
-    binutilsTar = getTarFile('http://heanet.dl.sourceforge.net/sourceforge/mingw/binutils-2.19.1-src.tar.gz', downloadDir)
+    binutilsTar = getTarFile('ftp://ftp.gnu.org/gnu/binutils/binutils-2.21.tar.gz', downloadDir)
     binutilsDir = extractTarFile(binutilsTar, sourceDir)
     
     # download mingw components
-    mingwTar = getTarFile('http://heanet.dl.sourceforge.net/sourceforge/mingw/mingwrt-3.16-mingw32-dev.tar.gz', downloadDir)
+    mingwTar = getTarFile('http://heanet.dl.sourceforge.net/sourceforge/mingw/mingwrt-3.18-mingw32-dev.tar.gz', downloadDir)
     mingwDir = extractTarFile(mingwTar, os.path.join(installDir, 'mingw32'))
 
-    w32apiTar = getTarFile('http://heanet.dl.sourceforge.net/sourceforge/mingw/w32api-3.13-mingw32-dev.tar.gz', downloadDir)
-    w32apiDir = extractTarFile(w32apiTar, os.path.join(installDir, 'mingw32'))
+    w32apiTar = getTarFile('http://heanet.dl.sourceforge.net/sourceforge/mingw/w32api-3.15-1-mingw32-dev.tar.lzma', downloadDir)
+    w32apiDir = extractTarFile(w32apiTar, os.path.join(installDir, 'mingw32'), True)
 
-    # download gmp and mpfr
+    # download gmp, mpfr and mpc
     gmpTar = getTarFile('ftp://ftp.gnu.org/gnu/gmp/gmp-4.2.4.tar.bz2', downloadDir)
     gmpDir = extractTarFile(gmpTar, sourceDir)
 
     mpfrTar = getTarFile('ftp://ftp.gnu.org/gnu/mpfr/mpfr-2.4.1.tar.bz2', downloadDir)
     mpfrDir = extractTarFile(mpfrTar, sourceDir)
 
+    mpcTar = getTarFile('http://www.multiprecision.org/mpc/download/mpc-0.8.2.tar.gz', downloadDir)
+    mpcDir = extractTarFile(mpcTar, sourceDir)
+
     # download gcc core
-    gccTar = getTarFile('ftp://ftp.ibiblio.org/pub/mirrors/gnu/ftp/gnu/gcc/gcc-4.4.1/gcc-core-4.4.1.tar.bz2', downloadDir)
+    gccTar = getTarFile('ftp://ftp.gnu.org/gnu/gcc/gcc-4.5.2/gcc-core-4.5.2.tar.bz2', downloadDir)
     gccDir = extractTarFile(gccTar, sourceDir)
     
-    gppTar = getTarFile('ftp://ftp.ibiblio.org/pub/mirrors/gnu/ftp/gnu/gcc/gcc-4.4.1/gcc-g++-4.4.1.tar.bz2', downloadDir)
+    gppTar = getTarFile('ftp://ftp.gnu.org/gnu/gcc/gcc-4.5.2/gcc-g++-4.5.2.tar.bz2', downloadDir)
     gppDir = extractTarFile(gppTar, sourceDir)
 
-    # create symbolic links to mpfr in gcc source
+    # create symbolic link to gmp in gcc source
+    os.symlink(gmpDir, os.path.join(gccDir, 'gmp'))
+
+    # create symbolic link to mpfr in gcc source
     os.symlink(mpfrDir, os.path.join(gccDir, 'mpfr'))
-    
+
+    # create symbolic link to mpc in gcc source
+    os.symlink(mpcDir, os.path.join(gccDir, 'mpc'))    
+
     # return the directories that need to be configured and built
     return (binutilsDir, gmpDir, gccDir)
 
@@ -674,14 +688,13 @@ def ffmpegCCTarget():
 
     # download all files needed to build mingw
     (binutilsDir, gmpDir, gccDir) = downloadMinGW(downloadDir, sourceDir, installDir)    
-    #(binutilsDir, gmpDir, gccDir) = (os.path.join(sourceDir, 'binutils-2.19.1'), os.path.join(sourceDir, 'gmp-4.2.4'), os.path.join(sourceDir, 'gcc-4.4.1'))
     
     # configure binutils
     print('Building binutils...')
     binutilsObjDir = os.path.join(sourceDir, 'binutils_obj')
     ice.utils.mkdir(binutilsObjDir, False)
     os.chdir(binutilsObjDir)
-    ice.utils.shell('../' + os.path.split(binutilsDir)[-1] + '/configure --prefix="' + installDir + '" --target=mingw32 --disable-nls --disable-shared', False)
+    ice.utils.shell('../' + os.path.split(binutilsDir)[-1] + '/configure --prefix="' + installDir + '" --target=mingw32 --disable-nls --disable-shared --disable-werror', False)
     
     # build binutils
     ice.utils.shell(make + ' CFLAGS="-fno-exceptions" LDFLAGS="-s"', False)
@@ -689,20 +702,6 @@ def ffmpegCCTarget():
     os.chdir(oldcwd)
     print('Completed.\n')
 
-    # build gmp separate from gcc due to config issue running from python
-    # configure gmp
-    print('Building gmp...')
-    gmpObjDir = os.path.join(sourceDir, 'gmp_obj')
-    ice.utils.mkdir(gmpObjDir, False)
-    os.chdir(gmpObjDir)
-    ice.utils.shell('../' + os.path.split(gmpObjDir)[-1] + '/configure --host=i386-pc-mingw32 --prefix="' + installDir + '" --disable-shared --enable-static', False)
-
-    # build gmp
-    ice.utils.shell(make, False)
-    ice.utils.shell(make + ' install', False)
-    os.chdir(oldcwd)
-    print('Completed.\n')
-    
     # configure gcc core
     print('Building gcc...')
     gccObjDir = os.path.join(sourceDir, 'gcc_obj')
@@ -732,13 +731,13 @@ def ffmpegWinTarget():
 
     # extract ffmpeg sources
     ice.utils.mkdir(sourceDir, False)
-    ffmpegDir = extractTarFile('ffmpeg/source/ffmpeg_source.tar.bz2', sourceDir)
+    ffmpegDir = extractTarFile('ffmpeg/source/ffmpeg-0.6.1.tar.bz2', sourceDir)
 
     #build ffmpeg with mingw cross-compiler
     oldcwd = os.getcwd()
     os.chdir(ffmpegDir)
     ffmpegBuildScript = """
-    ./configure --enable-static --prefix=""" + installDir + """ --cross-prefix=mingw32- --enable-cross-compile --target-os=mingw32 --cpu=nocona --disable-ssse3 --enable-memalign-hack --enable-network --disable-indevs --disable-outdevs --disable-bzlib --disable-ffplay --disable-ffserver --disable-ffmpeg --disable-debug 
+    ./configure --enable-shared --prefix=""" + installDir + """ --cross-prefix=mingw32- --enable-cross-compile --target-os=mingw32 --arch=i686 --cpu=nocona --disable-ssse3 --enable-memalign-hack --enable-network --disable-indevs --disable-outdevs --disable-bzlib --disable-ffplay --disable-ffserver --disable-ffmpeg --disable-debug 
     """ + make + """
     """ + make + """ install
     """
@@ -748,14 +747,16 @@ def ffmpegWinTarget():
 
     # copy the new .lib and header files to ffmpeg directory
     print("Copying cross-compiled mingw32 FFmpeg libraries\n")
-    ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavutil.a'), 'ffmpeg/lib/win32/avutil.lib', False)
-    ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavcodec.a'), 'ffmpeg/lib/win32/avcodec.lib', False)
-    ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavformat.a'), 'ffmpeg/lib/win32/avformat.lib', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavutil.a'), 'ffmpeg/win32/lib/avutil.lib', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavcodec.a'), 'ffmpeg/win32/lib/avcodec.lib', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libavformat.a'), 'ffmpeg/win32/lib/avformat.lib', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'lib/libswscale.a'), 'ffmpeg/win32/lib/swscale.lib', False)
 
     print("Copying FFmpeg headers since building mingw32 libraries should update include\n")
-    ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavutil'), 'ffmpeg/include/libavutil', False)
-    ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavcodec'), 'ffmpeg/include/libavcodec', False)
-    ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavformat'), 'ffmpeg/include/libavformat', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavutil'), 'ffmpeg/win32/include/libavutil', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavcodec'), 'ffmpeg/win32/include/libavcodec', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libavformat'), 'ffmpeg/win32/include/libavformat', False)
+    #ice.copyifnewer.copyIfNewer(os.path.join(installDir, 'include/libswscale'), 'ffmpeg/win32/include/libswscale', False)
 
 
 
