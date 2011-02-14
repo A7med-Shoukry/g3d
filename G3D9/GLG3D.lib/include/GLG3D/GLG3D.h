@@ -26,8 +26,14 @@
 #   pragma comment(lib, "glu32")
 #   pragma comment(lib, "shell32") // for drag drop
 
-#   define G3D_FFMPEG_AS_DLL 1
-#   ifdef G3D_FFMPEG_AS_DLL
+/** \def G3D_STATIC_LINK_FFMPEG If you #define this before including GLG3D.h or G3DAll.h,
+ then G3D will statically link to FFMPEG on Windows and you do not need to distribute its DLLs.  By
+ default G3D dynamically links to FFMPEG for licensing reasons, which means you need to 
+ distribute the bin/*.dll files with your program.
+*/
+//#   define G3D_STATIC_LINK_FFMPEG
+
+#   ifndef G3D_STATIC_LINK_FFMPEG
 #       pragma comment(lib, "avutil-50")
 #       pragma comment(lib, "avcodec-52")
 #       pragma comment(lib, "avformat-52")
