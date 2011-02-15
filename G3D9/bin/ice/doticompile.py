@@ -297,9 +297,9 @@ def processProjectFile(state, ignoreIceTxt = False):
         if u.strip() != '':
             if os.path.exists(pathConcat(u, 'ice.txt')):
                 # This is another iCompile project
-                state.addUsesProject(u, False)
+                state.addUsesProject(u)
             else:
-                state.addUsesLibrary(u, False)
+                state.addUsesLibrary(u)
 
     state.buildDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'builddir', True))
     state.workDir = addTrailingSlash(configGet(state, config, 'GLOBAL', 'workdir', True))
