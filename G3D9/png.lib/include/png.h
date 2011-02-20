@@ -1,4 +1,6 @@
-
+#ifdef __APPLE__
+#error "On OS X, G3D is supposed to use the system version of libpng"
+#endif
 /* png.h - header file for PNG reference library
  *
  * libpng version 1.4.4 - September 23, 2010
