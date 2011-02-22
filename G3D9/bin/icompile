@@ -296,7 +296,7 @@ def getLinkerOptions(state, allFiles):
         # Escape spaces in paths
         if ' ' in path: path = path.replace(' ', '\\ ')
         opt += ['-L' + path]
-        
+
     # Set of canonically named libraries to link against
     libraries        = set(state.usesLibrariesList)
 

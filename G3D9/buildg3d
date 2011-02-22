@@ -360,9 +360,10 @@ def libTarget():
         copyIfNewer('ffmpeg/win32/bin/*', 'build/bin/')
 
     else:
-        # OS X ships with an old version of libpng
+        # OS X ships with an old version of libpng (1.2); force recompilation of our version (1.4.4)
+        # This is soon to be replaced by FreeImage anyway
         #if (osx and not os.path.exists('/usr/X11/include/png.h')) or (ice.utils.shell("locate libpng.a") == ''):
-        #    if x == 0: x = runicompile('png.lib')
+        #if x == 0: x = runicompile('png.lib')
 
         if osx or (ice.utils.shell("locate libjpeg.a") == ''):
             if x == 0: x = runicompile('jpeg.lib')
