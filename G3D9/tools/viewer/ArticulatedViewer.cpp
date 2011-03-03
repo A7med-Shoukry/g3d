@@ -158,7 +158,8 @@ void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef
     }
     posed3D.fastClear();
 
-    screenPrintf("[Shown scaled by %f and offset by (%f, %f, %f)]\n", m_scale, m_offset.x, m_offset.y, m_offset.z);
+    screenPrintf("[Shown scaled by %f and offset by (%f, %f, %f)]\n",
+                 m_scale, m_offset.x, m_offset.y, m_offset.z);
     
     screenPrintf("Model Faces: %d,  Vertices: %d\n", m_numFaces, m_numVertices);
     if (m_selectedGeom.notNull()) {
@@ -210,7 +211,9 @@ bool ArticulatedViewer::onEvent(const GEvent& e, App* app) {
 
                         debugAssert(index.size() % 3 == 0);
                         for (int j = 0; j < index.size(); j += 3) {
-                            test = osRay.intersectionTime(vertex[index[j]], vertex[index[j + 1]], vertex[index[j + 2]]);
+                            test = osRay.intersectionTime(vertex[index[j]], 
+                                                          vertex[index[j + 1]], 
+                                                          vertex[index[j + 2]]);
                             if (test < distance) {
                                 m_selectedGeom = triList;
                                 m_selectedPartIndex = i;
@@ -223,7 +226,9 @@ bool ArticulatedViewer::onEvent(const GEvent& e, App* app) {
 
                         if (triList->twoSided) {
                             for (int j = 0; j < index.size(); j += 3) {
-                                test = osRay.intersectionTime(vertex[index[j + 2]], vertex[index[j + 1]], vertex[index[j]]);
+                                test = osRay.intersectionTime(vertex[index[j + 2]], 
+                                                              vertex[index[j + 1]], 
+                                                              vertex[index[j]]);
                                 if (test < distance) {
                                     m_selectedGeom = triList;
                                     m_selectedPartIndex = i;

@@ -224,21 +224,33 @@ class FakeFile:
         self._currentLine = 0
         self._textLines = contents.split('\n')
 
-    def readline(self):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
         if (self._currentLine >= len(self._textLines)):
             # end of file
-            return ''
+            raise StopIteration
         else:
             self._currentLine += 1
             return self._textLines[self._currentLine - 1] + '\n'
-           
+
+    def readline(self):
+        try:
+            return self.__next__()
+        except StopIteration:
+            return ''
 
 """ Called from processProjectFile """ 
 def _processDotICompile(state, config):
 
     # Set the defaults from the default .icompile and ice.txt
-    config.readfp(FakeFile(defaultDotICompile))
-    config.readfp(FakeFile(defaultProjectFileContents))
+    try:
+      config.read_file(FakeFile(defaultDotICompile))
+      config.read_file(FakeFile(defaultProjectFileContents))
+    except AttributeError:
+      config.readfp(FakeFile(defaultDotICompile))
+      config.readfp(FakeFile(defaultProjectFileContents))
 
     # Process .icompile
     if os.path.exists(state.preferenceFile()):
