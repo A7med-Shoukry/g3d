@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     debugAssert(! FilePath::isRoot("//foo/bar"));
 
     FileSystem::exists("$G3D9DATA/cubemap");
-    std::string path = "//black/c$/test.txt";
+    std::string path = "//black/c$/AUTOEXEC.BAT";
     bool b = FileSystem::exists(path);
 
     return 0;

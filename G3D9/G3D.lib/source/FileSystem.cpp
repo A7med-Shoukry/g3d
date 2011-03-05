@@ -147,10 +147,17 @@ FileSystem::Dir& FileSystem::getContents(const std::string& path, bool forceUpda
 
         // Out of date: update
         dir.lastChecked = now;
-
-        struct _stat st;
-        const bool exists = _stat(key.c_str(), &st) != -1;
-        const bool isDirectory = (st.st_mode & S_IFDIR) != 0;
+#       ifdef G3D_WIN32
+            // On windows, we have to use GetFileAttributes (http://msdn.microsoft.com/en-us/library/aa364944(v=vs.85).aspx) instead of 
+            // stat in order to work with network shares
+            const DWORD st = GetFileAttributesA(key.c_str());
+            const bool exists = (st != INVALID_FILE_ATTRIBUTES);
+            const bool isDirectory = (st & FILE_ATTRIBUTE_DIRECTORY) != 0;
+#       else
+            struct _stat st;
+            const bool exists = _stat(key.c_str(), &st) != -1;
+            const bool isDirectory = (st.st_mode & S_IFDIR) != 0;
+#       endif
 
         // Does this path exist on the real filesystem?
         if (exists && isDirectory) {
@@ -441,7 +448,8 @@ bool FileSystem::_exists(const std::string& _f, bool trustCache, bool caseSensit
     const std::string& path = FilePath::removeTrailingSlash(f);
     const std::string& parentPath = FilePath::parent(path);
 
-    const Dir& entry = getContents(parentPath, ! trustCache);
+    const bool forceUpdate = ! trustCache;
+    const Dir& entry = getContents(parentPath, forceUpdate);
 
     if (FilePath::containsWildcards(f)) {
         if (! entry.exists) {
