@@ -671,6 +671,12 @@ protected:
     inline Shader() {}
 
 public:
+    typedef VertexAndPixelShader::ArgList ArgList; 
+
+    /** Mapping from strings to GLSL "uniform" variables.  You may change these either
+        before or after the shader is set on G3D::RenderDevice--either way
+        they will take effect immediately.*/
+    ArgList   args;
 
     /** True if this variable is defined. @beta */
     bool definesArgument(const std::string& name) {
@@ -685,15 +691,10 @@ public:
     /** If this shader was loaded from disk, reload it */
     void reload();
 
-    /** Arguments to the vertex and pixel shader.  You may change these either
-        before or after the shader is set on G3D::RenderDevice-- either way
-        they will take effect immediately.*/
-    VertexAndPixelShader::ArgList   args;
 
     /** Returns true if this shader is declared to accept the specified argument. */
     bool hasArgument(const std::string& argname) const;
 
-        
     inline static ShaderRef fromFiles(
         const std::string& vertexFile, 
         const std::string& pixelFile,

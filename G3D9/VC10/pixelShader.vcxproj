@@ -78,6 +78,10 @@
   <ItemGroup>
     <ClCompile Include="..\samples\pixelShader\main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\samples\pixelShader\data-files\phong.pix" />
+    <None Include="..\samples\pixelShader\data-files\phong.vrt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

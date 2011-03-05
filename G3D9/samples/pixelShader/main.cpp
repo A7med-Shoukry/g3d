@@ -1,71 +1,59 @@
 /**
-  @file shader/main.cpp
+  \file shader/main.cpp
 
-  Example of G3D shaders and GUIs.
-  @author Morgan McGuire, http://graphics.cs.williams.edu
+  Example of using G3D shaders and GUIs.
+  
+  \author Morgan McGuire, http://graphics.cs.williams.edu
  */
 #include <G3D/G3DAll.h>
 #include <GLG3D/GLG3D.h>
 
 class App : public GApp {
 private:
-    /** Lighting environment */
-    LightingRef         lighting;
-    SkyParameters       skyParameters;
+    Lighting::Ref       lighting;
     SkyRef              sky;
+    IFSModel::Ref       model;
+
+    Shader::Ref         phongShader;
+    
+    float               diffuseScalar;
+    int                 diffuseColorIndex;
+
+    float               specularScalar;
+    int                 specularColorIndex;
+
+    float               reflect;
+    float               shine;
+
+    ////////////////////////////////////
+    // GUI
 
     /** For dragging the model */
     ThirdPersonManipulatorRef manipulator;
-    IFSModelRef         model;
-
-    /** Material properties and shader */
-    ShaderRef           phongShader;
-    float               reflect;
-    float               shine;
-    float               diffuse;
-    float               specular;
-    int                 diffuseColorIndex;
-    int                 specularColorIndex;
-    Array<GuiText>   colorList;
+    Array<GuiText>      colorList;
 
     void makeGui();
-    void makeColorList(GFontRef iconFont);
-    void configureShaderArgs(const LightingRef localLighting);
+    void makeColorList();
+    void makeLighting();
+    void configureShaderArgs(const Lighting::Ref localLighting);
 
 public:
 
-    App(const GApp::Settings& settings = GApp::Settings());
+    App() : diffuseScalar(0.6f), specularScalar(0.5f), reflect(0.1f), shine(20.0f) {}
 
     virtual void onInit();
-    virtual void onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surface2DRef>& posed2D);
+    virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D);
 };
 
-App::App(const GApp::Settings& settings) : GApp(settings), reflect(0.1f), shine(20.0f), diffuse(0.6f), specular(0.5f) {}
 
 void App::onInit() {
-    window()->setCaption("G3D Shader Demo");
-
-    // Called before the application loop beings.  Load data here
-    // and not in the constructor so that common exceptions will be
-    // automatically caught.
-    sky = Sky::fromFile(pathConcat(dataDir, "sky/"));
-
-    skyParameters = SkyParameters(G3D::toSeconds(11, 00, 00, AM));
-    lighting = Lighting::fromSky(sky, skyParameters, Color3::white());
-
-    setDesiredFrameRate(60);
-
-#   ifdef G3D_WIN32
-	if (! FileSystem::exists("phong.pix", false) && FileSystem::exists("G3D.sln", false)) {
-            // Running in the solution directory
-            chdir("../samples/shader/data-files");
-        }
-#   endif
-
+    window()->setCaption("Pixel Shader Demo");
+        
     phongShader = Shader::fromFiles("phong.vrt", "phong.pix");
     model = IFSModel::fromFile(System::findDataFile("teapot.ifs"));
 
-    makeColorList(GFont::fromFile(System::findDataFile("icon.fnt")));
+    makeLighting();
+    makeColorList();
     makeGui();
 
     // Color 1 is red
@@ -74,7 +62,8 @@ void App::onInit() {
     specularColorIndex = colorList.size() - 1;
     
     defaultCamera.setPosition(Vector3(1.0f, 1.0f, 2.5f));
-    defaultCamera.lookAt(Vector3::zero());
+    defaultCamera.setFieldOfView(45 * units::degrees(), GCamera::VERTICAL);
+    defaultCamera.lookAt(Point3::zero());
 
     // Add axes for dragging and turning the model
     manipulator = ThirdPersonManipulator::create();
@@ -83,12 +72,67 @@ void App::onInit() {
     // Turn off the default first-person camera controller and developer UI
     defaultController->setActive(false);
     developerWindow->setVisible(false);
+    developerWindow->cameraControlWindow->setVisible(false);
+    showRenderingStats = false;
 }
 
 
-void App::makeColorList(GFontRef iconFont) {
+void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
+    rd->setProjectionAndCameraMatrix(defaultCamera);
+
+    Draw::skyBox(rd, lighting->environmentMapTexture, lighting->environmentMapConstant);
+
+    rd->pushState(); {
+        // Pose our model based on the manipulator axes
+        Surface::Ref posedModel = model->pose(manipulator->frame());
+        
+        // Enable the shader
+        configureShaderArgs(lighting);
+        rd->setShader(phongShader);
+
+        // Send model geometry to the graphics card
+        rd->setObjectToWorldMatrix(posedModel->coordinateFrame());
+        posedModel->sendGeometry(rd);
+    } rd->popState();
+
+    // Render other objects, e.g., the 3D widgets
+    Surface::sortAndRender(rd, defaultCamera, surface3D, lighting);   
+}
+
+
+void App::configureShaderArgs(const LightingRef lighting) {
+	const GLight&       light         = lighting->lightArray[0];
+	const Color3&       diffuseColor  = colorList[diffuseColorIndex].element(0).color(Color3::white()).rgb();
+	const Color3&       specularColor = colorList[specularColorIndex].element(0).color(Color3::white()).rgb();
+    Shader::ArgList&    args          = phongShader->args;
+
+    // Viewer
+	args.set("wsEyePosition",       defaultCamera.coordinateFrame().translation);
+
+    // Lighting
+	args.set("wsLight",             light.position.xyz().direction());
+	args.set("lightColor",          light.color);
+	args.set("ambient",             Color3(0.3f));
+	args.set("environmentMap",      lighting->environmentMapTexture);
+	args.set("environmentConstant", lighting->environmentMapConstant);
+
+    // Material
+	args.set("diffuseColor",        diffuseColor);
+	args.set("diffuseScalar",       diffuseScalar);
+
+	args.set("specularColor",       specularColor);
+	args.set("specularScalar",      specularScalar);
+
+	args.set("shine",               shine);
+	args.set("reflect",             reflect);
+}
+
+
+void App::makeColorList() {
+    GFont::Ref iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
+
     // Characters in icon font that make a solid block of color
-    const char* block = "gggggg";
+    static const char* block = "gggggg";
 
     float size = 18;
     int N = 10;
@@ -101,111 +145,55 @@ void App::makeColorList(GFontRef iconFont) {
 
 
 void App::makeGui() {
-    GuiThemeRef skin = GuiTheme::fromFile(System::findDataFile("osx.gtm"), debugFont);
-    GuiWindow::Ref gui = GuiWindow::create("Material Parameters", skin);
-    
+    GuiWindow::Ref gui = GuiWindow::create("Material Parameters");    
     GuiPane* pane = gui->pane();
-    pane->addDropDownList("Diffuse", colorList, &diffuseColorIndex);
-    pane->addSlider("Intensity", &diffuse, 0.0f, 1.0f);
+
+    pane->beginRow();
+    pane->addSlider("Diffuse", &diffuseScalar, 0.0f, 1.0f);
+    pane->addDropDownList("", colorList, &diffuseColorIndex)->setWidth(80);
+    pane->endRow();
+
+    pane->beginRow();
+    pane->addSlider("Specular", &specularScalar, 0.0f, 1.0f);
+    pane->addDropDownList("", colorList, &specularColorIndex)->setWidth(80);
+    pane->endRow();
     
-    pane->addDropDownList("Specular", colorList, &specularColorIndex);
-    pane->addSlider("Intensity", &specular, 0.0f, 1.0f);
-    
-    pane->addSlider("Shininess", &shine, 1.0f, 100.0f);
     pane->addSlider("Reflectivity", &reflect, 0.0f, 1.0f);
+    pane->addSlider("Shininess", &shine, 1.0f, 100.0f);
     
+    gui->pack();
     addWidget(gui);
+    gui->moveTo(Point2(10, 10));
 }
 
 
-void App::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surface2DRef>& posed2D) {
-    LightingRef   localLighting = lighting;
-    SkyParameters localSky      = skyParameters;
-    
-    rd->setProjectionAndCameraMatrix(defaultCamera);
+void App::makeLighting() {
+    Lighting::Specification spec;
+    spec.lightArray.append(GLight::directional(Vector3(1.0f, 1.0f, 1.0f), Color3(1.0f), false));
 
-    rd->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
-    rd->clear(false, true, true);
-    sky->render(rd, localSky);
-
-    //////////////////////////////////////////////////////////////////////
-    // Shader example
-
-    rd->pushState();
-        // Pose our model based on the manipulator axes
-        Surface::Ref posedModel = model->pose(manipulator->frame());
-        
-        // Enable the shader
-        configureShaderArgs(localLighting);
-        rd->setShader(phongShader);
-
-        // Send model geometry to the graphics card
-        rd->setObjectToWorldMatrix(posedModel->coordinateFrame());
-        posedModel->sendGeometry(rd);
-    rd->popState();
-
-    //////////////////////////////////////////////////////////////////////
-    // Normal rendering loop boilerplate
-
-    // Process the installed widgets.
-
-    Array<Surface::Ref> translucent; 
-
-    // Use fixed-function lighting for the 3D widgets for convenience.
-    rd->pushState();
-        rd->enableLighting();
-        rd->setLight(0, localLighting->lightArray[0]);
-        rd->setAmbientLightColor(Color3::white() * 0.3f);
-
-        // 3D
-        if (posed3D.size() > 0) {
-            Vector3 lookVector = renderDevice->cameraToWorldMatrix().lookVector();
-            Surface::extractTranslucent(posed3D, translucent, false);
-            Surface::sortFrontToBack(posed3D, lookVector);
-            Surface::sortBackToFront(translucent, lookVector);
-
-            for (int i = 0; i < posed3D.size(); ++i) {
-                posed3D[i]->render(renderDevice);
-            }
-
-            for (int i = 0; i < translucent.size(); ++i) {
-                translucent[i]->render(renderDevice);
-            }
-        }
-    rd->popState();
-
-    Surface2D::sortAndRender(rd, posed2D);
-}
-
-void App::configureShaderArgs(const LightingRef lighting) {
-	const GLight& light = lighting->lightArray[0]; 
-
-	phongShader->args.set("wsLight", light.position.xyz().direction());
-	phongShader->args.set("lightColor", light.color);
-	phongShader->args.set("wsEyePosition", defaultCamera.coordinateFrame().translation);
-	phongShader->args.set("ambientLightColor", Color3::white() * 0.3f);
-
-	Color3 color = colorList[diffuseColorIndex].element(0).color(Color3::white()).rgb();
-	phongShader->args.set("diffuseColor", color);
-	phongShader->args.set("diffuse", diffuse);
-
-	color = colorList[specularColorIndex].element(0).color(Color3::white()).rgb();
-	phongShader->args.set("specularColor", color);
-	phongShader->args.set("specular", specular);
-	phongShader->args.set("shine", shine);
-	phongShader->args.set("reflect", reflect);
-
-	phongShader->args.set("environmentMap", lighting->environmentMapTexture);
-	phongShader->args.set("environmentMapColor", Color3::white() * lighting->environmentMapConstant);
+    // The environmentMap is a cube of six images that represents the incoming light to the scene from
+    // the surrounding environment.  G3D specifies all six faces at once using a wildcard and loads
+    // them into an OpenGL cube map.
+    spec.environmentMapConstant = 1.0f;
+    spec.environmentMapTexture.filename   = FilePath::concat(System::findDataFile("noonclouds"), "noonclouds_*.png");
+    spec.environmentMapTexture.dimension  = Texture::DIM_CUBE_MAP;
+    spec.environmentMapTexture.settings   = Texture::Settings::cubeMap();
+    spec.environmentMapTexture.preprocess = Texture::Preprocess::gamma(2.1f);
+    lighting = Lighting::create(spec);
 }
 
 G3D_START_AT_MAIN();
 
 int main(int argc, char** argv) {
-    GApp::Settings settings;
 
-    settings.window.width       = 960; 
-    settings.window.height      = 600;
+#   ifdef G3D_WIN32
+	    if (! FileSystem::exists("phong.pix", false) && FileSystem::exists("G3D.sln", false)) {
+            // The program was started from within Visual Studio and is
+            // running with cwd = G3D/VC10/.  Change to
+            // the appropriate sample directory.
+            chdir("../samples/pixelShader/data-files");
+        }
+#   endif
 
-    return App(settings).run();
+    return App().run();
 }
