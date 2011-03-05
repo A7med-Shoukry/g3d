@@ -66,6 +66,16 @@ public:
 };
 
 int main(int argc, char** argv) {
+
+    debugAssert(FilePath::isRoot("//foo"));
+    debugAssert(FilePath::isRoot("//foo/"));
+    debugAssert(! FilePath::isRoot("//foo/bar"));
+
+    FileSystem::exists("$G3D9DATA/cubemap");
+    std::string path = "//black/c$/test.txt";
+    bool b = FileSystem::exists(path);
+
+    return 0;
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
     for (int y = 0; y < im->height(); ++y) {

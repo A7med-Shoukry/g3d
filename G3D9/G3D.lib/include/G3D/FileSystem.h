@@ -186,7 +186,10 @@ private:
 
         \param f If \a f contains wildcards, the function returns true if any file 
         matches those wildcards.  Wildcards may only appear in the base or ext, not the
-        path.
+        path.  Environment variables beginning with dollar signs (e.g., in "$G3DDATA/cubemap"),
+         with optional parens ("$(G3DDATA)") are
+        automatically expanded in \a f. Default share names on Windows (e.g., "\\mycomputer\c$")
+        are correctly distinguished from empty environment variables.
 
         \param trustCache If true, uses the cache for optimizing repeated calls 
         in the same parent directory. 
@@ -444,6 +447,11 @@ public:
     /** Appends file onto dirname, ensuring a / if needed. */
     static std::string concat(const std::string& a, const std::string& b);
 
+    /** Returns true if \a f specifies a path that parses as root of the filesystem.
+        On OS X and other Unix-based operating systems, "/" is the only root.
+        On Windows, drive letters and shares are roots, e.g., "c:\", "\\foo\".
+        Does not check on Windows to see if the root is actually mounted or a legal
+        drive letter--this is a purely string based test. */
     static bool isRoot(const std::string& f);
 
     /** Removes the trailing slash unless \a f is a filesystem root */

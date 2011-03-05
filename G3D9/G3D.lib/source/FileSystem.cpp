@@ -679,9 +679,17 @@ bool FilePath::isRoot(const std::string& f) {
             }
         }
 
-        if (isSlash(f[0]) && isSlash(f[1])) {        
-            // e.g., "\\foo\"
-            return true;
+        // Windows shares are considered roots, but only if this does not include a path inside the share
+        if (isSlash(f[0]) && isSlash(f[1])) {
+            int i = f.find("/", 3);
+            int j = f.find("\\", 3);
+
+            if (i == -1) {
+                i = j;
+            }
+
+            // e.g., "\\foo\", "\\foo"
+            return ((i == -1) || (i == f.length() - 1));
         }
 #   else
         if (f == "/") {
@@ -945,16 +953,22 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
             var = path.substr(start, end - start + 1);
         }
 
-        const char* value = getenv(var.c_str());
+        if (! var.empty()) {
+            const char* value = getenv(var.c_str());
 
-        if (value == NULL) {
-            throw (std::string("Environment variable \"") + var + "\" not defined for path \"" + path + "\"");
+            if (value == NULL) {
+                throw (std::string("Environment variable \"") + var + "\" not defined for path \"" + path + "\"");
+            } else {
+                result += value;
+            }
         } else {
-            result += value;
+            // We just parsed an "empty" variable, which was probably a default share on Windows, e.g.,
+            // "\\mycomputer\c$", and not a variable name.
+            result += "$";            
         }
 
         start = end + 1;
-        end = path.find_first_of('$', end);
+        end = path.find_first_of('$', start);
     }
 
     // Paste on the remainder of the source path
