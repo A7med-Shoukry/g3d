@@ -179,6 +179,9 @@ void App::makeLighting() {
     spec.environmentMapTexture.dimension  = Texture::DIM_CUBE_MAP;
     spec.environmentMapTexture.settings   = Texture::Settings::cubeMap();
     spec.environmentMapTexture.preprocess = Texture::Preprocess::gamma(2.1f);
+    // Reduce memory size required to work on older GPUs
+    spec.environmentMapTexture.preprocess.scaleFactor = 0.25f;
+    spec.environmentMapTexture.settings.interpolateMode = Texture::BILINEAR_NO_MIPMAP;
     lighting = Lighting::create(spec);
 }
 
@@ -192,6 +195,8 @@ int main(int argc, char** argv) {
             // running with cwd = G3D/VC10/.  Change to
             // the appropriate sample directory.
             chdir("../samples/pixelShader/data-files");
+        } else if (FileSystem::exists("data-files")) {
+            chdir("data-files");
         }
 #   endif
 
