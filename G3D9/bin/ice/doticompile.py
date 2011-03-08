@@ -117,7 +117,7 @@ defaultDotICompile = """
 # """ + configHelp + """
 [GLOBAL]
 defaultinclude:  $(INCLUDE);/usr/local/include/SDL11;/usr/include/SDL;/usr/X11R6/include;
-defaultlibrary:  $(LIBRARY);$(LD_LIBRARY_PATH);$(DYLIB_LIBRARY_PATH);/usr/X11R6/lib;
+defaultlibrary:  $(LIBRARY);$(LD_LIBRARY_PATH);$(DYLD_LIBRARY_PATH);/usr/X11R6/lib;
 defaultcompiler: <NEWESTCOMPILER>
 defaultexclude:  <EXCLUDE>
 beep:            True
