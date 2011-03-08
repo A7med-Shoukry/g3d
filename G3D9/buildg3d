@@ -255,11 +255,12 @@ def buildNativeFFmpeg():
         except:
             raise Exception('Compiling FFMPEG requires that environment variable TMPDIR refer to a writable directory.  Current value is $TMPDIR=' + TMPDIR)
 
-    libs = ['libavutil.a', 'libavcodec.a', 'libavformat.a', 'libswscale.a']
+    libs = ['libavutil.dylib', 'libavcodec.dylib', 'libavformat.dylib', 'libswscale.dylib']
     print('----------------------------------------------------\n')
     print(('Building ' + ', '.join(libs)))
 
     buildLibPath = pathConcat('build', 'lib')
+    buildBinPath = pathConcat('build', 'bin')
 
     # Check to see if any ffmpeg library needs to be built
     outOfDate = [(not os.path.exists(pathConcat(buildLibPath, lib))) for lib in libs]
@@ -313,7 +314,7 @@ def buildNativeFFmpeg():
     if detectedArch != None:
         archOptions += ' --arch=' + detectedArch + ' '
         if osx and detectedArch == 'x86':
-            archOptions += ' --extra-cflags="-arch i686" --extra-ldflags="-arch i686" '
+            archOptions += ' --extra-cflags="-m32 -mdynamic-no-pic" --extra-ldflags="-arch i386" '
     
     if not osx and detectedTuning != None:
         archOptions += ' --cpu=' + detectedTuning + ' '
@@ -321,9 +322,9 @@ def buildNativeFFmpeg():
     # Create FFmpeg configure command
     ffmpegBuildScript = """
     echo Running configure in """ + os.getcwd() + """
-    ./configure --enable-static --cc=""" + compilerPath + """ --prefix=""" + installDir + archOptions + """ --enable-network --disable-indevs --disable-outdevs --disable-bzlib --disable-ffplay --disable-ffserver --disable-ffmpeg --disable-debug
+    ./configure --enable-shared --disable-static --cc=""" + compilerPath + """ --prefix=""" + installDir + archOptions + """  --enable-network --disable-avdevice --disable-ffprobe --disable-bzlib --disable-ffplay --disable-ffserver --disable-ffmpeg --disable-debug
     echo Running make...
-    CFLAGS="-m32" """ + make + """
+    """ + make + """
     echo Make install...
     """ + make + """ install
     """
@@ -339,12 +340,17 @@ def buildNativeFFmpeg():
     if retVal == 0:
         # ensure output directory exists
         ice.utils.mkdir(buildLibPath)
+        ice.utils.mkdir(buildBinPath)
  
         # copy the static libraries to the build directory
         print('Copying libraries...')
         for lib in libs:
-            ice.copyifnewer.copyIfNewer(pathConcat(installDir, 'lib', lib),
+            libPath = pathConcat(installDir, 'lib', lib)
+            ice.utils.run('install_name_tool', ['-id', '@loader_path/' + lib, libPath], True)
+            ice.copyifnewer.copyIfNewer(libPath,
                                         pathConcat(buildLibPath, lib))
+            ice.copyifnewer.copyIfNewer(libPath,
+                                        pathConcat(buildBinPath, lib))
 
     print('----------------------------------------------------')
     return retVal
@@ -371,7 +377,8 @@ def libTarget():
         if osx or (ice.utils.shell("locate libzip.a") == ''):
             if x == 0: x = runicompile('zip.lib')
          
-        if x == 0: x = buildNativeFFmpeg()
+        if osx:
+            if x == 0: x = buildNativeFFmpeg()
 
         if x == 0: x = runicompile('mongoose.lib')
 
