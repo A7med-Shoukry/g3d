@@ -24,7 +24,9 @@
  */
 
 #if defined(_WIN32)
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS	/* Disable deprecation warning in VS2005 */
+#endif
 #   if defined(_MSC_VER)
 #       pragma warning(disable : 4996)
 #   endif
@@ -96,7 +98,9 @@ typedef long off_t;
 #define	DIRSEP			'\\'
 #define	IS_DIRSEP_CHAR(c)	((c) == '/' || (c) == '\\')
 #define	O_NONBLOCK		0
+#ifndef EWOULDBLOCK
 #define	EWOULDBLOCK		WSAEWOULDBLOCK
+#endif
 #define	_POSIX_
 #define UINT64_FMT		"I64"
 

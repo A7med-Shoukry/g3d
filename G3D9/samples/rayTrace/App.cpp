@@ -84,8 +84,9 @@ void App::onCleanup() {
 
 static G3D::Random rnd(0xF018A4D2, false);
 
-Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i, int bounce) {
+Radiance3 App::rayTrace(const Ray& ray, World* world, int bounce) {
     Radiance3 radiance = Radiance3::zero();
+    const float BUMP_DISTANCE = 0.0001f;
 
     SurfaceElement surfel;
     float dist = inf();
@@ -95,7 +96,7 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i
             const GLight& light = world->lightArray[L];
 
             // Shadow rays
-            if (world->lineOfSight(surfel.geometric.location + surfel.geometric.normal * 0.0001f, light.position.xyz())) {
+            if (world->lineOfSight(surfel.geometric.location + surfel.geometric.normal * BUMP_DISTANCE, light.position.xyz())) {
                 Vector3 w_i = light.position.xyz() - surfel.shading.location;
                 const float distance2 = w_i.squaredLength();
                 w_i /= sqrt(distance2);
@@ -124,9 +125,11 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, const Color3& extinction_i
                 
             for (int i = 0; i < impulseArray.size(); ++i) {
                 const SurfaceElement::Impulse& impulse = impulseArray[i];
-                Ray secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location, impulse.w).bump(0.001f);
+                // Bump along the ray direction, which may be into the surface
+                const Vector3& offset = impulse.w * sign(impulse.w.dot(surfel.geometric.normal)) * BUMP_DISTANCE;
+                const Ray& secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location + offset, impulse.w);
 				debugAssert(secondaryRay.direction().isFinite());
-                radiance += rayTrace(secondaryRay, world, impulse.extinction, bounce + 1) * impulse.coefficient;
+                radiance += rayTrace(secondaryRay, world, bounce + 1) * impulse.coefficient;
 				debugAssert(radiance.isFinite());
             }
         }

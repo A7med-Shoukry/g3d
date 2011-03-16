@@ -41,12 +41,12 @@
     <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)d</TargetName>
-    <OutDir>$(SolutionDir)..\build\win-i386-vc10\bin\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\build\samples\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)..\build\win-i386-vc10\bin\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\build\samples\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
