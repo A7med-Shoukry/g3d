@@ -466,10 +466,10 @@ def docTarget():
 
     version += ' - ' + time.strftime('%B %Y')
 
-    copyIfNewer('doc-files/data-files', 'build/manual')
+    copyIfNewer('doc-files', 'build/manual')
 
-    env = {'HEADER_FILE':    'doc-files/data-files/header.html',
-           'FOOTER_FILE':    'doc-files/data-files/footer.html',
+    env = {'HEADER_FILE':    'manual/header.html',
+           'FOOTER_FILE':    'manual/footer.html',
            'PROJECT_NUMBER': version}
 
     # Generate C++ docs
