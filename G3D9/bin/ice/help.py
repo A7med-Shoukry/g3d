@@ -13,7 +13,7 @@ from . import copyifnewer
 
 def printVersion(version):
     print("iCompile " + versionToString(version))
-    print("Copyright 2003-2009 Morgan McGuire")
+    print("Copyright 2003-2011 Morgan McGuire")
     print("All rights reserved")
     print()
     print("http://ice.sf.net")
@@ -73,7 +73,7 @@ Options:
                   from automated build shell scripts.  If
                   --template <tname> is specified as well, a default
                   set of files will be built.  The only legal templates
-                  are 'hello', 'G3D', and 'empty' (default).
+                  are 'hello', 'G3D', 'tinyG3D', and 'empty' (default).
 
  --opt or -O      Generate an optimized executable.
  

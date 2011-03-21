@@ -105,7 +105,6 @@
               <LI><NOBR><A HREF="#installation">Installation</A></NOBR>
               <LI><NOBR><A HREF="#program">Compile a Program</A></NOBR>
               <LI><NOBR><A HREF="#library">Compile a Library</A></NOBR>
-              <LI><NOBR><A HREF="#directories">Special Directories</A></NOBR>
               <LI><NOBR><A HREF="#customizing">Customizing Projects</A></NOBR>
               <LI><NOBR><A HREF="#doticompile">Customizing System</A></NOBR>
               <LI><NOBR><A HREF="#command">Command Line</A></NOBR>
@@ -323,39 +322,6 @@
     <I>Gray files and directories are automatically generated.</I>
           
 
-    <A NAME="directories"/>
-    <H1>Special Directories</H1>
-    <p>
-    iCompile is controlled through the following special directory
-    names.  Using these is optional-- you <I>can</I> use these
-    directory names to take advantages of the full feature set, but
-    iCompile will compile a library or executable in any directory
-    structure.
-    </p>
-    <P>
-      <TABLE CELLSPACING=10>
-        <TR><TD WIDTH=25%></TD><TD WIDTH=5%></TD><TD></TD></TR>
-        
-        <TR><TD VALIGN=TOP><CODE>data-files</CODE></TD><TD></TD>
-          <TD VALIGN=TOP>Data files needed at runtime by an executable project.  Copied to <CODE>build/install</CODE> during build.</TD></TR>
-        
-        <TR><TD VALIGN=TOP><CODE>doc-files</CODE></TD><TD></TD>
-          <TD VALIGN=TOP>Resources needed by the generated documentation; usually images and hand coded html files.  Copied to <CODE>build/doc</CODE> during build.</TD></TR>
-        
-        <TR><TD VALIGN=TOP><CODE>include</CODE></TD><TD></TD>
-          <TD VALIGN=TOP>Header files needed by the <I>library user</I> for a library project.  Copied to <CODE>build/include</CODE> during build.  The library itself may use these files when building as <CODE>#include "include/..."</CODE>.</TD></TR>
-        
-        <TR><TD VALIGN=TOP><CODE><FONT COLOR=#AAAAAA>build</FONT></CODE></TD><TD></TD>
-          <TD VALIGN=TOP>Contains all generated files (except <CODE>ice.txt</CODE> and <CODE>Doxyfile</CODE>).  Deleted by <CODE>'icompile --clean'</CODE>.</TD></TR>
-        
-                  <TR><TD VALIGN=TOP><CODE><FONT COLOR=#AAAAAA>.ice-temp</FONT></CODE></TD><TD></TD>
-                    <TD VALIGN=TOP>Used internally by iCompile to store cached dependency information and object files.  Deleted by <CODE>'icompile --clean'</CODE>.</TD></TR>
-                  
-        <TR><TD VALIGN=TOP><CODE>.svn, CVS, graveyard, temp, tmp, test, build, Debug, Release, old, data-files, doc-files, .icee-temp</CODE></TD><TD></TD>
-          <TD VALIGN=TOP>Ignored when looking for source files during compilation.</TD></TR>
-        
-        
-      </TABLE>
       
       <A NAME="customizing"/>
       <H1>Customizing Projects</H1>
@@ -396,7 +362,7 @@ iCompile: the zero-configuration build system
 
 icompile  [--doc] [--opt | --debug] [--clean] [--version]
           [--config <custom .icompile>] [--verbosity n]
-          [--help] [--noprompt [--template <tname>]] [--info] 
+          [--help] [--noprompt [--template &lt;tname&gt;]] [--info] 
           [--deploy | --run <args> | --gdb <args>]
 
 iCompile can build most C++ projects without options or manual
@@ -404,7 +370,7 @@ configuration.  Just type 'icompile' with no arguments.  Run in an
 empty directory to generate a set of starter files.
 
 Options:
- --config <file>  Use <file> instead of ~/.icompile as the user configuration
+ --config &lt;file&gt;  Use &lt;file&gt; instead of ~/.icompile as the user configuration
                   file.  This allows you to build certain projects with
                   a different compiler or include paths without changing the
                   project ice.txt file, e.g., when installing a 3rd party library
@@ -440,7 +406,7 @@ Options:
                   from automated build shell scripts.  If
                   --template <tname> is specified as well, a default
                   set of files will be built.  The only legal templates
-                  are 'hello', 'G3D', and 'empty' (default).
+                  are 'hello', 'G3D', 'tinyG3D', and 'empty' (default).
 
  --opt or -O      Generate an optimized executable.
  

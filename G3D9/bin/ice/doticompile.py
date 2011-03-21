@@ -374,7 +374,7 @@ def getConfigurationState(args):
         colorPrint("ERROR: cannot specify --template without --noprompt", ERROR_COLOR)
         sys.exit(-208)
         
-    if state.template != 'hello' and state.template != 'G3D' and state.template != 'empty' and state.template != '':
+    if state.template != 'hello' and state.template != 'G3D'  and state.template != 'tinyG3D' and state.template != 'empty' and state.template != '':
         colorPrint("ERROR: 'hello', 'G3D', and 'empty' are the only legal template names (template='" +
                    state.template + "')", ERROR_COLOR)
         sys.exit(-209)
