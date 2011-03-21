@@ -34,8 +34,7 @@ from ice.copyifnewer import copyIfNewer
 from ice.topsort import *
 
 if int(sys.version[:sys.version.find('.')]) < 2:
-    print(('iCompile requires Python 2.6 or later.  You are running Python '
-           + sys.version))
+    print('iCompile requires Python 2.6 or later.  You are running Python ' + sys.version)
     sys.exit(-10)
 
 ##############################################################################
@@ -54,7 +53,7 @@ def buildDocumentation(state):
 
     mkdir(state.buildDir + 'doc')
 
-    # These files caches latex equations. It easily becomes corrupted
+    # These files caches Latex equations. It easily becomes corrupted
     # and can confuse the user, so we force it to regenerate each
     # time.
     for f in ['formulas.repository', '_formulas.tex']:
