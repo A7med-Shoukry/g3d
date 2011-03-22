@@ -458,9 +458,19 @@ by Morgan McGuire with additional programming by Robert Hunter and Corey Taylor.
        </pre>
                   
 
-<a name="linking"/>
+       <a name="linking"/>
        <h1>Linking</h1>
-       iCompile favors static linking.  However, it dynamically links the following (when they are needed):
+
+       iCompile automatically detects which libraries an executable must be linked against by:
+
+       <ul>
+         <li> Recognizing specific headers, such as <code>GL.h</code> </li>
+         <li> Recognizing specific unresolved symbols such as <code>glBegin</code> </li>
+         <li> Known dependencies of other libraries
+         <li> The presence of a <code>.dylib</code> or <code>.so</code> in the <code>data-files</code> directory </li>
+       </ul>
+
+       iCompile favors static linking.  However, any links to the following will be dynamic:
        
        <ul>
          <li> The C++ Standard Library</li>
@@ -473,10 +483,10 @@ by Morgan McGuire with additional programming by Robert Hunter and Corey Taylor.
        
        When iCompile dynamically links a <code>.dylib</code> on OS X, it
        copies the <code>.dylib</code> file to the <code>build</code>
-       directory and rebases it appropriately to create a standalone
-       distribution.
+       directory and rebases it using <code>install_name_tool</code> so that
+       the distribution will work on any computer.
        
-       The following section gives an overview of linking.
+       The following section gives a more detailed overview of linking.
        
        <H2>How Linking Works</H2>
       <p>
@@ -508,8 +518,8 @@ by Morgan McGuire with additional programming by Robert Hunter and Corey Taylor.
            machine specific, although it is possible to embed a relative
            path.  See the
            Unix <code>LD_LIBRARY_PATH</code>, <code>rpath</code>,
-           and <code>ldd</code> documentation. <b>TODO: what does iCompile
-             do?</b></li>
+           <code><a href="http://linux.die.net/man/1/chrpath">chrpath</a></code>,
+           and <code><a href="http://unixhelp.ed.ac.uk/CGI/man-cgi?ldd+1">ldd</a></code> documentation. 
          
          <li><code>.dll</code> (Windows dynamic link library) files are
            dynamically linked.  They are always accompanied by a small .lib
@@ -524,11 +534,9 @@ by Morgan McGuire with additional programming by Robert Hunter and Corey Taylor.
              uses it embed the path to the <code>.dylib</code> file.  
              These files are also known as "frameworks" when they are stored within
              a specific directory structure.
-             See also:
-             <ul>
-               <li> <a href="http://www.cocoadev.com/index.pl?ApplicationLinking">http://www.cocoadev.com/index.pl?ApplicationLinking</a>
-             </ul>
-             <b>TODO: how icompile finds these, icompile copies these, icompile rebases these</b>
+             See also <a href="http://www.cocoadev.com/index.pl?ApplicationLinking">OS X Application Linking</a> and
+              <a href="http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man1/install_name_tool.1.html">install_name_tool</a>
+              documentation.
            </p>
          </li>
          
