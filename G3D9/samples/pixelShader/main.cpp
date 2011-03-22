@@ -101,30 +101,30 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
 
 void App::configureShaderArgs(const LightingRef lighting) {
-	const GLight&       light         = lighting->lightArray[0];
-	const Color3&       diffuseColor  = colorList[diffuseColorIndex].element(0).color(Color3::white()).rgb();
-	const Color3&       specularColor = colorList[specularColorIndex].element(0).color(Color3::white()).rgb();
+    const GLight&       light         = lighting->lightArray[0];
+    const Color3&       diffuseColor  = colorList[diffuseColorIndex].element(0).color(Color3::white()).rgb();
+    const Color3&       specularColor = colorList[specularColorIndex].element(0).color(Color3::white()).rgb();
     Shader::ArgList&    args          = phongShader->args;
-
+    
     // Viewer
-	args.set("wsEyePosition",       defaultCamera.coordinateFrame().translation);
-
+    args.set("wsEyePosition",       defaultCamera.coordinateFrame().translation);
+    
     // Lighting
-	args.set("wsLight",             light.position.xyz().direction());
-	args.set("lightColor",          light.color);
-	args.set("ambient",             Color3(0.3f));
-	args.set("environmentMap",      lighting->environmentMapTexture);
-	args.set("environmentConstant", lighting->environmentMapConstant);
-
+    args.set("wsLight",             light.position.xyz().direction());
+    args.set("lightColor",          light.color);
+    args.set("ambient",             Color3(0.3f));
+    args.set("environmentMap",      lighting->environmentMapTexture);
+    args.set("environmentConstant", lighting->environmentMapConstant);
+    
     // Material
-	args.set("diffuseColor",        diffuseColor);
-	args.set("diffuseScalar",       diffuseScalar);
-
-	args.set("specularColor",       specularColor);
-	args.set("specularScalar",      specularScalar);
-
-	args.set("shine",               shine);
-	args.set("reflect",             reflect);
+    args.set("diffuseColor",        diffuseColor);
+    args.set("diffuseScalar",       diffuseScalar);
+    
+    args.set("specularColor",       specularColor);
+    args.set("specularScalar",      specularScalar);
+    
+    args.set("shine",               shine);
+    args.set("reflect",             reflect);
 }
 
 
@@ -182,6 +182,8 @@ void App::makeLighting() {
     // Reduce memory size required to work on older GPUs
     spec.environmentMapTexture.preprocess.scaleFactor = 0.25f;
     spec.environmentMapTexture.settings.interpolateMode = Texture::BILINEAR_NO_MIPMAP;
+    
+#error The following line leads to an early exit on OS X:
     lighting = Lighting::create(spec);
 }
 
@@ -190,14 +192,14 @@ G3D_START_AT_MAIN();
 int main(int argc, char** argv) {
 
 #   ifdef G3D_WIN32
-	    if (! FileSystem::exists("phong.pix", false) && FileSystem::exists("G3D.sln", false)) {
-            // The program was started from within Visual Studio and is
-            // running with cwd = G3D/VC10/.  Change to
-            // the appropriate sample directory.
-            chdir("../samples/pixelShader/data-files");
-        } else if (FileSystem::exists("data-files")) {
-            chdir("data-files");
-        }
+      if (! FileSystem::exists("phong.pix", false) && FileSystem::exists("G3D.sln", false)) {
+          // The program was started from within Visual Studio and is
+          // running with cwd = G3D/VC10/.  Change to
+          // the appropriate sample directory.
+          chdir("../samples/pixelShader/data-files");
+      } else if (FileSystem::exists("data-files")) {
+          chdir("data-files");
+      }
 #   endif
 
     return App().run();

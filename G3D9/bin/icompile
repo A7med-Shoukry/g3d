@@ -86,13 +86,12 @@ def buildDataFiles(state):
 
             if (state.os == 'osx') and any([x.endswith('.dylib') for x in outOfDateFiles]):
                 if verbosity >= NORMAL: colorPrint('\nRebasing OS X dylib files', SECTION_COLOR)
-                # On OS X, fix the load path to be relative to the build directory
-                # end dylibs are in data-files.  See http://www.cocoadev.com/index.pl?ApplicationLinking
+                # On OS X, fix the load path to be the build directory.  
+                # See http://www.cocoadev.com/index.pl?ApplicationLinking
                 for lib in outOfDateFiles:
                     if lib.endswith('.dylib'):
-                        raw = os.path.basename(lib)
-                        targetFile = dst + lib[len('data-files/'):]
-                        run('install_name_tool', ['-id', '@loader_path/' + raw, targetFile], verbosity >= VERBOSE)
+                        raw = betterbasename(lib)
+                        rebase(pathConcat(state.installDir, raw))
                         if verbosity == NORMAL:
                             print(raw)
                         
@@ -281,6 +280,36 @@ def extendLibrariesWithDependencies(libraries, state):
                     stack.append(dependency)
 
 """
+Change the id of a dylib that is already in the build directory.
+filename = state.installDir + basename
+"""
+def rebase(filename):
+    raw = betterbasename(filename)
+    run('install_name_tool', ['-id', pathConcat('@loader_path', raw), filename], verbosity >= VERBOSE)
+   
+
+"""
+If lib is a .dylib and on OS X, find the dylib and copy-if-newer it to the
+install directory, and then rebase it.
+"""
+def copyIfDylib(lib, isRelease, state):
+    if (state.os != 'osx') or (lib.type != DYNAMIC): return
+
+    # is this a .dylib or a .so? 
+    name = lib.releaseLib if isRelease else lib.debugLib
+    src = findLibrary(name, lib.type, state.libraryPaths())
+    if not src.endswith('.dylib'): return
+
+    b = betterbasename(src)
+    dst = pathConcat(state.installDir, b)
+    # We have a dylib; see if we need to copy it
+    if (len(copyIfNewer(src, dst, verbosity >= VERBOSE, False, True)) > 0):
+        if (verbosity == NORMAL): print('\r  ' + b)
+        # The dylib was copied, so rebase it
+        rebase(dst)
+        
+
+"""
  allFiles is a list of all files on which something
  depends for the project.
 """
@@ -329,7 +358,8 @@ def getLinkerOptions(state, allFiles):
     sortLibraries(libList)
     if verbosity >= TRACE: print('Libraries after sort: ' + str(libList))
 
-    # Separate into static libs, dynamic libs, and frameworks
+    # Separate into static libs (a), dynamic libs (so, dylib), and
+    # frameworks (dylib in framework dir)
     allLinks = []
 
     state.setLibList(libList)
@@ -342,11 +372,13 @@ def getLinkerOptions(state, allFiles):
                 if state.os == 'osx' and lib.debugFramework != None:
                     allLinks += ['-framework',  lib.debugFramework]
                 elif (lib.type != FRAMEWORK) and (lib.debugLib != None):
+                    copyIfDylib(lib, False, state)
                     allLinks += ['-l' + rawLibraryFilename(findLibrary(lib.debugLib, lib.type, state.libraryPaths()))]
             else:
                 if state.os == 'osx' and lib.releaseFramework != None:
                     allLinks += ['-framework',  lib.releaseFramework]
                 elif (lib.type != FRAMEWORK) and (lib.releaseLib != None):
+                    copyIfDylib(lib, True, sate)
                     allLinks += ['-l' + rawLibraryFilename(findLibrary(lib.releaseLib, lib.type, state.libraryPaths()))]
 
         elif verbosity >= NORMAL:

@@ -12,9 +12,9 @@ import os, glob
 # libraries to the link list based on what is #included.  Used by
 # getLinkerOptions.
 
-STATIC    = 1
-DYNAMIC   = 2
-FRAMEWORK = 3
+STATIC    = 1      # .a or .lib
+DYNAMIC   = 2      # .so or .dll, or .dylib
+FRAMEWORK = 3      # .dylib in a framework directory
 
 class Library:
     name             = None
@@ -139,10 +139,10 @@ Library('ANN',         STATIC,    'ANN',     'ANN',      None,       None,    ['
 Library('OpenCV',      STATIC,    'cv',      'cv',       None,       None,    ['cv.h'],         [],                                            ['OpenCV-Aux', 'OpenCV-Core']),
 Library('OpenCV-Aux',  STATIC,    'cvaux',   'cvaux',    None,       None,    [],               [],                                            ['OpenCV-Core']),
 Library('OpenCV-Core', STATIC,    'cxcore',  'cxcore',   None,       None,    [],               [],                                            []),
-Library('FFMPEG-util', DYNAMIC,    'avutil',  'avutil',   None,       None,    ['avutil.h'],     ['av_malloc'],                                 []),
-Library('FFMPEG-codec', DYNAMIC,   'avcodec', 'avcodec',  None,       None,    ['avcodec.h'],    ['avcodec_open'],                              ['zlib']),
-Library('FFMPEG-format', DYNAMIC,  'avformat','avformat', None,       None,    ['avformat.h'],   ['av_register_all'],                           ['FFMPEG-util']),
-Library('FFMPEG-swscale', DYNAMIC, 'swscale', 'swscale', None, None, ['swscale.h'], ['sws_scale'], ['FFMPEG-util']),
+Library('FFMPEG-util', DYNAMIC,    'avutil',  'avutil',  None,       None,    ['avutil.h'],     ['av_malloc'],                                 []),
+Library('FFMPEG-codec', DYNAMIC,   'avcodec', 'avcodec', None,       None,    ['avcodec.h'],    ['avcodec_open'],                              ['zlib']),
+Library('FFMPEG-format', DYNAMIC,  'avformat','avformat',None,       None,    ['avformat.h'],   ['av_register_all'],                           ['FFMPEG-util']),
+Library('FFMPEG-swscale', DYNAMIC, 'swscale', 'swscale', None,       None,    ['swscale.h'], ['sws_scale'], ['FFMPEG-util']),
 Library('FMOD',        DYNAMIC,   'fmodex',  'fmodex',   None,       None,    ['fmod.hpp', 'fmod.h'], [],                                      ['FFMPEG-codec', 'FFPMEG-util']),
 Library('mongoose',    STATIC,    'mongoose', 'mongoose', None,      None,    ['mongoose.h'],   [], []),
 Library('irrKlang',    DYNAMIC,   'irrklang','irrklang', None,       None,    ['irrKlang.h'],   ['createIrrKlangDevice'],                                            [])]:
@@ -228,29 +228,42 @@ def sortLibraries(liblist):
     
 
 """ Given a library name (e.g. "G3D") finds the library file and
-    returns it. 
+    returns the fully qualified path to it. 
 
     type must be STATIC or DYNAMIC
 """
 def findLibrary(_lfile, type, libraryPaths):
     ext = '.a'
+    ext2 = None
+
     if type == DYNAMIC:
         ext = '.so'
-     
-    lfile = 'lib' + _lfile + ext
+        if (os.uname()[0] == 'Darwin'):
+            ext2 = '.dylib'
 
-    # Find the library and link against it
+    lfile = 'lib' + _lfile + ext
+    lfile2 = None
+    if ext2 != None: lfile2 = 'lib' + _lfile + ext2
+
+    # Find the library 
     for path in libraryPaths:
         if os.path.exists(pathConcat(path, lfile)):
-            return path + lfile
+            return pathConcat(path, lfile)
+        elif (lfile2 != None) and os.path.exists(pathConcat(path, lfile2)):
+            return pathConcat(path, lfile2)
 
     # We couldn't find the library.  Try looking for the library
     # with a version number appended.
     wildlfile = 'lib' + _lfile + '-*' + ext
+    wildlfile2 = None
+    if ext != None: wildlfile2 = 'lib' + _lfile + '-*' + ext
+
     bestVersion = 0
     bestFile = None
     for path in libraryPaths:
         files = glob.glob(pathConcat(path, wildlfile))
+        if wildlfile2 != None:
+            files += glob.glob(pathConcat(path, wildlfile2))
 
         # Choose the latest version from those found
         for file in files:
