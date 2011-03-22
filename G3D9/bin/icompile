@@ -15,7 +15,7 @@
 #**********************************************************************
 from __future__ import print_function
 
-version = [0, 5, 15]
+version = [0, 5, 16]
 
 import sys, string, os, os.path, fileinput, tempfile, shutil, re
 import subprocess, pickle, time, copy, threading, platform, csv
@@ -298,7 +298,11 @@ def copyIfDylib(lib, isRelease, state):
     # is this a .dylib or a .so? 
     name = lib.releaseLib if isRelease else lib.debugLib
     src = findLibrary(name, lib.type, state.libraryPaths())
-    if not src.endswith('.dylib') or src.endswith("libpthread.dylib"): return
+    #
+    if not src.endswith('.dylib'): return
+
+    # rebasing libpthread.dylib causes pthread_join to exit the program for some reason
+    if src.endswith("libpthread.dylib"): return
 
     b = betterbasename(src)
     dst = pathConcat(state.installDir, b)

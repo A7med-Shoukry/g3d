@@ -82,8 +82,8 @@
 
         <TD VALIGN=BOTTOM ALIGN=RIGHT>
           <FONT SIZE=2>
-            <I>Version 0.5.15
-              <BR>2011-03-20
+            <I>Version 0.5.16
+              <BR>2011-03-22
           </FONT>
         </TD>
     </TR>
@@ -484,7 +484,8 @@ by Morgan McGuire with additional programming by Robert Hunter and Corey Taylor.
        When iCompile dynamically links a <code>.dylib</code> on OS X, it
        copies the <code>.dylib</code> file to the <code>build</code>
        directory and rebases it using <code>install_name_tool</code> so that
-       the distribution will work on any computer.
+       the distribution will work on any computer--except for <code>libpthread.dylib</code>,
+       which is unstable when rebased.
        
        The following section gives a more detailed overview of linking.
        
