@@ -1,5 +1,9 @@
 
 #include <G3D/G3DAll.h>
+#include "irrklang/irrKlang.h"
+
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+
 
 class App : public GApp {
 public:
@@ -10,6 +14,8 @@ public:
 
     MD3Model::Ref       model;
     MD3Model::Pose      modelPose;
+
+    irrklang::ISoundEngine* irrklangDevice;
 
     App(const GApp::Settings& settings = GApp::Settings());
 
@@ -95,8 +101,11 @@ void App::onInit() {
 
     //GuiTheme::Ref theme = GuiTheme::fromFile("osx_new.gtm");
     
-
     //model = MD3Model::fromDirectory("C:\\dev\\data\\md3\\chaos-marine\\models\\players\\Chaos-Marine");
+
+	// start the sound engine with default parameters
+	irrklangDevice = irrklang::createIrrKlangDevice();
+    debugAssert(irrklangDevice);
 }
 
 
@@ -113,6 +122,8 @@ void App::onNetwork() {
 void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     // Add physical simulation here.  You can make your time
     // advancement based on any of the three arguments.
+
+    //irrklangDevice->play2D("test.wmv");
 }
 
 
@@ -163,6 +174,7 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& surfaceArray, Array<
 void App::onCleanup() {
     // Called after the application loop ends.  Place a majority of cleanup code
     // here instead of in the constructor so that exceptions can be caught
+	irrklangDevice->drop();
 }
 
 
