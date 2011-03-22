@@ -156,7 +156,10 @@ void GThread::waitForCompletion() {
         ::WaitForSingleObject(m_event, INFINITE);
 #   else
         debugAssert(m_handle);
+        printf("Before pthread_join\n"); // TODO: remove
+        printf("m_status = %d\n", m_status);
         pthread_join(m_handle, NULL);
+        printf("After pthread_join\n"); // TODO: remove
 #   endif
 }
 

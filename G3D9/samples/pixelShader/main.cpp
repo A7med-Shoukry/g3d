@@ -183,8 +183,9 @@ void App::makeLighting() {
     spec.environmentMapTexture.preprocess.scaleFactor = 0.25f;
     spec.environmentMapTexture.settings.interpolateMode = Texture::BILINEAR_NO_MIPMAP;
     
-#error The following line leads to an early exit on OS X:
+    printf("Before lighting\n");
     lighting = Lighting::create(spec);
+    printf("After lighting\n");
 }
 
 G3D_START_AT_MAIN();

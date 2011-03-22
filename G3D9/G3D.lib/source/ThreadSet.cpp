@@ -54,6 +54,8 @@ void ThreadSet::start(SpawnBehavior lastBehavior) const {
     // Start the last one on my thread
     if ((unstarted.size() > 0) && (lastBehavior == USE_CURRENT_THREAD)) {
         unstarted.last()->start(USE_CURRENT_THREAD);
+        printf("Running thread %d on current thread\n");
+        debugAssert(unstarted.last()->completed());
     }
 }
     
@@ -72,10 +74,13 @@ void ThreadSet::terminate() const {
 
 void ThreadSet::waitForCompletion() const {
     ThreadSet* me = const_cast<ThreadSet*>(this);
+
     me->m_lock.lock();
     for (int i = 0; i < m_thread.size(); ++i) {
         if (m_thread[i]->started()) {
+            printf("before waitForcompletion (%d/%d)\n", i, m_thread.size() - 1);
             m_thread[i]->waitForCompletion();
+            printf("after waitForcompletion\n");
         }
     }
     me->m_lock.unlock();

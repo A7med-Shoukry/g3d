@@ -298,7 +298,7 @@ def copyIfDylib(lib, isRelease, state):
     # is this a .dylib or a .so? 
     name = lib.releaseLib if isRelease else lib.debugLib
     src = findLibrary(name, lib.type, state.libraryPaths())
-    if not src.endswith('.dylib'): return
+    if not src.endswith('.dylib') or src.endswith("libpthread.dylib"): return
 
     b = betterbasename(src)
     dst = pathConcat(state.installDir, b)
