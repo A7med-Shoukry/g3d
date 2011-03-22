@@ -382,7 +382,7 @@ def getLinkerOptions(state, allFiles):
                 if state.os == 'osx' and lib.releaseFramework != None:
                     allLinks += ['-framework',  lib.releaseFramework]
                 elif (lib.type != FRAMEWORK) and (lib.releaseLib != None):
-                    copyIfDylib(lib, True, sate)
+                    copyIfDylib(lib, True, state)
                     allLinks += ['-l' + rawLibraryFilename(findLibrary(lib.releaseLib, lib.type, state.libraryPaths()))]
 
         elif verbosity >= NORMAL:
