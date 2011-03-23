@@ -189,7 +189,8 @@ void App::makeLighting() {
 G3D_START_AT_MAIN();
 
 int main(int argc, char** argv) {
-
+    alwaysAssertM(false, "current dir = " + FileSystem::currentDirectory() +
+                  format(", argv[0] = %s", argv[0]));
 #   ifdef G3D_WIN32
       if (! FileSystem::exists("phong.pix", false) && FileSystem::exists("G3D.sln", false)) {
           // The program was started from within Visual Studio and is

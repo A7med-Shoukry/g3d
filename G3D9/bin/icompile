@@ -1044,7 +1044,8 @@ def computeDataSize():
             del subdirs[:]
         else:
             for file in files:
-                if not file.endswith('~') and not file.startswith('#'):
+                if (not file.endswith('~') and not file.startswith('#') and not file.endswith('.dll') and 
+                    not file.endswith('.dylib') and not file.endswith('.so')):
                     fileCount += 1
                     byteCount += os.path.getsize(os.path.join(path, file))
                     
