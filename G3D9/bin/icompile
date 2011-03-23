@@ -285,7 +285,7 @@ filename = state.installDir + basename
 """
 def rebase(filename):
     raw = betterbasename(filename)
-    run('install_name_tool', ['-id', pathConcat('@loader_path', raw), filename], verbosity >= VERBOSE)
+    run('install_name_tool', ['-id', pathConcat('@executable_path', raw), filename], verbosity >= VERBOSE)
    
 
 """

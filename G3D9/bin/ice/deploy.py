@@ -44,10 +44,10 @@ def _makePList(appname, binaryName):
 
 
 def _createApp(tmpDir, appDir, srcDir, state):
-    contents   = appDir + 'Contents/'
-    frameworks = contents + 'Frameworks/'
-    resources  = contents + 'Resources/'
-    macos      = contents + 'MacOS/'
+    contents   = pathConcat(appDir,   'Contents/')
+    frameworks = pathConcat(contents, 'Frameworks/')
+    resources  = pathConcat(contents, 'Resources/')
+    macos      = pathConcat(contents, 'MacOS/')
 
     # Create directories
     mkdir(appDir,     verbosity >= VERBOSE)
@@ -61,14 +61,25 @@ def _createApp(tmpDir, appDir, srcDir, state):
     writeFile(contents + 'Info.plist', _makePList(state.projectName, state.binaryName))
     writeFile(contents + 'PkgInfo', 'APPL' + state.binaryName[0:4] + '\n') 
 
-    # Copy binary
-    if verbosity >= NORMAL: colorPrint('\nCopying executable', SECTION_COLOR)
-    shell('cp ' + state.binaryDir + state.binaryName + ' ' + macos + state.binaryName, verbosity >= VERBOSE) 
+    # Copy the build directory to Resources
+    if verbosity >= NORMAL: colorPrint('\nCopying all built files to Resources/', SECTION_COLOR)
+    copyIfNewer(state.installDir, resources, verbosity >= VERBOSE, verbosity == NORMAL)
+    if verbosity >= VERBOSE: colorPrint('Done copying to Resources/', SECTION_COLOR)
 
-    # Copy data-files to Resources
-    if verbosity >= NORMAL: colorPrint('\nCopying data files', SECTION_COLOR)
-    copyIfNewer('data-files', resources, verbosity >= VERBOSE, verbosity == NORMAL)
-    if verbosity >= VERBOSE: colorPrint('Done copying data files', SECTION_COLOR)
+    # Move the binary from Resources to MacOS
+    if verbosity >= NORMAL: colorPrint('\nMoving executable to MacOS/', SECTION_COLOR)
+    shell('mv ' + pathConcat(resources, state.binaryName) + ' ' + pathConcat(macos, state.binaryName), verbosity >= VERBOSE) 
+    if verbosity >= VERBOSE: colorPrint('Done moving executable', SECTION_COLOR)
+
+    # Copy dynamic libraries
+    if verbosity >= NORMAL: colorPrint('\nMoving dynamic libraries to MacOS/', SECTION_COLOR)
+    for file in os.listdir(resources):
+        # file is relative to resources
+        if file.endswith('.dylib') or file.endswith('.so'):
+            shell('mv ' + pathConcat(resources, file) + ' ' + pathConcat(macos, file), verbosity >= VERBOSE)
+    if verbosity >= VERBOSE: colorPrint('Done moving dynamic libraries', SECTION_COLOR)
+
+    print()
 
     # Copy frameworks
     for libName in state.libList():
