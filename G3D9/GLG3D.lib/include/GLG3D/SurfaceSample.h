@@ -257,21 +257,21 @@ public:
        \brief Sample outgoing photon direction \f$\vec{\omega}_o\f$ from the 
        distribution \f$f(\vec{\omega}_i, \vec{\omega}_o)\cos \theta_i\f$.
 
-       Used in forward photon tracing.  The extra cosine term handles the 
-       projected area effect.
+       Used in forward photon tracing and in path tracing.  The extra
+       cosine term handles the projected area effect, which is almost always
+       what you want to sample against.
        
        The probability of different kinds of scattering are given by:
 
        \f{eqnarray}
-       \nonumber\rho_L &=& \int_\cap f_L (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cap \frac{1}{\pi} \rho_{L0} F_{L}(\vec{\omega}_i) (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i =
-\rho_{L0} F_{L}(\vec{\omega}_i) \\
-       \nonumber\rho_g &=& \int_\cap f_g (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cap \frac{s + 8}{8 \pi} F_r(\vec{\omega}_i)\max(0, \vec{n} \cdot \vec{\omega}_h)^{s} (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = F_r(\vec{\omega}_i)\\
-       \nonumber\rho_m &=& \int_\cap f_m (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cap F_r(\vec{\omega}_i) \delta(\vec{\omega}_o, \vec{\omega}_m) / (\vec{\omega}_i \cdot \vec{n}) (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = F_r(\vec{\omega}_i)\\
-       \nonumber\rho_L &=& \int_\cup f_t (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = 
-\int_\cup F_t(\vec{\omega}_i) T_0 \delta(\vec{\omega}_o, \vec{\omega}_t) / (\vec{\omega}_i \cdot \vec{n}) (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i = F_t(\vec{\omega}_i) T_0
+       \nonumber\rho_L &=& \int_\cap f_L (\vec{\omega}_i \cdot \vec{n}) ~ d\vec{\omega}_i = 
+\int_\cap \frac{1}{\pi} \rho_{L0} (1 - F_{r}(\vec{\omega}_i)) (\vec{\omega}_i \cdot \vec{n}) ~ d\vec{\omega}_i \\
+       \nonumber\rho_g &=& \int_\cap f_g (\vec{\omega}_i \cdot \vec{n}) ~ d\vec{\omega}_i = 
+\int_\cap \frac{s + 8}{8 \pi} F_r(\vec{\omega}_i)\max(0, \vec{n} \cdot \vec{\omega}_h)^{s} (\vec{\omega}_i \cdot \vec{n}) ~ d\vec{\omega}_i \mbox{ if } s\neq\infty, \mbox{ otherwise } 0\\
+       \nonumber\rho_m &=& \int_\cap f_m (\vec{\omega}_i \cdot \vec{n}) ~ d\vec{\omega}_i = 
+\int_\cap F_r(\vec{\omega}_i) \delta(\vec{\omega}_o, \vec{\omega}_m) / (\vec{\omega}_i \cdot \vec{n}) (\vec{\omega}_i \cdot \vec{n}) ~d\vec{\omega}_i  \mbox{ if } s=\infty, \mbox{ otherwise } 0\\
+       \nonumber\rho_t &=& \int_\cup f_t (\vec{\omega}_i \cdot \vec{n}) ~ d\vec{\omega}_i = 
+\int_\cup (1 - F_r(\vec{\omega}_i)) T_0 \delta(\vec{\omega}_o, \vec{\omega}_t) / (\vec{\omega}_i \cdot \vec{n}) (\vec{\omega}_i \cdot \vec{n}) ~d\vec{\omega}_i 
        \f}
 
        Note that at most one of the glossy and mirror probabilities may be non-zero.
@@ -284,7 +284,18 @@ public:
        \param eta_other Index of refraction on the side of the normal (i.e., material that is being exited to enter the 
          object whose surface this BSDF describes)
 
-       @beta
+       \param power_o Because samples are taken against the BSDF averaged over all wavelengths,
+       the individual wavelengths always have distorted probabilities for a non-white surface.
+       For an incident photon with power_i, power_o is the outgoing power adjusted to take
+       this distortion into account.       
+
+       \param densityHack Returns a
+       number that increases with the probability density of the
+       selected sample but is not proportional to it.  It can't
+       actually proportional because if a specular scattering event occured
+       the density was infinite.  This is useful for algorithms like Image Space Photon Mapping
+       that use coarse probability density as a heuristic for driving sampling patterns.
+       See also conditionalScatteringProbability().
 
        @return false if the photon was absorbed, true if it scatters. */
     bool scatter
@@ -295,8 +306,21 @@ public:
      float&         eta_o,
      Color3&        extinction_o,
      Random&        random,
-     float&         density) const;
+     float&         densityHack) const;
 
+    /**
+       Returns the probability that an incoming photon will scatter,
+       given its direction.
+
+       Evaluates the integral
+       \f$ \int_\cap f(\vec{\omega}_i, \vec{\omega}_o) (\vec{\omega}_i \cdot \vec{n}) d\vec{\omega}_i \f$
+       whose value is on the interval \f$[0, 2\pi]\f$.
+
+       Combined with evaluateBSDF and getBSDFImpulses, this allows exact
+       computation of the probability density for a scattered photon, which
+       is needed for algorithms like path tracing and metropolis light transport.
+     */
+    Color3 conditionalScatteringProbability(const Vector3& w_i) const;
 };
 
 } // G3D

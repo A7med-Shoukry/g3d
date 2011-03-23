@@ -427,6 +427,8 @@ bool SurfaceElement::scatter
         }
      }
 
+    // TODO: glossy bounce should be taken before lambertian
+
     // Choose a random number on [0, 1], then reduce it by each kind of
     // scattering's probability until it becomes negative (i.e., scatters).
     float r = random.uniform();
@@ -534,6 +536,41 @@ bool SurfaceElement::scatter
 
     // Absorbed
     return false;
+}
+
+
+Color3 SurfaceElement::conditionalScatteringProbability(const Vector3& w_i) const {
+    const Vector3& n = shading.normal;
+    Color3 F(0, 0, 0);
+    bool Finit = false;
+
+    Color3 total;
+    const float cos_i = max(0.0f, w_i.dot(n));
+
+    if (material.glossyReflect.nonZero()) {
+        // Glossy reflectance
+        F = computeF(material.glossyReflect, max(0.001f, cos_i));
+        Finit = true;
+
+        if (isFinite(material.glossyExponent)) {
+            // The cosine appears in the glossy lobe
+            total += F * cos_i;
+        } else {
+            // The mirror BSDF term is defined to divide out the cosine
+            // of the incident angle.
+            total += F;
+        }
+    }
+
+    // Lambertian
+    total += (Color3(1.0f) - F) * material.lambertianReflect * cos_i;
+
+    // Transmission; defined to divide out the cosine term as well
+    total += (Color3(1.0f) - F) * material.transmit;
+
+    // The total is at most 1/2pi, so that if integrated over
+    // the entire incoming hemisphere the max is 1.0.
+    return total / (2.0f * pif());
 }
 
 } // G3D
