@@ -152,16 +152,19 @@ class DoxygenRefLinkRemapper:
             
             # read each line in file and replace any matched ref links
             f = open(filename)
+            print(filename)
             try:
                 for line in f:
-                    remappedBuffer += re.sub('(href="class_g3_d_1_1_reference_counted_pointer.html">)([a-zA-Z0-9:]+)(</a>)', self.__linkMatchCallack, line)
+                    remappedBuffer += re.sub('(href="class_g3_d_1_1_reference_counted_pointer.html">)([a-zA-Z0-9:]+)(</a>)', self.__linkMatchCallback, line)
+            except UnicodeDecodeError as e:
+                print('Error rewriting ' + filename + ': ', e)
             finally:
                 f.close()
             
-            #assume lines were read and remapped correctly, write new documentation
+            # assume lines were read and remapped correctly, write new documentation
             writeFile(filename, remappedBuffer)
             
-    def __linkMatchCallack(self, match):
+    def __linkMatchCallback(self, match):
         # if ref search fails, build the fully qualified ref name that we can search the dictionary for
         # e.g., SuperShader::Pass::Ref would be qualified as G3D::SuperShader::Pass::Ref
         # ref links found in non-struct/class files will be matched as-is

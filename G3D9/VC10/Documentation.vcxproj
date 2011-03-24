@@ -7,33 +7,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\buildg3d" />
-    <None Include="..\buildg3d.bat" />
-    <None Include="..\BUILD_INSTRUCTIONS.txt" />
-    <None Include="..\doc-files\api-index.dox" />
-    <None Include="..\doc-files\changelog.dox" />
-    <None Include="..\doc-files\contributors.dox" />
-    <None Include="..\doc-files\data-index.dox" />
-    <None Include="..\doc-files\error.dox" />
-    <None Include="..\doc-files\footer.html" />
-    <None Include="..\doc-files\frequent.dox" />
-    <None Include="..\doc-files\guide-concepts.dox" />
-    <None Include="..\doc-files\guide-demos.dox" />
-    <None Include="..\doc-files\guide-macosx.dox" />
-    <None Include="..\doc-files\guide-newunix.dox" />
-    <None Include="..\doc-files\guide-newuser.dox" />
-    <None Include="..\doc-files\guide-newwin32.dox" />
-    <None Include="..\doc-files\guide-overview.dox" />
-    <None Include="..\doc-files\guide-unix.dox" />
-    <None Include="..\doc-files\guide-welcome.dox" />
-    <None Include="..\doc-files\guide-win32.dox" />
-    <None Include="..\doc-files\header.html" />
-    <None Include="..\doc-files\license.dox" />
-    <None Include="..\doc-files\stylesheet.css" />
-    <None Include="..\doc-files\topic-index.dox" />
-    <None Include="..\Doxyfile" />
-    <None Include="..\Doxyfile-java" />
-    <None Include="..\README.TXT" />
+    <None Include="..\manual\api-index.dox" />
+    <None Include="..\manual\changelog.dox" />
+    <None Include="..\manual\contributors.dox" />
+    <None Include="..\manual\data-index.dox" />
+    <None Include="..\manual\error.dox" />
+    <None Include="..\manual\footer.html" />
+    <None Include="..\manual\frequent.dox" />
+    <None Include="..\manual\guide-concepts.dox" />
+    <None Include="..\manual\guide-demos.dox" />
+    <None Include="..\manual\guide-macosx.dox" />
+    <None Include="..\manual\guide-newunix.dox" />
+    <None Include="..\manual\guide-newuser.dox" />
+    <None Include="..\manual\guide-newwin32.dox" />
+    <None Include="..\manual\guide-overview.dox" />
+    <None Include="..\manual\guide-unix.dox" />
+    <None Include="..\manual\guide-welcome.dox" />
+    <None Include="..\manual\guide-win32.dox" />
+    <None Include="..\manual\header.html" />
+    <None Include="..\manual\immediatemode.dox" />
+    <None Include="..\manual\license.dox" />
+    <None Include="..\manual\stylesheet.css" />
+    <None Include="..\manual\topic-index.dox" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3BCF1B24-F228-4D95-B100-9300E0886C85}</ProjectGuid>
