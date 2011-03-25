@@ -7,8 +7,7 @@ import re, string
 from .utils import *
 
 _excludeDirPatterns = \
-    ['^\.',\
-     '^#',\
+    ['^#',\
      '~$',\
      '^\.svn$',\
      '^\.git$',\
@@ -21,7 +20,7 @@ _excludeDirPatterns = \
      '^\.icompile-temp$', \
      '^\.ice-tmp$', \
      '^build$']
-
+#'^\.',\
 
 """ Regular expression patterns that will be excluded from copying by 
     copyIfNewer.

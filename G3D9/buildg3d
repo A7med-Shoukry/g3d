@@ -207,7 +207,7 @@ def initOS():
 
 initOS()
 
-def copyIfNewer(source, dest):
+def copyIfNewer(source, dest, echoCommands = True, echoFilenames = True, actuallyCopy = True):
     if windows:
         # Use the binary
         print('copyifnewer %s %s' % (source, dest))
@@ -215,7 +215,7 @@ def copyIfNewer(source, dest):
                    ['bin\\copyifnewer.exe', '--super-exclusions', source, dest])
     else:
         # Use python commands
-        ice.copyifnewer.copyIfNewer(source, dest)
+        ice.copyifnewer.copyIfNewer(source, dest, echoCommands, echoFilenames, actuallyCopy)
         return 0
 
 
@@ -547,11 +547,11 @@ def srczipTarget():
     # .svn files
     dest ='temp/src/G3D'
     mkdir(dest)
-    copyIfNewer('.', dest)
+    copyIfNewer('.', dest, True, True, True)
     
     os.chdir('temp/src')
     # Now produce the zipfile
-    list(zip('G3D', '../../build/' + 'G3D' + '-' + g3dVersion.toString() + '-src.zip'))
+    zip('G3D', '../../build/' + 'G3D' + '-' + g3dVersion.toString() + '-src.zip')
     os.chdir('../..')
 
 def sourceTarget():
