@@ -293,13 +293,13 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\SurfaceSample.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\Texture_Visualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\SurfaceElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -590,6 +590,9 @@
       <Filter>Header Files\GL</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceSample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
