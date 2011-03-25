@@ -19,10 +19,9 @@ href="classes.html">Classes</a>.
     \link G3D::ArticulatedModel ArticulatedModel\endlink,
     \link G3D::_BSPMAP::Map BSPMap\endlink,
     \link G3D::debugDraw debugDraw\endlink,
-    \link G3D::DirectionHistogram DirectionHistogram\endlink,
     \link G3D::GEntity GEntity\endlink,
     \link G3D::GFont GFont\endlink,
-    \link G3D::SuperSurface SuperSurface\endlink
+    \link G3D::SuperSurface SuperSurface\endlink,
     \link G3D::SuperSurface::CPUGeom SuperSurface::CPUGeom\endlink,
     \link G3D::SuperSurface::GPUGeom SuperSurface::GPUGeom\endlink,
     \link G3D::GLight GLight\endlink,
@@ -36,17 +35,29 @@ href="classes.html">Classes</a>.
     \link G3D::PointShape PointShape\endlink,
     \link G3D::RayShape RayShape\endlink,
     \link G3D::SphereShape SphereShape\endlink, \link G3D::TriangleShape TriangleShape\endlink),
-    \link G3D::Material Material\endlink,    
     \link G3D::MD2Model MD2Model\endlink,
     \link G3D::MD3Model MD3Model\endlink,
     \link G3D::Surface Surface\endlink,
     \link G3D::Surface2D Surface2D\endlink,
-    \link G3D::SurfaceElement SurfaceElement\endlink,
     \link G3D::Tri Tri\endlink,
     \link G3D::Tri::Intersector Tri::Intersector\endlink,
     \link G3D::TriTree TriTree\endlink,
     \link G3D::VideoInput VideoInput\endlink,
     \link G3D::VideoOutput VideoOutput\endlink
+
+  <li><b>Materials and Scattering</b>&nbsp;&nbsp;
+    \link G3D::BumpMap BumpMap\endlink,
+    \link G3D::DirectionHistogram DirectionHistogram\endlink,
+    \link G3D::Material Material\endlink,    
+    \link G3D::SuperBSDF SuperBSDF\endlink,
+    \link G3D::SuperShader SuperShader\endlink,
+    \link G3D::SuperShader::Pass SuperShader::Pass\endlink,
+    \link G3D::SuperShader::NonShadowedPass SuperShader::NonShadowedPass\endlink,
+    \link G3D::SuperShader::ExtraLightPass SuperShader::ExtraLightPass\endlink,
+    \link G3D::SuperShader::ShadowedPass SuperShader::ShadowedPass\endlink,
+    \link G3D::SurfaceElement SurfaceElement\endlink,
+    \link G3D::SurfaceElement::Impulse SurfaceElement::Impulse\endlink,
+    \link G3D::SurfaceElement::MaterialElement SurfaceElement::MaterialElement\endlink
 
   <li><b>User Interface</b>&nbsp; &nbsp;
     \link G3D::BackgroundWidget BackgroundWidget\endlink,
@@ -95,7 +106,6 @@ href="classes.html">Classes</a>.
     \link G3D::X11Window X11Window\endlink
    
   <LI><B>Effects</B> &nbsp; &nbsp;
-    \link G3D::BumpMap BumpMap\endlink,
     \link G3D::beginMarkShadows beginMarkShadows\endlink, 
     \link G3D::drawFeatureEdges drawFeatureEdges\endlink,
     \link G3D::endMarkShadows endMarkShadows\endlink, 
@@ -103,12 +113,6 @@ href="classes.html">Classes</a>.
     \link G3D::GBuffer GBuffer\endlink,
     \link G3D::markShadows markShadows\endlink,
     \link G3D::ShadowMap ShadowMap\endlink,
-    \link G3D::SuperShader SuperShader\endlink,
-    \link G3D::SuperShader::Pass SuperShader::Pass\endlink,
-    \link G3D::SuperShader::NonShadowedPass SuperShader::NonShadowedPass\endlink,
-    \link G3D::SuperShader::ExtraLightPass SuperShader::ExtraLightPass\endlink,
-    \link G3D::SuperShader::ShadowedPass SuperShader::ShadowedPass\endlink,
-    \link G3D::SuperBSDF SuperBSDF\endlink,
     \link G3D::Film Film\endlink
    </UL>
 

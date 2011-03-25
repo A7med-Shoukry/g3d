@@ -9,7 +9,7 @@
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
-#include "GLG3D/SurfaceSample.h"
+#include "GLG3D/SurfaceElement.h"
 
 namespace G3D {
 
