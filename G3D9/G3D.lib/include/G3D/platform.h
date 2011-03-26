@@ -6,7 +6,7 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  @created 2003-06-09
- @edited  2010-01-11
+ @edited  2011-03-26
  */
 
 #ifndef G3D_platform_h
@@ -17,7 +17,7 @@
  The version number of G3D in the form: MmmBB -> 
  version M.mm [beta BB]
  */
-#define G3D_VER 90002
+#define G3D_VER 90003
 
 // fatal error for unsupported architectures
 #if defined(__powerpc__)
