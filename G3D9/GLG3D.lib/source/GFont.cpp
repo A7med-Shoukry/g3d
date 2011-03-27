@@ -50,7 +50,7 @@ void GFont::recenterGlyphs(const GImage& src, GImage& dst) {
 
     for (int y = 0; y < 16; ++y) {
         for (int x = 0; x < 16; ++x) {
-            GImage::pasteSubImage(dst, src, x * dstWidth + dstOffsetX, y * dstHeight + dstOffsetY, x * srcWidth, y * srcHeight, srcWidth, srcHeight);
+            GImage::copyRect(dst, src, x * dstWidth + dstOffsetX, y * dstHeight + dstOffsetY, x * srcWidth, y * srcHeight, srcWidth, srcHeight);
         }
     }
 }

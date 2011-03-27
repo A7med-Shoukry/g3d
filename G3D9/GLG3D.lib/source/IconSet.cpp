@@ -171,7 +171,7 @@ void IconSet::makeIconSet(const std::string& baseDir, const std::string& outFile
         }
         
         // Paste into the packed image
-        GImage::pasteSubImage(packed, src, w, y, 0, 0, src.width(), src.height());
+        GImage::copyRect(packed, src, w, y, 0, 0, src.width(), src.height());
 
         w += s.width;
         h = max(h, s.height);

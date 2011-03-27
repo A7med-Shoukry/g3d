@@ -706,7 +706,7 @@ GImage& GImage::operator=(const GImage& other) {
 }
 
 
-bool GImage::copySubImage(
+bool GImage::copyRect(
     GImage & dest, const GImage & src,
     int srcX, int srcY, int srcWidth, int srcHeight) {
     if ((src.m_width < srcX + srcWidth) ||
@@ -720,18 +720,23 @@ bool GImage::copySubImage(
     dest.resize(srcWidth, srcHeight, src.m_channels);
     
     bool ret;
-    ret = pasteSubImage(dest, src, 0, 0, srcX, srcY, srcWidth, srcHeight);
+    ret = copyRect(dest, src, 0, 0, srcX, srcY, srcWidth, srcHeight);
     debugAssert(ret);
 
     return true;
 }
 
 
-bool GImage::pasteSubImage(
-    GImage & dest, const GImage & src,
-    int destX, int destY,
-    int srcX, int srcY, int srcWidth, int srcHeight) {
-
+bool GImage::copyRect
+(GImage& dest,
+ const GImage& src,
+ int destX, 
+ int destY,
+ int srcX,
+ int srcY, 
+ int srcWidth, 
+ int srcHeight) {
+    
     if ((src.m_width < srcX + srcWidth) ||
         (src.m_height < srcY + srcHeight) ||
         (dest.m_width < destX + srcWidth) ||

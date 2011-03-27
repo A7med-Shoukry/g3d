@@ -393,14 +393,14 @@ public:
     void resize(int width, int height, int channels, bool zero = true);
 
     /**
-     Copies src sub-image data into dest at a certain offset.  
-     The dest variable must already contain an image that is large
-     enough to contain the src sub-image at the specified offset.
-     Returns true on success and false if the src sub-image cannot
+     Copies \a src sub-image data into \a dest at a certain offset.  
+     The \a dest variable must already contain an image that is large
+     enough to contain the \a src sub-image at the specified offset.
+     Returns true on success and false if the \a src sub-image cannot
      completely fit within dest at the specified offset.  Both
-     src and dest must have the same number of channels.
+     \a src and \a dest must have the same number of channels.
      */
-    static bool pasteSubImage(
+    static bool copyRect(
         GImage& dest, 
         const GImage& src,
         int destX, 
@@ -415,7 +415,7 @@ public:
      Returns true on success and false if the src sub-image
      is not within src.
      */
-    static bool copySubImage(GImage & dest, const GImage & src,
+    static bool copyRect(GImage & dest, const GImage & src,
         int srcX, int srcY, int srcWidth, int srcHeight);
 
     void convertToRGBA();
