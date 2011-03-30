@@ -182,7 +182,7 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
 
     // Bloom
     if (bloomStrength > 0) {
-        Framebuffer::Ref oldFB = rd->framebuffer();
+        Framebuffer::Ref oldFB = rd->drawFramebuffer();
         rd->setFramebuffer(m_framebuffer);
         rd->clear();
         m_preBloomShader->args.set("sourceTexture",  input);
