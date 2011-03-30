@@ -124,6 +124,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "remoteRender", "remoteRende
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mongoose.lib", "mongoose.lib.vcxproj", "{E893FD69-A904-4E47-A1F9-4E1DC6FB413D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BuildScripts", "BuildScripts.vcxproj", "{985177F9-F95C-4815-88A1-D71C108D6C56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -217,6 +219,10 @@ Global
 		{E893FD69-A904-4E47-A1F9-4E1DC6FB413D}.Debug|Win32.Build.0 = Release|Win32
 		{E893FD69-A904-4E47-A1F9-4E1DC6FB413D}.Release|Win32.ActiveCfg = Release|Win32
 		{E893FD69-A904-4E47-A1F9-4E1DC6FB413D}.Release|Win32.Build.0 = Release|Win32
+		{985177F9-F95C-4815-88A1-D71C108D6C56}.Debug|Win32.ActiveCfg = Debug|Win32
+		{985177F9-F95C-4815-88A1-D71C108D6C56}.Debug|Win32.Build.0 = Debug|Win32
+		{985177F9-F95C-4815-88A1-D71C108D6C56}.Release|Win32.ActiveCfg = Release|Win32
+		{985177F9-F95C-4815-88A1-D71C108D6C56}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
