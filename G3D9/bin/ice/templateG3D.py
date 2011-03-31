@@ -7,13 +7,14 @@ from .utils import *
 from .variables import *
 from . import copyifnewer
 from .doticompile import *
+import doticompile
 import copy
 
 def findG3DStarter(state, name):
 
     # load the default .icompile
     fakeState = copy.copy(state)
-    processProjectFile(fakeState, True)
+    doticompile.processProjectFile(fakeState, True)
 
     locations = [pathConcat(x, '../') for x in fakeState.includePaths()]
     locations += [
