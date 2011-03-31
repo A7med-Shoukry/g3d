@@ -287,7 +287,8 @@ public:
        \param power_o Because samples are taken against the BSDF averaged over all wavelengths,
        the individual wavelengths always have distorted probabilities for a non-white surface.
        For an incident photon with power_i, power_o is the outgoing power adjusted to take
-       this distortion into account.       
+       this distortion into account. You can apply the function with power_i = Color3::white()
+       when path tracing and power_o will be the coefficient to scale scattered radiance by.
 
        \param densityHack Returns a
        number that increases with the probability density of the
@@ -308,6 +309,8 @@ public:
      Random&        random,
      float&         densityHack) const;
 
+
+#if 0
     /**
        Returns the probability that an incoming photon will scatter,
        given its direction.
@@ -321,6 +324,7 @@ public:
        is needed for algorithms like path tracing and metropolis light transport.
      */
     Color3 conditionalScatteringProbability(const Vector3& w_i) const;
+#endif
 };
 
 } // G3D

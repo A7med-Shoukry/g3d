@@ -1,10 +1,10 @@
 /**
-  \file SurfaceElement.h
+  \file SurfaceElement.cpp
   
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2009-01-01
-  \edited  2010-12-20
+  \edited  2011-03-31
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
@@ -184,7 +184,7 @@ Color3 SurfaceElement::evaluateBSDF
         const Vector3& w_h = (w_i + w_o).direction();
         const float cos_h = max(0.0f, w_h.dot(n));
         
-        const float s = min(material.glossyExponent, material.glossyExponent);
+        const float s = min(material.glossyExponent, maxShininess);
         
         F = computeF(material.glossyReflect, cos_i);
         if (s == finf()) {
@@ -538,6 +538,8 @@ bool SurfaceElement::scatter
     return false;
 }
 
+#if 0 // Originally thought we needed something like this, now realized that we don't...and it was wrong anyway.
+// keeping around for a while in case we rediscover a use for it
 
 Color3 SurfaceElement::conditionalScatteringProbability(const Vector3& w_i) const {
     const Vector3& n = shading.normal;
@@ -572,5 +574,6 @@ Color3 SurfaceElement::conditionalScatteringProbability(const Vector3& w_i) cons
     // the entire incoming hemisphere the max is 1.0.
     return total / (2.0f * pif());
 }
+#endif
 
 } // G3D
