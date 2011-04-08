@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\manual\api-index.dox" />
+    <None Include="..\manual\changelog.dox" />
+    <None Include="..\manual\contributors.dox" />
+    <None Include="..\manual\data-index.dox" />
+    <None Include="..\manual\error.dox" />
+    <None Include="..\manual\footer.html" />
+    <None Include="..\manual\frequent.dox" />
+    <None Include="..\manual\guide-concepts.dox" />
+    <None Include="..\manual\guide-demos.dox" />
+    <None Include="..\manual\guide-macosx.dox" />
+    <None Include="..\manual\guide-newunix.dox" />
+    <None Include="..\manual\guide-newuser.dox" />
+    <None Include="..\manual\guide-newwin32.dox" />
+    <None Include="..\manual\guide-overview.dox" />
+    <None Include="..\manual\guide-unix.dox" />
+    <None Include="..\manual\guide-welcome.dox" />
+    <None Include="..\manual\guide-win32.dox" />
+    <None Include="..\manual\header.html" />
+    <None Include="..\manual\immediatemode.dox" />
+    <None Include="..\manual\license.dox" />
+    <None Include="..\manual\stylesheet.css" />
+    <None Include="..\manual\topic-index.dox" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3BCF1B24-F228-4D95-B100-9300E0886C85}</ProjectGuid>
+    <RootNamespace>Documentation</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
