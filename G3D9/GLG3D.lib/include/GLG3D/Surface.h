@@ -172,7 +172,7 @@ public:
     }
 
     /** Utility function for rendering a set of surfaces in wireframe using the current blending mode. */
-    static void renderWireframe(const Array<Surface::Ref>& models, const Color4& color = Color3::black());
+    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black());
 
     static void getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds);
     static void getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds);

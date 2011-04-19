@@ -60,14 +60,14 @@ void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds) {
 }
 
 
-void Surface::renderWireframe(const Array<Surface::Ref>& surface3D, const Color4& color) {
+void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color) {
     rd->pushState(); {
         rd->setDepthWrite(false);
         rd->setDepthTest(RenderDevice::DEPTH_LEQUAL);
         rd->setRenderMode(RenderDevice::RENDER_WIREFRAME);
         rd->setPolygonOffset(-0.5f);
 
-        rd->setColor(Color3::white() * 0.7f);
+        rd->setColor(color);
         rd->setShader(NULL);
         rd->setLineWidth(0.8f);
 
