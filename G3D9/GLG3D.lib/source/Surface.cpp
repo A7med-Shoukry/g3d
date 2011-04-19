@@ -60,6 +60,25 @@ void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds) {
 }
 
 
+void Surface::renderWireframe(const Array<Surface::Ref>& surface3D, const Color4& color) {
+    rd->pushState(); {
+        rd->setDepthWrite(false);
+        rd->setDepthTest(RenderDevice::DEPTH_LEQUAL);
+        rd->setRenderMode(RenderDevice::RENDER_WIREFRAME);
+        rd->setPolygonOffset(-0.5f);
+
+        rd->setColor(Color3::white() * 0.7f);
+        rd->setShader(NULL);
+        rd->setLineWidth(0.8f);
+
+        for (int i = 0; i < surface3D.size(); ++i) {
+            rd->setObjectToWorldMatrix(surface3D[i]->coordinateFrame());
+            surface3D[i]->sendGeometry(rd);
+        }
+    } rd->popState();
+}
+
+
 void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds) {
     AABox temp;
     getBoxBounds(models, temp);
