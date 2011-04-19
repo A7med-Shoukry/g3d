@@ -13,11 +13,6 @@ int main(int argc, const char* argv[]) {
     settings.window.width       = 1280; 
     settings.window.height      = 720;
 
-    GCamera camera;
-
-    Point3 P = camera.project(Point3(0,  5,-10), Rect2D::xywh(0,0,800, 600));
-    Point3 Q = camera.project(Point3(0, -5,-10), Rect2D::xywh(0,0,800, 600));
-
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {
             // Running on Windows, building inside the starter directory
