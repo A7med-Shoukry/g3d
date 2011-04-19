@@ -3266,7 +3266,7 @@ send_cgi(struct mg_connection *conn, const char *prog)
 	int			headers_len, data_len, i, n;
 	const char		*status;
 	char			buf[MAX_REQUEST_SIZE], *pbuf;
-	struct mg_request_info	ri = {};
+	struct mg_request_info	ri;
 	struct cgi_env_block	blk;
 	char			dir[FILENAME_MAX], *p;
 	int			fd_stdin[2], fd_stdout[2];

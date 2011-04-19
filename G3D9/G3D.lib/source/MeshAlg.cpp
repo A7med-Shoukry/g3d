@@ -417,6 +417,7 @@ void MeshAlg::computeBounds(
     AABox&                  box, 
     Sphere&                 sphere) {
 
+    // Makes a copy so as to re-use the existing computebounds code
     Array<Vector3> newArray;
     newArray.resize(indexArray.size());
     for (int i = 0; i < indexArray.size(); ++i) {
@@ -470,13 +471,13 @@ void MeshAlg::computeBounds(
     Vector3 dia2 = xmax;
     {
         // Set xspan = distance between the 2 points xmin & xmax (squared)
-        double xspan = (xmax - xmin).squaredMagnitude();
+        float xspan = (xmax - xmin).squaredMagnitude();
 
         // Same for y & z spans
-        double yspan = (ymax - ymin).squaredMagnitude();
-        double zspan = (zmax - zmin).squaredMagnitude();
+        float yspan = (ymax - ymin).squaredMagnitude();
+        float zspan = (zmax - zmin).squaredMagnitude();
     
-        double maxspan = xspan;
+        float maxspan = xspan;
 
         if (yspan > maxspan) {
 	        maxspan = yspan;
@@ -500,18 +501,18 @@ void MeshAlg::computeBounds(
     // calculate initial radius^2 and radius 
     Vector3 d = dia2 - sphere.center;
 
-    double radSq = d.squaredMagnitude();
-    double rad  = sqrt(radSq);
+    float radSq = d.squaredMagnitude();
+    float rad  = sqrt(radSq);
 
     // SECOND PASS: increment current sphere
-    double old_to_p, old_to_new;
+    float old_to_p, old_to_new;
 
     for (int v = 0; v < vertexArray.size(); ++v) {
         const Vector3& vertex = vertexArray[v];
 
         d = vertex - center;
 
-        double old_to_p_sq = d.squaredMagnitude();
+        float old_to_p_sq = d.squaredMagnitude();
 
     	// do r^2 test first 
         if (old_to_p_sq > radSq) {
@@ -533,18 +534,18 @@ void MeshAlg::computeBounds(
 	const Vector3 min(xmin.x, ymin.y, zmin.z);
 	const Vector3 max(xmax.x, ymax.y, zmax.z);
 
-        box = AABox(min, max);
+   box = AABox(min, max);
 
 	const float boxRadSq = (max - min).squaredMagnitude() * 0.25f;
 
 	if (boxRadSq >= radSq){
-            if (isNaN(center.x) || ! isFinite(rad)) {
-                sphere = Sphere(Vector3::zero(), finf());
-            } else {
-                sphere = Sphere(center, rad);
-            }
+        if (isNaN(center.x) || ! isFinite(rad)) {
+            sphere = Sphere(Vector3::zero(), finf());
+        } else {
+            sphere = Sphere(center, rad);
+        }
 	} else {
-            sphere = Sphere((max + min) * 0.5f, sqrt(boxRadSq));
+        sphere = Sphere((max + min) * 0.5f, sqrt(boxRadSq));
 	}
 }
 

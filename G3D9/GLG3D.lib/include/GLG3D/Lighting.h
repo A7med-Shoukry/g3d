@@ -136,10 +136,10 @@ public:
         float                             environmentMapConstant;
         Array<GLight>                     lightArray;
 
-        Specification() : emissiveScale(Color3::white()), environmentMapConstant(1.0f) {
-            environmentMapTexture.filename = "<white>";
+        Specification() : emissiveScale(Color3::white()), environmentMapConstant(0.0f) {
+            environmentMapTexture.filename  = "<white>";
             environmentMapTexture.dimension = Texture::DIM_CUBE_MAP;
-            environmentMapTexture.settings = Texture::Settings::cubeMap();
+            environmentMapTexture.settings  = Texture::Settings::cubeMap();
         }
 
         Specification(const class Any&);

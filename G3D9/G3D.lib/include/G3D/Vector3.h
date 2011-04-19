@@ -96,6 +96,25 @@ public:
     explicit Vector3(class TextInput& t);
     explicit Vector3(const class Color3& c);
 
+    /** The default Direct3D coordinate system is left-handed Y=up.
+       http://msdn.microsoft.com/en-us/library/bb204853(v=vs.85).aspx*/
+    static Vector3 fromDirect3D(const Vector3& d3d) {
+        return Vector3(d3d.x, d3d.y, -d3d.z);
+    }
+
+    Vector3 toDirect3D() {
+        return Vector3(x, y, -z);
+    }
+
+    /** The default Autodesk 3DS Max coordinate system is right-handed Z=up. */
+    static Vector3 from3DSMax(const Vector3& max) {
+        return Vector3(max.x, max.z, -max.y);
+    }
+
+    Vector3 to3DSMax(const Vector3& v) {
+        return Vector3(x, -z, y);
+    }
+
 	/** Format is three float32's */
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);
