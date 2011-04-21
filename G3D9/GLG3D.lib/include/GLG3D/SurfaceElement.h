@@ -167,8 +167,8 @@ private:
      G3D::Random&   r,
      Vector3&       w_o) const;
 
-    /** Samples just the emission using the existing texCoord, leaving
-        other fields unchanged. Called from set(Tri::Intersector, ...).*/
+    /** Sets the material.emit field by sampling at the shading.texCoord, leaving
+        other fields of material unchanged. Called from set(Tri::Intersector, ...).*/
     void setEmit();
     
     /** Sets the SurfaceElement::shading fields, using the existing SurfaceElement::interpolated fields.
