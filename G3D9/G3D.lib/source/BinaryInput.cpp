@@ -428,13 +428,17 @@ std::string BinaryInput::readString(int64 n) {
     prepareToRead(n);
     debugAssertM((m_pos + n) <= m_length, "Read past end of file");
     
-    char *s = (char*)System::alignedMalloc(n + 1, 16);
+    const bool hasNull = (n > 0) && (m_buffer[m_pos + n] == '\0');
+
+    char* s = (char*)System::alignedMalloc(n + (hasNull ? 0 : 1), 16);
     assert(s != NULL);
 
     memcpy(s, m_buffer + m_pos, n);
-    // There may not be a null, so make sure
-    // we add one.
-    s[n] = '\0';
+
+    if (! hasNull) {
+        // Needs a terminator.
+        s[n] = '\0';
+    }
 
     std::string out = s;
     System::alignedFree(s);
