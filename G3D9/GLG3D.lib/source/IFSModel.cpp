@@ -254,7 +254,7 @@ void IFSModel::load(
         }
         
         std::string header = bi.readString32();
-        if (header != "IFS") {
+        if (strcmp(header.c_str(), "IFS") != 0) {
             throw std::string("File is not an IFS file");
         }
         float32 ifsversion  = bi.readFloat32();
@@ -268,7 +268,7 @@ void IFSModel::load(
         while (bi.hasMore()) {
             std::string str = bi.readString32();
             
-            if (str == "VERTICES") {
+            if (strcmp(str.c_str(), "VERTICES") == 0) {
                 debugAssertM(vertex.size() == 0, "Multiple vertex fields!");
                 uint32 num = bi.readUInt32();
                 

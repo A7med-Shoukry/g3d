@@ -428,6 +428,7 @@ std::string BinaryInput::readString(int64 n) {
     prepareToRead(n);
     debugAssertM((m_pos + n) <= m_length, "Read past end of file");
     
+    // std::string doesn't need null termination
     std::string out;
     out.resize(n);
     out.assign((char*)(m_buffer + m_pos), n);
@@ -511,7 +512,11 @@ std::string BinaryInput::readStringEven() {
 
 std::string BinaryInput::readString32() {
     int len = readUInt32();
-    return readString(len);
+    // Don't read the NULL into the string
+    std::string s = readString(len - 1);
+    // But do skip it
+    ++m_pos;
+    return s;
 }
 
 

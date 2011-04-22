@@ -97,7 +97,9 @@ GuiThemeRef GuiTheme::fromFile(
 void GuiTheme::loadTheme(BinaryInput& b) {
     std::string f = b.readString32();
     (void)f;
-    debugAssert(f == "G3D Skin File");
+    // G3D 8.x and earlier had two nulls at the end of a string written to a file,
+    // so we can't use std::string comparison on them.
+    debugAssert(strcmp(f.c_str(), "G3D Skin File") == 0);
 
     float version = b.readFloat32();
     (void)version;

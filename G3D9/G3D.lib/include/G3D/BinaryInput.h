@@ -359,9 +359,9 @@ public:
     void readBytes(void* bytes, int64 n);
 
     /**
-     Reads an n character string.  The string is not
-     required to end in NULL in the file but will
-     always be a proper std::string when returned.
+     Reads an n-character string.  If the string ends in NULL, a NULL character 
+     will appear in your std::string.  You probably don't want that, so if you
+     expect a NULL, read (n-1) characters and then skip the next byte.
      */
     std::string readString(int64 n);
 
@@ -376,11 +376,12 @@ public:
     /**
      Reads until NULL or the end of the file is encountered.
      If the string has odd length (including NULL), reads 
-     another byte.
+     another byte.  This is a common format for 16-bit alignment
+     in files.
      */
     std::string readStringEven();
 
-
+    /** Reads a uint32 and then a NULL-terminated string of that many characters, including an expected NULL termination. */
     std::string readString32();
 
     Vector4 readVector4();

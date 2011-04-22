@@ -460,9 +460,8 @@ void BinaryOutput::writeStringEven(const char* s) {
 
 
 void BinaryOutput::writeString32(const char* s) {
-    // Does not write a null
-    int len = strlen(s);
-
+    // Write the NULL and count it
+    int len = strlen(s) + 1;
     writeUInt32(len);
 
     debugAssert(m_beginEndBits == 0);
