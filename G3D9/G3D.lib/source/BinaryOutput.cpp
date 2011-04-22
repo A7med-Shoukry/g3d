@@ -460,8 +460,15 @@ void BinaryOutput::writeStringEven(const char* s) {
 
 
 void BinaryOutput::writeString32(const char* s) {
-    writeUInt32(strlen(s) + 1);
-    writeString(s);
+    // Does not write a null
+    int len = strlen(s);
+
+    writeUInt32(len);
+
+    debugAssert(m_beginEndBits == 0);
+    reserveBytes(len);
+    System::memcpy(m_buffer + m_pos, s, len);
+    m_pos += len;
 }
 
 

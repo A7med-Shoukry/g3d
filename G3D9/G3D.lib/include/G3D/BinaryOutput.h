@@ -342,12 +342,13 @@ public:
 
     void writeStringEven(const char* s);
 
-
     void writeString32(const char* s);
 
     /**
      Write a string with a 32-bit length field in front
-     of it.
+     of it.  The NULL is not written or included in the 
+     length--there are exactly
+     as many characters as required.
      */
     void writeString32(const std::string& s) {
         writeString32(s.c_str());
