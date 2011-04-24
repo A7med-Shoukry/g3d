@@ -117,6 +117,47 @@ void ArticulatedViewer::onInit(const std::string& filename) {
             m_model->partArray[partIndex].updateVAR();
         }
     }
+
+    saveGeometry();
+}
+
+
+void ArticulatedViewer::saveGeometry() {
+    const MeshAlg::Geometry& geometry = m_model->partArray[0].geometry;
+    const Array<Point2>& texCoord     = m_model->partArray[0].texCoordArray;
+
+    const ArticulatedModel::Part& part = m_model->partArray[0];
+
+    int numIndices = 0;
+    for (int t = 0; t < part.triList.size(); ++t) { 
+        numIndices += part.triList[t]->indexArray.size();
+    }
+
+    BinaryOutput b("d:/out.bin", G3D_LITTLE_ENDIAN);
+    b.writeInt32(numIndices);
+    b.writeInt32(geometry.vertexArray.size());
+    for (int t = 0; t < part.triList.size(); ++t) {
+        const Array<int>& index = part.triList[t]->indexArray;
+        for (int i = 0; i < index.size(); ++i) {
+            b.writeInt32(index[i]);
+        }
+    }
+    for (int i = 0; i < geometry.vertexArray.size(); ++i) {
+        part.cframe.pointToWorldSpace(geometry.vertexArray[i]).serialize(b);
+    }
+    for (int i = 0; i < geometry.normalArray.size(); ++i) {
+        part.cframe.vectorToWorldSpace(geometry.normalArray[i]).serialize(b);
+    }
+    if (texCoord.size() > 0) {
+        for (int i = 0; i < texCoord.size(); ++i) {
+            texCoord[i].serialize(b);
+        }
+    } else {
+        for (int i = 0; i < geometry.vertexArray.size(); ++i) {
+            Point2::zero().serialize(b);
+        }
+    }
+    b.commit();
 }
 
 
