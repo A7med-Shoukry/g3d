@@ -110,6 +110,12 @@ public class BinaryOutput {
         data[position++] = (byte)v;
     }
 
+    public void writeBytes(byte[] v, int size) {
+        reserveBytes(size);
+        System.arraycopy(v, 0, data, position, size);
+        position += size;
+    }
+
     public void writeInt8(int v) {
         reserveBytes(1);
         data[position++] = (byte)v;
@@ -199,6 +205,11 @@ public class BinaryOutput {
         }
         
         writeInt8(0);
+    }
+
+    public void writeString32(String str) {
+        writeUInt32(str.getBytes().length + 1);
+        writeString(str);
     }
 
     /** Skips ahead n bytes. */
