@@ -8,6 +8,8 @@
 #ifndef G3D_GEvent_h
 #define G3D_GEvent_h
 
+#include "G3D/BinaryInput.h"
+#include "G3D/BinaryOutput.h"
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
 #include "GLG3D/GKey.h"
@@ -176,6 +178,20 @@ public:
         </pre>
      */
     uint16          unicode;
+
+    void serialize(G3D::BinaryOutput& b) {
+        b.writeUInt8(scancode);
+        b.writeInt32(sym);
+        b.writeInt32(mod);
+        b.writeUInt16(unicode);
+    }
+
+    void deserialize(G3D::BinaryInput& b) {
+        scancode = b.readUInt8();
+        sym = static_cast<GKey::Value>(b.readInt32());
+        mod = static_cast<GKeyMod::Value>(b.readInt32());
+        unicode = b.readUInt16();
+    }
 };
 
 ///////////////////////////////////////////////////////////
