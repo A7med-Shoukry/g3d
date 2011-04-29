@@ -168,10 +168,13 @@ void GuiTheme::loadCoords(const Any& any) {
     debugAssert(windowStyleName[WINDOW_STYLE_COUNT - 1] == "no");
     // Skip the no-style window
     for (int i = 0; i < WINDOW_STYLE_COUNT - 1; ++i) {
-        m_window[i].textStyle = m_textStyle;
-        m_window[i].defocusedTextStyle = m_textStyle;
-        m_window[i].load(any[windowStyleName[i]]);
+        if (i != PANEL_WINDOW_STYLE) {
+            m_window[i].textStyle = m_textStyle;
+            m_window[i].defocusedTextStyle = m_textStyle;
+            m_window[i].load(any[windowStyleName[i]]);
+        }
     }
+    m_window[PANEL_WINDOW_STYLE] = m_window[MENU_WINDOW_STYLE];
 
     m_hSlider.textStyle = m_textStyle;
     m_hSlider.disabledTextStyle = m_disabledTextStyle;
