@@ -164,7 +164,7 @@ void GuiTheme::loadCoords(const Any& any) {
     m_osxWindowButtons = (any["windowButtonStyle"] == "osx");
 
 
-    static std::string windowStyleName[WINDOW_STYLE_COUNT] = {"window", "toolWindow", "dialogWindow", "drawer", "menu", "no"};
+    static std::string windowStyleName[WINDOW_STYLE_COUNT] = {"window", "toolWindow", "dialogWindow", "drawer", "menu", "panel", "no"};
     debugAssert(windowStyleName[WINDOW_STYLE_COUNT - 1] == "no");
     // Skip the no-style window
     for (int i = 0; i < WINDOW_STYLE_COUNT - 1; ++i) {
