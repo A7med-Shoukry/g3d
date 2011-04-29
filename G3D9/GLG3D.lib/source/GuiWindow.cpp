@@ -158,7 +158,7 @@ void GuiWindow::onUserInput(UserInput* ui) {
     if (m_rect.contains(mouse)) {
         // The mouse is over this window, update the mouseOver control
         
-        if ((m_closeAction != NO_CLOSE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
+        if ((m_closeAction != NO_CLOSE) && (m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::PANEL_WINDOW_STYLE)) {
             m_closeButton.mouseOver = 
                 m_skin->windowToCloseButtonBounds(m_rect, GuiTheme::WindowStyle(m_style)).contains(mouse);
         }
@@ -234,7 +234,7 @@ bool GuiWindow::onEvent(const GEvent& event) {
 
         if (! focused()) {
             // Set focus
-            bool moveToFront = (m_style != GuiTheme::NO_WINDOW_STYLE);
+            bool moveToFront = (m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::PANEL_WINDOW_STYLE);
             m_manager->setFocusedWidget(this, moveToFront);
             m_focused = true;
 
@@ -248,7 +248,7 @@ bool GuiWindow::onEvent(const GEvent& event) {
 
         Rect2D titleRect;
         Rect2D closeRect;
-        if (m_style == GuiTheme::NO_WINDOW_STYLE) {
+        if ((m_style == GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
             // Prevent anyone from clicking here.
             titleRect = Rect2D::xyxy(-1,-1,-1,-1);
             closeRect = titleRect;
@@ -385,7 +385,7 @@ void GuiWindow::render(RenderDevice* rd) const {
     {
         bool hasClose = m_closeAction != NO_CLOSE;
 
-        if (m_style != GuiTheme::NO_WINDOW_STYLE) {
+        if ((m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
             m_skin->renderWindow(m_rect, focused(), hasClose, m_closeButton.down,
                                m_closeButton.mouseOver, m_text, GuiTheme::WindowStyle(m_style));
         } else {
