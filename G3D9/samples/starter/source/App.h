@@ -17,6 +17,10 @@ class App : public GApp {
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;
 
+    bool                m_showAxes;
+    bool                m_showLightSources;
+    bool                m_showWireframe;
+
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
 

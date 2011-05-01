@@ -44,7 +44,11 @@ void App::onInit() {
     debugWindow->setVisible(true);
     developerWindow->cameraControlWindow->setVisible(true);
     developerWindow->videoRecordDialog->setEnabled(true);
+
     showRenderingStats = false;
+    m_showLightSources = true;
+    m_showAxes         = true;
+    m_showWireframe    = false;
 
     makeGUI();
 
@@ -59,26 +63,37 @@ void App::onInit() {
 
 void App::makeGUI() {
     GuiPane* scenePane = debugPane->addPane("Scene", GuiTheme::ORNATE_PANE_STYLE);
-    scenePane->beginRow();
-    {
+    scenePane->moveBy(0, -10);
+    scenePane->beginRow(); {
         // Example of using a callback; you can also listen for events in onEvent or bind controls to data
-        m_sceneDropDownList = debugPane->addDropDownList("", Scene::sceneNames(), NULL, GuiControl::Callback(this, &App::loadScene));
+        m_sceneDropDownList = scenePane->addDropDownList("", Scene::sceneNames(), NULL, GuiControl::Callback(this, &App::loadScene));
         scenePane->addButton(GuiText("q", GFont::fromFile(System::findDataFile("icon.fnt")), 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
-    }
-    scenePane->endRow();
+    } scenePane->endRow();
+
+    const int w = 120;
+    scenePane->beginRow(); {
+        scenePane->addCheckBox("Axes", &m_showAxes)->setWidth(w);
+        scenePane->addCheckBox("Light sources", &m_showLightSources);
+    } scenePane->endRow();
+    scenePane->beginRow(); {
+        scenePane->addCheckBox("Wireframe", &m_showWireframe)->setWidth(w);
+    } scenePane->endRow();
+    scenePane->pack();
+
+    GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
+    infoPane->moveRightOf(scenePane);
+    infoPane->moveBy(10, 0);
+    // Example of how to add debugging controls
+    infoPane->addLabel("You can add more GUI controls");
+    infoPane->addLabel("in App::onInit().");
+    infoPane->addButton("Exit", this, &App::endProgram);
+    infoPane->pack();
 
     // More examples of debugging GUI controls:
     // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
     // debugPane->addTextBox("Name", &myName);
     // debugPane->addNumberBox("height", &height, "m", GuiTheme::LINEAR_SLIDER, 1.0f, 2.5f);
     // button = debugPane->addButton("Run Simulator");
-
-    GuiPane* infoPane = debugPane->addPane("", GuiTheme::NO_PANE_STYLE);
-    // Example of how to add debugging controls
-    infoPane->addLabel("Add more debug controls");
-    infoPane->addLabel("in App::onInit().");
-    infoPane->addButton("Exit", this, &App::endProgram);
-    infoPane->moveRightOf(scenePane);
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
@@ -178,6 +193,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     // ShadowMap as the final argument to create shadows.)
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
 
+
+    if (m_showWireframe) {
+        Surface::renderWireframe(rd, surface3D);
+    }
+
     //////////////////////////////////////////////////////
     // Sample immediate-mode rendering code
     rd->enableLighting();
@@ -186,11 +206,17 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     }
     rd->setAmbientLightColor(Color3::white() * 0.5f);
 
-    Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
     Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());
-    Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f),
-              Color3::black());
-    
+    Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f), Color3::black());
+
+    if (m_showAxes) {
+        Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
+    }    
+
+    if (m_showLightSources) {
+        Draw::lighting(m_scene->lighting(), rd);
+    }
+
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
 }
