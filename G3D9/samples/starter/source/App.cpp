@@ -44,7 +44,7 @@ void App::onInit() {
     debugWindow->setVisible(true);
     developerWindow->cameraControlWindow->setVisible(true);
     developerWindow->videoRecordDialog->setEnabled(true);
-    showRenderingStats = true;
+    showRenderingStats = false;
 
     makeGUI();
 
@@ -58,11 +58,14 @@ void App::onInit() {
 
 
 void App::makeGUI() {
-    // Example of how to add debugging controls
-    debugPane->addButton("Exit", this, &App::endProgram);
-    
-    debugPane->addLabel("Add more debug controls");
-    debugPane->addLabel("in App::onInit().");
+    GuiPane* scenePane = debugPane->addPane("Scene", GuiTheme::ORNATE_PANE_STYLE);
+    scenePane->beginRow();
+    {
+        // Example of using a callback; you can also listen for events in onEvent or bind controls to data
+        m_sceneDropDownList = debugPane->addDropDownList("", Scene::sceneNames(), NULL, GuiControl::Callback(this, &App::loadScene));
+        scenePane->addButton(GuiText("q", GFont::fromFile(System::findDataFile("icon.fnt")), 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
+    }
+    scenePane->endRow();
 
     // More examples of debugging GUI controls:
     // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
@@ -70,11 +73,12 @@ void App::makeGUI() {
     // debugPane->addNumberBox("height", &height, "m", GuiTheme::LINEAR_SLIDER, 1.0f, 2.5f);
     // button = debugPane->addButton("Run Simulator");
 
-    // Example of using a callback; you can also listen for events in onEvent or bind controls to data
-    debugPane->beginRow();
-    m_sceneDropDownList = debugPane->addDropDownList("Scene", Scene::sceneNames(), NULL, GuiControl::Callback(this, &App::loadScene));
-    debugPane->addButton(GuiText("q", GFont::fromFile(System::findDataFile("icon.fnt")), 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
-    debugPane->endRow();
+    GuiPane* infoPane = debugPane->addPane("", GuiTheme::NO_PANE_STYLE);
+    // Example of how to add debugging controls
+    infoPane->addLabel("Add more debug controls");
+    infoPane->addLabel("in App::onInit().");
+    infoPane->addButton("Exit", this, &App::endProgram);
+    infoPane->moveRightOf(scenePane);
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
