@@ -83,6 +83,7 @@
      <li> Sample programs, viewer, and test now statically link FFMPEG on Win32 to avoid DLL/PATH problems when distributing the binaries.
      <li> In the G3D source tree, renamed doc-files/ to manual/ and doc-files/data-files to doc-files/ to match icompile conventions
      <li> Upgraded to icompile 0.5.15
+	 <li> G3D::Widget now uses G3D::Surface2D::depth for event delivery as well as rendering
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
      <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
      <li> Fix: SuperBSDF::evaluate now computes the same result as SuperShader for glossy terms
@@ -121,6 +122,7 @@
      <li> Replaced G3D::GLight::spotCutoff (in degrees) with G3D::GLight::spotHalfAngle (radians)
      <li> Removed G3D::GLight::specular and diffuse; changed point light attenuation to default to quadratic
      <li> Removed GCamera::imagePlaneDepth (use GCamera::nearPlaneZ)
+	 <li> Removed G3D::BackgroundWidget
      <li> Removed ToneMap (use Film)
 	 <li> G3D::GCamera::viewportWidth &rarr; G3D::GCamera::nearPlaneViewportWidth
 	 <li> G3D::GCamera::viewportHeight &rarr; G3D::GCamera::nearPlaneViewportHeight

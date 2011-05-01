@@ -103,7 +103,6 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\BackgroundWidget.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAPLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BumpMap.cpp" />
@@ -198,7 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\BackgroundWidget.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BumpMap.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\CameraControlWindow.h" />

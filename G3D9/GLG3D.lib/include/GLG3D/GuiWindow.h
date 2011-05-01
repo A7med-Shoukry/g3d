@@ -364,9 +364,9 @@ public:
         return m_text;
     }
 
-    virtual Rect2D bounds () const;
+    virtual Rect2D bounds() const;
 
-    virtual float depth () const;
+    virtual float depth() const;
 
 };
 

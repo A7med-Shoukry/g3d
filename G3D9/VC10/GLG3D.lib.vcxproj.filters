@@ -26,9 +26,6 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\BackgroundWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -311,9 +308,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\BackgroundWidget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h">

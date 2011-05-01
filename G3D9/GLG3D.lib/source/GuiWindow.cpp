@@ -615,7 +615,12 @@ Rect2D GuiWindow::bounds () const {
 
 
 float GuiWindow::depth () const {
-    return 0;
+    if ((m_style == GuiTheme::NO_WINDOW_STYLE) || (m_style == GuiTheme::PANEL_WINDOW_STYLE)) {
+        // Stay in back
+        return 0;
+    } else {
+        return m_depth;
+    }
 }
 
 }
