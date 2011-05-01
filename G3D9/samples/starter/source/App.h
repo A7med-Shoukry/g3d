@@ -20,6 +20,9 @@ class App : public GApp {
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
 
+    /** Called from onInit */
+    void makeGUI();
+
 public:
     
     App(const GApp::Settings& settings = GApp::Settings());

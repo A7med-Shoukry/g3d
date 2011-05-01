@@ -46,7 +46,18 @@ void App::onInit() {
     developerWindow->videoRecordDialog->setEnabled(true);
     showRenderingStats = true;
 
-    /////////////////////////////////////////////////////////////
+    makeGUI();
+
+    // Start wherever the developer HUD last marked as "Home"
+    defaultCamera.setCoordinateFrame(bookmark("Home"));
+
+    m_shadowMap = ShadowMap::create();
+
+    loadScene();
+}
+
+
+void App::makeGUI() {
     // Example of how to add debugging controls
     debugPane->addButton("Exit", this, &App::endProgram);
     
@@ -60,17 +71,13 @@ void App::onInit() {
     // button = debugPane->addButton("Run Simulator");
 
     // Example of using a callback; you can also listen for events in onEvent or bind controls to data
+    debugPane->beginRow();
     m_sceneDropDownList = debugPane->addDropDownList("Scene", Scene::sceneNames(), NULL, GuiControl::Callback(this, &App::loadScene));
-    debugPane->addButton(GuiText("q", GFont::fromFile(System::findDataFile("icon.fnt")), 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->moveRightOf(m_sceneDropDownList);
+    debugPane->addButton(GuiText("q", GFont::fromFile(System::findDataFile("icon.fnt")), 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
+    debugPane->endRow();
+
     debugWindow->pack();
-    debugWindow->moveTo(Vector2(0, window()->height() - debugWindow->rect().height()));
-
-    // Start wherever the developer HUD last marked as "Home"
-    defaultCamera.setCoordinateFrame(bookmark("Home"));
-
-    m_shadowMap = ShadowMap::create();
-
-    loadScene();
+    debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
 }
 
 
@@ -114,17 +121,25 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 }
 
 
-bool App::onEvent(const GEvent& e) {
-    if (GApp::onEvent(e)) {
+bool App::onEvent(const GEvent& event) {
+    if (GApp::onEvent(event)) {
         return true;
     }
+
+    if (event.type == GEventType::VIDEO_RESIZE) {
+        // Example GUI dynamic layout code.  Resize the debugWindow to fill
+        // the screen horizontally.
+        debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
+        return true;
+    }
+
     // If you need to track individual UI events, manage them here.
     // Return true if you want to prevent other parts of the system
     // from observing this specific event.
     //
     // For example,
-    // if ((e.type == GEventType::GUI_ACTION) && (e.gui.control == m_button)) { ... return true;}
-    // if ((e.type == GEventType::KEY_DOWN) && (e.key.keysym.sym == GKey::TAB)) { ... return true; }
+    // if ((event.type == GEventType::GUI_ACTION) && (event.gui.control == m_button)) { ... return true;}
+    // if ((event.type == GEventType::KEY_DOWN) && (event.key.keysym.sym == GKey::TAB)) { ... return true; }
 
     return false;
 }

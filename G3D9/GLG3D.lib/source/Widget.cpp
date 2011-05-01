@@ -192,8 +192,8 @@ void WidgetManager::defocusWidget(const Widget::Ref& m) {
 }
 
 
-static inline bool __cdecl depthLessThan(const Widget::Ref& elem1, const Widget::Ref& elem2) {
-    return elem1->depth() < elem2->depth();
+static inline bool __cdecl depthGreatherThan(const Widget::Ref& elem1, const Widget::Ref& elem2) {
+    return elem1->depth() > elem2->depth();
 }
 
 void WidgetManager::updateWidgetDepths() {
@@ -201,7 +201,7 @@ void WidgetManager::updateWidgetDepths() {
         // Reserve depth 1 for the background and panels and depth 0 for menus and tooltips
         m_moduleArray[i]->setDepth(1.0f - float(i + 1) / (m_moduleArray.size() + 1));
     }
-    m_moduleArray.sort(depthLessThan);
+    m_moduleArray.sort(depthGreatherThan);
 }
 
 
@@ -316,8 +316,7 @@ void WidgetManager::onAI() {
 
 #undef ITERATOR
 
-bool WidgetManager::onEvent(const GEvent& event, 
-                             WidgetManager::Ref& a) {
+bool WidgetManager::onEvent(const GEvent& event, WidgetManager::Ref& a) {
     static WidgetManager::Ref x(NULL);
     return onEvent(event, a, x);
 }
@@ -340,26 +339,21 @@ bool WidgetManager::onEvent(const GEvent& event, WidgetManager::Ref& a, WidgetMa
                 
         for (int i = array.size() - 1; i >= 0; --i) {
 
-            debugAssertGLOk();
             if (array[i]->onEvent(event)) {
                 debugAssertGLOk();
                 if (b.notNull()) {
                     b->endLock();
                 }
                 a->endLock();
-                debugAssertGLOk();
                 return true;
             }
         }
-        debugAssertGLOk();
     }
     
     if (b.notNull()) {
         b->endLock();
     }
     a->endLock();
-
-    debugAssertGLOk();
 
     return false;
 }

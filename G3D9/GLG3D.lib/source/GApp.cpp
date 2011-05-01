@@ -225,14 +225,15 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
         UprightSplineManipulator::Ref splineManipulator = UprightSplineManipulator::create(&defaultCamera);
         addWidget(splineManipulator);
         
-        GFont::Ref arialFont = GFont::fromFile(System::findDataFile("icon.fnt"));
-        GuiTheme::Ref theme = GuiTheme::fromFile(System::findDataFile("osx.gtm"), arialFont);
+        GFont::Ref      arialFont   = GFont::fromFile(System::findDataFile("icon.fnt"));
+        GuiTheme::Ref   theme       = GuiTheme::fromFile(System::findDataFile("osx.gtm"), arialFont);
 
-        debugWindow = GuiWindow::create("Debug Controls", theme, 
-            Rect2D::xywh(0, settings.window.height - 150, 150, 150), GuiTheme::TOOL_WINDOW_STYLE, GuiWindow::HIDE_ON_CLOSE);
-        debugWindow->setVisible(false);
+        debugWindow = GuiWindow::create("Control Window", theme, 
+            Rect2D::xywh(0, 0, settings.window.width, 150), GuiTheme::PANEL_WINDOW_STYLE, GuiWindow::NO_CLOSE);
         debugPane = debugWindow->pane();
+        debugWindow->setVisible(false);
         addWidget(debugWindow);
+
 
         developerWindow = DeveloperWindow::create
             (this,
@@ -574,7 +575,8 @@ void GApp::renderDebugInfo() {
 bool GApp::onEvent(const GEvent& event) {
     if (event.type == GEventType::VIDEO_RESIZE) {
         resize(event.resize.w, event.resize.h);
-        return true;
+        // Don't consume the resize event--we want subclasses to be able to handle it as well
+        return false;
     }
 
     return false;
