@@ -198,8 +198,8 @@ static inline bool __cdecl depthLessThan(const Widget::Ref& elem1, const Widget:
 
 void WidgetManager::updateWidgetDepths() {
     for (int i = 0; i < m_moduleArray.size(); ++i) {
-        // Reserve depth 0 for the background and panels and depth 1 for menus and tooltips
-        m_moduleArray[i]->setDepth(float(i + 1) / (m_moduleArray.size() + 1));
+        // Reserve depth 1 for the background and panels and depth 0 for menus and tooltips
+        m_moduleArray[i]->setDepth(1.0f - float(i + 1) / (m_moduleArray.size() + 1));
     }
     m_moduleArray.sort(depthLessThan);
 }

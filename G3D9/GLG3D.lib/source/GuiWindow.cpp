@@ -609,15 +609,15 @@ void GuiWindow::Modal::processEventQueue() {
 }
 
 
-Rect2D GuiWindow::bounds () const {
+Rect2D GuiWindow::bounds() const {
     return m_rect;
 }
 
 
-float GuiWindow::depth () const {
+float GuiWindow::depth() const {
     if ((m_style == GuiTheme::NO_WINDOW_STYLE) || (m_style == GuiTheme::PANEL_WINDOW_STYLE)) {
         // Stay in back
-        return 0;
+        return 1.0;
     } else {
         return m_depth;
     }

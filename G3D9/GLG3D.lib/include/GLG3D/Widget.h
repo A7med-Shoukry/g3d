@@ -115,7 +115,7 @@ public:
     }
 
     /** Inherited from Surface2D.  Controls the depth of objects when rendering.  Subclasses may override this but it can 
-     interfere with the normal handling of rendering and event delivery. */
+     interfere with the normal handling of rendering and event delivery. depth = 0 is usually the "top" widget and depth = 1 is usually the "bottom" widget. */
     virtual float depth() const { 
         return m_depth; 
     }
@@ -154,8 +154,7 @@ private:
         DelayedEvent(Type type = ADD, const Widget::Ref& module = NULL) : type(type), module(module) {}
     };
     
-    /** Events are delivered in decreasing index order, except
-        rendering, which is processed in increasing order.  */
+    /** Events are delivered in DECREASING index order.  */
     Array<Widget::Ref>   m_moduleArray;
 
     bool                 m_locked;
