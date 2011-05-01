@@ -118,7 +118,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
         }
     }
 
-    saveGeometry();
+//    saveGeometry();
 }
 
 

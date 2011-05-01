@@ -118,6 +118,7 @@ void WidgetManager::remove(const Widget::Ref& m) {
         if (j != -1) {
             m->setManager(NULL);
             m_moduleArray.remove(j);
+            updateWidgetDepths();
             return;
         }
         debugAssertM(false, "Removed a Widget that was not in the manager.");
@@ -176,6 +177,7 @@ void WidgetManager::moveWidgetToBack(const Widget::Ref& widget) {
            // Found and not already at the bottom
            m_moduleArray.remove(i);
            m_moduleArray.insert(0, widget);
+           updateWidgetDepths();
        } 
    }
 }
@@ -187,6 +189,19 @@ void WidgetManager::defocusWidget(const Widget::Ref& m) {
    } else if (focusedWidget().pointer() == m.pointer()) {
        setFocusedWidget(NULL);
    }    
+}
+
+
+static inline bool __cdecl depthLessThan(const Widget::Ref& elem1, const Widget::Ref& elem2) {
+    return elem1->depth() < elem2->depth();
+}
+
+void WidgetManager::updateWidgetDepths() {
+    for (int i = 0; i < m_moduleArray.size(); ++i) {
+        // Reserve depth 0 for the background and panels and depth 1 for menus and tooltips
+        m_moduleArray[i]->setDepth(float(i + 1) / (m_moduleArray.size() + 1));
+    }
+    m_moduleArray.sort(depthLessThan);
 }
 
 
@@ -202,10 +217,11 @@ void WidgetManager::setFocusedWidget(const Widget::Ref& m, bool moveToFront) {
         debugAssert(m.isNull() || m_moduleArray.contains(m));
 
         if (m.notNull() && moveToFront) {
-            // Move to the first event position
+            // Move to the first event position and let updateWidgetOrder take it from there
             int i = m_moduleArray.findIndex(m);
             m_moduleArray.remove(i);
             m_moduleArray.append(m);
+            updateWidgetDepths();
         }
 
         m_focusedModule = m;

@@ -67,15 +67,6 @@ public:
 
 int main(int argc, char** argv) {
 
-    debugAssert(FilePath::isRoot("//foo"));
-    debugAssert(FilePath::isRoot("//foo/"));
-    debugAssert(! FilePath::isRoot("//foo/bar"));
-
-    FileSystem::exists("$G3D9DATA/cubemap");
-    std::string path = "//black/c$/AUTOEXEC.BAT";
-    bool b = FileSystem::exists(path);
-
-    return 0;
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
     for (int y = 0; y < im->height(); ++y) {
@@ -108,9 +99,8 @@ int main(int argc, char** argv) {
         }
 #   endif
     debugPrintf("Running in %s\n", FileSystem::currentDirectory().c_str());
-        //CubeMap<Image3>::Ref im = CubeMap<Image3>::create(System::findDataFile("test/testcube_*.jpg"));
+    //CubeMap<Image3>::Ref im = CubeMap<Image3>::create(System::findDataFile("test/testcube_*.jpg"));
     
-
     return App(settings).run();
 }
 
@@ -225,6 +215,9 @@ void loadt2D() {
 
 
 void App::onInit() {
+//    GuiWindow::Ref g = GuiWindow::create();
+
+
     Stopwatch stopwatch;
 
 

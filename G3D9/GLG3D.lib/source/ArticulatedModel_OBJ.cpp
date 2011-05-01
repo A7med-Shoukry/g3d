@@ -183,7 +183,7 @@ public:
 };
 
 
-static Vector3 readVertex(TextInput& ti, const Matrix4& xform) {
+static Point3 readVertex(TextInput& ti, const Matrix4& xform) {
     // Vertex
     Vector4 v;
     v.x = ti.readNumber();
@@ -232,9 +232,9 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     // Negative indices are relative to the last coordinate seen.
 
     // Raw arrays with independent indexing, as imported from the file
-    Array<Vector3> rawVertex;
+    Array<Point3>  rawVertex;
     Array<Vector3> rawNormal;
-    Array<Vector2> rawTexCoord;
+    Array<Point2>  rawTexCoord;
 
     // part.geometry.vertexArray[i] = rawVertex[cookVertex[i]];
     Array<int>      cookVertex;
@@ -253,7 +253,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     Array<int>     faceTempIndex;
 
     Table<std::string, Material::Ref> materialLibrary;
-    Table<std::string, TriListSpec*> groupTable;
+    Table<std::string, TriListSpec*>  groupTable;
 
     TriListSpec* currentTriList = NULL;
     int numTris = 0;
@@ -327,6 +327,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
                     int t = 0;
 
                     if (ti.peek().type() == Token::SYMBOL) {
+                        // Optional texcoord and normal
                         ti.readSymbol("/");
                         if (ti.peek().type() == Token::NUMBER) {
                             t = ti.readNumber();
