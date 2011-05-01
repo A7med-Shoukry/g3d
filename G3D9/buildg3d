@@ -584,17 +584,17 @@ def jarTarget():
            print('javac or jar not found on this machine, skipping .jar creation!')
            return -1
        javac = 'javac'
+       jar = 'jar'
 
    print('Building G3D.jar...')
    mkdir('temp/G3D.jar/G3D')
    mkdir('build')
    
-   shell(javac + ' -d temp/G3D.jar G3D.jar/G3D/*.java')
-
-   ret = run('jar', ['-cf', 'build/G3D.jar', '-C', 'temp/G3D.jar', 'G3D'])
-
+   ret = run(javac, ['-d', 'temp/G3D.jar', 'G3D.jar/G3D/*.java'])
    if ret == 0:
-       print('Built build/G3D.jar')
+       ret = run(jar, ['-cf', 'build/G3D.jar', '-C', 'temp/G3D.jar', 'G3D'])
+       if ret == 0:
+           print('Built build/G3D.jar')
 
    return ret
 
