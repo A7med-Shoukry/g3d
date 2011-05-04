@@ -162,8 +162,15 @@ public:
 
 /**
  Use ReferenceCountedPointer<T> in place of T* in your program.
- T must subclass ReferenceCountedObject.
-@deprecated To be replaced by boost::shared_ptr in 7.0
+ T must subclass ReferenceCountedObject.  For convenience, most
+ classes define a "Ref" typedef member:
+
+ <code>
+  class Foo : public ReferenceCountedObject {
+  public:
+     typedef ReferenceCountedPointer<Foo> Ref;
+  };
+ </code>
  */
 template <class T>
 class ReferenceCountedPointer {
