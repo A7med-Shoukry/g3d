@@ -187,7 +187,7 @@ const Color3& Color3::gray() {
 
 
 const Color3& Color3::white() {
-    static Color3 c(1, 1, 1);
+    static Color3 c(1.0f, 1.0f, 1.0f);
     return c;
 }
 

@@ -283,14 +283,7 @@ public:
 
     /** The glossy exponent is packed so that 0 = no specular, 
         1 = mirror (infinity), and on the open interval \f$e \in (0, 1), ~ e \rightarrow 1024 e^2 + 1\f$.
-        This function abstracts the unpacking, since it may change in future versions.
-        
-        Because direct shading is specified for SuperBSDF to apply a
-        glossy reflection to mirror surfaces, e = 1 produces 1025 as
-        well.
-
-        Returns a large finite number for mirrors so that light
-        sources produce some visible highlights.
+        This function abstracts the unpacking, since it may change in future versions.        
         */
     static inline float unpackSpecularExponent(float e) {
         if (e >= 1.0) {
@@ -300,7 +293,8 @@ public:
         }
     }
 
-    /** Packing is \f$\frac{ \sqrt{ \frac{x - 1}{1024} } * 253 + 1}{255} \f$; infinity is packed to 1.0f */
+    /** Packing is \f$\frac{ \sqrt{ \frac{x - 1}{1024} } * 253 + 1}{255} \f$ for \f$x < 1023 \f$, 1.0f/254.0 for
+        \f$1024 \leq x < \infty\f$, and 1.0f for \f$x = \infty \f$ */
     static inline float packSpecularExponent(float x) {
         debugAssert(x > 0);
         // Never let the exponent go above the max representable non-mirror value in a uint8

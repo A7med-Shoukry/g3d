@@ -182,6 +182,7 @@ void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef
     
     m_model->pose(posed3D);
     Surface::sortAndRender(rd, app->defaultCamera, posed3D, lighting, app->shadowMap);
+    //Surface::renderWireframe(rd, posed3D);
 
     for (int p = 0; p < posed3D.size(); ++p) {
         SuperSurface::Ref s = posed3D[p].downcast<SuperSurface>();

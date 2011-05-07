@@ -47,9 +47,9 @@
 #   endif
 
 #   ifdef _DEBUG
-#		pragma comment(lib, "GLG3Dd")
+#	pragma comment(lib, "GLG3Dd")
 #   else
-#		pragma comment(lib, "GLG3D")
+#	pragma comment(lib, "GLG3D")
 #   endif
 
 #endif
@@ -64,8 +64,6 @@
 #include "GLG3D/VertexBuffer.h"
 #include "GLG3D/VertexRange.h"
 #include "GLG3D/GFont.h"
-#include "GLG3D/SkyParameters.h"
-#include "GLG3D/Sky.h"
 #include "GLG3D/UserInput.h"
 #include "GLG3D/FirstPersonManipulator.h"
 #include "GLG3D/Draw.h"
@@ -123,7 +121,6 @@
 #include "GLG3D/FileDialog.h"
 #include "GLG3D/IconSet.h"
 
-#include "GLG3D/BackgroundWidget.h"
 #include "GLG3D/UprightSplineManipulator.h"
 #include "GLG3D/CameraControlWindow.h"
 #include "GLG3D/DeveloperWindow.h"
