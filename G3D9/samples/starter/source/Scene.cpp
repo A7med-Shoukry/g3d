@@ -123,6 +123,8 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     // Load the camera
     camera = any["camera"];
 
+
+    // Use the environment map as a skybox if there isn't one already, and vice versa
     if (any.containsKey("skyBox")) {
         Any sky = any["skyBox"];
 		sky.verifyType(Any::TABLE);
@@ -168,10 +170,8 @@ void Scene::onPose(Array<Surface::Ref>& surfaceArray) {
 }
 
 
-Entity::Ref Scene::intersectBounds(const Ray& ray, const Array<Entity::Ref>& exclude) {
+Entity::Ref Scene::intersectBounds(const Ray& ray, float& distance, const Array<Entity::Ref>& exclude) {
     Entity::Ref closest = NULL;
-#if 0
-    float distance = finf();
     
     for (int e = 0; e < m_entityArray.size(); ++e) {
         const Entity::Ref& entity = m_entityArray[e];
@@ -183,6 +183,24 @@ Entity::Ref Scene::intersectBounds(const Ray& ray, const Array<Entity::Ref>& exc
             }
         }
     }
-# endif
+
+    return closest;
+}
+
+
+Entity::Ref Scene::intersect(const Ray& ray, float& distance, const Array<Entity::Ref>& exclude) {
+    Entity::Ref closest = NULL;
+    
+    for (int e = 0; e < m_entityArray.size(); ++e) {
+        const Entity::Ref& entity = m_entityArray[e];
+        if (! exclude.contains(entity)) {
+            float intersection = entity->intersect(ray, distance);
+            if (intersection < distance) {
+                closest = entity;
+                distance = intersection;
+            }
+        }
+    }
+
     return closest;
 }

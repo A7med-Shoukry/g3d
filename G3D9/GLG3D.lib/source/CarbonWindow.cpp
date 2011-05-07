@@ -577,8 +577,6 @@ CarbonWindow::CarbonWindow
     
     //_glDrawable = (AGLDrawable) GetWindowPort(_window);
 
-
-
     if (! m_settings.fullScreen) {
         // Recommended by Apple, but crashes in full-screen mode
         //format = aglCreatePixelFormat(attribs);
@@ -1023,7 +1021,7 @@ bool CarbonWindow::makeMouseEvent(EventRef theEvent, GEvent& e) {
         if((point.x >= rect.left) && (point.y >= rect.top) && (point.x <= rect.right) && (point.y <= rect.bottom)) {
             // If the user wants to resize, we should allow them to.
             GetWindowBounds(_window, kWindowGrowRgn, &rectGrow);
-            if (!m_settings.fullScreen && m_settings.resizable && ((point.x >= rectGrow.left) && (point.y >= rectGrow.top))) {
+            if (! m_settings.fullScreen && m_settings.resizable && ((point.x >= rectGrow.left) && (point.y >= rectGrow.top))) {
                 return false;
             }
             
@@ -1032,25 +1030,45 @@ bool CarbonWindow::makeMouseEvent(EventRef theEvent, GEvent& e) {
             switch (eventKind) {
             case kEventMouseDown:
             case kEventMouseUp:
-                e.type = ((eventKind == kEventMouseDown) || (eventKind == kEventMouseDragged)) ? GEventType::MOUSE_BUTTON_DOWN : GEventType::MOUSE_BUTTON_UP;
-                e.button.x = point.x-rect.left;
-                e.button.y = point.y-rect.top;
+                if (kEventMouseButtonPrimary == button) {
+                    _mouseButtons[0] = (eventKind == kEventMouseDown);
+                } else if(kEventMouseButtonTertiary == button) {
+                    _mouseButtons[2] = (eventKind == kEventMouseDown);
+                } else if (kEventMouseButtonSecondary == button) {
+                    _mouseButtons[1] = (eventKind == kEventMouseDown);
+                }
+
+                // Fall through
+            case kEventWindowClickContentRgn:
+                if (eventKind == kEventMouseDown) {
+                    e.type = GEventType::MOUSE_BUTTON_DOWN;
+                    e.button.state = SDL_PRESSED;
+                } else if (eventKind == kEventWindowClickContentRgn) {
+                    e.type = GEventType::MOUSE_BUTTON_CLICK;
+                    int c;
+                    GetEventParameter(theEvent, kEventParamClickCount, typeUInt32, NULL, sizeof(int), NULL, &c);
+                    e.button.numClicks = c;
+                } else {
+                    e.type = GEventType::MOUSE_BUTTON_UP;
+                    e.button.state = SDL_RELEASED;
+                }
+
+                e.button.x = point.x - rect.left;
+                e.button.y = point.y - rect.top;
                 
                 // Mouse button index
                 e.button.which = 0;		// TODO: Which Mouse is Being Used?
-                e.button.state = ((eventKind == kEventMouseDown) || (eventKind == kEventMouseDragged)) ? SDL_PRESSED : SDL_RELEASED;
                 
-                if(kEventMouseButtonPrimary == button) {
+                if (kEventMouseButtonPrimary == button) {
                     e.button.button = 0;
-                    _mouseButtons[0] = (eventKind == kEventMouseDown);
                 } else if(kEventMouseButtonTertiary == button) {
                     e.button.button = 1;
-                    _mouseButtons[2] = (eventKind == kEventMouseDown);
                 } else if (kEventMouseButtonSecondary == button) {
                     e.button.button = 2;
-                    _mouseButtons[1] = (eventKind == kEventMouseDown);
                 }
+
                 return true;
+
             case kEventMouseDragged:
             case kEventMouseMoved:
                 e.motion.type = GEventType::MOUSE_MOTION;
@@ -1090,12 +1108,12 @@ bool CarbonWindow::makeMouseEvent(EventRef theEvent, GEvent& e) {
 #pragma mark Protected - CarbonWindow - Event Generation:
 
 void CarbonWindow::getOSEvents(Queue<GEvent>& events) {
-    EventRef		theEvent;
-    EventTargetRef	theTarget;
+    EventRef	    theEvent;
+    EventTargetRef  theTarget;
     OSStatus        osErr = noErr;
     GEvent          e;
     
-    osErr = ReceiveNextEvent(0, NULL,kEventDurationNanosecond,true, &theEvent);
+    osErr = ReceiveNextEvent(0, NULL, kEventDurationNanosecond, true, &theEvent);
     
     // If we've gotten no event, we should just return false so that
     // a render pass can occur.
@@ -1107,8 +1125,22 @@ void CarbonWindow::getOSEvents(Queue<GEvent>& events) {
     // equivalent. This is going to get messy.
     UInt32 eventClass = GetEventClass(theEvent);
     UInt32 eventKind = GetEventKind(theEvent);
-    
+    //debugPrintf("Event class = %c%c%c%c, kind = %d\n", (eventClass >> 24) & 0xFF, (eventClass >> 16) & 0xFF, (eventClass >> 8) & 0xFF, eventClass & 0xFF, eventKind);
     switch (eventClass) { 
+    case kEventClassWindow:
+        if (_windowActive) {
+            if (eventKind == kEventWindowClickContentRgn) {
+                // TODO: The current version does not receive these events. 
+                // I don't know why.
+
+                // Click is a window event, not a mouse event
+                if (makeMouseEvent(theEvent, e)) {
+                    events.pushBack(e);
+                }
+            }
+        }
+        break;
+
     case kEventClassMouse:
         // makeMouseEvent will only return true if we need to handle
         // the mouse event. Otherwise it will return false and allow
@@ -1116,6 +1148,13 @@ void CarbonWindow::getOSEvents(Queue<GEvent>& events) {
         if (_windowActive) {
             if (makeMouseEvent(theEvent, e)) {
                 events.pushBack(e);
+                
+                // If this was a mouse up, also generate the click event
+                if (eventKind == kEventMouseUp) {
+                    e.type = GEventType::MOUSE_BUTTON_CLICK;
+                    e.button.numClicks = 1;
+                    events.pushBack(e);
+                }
             }
         }
         break;
@@ -1161,6 +1200,7 @@ void CarbonWindow::getOSEvents(Queue<GEvent>& events) {
             }
         } 
         break;
+
     case kHighLevelEvent:
     case kEventAppleEvent:
     case kEventClassCommand:

@@ -57,14 +57,23 @@ public:
     /** Enumerate the names of all available scenes. */
     static Array<std::string> sceneNames();
 
-	/** Returns the Entity whose conservative bounds are first
-	    intersected by \a ray, excluding Entitys in \a exclude.  
-		Useful for mouse selection.  Returns NULL if none are intersected.
+    /** Returns the Entity whose conservative bounds are first
+        intersected by \a ray, excluding Entity%s in \a exclude.  
+        Useful for mouse selection and coarse hit-scan collision detection.  
+        Returns NULL if none are intersected.
+        
+        Note that this may not return the closest Entity if another's bounds
+        project in front of it.
 
-		Note that this may not return the closest Entity if another's bounds
-		project in front of it.
-     */	  
-	Entity::Ref intersectBounds(const Ray& ray, const Array<Entity::Ref>& exclude = Array<Entity::Ref>());
+        \param distance Maximum distance at which to allow selection
+        (e.g., finf()).  On return, this is the distance to the
+        object.
+     */  
+    Entity::Ref intersectBounds(const Ray& ray, float& distance, const Array<Entity::Ref>& exclude = Array<Entity::Ref>());
+
+    /** Performs very precise (usually, ray-triangle) intersection, and is much slower
+        than intersectBounds.  */
+    Entity::Ref intersect(const Ray& ray, float& distance, const Array<Entity::Ref>& exclude = Array<Entity::Ref>());
 };
 
 #endif

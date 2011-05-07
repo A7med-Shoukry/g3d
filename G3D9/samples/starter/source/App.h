@@ -17,6 +17,12 @@ class App : public GApp {
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;
 
+    /** Used for enabling dragging of objects with m_entityManipulator.*/
+    Entity::Ref         m_selectedEntity;
+
+    
+    ThirdPersonManipulator::Ref m_entityManipulator;
+
     bool                m_showAxes;
     bool                m_showLightSources;
     bool                m_showWireframe;

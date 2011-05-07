@@ -50,6 +50,10 @@ void App::onInit() {
     m_showAxes         = true;
     m_showWireframe    = false;
 
+    m_entityManipulator = ThirdPersonManipulator::create();
+    m_entityManipulator->setEnabled(false);
+    addWidget(m_entityManipulator);
+
     makeGUI();
 
     // Start wherever the developer HUD last marked as "Home"
@@ -136,11 +140,20 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     // advancement based on any of the three arguments.
     if (m_scene.notNull()) {
         m_scene->onSimulation(sdt);
+
+        if (m_selectedEntity.notNull()) {
+            // Apply the manipulator
+            m_selectedEntity->setFrame(m_entityManipulator->frame());
+        }
     }
 }
 
 
 bool App::onEvent(const GEvent& event) {
+    if (event.type == GEventType::MOUSE_BUTTON_CLICK) {
+        debugPrintf("Click, button = %d\n",  event.button.button);
+    }
+
     if (GApp::onEvent(event)) {
         return true;
     }
@@ -150,6 +163,23 @@ bool App::onEvent(const GEvent& event) {
         // the screen horizontally.
         debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
         return true;
+    }
+
+    if ((event.type == GEventType::MOUSE_BUTTON_CLICK) && (event.button.button == 0)) {
+        // Left click: select by casting a ray through the center of the pixel
+        const Ray& ray = defaultCamera.worldRay(event.button.x + 0.5f, event.button.y + 0.5f, renderDevice->viewport());
+        
+        float distance = finf();
+        m_selectedEntity = m_scene->intersect(ray, distance);
+
+        if (m_selectedEntity.notNull()) {
+            debugPrintf("Selected something\n");
+            m_entityManipulator->setFrame(m_selectedEntity->frame());
+            m_entityManipulator->setEnabled(true);
+        } else {
+            debugPrintf("Selected missed\n");
+            m_entityManipulator->setEnabled(false);
+        }
     }
 
     // If you need to track individual UI events, manage them here.
