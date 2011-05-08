@@ -40,7 +40,7 @@ GuiText::GuiText
 
 
 GuiText::GuiText
-(const char* text) {
+(const char* text) : m_sourceRect(Rect2D::empty()) {
     append(text);
 }
 

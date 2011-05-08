@@ -475,6 +475,7 @@ private:
         Vector2      defocused;
         Vector2      windowDefocused;
 
+        WindowButton() : base(Rect2D::empty()) {}
         void load(const Any& any);
     };
 
