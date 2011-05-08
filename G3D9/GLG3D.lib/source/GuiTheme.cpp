@@ -924,6 +924,7 @@ void GuiTheme::makeThemeFromSourceFiles(
 }
 
 void GuiTheme::pushClientRect(const Rect2D& r) {
+    debugAssert(! r.isEmpty());
     debugAssert(m_inRendering);
 
     // Must draw old text since we don't keep track of which text 

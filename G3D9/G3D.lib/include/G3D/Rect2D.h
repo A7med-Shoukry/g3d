@@ -117,6 +117,8 @@ private:
         return false;
     }
 
+    /** Uninitialized constructor */
+    Rect2D(bool b) {}
 public:
 
     /** \param any Must either Rect2D::xywh(#, #, #, #) or Rect2D::xyxy(#, #, #, #)*/
@@ -130,6 +132,7 @@ public:
 
     static const Rect2D& empty();
 
+    /** Returns true if this is the empty set, which is distinct from a zero-area rectangle. */
     inline bool isEmpty() const {
         return min.isNaN() && max.isNaN();
     }
@@ -223,7 +226,7 @@ public:
     }
 
     Rect2D lerp(const Rect2D& other, float alpha) const {
-        Rect2D out;
+        Rect2D out(false);
         
         out.min = min.lerp(other.min, alpha);
         out.max = max.lerp(other.max, alpha);
@@ -232,7 +235,7 @@ public:
     }
 
     static Rect2D xyxy(float x0, float y0, float x1, float y1) {
-        Rect2D r;
+        Rect2D r(false);
         
         r.min.x = G3D::min(x0, x1);
         r.min.y = G3D::min(y0, y1);
@@ -243,7 +246,7 @@ public:
     }
 
     static Rect2D xyxy(const Point2& v0, const Point2& v1) {
-        Rect2D r;
+        Rect2D r(false);
 
         r.min = v0.min(v1);
         r.max = v0.max(v1);

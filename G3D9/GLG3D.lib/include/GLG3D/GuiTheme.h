@@ -245,6 +245,7 @@ private:
          */
         Rect2D          source;
 
+        Fill() : source(Rect2D::empty()) {}
         void load(const Any& any);
         void render(class RenderDevice* rd, const Rect2D& bounds, const Vector2& texOffset) const;        
     };
@@ -257,6 +258,8 @@ private:
         Rect2D         left;
         Fill           center;
         Rect2D         right;
+
+        StretchRectH() : left(Rect2D::empty()), right(Rect2D::empty()) {}
 
         void load(const Any& any);
 
@@ -430,6 +433,7 @@ private:
         public:
             Rect2D    checked;
             Rect2D    unchecked;
+            Pair() : checked(Rect2D::empty()), unchecked(Rect2D::empty()) {}
             void load(const Any& any);
         };
 
@@ -525,6 +529,7 @@ private:
             Focus            enabled;
             Vector2          disabled;
 
+            Thumb() : base(Rect2D::empty()) {}
             void load(const Any& any);
         };
 

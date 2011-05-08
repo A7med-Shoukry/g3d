@@ -156,6 +156,7 @@
     <ClCompile Include="..\GLG3D.lib\source\GuiWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\IconSet.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\IFSModel.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\Lighting.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material_Specification.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\MD2Model.cpp" />
@@ -171,8 +172,6 @@
     <ClCompile Include="..\GLG3D.lib\source\ShadowMap.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\shadowVolume.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shape.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\Sky.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\SkyParameters.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperBSDF.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperShader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperSurface.cpp" />
@@ -268,7 +267,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\shadowVolume.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shape.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Sky.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SkyParameters.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperBSDF.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperShader.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperSurface.h" />

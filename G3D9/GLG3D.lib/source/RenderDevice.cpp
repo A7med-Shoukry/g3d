@@ -562,7 +562,9 @@ RenderDevice::RenderState::RenderState(int width, int height, int htutc) :
 
     depthTest(DEPTH_LEQUAL),
     alphaTest(ALPHA_ALWAYS_PASS),
-    alphaReference(0.0) {
+    alphaReference(0.0),
+    
+    clip2D(Rect2D::inf()) {
 
     drawFramebuffer = NULL;
     readFramebuffer = NULL;
@@ -1500,14 +1502,18 @@ void RenderDevice::setClip2D(const Rect2D& clip) {
     minStateChange();
 
     if (clip.isFinite()) {
+        if (clip.isEmpty()) {
+            m_state.clip2D = Rect2D::xywh(0,0,0,0);
+        } else {
+            m_state.clip2D = clip;
+        }
         // set the new clip Rect2D
         minGLStateChange();
-        m_state.clip2D = clip;
 
-        int clipX0 = iFloor(clip.x0());
-        int clipY0 = iFloor(clip.y0());
-        int clipX1 = iCeil(clip.x1());
-        int clipY1 = iCeil(clip.y1());
+        int clipX0 = iFloor(m_state.clip2D.x0());
+        int clipY0 = iFloor(m_state.clip2D.y0());
+        int clipX1 = iCeil(m_state.clip2D.x1());
+        int clipY1 = iCeil(m_state.clip2D.y1());
 
         int y = 0;
         if (invertY()) {
