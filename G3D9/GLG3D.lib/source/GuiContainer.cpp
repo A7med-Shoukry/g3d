@@ -14,11 +14,11 @@
 namespace G3D {
 
 GuiContainer::GuiContainer(class GuiWindow* gui, const class GuiText& text) :
-    GuiControl(gui, text) {}
+    GuiControl(gui, text), m_clientRect(Rect2D::empty()) {}
 
 
 GuiContainer::GuiContainer(class GuiContainer* parent, const class GuiText& text) :
-    GuiControl(parent, text) {}
+    GuiControl(parent, text), m_clientRect(Rect2D::empty()) {}
 
     
 void GuiContainer::setRect(const Rect2D& rect) {
@@ -28,6 +28,7 @@ void GuiContainer::setRect(const Rect2D& rect) {
 
 
 void GuiContainer::increaseBounds(const Vector2& extent) {
+    debugAssert(! m_clientRect.isEmpty());
     if ((m_clientRect.width() < extent.x) || (m_clientRect.height() < extent.y)) {
         // Create the new client rect
         Vector2 newExtent = extent.max(m_clientRect.wh());
