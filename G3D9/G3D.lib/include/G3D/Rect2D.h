@@ -129,9 +129,13 @@ public:
 
     Rect2D(const Rect2D& r) : min(r.min), max(r.max) {}
 
-    /** Creates the empty set rectangle. */
-    Rect2D() : min(fnan(), fnan()), max(fnan(), fnan()) {}
+    /** Creates the empty set rectangle.
+    KNOWN BUG: The current version returns the zero rectangle.
+    */
+    // TODO: uncomment the next line
+    Rect2D() {}// : min(fnan(), fnan()), max(fnan(), fnan()) {}
 
+    /** KNOWN BUG: The current version returns the zero rectangle. */
     static const Rect2D& empty();
 
     /** Returns true if this is the empty set, which is distinct from a zero-area rectangle. */
