@@ -14,12 +14,12 @@
 
 namespace G3D {
 
-GuiControl::GuiControl(GuiWindow* gui, const GuiText& caption) : m_enabled(true), m_gui(gui), m_parent(NULL), m_visible(true) {
+GuiControl::GuiControl(GuiWindow* gui, const GuiText& caption) : m_enabled(true), m_gui(gui), m_parent(NULL), m_rect(Rect2D::empty()), m_clickRect(Rect2D::empty()), m_visible(true) {
     m_eventSource = this;
     setCaption(caption);
 }
 
-GuiControl::GuiControl(GuiContainer* parent, const GuiText& caption) : m_enabled(true), m_gui(parent->m_gui), m_parent(parent), m_visible(true) {
+GuiControl::GuiControl(GuiContainer* parent, const GuiText& caption) : m_enabled(true), m_gui(parent->m_gui), m_parent(parent), m_rect(Rect2D::empty()), m_clickRect(Rect2D::empty()), m_visible(true) {
     m_eventSource = this;
     setCaption(caption);
 }
@@ -30,15 +30,15 @@ GuiWindow* GuiControl::window() const {
 }
 
 
-Vector2 GuiControl::fromOSWindowCoords(const Vector2& v) const {
-    Vector2 xform = toOSWindowCoords(Vector2(0, 0));
+Point2 GuiControl::fromOSWindowCoords(const Point2& v) const {
+    Vector2 xform = toOSWindowCoords(Point2(0, 0));
     return v - xform;
 }
 
 
-Vector2 GuiControl::toOSWindowCoords(const Vector2& v) const {
+Point2 GuiControl::toOSWindowCoords(const Point2& v) const {
 
-    Vector2 result = v + m_rect.x0y0();
+    Point2 result = v + m_rect.x0y0();
 
     const GuiContainer* current = m_parent;
 
@@ -53,6 +53,7 @@ Vector2 GuiControl::toOSWindowCoords(const Vector2& v) const {
     // result is now relative to the OSWindow
     return result;
 }
+
 
 void GuiControl::setFocused(bool b) {
     if (! b) {
