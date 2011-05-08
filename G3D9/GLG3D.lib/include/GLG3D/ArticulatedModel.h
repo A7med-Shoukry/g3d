@@ -246,7 +246,7 @@ public:
         MeshAlg::Geometry           geometry;
 	
         /** CPU texture coordinates. */
-        Array<Vector2>              texCoordArray;
+        Array<Point2>               texCoordArray;
         
         /** CPU per-vertex tangent vectors, typically computed by computeNormalsAndTangentSpace.
             Packs two tangents, T1 and T2 that form a reference frame with the normal such that 
@@ -279,6 +279,12 @@ public:
             geometry.clear();
             indexArray.clear();
         }
+
+
+        /** \param R in the parent's reference frame 
+         */
+        bool intersect(const Ray& R, int myPartIndex, const ArticulatedModel::Ref& model, const Pose& pose, float& maxDistance,
+                       int& partIndex, int& triListIndex, int& triIndex, float& u, float& v) const;
 
 
         /** Creates a new tri list, adds it to the Part, and returns it.
@@ -786,6 +792,22 @@ public:
     /** Doubles the geometry for any twoSided triList and then removes the flag. 
       You need to call updateAll() after invoking this. */
     void replaceTwoSidedWithGeometry();
+
+    /**
+       Returns true if ray \a R intersects this model, when it has \a
+       cframe and \a pose, at a distance less than \a maxDistance.  If
+       so, sets maxDistance to the intersection distance and sets the
+       indices of the part, triList within the part, and triangle
+       first vertex index within the triList.  \a u and \a v are the
+       barycentric coordinates of vertices triIndex and triIndex + 1.
+       The barycentric coordinate of vertex <code>triIndex + 2</code>
+       is <code>1 - u - v</code>.
+
+       This is primarily intended for mouse selection.  For ray tracing
+       or physics, consider G3D::TriTree instead.
+     */
+    bool intersect(const Ray& R, const CFrame& cframe, const Pose& pose, float& maxDistance, int& partIndex, 
+                   int& triListIndex, int& triIndex, float& u, float& v) const;
 };
 
 }

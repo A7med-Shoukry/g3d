@@ -1,9 +1,9 @@
 /**
- @file ArticulatedModel.cpp
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \file source/ArticulatedModel.cpp
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2003-09-14
- @edited  2010-09-18
+ \created 2003-09-14
+ \edited  2011-06-18
  */
 
 #include "GLG3D/ArticulatedModel.h"
@@ -11,6 +11,7 @@
 #include "G3D/ThreadSet.h"
 #include "GLG3D/GLCaps.h"
 #include "G3D/Any.h"
+#include "G3D/Ray.h"
 #include "G3D/FileSystem.h"
 #include "GLG3D/BSPMAP.h"
 
@@ -169,6 +170,29 @@ void ArticulatedModel::setStorage(ImageStorage s) {
             part.triList[t]->material->setStorage(s);
         }
     }
+}
+
+
+bool ArticulatedModel::intersect
+(const Ray& R, const CFrame& cframe, const Pose& pose, float& maxDistance, int& partIndex, 
+ int& triListIndex, int& triIndex, float& u, float& v) const {
+ 
+    // Take the ray to object space
+    const Ray& osRay = cframe.toObjectSpace(R);
+
+    const ArticulatedModel::Ref ptr = this;
+    bool result = false;
+    // Start with the roots
+    for (int i = 0; i < partArray.size(); ++i) {
+        if (partArray[i].parent == -1) {
+            // This is a root
+            if (partArray[i].intersect(osRay, i, ptr, pose, maxDistance, partIndex, triListIndex, triIndex, u, v)) {
+                result = true;
+            }
+        }
+    }
+   
+    return result;
 }
 
 
@@ -429,6 +453,77 @@ void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& pr
         }
     }
     // s.after("Create parts");
+}
+
+
+bool ArticulatedModel::Part::intersect
+(const Ray& R, int myPartIndex, const ArticulatedModel::Ref& model, const Pose& pose, float& maxDistance,
+ int& partIndex, int& triListIndex, int& triIndex, float& u, float& v) const {
+    CoordinateFrame frame;
+
+    if (pose.cframe.containsKey(name)) {
+        frame = cframe * pose.cframe[name];
+    } else {
+        frame = cframe;
+    }
+
+    debugAssert(! isNaN(frame.translation.x));
+    debugAssert(! isNaN(frame.rotation[0][0]));
+
+    const Ray& osRay = frame.toObjectSpace(R);
+
+    bool result = false;
+    if (hasGeometry()) {
+
+        for (int t = 0; t < triList.size(); ++t) {
+            const TriList::Ref& list = triList[t];
+
+            const Point3* vertex = geometry.vertexArray.getCArray();
+
+            if (list.notNull() && (list->indexArray.size() > 0) && (osRay.intersectionTime(list->boxBounds) < maxDistance)) {
+                const Array<int>& indexArray = list->indexArray;
+                const int N = indexArray.size();
+                const int* index = indexArray.getCArray();
+
+                // Check for intersections
+                for (int i = 0; i < N; i += 3) {
+                    
+                    float w0 = 0, w1 = 0, w2 = 0;
+                    const float temp = osRay.intersectionTime
+                        (vertex[index[i]], 
+                         vertex[index[i + 1]],
+                         vertex[index[i + 2]],
+                         w0,
+                         w1,
+                         w2);
+
+                    if (temp < maxDistance) {
+                        maxDistance = temp;
+                        partIndex = myPartIndex;
+                        triIndex = i;
+                        triListIndex = t;
+                        result = true;
+                        u = w0;
+                        v = w1;
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Recursively check subparts and pass along our coordinate frame.
+    for (int i = 0; i < subPartArray.size(); ++i) {
+        const int p = subPartArray[i];
+        debugAssertM(model->partArray[p].parent == myPartIndex,
+            "Parent and child pointers do not match.");(void)myPartIndex;
+
+        if (model->partArray[p].intersect(osRay, p, model, pose, maxDistance, partIndex, triListIndex, triIndex, u, v)) {
+            result = true;
+        }
+    }
+
+    return result;
 }
 
 

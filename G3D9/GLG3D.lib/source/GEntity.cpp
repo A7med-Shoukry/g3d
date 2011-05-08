@@ -182,7 +182,23 @@ bool GEntity::intersectBounds(const Ray& R, float& maxDistance) const {
 
 
 bool GEntity::intersect(const Ray& R, float& maxDistance) const {
-    // TODO
+    switch (m_modelType) {
+    case ARTICULATED_MODEL:
+        {
+            int partIndex    = -1;
+            int triListIndex = -1; 
+            int triIndex     = -1;
+            float u = 0, v = 0;
+            return m_artModel->intersect(R, m_frame, m_artPose, maxDistance, partIndex, triListIndex, triIndex, u, v);
+        }
+        break;
+
+    case MD2_MODEL:
+    case MD3_MODEL:
+        return intersectBounds(R, maxDistance);
+        break;
+    }
+
     return false;
 }
 
