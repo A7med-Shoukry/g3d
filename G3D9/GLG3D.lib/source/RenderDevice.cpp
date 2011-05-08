@@ -553,7 +553,7 @@ RenderDevice::RenderState::RenderState(int width, int height, int htutc) :
     // WARNING: this must be kept in sync with the initialization code
     // in init();
     viewport(Rect2D::xywh(0, 0, width, height)),
-
+    clip2D(Rect2D::inf()),
     useClip2D(false),
 
     depthWrite(true),
@@ -562,9 +562,7 @@ RenderDevice::RenderState::RenderState(int width, int height, int htutc) :
 
     depthTest(DEPTH_LEQUAL),
     alphaTest(ALPHA_ALWAYS_PASS),
-    alphaReference(0.0),
-    
-    clip2D(Rect2D::inf()) {
+    alphaReference(0.0) {
 
     drawFramebuffer = NULL;
     readFramebuffer = NULL;
