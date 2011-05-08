@@ -167,7 +167,7 @@ protected:
     Modal*              modal;
 
     /** Window label */
-    GuiText          m_text;
+    GuiText             m_text;
 
     /** Window border bounds. Actual rendering may be outside these bounds. */
     Rect2D              m_rect;

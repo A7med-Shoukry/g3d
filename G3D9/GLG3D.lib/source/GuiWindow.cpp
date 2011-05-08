@@ -52,9 +52,11 @@ GuiWindow::GuiWindow()
 
 
 GuiWindow::GuiWindow(const GuiText& text, GuiThemeRef skin, const Rect2D& rect, GuiTheme::WindowStyle style, CloseAction close) 
-    : modal(NULL), m_text(text), m_rect(rect), m_visible(true), 
+    : modal(NULL), m_text(text), m_rect(rect),
+      m_clientRect(rect), m_visible(true), 
       m_style(style), m_closeAction(close), m_skin(skin), 
       inDrag(false),
+      dragOriginalRect(Rect2D::empty()),
       mouseOverGuiControl(NULL), 
       keyFocusGuiControl(NULL),
       m_enabled(true),

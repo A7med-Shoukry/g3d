@@ -23,7 +23,8 @@
 namespace G3D {
 
 namespace _internal {    
-    Morph::Morph() : active(false) {}
+
+Morph::Morph() : active(false), start(Rect2D::empty()), end(Rect2D::empty()) {}
 
 void Morph::morphTo(const Rect2D& startPos, const Rect2D& endPos) {
     active = true;
