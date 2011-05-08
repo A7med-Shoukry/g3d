@@ -2,6 +2,7 @@
 #include "G3D/Box.h"
 #include "G3D/AABox.h"
 #include "G3D/Sphere.h"
+#include "G3D/Ray.h"
 
 namespace G3D {
 
@@ -121,6 +122,8 @@ void GEntity::onSimulation(GameTime absoluteTime, GameTime deltaTime) {
 
 
 void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
+    const int oldLen = surfaceArray.size();
+
     switch (m_modelType) {
     case ARTICULATED_MODEL:
         m_artModel->pose(surfaceArray, m_frame, m_artPose);
@@ -134,33 +137,53 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
         m_md3Model->pose(surfaceArray, m_frame, m_md3Pose);
         break;
     }
+
+    // Compute bounds
+    m_lastBoxBounds = AABox::empty();
+    m_lastSphereBounds = Sphere(m_frame.translation, 0);
+    for (int i = oldLen; i < surfaceArray.size(); ++i) {
+        AABox b;
+        Sphere s;
+        const Surface::Ref& surf = surfaceArray[i];
+        
+        surf->getWorldSpaceBoundingBox(b);
+        surf->getWorldSpaceBoundingSphere(s);
+        m_lastBoxBounds.merge(b);
+        m_lastSphereBounds.radius = max(m_lastSphereBounds.radius,
+                                        (s.center - m_lastSphereBounds.center).length() + s.radius);
+    }
 }
 
 
-void GEntity::getBounds(AABox& box) const {
-    box = AABox(-Vector3::inf(), Vector3::inf());
+void GEntity::getLastBounds(AABox& box) const {
+    box = m_lastBoxBounds;
 }
 
 
-void GEntity::getBounds(Box& box) const {
-    box = Box(-Vector3::inf(), Vector3::inf());
+void GEntity::getLastBounds(Box& box) const {
+    box = m_lastBoxBounds;
 }
 
 
-void GEntity::getBounds(Sphere& sphere) const {
-    sphere = Sphere(m_frame.translation, finf());
+void GEntity::getLastBounds(Sphere& sphere) const {
+    sphere = m_lastSphereBounds;
 }
 
 
-float GEntity::intersectBounds(const Ray& R, float maxDistance) const {
+bool GEntity::intersectBounds(const Ray& R, float& maxDistance) const {
+    float t = R.intersectionTime(m_lastBoxBounds);
+    if (t < maxDistance) {
+        maxDistance = t;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+bool GEntity::intersect(const Ray& R, float& maxDistance) const {
     // TODO
-    return finf();
-}
-
-
-float GEntity::intersect(const Ray& R, float maxDistance) const {
-    // TODO
-    return finf();
+    return false;
 }
 
 }

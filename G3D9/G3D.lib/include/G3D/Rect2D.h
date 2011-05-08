@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
   \created 2003-11-13
-  \created 2010-11-16
+  \created 2011-06-16
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
@@ -125,20 +125,24 @@ public:
     /** Converts the Rect2D to an Any. */
     Any toAny() const;
 
-    Rect2D() : min(0, 0), max(0, 0) {}
+    /** Creates the empty set rectangle. */
+    Rect2D() : min(fnan(), fnan()), max(fnan(), fnan()) {}
+
+    static const Rect2D& empty();
+
+    inline bool isEmpty() const {
+        return min.isNaN() && max.isNaN();
+    }
 
     /** Creates a rectangle at 0,0 with the given width and height*/
     Rect2D(const Vector2& wh) : min(0, 0), max(wh.x, wh.y) {}
 
-    /** Computes a rectangle that contains both @a a and @a b.  
-        Note that even if @a or @b has zero area, its origin will be included.*/
-    Rect2D(const Rect2D& a, const Rect2D& b) {
-        min = a.min.min(b.min);
-        max = a.max.max(b.max);
-    }
-
     Vector2 extent() const {
-        return max - min;
+        if (isEmpty()) {
+            return Vector2::zero();
+        } else {
+            return max - min;
+        }
     }
 
     /** @brief Uniformly random point on the interior */
@@ -148,11 +152,19 @@ public:
     }
 
     float width() const {
-        return max.x - min.x;
+        if (isEmpty()) {
+            return 0;
+        } else {
+            return max.x - min.x;
+        }
     }
 
     float height() const {
-        return max.y - min.y;
+        if (isEmpty()) {
+            return 0;
+        } else {
+            return max.y - min.y;
+        }
     }
 
     float x0() const {
@@ -191,7 +203,11 @@ public:
 
     /** Width and height */
     Vector2 wh() const {
-        return max - min;
+        if (isEmpty()) {
+            return Vector2::zero();
+        } else {
+            return max - min;
+        }
     }
 
     Point2 center() const {
@@ -353,6 +369,22 @@ public:
         return Rect2D::xywh(newX, newY, newW, newH);
     }
 
+    void merge(const Rect2D& other) {
+        if (isEmpty()) {
+            *this = other;
+        } else if (! other.isEmpty()) {
+            min = min.min(other.min);
+            max = max.max(other.max);
+        }
+    }
+
+    /** Computes a rectangle that contains both @a a and @a b.  
+        Note that even if @a or @b has zero area, its origin will be included.*/
+    Rect2D(const Rect2D& a, const Rect2D& b) {
+        *this = a;
+        merge(b);
+    }
+
     /** 
      Clips so that the rightmost point of the outPoly is at rect.x1 (e.g. a 800x600 window produces
      rightmost point 799, not 800).  The results are suitable for pixel rendering if iRounded.
@@ -406,15 +438,16 @@ public:
     }
 
     /**
-     Returns the overlap region between the two rectangles.  This may have zero area
-     if they do not intersect.  See the two-Rect2D constructor for a way to compute
-     a union-like rectangle.
+     Returns the overlap region between the two rectangles.  This may
+     have zero area if they do not intersect.  See the two-Rect2D
+     constructor and merge() for a way to compute a union-like
+     rectangle.
      */
     Rect2D intersect(const Rect2D& other) const {
         if (intersects(other)) {
             return Rect2D::xyxy(min.max(other.min), max.min(other.max));
-        }else{
-            return Rect2D::xywh(0, 0, 0, 0);
+        } else {
+            return empty();
         }
     }
 };

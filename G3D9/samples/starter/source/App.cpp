@@ -170,14 +170,12 @@ bool App::onEvent(const GEvent& event) {
         const Ray& ray = defaultCamera.worldRay(event.button.x + 0.5f, event.button.y + 0.5f, renderDevice->viewport());
         
         float distance = finf();
-        m_selectedEntity = m_scene->intersect(ray, distance);
+        m_selectedEntity = m_scene->intersectBounds(ray, distance);
 
         if (m_selectedEntity.notNull()) {
-            debugPrintf("Selected something\n");
             m_entityManipulator->setFrame(m_selectedEntity->frame());
             m_entityManipulator->setEnabled(true);
         } else {
-            debugPrintf("Selected missed\n");
             m_entityManipulator->setEnabled(false);
         }
     }

@@ -20,22 +20,36 @@
 namespace G3D {
 
 AABox::AABox(const Any& a) {
-    a.verifyName("AABox");
-    a.verifyType(Any::ARRAY);
-    if (a.size() == 1) {
-        *this = AABox(Point3(a[0]));
-    } else if (a.size() == 2) {
-        set(Point3(a[0]), Point3(a[1]));
+    if (a.name() == "AABox::empty") {
+        *this = AABox::empty();
     } else {
-        a.verify(false, "AABox must recieve exactly 1 or two arguments.");
+        a.verifyName("AABox");
+        a.verifyType(Any::ARRAY);
+        if (a.size() == 1) {
+            *this = AABox(Point3(a[0]));
+        } else if (a.size() == 2) {
+            set(Point3(a[0]), Point3(a[1]));
+        } else {
+            a.verify(false, "AABox must recieve exactly 1 or two arguments.");
+        }
     }
 }
 
 
 Any AABox::toAny() const {
-    Any a(Any::ARRAY, "AABox");
-    a.append(lo, hi);
-    return a;
+    if (isEmpty()) {
+        return Any(Any::ARRAY, "AABox::empty");
+    } else {
+        Any a(Any::ARRAY, "AABox");
+        a.append(lo, hi);
+        return a;
+    }
+}
+
+
+const AABox& AABox::empty() {
+    static const AABox b;
+    return b;
 }
 
 

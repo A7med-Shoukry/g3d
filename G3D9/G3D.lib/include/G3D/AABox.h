@@ -34,13 +34,16 @@ private:
     /** Optional argument placeholder */
     static int dummy;
 
+    /** NaN if empty */
     Point3  lo;
+
+    /** NaN if empty */
     Point3  hi;
 
 public:
 
-    /** Creates a zero-area box at the origin */
-    AABox() {}
+    /** Creates the empty bounds */
+    AABox() : lo(fnan(), fnan(), fnan()), hi(fnan(), fnan(), fnan()) {}
 
     /**
      Constructs a zero-area AABox at v.
@@ -56,6 +59,10 @@ public:
     explicit AABox(const class Any& a);
 
     Any toAny() const;
+    
+    bool isEmpty() const {
+        return lo.isNaN();
+    }
 
     /** Assumes that low is less than or equal to high along each dimension.
         To have this automatically enforced, use
@@ -72,6 +79,7 @@ public:
             (low.x <= high.x) &&
             (low.y <= high.y) &&
             (low.z <= high.z));
+        debugAssert(! low.isNaN() && ! high.isNaN());
         lo = low;
         hi = high;
     }
@@ -80,13 +88,22 @@ public:
      Grows to include the bounds of a
      */
     inline void merge(const AABox& a) {
-        lo = lo.min(a.lo);
-        hi = hi.max(a.hi);
+        if (isEmpty()) {
+            lo = a.lo;
+            hi = a.hi;
+        } else if (! a.isEmpty()) {
+            lo = lo.min(a.lo);
+            hi = hi.max(a.hi);
+        }
     }
 
     inline void merge(const Point3& a) {
-        lo = lo.min(a);
-        hi = hi.max(a);
+        if (isEmpty()) {
+            lo = hi = a;
+        } else {
+            lo = lo.min(a);
+            hi = hi.max(a);
+        }
     }
 
     void serialize(class BinaryOutput& b) const;
@@ -94,13 +111,15 @@ public:
     void deserialize(class BinaryInput& b);
 
     inline bool isFinite() const {
-        return lo.isFinite() && hi.isFinite();
+        return isEmpty() || (lo.isFinite() && hi.isFinite());
     }
 
+    /** Returns not-a-number if empty */
     inline const Point3& low() const {
         return lo;
     }
 
+    /** Returns not-a-number if empty */
     inline const Point3& high() const {
         return hi;
     }
@@ -118,8 +137,10 @@ public:
 
     static const AABox& zero();
 
+    static const AABox& empty();
+
     /**
-      Returns the centroid of the box.
+      Returns the centroid of the box (NaN if empty)
      */
     inline Point3 center() const {
         return (lo + hi) * 0.5;
@@ -131,12 +152,18 @@ public:
      Distance from corner(0) to the next corner along axis a.
      */
     inline float extent(int a) const {
+        if (isEmpty()) {
+            return 0;
+        }
         debugAssert(a < 3);
         return hi[a] - lo[a];
     }
 
 
     inline Vector3 extent() const {
+        if (isEmpty()) {
+            return Vector3::zero();
+        }
         return hi - lo;
     }
 
@@ -148,7 +175,7 @@ public:
      */
     void split(const Vector3::Axis& axis, float location, AABox& low, AABox& high) const;
 
-	/**
+    /**
 	 Conservative culling test for up to 32 planes.	
 	 Returns true if there exists a <CODE>plane[p]</CODE> for
      which the entire object is in the negative half space
@@ -175,19 +202,20 @@ public:
      @param childMask Test mask for the children of this volume.
        
 	 */
-	bool culledBy(
-		const Array<Plane>&		plane,
-		int32&					cullingPlaneIndex,
-		const uint32  			testMask,
-        uint32&                 childMask) const;
+    bool culledBy
+    (
+     const Array<Plane>&	plane,
+     int32&			cullingPlaneIndex,
+     const uint32  		testMask,
+     uint32&                    childMask) const;
 
     /**
      Conservative culling test that does not produce a mask for children.
      */
-	bool culledBy(
-		const Array<Plane>&		plane,
-		int32&					cullingPlaneIndex = dummy,
-		const uint32  			testMask		  = 0xFFFFFFFF) const;
+    bool culledBy
+        (const Array<Plane>&		plane,
+         int32&				cullingPlaneIndex = dummy,
+         const uint32  			testMask  = 0xFFFFFFFF) const;
 
     /** less than or equal to containment */
     inline bool contains(const AABox& other) const {
@@ -200,8 +228,7 @@ public:
             (other.lo.z >= lo.z);
     }
 
-    inline bool contains(
-        const Point3&      point) const {
+    inline bool contains(const Point3& point) const {
         return
             (point.x >= lo.x) &&
             (point.y >= lo.y) &&
@@ -212,11 +239,13 @@ public:
     }
 
     inline float area() const {
+        if (isEmpty()) { return 0; }
         Vector3 diag = hi - lo;
         return 2.0f * (diag.x * diag.y + diag.y * diag.z + diag.x * diag.z);
     }
 
     inline float volume() const {
+        if (isEmpty()) { return 0; }
         Vector3 diag = hi - lo;
         return diag.x * diag.y * diag.z;
     }
@@ -236,7 +265,12 @@ public:
     AABox intersect(const AABox& other) const {
         Point3 H = hi.min(other.hi);
         Point3 L = lo.max(other.lo).min(H);
-        return AABox(L, H);
+        AABox b(L, H);
+        if (b.volume() == 0) {
+            return AABox::empty();
+        } else {
+            return b;
+        }
     }
 
     inline size_t hashCode() const {
@@ -244,11 +278,19 @@ public:
     }
 
     inline bool operator==(const AABox& b) const {
-        return (lo == b.lo) && (hi == b.hi);
+        if (isEmpty() && b.isEmpty()) {
+            return true;
+        } else {
+            return (lo == b.lo) && (hi == b.hi);
+        }
     }
 
     inline bool operator!=(const AABox& b) const {
-        return !((lo == b.lo) && (hi == b.hi));
+        if (isEmpty()) {
+            return b.isEmpty();
+        } else {
+            return !((lo == b.lo) && (hi == b.hi));
+        }
     }
 
     inline AABox operator+(const Vector3& v) const {

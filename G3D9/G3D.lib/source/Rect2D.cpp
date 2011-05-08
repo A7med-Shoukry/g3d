@@ -4,7 +4,7 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
   
   @created 2003-11-13
-  @created 2009-11-16
+  @created 2011-06-16
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
@@ -18,6 +18,12 @@
 #include "G3D/BinaryOutput.h"
 
 namespace G3D {
+
+const Rect2D& Rect2D::empty() {
+    static Rect2D r;
+    return r;
+}
+
 
 void Rect2D::serialize(class BinaryOutput& b) const {
     min.serialize(b);
@@ -33,6 +39,11 @@ void Rect2D::deserialize(class BinaryInput& b) {
 
 /** \param any Must either Rect2D::xywh(#, #, #, #) or Rect2D::xyxy(#, #, #, #)*/
 Rect2D::Rect2D(const Any& any) {
+    if (any.name() == "Rect2D::empty" || any.name() == "AABox2D::empty") {
+        *this = empty();
+        return;
+    }
+
     any.verifyName("Rect2D::xyxy", "Rect2D::xywh");
     any.verifyType(Any::ARRAY);
     any.verifySize(4);
@@ -46,9 +57,13 @@ Rect2D::Rect2D(const Any& any) {
 
 /** Converts the Rect2D to an Any. */
 Any Rect2D::toAny() const {
-    Any any(Any::ARRAY, "Rect2D::xywh");
-    any.append(Any(x0()), Any(y0()), Any(width()), Any(height()));
-    return any;
+    if (isEmpty()) {
+        return Any(Any::ARRAY, "Rect2D::empty");
+    } else {
+        Any any(Any::ARRAY, "Rect2D::xywh");
+        any.append(Any(x0()), Any(y0()), Any(width()), Any(height()));
+        return any;
+    }
 }
 
 }

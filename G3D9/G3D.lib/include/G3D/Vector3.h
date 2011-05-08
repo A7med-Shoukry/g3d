@@ -155,6 +155,9 @@ public:
     /** Returns true if this vector has finite length. */
     bool isFinite() const;
 
+    /** True if any field is nan */
+    bool isNaN() const;
+
     /** Returns true if this vector has length ~= 0 */
     bool isZero() const;
 

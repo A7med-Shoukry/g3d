@@ -62,14 +62,25 @@ protected:
     MD3Model::Ref                   m_md3Model;
     MD3Model::Pose                  m_md3Pose;
 
+    //////////////////////////////////////////////
+
+    /** Bounds at the last pose() call, in world space. */ 
+    AABox                           m_lastBoxBounds;
+
+    /** Bounds at the last pose() call, in world space. */ 
+    Sphere                          m_lastSphereBounds;
+
     GEntity();
 
     /** \deprecated */
-    GEntity(const std::string& n, const PhysicsFrameSpline& frameSpline, 
-        const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
-        const MD2Model::Ref& md2Model,
-        const MD3Model::Ref& md3Model);
-
+    GEntity
+    (const std::string& n, 
+     const PhysicsFrameSpline& frameSpline, 
+     const ArticulatedModel::Ref& artModel,
+     const ArticulatedModel::PoseSpline& artPoseSpline,
+     const MD2Model::Ref& md2Model,
+     const MD3Model::Ref& md3Model);
+    
 
     /**\brief Construct a GEntity.
 
@@ -146,26 +157,25 @@ public:
     /** Pose as of the last simulation time */
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
 
-    /** Return a world-space axis-aligned bounding box. */
-    virtual void getBounds(class AABox& box) const;
+    /** Return a world-space axis-aligned bounding box as of the last call to onPose(). */
+    virtual void getLastBounds(class AABox& box) const;
 
-    /** Return a world-space bounding sphere. */
-    virtual void getBounds(class Sphere& sphere) const;
+    /** Return a world-space bounding sphere as of the last call to onPose(). */
+    virtual void getLastBounds(class Sphere& sphere) const;
+    
+    /** Return a world-space bounding box as of the last call to onPose(). */
+    virtual void getLastBounds(class Box& box) const;
 
-    /** Return a world-space bounding box. */
-    virtual void getBounds(class Box& box) const;
-
-    /** Return the distance to the first intersection of the GEntity's bounds
-        with ray \a R at distance
-        less than \a maxDistance.  Returns finf() if there is no such intersection.
+    /** Returns true if there is conservatively some intersection
+        with the object's bounds closer than \a maxDistance to the
+        ray origin.  If so, updates maxDistance with the intersection distance.
         
-        The bounds used may be more accurate than any of the given getBounds() results
-        because the method may recurse into individual parts of the scene graph
-        within the GEntity.
-    */
-    virtual float intersectBounds(const Ray& R, float maxDistance = finf()) const;
+        The bounds used may be more accurate than any of the given
+        getLastBounds() results because the method may recurse into
+        individual parts of the scene graph within the GEntity. */
+    virtual bool intersectBounds(const Ray& R, float& maxDistance) const;
 
-    virtual float intersect(const Ray& R, float maxDistance = finf()) const;
+    virtual bool intersect(const Ray& R, float& maxDistance) const;
 };
 
 }

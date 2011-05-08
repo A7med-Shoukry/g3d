@@ -175,12 +175,8 @@ Entity::Ref Scene::intersectBounds(const Ray& ray, float& distance, const Array<
     
     for (int e = 0; e < m_entityArray.size(); ++e) {
         const Entity::Ref& entity = m_entityArray[e];
-        if (! exclude.contains(entity)) {
-            float intersection = entity->intersectBounds(ray, distance);
-            if (intersection < distance) {
-                closest = entity;
-                distance = intersection;
-            }
+        if (! exclude.contains(entity) && entity->intersectBounds(ray, distance)) {
+            closest = entity;
         }
     }
 
@@ -193,12 +189,8 @@ Entity::Ref Scene::intersect(const Ray& ray, float& distance, const Array<Entity
     
     for (int e = 0; e < m_entityArray.size(); ++e) {
         const Entity::Ref& entity = m_entityArray[e];
-        if (! exclude.contains(entity)) {
-            float intersection = entity->intersect(ray, distance);
-            if (intersection < distance) {
-                closest = entity;
-                distance = intersection;
-            }
+        if (! exclude.contains(entity) && entity->intersect(ray, distance)) {
+            closest = entity;
         }
     }
 
