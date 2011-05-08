@@ -59,7 +59,8 @@ GuiWindow::GuiWindow(const GuiText& text, GuiThemeRef skin, const Rect2D& rect, 
       keyFocusGuiControl(NULL),
       m_enabled(true),
       m_focused(false),
-      m_mouseVisible(false) {
+      m_mouseVisible(false),
+      m_rect(Rect2D::empty()) {
 
     setRect(rect);
     m_rootPane = new GuiPane(this, "", clientRect() - clientRect().x0y0(), GuiTheme::NO_PANE_STYLE);
