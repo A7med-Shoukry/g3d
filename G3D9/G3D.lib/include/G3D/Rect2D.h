@@ -272,10 +272,12 @@ public:
     }
 
     bool contains(const Point2& v) const {
+        // This will automatically return false if isEmpty()
         return (v.x >= min.x) && (v.y >= min.y) && (v.x <= max.x) && (v.y <= max.y);
     }
 
     bool contains(const Rect2D& r) const {
+        // This will automatically return false if isEmpty()
         return (min.x <= r.min.x) && (min.y <= r.min.y) &&
                (max.x >= r.max.x) && (max.y >= r.max.y);
     }
@@ -284,12 +286,14 @@ public:
         Note that two rectangles that are adjacent do not intersect because there is
         zero area to the overlap, even though one of them "contains" the corners of the other.*/
     bool intersects(const Rect2D& r) const {
+        // This will automatically return false if isEmpty()
         return (min.x < r.max.x) && (min.y < r.max.y) &&
                (max.x > r.min.x) && (max.y > r.min.y);
     }
 
     /** Like intersection, but counts the adjacent case as touching. */
     bool intersectsOrTouches(const Rect2D& r) const {
+        // This will automatically return false if isEmpty()
         return (min.x <= r.max.x) && (min.y <= r.max.y) &&
                (max.x >= r.min.x) && (max.y >= r.min.y);
     }
