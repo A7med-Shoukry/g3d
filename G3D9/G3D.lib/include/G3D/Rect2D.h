@@ -127,6 +127,8 @@ public:
     /** Converts the Rect2D to an Any. */
     Any toAny() const;
 
+    Rect2D(const Rect2D& r) : min(r.min), max(r.max) {}
+
     /** Creates the empty set rectangle. */
     Rect2D() : min(fnan(), fnan()), max(fnan(), fnan()) {}
 
