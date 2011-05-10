@@ -376,18 +376,25 @@ void GuiPane::render(RenderDevice* rd, const GuiThemeRef& skin) const {
 void GuiPane::renderChildren(RenderDevice* rd, const GuiThemeRef& skin) const {
     skin->pushClientRect(m_clientRect);
 
-    if (! rd->clip2D().isEmpty()) {
+    const Rect2D& clipRect = rd->clip2D();
+    if (! clipRect.isEmpty()) {
 
         for (int L = 0; L < labelArray.size(); ++L) {
-            labelArray[L]->render(rd, skin);
+            if (clipRect.intersects(labelArray[L]->rect())) {
+                labelArray[L]->render(rd, skin);
+            }
         }
 
         for (int c = 0; c < controlArray.size(); ++c) {
-            controlArray[c]->render(rd, skin);
+            if (clipRect.intersects(controlArray[c]->rect())) {
+                controlArray[c]->render(rd, skin);
+            }
         }
 
         for (int p = 0; p < containerArray.size(); ++p) {
-            containerArray[p]->render(rd, skin);
+            if (clipRect.intersects(containerArray[p]->rect())) {
+                containerArray[p]->render(rd, skin);
+            }
         }
     }
 
