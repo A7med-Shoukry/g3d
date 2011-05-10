@@ -380,21 +380,15 @@ void GuiPane::renderChildren(RenderDevice* rd, const GuiThemeRef& skin) const {
     if (! clipRect.isEmpty()) {
 
         for (int L = 0; L < labelArray.size(); ++L) {
-            if (clipRect.intersects(labelArray[L]->rect())) {
-                labelArray[L]->render(rd, skin);
-            }
+            labelArray[L]->render(rd, skin);
         }
 
         for (int c = 0; c < controlArray.size(); ++c) {
-            if (clipRect.intersects(controlArray[c]->rect())) {
-                controlArray[c]->render(rd, skin);
-            }
+            controlArray[c]->render(rd, skin);
         }
 
         for (int p = 0; p < containerArray.size(); ++p) {
-            if (clipRect.intersects(containerArray[p]->rect())) {
-                containerArray[p]->render(rd, skin);
-            }
+            containerArray[p]->render(rd, skin);
         }
     }
 
