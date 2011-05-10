@@ -939,8 +939,8 @@ void GuiTheme::pushClientRect(const Rect2D& r) {
     m_scissorStack.append(oldRect);
 
     Rect2D newRect = r + oldMatrix.translation.xy();
-    newRect = oldRect.intersect(newRect);
-    m_rd->setClip2D(newRect);
+    const Rect2D& afterIntersectRect = oldRect.intersect(newRect);
+    m_rd->setClip2D(afterIntersectRect);
 
     const CoordinateFrame& newMatrix = oldMatrix * CoordinateFrame(Vector3(r.x0y0(), 0));
     m_rd->setObjectToWorldMatrix(newMatrix);

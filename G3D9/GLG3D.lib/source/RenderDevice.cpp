@@ -1499,19 +1499,21 @@ void RenderDevice::forceSetViewport(const Rect2D& v) {
 void RenderDevice::setClip2D(const Rect2D& clip) {
     minStateChange();
 
-    if (clip.isFinite()) {
+    if (clip.isFinite() || clip.isEmpty()) {
+        m_state.clip2D = clip;
+
+        Rect2D r = clip;
         if (clip.isEmpty()) {
-            m_state.clip2D = Rect2D::xywh(0,0,0,0);
-        } else {
-            m_state.clip2D = clip;
+            r = Rect2D::xywh(0,0,0,0);
         }
+
         // set the new clip Rect2D
         minGLStateChange();
 
-        int clipX0 = iFloor(m_state.clip2D.x0());
-        int clipY0 = iFloor(m_state.clip2D.y0());
-        int clipX1 = iCeil(m_state.clip2D.x1());
-        int clipY1 = iCeil(m_state.clip2D.y1());
+        int clipX0 = iFloor(r.x0());
+        int clipY0 = iFloor(r.y0());
+        int clipX1 = iCeil(r.x1());
+        int clipY1 = iCeil(r.y1());
 
         int y = 0;
         if (invertY()) {
