@@ -11,7 +11,6 @@
 class App : public GApp {
 private:
     Lighting::Ref       lighting;
-    SkyRef              sky;
     IFSModel::Ref       model;
 
     Shader::Ref         phongShader;

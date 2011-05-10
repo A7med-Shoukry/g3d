@@ -9,8 +9,6 @@ class App : public GApp {
 public:
 	// Sample scene
     LightingRef         lighting;
-    SkyParameters       skyParameters;
-    SkyRef              sky;
 
     MD3Model::Ref       model;
     MD3Model::Pose      modelPose;
@@ -78,10 +76,7 @@ void App::onInit() {
     developerWindow->videoRecordDialog->setEnabled(true);
     showRenderingStats = true;
 
-    sky = Sky::fromFile(System::findDataFile("sky"));
-
-    skyParameters = SkyParameters(G3D::toSeconds(11, 00, 00, AM));
-    lighting = Lighting::fromSky(sky, skyParameters, Color3::white());
+    lighting = Lighting::create();
 
     /////////////////////////////////////////////////////////////
     // Example of how to add debugging controls

@@ -41,9 +41,7 @@ void App::onInit() {
     showRenderingStats = false;
     window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
 
-    sky = Sky::fromFile(System::findDataFile("sky"));
-    skyParameters = SkyParameters( G3D::toSeconds(10, 00, 00, AM) );
-    lighting = Lighting::fromSky( sky, skyParameters, Color3::white() );
+    lighting = Lighting::create();
     lighting->lightArray.clear();
     lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(10)));
     lighting->lightArray.append( GLight::directional(Vector3(-1,0,-1), Radiance3(0.8f, 0.9f, 1), false));
