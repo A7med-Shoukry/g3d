@@ -18,6 +18,7 @@
 #include "G3D/g3dmath.h"
 #include "G3D/G3DGameUnits.h"
 #include "G3D/BinaryFormat.h"
+#include "G3D/MemoryManager.h"
 #include <string>
 
 #ifdef G3D_OSX
@@ -125,6 +126,8 @@ private:
 #endif
 
     std::string    m_version;
+
+    MemoryManager::Ref  m_memoryManager;
     OutOfMemoryCallback m_outOfMemoryCallback;
 
 #ifdef G3D_OSX
@@ -240,6 +243,9 @@ public:
        Returns the current date as a string in the form YYYY-MM-DD
     */
     static std::string currentDateString();
+
+    /// Returns the default system PoolMemoryManager instance
+    static MemoryManager::Ref memoryManager();
 
     /**
        Guarantees that the start of the array is aligned to the 

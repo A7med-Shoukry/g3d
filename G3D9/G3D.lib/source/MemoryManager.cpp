@@ -16,25 +16,17 @@ namespace G3D {
 
 MemoryManager::MemoryManager() {}
 
+////////////////////////////////////////////////////
 
-void* MemoryManager::alloc(size_t s) {
+PoolMemoryManager::PoolMemoryManager() {}
+
+void* PoolMemoryManager::alloc(size_t s) {
     return System::malloc(s);
 }
 
 
-void MemoryManager::free(void* ptr) {
+void PoolMemoryManager::free(void* ptr) {
     System::free(ptr);
-}
-
-
-bool MemoryManager::isThreadsafe() const {
-    return true;
-}
-
-
-MemoryManager::Ref MemoryManager::create() {
-    static MemoryManager::Ref m = new MemoryManager();
-    return m;
 }
 
 

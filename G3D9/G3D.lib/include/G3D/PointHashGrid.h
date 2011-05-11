@@ -217,7 +217,7 @@ public:
         their positions must be within this radius as well.  You can later change this
         value with clearAndSetRadiusHint().
     */
-    PointHashGrid(float radiusHint, const MemoryManager::Ref& m = MemoryManager::create()) : m_size(0), m_memoryManager(m) {
+    PointHashGrid(float radiusHint, const MemoryManager::Ref& m = System::memoryManager()) : m_size(0), m_memoryManager(m) {
         initOffsetArray();
         m_data.clearAndSetMemoryManager(m_memoryManager);
 
@@ -247,7 +247,7 @@ public:
        
        \sa clearAndSetRadiusHint()
     */
-    PointHashGrid(const Array<Value>& init, float radiusHint = -1.0f, const MemoryManager::Ref& m = MemoryManager::create()) : m_size(0), m_memoryManager(m) {		
+    PointHashGrid(const Array<Value>& init, float radiusHint = -1.0f, const MemoryManager::Ref& m = System::memoryManager()) : m_size(0), m_memoryManager(m) {		
         initOffsetArray();
         m_data.clearAndSetMemoryManager(m_memoryManager);
 

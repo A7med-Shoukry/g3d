@@ -323,6 +323,8 @@ void System::init() {
     initTime();
 
     getStandardProcessorExtensions();
+
+    m_memoryManager = new PoolMemoryManager();
 }
 
 
@@ -920,6 +922,11 @@ RealTime System::time() {
 #   endif
 }
 
+
+MemoryManager::Ref System::memoryManager()
+{
+    return instance().m_memoryManager;
+}
 
 ////////////////////////////////////////////////////////////////
 
