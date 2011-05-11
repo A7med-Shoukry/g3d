@@ -2,18 +2,18 @@
 #include <G3D/G3DAll.h>
 #include "irrklang/irrKlang.h"
 
-#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+//#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
 
 class App : public GApp {
 public:
-	// Sample scene
     LightingRef         lighting;
+    Texture::Ref        sky;
 
     MD3Model::Ref       model;
     MD3Model::Pose      modelPose;
 
-    irrklang::ISoundEngine* irrklangDevice;
+    //irrklang::ISoundEngine* irrklangDevice;
 
     App(const GApp::Settings& settings = GApp::Settings());
 
@@ -66,27 +66,10 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 
 
 void App::onInit() {
-    // Called before the application loop beings.  Load data here and
-    // not in the constructor so that common exceptions will be
-    // automatically caught.
-
-    // Turn on the developer HUD
-    debugWindow->setVisible(true);
-    developerWindow->cameraControlWindow->setVisible(true);
-    developerWindow->videoRecordDialog->setEnabled(true);
     showRenderingStats = true;
 
+    sky = Texture::fromFile(dataDir + "/cubemap/noonclouds/noonclouds_*.png", ImageFormat::AUTO(), Texture::DIM_CUBE_MAP_NPOT, Texture::Settings::cubeMap(), Texture::Preprocess::gamma(2.1f));
     lighting = Lighting::create();
-
-    /////////////////////////////////////////////////////////////
-    // Example of how to add debugging controls
-    debugPane->addButton("Exit", this, &App::endProgram);
-    
-    // More examples of debugging GUI controls:
-    // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
-    // debugPane->addTextBox("Name", &myName);
-    // debugPane->addNumberBox("height", &height, "m", GuiTheme::LINEAR_SLIDER, 1.0f, 2.5f);
-    // button = debugPane->addButton("Run Simulator");
 
     // Start wherever the developer HUD last marked as "Home"
     defaultCamera.setCoordinateFrame(bookmark("Home"));
@@ -99,8 +82,8 @@ void App::onInit() {
     //model = MD3Model::fromDirectory("C:\\dev\\data\\md3\\chaos-marine\\models\\players\\Chaos-Marine");
 
 	// start the sound engine with default parameters
-	irrklangDevice = irrklang::createIrrKlangDevice();
-    debugAssert(irrklangDevice);
+	//irrklangDevice = irrklang::createIrrKlangDevice();
+    //debugAssert(irrklangDevice);
 }
 
 
@@ -155,6 +138,8 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& surfaceArray, Array<
     rd->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
     rd->clear(true, true, true);
 
+    Draw::skyBox(rd, sky);
+
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
     // ShadowMap as the final argument to create shadows.)
@@ -169,7 +154,7 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& surfaceArray, Array<
 void App::onCleanup() {
     // Called after the application loop ends.  Place a majority of cleanup code
     // here instead of in the constructor so that exceptions can be caught
-	irrklangDevice->drop();
+	//irrklangDevice->drop();
 }
 
 
