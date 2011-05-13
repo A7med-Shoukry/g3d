@@ -4,7 +4,6 @@ from __future__ import print_function
 
 from .utils import *
 from .variables import *
-import doticompile
 defaultMainCppContents = """
 /** @file main.cpp
  */

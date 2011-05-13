@@ -5,7 +5,7 @@
 from __future__ import print_function
 
 import sys, string, os, os.path, fileinput, tempfile, shutil, re
-import subprocess, pickle, time, subprocess
+import subprocess, pickle, time
 try:
   from subprocess import getoutput
 except ImportError:

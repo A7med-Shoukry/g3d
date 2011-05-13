@@ -976,7 +976,7 @@ def processStatistics(state):
         note = ''
         if len(oldLog) > 1:
             # Read the note from the last row
-            lastLine = csv.reader([oldLog[-1]], skipinitialspace=True).next()
+            lastLine = next(csv.reader([oldLog[-1]], skipinitialspace=True))
             if len(lastLine) >= 10:
                 note = lastLine[9]
         info += ',"' + note + '"\n'

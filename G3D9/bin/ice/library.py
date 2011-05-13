@@ -210,7 +210,7 @@ def _libSorter(x, y):
 
        # Two libraries with no known dependencies; put them in alphabetical order
        # (since we have no other metric!) to guarantee a stable sort
-       return cmp(x, y)
+       return (x > y) - (x < y)  # Python 3 removes the global cmp() function
 
 """
 Converts a cmp= function into a key= function
