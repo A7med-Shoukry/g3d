@@ -179,7 +179,7 @@ public:
      */
     uint16          unicode;
 
-    void serialize(G3D::BinaryOutput& b) {
+    void serialize(G3D::BinaryOutput& b) const {
         b.writeUInt8(scancode);
         b.writeInt32(sym);
         b.writeInt32(mod);
