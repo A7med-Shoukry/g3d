@@ -1,12 +1,12 @@
 /**
-  @file AABox.h
+  \file G3D/AABox.h
  
   Axis-aligned box class
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
-  @created 2004-01-10
-  @edited  2011-02-10
+  \created 2004-01-10
+  \edited  2011-05-15
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
@@ -42,11 +42,11 @@ private:
 
 public:
 
-    /** Creates the empty bounds */
+    /** Creates the empty bounds, i.e., an empty set of points. */
     AABox() : lo(fnan(), fnan(), fnan()), hi(fnan(), fnan(), fnan()) {}
 
     /**
-     Constructs a zero-area AABox at v.
+     Constructs a zero-volume AABox at v.
      */
     explicit AABox(const Point3& v) {
         lo = hi = v;
@@ -55,6 +55,8 @@ public:
     /** Format is one of:
        - AABox(lowpoint, highpoint)
        - AABox(point)
+       - AABox::empty()
+       - AABox::inf()
     */
     explicit AABox(const class Any& a);
 
@@ -85,7 +87,7 @@ public:
     }
 
     /**
-     Grows to include the bounds of a
+     Grows to include the bounds of \a a
      */
     inline void merge(const AABox& a) {
         if (isEmpty()) {
@@ -153,7 +155,7 @@ public:
      */
     inline float extent(int a) const {
         if (isEmpty()) {
-            return 0;
+            return 0.0f;
         }
         debugAssert(a < 3);
         return hi[a] - lo[a];
@@ -203,8 +205,7 @@ public:
        
 	 */
     bool culledBy
-    (
-     const Array<Plane>&	plane,
+    (const Array<Plane>&	plane,
      int32&			cullingPlaneIndex,
      const uint32  		testMask,
      uint32&                    childMask) const;
@@ -213,9 +214,9 @@ public:
      Conservative culling test that does not produce a mask for children.
      */
     bool culledBy
-        (const Array<Plane>&		plane,
-         int32&				cullingPlaneIndex = dummy,
-         const uint32  			testMask  = 0xFFFFFFFF) const;
+    (const Array<Plane>&		plane,
+     int32&	                    cullingPlaneIndex = dummy,
+     const uint32               testMask  = 0xFFFFFFFF) const;
 
     /** less than or equal to containment */
     inline bool contains(const AABox& other) const {
@@ -263,13 +264,17 @@ public:
 
     /** Return the intersection of the two boxes */
     AABox intersect(const AABox& other) const {
-        Point3 H = hi.min(other.hi);
-        Point3 L = lo.max(other.lo).min(H);
-        AABox b(L, H);
-        if (b.volume() == 0) {
-            return AABox::empty();
+        if (isEmpty() || other.isEmpty()) {
+            return empty();
+        }
+
+        const Point3& H = hi.min(other.hi);
+        const Point3& L = lo.max(other.lo).min(H);
+
+        if (H.x < L.x && H.y < L.y && H.z < L.z) {
+            return empty();
         } else {
-            return b;
+            return AABox(L, H);
         }
     }
 
