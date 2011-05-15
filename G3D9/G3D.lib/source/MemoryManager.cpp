@@ -16,6 +16,14 @@ namespace G3D {
 
 MemoryManager::MemoryManager() {}
 
+void* MemoryManager::allocZeroed(size_t bytes) {
+    void* m = alloc(bytes);
+    if (m != NULL) {
+        System::memset(m, 0, bytes);
+    }
+    return m;
+}
+
 ////////////////////////////////////////////////////
 
 PoolMemoryManager::PoolMemoryManager() {}

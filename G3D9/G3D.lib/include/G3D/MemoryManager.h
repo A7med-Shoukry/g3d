@@ -43,6 +43,24 @@ public:
     /** Returns true if this memory manager is threadsafe (i.e., alloc
         and free can be called asychronously) */
     virtual bool isThreadsafe() const = 0;
+
+    /** If the allocation size of \a block can be changed to newBytes, it does so and returns true.  Otherwise, it returns false and the block allocation is unmodified. Growing may fail because there is no adjacent space.  Shrinking may fail because the memory was allocated out of a pool of fixed-size buffers.  Note that a failed shrinking can be ignored without impacting program behavior, but a failed growth must be resolved explicitly  Sample usage:
+    <pre>
+    If shrinking, perform your C++ cleanup on the objects that will be freed
+
+    if (! mm->attemptToChangeAllocationSize(b, s) && (s > originalSize)) {
+         void* n = mm->alloc(s);
+         do your own C++ copy from b to n, if required, or simply System::memcpy if POD
+         mm->free(b);
+         b = n;
+    }
+    </pre>
+
+    Compare to C realloc(), which is not safe for C++ objects or those with embedded references.
+    */
+    virtual bool attemptToChangeAllocationSize(void* block, size_t newBytes) { return false; }
+
+    virtual void* allocZeroed(size_t bytes);
 };
 
 /** Wraps System::malloc and System::free.
