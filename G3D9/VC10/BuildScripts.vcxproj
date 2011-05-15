@@ -10,6 +10,11 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\buildg3d" />
+    <None Include="..\buildg3d.bat" />
+    <None Include="..\BUILD_INSTRUCTIONS.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{985177F9-F95C-4815-88A1-D71C108D6C56}</ProjectGuid>
     <RootNamespace>BuildScripts</RootNamespace>
@@ -59,15 +64,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <None Include="..\..\buildg3d">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\..\buildg3d.bat">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\..\BUILD_INSTRUCTIONS.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
