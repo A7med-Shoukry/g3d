@@ -1046,6 +1046,7 @@ def isCFile(file):
     return ((ext == 'cpp') or
            (ext == 'c') or
            (ext == 'c++') or
+           (ext == 'cc') or
            (ext == 'cxx') or
            (ext == 'i') or
            (ext == 'ii') or
