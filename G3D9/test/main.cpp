@@ -732,7 +732,7 @@ int main(int argc, char* argv[]) {
 
         perfHashTrait();
         // Pause so that we can see the values in the debugger
-        getch();
+        //getch();
 
 
         perfKDTree();
