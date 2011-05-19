@@ -93,6 +93,7 @@ href="classes.html">Classes</a>.
     \link G3D::IconSet IconSet\endlink,
     \link G3D::Manipulator Manipulator\endlink,
     \link G3D::OSWindow OSWindow\endlink,
+	\link G3D::PhysicsFrameSplineEditor PhysicsFrameSplineEditor\endlink, 
     \link G3D::screenPrintf screenPrintf\endlink,
     \link G3D::SDLWindow SDLWindow\endlink,
     \link G3D::ThirdPersonManipulator ThirdPersonManipulator\endlink,

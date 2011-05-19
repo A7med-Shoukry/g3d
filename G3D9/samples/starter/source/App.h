@@ -11,8 +11,6 @@
 #include <G3D/G3DAll.h>
 
 #include "Scene.h"
-#include "SplineEditor.h"
-
 
 class App : public GApp {
     GuiDropDownList*    m_sceneDropDownList;
@@ -23,7 +21,7 @@ class App : public GApp {
     Entity::Ref         m_selectedEntity;
 
     /** Used for editing entity splines.*/
-    SplineEditor::Ref   m_splineEditor;
+    PhysicsFrameSplineEditor::Ref   m_splineEditor;
 
     bool                m_showAxes;
     bool                m_showLightSources;

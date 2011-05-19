@@ -134,6 +134,7 @@
 #include "GLG3D/Discovery.h"
 #include "GLG3D/GEntity.h"
 
+#include "GLG3D/PhysicsFrameSplineEditor.h"
 
 #ifdef G3D_OSX
 #include "GLG3D/CarbonWindow.h"

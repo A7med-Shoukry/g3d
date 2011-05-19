@@ -164,6 +164,7 @@
     <ClCompile Include="..\GLG3D.lib\source\MD3Model.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Milestone.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\OSWindow.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\PhysicsFrameSplineEditor.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Profiler.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Renderbuffer.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\RenderDevice.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Milestone.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\NSAutoreleasePoolWrapper.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\OSWindow.h" />
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\PhysicsFrameSplineEditor.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Profiler.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Renderbuffer.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\RenderDevice.h" />
