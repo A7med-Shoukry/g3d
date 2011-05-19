@@ -118,6 +118,8 @@ void App::onInit() {
 }
 
 void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
+    GApp::onPose(surfaceArray, surface2D);
+
     // Append any models to the arrays that you want to later be rendered by onGraphics()
     if (m_scene.notNull()) {
         m_scene->onPose(surfaceArray);

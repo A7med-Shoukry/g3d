@@ -40,11 +40,6 @@ void App::onInit() {
     // not in the constructor so that common exceptions will be
     // automatically caught.
 
-    // Turn on the developer HUD
-    debugWindow->setVisible(true);
-    developerWindow->cameraControlWindow->setVisible(true);
-    developerWindow->videoRecordDialog->setEnabled(true);
-
     showRenderingStats = false;
     m_showLightSources = true;
     m_showAxes         = true;
@@ -62,9 +57,20 @@ void App::onInit() {
 
 
 void App::makeGUI() {
+    // Turn on the developer HUD
+    debugWindow->setVisible(true);
+    developerWindow->cameraControlWindow->setVisible(true);
+    developerWindow->videoRecordDialog->setEnabled(true);
+
+
+    // Create a spline editor next to the camera control
     m_splineEditor = SplineEditor::create();
     addWidget(m_splineEditor);
+    developerWindow->cameraControlWindow->moveTo(Point2(window()->width() - developerWindow->cameraControlWindow->rect().width(), 0));
+    m_splineEditor->moveTo(developerWindow->cameraControlWindow->rect().x0y0() - Vector2(m_splineEditor->rect().width(), 0));
 
+    
+    // Create a scene management GUI
     GuiPane* scenePane = debugPane->addPane("Scene", GuiTheme::ORNATE_PANE_STYLE);
     scenePane->moveBy(0, -10);
     scenePane->beginRow(); {
@@ -130,26 +136,30 @@ void App::loadScene() {
 
 
 void App::onAI() {
+    GApp::onAI();
     // Add non-simulation game logic and AI code here
 }
 
 
 void App::onNetwork() {
+    GApp::onNetwork();
     // Poll net messages here
 }
 
 
 void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
-    (void)idt; (void)sdt; (void)rdt;
+    GApp::onSimulation(rdt, sdt, idt);
+
     // Add physical simulation here.  You can make your time
     // advancement based on any of the three arguments.
     if (m_scene.notNull()) {
-        m_scene->onSimulation(sdt);
-
         if (m_selectedEntity.notNull() && m_splineEditor->enabled()) {
-            // Apply the edit
+            // Apply the edited spline.  Do this before object simulation, so that the object
+            // is in sync with the widget for manipulating it.
             m_selectedEntity->setFrameSpline(m_splineEditor->spline());
         }
+
+        m_scene->onSimulation(sdt);
     }
 }
 
@@ -195,6 +205,7 @@ bool App::onEvent(const GEvent& event) {
 
 
 void App::onUserInput(UserInput* ui) {
+    GApp::onUserInput(ui);
     (void)ui;
     // Add key handling here based on the keys currently held or
     // ones that changed in the last frame.
@@ -202,6 +213,8 @@ void App::onUserInput(UserInput* ui) {
 
 
 void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
+    GApp::onPose(surfaceArray, surface2D);
+
     // Append any models to the arrays that you want to later be rendered by onGraphics()
     if (m_scene.notNull()) {
         m_scene->onPose(surfaceArray);

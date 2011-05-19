@@ -718,20 +718,17 @@ void GApp::oneFrame() {
         }
         debugAssertGLOk();
         onUserInput(userInput);
-        m_widgetManager->onUserInput(userInput);
         m_userInputWatch.tock();
 
         // Network
         m_networkWatch.tick();
         onNetwork();
-        m_widgetManager->onNetwork();
         m_networkWatch.tock();
 
         // Logic
         m_logicWatch.tick();
         {
             onAI();
-            m_widgetManager->onAI();
         }
         m_logicWatch.tock();
 
@@ -744,7 +741,6 @@ void GApp::oneFrame() {
 
             onBeforeSimulation(rdt, sdt, idt);
             onSimulation(rdt, sdt, idt);
-            m_widgetManager->onSimulation(rdt, sdt, idt);
             onAfterSimulation(rdt, sdt, idt);
 
             if (m_cameraManipulator.notNull()) {
@@ -761,7 +757,6 @@ void GApp::oneFrame() {
     // Pose
     m_posed3D.fastClear();
     m_posed2D.fastClear();
-    m_widgetManager->onPose(m_posed3D, m_posed2D);
     onPose(m_posed3D, m_posed2D);
 
     // Wait 
@@ -891,9 +886,7 @@ void GApp::onCleanup() {}
 
 
 void GApp::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
-    (void)idt;
-    (void)rdt;
-    (void)sdt;
+    m_widgetManager->onSimulation(rdt, sdt, idt);
 }
 
 
@@ -910,14 +903,17 @@ void GApp::onAfterSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 }
 
 void GApp::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
-    (void)posed3D;
-    (void)posed2D;
+    m_widgetManager->onPose(posed3D, posed2D);
 }
 
-void GApp::onNetwork() {}
+void GApp::onNetwork() {
+    m_widgetManager->onNetwork();
+}
 
 
-void GApp::onAI() {}
+void GApp::onAI() {
+    m_widgetManager->onAI();
+}
 
 
 void GApp::beginRun() {
@@ -970,7 +966,9 @@ void GApp::onConsoleCommand(const std::string& cmd) {
 
 
 void GApp::onUserInput(UserInput* userInput) {
+    m_widgetManager->onUserInput(userInput);
 }
+
 
 void GApp::processGEventQueue() {
     userInput->beginEvents();

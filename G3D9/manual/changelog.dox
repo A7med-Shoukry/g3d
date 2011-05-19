@@ -110,6 +110,7 @@
 
      <b>Backwards Incompatible Changes</b>:
      <ul>
+	 <li> G3D::GApp subclasses must now invoke the super version of any method that they override to ensure that Widgets work correctly.
      <li> G3D::AABox default constructor returns the empty box, which is now distinct from the box at the origin
      <li> Removed G3D::SkyParameters and G3D::Sky </li>
      <li> Removed G3D::AnyVal (use G3D::Any now)

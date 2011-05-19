@@ -51,7 +51,7 @@ protected:
         
 public:
 
-    static Ref create(const GuiText& caption = "Spline", GuiTheme::Ref theme = NULL);
+    static Ref create(const GuiText& caption = "Spline Editor", GuiTheme::Ref theme = NULL);
 
     virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt);
 
@@ -68,9 +68,7 @@ public:
         return m_selectedControlPointIndex;
     }
 
-    virtual void setSelectedControlPointIndex(int i) {
-        m_selectedControlPointIndex = iClamp(i, 0, m_spline.control.size() - 1);
-    }
+    virtual void setSelectedControlPointIndex(int i);
     
     /** Returns true if the underlying spline is cyclic */
     bool cyclic() const;

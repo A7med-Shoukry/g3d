@@ -4,7 +4,7 @@
    \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
    \created 2003-11-03
-   \edited  2010-09-12
+   \edited  2011-05-12
 */
 
 #ifndef G3D_GApp_h
@@ -90,6 +90,9 @@ DebugID debugDraw
 
  onWait runs before onGraphics because the beginning of onGraphics causes the CPU to block, waiting for the GPU
  to complete the previous frame.
+
+ When you override a method, invoke the GApp version of that method to ensure that Widget%s still work
+ properly.  This allows you to control whether your per-app operations occur before or after the Widget ones.
 
  \sa GApp::Settings, OSWindow, RenderDevice, G3D_START_AT_MAIN
 */

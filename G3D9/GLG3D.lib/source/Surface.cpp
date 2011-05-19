@@ -477,9 +477,13 @@ AABox Surface::objectSpaceBoundingBox() const {
 
 void Surface::getWorldSpaceBoundingBox(AABox& box) const {
     getObjectSpaceBoundingBox(box);
-    if (! box.isFinite()) {
+
+    if (box.isEmpty()) {
+        // Nothing to do!
+    } else if (! box.isFinite()) {
         box = AABox::inf();
     } else {
+        // Transform the object space box to world space and then re-bound
         CoordinateFrame C;
         getCoordinateFrame(C);
         const Box& temp = C.toWorldSpace(box);        

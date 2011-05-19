@@ -27,11 +27,18 @@ SplineEditor::SplineEditor(const GuiText& caption, GuiTheme::Ref theme) :
 
 
     GuiPane* p = pane();
-    GuiPane* cpPane = p->addPane("Control Point");
-    cpPane->addButton("Add new", this, &SplineEditor::addControlPoint);
-    m_removeSelectedButton = cpPane->addButton("Remove selected", this, &SplineEditor::removeSelectedControlPoint);
+    
+    GuiPane* cpPane = p->addPane("Control Point", GuiTheme::ORNATE_PANE_STYLE);
+    cpPane->moveBy(0, -15);
+    cpPane->beginRow(); {
+        GuiButton* b = cpPane->addButton("Add new", this, &SplineEditor::addControlPoint);
+        b->moveBy(-2, -7);
+        m_removeSelectedButton = cpPane->addButton("Remove", this, &SplineEditor::removeSelectedControlPoint);
+    } cpPane->endRow();
+    cpPane->pack();
 
     p->addCheckBox("Cyclic", Pointer<bool>(this, &SplineEditor::cyclic, &SplineEditor::setCyclic));
+    pack();
 }
 
 
@@ -55,7 +62,8 @@ void SplineEditor::addControlPoint() {
         m_spline.append(f);
 
         // Select the new point
-        ++m_selectedControlPointIndex;
+        setSelectedControlPointIndex(m_selectedControlPointIndex + 1);
+
     } else {
         // Adding between two points
         float t0 = m_spline.time[m_selectedControlPointIndex];
@@ -81,7 +89,7 @@ void SplineEditor::addControlPoint() {
         m_spline.time.insert(m_selectedControlPointIndex, newT);
 
         // Select the new point
-        ++m_selectedControlPointIndex;
+        setSelectedControlPointIndex(m_selectedControlPointIndex + 1);
 
         // Fix the rest of the times to be offset by the inserted duration
         float shift = newT - t0;
@@ -101,7 +109,7 @@ void SplineEditor::removeSelectedControlPoint() {
     // TODO: Should we fix the times?  Maybe
     m_spline.time.remove(m_selectedControlPointIndex);
     m_spline.control.remove(m_selectedControlPointIndex);
-    m_selectedControlPointIndex = iClamp(m_selectedControlPointIndex - 1, 0, m_spline.control.size() - 1);
+    setSelectedControlPointIndex(m_selectedControlPointIndex - 1);
 }
 
 
@@ -150,5 +158,12 @@ void SplineEditor::setSpline(const PhysicsFrameSpline& s) {
 
     m_selectedControlPointIndex = iClamp(m_selectedControlPointIndex, 0, m_spline.control.size() - 1);
     
+    m_nodeManipulator->setFrame(m_spline.control[m_selectedControlPointIndex]);
+}
+
+
+void SplineEditor::setSelectedControlPointIndex(int i) {
+    m_selectedControlPointIndex = iClamp(i, 0, m_spline.control.size() - 1);
+    // Move the manipulator to the new control point
     m_nodeManipulator->setFrame(m_spline.control[m_selectedControlPointIndex]);
 }

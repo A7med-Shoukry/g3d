@@ -29,6 +29,7 @@ Box::Box() {
 
 
 Box::Box(const AABox& b) {
+    debugAssert(! b.isEmpty());
     init(b.low(), b.high());
 }
 
@@ -77,17 +78,17 @@ void Box::deserialize(class BinaryInput& b) {
 }
 
 
-Box::Box(
-    const Vector3& min,
-    const Vector3& max) {
+Box::Box
+   (const Point3& min,
+    const Point3& max) {
 
     init(min.min(max), min.max(max));
 
 }
 
-void Box::init(
-    const Vector3& min,
-    const Vector3& max) {
+void Box::init
+   (const Point3& min,
+    const Point3& max) {
 
     debugAssert(
         (min.x <= max.x) &&
@@ -161,7 +162,7 @@ CoordinateFrame Box::localFrame() const {
 }
 
 
-void Box::getFaceCorners(int f, Vector3& v0, Vector3& v1, Vector3& v2, Vector3& v3) const {
+void Box::getFaceCorners(int f, Point3& v0, Point3& v1, Point3& v2, Point3& v3) const {
     switch (f) {
     case 0:
         v0 = _corner[0]; v1 = _corner[1]; v2 = _corner[2]; v3 = _corner[3];
@@ -196,8 +197,8 @@ void Box::getFaceCorners(int f, Vector3& v0, Vector3& v1, Vector3& v2, Vector3& 
 
 int Box::dummy = 0;
 
-bool Box::culledBy(
-    const Array<Plane>& plane,
+bool Box::culledBy
+   (const Array<Plane>& plane,
     int&                cullingPlane,
     const uint32        _inMask,
     uint32&             childMask) const {
@@ -256,8 +257,8 @@ bool Box::culledBy(
 }
 
 
-bool Box::culledBy(
-    const Array<Plane>& plane,
+bool Box::culledBy
+   (const Array<Plane>& plane,
 	int&				cullingPlane,
 	const uint32		_inMask) const {
 
@@ -300,8 +301,8 @@ bool Box::culledBy(
 }
 
 
-bool Box::contains(
-    const Vector3&      point) const {
+bool Box::contains
+    (const Point3&      point) const {
 
     // Form axes from three edges, transform the point into that
     // space, and perform 3 interval tests
@@ -371,14 +372,17 @@ Vector3 Box::randomInteriorPoint() const {
     return sum;
 }
 
+
 Box Box::inf() {
     return Box(-Vector3::inf(), Vector3::inf());
 }
 
-void Box::getBounds(class AABox& aabb) const {
 
-    Vector3 lo = _corner[0];
-    Vector3 hi = lo;
+void Box::getBounds(class AABox& aabb) const {
+    debugAssert(! aabb.isEmpty());
+
+    Point3 lo = _corner[0];
+    Point3 hi = lo;
 
     for (int v = 1; v < 8; ++v) {
         const Vector3& C = _corner[v];
