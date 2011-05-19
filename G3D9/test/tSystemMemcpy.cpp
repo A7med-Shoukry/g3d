@@ -25,8 +25,11 @@ void perfSystemMemcpy() {
 
     for (int m = 0; m < M; ++m) {
         int n = (int)size[m];
-        void* m1 = System::alignedMalloc(n, 1024*4);
-        void* m2 = System::alignedMalloc(n, 1024*4);
+        void* m1 = System::alignedMalloc(n, 16);
+        void* m2 = System::alignedMalloc(n, 16);
+
+        alwaysAssertM((((int)m1) % 16) == 0, "Memory is not aligned correctly");
+        alwaysAssertM((((int)m2) % 16) == 0, "Memory is not aligned correctly");
 
         // First iteration just primes the system
         ::memcpy(m1, m2, n);

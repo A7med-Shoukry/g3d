@@ -726,24 +726,26 @@ int main(int argc, char* argv[]) {
 
 #    ifndef _DEBUG
         printf("Performance analysis:\n\n");
+
+        perfSystemMemcpy();
+        measureMemsetPerformance();
+
+        printf("%s\n", System::mallocPerformance().c_str());
+
+        // Pause so that we can see the values in the debugger
+//        getch();
+
         perfBinaryIO();
+
+        perfArray();
 
         perfTable();
 
         perfHashTrait();
-        // Pause so that we can see the values in the debugger
-        //getch();
-
 
         perfKDTree();
 
-
         perfCollisionDetection();
-
-        perfArray();
-
-
-        printf("%s\n", System::mallocPerformance().c_str());
 
         perfQueue();
 
@@ -751,12 +753,8 @@ int main(int argc, char* argv[]) {
 
         perfTextOutput();
 
-        perfSystemMemcpy();
-
         perfPointHashGrid();
 
-
-        measureMemsetPerformance();
         measureNormalizationPerformance();
 
         OSWindow::Settings settings;

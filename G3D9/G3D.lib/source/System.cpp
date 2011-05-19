@@ -570,9 +570,12 @@ void System::getStandardProcessorExtensions() {
 
 #if defined(G3D_WIN32)
     #pragma message("Port System::memcpy SIMD to all platforms")
-/** Michael Herf's fast memcpy */
+/** Michael Herf's fast memcpy.  Assumes 16-byte alignment */
 void memcpyMMX(void* dst, const void* src, int nbytes) {
     int remainingBytes = nbytes;
+
+    alwaysAssertM((int)dst % 16 == 0, format("Must be on 16-byte boundary.  dst = 0x%x", dst));
+    alwaysAssertM((int)src % 16 == 0, format("Must be on 16-byte boundary.  src = 0x%x", src));
 
     if (nbytes > 64) {
         _asm {
@@ -620,7 +623,12 @@ void memcpyMMX(void* dst, const void* src, int nbytes) {
 
 void System::memcpy(void* dst, const void* src, size_t numBytes) {
 #if defined(G3D_WIN32)
-    memcpyMMX(dst, src, numBytes);
+    // The overhead of our memcpy seems to only be worthwhile on large arrays
+    if (((size_t)dst % 16 == 0) && ((size_t)src % 16 == 0) && (numBytes > 3400000)) {
+        memcpyMMX(dst, src, numBytes);
+    } else {
+        ::memcpy(dst, src, numBytes);
+    }
 #else
     ::memcpy(dst, src, numBytes);
 #endif
