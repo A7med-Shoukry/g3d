@@ -87,6 +87,7 @@
      <li> In the G3D source tree, renamed doc-files/ to manual/ and doc-files/data-files to doc-files/ to match icompile conventions
      <li> Upgraded to icompile 0.5.15
      <li> G3D::Widget now uses G3D::Surface2D::depth for event delivery as well as rendering
+	 <li> Fix: ShadowMap now enforces minimum bounds for empty scenes and a maximum bound for infinite scenes 
      <li> Fix: G3D::CarbonWindow now returns proper mouse click events
      <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
      <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload

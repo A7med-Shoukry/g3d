@@ -14,11 +14,13 @@
     <ClInclude Include="..\samples\starter\source\App.h" />
     <ClInclude Include="..\samples\starter\source\Entity.h" />
     <ClInclude Include="..\samples\starter\source\Scene.h" />
+    <ClInclude Include="..\samples\starter\source\SplineEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\samples\starter\source\App.cpp" />
     <ClCompile Include="..\samples\starter\source\Entity.cpp" />
     <ClCompile Include="..\samples\starter\source\Scene.cpp" />
+    <ClCompile Include="..\samples\starter\source\SplineEditor.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{935AA8F5-59C4-4336-A21E-4336F2F186B7}</ProjectGuid>

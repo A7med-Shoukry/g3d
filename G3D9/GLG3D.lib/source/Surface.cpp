@@ -45,14 +45,9 @@ void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3
 
 
 void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds) {
-    if (models.size() == 0) {
-        bounds = AABox();
-        return;
-    }
+    bounds = AABox::empty();
 
-    models[0]->worldSpaceBoundingBox().getBounds(bounds);
-
-    for (int i = 1; i < models.size(); ++i) {
+    for (int i = 0; i < models.size(); ++i) {
         AABox temp;
         models[i]->worldSpaceBoundingBox().getBounds(temp);
         bounds.merge(temp);
@@ -82,7 +77,7 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
 void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds) {
     AABox temp;
     getBoxBounds(models, temp);
-    bounds = Sphere(temp.center(), temp.extent().length() / 2.0f);
+    temp.getBounds(bounds);
 }
 
 
