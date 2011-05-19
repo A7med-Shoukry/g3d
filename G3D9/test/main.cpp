@@ -727,17 +727,17 @@ int main(int argc, char* argv[]) {
 #    ifndef _DEBUG
         printf("Performance analysis:\n\n");
 
+        perfArray();
+        //getch();
+
         perfSystemMemcpy();
         measureMemsetPerformance();
 
         printf("%s\n", System::mallocPerformance().c_str());
 
         // Pause so that we can see the values in the debugger
-//        getch();
 
         perfBinaryIO();
-
-        perfArray();
 
         perfTable();
 

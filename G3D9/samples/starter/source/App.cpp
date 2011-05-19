@@ -227,15 +227,12 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     if (m_scene.isNull()) {
         return;
     }
-    rd->setAlphaWrite(false);
-
     Draw::skyBox(rd, m_scene->skyBoxTexture(), m_scene->skyBoxConstant());
 
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
     // ShadowMap as the final argument to create shadows.)
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
-
 
     if (m_showWireframe) {
         Surface::renderWireframe(rd, surface3D);
@@ -253,7 +250,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f), Color3::black());
 
     if (m_showAxes) {
-        Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
+        Draw::axes(Point3(0, 0, 0), rd);
     }    
 
     if (m_showLightSources) {
@@ -283,5 +280,5 @@ void App::endProgram() {
 
 
 void App::saveScene() {
-    // TODO
+    // Called when the "save" button is pressed
 }
