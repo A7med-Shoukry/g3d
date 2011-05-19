@@ -265,9 +265,28 @@ void testBasicSerialization() {
         debugAssertM(alpha == tmp, format("%s should be %s \n", alpha.toString().c_str(), tmp.toString().c_str()));
         debugAssertM(alpha2 == tmp2, format("%s should be %s \n", alpha2.toString().c_str(), tmp2.toString().c_str()));
     }
+
+}
+
+static void testStringSerialization() {
+    uint8 data[1024];
+
+    BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
+    std::string src = "Hello";
+    bo.writeString(src);
+    bo.commit(data);
+
+    BinaryInput bi(data, bo.size(), G3D_LITTLE_ENDIAN);
+    std::string dst = bi.readString();
+
+    debugAssert(bo.size() == 6);
+    debugAssert(src.length() == dst.length());
+    debugAssert(src == dst);
+
 }
 
 void testBinaryIO() {
+    testStringSerialization();
     testBasicSerialization();
     testBitSerialization();
     testCompression();

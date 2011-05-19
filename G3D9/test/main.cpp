@@ -789,6 +789,10 @@ int main(int argc, char* argv[]) {
 
     printf("\n\nTests:\n\n");
 
+    testBinaryIO();
+
+    testReliableConduit(NetworkDevice::instance());
+
     testAny();
 
     testFileSystem();
@@ -798,7 +802,6 @@ int main(int argc, char* argv[]) {
     testTextInput();
     testTextInput2();
     printf("  passed\n");
-
 
     testSphere();
 
@@ -829,12 +832,9 @@ int main(int argc, char* argv[]) {
 
     testTable();
 
-    testTableTable();
-  
+    testTableTable();  
 
     testCoordinateFrame();
-
-    testReliableConduit(NetworkDevice::instance());
 
     testQuat();
 
@@ -898,8 +898,6 @@ int main(int argc, char* argv[]) {
     testCallback();
 
     testPointHashGrid();
-
-    testBinaryIO();
 
 #   ifdef RUN_SLOW_TESTS
         testHugeBinaryIO();

@@ -458,10 +458,12 @@ std::string BinaryInput::readString() {
         }
     }
 
-    // Consume NULL
-    ++n;
+    std::string s = readString(n);
 
-    return readString(n);
+    // Consume the NULL
+    skip(1);
+
+    return s;
 }
 
 static bool isNewline(char c) {
