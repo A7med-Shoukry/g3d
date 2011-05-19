@@ -470,6 +470,76 @@ protected:
 };
 
 
+/** A surface subclass that overrides the CPU geometry methods to do nothing. */
+class EmptySurface : public Surface {
+public:
+
+    virtual const MeshAlg::Geometry& objectSpaceGeometry() const {
+        static MeshAlg::Geometry x;
+        return x;
+    }
+
+    virtual const Array<Vector3>& objectSpaceFaceNormals
+    (bool normalize = true) const {
+        (void)normalize;
+        static Array<Vector3> x;
+        return x;
+    }
+
+    virtual const Array<MeshAlg::Face>& faces() const {
+        static Array<MeshAlg::Face> x;
+        return x;
+    }
+
+    virtual const Array<MeshAlg::Edge>& edges() const {
+        static Array<MeshAlg::Edge> x;
+        return x;
+    }
+
+    virtual const Array<MeshAlg::Vertex>& vertices() const {
+        static Array<MeshAlg::Vertex> x;
+        return x;
+    }
+
+    virtual const Array<MeshAlg::Face>& weldedFaces() const {
+        static Array<MeshAlg::Face> x;
+        return x;
+    }
+
+    virtual const Array<MeshAlg::Edge>& weldedEdges() const {
+        static Array<MeshAlg::Edge> x;
+        return x;
+    }
+
+    virtual const Array<MeshAlg::Vertex>& weldedVertices() const {
+        static Array<MeshAlg::Vertex> x;
+        return x;
+    }
+
+    virtual const Array<int>& triangleIndices() const {
+        static Array<int> x;
+        return x;
+    }
+
+    virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
+        s.radius = finf();
+        s.center = Vector3::zero();
+    }
+
+    virtual void getObjectSpaceBoundingBox(AABox& b) const {
+        b = AABox::inf();
+    }
+
+    virtual int numBoundaryEdges() const {
+        return 0;
+    }
+
+    virtual int numWeldedBoundaryEdges() const {
+        return 0;
+    }
+};
+
+
 /////////////////////////////////////////////////////////////////
 
 typedef ReferenceCountedPointer<class Surface2D> Surface2DRef;

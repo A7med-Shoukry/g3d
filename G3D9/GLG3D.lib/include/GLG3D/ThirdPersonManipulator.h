@@ -1,14 +1,14 @@
 /**
-  @file GLG3D/ThirdPersonManipulator.h
+  \file GLG3D/ThirdPersonManipulator.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2006-06-09
-  @edited  2006-07-18
+  \created 2006-06-09
+  \edited  2011-05-01
 */
 
-#ifndef G3D_THIRDPERSONMANIPULATOR_H
-#define G3D_THIRDPERSONMANIPULATOR_H
+#ifndef G3D_ThirdPersonManipulator_h
+#define G3D_ThirdPersonManipulator_h
 
 #include "G3D/Array.h"
 #include "G3D/Vector3.h"
@@ -373,5 +373,6 @@ public:
     virtual void onAI();
 };
 
-}
-#endif
+} // namespace G3D
+
+#endif // ThirdPersonManipulator_h

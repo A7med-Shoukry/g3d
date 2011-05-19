@@ -39,8 +39,16 @@ protected:
     /** Current position */
     CFrame                          m_frame;
 
-    /** Root position over time */
+    /** The Any from which this was originally constructed */
+    Any                             m_sourceAny;
+
+    /** Root position over time.  Set m_frameSplineChanged if this
+        changes. */
     PhysicsFrameSpline              m_frameSpline;
+
+    /** True if the spline was mutated since load.  Used by toAny() to
+        decide if m_sourceAny is out of date. */
+    bool                            m_frameSplineChanged;
 
     //////////////////////////////////////////////
 
@@ -138,6 +146,7 @@ public:
         return new GEntity(name, propertyTable, modelTable);
     }
 
+    /** Current position, i.e., as of last onSimulation call */
     const CFrame& frame() const {
         return m_frame;
     }
@@ -145,6 +154,23 @@ public:
     const std::string& name() const {
         return m_name;
     }
+
+    /** Provides access to the underlying spline */
+    const PhysicsFrameSpline& frameSpline() const {
+        return m_frameSpline;
+    }
+
+    void setFrameSpline(const PhysicsFrameSpline& s) {
+        if (m_frameSpline != s) {
+            m_frameSplineChanged = true;
+        }
+        m_frameSpline = s;
+    }
+
+    /** Converts the current GEntity to an Any.  Subclasses should
+        modify at least the name of the Table, which will be "GEntity"
+        if not changed. */
+    virtual Any toAny() const;
 
     /** 
         \brief Physical simulation callback.

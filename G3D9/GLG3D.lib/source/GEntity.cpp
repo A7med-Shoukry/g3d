@@ -202,4 +202,24 @@ bool GEntity::intersect(const Ray& R, float& maxDistance) const {
     return false;
 }
 
+
+Any GEntity::toAny() const {
+    Any a = m_sourceAny;
+
+    // Update if the position is out of date
+    if (m_frameSpline.control.size() == 1) {
+        // Write out in short form
+        const PhysicsFrame& p = m_frameSpline.control[0];
+        if (p.rotation == Quat()) {
+            a["position"] = p.translation;
+        } else {
+            a["position"] = CFrame(p);
+        }
+    } else {
+        a["position"] = m_frameSpline;
+    }
+
+    return a;
+}
+
 }

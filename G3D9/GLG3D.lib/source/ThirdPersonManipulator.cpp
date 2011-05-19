@@ -1,10 +1,10 @@
 /**
-  @file GLG3D/ThirdPersonManipulator.cpp
+  \file GLG3D/ThirdPersonManipulator.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2006-06-09
-  @edited  2010-01-11
+  \created 2006-06-09
+  \edited  2011-01-11
 */
 
 #include "GLG3D/ThirdPersonManipulator.h"
@@ -336,7 +336,7 @@ void ThirdPersonManipulator::render(RenderDevice* rd) const {
 }
 
 
-class TPMSurface : public Surface {
+class TPMSurface : public EmptySurface {
     friend class ThirdPersonManipulator;
 
     ThirdPersonManipulator* m_manipulator;
@@ -349,60 +349,12 @@ public:
         m_manipulator->render(rd);
     }
 
-    
     virtual std::string name() const {
         return "ThirdPersonManipulator";
     }
 
     virtual void getCoordinateFrame(CoordinateFrame& c) const {
         m_manipulator->getControlFrame(c);
-    }
-
-    virtual const MeshAlg::Geometry& objectSpaceGeometry() const {
-        static MeshAlg::Geometry x;
-        return x;
-    }
-
-    virtual const Array<Vector3>& objectSpaceFaceNormals
-    (bool normalize = true) const {
-        (void)normalize;
-        static Array<Vector3> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Face>& faces() const {
-        static Array<MeshAlg::Face> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Edge>& edges() const {
-        static Array<MeshAlg::Edge> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Vertex>& vertices() const {
-        static Array<MeshAlg::Vertex> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Face>& weldedFaces() const {
-        static Array<MeshAlg::Face> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Edge>& weldedEdges() const {
-        static Array<MeshAlg::Edge> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Vertex>& weldedVertices() const {
-        static Array<MeshAlg::Vertex> x;
-        return x;
-    }
-
-    virtual const Array<int>& triangleIndices() const {
-        static Array<int> x;
-        return x;
     }
 
     virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
@@ -412,14 +364,6 @@ public:
 
     virtual void getObjectSpaceBoundingBox(AABox& b) const {
         b = AABox(Vector3(-2,-2,-2), Vector3(2,2,2));
-    }
-
-    virtual int numBoundaryEdges() const {
-        return 0;
-    }
-
-    virtual int numWeldedBoundaryEdges() const {
-        return 0;
     }
 };
 

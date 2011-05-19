@@ -5,7 +5,7 @@
 #include "Entity.h"
 
 
-/** Sample scene graph.
+/** \brief Sample scene graph.
 
     Includes loading from a text file, and a GUI component for detecting
     and selecting scenes.
@@ -16,6 +16,10 @@
 */
 class Scene : public ReferenceCountedObject {
 protected:
+    
+    /** The Any from which this scene was constructed. */
+    Any                         m_sourceAny;
+
     /** Current time */
     GameTime                    m_time;
     Lighting::Ref               m_lighting;
@@ -33,6 +37,16 @@ public:
     typedef ReferenceCountedPointer<Scene> Ref;
 
     static Scene::Ref create(const std::string& sceneName, GCamera& camera);
+
+    /** Creates an Any representing this scene by updating the one
+     from which it was loaded with the current Entity positions.  This
+     will overwrite any <code>#include</code> entries that appeared in
+     the original source Any.
+
+     You can obtain the original filename as a.source().filename().
+    */
+    Any toAny() const;
+
     
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
 

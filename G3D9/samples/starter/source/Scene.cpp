@@ -101,6 +101,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
         } else if (v.nameBeginsWith("MD3Model")) {
             m = MD3Model::create(v);
         } else {
+            // TODO: Add your own model formats here!
             debugAssertM(false, "Unrecognized model type: " + v.name());
         }
 
@@ -115,7 +116,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
         AnyTableReader propertyTable(it->value);
         if (it->value.nameEquals("Entity")) {
             s->m_entityArray.append(Entity::create(name, propertyTable, modelTable));
-        } /* else if (it->value.nameEquals("...")) {  TODO: add your own subclasses here! } */
+        } /* else if (it->value.nameEquals("...")) {  TODO: add your own GEntity subclasses here! } */
         
         propertyTable.verifyDone();
     }
@@ -195,4 +196,18 @@ Entity::Ref Scene::intersect(const Ray& ray, float& distance, const Array<Entity
     }
 
     return closest;
+}
+
+
+Any Scene::toAny() const {
+    Any a = m_sourceAny;
+
+    // Overwrite the entity table
+    Any entityTable(Any::TABLE);
+    for (int i = 0; i < m_entityArray.size(); ++i) {
+        const Entity::Ref& entity = m_entityArray[i];
+        entityTable[entity->name()] = entity->toAny();
+    }
+
+    return a;
 }

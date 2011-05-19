@@ -311,6 +311,28 @@ void FirstPersonManipulator::onUserInput(UserInput* ui) {
 
 
 bool FirstPersonManipulator::onEvent(const GEvent& event) {
+    if (m_active && (m_mouseMode == MOUSE_DIRECT_RIGHT_BUTTON) && (event.type == GEventType::MOUSE_BUTTON_DOWN)) {
+        // This may be the "right-click" (OS dependent) that will
+        // start camera movement.  If it is, we don't want other
+        // Widgets to see the event.
+
+        if (event.button.button == 1) {
+            // Right click
+            return true;
+        }
+
+#       ifdef G3D_OSX
+        if ((m_userInput != NULL) && 
+            (event.button.button == 0) &&
+            (m_userInput->keyDown(GKey::LSHIFT) ||
+             m_userInput->keyDown(GKey::RSHIFT) ||
+             m_userInput->keyDown(GKey::LCTRL)  ||
+             m_userInput->keyDown(GKey::RCTRL))) {
+            // "Right click"
+            return true;
+        }
+#       endif
+    }
     return false;
 }
 

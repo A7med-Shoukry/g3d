@@ -26,6 +26,8 @@
      <li> G3D::Texture::Visualization, G3D::Texture::visualization
      <li> G3D::RayGridIterator
      <li> Improved error reporting from Any and ParseError
+     <li> PhysicsFrame::operator==, Quat::operator==, PhysicsFrameSpline::operator==
+     <li> G3D::GEntity::toAny, G3D::PhysicsFrameSpline::toAny, G3D::PhysicsFrame::toAny, G3D::Quat::toAny
      <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
      <li> G3D::GCamera::exposureTime 
      <li> G3D::ArrowShape

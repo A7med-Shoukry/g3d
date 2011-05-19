@@ -24,9 +24,15 @@ PhysicsFrame::PhysicsFrame() {
 
 PhysicsFrame::PhysicsFrame(
     const CoordinateFrame& coordinateFrame) {
-
     translation = coordinateFrame.translation;
     rotation    = Quat(coordinateFrame.rotation);
+}
+
+
+Any PhysicsFrame::toAny() const {
+    Any a(Any::ARRAY, "PFrame");
+    a.append(rotation, translation);
+    return a;
 }
 
 

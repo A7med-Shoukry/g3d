@@ -11,17 +11,19 @@
 #include <G3D/G3DAll.h>
 
 #include "Scene.h"
+#include "SplineEditor.h"
+
 
 class App : public GApp {
     GuiDropDownList*    m_sceneDropDownList;
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;
 
-    /** Used for enabling dragging of objects with m_entityManipulator.*/
+    /** Used for enabling dragging of objects with m_splineEditor.*/
     Entity::Ref         m_selectedEntity;
 
-    
-    ThirdPersonManipulator::Ref m_entityManipulator;
+    /** Used for editing entity splines.*/
+    SplineEditor::Ref   m_splineEditor;
 
     bool                m_showAxes;
     bool                m_showLightSources;
@@ -29,6 +31,9 @@ class App : public GApp {
 
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
+
+    /** Save the current scene over the one on disk. */
+    void saveScene();
 
     /** Called from onInit */
     void makeGUI();

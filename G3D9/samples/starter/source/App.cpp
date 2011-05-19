@@ -50,10 +50,6 @@ void App::onInit() {
     m_showAxes         = true;
     m_showWireframe    = false;
 
-    m_entityManipulator = ThirdPersonManipulator::create();
-    m_entityManipulator->setEnabled(false);
-    addWidget(m_entityManipulator);
-
     makeGUI();
 
     // Start wherever the developer HUD last marked as "Home"
@@ -66,12 +62,21 @@ void App::onInit() {
 
 
 void App::makeGUI() {
+    m_splineEditor = SplineEditor::create();
+    addWidget(m_splineEditor);
+
     GuiPane* scenePane = debugPane->addPane("Scene", GuiTheme::ORNATE_PANE_STYLE);
     scenePane->moveBy(0, -10);
     scenePane->beginRow(); {
         // Example of using a callback; you can also listen for events in onEvent or bind controls to data
         m_sceneDropDownList = scenePane->addDropDownList("", Scene::sceneNames(), NULL, GuiControl::Callback(this, &App::loadScene));
-        scenePane->addButton(GuiText("q", GFont::fromFile(System::findDataFile("icon.fnt")), 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
+
+        static const char* reloadIcon = "q";
+        static const char* diskIcon = "\xcd";
+        GFont::Ref iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
+
+        scenePane->addButton(GuiText(reloadIcon, iconFont, 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
+        scenePane->addButton(GuiText(diskIcon, iconFont, 18), this, &App::saveScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
     } scenePane->endRow();
 
     const int w = 120;
@@ -141,19 +146,15 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     if (m_scene.notNull()) {
         m_scene->onSimulation(sdt);
 
-        if (m_selectedEntity.notNull()) {
-            // Apply the manipulator
-            m_selectedEntity->setFrame(m_entityManipulator->frame());
+        if (m_selectedEntity.notNull() && m_splineEditor->enabled()) {
+            // Apply the edit
+            m_selectedEntity->setFrameSpline(m_splineEditor->spline());
         }
     }
 }
 
 
 bool App::onEvent(const GEvent& event) {
-    if (event.type == GEventType::MOUSE_BUTTON_CLICK) {
-        debugPrintf("Click, button = %d\n",  event.button.button);
-    }
-
     if (GApp::onEvent(event)) {
         return true;
     }
@@ -165,7 +166,8 @@ bool App::onEvent(const GEvent& event) {
         return true;
     }
 
-    if ((event.type == GEventType::MOUSE_BUTTON_CLICK) && (event.button.button == 0)) {
+
+    if ((event.type == GEventType::MOUSE_BUTTON_DOWN) && (event.button.button == 0)) {
         // Left click: select by casting a ray through the center of the pixel
         const Ray& ray = defaultCamera.worldRay(event.button.x + 0.5f, event.button.y + 0.5f, renderDevice->viewport());
         
@@ -173,10 +175,10 @@ bool App::onEvent(const GEvent& event) {
         m_selectedEntity = m_scene->intersect(ray, distance);
 
         if (m_selectedEntity.notNull()) {
-            m_entityManipulator->setFrame(m_selectedEntity->frame());
-            m_entityManipulator->setEnabled(true);
+            m_splineEditor->setSpline(m_selectedEntity->frameSpline());
+            m_splineEditor->setEnabled(true);
         } else {
-            m_entityManipulator->setEnabled(false);
+            m_splineEditor->setEnabled(false);
         }
     }
 
@@ -264,4 +266,9 @@ void App::onCleanup() {
 
 void App::endProgram() {
     m_endProgram = true;
+}
+
+
+void App::saveScene() {
+    // TODO
 }
