@@ -7,7 +7,7 @@ using G3D::uint64;
 void testPseudoInverse() {
 #ifdef G3D_WIN32
     // Windows seems to preserve precision better when compiling the SVD code.
-    float normThreshold = 0.0002f;
+    float normThreshold = 0.0009f;
 #else
     float normThreshold = 0.04f;
 #endif
