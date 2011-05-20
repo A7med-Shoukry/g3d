@@ -12,6 +12,7 @@ int main(int argc, const char* argv[]) {
     // settings class.  For example:
     settings.window.width       = 1280; 
     settings.window.height      = 720;
+    settings.window.defaultIconFilename = "icon.png";
 
 #   ifdef G3D_WIN32
 	if (FileSystem::exists("data-files", false)) {
