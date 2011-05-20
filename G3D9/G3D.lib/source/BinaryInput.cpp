@@ -138,9 +138,16 @@ void BinaryInput::loadIntoMemory(int64 startPosition, int64 minLength) {
         // The current buffer isn't big enough to hold the chunk we want to read.
         // This happens if there was little memory available during the initial constructor
         // read but more memory has since been freed.
+        void* oldBuffer = m_buffer;
+        int64 oldBufferLength = m_bufferLength;
+
         m_bufferLength = minLength;
         debugAssert(m_freeBuffer);
-        m_buffer = (uint8*)System::realloc(m_buffer, m_bufferLength);
+
+        m_buffer = (uint8*)System::memoryManager()->alloc(m_bufferLength);
+        System::memcpy(m_buffer, oldBuffer, oldBufferLength);
+        System::memoryManager()->free(oldBuffer);
+
         if (m_buffer == NULL) {
             throw "Tried to read a larger memory chunk than could fit in memory. (2)";
         }

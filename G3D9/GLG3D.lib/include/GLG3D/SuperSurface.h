@@ -37,15 +37,15 @@ public:
 
     typedef ReferenceCountedPointer<SuperSurface> Ref;
 
-    /** Allocates with System::malloc to avoid the performance
+    /** Allocates with System::memoryManager()->alloc to avoid the performance
         overhead of creating lots of small heap objects using
         ::malloc. */
     static void* operator new(size_t size) {
-        return System::malloc(size);
+        return System::memoryManager()->alloc(size);
     }
 
     static void operator delete(void* p) {
-        System::free(p);
+        System::memoryManager()->free(p);
     }
 
     /** @brief A GPU mesh utility class that works with G3D::SuperSurface.

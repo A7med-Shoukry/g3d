@@ -1,11 +1,10 @@
 /**
-  @file MemoryManager.cpp
+  \file MemoryManager.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2009-04-20
-  @edited  2009-05-29
+  \created 2009-04-20
+  \edited  2011-05-16
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 
@@ -23,20 +22,6 @@ void* MemoryManager::allocZeroed(size_t bytes) {
     }
     return m;
 }
-
-////////////////////////////////////////////////////
-
-PoolMemoryManager::PoolMemoryManager() {}
-
-void* PoolMemoryManager::alloc(size_t s) {
-    return System::malloc(s);
-}
-
-
-void PoolMemoryManager::free(void* ptr) {
-    System::free(ptr);
-}
-
 
 ///////////////////////////////////////////////////
 
@@ -88,4 +73,5 @@ CRTMemoryManager::Ref CRTMemoryManager::create() {
     static CRTMemoryManager::Ref m = new CRTMemoryManager();
     return m;
 }
-}
+
+} // namespace G3D

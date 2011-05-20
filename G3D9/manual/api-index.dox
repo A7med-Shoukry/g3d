@@ -448,8 +448,7 @@ href="classes.html">Classes</a>.
         \link G3D::CRTMemoryManager CRTMemoryManager\endlink,  
         \link G3D::G3DEndian G3DEndian\endlink,
         \link G3D::MemoryManager MemoryManager\endlink,
-        \link G3D::System::free System::free\endlink,
-        \link G3D::System::malloc System::malloc\endlink
+        \link G3D::System::memoryManager System::memoryManager\endlink,
      </li>
         
      <LI><B>Utilities and Constants</B> &nbsp; &nbsp;

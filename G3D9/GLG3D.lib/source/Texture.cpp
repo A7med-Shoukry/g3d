@@ -1843,7 +1843,7 @@ Texture::Ref Texture::alphaOnlyVersion() const {
     for (int f = 0; f < numFaces; ++f) {
         GLenum target = dimensionToTarget(m_dimension);
         glBindTexture(target, m_textureID);
-        bytes[f] = (const void*)System::malloc(m_width * m_height);
+        bytes[f] = (const void*)System::memoryManager()->alloc(m_width * m_height);
         glGetTexImage(target, 0, GL_ALPHA, GL_UNSIGNED_BYTE, const_cast<void*>(bytes[f]));
     }
 
@@ -1862,7 +1862,7 @@ Texture::Ref Texture::alphaOnlyVersion() const {
 			m_settings);
 
     for (int f = 0; f < numFaces; ++f) {
-        System::free(const_cast<void*>(bytes[f]));
+        System::memoryManager()->free(const_cast<void*>(bytes[f]));
     }
 
     return ret;

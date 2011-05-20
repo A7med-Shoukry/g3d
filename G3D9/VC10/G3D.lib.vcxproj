@@ -164,6 +164,7 @@
     <ClCompile Include="..\G3D.lib\source\PhysicsFrame.cpp" />
     <ClCompile Include="..\G3D.lib\source\PhysicsFrameSpline.cpp" />
     <ClCompile Include="..\G3D.lib\source\Plane.cpp" />
+    <ClCompile Include="..\G3D.lib\source\PoolMemoryManager.cpp" />
     <ClCompile Include="..\G3D.lib\source\PrecomputedRandom.cpp" />
     <ClCompile Include="..\G3D.lib\source\prompt.cpp" />
     <ClCompile Include="..\G3D.lib\source\Quat.cpp" />
@@ -277,6 +278,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Pointer.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\PointHashGrid.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\PointKDTree.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\PoolMemoryManager.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\PositionTrait.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\PrecomputedRandom.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\prompt.h" />

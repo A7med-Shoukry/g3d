@@ -1557,11 +1557,11 @@ LRESULT CALLBACK Win32Window::windowProc(HWND     window,
                 this_window->m_droppedFiles.clear();
                 for (int i = 0; i < n; ++i) {
                     int numChars = DragQueryFile(hDrop, i, NULL, 0);
-                    char* temp = (char*)System::malloc(numChars + 2);
+                    char* temp = (char*)System::memoryManager()->alloc(numChars + 2);
                     DragQueryFileA(hDrop, i, temp, numChars + 1);
                     std::string s = temp;
                     this_window->m_droppedFiles.append(s);
-                    System::free(temp);
+                    System::memoryManager()->free(temp);
                 }
                 DragFinish(hDrop);
 

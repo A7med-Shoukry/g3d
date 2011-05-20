@@ -327,7 +327,7 @@ protected:
 	    }
     };
 
-    // Using System::malloc with this class provided no speed improvement.
+    // Using System::memoryManager()->alloc with this class provided no speed improvement.
     class Node {
     public:
 

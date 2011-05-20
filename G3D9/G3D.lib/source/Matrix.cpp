@@ -568,8 +568,8 @@ void Matrix::Impl::setSize(int newRows, int newCols) {
 
     // Construct the row pointers
     //delete[] elt;
-    System::free(elt);
-    elt = (T**)System::malloc(R * sizeof(T*));// new T*[R];
+    System::memoryManager()->free(elt);
+    elt = (T**)System::memoryManager()->alloc(R * sizeof(T*));// new T*[R];
 
     for (int r = 0; r < R; ++ r) {
         elt[r] = data + r * C;
@@ -579,7 +579,7 @@ void Matrix::Impl::setSize(int newRows, int newCols) {
 
 Matrix::Impl::~Impl() {
     //delete[] elt;
-    System::free(elt);
+    System::memoryManager()->free(elt);
     System::alignedFree(data);
 }
 

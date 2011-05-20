@@ -83,11 +83,11 @@ public:
     public:
 
         static void* operator new(size_t size) {
-            return System::malloc(size);
+            return System::memoryManager()->alloc(size);
         }
 
         static void operator delete(void* p) {
-            System::free(p);
+            System::memoryManager()->free(p);
         }
 
         ~Impl();

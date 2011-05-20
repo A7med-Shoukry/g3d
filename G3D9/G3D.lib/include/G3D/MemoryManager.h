@@ -1,11 +1,10 @@
 /**
-  @file MemoryManager.h
+  \file MemoryManager.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2009-04-20
-  @edited  2009-04-20
+  \created 2009-04-20
+  \edited  2011-05-16
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 #ifndef G3D_MemoryManager_h
@@ -18,7 +17,7 @@ namespace G3D {
 
 /** 
    Abstraction of memory management.
-   Default implementation uses G3D::System::malloc and is threadsafe.
+   Default implementation uses G3D::System::memoryManager()->alloc and is threadsafe.
 
    \sa LargePoolMemoryManager, CRTMemoryManager, AlignedMemoryManager, AreaMemoryManager */
 class MemoryManager : public ReferenceCountedObject {
@@ -48,7 +47,7 @@ public:
     <pre>
     If shrinking, perform your C++ cleanup on the objects that will be freed
 
-    if (! mm->attemptToChangeAllocationSize(b, s) && (s > originalSize)) {
+    if (! mm->tryUpdateAllocSize(b, s) && (s > originalSize)) {
          void* n = mm->alloc(s);
          do your own C++ copy from b to n, if required, or simply System::memcpy if POD
          mm->free(b);
@@ -58,26 +57,18 @@ public:
 
     Compare to C realloc(), which is not safe for C++ objects or those with embedded references.
     */
-    virtual bool attemptToChangeAllocationSize(void* block, size_t newBytes) { return false; }
+    virtual bool tryUpdateAllocSize(void* block, size_t newBytes) { return false; }
 
+    /// Allocates memory thrugh alloc then initializes all bytes to 0.
     virtual void* allocZeroed(size_t bytes);
+
+    /// Returns implementation-specific string describing current allocation performance
+    virtual std::string describePerformance() const { return "Performance N/A"; }
+
+    /// Resets performance indicators used to create performance description
+    virtual void resetPerformance() { }
 };
 
-/** Wraps System::malloc and System::free.
-    \sa MemoryManager */
-class PoolMemoryManager : public MemoryManager {
-public:
-    PoolMemoryManager();
-
-    /// Allocates using System::malloc
-    virtual void* alloc(size_t numBytes);
-
-    // Frees using System::free
-    virtual void free(void* ptr);
-
-    /// System::malloc and System::free are thread-safe
-    virtual bool isThreadsafe() const { return true; }
-};
 
 /** 
    Allocates memory on 16-byte boundaries.
@@ -119,6 +110,6 @@ public:
     static CRTMemoryManager::Ref create();
 };
 
-}
+} // namespace G3D
 
-#endif
+#endif // G3D_MemoryManager_h

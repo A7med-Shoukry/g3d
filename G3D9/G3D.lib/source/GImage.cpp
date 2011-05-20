@@ -194,7 +194,7 @@ void GImage::flipRGBVertical(
     
     // Allocate a temp row so the operation
     // is still safe if in == out
-    uint8* temp = (uint8*)System::malloc(width * 3);
+    uint8* temp = (uint8*)System::memoryManager()->alloc(width * 3);
     alwaysAssertM(temp != NULL, "Out of memory"); 
 
     int oneRow = width * 3;
@@ -209,7 +209,7 @@ void GImage::flipRGBVertical(
         System::memcpy(out + botOff, temp,        oneRow);
     }
 
-    System::free(temp);
+    System::memoryManager()->free(temp);
 }
 
 
@@ -222,7 +222,7 @@ void GImage::flipRGBAVertical(
     
     // Allocate a temp row so the operation
     // is still safe if in == out
-    uint8* temp = (uint8*)System::malloc(width * 4);
+    uint8* temp = (uint8*)System::memoryManager()->alloc(width * 4);
     alwaysAssertM(temp != NULL, "Out of memory");
 
     int oneRow = width * 4;
@@ -236,7 +236,7 @@ void GImage::flipRGBAVertical(
         System::memcpy(out + botOff, temp,        oneRow);
     }
 
-    System::free(temp);
+    System::memoryManager()->free(temp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -812,7 +812,7 @@ void GImage::encode(
 
     encode(format, out);
 
-    outData = (uint8*)System::malloc(out.size());
+    outData = (uint8*)System::memoryManager()->alloc(out.size());
     debugAssert(outData);
     outLength = out.size();
 

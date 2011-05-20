@@ -36,6 +36,7 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 
 
 void App::onInit() {
+    GApp::onInit();
     // Called before the application loop beings.  Load data here and
     // not in the constructor so that common exceptions will be
     // automatically caught.
@@ -212,18 +213,17 @@ void App::onUserInput(UserInput* ui) {
 }
 
 
-void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
-    GApp::onPose(surfaceArray, surface2D);
+void App::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
+    GApp::onPose(posed3D, posed2D);
 
     // Append any models to the arrays that you want to later be rendered by onGraphics()
     if (m_scene.notNull()) {
-        m_scene->onPose(surfaceArray);
+        m_scene->onPose(posed3D);
     }
-    (void)surface2D;
 }
 
 
-void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
+void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
     if (m_scene.isNull()) {
         return;
     }
@@ -232,10 +232,10 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
     // ShadowMap as the final argument to create shadows.)
-    Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
+    Surface::sortAndRender(rd, defaultCamera, posed3D, m_scene->lighting(), m_shadowMap);
 
     if (m_showWireframe) {
-        Surface::renderWireframe(rd, surface3D);
+        Surface::renderWireframe(rd, posed3D);
     }
 
     //////////////////////////////////////////////////////

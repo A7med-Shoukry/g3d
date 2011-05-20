@@ -1,8 +1,6 @@
 /** 
-  @file System.cpp
+  \file System.cpp
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-
   Note: every routine must call init() first.
 
   There are two kinds of detection used in this file.  At compile
@@ -10,8 +8,11 @@
   can be used at all.  At runtime, processor detection is used to
   determine if we can safely call the routines that use that assembly.
 
-  @created 2003-01-25
-  @edited  2010-01-03
+  \created 2003-01-25
+  \edited  2011-05-16
+
+  Copyright 2000-2011, Morgan McGuire.
+  All rights reserved.
  */
 
 #include "G3D/platform.h"
@@ -28,6 +29,7 @@
 #include "G3D/GMutex.h"
 #include "G3D/units.h"
 #include "G3D/FileSystem.h"
+#include "G3D/PoolMemoryManager.h"
 #include <time.h>
 
 #include <cstring>
@@ -324,7 +326,11 @@ void System::init() {
 
     getStandardProcessorExtensions();
 
+#ifndef NO_BUFFERPOOL
     m_memoryManager = new PoolMemoryManager();
+#else
+    m_memoryManager = new CRTMemoryManager();
+#endif
 }
 
 
@@ -938,545 +944,6 @@ MemoryManager::Ref System::memoryManager()
 
 ////////////////////////////////////////////////////////////////
 
-#define REALPTR_TO_USERPTR(x)   ((uint8*)(x) + sizeof(uint32))
-#define USERPTR_TO_REALPTR(x)   ((uint8*)(x) - sizeof(uint32))
-#define USERSIZE_TO_REALSIZE(x)       ((x) + sizeof(uint32))
-#define REALSIZE_FROM_USERPTR(u) (*(uint32*)USERPTR_TO_REALPTR(ptr) + sizeof(uint32))
-#define USERSIZE_FROM_USERPTR(u) (*(uint32*)USERPTR_TO_REALPTR(ptr))
-
-class BufferPool {
-public:
-
-    /** Only store buffers up to these sizes (in bytes) in each pool->
-        Different pools have different management strategies.
-
-        A large block is preallocated for tiny buffers; they are used with
-        tremendous frequency.  Other buffers are allocated as demanded.
-        Tiny buffers are 128 bytes long because that seems to align well with
-        cache sizes on many machines.
-      */
-    enum {tinyBufferSize = 128, smallBufferSize = 1024, medBufferSize = 4096};
-
-    /** 
-       Most buffers we're allowed to store.
-       250000 * 128  = 32 MB (preallocated)
-        10000 * 1024 = 10 MB (allocated on demand)
-         1024 * 4096 =  4 MB (allocated on demand)
-     */
-    enum {maxTinyBuffers = 250000, maxSmallBuffers = 10000, maxMedBuffers = 1024};
-
-private:
-
-    /** Pointer given to the program.  Unless in the tiny heap, the user size of the block is stored right in front of the pointer as a uint32.*/
-    typedef void* UserPtr;
-
-    /** Actual block allocated on the heap */
-    typedef void* RealPtr;
-
-    class MemBlock {
-    public:
-        UserPtr     ptr;
-        size_t      bytes;
-
-        inline MemBlock() : ptr(NULL), bytes(0) {}
-        inline MemBlock(UserPtr p, size_t b) : ptr(p), bytes(b) {}
-    };
-
-    MemBlock smallPool[maxSmallBuffers];
-    int smallPoolSize;
-
-    MemBlock medPool[maxMedBuffers];
-    int medPoolSize;
-
-    /** The tiny pool is a single block of storage into which all tiny
-        objects are allocated.  This provides better locality for
-        small objects and avoids the search time, since all tiny
-        blocks are exactly the same size. */
-    void* tinyPool[maxTinyBuffers];
-    int tinyPoolSize;
-
-    /** Pointer to the data in the tiny pool */
-    void* tinyHeap;
-
-    Spinlock            m_lock;
-
-    void lock() {
-        m_lock.lock();
-    }
-
-    void unlock() {
-        m_lock.unlock();
-    }
-
-#if 0 //-----------------------------------------------old mutex
-#   ifdef G3D_WIN32
-    CRITICAL_SECTION    mutex;
-#   else
-    pthread_mutex_t     mutex;
-#   endif
-
-    /** Provide synchronization between threads */
-    void lock() {
-#       ifdef G3D_WIN32
-            EnterCriticalSection(&mutex);
-#       else
-            pthread_mutex_lock(&mutex);
-#       endif
-    }
-
-    void unlock() {
-#       ifdef G3D_WIN32
-            LeaveCriticalSection(&mutex);
-#       else
-            pthread_mutex_unlock(&mutex);
-#       endif
-    }
-#endif //-------------------------------------------old mutex
-
-    /** 
-     Malloc out of the tiny heap. Returns NULL if allocation failed.
-     */
-    inline UserPtr tinyMalloc(size_t bytes) {
-        // Note that we ignore the actual byte size
-        // and create a constant size block.
-        (void)bytes;
-        assert(tinyBufferSize >= bytes);
-
-        UserPtr ptr = NULL;
-
-        if (tinyPoolSize > 0) {
-            --tinyPoolSize;
-
-            // Return the old last pointer from the freelist
-            ptr = tinyPool[tinyPoolSize];
-
-#           ifdef G3D_DEBUG
-                if (tinyPoolSize > 0) {
-                    assert(tinyPool[tinyPoolSize - 1] != ptr); 
-                     //   "System::malloc heap corruption detected: "
-                     //   "the last two pointers on the freelist are identical (during tinyMalloc).");
-                }
-#           endif
-
-            // NULL out the entry to help detect corruption
-            tinyPool[tinyPoolSize] = NULL;
-        }
-
-        return ptr;
-    }
-
-    /** Returns true if this is a pointer into the tiny heap. */
-    bool inTinyHeap(UserPtr ptr) {
-        return 
-            (ptr >= tinyHeap) && 
-            (ptr < (uint8*)tinyHeap + maxTinyBuffers * tinyBufferSize);
-    }
-
-    void tinyFree(UserPtr ptr) {
-        assert(ptr);
-        assert(tinyPoolSize < maxTinyBuffers);
- //           "Tried to free a tiny pool buffer when the tiny pool freelist is full.");
-
-#       ifdef G3D_DEBUG
-            if (tinyPoolSize > 0) {
-                UserPtr prevOnHeap = tinyPool[tinyPoolSize - 1];
-                assert(prevOnHeap != ptr); 
-//                    "System::malloc heap corruption detected: "
-//                    "the last two pointers on the freelist are identical (during tinyFree).");
-            }
-#       endif
-
-        assert(tinyPool[tinyPoolSize] == NULL);
-
-        // Put the pointer back into the free list
-        tinyPool[tinyPoolSize] = ptr;
-        ++tinyPoolSize;
-
-    }
-
-    void flushPool(MemBlock* pool, int& poolSize) {
-        for (int i = 0; i < poolSize; ++i) {
-            bytesAllocated -= USERSIZE_TO_REALSIZE(pool[i].bytes);
-            ::free(USERPTR_TO_REALPTR(pool[i].ptr));
-            pool[i].ptr = NULL;
-            pool[i].bytes = 0;
-        }
-        poolSize = 0;
-    }
-
-
-    /** Allocate out of a specific pool.  Return NULL if no suitable 
-        memory was found. */
-    UserPtr malloc(MemBlock* pool, int& poolSize, size_t bytes) {
-
-        // OPT: find the smallest block that satisfies the request.
-
-        // See if there's something we can use in the buffer pool.
-        // Search backwards since usually we'll re-use the last one.
-        for (int i = (int)poolSize - 1; i >= 0; --i) {
-            if (pool[i].bytes >= bytes) {
-                // We found a suitable entry in the pool.
-
-                // No need to offset the pointer; it is already offset
-                UserPtr ptr = pool[i].ptr;
-
-                // Remove this element from the pool, replacing it with
-                // the one from the end (same as Array::fastRemove)
-                --poolSize;
-                pool[i] = pool[poolSize];
-
-                return ptr;
-            }
-        }
-
-        return NULL;
-    }
-
-public:
-
-    /** Count of memory allocations that have occurred. */
-    int totalMallocs;
-    int mallocsFromTinyPool;
-    int mallocsFromSmallPool;
-    int mallocsFromMedPool;
-
-    /** Amount of memory currently allocated (according to the application). 
-        This does not count the memory still remaining in the buffer pool,
-        but does count extra memory required for rounding off to the size
-        of a buffer.
-        Primarily useful for detecting leaks.*/
-    // TODO: make me an atomic int!
-    volatile int bytesAllocated;
-
-    BufferPool() {
-        totalMallocs         = 0;
-
-        mallocsFromTinyPool  = 0;
-        mallocsFromSmallPool = 0;
-        mallocsFromMedPool   = 0;
-
-        bytesAllocated       = true;
-
-        tinyPoolSize         = 0;
-        tinyHeap             = NULL;
-
-        smallPoolSize        = 0;
-
-        medPoolSize          = 0;
-
-
-        // Initialize the tiny heap as a bunch of pointers into one
-        // pre-allocated buffer.
-        tinyHeap = ::malloc(maxTinyBuffers * tinyBufferSize);
-        for (int i = 0; i < maxTinyBuffers; ++i) {
-            tinyPool[i] = (uint8*)tinyHeap + (tinyBufferSize * i);
-        }
-        tinyPoolSize = maxTinyBuffers;
-
-#if 0        ///---------------------------------- old mutex
-#       ifdef G3D_WIN32
-            InitializeCriticalSection(&mutex);
-#       else
-            pthread_mutex_init(&mutex, NULL);
-#       endif
-#endif        ///---------------------------------- old mutex
-    }
-
-
-    ~BufferPool() {
-        ::free(tinyHeap);
-        flushPool(smallPool, smallPoolSize);
-        flushPool(medPool, medPoolSize);
-#if 0 //-------------------------------- old mutex
-#       ifdef G3D_WIN32
-            DeleteCriticalSection(&mutex);
-#       else
-            // No destruction on pthreads
-#       endif
-#endif //--------------------------------old mutex
-    }
-
-    
-    UserPtr realloc(UserPtr ptr, size_t bytes) {
-        if (ptr == NULL) {
-            return malloc(bytes);
-        }
-
-        if (inTinyHeap(ptr)) {
-            if (bytes <= tinyBufferSize) {
-                // The old pointer actually had enough space.
-                return ptr;
-            } else {
-                // Free the old pointer and malloc
-                
-                UserPtr newPtr = malloc(bytes);
-                System::memcpy(newPtr, ptr, tinyBufferSize);
-                tinyFree(ptr);
-                return newPtr;
-
-            }
-        } else {
-            // In one of our heaps.
-
-            // See how big the block really was
-            size_t userSize = USERSIZE_FROM_USERPTR(ptr);
-            if (bytes <= userSize) {
-                // The old block was big enough.
-                return ptr;
-            }
-
-            // Need to reallocate and move
-            UserPtr newPtr = malloc(bytes);
-            System::memcpy(newPtr, ptr, userSize);
-            free(ptr);
-            return newPtr;
-        }
-    }
-
-
-    UserPtr malloc(size_t bytes) {
-        lock();
-        ++totalMallocs;
-
-        if (bytes <= tinyBufferSize) {
-
-            UserPtr ptr = tinyMalloc(bytes);
-
-            if (ptr) {
-                ++mallocsFromTinyPool;
-                unlock();
-                return ptr;
-            }
-
-        } 
-        
-        // Failure to allocate a tiny buffer is allowed to flow
-        // through to a small buffer
-        if (bytes <= smallBufferSize) {
-            
-            UserPtr ptr = malloc(smallPool, smallPoolSize, bytes);
-
-            if (ptr) {
-                ++mallocsFromSmallPool;
-                unlock();
-                return ptr;
-            }
-
-        } else if (bytes <= medBufferSize) {
-            // Note that a small allocation failure does *not* fall
-            // through into a medium allocation because that would
-            // waste the medium buffer's resources.
-
-            UserPtr ptr = malloc(medPool, medPoolSize, bytes);
-
-            if (ptr) {
-                ++mallocsFromMedPool;
-                unlock();
-                debugAssertM(ptr != NULL, "BufferPool::malloc returned NULL");
-                return ptr;
-            }
-        }
-
-        bytesAllocated += USERSIZE_TO_REALSIZE(bytes);
-        unlock();
-
-        // Heap allocate
-
-        // Allocate 4 extra bytes for our size header (unfortunate,
-        // since malloc already added its own header).
-        RealPtr ptr = ::malloc(USERSIZE_TO_REALSIZE(bytes));
-
-        if (ptr == NULL) {
-            // Flush memory pools to try and recover space
-            flushPool(smallPool, smallPoolSize);
-            flushPool(medPool, medPoolSize);
-            ptr = ::malloc(USERSIZE_TO_REALSIZE(bytes));
-        }
-
-        if (ptr == NULL) {
-            if ((System::outOfMemoryCallback() != NULL) &&
-                (System::outOfMemoryCallback()(USERSIZE_TO_REALSIZE(bytes), true) == true)) {
-                // Re-attempt the malloc
-                ptr = ::malloc(USERSIZE_TO_REALSIZE(bytes));
-            }
-        }
-
-        if (ptr == NULL) {
-            if (System::outOfMemoryCallback() != NULL) {
-                // Notify the application
-                System::outOfMemoryCallback()(USERSIZE_TO_REALSIZE(bytes), false);
-            }
-#           ifdef G3D_DEBUG
-            debugPrintf("::malloc(%d) returned NULL\n", (int)USERSIZE_TO_REALSIZE(bytes));
-#           endif
-            debugAssertM(ptr != NULL, 
-                         "::malloc returned NULL. Either the "
-                         "operating system is out of memory or the "
-                         "heap is corrupt.");
-            return NULL;
-        }
-
-        *(uint32*)ptr = bytes;
-
-        return REALPTR_TO_USERPTR(ptr);
-    }
-
-
-    void free(UserPtr ptr) {
-        if (ptr == NULL) {
-            // Free does nothing on null pointers
-            return;
-        }
-
-        assert(isValidPointer(ptr));
-
-        if (inTinyHeap(ptr)) {
-            lock();
-            tinyFree(ptr);
-            unlock();
-            return;
-        }
-
-        uint32 bytes = USERSIZE_FROM_USERPTR(ptr);
-
-        lock();
-        if (bytes <= smallBufferSize) {
-            if (smallPoolSize < maxSmallBuffers) {
-                smallPool[smallPoolSize] = MemBlock(ptr, bytes);
-                ++smallPoolSize;
-                unlock();
-                return;
-            }
-        } else if (bytes <= medBufferSize) {
-            if (medPoolSize < maxMedBuffers) {
-                medPool[medPoolSize] = MemBlock(ptr, bytes);
-                ++medPoolSize;
-                unlock();
-                return;
-            }
-        }
-        bytesAllocated -= USERSIZE_TO_REALSIZE(bytes);
-        unlock();
-
-        // Free; the buffer pools are full or this is too big to store.
-        ::free(USERPTR_TO_REALPTR(ptr));
-    }
-
-    std::string performance() const {
-        if (totalMallocs > 0) {
-            int pooled = mallocsFromTinyPool +
-                         mallocsFromSmallPool + 
-                         mallocsFromMedPool;
-
-            int total = totalMallocs;
-
-            return format("malloc performance: %5.1f%% <= %db, %5.1f%% <= %db, "
-                          "%5.1f%% <= %db, %5.1f%% > %db",
-                          100.0 * mallocsFromTinyPool  / total,
-                          BufferPool::tinyBufferSize,
-                          100.0 * mallocsFromSmallPool / total,
-                          BufferPool::smallBufferSize,
-                          100.0 * mallocsFromMedPool   / total,
-                          BufferPool::medBufferSize,
-                          100.0 * (1.0 - (double)pooled / total),
-                          BufferPool::medBufferSize);
-        } else {
-            return "No System::malloc calls made yet.";
-        }
-    }
-
-    std::string status() const {
-        return format("preallocated shared buffers: %5d/%d x %db",
-            maxTinyBuffers - tinyPoolSize, maxTinyBuffers, tinyBufferSize);
-    }
-};
-
-// Dynamically allocated because we need to ensure that
-// the buffer pool is still around when the last global variable 
-// is deallocated.
-static BufferPool* bufferpool = NULL;
-
-std::string System::mallocPerformance() {    
-#ifndef NO_BUFFERPOOL
-    return bufferpool->performance();
-#else
-    return "NO_BUFFERPOOL";
-#endif
-}
-
-std::string System::mallocStatus() {    
-#ifndef NO_BUFFERPOOL
-    return bufferpool->status();
-#else
-    return "NO_BUFFERPOOL";
-#endif
-}
-
-
-void System::resetMallocPerformanceCounters() {
-#ifndef NO_BUFFERPOOL
-    bufferpool->totalMallocs         = 0;
-    bufferpool->mallocsFromMedPool   = 0;
-    bufferpool->mallocsFromSmallPool = 0;
-    bufferpool->mallocsFromTinyPool  = 0;
-#endif
-}
-
-
-#ifndef NO_BUFFERPOOL
-inline void initMem() {
-    // Putting the test here ensures that the system is always
-    // initialized, even when globals are being allocated.
-    static bool initialized = false;
-    if (! initialized) {
-        bufferpool = new BufferPool();
-        initialized = true;
-    }
-}
-#endif
-
-
-void* System::malloc(size_t bytes) {
-#ifndef NO_BUFFERPOOL
-    initMem();
-    return bufferpool->malloc(bytes);
-#else
-    return ::malloc(bytes);
-#endif
-}
-
-void* System::calloc(size_t n, size_t x) {
-#ifndef NO_BUFFERPOOL
-    void* b = System::malloc(n * x);
-    debugAssertM(b != NULL, "System::malloc returned NULL");
-    debugAssertM(isValidHeapPointer(b), "System::malloc returned an invalid pointer");
-    System::memset(b, 0, n * x);
-    return b;
-#else
-    return ::calloc(n, x);
-#endif
-}
-
-
-void* System::realloc(void* block, size_t bytes) {
-#ifndef NO_BUFFERPOOL
-    initMem();
-    return bufferpool->realloc(block, bytes);
-#else
-    return ::realloc(block, bytes);
-#endif
-}
-
-
-void System::free(void* p) {
-#ifndef NO_BUFFERPOOL
-    bufferpool->free(p);
-#else
-    return ::free(p);
-#endif
-}
-
-
 void* System::alignedMalloc(size_t bytes, size_t alignment) {
 
     alwaysAssertM(isPow2(alignment), "alignment must be a power of 2");
@@ -1491,7 +958,7 @@ void* System::alignedMalloc(size_t bytes, size_t alignment) {
     // for clarity.
     size_t totalBytes = bytes + iMax(alignment, sizeof(void*));
 
-    size_t truePtr = (size_t)System::malloc(totalBytes);
+    size_t truePtr = (size_t)instance().m_memoryManager->alloc(totalBytes);
 
     if (truePtr == 0) {
         // malloc returned NULL
@@ -1555,7 +1022,7 @@ void System::alignedFree(void* _ptr) {
     void* truePtr = (void*)redirectPtr[0];
 
     debugAssert(isValidHeapPointer((void*)truePtr));
-    System::free(truePtr);
+    instance().m_memoryManager->free(truePtr);
 }
 
 
