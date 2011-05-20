@@ -6,11 +6,10 @@ import os
 from .utils import *
 from .variables import *
 from . import copyifnewer
-from .doticompile import *
 import copy
 
 def findG3DStarter(state, name):
-
+    from .doticompile import processProjectFile
     # load the default .icompile
     fakeState = copy.copy(state)
     processProjectFile(fakeState, True)
