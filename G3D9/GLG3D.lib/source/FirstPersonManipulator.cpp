@@ -167,8 +167,7 @@ void FirstPersonManipulator::setTurnRate(double radiansPerSecond) {
 }
 
 
-void FirstPersonManipulator::lookAt(
-    const Vector3&      position) {
+void FirstPersonManipulator::lookAt(const Point3& position) {
 
     const Vector3 look = (position - m_translation);
 
@@ -277,10 +276,10 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
             }
 
             if (mouse.y <= hotRegion.y0()) {
-                delta.y = -square(1.0 - (mouse.y - viewport.y0()) / hotExtent.y) * 0.6;
+                delta.y = -square(1.0 - (mouse.y - viewport.y0()) / hotExtent.y) * 0.6f;
                 // - pitch
             } else if (mouse.y >= hotRegion.y1()) {
-                delta.y = square(1.0 - (viewport.y1() - mouse.y) / hotExtent.y) * 0.6;
+                delta.y = square(1.0 - (viewport.y1() - mouse.y) / hotExtent.y) * 0.6f;
                 // + pitch
             }
 
@@ -315,6 +314,8 @@ bool FirstPersonManipulator::onEvent(const GEvent& event) {
         // This may be the "right-click" (OS dependent) that will
         // start camera movement.  If it is, we don't want other
         // Widgets to see the event.
+
+        //debugPrintf("Button = %d\n", event.button.button);
 
         if (event.button.button == 1) {
             // Right click
