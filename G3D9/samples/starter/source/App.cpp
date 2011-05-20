@@ -281,4 +281,14 @@ void App::endProgram() {
 
 void App::saveScene() {
     // Called when the "save" button is pressed
+    if (m_scene.notNull()) {
+        Any a = m_scene->toAny();
+        const std::string& filename = a.source().filename;
+        if (filename != "") {
+            a.save(filename);
+            debugPrintf("Saved %s\n", filename.c_str());
+        } else {
+            debugPrintf("Could not save: empty filename");
+        }
+    }
 }

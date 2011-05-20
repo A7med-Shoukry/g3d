@@ -40,7 +40,6 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiTh
     m_nodeManipulator = ThirdPersonManipulator::create();
     m_nodeManipulator->setEnabled(false);
 
-
     GuiPane* p = pane();
     
     GuiPane* cpPane = p->addPane("Control Point", GuiTheme::ORNATE_PANE_STYLE);
@@ -147,6 +146,7 @@ void PhysicsFrameSplineEditor::setManager(WidgetManager* m) {
     
     if (m != NULL) {
         m->add(m_nodeManipulator);
+        m_nodeManipulator->setEnabled(false);
     }
 }
 

@@ -867,6 +867,7 @@ void Any::serialize(TextOutput& to) const {
             to.writeSymbol("=");
             table[keys[i]].serialize(to);
 
+            to.deleteSpace();
             to.writeSymbol(";");
 
             // Skip an extra line between table entries that are longer than a line
@@ -902,6 +903,7 @@ void Any::serialize(TextOutput& to) const {
         for (int ii = 0; ii < size(); ++ii) {
             array[ii].serialize(to);
             if (ii < size() - 1) {
+                to.deleteSpace();
                 if (longForm) {
                     // Probably a long-form array
                     to.writeSymbol(";");
@@ -925,7 +927,7 @@ void Any::serialize(TextOutput& to) const {
 void Any::deserializeComment(TextInput& ti, Token& token, std::string& comment) {
     // Parse comments
     while (token.type() == Token::COMMENT) {
-        comment += trimWhitespace(token.string()) + "\n";
+        comment += trimWhitespace(token.string());
 
         // Allow comments to contain newlines.
         do {
@@ -936,6 +938,7 @@ void Any::deserializeComment(TextInput& ti, Token& token, std::string& comment) 
 
     comment = trimWhitespace(comment);
 }
+
 
 /** True if \a c is an open paren of some form */
 static bool isOpen(const char c) {

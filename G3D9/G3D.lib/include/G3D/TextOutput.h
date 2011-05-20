@@ -1,16 +1,16 @@
 /**
-  @file TextOutput.h
+  \file G3D/TextOutput.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2004-06-21
-  @edited  2006-10-24
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2004-06-21
+  \edited  2011-05-24
 
-  Copyright 2000-2007, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 
-#ifndef G3D_TEXTOUTPUT_H
-#define G3D_TEXTOUTPUT_H
+#ifndef G3D_TextOutput_h
+#define G3D_TextOutput_h
 
 #include "G3D/platform.h"
 #include "G3D/Array.h"
@@ -213,6 +213,9 @@ public:
 
     void writeNewline();
     void writeNewlines(int numLines);
+
+    /** If the most recently written character was a space, remove it and return true. Can be called repeatedly to back up over multiple spaces. */
+    bool deleteSpace();
 
     /** The symbol is written without quotes.  Symbols are required to begin with a
         letter or underscore and contain only letters, underscores, and numbers 

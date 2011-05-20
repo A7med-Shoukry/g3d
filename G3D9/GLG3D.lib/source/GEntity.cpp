@@ -6,17 +6,20 @@
 
 namespace G3D {
 
-GEntity::GEntity() {}
+GEntity::GEntity() : m_frameSplineChanged(false) {}
 
 GEntity::GEntity
 (const std::string& name,
  AnyTableReader&    propertyTable,
  const ModelTable&  modelTable) 
     : m_name(name),
-      m_modelType(ARTICULATED_MODEL) {
+      m_modelType(ARTICULATED_MODEL),
+      m_frameSplineChanged(false) {
 
-    const Any& modelNameAny = propertyTable["model"];
-    const std::string& modelName = modelNameAny.string();
+    m_sourceAny = propertyTable.any();
+
+    const Any&         modelNameAny  = propertyTable["model"];
+    const std::string& modelName     = modelNameAny.string();
     
     const ReferenceCountedPointer<ReferenceCountedObject>* model = modelTable.getPointer(modelName);
     modelNameAny.verify((model != NULL), 
@@ -38,21 +41,26 @@ GEntity::GEntity
     if (! propertyTable.getIfPresent("position", m_frameSpline)) {
         // Create a default value
         m_frameSpline.append(CFrame());
+        m_frameSplineChanged = true;
     }
 }
 
 
 GEntity::GEntity
-(const std::string& n, const PhysicsFrameSpline& frameSpline, 
-const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
-const MD2Model::Ref& md2Model,
-const MD3Model::Ref& md3Model) : 
+(const std::string&                  n, 
+ const PhysicsFrameSpline&           frameSpline, 
+ const ArticulatedModel::Ref&        artModel, 
+ const ArticulatedModel::PoseSpline& artPoseSpline,
+ const MD2Model::Ref&                md2Model,
+ const MD3Model::Ref&                md3Model) : 
     m_name(n), 
     m_modelType(ARTICULATED_MODEL),
     m_frameSpline(frameSpline),
+    m_frameSplineChanged(false),
     m_artPoseSpline(artPoseSpline), 
     m_artModel(artModel),
-    m_md2Model(md2Model), m_md3Model(md3Model) {
+    m_md2Model(md2Model), 
+    m_md3Model(md3Model) {
 
     m_name  = n;
     m_frameSpline = frameSpline;
@@ -205,6 +213,10 @@ bool GEntity::intersect(const Ray& R, float& maxDistance) const {
 
 Any GEntity::toAny() const {
     Any a = m_sourceAny;
+    debugAssert(! a.isNone());
+    if (a.isNone()) {
+        return a;
+    }
 
     // Update if the position is out of date
     if (m_frameSpline.control.size() == 1) {

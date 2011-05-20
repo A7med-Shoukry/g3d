@@ -83,6 +83,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
 
     Any any;
     any.load(filename);
+    s->m_sourceAny = any;
 
     // Load the lighting
     s->m_lighting = Lighting::create(any.get("lighting", Lighting::Specification()));
