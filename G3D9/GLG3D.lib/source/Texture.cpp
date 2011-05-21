@@ -1,10 +1,10 @@
 /**
- @file Texture.cpp
+ \file Texture.cpp
 
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2001-02-28
- @edited  2010-03-18
+ \created 2001-02-28
+ \edited  2011-05-18
 */
 #include "G3D/Log.h"
 #include "G3D/Any.h"
@@ -2404,6 +2404,17 @@ Any Texture::Specification::toAny() const {
     a["visualization"] = visualization;
 
     return a;
+}
+
+
+void Texture::Specification::serialize(BinaryOutput& b) const {
+    toAny().serialize(b);
+}
+
+void Texture::Specification::deserialize(BinaryInput& b) {
+    Any a;
+    a.deserialize(b);
+    *this = a;
 }
 
 

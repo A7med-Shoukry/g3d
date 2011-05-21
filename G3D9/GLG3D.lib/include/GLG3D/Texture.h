@@ -675,6 +675,12 @@ public:
 
         Specification(const Any& any);
 
+        void deserialize(BinaryInput& b);
+
+        Specification(BinaryInput& b) {
+            deserialize(b);
+        }
+
         bool operator==(const Specification& s) const;
 
         bool operator!=(const Specification& s) const {
@@ -682,6 +688,8 @@ public:
         }
 
         Any toAny() const;
+
+        void serialize(BinaryOutput& b) const;
     };
 
     static Ref create(const Specification& s);

@@ -27,6 +27,7 @@ public:
 
     // Must update ImageFormat::name() when this enum changes.
     enum Code {
+        CODE_AUTO = -2,
         CODE_NONE = -1,
         CODE_L8,
         CODE_L16,

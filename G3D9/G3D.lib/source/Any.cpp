@@ -1,11 +1,11 @@
 /**
- @file Any.cpp
+ \file Any.cpp
 
- @author Morgan McGuire
- @author Shawn Yarbrough
+ \author Morgan McGuire
+ \author Shawn Yarbrough
   
- @created 2006-06-11
- @edited  2010-07-24
+ \created 2006-06-11
+ \edited  2011-05-24
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -14,6 +14,8 @@
 #include "G3D/Any.h"
 #include "G3D/TextOutput.h"
 #include "G3D/TextInput.h"
+#include "G3D/BinaryOutput.h"
+#include "G3D/BinaryInput.h"
 #include "G3D/stringutils.h"
 #include "G3D/fileutils.h"
 #include "G3D/FileSystem.h"
@@ -21,6 +23,19 @@
 #include <iostream>
 
 namespace G3D {
+
+void Any::serialize(BinaryOutput& b) const {
+    b.writeInt32(1);
+    b.writeString32(unparse());
+}
+
+
+void Any::deserialize(BinaryInput& b) {
+    const int version = b.readInt32();
+    alwaysAssertM(version == 1, "Wrong Any serialization version");
+    parse(b.readString32());
+}
+
 
 std::string Any::resolveStringAsFilename() const {
     verifyType(STRING);
