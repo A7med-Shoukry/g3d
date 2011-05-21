@@ -57,19 +57,23 @@ public:
     Matrix3(const Any& any);
 
     static Matrix3 fromColumns(const Vector3& c0, const Vector3& c1, const Vector3& c2) {
+        Matrix3 m;
         for (int r = 0; r < 3; ++r) {
-            elt[r][0] = c0[r];
-            elt[r][1] = c1[r];
-            elt[r][2] = c2[r];
+            m.elt[r][0] = c0[r];
+            m.elt[r][1] = c1[r];
+            m.elt[r][2] = c2[r];
         }
+        return m;
     }
 
     static Matrix3 fromRows(const Vector3& r0, const Vector3& r1, const Vector3& r2) {
+        Matrix3 m;
         for (int c = 0; c < 3; ++c) {
-            elt[0][c] = r0[c];
-            elt[1][c] = r1[c];
-            elt[2][c] = r2[c];
+            m.elt[0][c] = r0[c];
+            m.elt[1][c] = r1[c];
+            m.elt[2][c] = r2[c];
         }
+        return m;
     }
 
     Any toAny() const;
