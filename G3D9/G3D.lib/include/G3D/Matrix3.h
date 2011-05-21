@@ -1,14 +1,14 @@
 /**
-  @file Matrix3.h
+  \file Matrix3.h
  
   3x3 matrix class
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
-  @cite Portions based on Dave Eberly's Magic Software Library at <A HREF="http://www.magic-software.com">http://www.magic-software.com</A>
+  \cite Portions based on Dave Eberly's Magic Software Library at <A HREF="http://www.magic-software.com">http://www.magic-software.com</A>
  
-  @created 2001-06-02
-  @edited  2006-04-05
+  \created 2001-06-02
+  \edited  2011-05-05
  */
 
 #ifndef G3D_Matrix3_h
@@ -37,6 +37,7 @@ class Any;
 class Matrix3 {
 private:
 
+    // Row, column
     float elt[3][3];
 
     // Hidden operators
@@ -54,6 +55,22 @@ public:
         -Matrix3::identity()
     */
     Matrix3(const Any& any);
+
+    static Matrix3 fromColumns(const Vector3& c0, const Vector3& c1, const Vector3& c2) {
+        for (int r = 0; r < 3; ++r) {
+            elt[r][0] = c0[r];
+            elt[r][1] = c1[r];
+            elt[r][2] = c2[r];
+        }
+    }
+
+    static Matrix3 fromRows(const Vector3& r0, const Vector3& r1, const Vector3& r2) {
+        for (int c = 0; c < 3; ++c) {
+            elt[0][c] = r0[c];
+            elt[1][c] = r1[c];
+            elt[2][c] = r2[c];
+        }
+    }
 
     Any toAny() const;
 
@@ -95,7 +112,7 @@ public:
              float fEntry20, float fEntry21, float fEntry22);
 
     /**
-     * member access, allows use of construct mat[r][c]
+     Member access, allows use of construct mat[r][c]
      */
     inline float* operator[] (int iRow) {
         debugAssert(iRow >= 0);
