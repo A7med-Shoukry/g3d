@@ -175,7 +175,6 @@ bool App::onEvent(const GEvent& event) {
         // Example GUI dynamic layout code.  Resize the debugWindow to fill
         // the screen horizontally.
         debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
-        return true;
     }
 
 
