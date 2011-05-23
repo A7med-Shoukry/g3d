@@ -97,6 +97,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
         Any v = it->value;
         if (v.nameBeginsWith("ArticulatedModel")) {
             m = ArticulatedModel::create(v);
+            m.downcast<ArticulatedModel>()->name = it->key;
         } else if (v.nameBeginsWith("MD2Model")) {
             m = MD2Model::create(v);
         } else if (v.nameBeginsWith("MD3Model")) {
