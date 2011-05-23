@@ -927,7 +927,7 @@ void ArticulatedModel::Part::pose
     (const ArticulatedModel::Ref&      model,
      int                               partIndex,
      Array<Surface::Ref>&              posedArray,
-     const CoordinateFrame&            parent, 
+     const CoordinateFrame&            parent,
      const Pose&                       posex) const {
 
     CoordinateFrame frame;
@@ -948,8 +948,9 @@ void ArticulatedModel::Part::pose
                 SuperSurface::CPUGeom cpuGeom(&triList[t]->indexArray, &geometry, 
                                               &texCoordArray, &packedTangentArray);
 
-                posedArray.append(SuperSurface::create(model->name, frame, triList[t],
-                                                            cpuGeom, model));
+                posedArray.append(SuperSurface::create
+                                  (model->name + format(".part[\"%s\"].triList[%d]", name.c_str(), t), 
+                                   frame, triList[t], cpuGeom, model));
             }
         }
     }
