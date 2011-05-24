@@ -105,7 +105,7 @@ void* System::malloc(size_t bytes) {
 
 
 void System::free(void* ptr) {
-    memoryManager->free(ptr);
+    memoryManager()->free(ptr);
 }
 
 
