@@ -55,9 +55,9 @@ public:
 
     Color3uint8(const uint8 _r, const uint8 _g, const uint8 _b) : r(_r), g(_g), b(_b) {}
 
-    Color3uint8(const class Color3& c);
+    explicit Color3uint8(const class Color3& c);
 
-    Color3uint8(class BinaryInput& bi);
+    explicit Color3uint8(class BinaryInput& bi);
 
     static Color3uint8 fromARGB(uint32 i) {
         Color3uint8 c;

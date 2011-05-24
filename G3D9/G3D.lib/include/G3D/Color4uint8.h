@@ -48,7 +48,7 @@ public:
 
     Color4uint8() : r(0), g(0), b(0), a(0) {}
 
-    Color4uint8(const class Color4& c);
+    explicit Color4uint8(const class Color4& c);
 
     Color4uint8 max(const Color4uint8 x) const {
         return Color4uint8(G3D::max(r, x.r), G3D::max(g, x.g), G3D::max(b, x.b), G3D::max(a, x.a));

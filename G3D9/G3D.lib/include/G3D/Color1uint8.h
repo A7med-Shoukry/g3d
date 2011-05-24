@@ -69,9 +69,9 @@ public:
 
     explicit Color1uint8(const uint8 _v) : value(_v) {}
 
-    Color1uint8(const class Color1& c);
+    explicit Color1uint8(const class Color1& c);
 
-    Color1uint8(class BinaryInput& bi);
+    explicit Color1uint8(class BinaryInput& bi);
 
     void serialize(class BinaryOutput& bo) const;
 
