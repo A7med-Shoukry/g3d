@@ -1553,7 +1553,7 @@ Image1uint8Ref Texture::toDepthImage1uint8() const {
     
     // Float to int conversion
     for (int i = m_width * m_height - 1; i >= 0; --i) {
-        d[i] = s[i];
+        d[i] = Color1uint8(s[i]);
     }
     
     return dst;

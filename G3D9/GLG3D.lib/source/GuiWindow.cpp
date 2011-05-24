@@ -63,6 +63,7 @@ GuiWindow::GuiWindow(const GuiText& text, GuiThemeRef skin, const Rect2D& rect, 
       m_focused(false),
       m_mouseVisible(false) {
 
+    debugAssertM(! rect.isEmpty(), "Pass a non-empty rectangle for the initial bounds.  Rect2D() creates an empty rectangle, which now is different from a zero-area rectangle at zero.");
     setRect(rect);
     m_rootPane = new GuiPane(this, "", clientRect() - clientRect().x0y0(), GuiTheme::NO_PANE_STYLE);
 }
@@ -100,11 +101,13 @@ void GuiWindow::morphTo(const Rect2D& r) {
     // Terminate any drag
     inDrag = false;
 
+    debugAssert(! r.isEmpty());
     m_morph.morphTo(rect(), r);
 }
 
 
 void GuiWindow::setRect(const Rect2D& r) {
+    debugAssert(! r.isEmpty());
     m_rect = r;
     m_morph.active = false;
     
