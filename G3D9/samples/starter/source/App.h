@@ -23,9 +23,14 @@ class App : public GApp {
     /** Used for editing entity splines.*/
     PhysicsFrameSplineEditor::Ref   m_splineEditor;
 
+    /** Don't allow object editing */
+    bool                m_preventEntityDrag;
+    bool                m_preventEntitySelect;
+
     bool                m_showAxes;
     bool                m_showLightSources;
     bool                m_showWireframe;
+
 
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();

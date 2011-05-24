@@ -224,7 +224,7 @@ private:
 
     friend class TPMSurface;
 
-    Surface::Ref           m_posedModel;
+    Surface::Ref            m_posedModel;
 
     /** The frame of the control for movement purposes.  */
     CoordinateFrame         m_offsetFrame;
@@ -291,6 +291,7 @@ public:
 
     typedef ReferenceCountedPointer<ThirdPersonManipulator> Ref;
 
+    /** Called by the surface */
     virtual void render(RenderDevice* rd) const;
 
     /** Called when it has been determined that the user first began a

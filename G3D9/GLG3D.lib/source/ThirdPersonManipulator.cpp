@@ -128,7 +128,7 @@ void UIGeom::computeProjection(RenderDevice* rd) {
     }
 }
 
-#define HIDDEN_LINE_ALPHA (0.1f)
+#define HIDDEN_LINE_ALPHA (0.3f)
 
 void UIGeom::render(RenderDevice* rd, const Color3& color, float lineScale) const {
     if (! visible) {
@@ -256,6 +256,7 @@ ThirdPersonManipulatorRef ThirdPersonManipulator::create() {
     return new ThirdPersonManipulator();
 }
 
+
 void ThirdPersonManipulator::render(RenderDevice* rd) const {
     rd->pushState();
     // Highlight the appropriate axis
@@ -305,9 +306,13 @@ void ThirdPersonManipulator::render(RenderDevice* rd) const {
                      RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA);
     rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
 
+    // Regardless of what the caller wanted, ensure that we always
+    // get to write
+    rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0);
+
+    // Draw the background in LEQUAL mode
     // The Draw::axes command automatically doubles whatever scale we give it
     Draw::axes(m_controlFrame, rd, color[0], color[1], color[2], m_axisScale * 0.5f);
-
     // Hidden line
     rd->setDepthTest(RenderDevice::DEPTH_GREATER);
     Draw::axes(m_controlFrame, rd,
@@ -319,6 +324,7 @@ void ThirdPersonManipulator::render(RenderDevice* rd) const {
 
     rd->setObjectToWorldMatrix(m_controlFrame);
 
+    // These do their own hidden-line rendering
     if (m_translationEnabled) {
         for (int g = FIRST_TRANSLATION; g <= LAST_TRANSLATION; ++g) {
             m_geomArray[g].render(rd, color[g]);
@@ -347,6 +353,11 @@ public:
 
     virtual void render(RenderDevice* rd) const {
         m_manipulator->render(rd);
+    }
+
+    /** Force rendering after opaque objects so that it can try to always be on top. */
+    virtual bool hasTransmission() const {
+        return true;
     }
 
     virtual std::string name() const {

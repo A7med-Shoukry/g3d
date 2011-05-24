@@ -144,7 +144,7 @@ public:
     void setFrame(const CoordinateFrame& c);
 
     // Inherited from Manipulator
-	virtual void getFrame(CoordinateFrame& c) const;
+    virtual void getFrame(CoordinateFrame& c) const;
     virtual CoordinateFrame frame() const;
 
     // Inherited from Widget
@@ -155,9 +155,9 @@ public:
     virtual void onUserInput(UserInput* ui);
     virtual bool onEvent(const GEvent& event);
 
-	Vector3 lookVector() const {
-		return frame().lookVector();
-	}
+    Vector3 lookVector() const {
+        return frame().lookVector();
+    }
 };
 
 }

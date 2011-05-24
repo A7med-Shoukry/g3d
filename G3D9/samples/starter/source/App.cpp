@@ -42,10 +42,12 @@ void App::onInit() {
     // not in the constructor so that common exceptions will be
     // automatically caught.
 
-    showRenderingStats = false;
-    m_showLightSources = true;
-    m_showAxes         = true;
-    m_showWireframe    = false;
+    showRenderingStats    = false;
+    m_showLightSources    = true;
+    m_showAxes            = true;
+    m_showWireframe       = false;
+    m_preventEntityDrag   = false;
+    m_preventEntitySelect = false;
 
     makeGUI();
 
@@ -71,6 +73,7 @@ void App::makeGUI() {
     developerWindow->cameraControlWindow->moveTo(Point2(window()->width() - developerWindow->cameraControlWindow->rect().width(), 0));
     m_splineEditor->moveTo(developerWindow->cameraControlWindow->rect().x0y0() - Vector2(m_splineEditor->rect().width(), 0));
 
+    GFont::Ref iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
     
     // Create a scene management GUI
     GuiPane* scenePane = debugPane->addPane("Scene", GuiTheme::ORNATE_PANE_STYLE);
@@ -81,7 +84,6 @@ void App::makeGUI() {
 
         static const char* reloadIcon = "q";
         static const char* diskIcon = "\xcd";
-        GFont::Ref iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
 
         scenePane->addButton(GuiText(reloadIcon, iconFont, 14), this, &App::loadScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
         scenePane->addButton(GuiText(diskIcon, iconFont, 18), this, &App::saveScene, GuiTheme::TOOL_BUTTON_STYLE)->setWidth(32);
@@ -95,6 +97,7 @@ void App::makeGUI() {
     scenePane->beginRow(); {
         scenePane->addCheckBox("Wireframe", &m_showWireframe)->setWidth(w);
     } scenePane->endRow();
+    scenePane->addCheckBox(GuiText("\xcf", iconFont, 20), &m_preventEntityDrag, GuiTheme::TOOL_CHECK_BOX_STYLE);
     scenePane->pack();
 
     GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
@@ -152,6 +155,9 @@ void App::onNetwork() {
 void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     GApp::onSimulation(rdt, sdt, idt);
 
+    m_splineEditor->setEnabled(m_splineEditor->enabled() && ! m_preventEntityDrag);
+    m_splineEditor->setVisible(m_splineEditor->enabled());
+
     // Add physical simulation here.  You can make your time
     // advancement based on any of the three arguments.
     if (m_scene.notNull()) {
@@ -178,7 +184,7 @@ bool App::onEvent(const GEvent& event) {
     }
 
 
-    if ((event.type == GEventType::MOUSE_BUTTON_DOWN) && (event.button.button == 0)) {
+    if (! m_preventEntitySelect && (event.type == GEventType::MOUSE_BUTTON_DOWN) && (event.button.button == 0)) {
         // Left click: select by casting a ray through the center of the pixel
         const Ray& ray = defaultCamera.worldRay(event.button.x + 0.5f, event.button.y + 0.5f, renderDevice->viewport());
         
@@ -187,7 +193,7 @@ bool App::onEvent(const GEvent& event) {
 
         if (m_selectedEntity.notNull()) {
             m_splineEditor->setSpline(m_selectedEntity->frameSpline());
-            m_splineEditor->setEnabled(true);
+            m_splineEditor->setEnabled(! m_preventEntityDrag);
         } else {
             m_splineEditor->setEnabled(false);
         }

@@ -261,7 +261,7 @@ void configureSingleLightShaderArgs(
         const float angle = light.spotHalfAngle;
 
         cosThresh = cos(angle);
-        if (shadowMapPass && light.spotSquare) {
+        if (light.spotSquare) {
             // Increase the effective angle for a "square" spotlight
             cosThresh /= 1.41421356f;
         }
