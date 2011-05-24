@@ -99,6 +99,16 @@ static void getG3DVersion(std::string& s);
 static G3DEndian checkEndian();
 
 
+void* System::malloc(size_t bytes) {
+    return memoryManager()->alloc(bytes);
+}
+
+
+void System::free(void* ptr) {
+    memoryManager->free(ptr);
+}
+
+
 System& System::instance() {
     static System thesystem;
     return thesystem;

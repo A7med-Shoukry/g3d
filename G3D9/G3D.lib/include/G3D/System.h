@@ -247,6 +247,10 @@ public:
     /// Returns the default system PoolMemoryManager instance
     static MemoryManager::Ref memoryManager();
 
+    static void* malloc(size_t bytes);
+
+    static void free(void* ptr);
+
     /**
        Guarantees that the start of the array is aligned to the 
        specified number of bytes.
