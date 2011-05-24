@@ -104,6 +104,7 @@ void GuiPane::pack() {
 void GuiPane::setRect(const Rect2D& rect) {
     m_rect = rect;       
     m_clientRect = theme()->paneToClientBounds(m_rect, m_caption, GuiTheme::PaneStyle(m_style));
+    debugAssert(! m_clientRect.isEmpty());
 }
 
 

@@ -64,9 +64,12 @@ GuiTextureBox::GuiTextureBox
         static const char* diskIcon = "\xcd";
         static const char* inspectorIcon = "\xa0";
 
+        debugAssert(! m_clientRect.isEmpty());
         m_saveButton = m_drawerPane->addButton(GuiText(diskIcon, iconFont, h), 
                                                         Callback(this, &GuiTextureBox::save),
                                                         GuiTheme::TOOL_BUTTON_STYLE);
+        debugAssert(! m_clientRect.isEmpty());
+
         m_saveButton->setSize(h, h);
 
 
@@ -252,7 +255,9 @@ bool GuiTextureBox::onEvent(const GEvent& event) {
 
 
 void GuiTextureBox::setRect(const Rect2D& rect) {
+    debugAssert(! rect.isEmpty());
     GuiContainer::setRect(rect);
+    debugAssert(! m_clientRect.isEmpty());
 
     m_clipBounds = theme()->canvasToClientBounds(canvasRect(), m_captionHeight);
 

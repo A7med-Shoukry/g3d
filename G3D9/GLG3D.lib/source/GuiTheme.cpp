@@ -866,6 +866,10 @@ float GuiTheme::paneTopPadding(const GuiText& caption, PaneStyle paneStyle) cons
 
 Rect2D GuiTheme::paneToClientBounds(const Rect2D& bounds, const GuiText& caption, PaneStyle paneStyle) const {
     const Vector2 captionSpace(0, paneTopPadding(caption, paneStyle));
+
+    debugAssert(! bounds.isEmpty());
+    debugAssert(captionSpace.isFinite() && m_pane[paneStyle].clientPad.topLeft.isFinite() && m_pane[paneStyle].clientPad.wh().isFinite());
+
     return Rect2D::xywh(bounds.x0y0() + m_pane[paneStyle].clientPad.topLeft + captionSpace,
                         bounds.wh() - m_pane[paneStyle].clientPad.wh() - captionSpace);
 }

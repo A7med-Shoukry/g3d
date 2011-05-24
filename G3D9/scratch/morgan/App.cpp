@@ -217,6 +217,8 @@ void loadt2D() {
 void App::onInit() {
 //    GuiWindow::Ref g = GuiWindow::create();
 
+    GImage im(10,10,3);
+    show(im);
 
     Stopwatch stopwatch;
 

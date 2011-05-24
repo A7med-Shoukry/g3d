@@ -1,10 +1,10 @@
 /**
- @file GuiControl.cpp
+ \file GuiControl.cpp
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2007-06-01
- @edited  2009-10-10
+ \created 2007-06-01
+ \edited  2011-05-10
  */
 
 #include "G3D/platform.h"
@@ -14,12 +14,12 @@
 
 namespace G3D {
 
-GuiControl::GuiControl(GuiWindow* gui, const GuiText& caption) : m_enabled(true), m_gui(gui), m_parent(NULL), m_rect(Rect2D::empty()), m_clickRect(Rect2D::empty()), m_visible(true) {
+GuiControl::GuiControl(GuiWindow* gui, const GuiText& caption) : m_enabled(true), m_gui(gui), m_parent(NULL), m_rect(Rect2D::xywh(0,0,0,0)), m_clickRect(Rect2D::empty()), m_visible(true) {
     m_eventSource = this;
     setCaption(caption);
 }
 
-GuiControl::GuiControl(GuiContainer* parent, const GuiText& caption) : m_enabled(true), m_gui(parent->m_gui), m_parent(parent), m_rect(Rect2D::empty()), m_clickRect(Rect2D::empty()), m_visible(true) {
+GuiControl::GuiControl(GuiContainer* parent, const GuiText& caption) : m_enabled(true), m_gui(parent->m_gui), m_parent(parent), m_rect(Rect2D::xywh(0,0,0,0)), m_clickRect(Rect2D::empty()), m_visible(true) {
     m_eventSource = this;
     setCaption(caption);
 }
