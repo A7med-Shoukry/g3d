@@ -25,7 +25,7 @@ Image3uint8::Ref Image3uint8::fromImage1uint8(const ReferenceCountedPointer<clas
 
 
 Image3uint8::Image3uint8(int w, int h, WrapMode wrap) : Map2D<Color3uint8>(w, h, wrap) {
-    setAll(Color3::black());
+    setAll(Color3uint8(0,0,0));
 }
 
 

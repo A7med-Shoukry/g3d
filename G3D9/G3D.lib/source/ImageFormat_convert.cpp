@@ -846,32 +846,32 @@ static void rgb8_to_bayer_rggb8(const int w, const int h,
 
     // Top row pixels
     for (int y = 0; y < h - 1; y += 2) {
-	int offset = y * w;
+	    int offset = y * w;
 
-	// Top left pixels
-	for(int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].r);
-	}
+	    // Top left pixels
+	    for(int x = 0; x < w - 1; x += 2) {
+	        dstColor[x + offset] = Color1uint8(srcColor[x + offset].r);
+	    }
 
-	// Top right pixels
-	for(int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
-	}
-    }
+	    // Top right pixels
+	    for(int x = 1; x < w - 1; x += 2) {
+	        dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
+	    }
+        }
 
-    // Bottom row pixels
-    for (int y = 1; y < h - 1; y += 2) {
-	int offset = y * w;
+        // Bottom row pixels
+        for (int y = 1; y < h - 1; y += 2) {
+	    int offset = y * w;
 
-	// Bottom left pixels
-	for (int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
-	}
+	    // Bottom left pixels
+	    for (int x = 0; x < w - 1; x += 2) {
+	        dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
+	    }
 
-	// Bottom right pixels
-	for (int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].b);
-	}
+	    // Bottom right pixels
+	    for (int x = 1; x < w - 1; x += 2) {
+	        dstColor[x + offset] = Color1uint8(srcColor[x + offset].b);
+	    }
     }
 }
 
@@ -887,12 +887,12 @@ static void rgb8_to_bayer_grbg8(const int w, const int h,
 
 	// Top left pixels
 	for (int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
 	}
 
 	// Top right pixels
 	for (int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].r);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].r);
 	}
     }
 
@@ -902,12 +902,12 @@ static void rgb8_to_bayer_grbg8(const int w, const int h,
 
 	// Bottom left pixels
 	for (int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].b);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].b);
 	}
 
 	// Bottom right pixels
 	for (int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
 	}
     }
 }
@@ -924,12 +924,12 @@ static void rgb8_to_bayer_bggr8(const int w, const int h,
 
 	// Top left pixels
 	for (int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].b);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].b);
 	}
 
 	// Top right pixels
 	for (int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
 	}
     }
 
@@ -939,12 +939,12 @@ static void rgb8_to_bayer_bggr8(const int w, const int h,
 
 	// Bottom left pixels
 	for(int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
 	}
 
 	// Bottom right pixels
 	for(int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].r);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].r);
 	}
     }
 }
@@ -961,12 +961,12 @@ static void rgb8_to_bayer_gbrg8(const int w, const int h,
 
 	// Top left pixels
 	for(int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
 	}
 
 	// Top right pixels
 	for(int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].b);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].b);
 	}
     }
 
@@ -976,12 +976,12 @@ static void rgb8_to_bayer_gbrg8(const int w, const int h,
 
 	// Bottom left pixels
 	for(int x = 0; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].r);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].r);
 	}
 
 	// Bottom right pixels
 	for(int x = 1; x < w - 1; x += 2) {
-	    dstColor[x + offset] = Color1(srcColor[x + offset].g);
+	    dstColor[x + offset] = Color1uint8(srcColor[x + offset].g);
 	}
     }
 }
