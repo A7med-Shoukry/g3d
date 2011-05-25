@@ -72,7 +72,7 @@ void perfSystemMemcpy() {
     printf("\n--------------------------------------------------\n");
     printf("    Outcome         ");
     for (int m = 0; m < M; ++m) {
-        if (g3d[m] <= native[m] * 1.05) {
+        if (g3d[m] <= native[m] * 1.1) {
             printf("    ok ");
         } else {
             printf("   FAIL");
