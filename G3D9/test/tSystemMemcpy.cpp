@@ -69,8 +69,16 @@ void perfSystemMemcpy() {
         double k = trials * (double)size[m] / 1024;
         printf(" %6d", (int)(g3d[m] / k));
     }
-    printf("\n");
-    
+    printf("\n--------------------------------------------------\n");
+    printf("    Outcome         ");
+    for (int m = 0; m < M; ++m) {
+        if (g3d[m] <= native[m] * 1.05) {
+            printf("    ok ");
+        } else {
+            printf("   FAIL");
+        }
+    }
+    printf("\n");    
 
     if (System::hasSSE2() && System::hasMMX()) {
         printf("      * MMX on this machine\n");

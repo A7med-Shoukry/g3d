@@ -693,9 +693,11 @@ void memfill(void *dst, int n32, unsigned long i) {
 
 void System::memset(void* dst, uint8 value, size_t numBytes) {
 #if defined(G3D_WIN32)
-    uint32 v = value;
-    v = v + (v << 8) + (v << 16) + (v << 24); 
-    G3D::memfill(dst, v, numBytes);
+    if ((((size_t)dst % 16) == 0) && (numBytes >= 512*1024)) {
+        uint32 v = value;
+        v = v + (v << 8) + (v << 16) + (v << 24); 
+        G3D::memfill(dst, v, numBytes);
+    }
 #else
     ::memset(dst, value, numBytes);
 #endif

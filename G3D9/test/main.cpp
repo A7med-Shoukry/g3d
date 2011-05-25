@@ -101,6 +101,8 @@ void testReliableConduit(NetworkDevice*);
 
 void perfSystemMemcpy();
 void testSystemMemcpy();
+
+void perfSystemMemset();
 void testSystemMemset();
 
 void testMap2D();
@@ -390,31 +392,6 @@ public:
         printf("Destruct %d\n", x);
     }
 };
-
-
-
-void measureMemsetPerformance() {
-    printf("----------------------------------------------------------\n");
-
-    uint64 native = 0, g3d = 0;
-
-    int n = 1024 * 1024;
-    void* m1 = malloc(n);
-
-    // First iteration just primes the system
-    for (int i=0; i < 2; ++i) {
-        System::beginCycleCount(native);
-            memset(m1, 31, n);
-        System::endCycleCount(native);
-        System::beginCycleCount(g3d);
-            System::memset(m1, 31, n);
-        System::endCycleCount(g3d);
-    }
-    free(m1);
-
-    printf("System::memset:                     %d cycles/kb\n", (int)(g3d / (n / 1024)));
-    printf("::memset      :                     %d cycles/kb\n", (int)(native / (n / 1024)));
-}
 
 
 
@@ -727,15 +704,15 @@ int main(int argc, char* argv[]) {
 #    ifndef _DEBUG
         printf("Performance analysis:\n\n");
 
-        perfArray();
-        //getch();
-
         perfSystemMemcpy();
-        measureMemsetPerformance();
+        perfSystemMemset();
+
+        // Pause so that we can see the values in the debugger
+        getch();
 
         printf("%s\n", System::memoryManager()->describePerformance().c_str());
 
-        // Pause so that we can see the values in the debugger
+        perfArray();
 
         perfBinaryIO();
 
@@ -765,7 +742,7 @@ int main(int argc, char* argv[]) {
         settings.stencilBits = 0;
         settings.msaaSamples = 1;
 
-        if (!renderDevice) {
+        if (! renderDevice) {
             renderDevice = new RenderDevice();
         }
     
