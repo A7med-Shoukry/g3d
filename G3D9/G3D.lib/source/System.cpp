@@ -697,6 +697,8 @@ void System::memset(void* dst, uint8 value, size_t numBytes) {
         uint32 v = value;
         v = v + (v << 8) + (v << 16) + (v << 24); 
         G3D::memfill(dst, v, numBytes);
+    } else {
+        ::memset(dst, value, numBytes);
     }
 #else
     ::memset(dst, value, numBytes);
