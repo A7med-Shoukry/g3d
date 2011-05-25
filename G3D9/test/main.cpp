@@ -708,7 +708,7 @@ int main(int argc, char* argv[]) {
         perfSystemMemset();
 
         // Pause so that we can see the values in the debugger
-        getch();
+   //     getch();
 
         printf("%s\n", System::memoryManager()->describePerformance().c_str());
 

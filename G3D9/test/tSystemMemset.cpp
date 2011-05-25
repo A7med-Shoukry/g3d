@@ -49,7 +49,7 @@ void perfSystemMemset() {
     static const int M = 8;
 
     //  Repeats per memory size
-    static const int trials = 200;
+    static const int trials = 300;
 
     size_t size[M];
     for (int i = 0; i < M; ++i) {
@@ -103,7 +103,7 @@ void perfSystemMemset() {
         double k = trials * (double)size[m] / 1024;
         printf(" %6d", (int)(g3d[m] / k));
     }
-    printf("\n--------------------------------------------------\n");
+    printf("\n        --------------------------------------------------\n");
     printf("    Outcome         ");
     for (int m = 0; m < M; ++m) {
         if (g3d[m] <= native[m] * 1.1) {
