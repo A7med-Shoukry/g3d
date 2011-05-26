@@ -91,7 +91,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     Any models = any["models"];
     typedef ReferenceCountedPointer<ReferenceCountedObject> ModelRef;
     Table< std::string, ModelRef > modelTable;
-    for (Any::AnyTable::Iterator it = models.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = models.table().begin(); it.isValid(); ++it) {
         ModelRef m;
         Any v = it->value;
         if (v.nameBeginsWith("ArticulatedModel")) {
@@ -109,7 +109,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
 
     // Instance the models
     Any entities = any["entities"];
-    for (Table<std::string, Any>::Iterator it = entities.table().begin(); it.hasMore(); ++it) {
+    for (Table<std::string, Any>::Iterator it = entities.table().begin(); it.isValid(); ++it) {
         const std::string& name = it->key;
 
         AnyTableReader propertyTable(it->value);

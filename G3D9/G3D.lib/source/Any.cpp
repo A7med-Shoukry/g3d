@@ -708,7 +708,7 @@ bool Any::operator==(const Any& x) const {
         }
         const Table<std::string, Any>& table1 = table();
         const Table<std::string, Any>& table2 = x.table();
-        for (Table<std::string, Any>::Iterator it = table1.begin(); it.hasMore(); ++it) {
+        for (Table<std::string, Any>::Iterator it = table1.begin(); it.isValid(); ++it) {
             const Any* p2 = table2.getPointer(it->key);
             if (p2 == NULL) {
                 // Key not found

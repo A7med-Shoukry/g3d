@@ -125,6 +125,11 @@ public:
             return *this;
         }
 
+        bool isValid() const {
+            return ! m_end;
+        }
+
+        /** @deprecated  Use isValid */
         bool hasMore() const {
             return ! m_end;
         }
@@ -254,7 +259,7 @@ void MeshAlg::computeAdjacency(
     MeshEdgeTable::Iterator cur = edgeTable.begin();
 
     Array<Edge> tempEdgeArray;
-    while (cur.hasMore()) {
+    while (cur.isValid()) {
         MeshEdgeTable::FaceIndexArray& faceIndexArray = cur.faceIndex();
 
         // Process this edge

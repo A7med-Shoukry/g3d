@@ -412,7 +412,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     }
 
     // Create trilists
-    for (Table<std::string, TriListSpec*>::Iterator it = groupTable.begin(); it.hasMore(); ++it) {
+    for (Table<std::string, TriListSpec*>::Iterator it = groupTable.begin(); it.isValid(); ++it) {
         TriListSpec* s = it->value;
 
         Material::Ref material;

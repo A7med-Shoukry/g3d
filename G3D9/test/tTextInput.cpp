@@ -40,7 +40,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
 	}
 
     {
@@ -57,7 +57,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
 	}
 
 	{
@@ -73,7 +73,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
 	}
 
     {
@@ -85,7 +85,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
     }
     {
         TextInput ti(TextInput::FROM_STRING, "1.E7");
@@ -95,7 +95,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
     }
 
     {
@@ -110,7 +110,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
     }
 
     {
@@ -139,7 +139,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
     }
 
     {
@@ -155,7 +155,7 @@ void testTextInput() {
 
         t = ti.read();
         debugAssert(t.type() == Token::END);
-        debugAssert(!ti.hasMore());
+        debugAssert(! ti.hasMore());
     }
 
     {

@@ -841,7 +841,7 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
             // Add console processing here
 
             TextInput t(TextInput::FROM_STRING, str);
-            if (t.hasMore() && (t.peek().type() == Token::SYMBOL)) {
+            if (t.isValid() && (t.peek().type() == Token::SYMBOL)) {
                 std::string cmd = toLower(t.readSymbol());
                 if (cmd == "exit") {
                     setExitCode(0);

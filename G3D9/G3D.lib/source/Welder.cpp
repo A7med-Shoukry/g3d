@@ -102,7 +102,7 @@ private:
 
         if (n.isZero()) {
             // Don't bother trying to match the surface normal, since this vertex has no surface normal.
-            while (it.hasMore()) {
+            while (it.isValid()) {
                 if ((t - it->texCoord).squaredLength() <= texCoordWeldRadius2) {
                     // This is the vertex
                     return it->index;
@@ -110,7 +110,7 @@ private:
                 ++it;
             }
         } else {
-            while (it.hasMore()) {
+            while (it.isValid()) {
                 if (((n - it->normal).squaredLength() <= normalWeldRadius2) &&
                     ((t - it->texCoord).squaredLength() <= texCoordWeldRadius2)) {
                     // This is the vertex
@@ -267,7 +267,7 @@ private:
             Vector3 sum;
 
             const Vector3& original = normalArray[v];
-            while (it.hasMore()) {
+            while (it.isValid()) {
                 const Vector3& N = it->normal;
                 const float cosAngle = N.dot(original);
 
@@ -397,7 +397,7 @@ void Welder::weld(
 Welder::Settings::Settings(const Any& any) {
     *this = Settings();
     any.verifyName("Welder::Settings");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "normalsmoothingangle") {
             normalSmoothingAngle = it->value;

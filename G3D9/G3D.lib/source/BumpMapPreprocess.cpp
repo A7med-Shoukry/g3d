@@ -17,7 +17,7 @@ namespace G3D {
 
 BumpMapPreprocess::BumpMapPreprocess(const Any& any) {
     *this = BumpMapPreprocess();
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "lowpassfilter") {
             lowPassFilter = it->value;

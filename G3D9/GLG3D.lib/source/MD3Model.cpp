@@ -151,7 +151,7 @@ MD3Model::Skin::Ref MD3Model::Skin::create(const Any& any) {
         if (src.type() == Any::STRING) {
             loadSkinFile(src.resolveStringAsFilename(), dst);
         } else {
-            for (Table<std::string, Any>::Iterator it = src.table().begin(); it.hasMore(); ++it) {
+            for (Table<std::string, Any>::Iterator it = src.table().begin(); it.isValid(); ++it) {
                 if (it->value.type() == Any::NONE) {
                     dst.set(it->key, NULL);
                 } else {
@@ -170,7 +170,7 @@ MD3Model::Specification::Specification(const Any& any) {
         directory = any.resolveStringAsFilename();
     } else {
         any.verifyName("MD3Model::Specification");
-        for (Table<std::string, Any>::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Table<std::string, Any>::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = toLower(it->key);
             if (key == "directory") {
                 directory = it->value.resolveStringAsFilename();

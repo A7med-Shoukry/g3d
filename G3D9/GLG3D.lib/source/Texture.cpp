@@ -207,7 +207,7 @@ Texture::Preprocess::Preprocess(const Any& any) {
     *this = Preprocess::defaults();
     any.verifyNameBeginsWith("Texture::Preprocess");
     if (any.type() == Any::TABLE) {
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = it->key;
             if (key == "modulate") {
                 modulate = Color4(it->value);
@@ -2440,7 +2440,7 @@ Texture::Specification::Specification(const Any& any) {
         }
     } else {
         any.verifyNameBeginsWith("Texture::Specification");
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = it->key;
             if (key == "filename") {
                 filename = it->value.resolveStringAsFilename();

@@ -437,6 +437,11 @@ public:
             }
         }
 
+        bool isValid() const {
+            return ! m_isEnd;
+        }
+
+        /** @deprecated  Use isValid */
         bool hasMore() const {
             return ! m_isEnd;
         }
@@ -665,7 +670,12 @@ public:
         const Value* operator->() const { return &value(); }
         operator Value*()         const { return &value(); }
 
+        /** \deprecated Use isValid */
         bool hasMore() const {
+            return ! m_isEnd;
+        }
+
+        bool isValid() const {
             return ! m_isEnd;
         }
     }; // BoxIterator
@@ -702,7 +712,7 @@ public:
         SphereIterator() : m_isEnd(true) {}
 
         void advance() {
-            if (! m_boxIterator.hasMore()) {
+            if (! m_boxIterator.isValid()) {
                 m_isEnd = true;
                 return;
             }
@@ -710,7 +720,7 @@ public:
             while (! m_sphere.contains(m_boxIterator.position())) {
                 ++m_boxIterator;
                 
-                if (! m_boxIterator.hasMore()) {
+                if (! m_boxIterator.isValid()) {
                     m_isEnd = true;
                     return;
                 }
@@ -783,7 +793,12 @@ public:
         const Value* operator->() const { return &value(); }
         operator Value*()         const { return &value(); }
 
+        /** @deprecated use isValid */
         bool hasMore() const {
+            return ! m_isEnd;
+        }
+
+        bool isValid() const {
             return ! m_isEnd;
         }
     }; // SphereIterator
@@ -804,7 +819,7 @@ public:
     
     /** Appends results */
     void getIntersectingMembers(const Sphere& sphere, Array<Value>& result) const {
-        for (SphereIterator it = beginSphereIntersection(sphere); it.hasMore(); ++it) {
+        for (SphereIterator it = beginSphereIntersection(sphere); it.isValid(); ++it) {
             result.append(*it);
         }
     }
@@ -882,7 +897,7 @@ public:
             m_tableIterator( grid->m_data.begin()),
             m_epoch(grid->m_epoch) {
             m_indirection.m_parent = this;
-            m_isEnd = ! m_tableIterator.hasMore();
+            m_isEnd = ! m_tableIterator.isValid();
         }
         
         // Intentionally unimplemented
@@ -912,7 +927,7 @@ public:
                          "It is illegal to mutate the HashGrid while "
                          "iterating through it.");
             ++m_tableIterator;
-            m_isEnd = ! m_tableIterator.hasMore();
+            m_isEnd = ! m_tableIterator.isValid();
             return *this;
         }
 
@@ -923,7 +938,12 @@ public:
             return old;
         }
 
+        /** \deprecated Use isValid */
         bool hasMore() const {
+            return ! m_isEnd;
+        }
+
+        bool isValid() const {
             return ! m_isEnd;
         }
     }; // CellIterator
@@ -960,7 +980,7 @@ public:
         Using objects (instead of pointers) or reference counted pointers is 
         recommended over using pointers and this deleteAll method.*/
     void deleteAll() {
-        for (Iterator it = begin(); it.hasMore(); ++it) {
+        for (Iterator it = begin(); it.isValid(); ++it) {
             delete *it;
         }
         clear();
@@ -983,7 +1003,7 @@ public:
         m_bounds = AABox();
         if (! shrink) {
             // Remove all data
-            for (CellIterator it = beginCells(); it.hasMore(); ++it) {
+            for (CellIterator it = beginCells(); it.isValid(); ++it) {
                 it.cell().clear(true);
             }
         } else {

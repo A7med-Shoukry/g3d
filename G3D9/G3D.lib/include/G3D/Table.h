@@ -535,8 +535,12 @@ public:
             return &(node->entry);
         }
 
-        /** False if this entry is invalid */
-		bool hasMore() const {
+        bool isValid() const {
+            return ! isDone;
+        }
+
+        /** @deprecated  Use isValid */
+        bool hasMore() const {
 			return ! isDone;
 		}
     };

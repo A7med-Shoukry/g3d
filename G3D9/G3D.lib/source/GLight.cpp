@@ -22,7 +22,7 @@ GLight::GLight(const Any& any) {
         *this = GLight();
         Vector3 spotTarget;
         bool hasSpotTarget = false;
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = it->key;
             if (key == "position") {
                 position = it->value;

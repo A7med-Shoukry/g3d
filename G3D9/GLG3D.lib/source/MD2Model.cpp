@@ -135,7 +135,7 @@ MD2Model::Specification::Specification(const Any& any) {
 
     any.verifyName("MD2Model::Specification");
     *this = Specification();
-    for (Table<std::string, Any>::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Table<std::string, Any>::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "filename") {
             filename = it->value.resolveStringAsFilename();
@@ -194,7 +194,7 @@ void MD2Model::pose(Array<Surface::Ref>& surfaceArray, const CFrame& rootFrame, 
 MD2Model::Part::Specification::Specification(const Any& any) {
     any.verifyName("MD2Model::Part::Specification");
     *this = Specification();
-    for (Table<std::string, Any>::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Table<std::string, Any>::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "filename") {
             filename = it->value.resolveStringAsFilename();

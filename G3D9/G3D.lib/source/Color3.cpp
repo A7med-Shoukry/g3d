@@ -35,7 +35,7 @@ Color3::Color3(const Any& any) {
     switch (any.type()) {
     case Any::TABLE:
 
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = toLower(it->key);
             if (key == "r") {
                 r = it->value;

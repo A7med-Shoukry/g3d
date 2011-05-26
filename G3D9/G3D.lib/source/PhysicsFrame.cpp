@@ -52,7 +52,7 @@ PhysicsFrame::PhysicsFrame(const Any& a) {
             rotation    = a[0];
             translation = a[1];
         } else {
-            for (Any::AnyTable::Iterator it = a.table().begin(); it.hasMore(); ++it) {
+            for (Any::AnyTable::Iterator it = a.table().begin(); it.isValid(); ++it) {
                 const std::string& n = toLower(it->key);
                 if (n == "translation") {
                     translation = it->value;

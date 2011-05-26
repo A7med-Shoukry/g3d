@@ -53,6 +53,7 @@
      <li> G3D::FileSystem::markFileUsed, G3D::FileSystem::usedFiles
      <li> G3D::Point2 typedef
      <li> G3D::Noise
+     <li> Replaced all instances of .hasMore() with .isValid(), deprecated hasMore, and added isValid to all iterators.
      <li> Flipped the GCamera::project Y-axis to match RenderDevice's Y-axis
      <li> Extended G3D::SuperSurface to work with inverted cameras for planar mirror rendering
      <li> BIN8, BIN11, BIN16, BIN32

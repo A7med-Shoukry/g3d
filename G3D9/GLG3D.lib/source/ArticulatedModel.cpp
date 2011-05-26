@@ -26,7 +26,7 @@ ArticulatedModel::Specification::Specification(const Any& any) {
         filename = any.resolveStringAsFilename();
     } else {
         any.verifyName("ArticulatedModel::Specification");
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = toLower(it->key);
             if (key == "filename") {
                 filename = it->value.resolveStringAsFilename();
@@ -55,7 +55,7 @@ Any ArticulatedModel::Specification::toAny() const {
 ArticulatedModel::Preprocess::Preprocess(const Any& any) {
     *this = Preprocess();
     any.verifyName("ArticulatedModel::Preprocess");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "stripmaterials") {
             stripMaterials = it->value.boolean();
@@ -74,7 +74,7 @@ ArticulatedModel::Preprocess::Preprocess(const Any& any) {
         } else if (key == "normalmapwhiteheightinpixels") {
             normalMapWhiteHeightInPixels = it->value;
         } else if (key == "materialsubstitution") {
-            for (Any::AnyTable::Iterator m = it->value.table().begin(); m.hasMore(); ++m) {
+            for (Any::AnyTable::Iterator m = it->value.table().begin(); m.isValid(); ++m) {
                 materialSubstitution.set(m->key, m->value);
             }
         } else if (key == "materialoverride") {
@@ -107,7 +107,7 @@ Any ArticulatedModel::Preprocess::toAny() const {
     a.set("replaceTwoSidedWithGeometry",  replaceTwoSidedWithGeometry);
     
     Any t(Any::TABLE);
-    for (Table<std::string, Material::Specification>::Iterator it = materialSubstitution.begin(); it.hasMore(); ++it) {
+    for (Table<std::string, Material::Specification>::Iterator it = materialSubstitution.begin(); it.isValid(); ++it) {
         t[it->key] = it->value;
     }
     a["materialSubstitution"] = t;
@@ -120,7 +120,7 @@ Any ArticulatedModel::Preprocess::toAny() const {
 ArticulatedModel::Settings::Settings(const Any& any) {
     *this = Settings();
     any.verifyName("ArticulatedModel::Settings");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "weld") {
             weld = it->value;
@@ -1140,13 +1140,13 @@ ArticulatedModel::PoseSpline::PoseSpline() {}
 
 ArticulatedModel::PoseSpline::PoseSpline(const Any& any) {
     any.verifyName("ArticulatedModel::PoseSpline");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         partSpline.getCreate(it->key) = it->value;
     }
 }
  
 void ArticulatedModel::PoseSpline::get(float t, ArticulatedModel::Pose& pose) {
-    for (SplineTable::Iterator it = partSpline.begin(); it.hasMore(); ++it) {
+    for (SplineTable::Iterator it = partSpline.begin(); it.isValid(); ++it) {
         if (it->value.control.size() > 0) {
             pose.cframe.set(it->key, it->value.evaluate(t));
         }

@@ -68,7 +68,7 @@ void XML::serialize(TextOutput& t) const {
         t.writeSymbol(m_value);
     } else {
         t.printf("<%s", m_name.c_str());
-        for (AttributeTable::Iterator it = m_attribute.begin(); it.hasMore(); ++it) {
+        for (AttributeTable::Iterator it = m_attribute.begin(); it.isValid(); ++it) {
             t.printf(" %s=\"%s\"", it->key.c_str(), it->value.m_value.c_str());
         }
         t.printf(">");

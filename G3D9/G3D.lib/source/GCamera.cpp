@@ -26,7 +26,7 @@ GCamera::GCamera(const Any& any) {
 
     const Any::AnyTable& table = any.table();
     Any::AnyTable::Iterator it = table.begin();
-    while (it.hasMore()) {
+    while (it.isValid()) {
         const std::string& k = toUpper(it->key);
         if (k == "FOVDIRECTION") {
             const std::string& v = toUpper(it->value);
