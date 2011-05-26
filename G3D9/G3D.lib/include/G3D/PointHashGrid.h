@@ -33,19 +33,15 @@ namespace G3D {
 
     You can move members of the data set by first removing them and then
     adding them with a new location.
-
-    <i>Value</i> must be supported by a G3D::PositionTrait and
-    G3D::EqualsTrait.  Overloads are provided for
-    common G3D classes like G3D::Vector3.  For example:
+    
+    Template argument \a PosFunc must provide a static <code>getPosition</code> method 
+    and \a EqualsFunc must provide a static <code>equals</code> method, as described below.  
+    You can either write classes that support these yourself, provide template specializations of
+    G3D::PositionTrait and
+    G3D::EqualsTrait, or rely on the default template specializations, which already exist for
+    common G3D classes like G3D::Point3.  For example:
 
     \code
-    class EqualsFunc {
-    public:
-        static bool equals(const Data& p, const Data& q) {
-            return p == q;
-        }
-    };
-    
     class PosFunc {
     public:
         static void getPosition(const Data& d, Vector3& pos) {
@@ -53,10 +49,17 @@ namespace G3D {
         }
     };
 
+    class EqualsFunc {
+    public:
+        static bool equals(const Data& p, const Data& q) {
+            return p == q;
+        }
+    };
+    
     PointHashGrid<Data, Data::PosFunc, Data::EqualsFunc> grid;
    \endcode
 
-   If the <i>Value</i> class defines operator==, the Equalsfunc is optional:
+   If the \a Value class defines <code>operator==</code>, then the \a Equalsfunc is optional, so you can just write:
 
    \code
     PointHashGrid<Data, Data::PosFunc> grid;
@@ -98,13 +101,13 @@ private:
     /** A value annotated with precomputed position and hash code.*/
     class Entry {
     public:
-        Vector3			 position;
+        Point3			 position;
         Value			 value;
     };
 
     /** One cell of the grid. */
     typedef SmallArray<Entry, expectedCellSize> Cell;
-    typedef Table<Vector3int32, Cell >          CellTable;
+    typedef Table<Point3int32, Cell >          CellTable;
 
     /** The cube of +/-1 along each dimension. Initialized by initOffsetArray.*/
     Vector3int32        m_offsetArray[3*3*3];
@@ -142,18 +145,19 @@ private:
 
     /** Locate the cell and index within that cell containing v. Called by
         remove() and contains(). */
-    bool find(const Value&    v, 
-              Vector3int32&   foundCellCoord, 
-              Cell*&          foundCell, 
-              int&            index) {
+    bool find
+       (const Value&    v, 
+        Point3int32&   foundCellCoord, 
+        Cell*&          foundCell, 
+        int&            index) {
         
-        Vector3 pos;
+        Point3 pos;
         PosFunc::getPosition(v, pos);
 
-        Vector3int32 cellCoord;
+        Point3int32 cellCoord;
         getCellCoord(pos, cellCoord);
         for (int i = 0; i < 27; ++i) {
-            Vector3int32 c = cellCoord + m_offsetArray[i];
+            Point3int32 c = cellCoord + m_offsetArray[i];
             Cell* cell = m_data.getPointer(c);
             if (cell != NULL) {
                 // The cell exists
@@ -179,7 +183,7 @@ public:
         It is useful to calling code to determine when an object
         is about to move between cells.
      */
-    inline void getCellCoord(const Vector3& pos, Vector3int32& cellCoord) const {
+    inline void getCellCoord(const Point3& pos, Point3int32& cellCoord) const {
         for (int a = 0; a < 3; ++a) {
             cellCoord[a] = iFloor(pos[a] * m_invCellWidth);
         }
@@ -190,7 +194,7 @@ protected:
     /** Initializes m_offsetArray. */
     void initOffsetArray() {
         int i = 0;
-        Vector3int32 d;
+        Point3int32 d;
         for (d.x = -1; d.x <= +1; ++d.x) {
             for (d.y = -1; d.y <= +1; ++d.y) {
                 for (d.z = -1; d.z <= +1; ++d.z) {
@@ -251,14 +255,14 @@ public:
         initOffsetArray();
         m_data.clearAndSetMemoryManager(m_memoryManager);
 
-        Vector3 lo(Vector3::inf());
-        Vector3 hi(-lo);
+        Point3 lo(Vector3::inf());
+        Point3 hi(-lo);
 
         // Compute bounds
         Array<Entry> entry(init.size());
         for (int i = 0; i < entry.size(); ++i) {
             const Value& value = init[i];
-            Vector3 pos;
+            Point3 pos;
 
             entry[i].value     = value;
             entry[i].hashCode  = m_hashFunc(value);
@@ -305,9 +309,9 @@ public:
         Multiple elements that are equal may be inserted; all copies will be
         in the data structure. */
     void insert(const Value& v) {
-        Vector3 pos;
+        Point3 pos;
         PosFunc::getPosition(v, pos);
-        Vector3int32 cellCoord;
+        Point3int32 cellCoord;
         getCellCoord(pos, cellCoord);
 
         // See if the cell already exists

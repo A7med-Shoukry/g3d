@@ -316,7 +316,8 @@ protected:
 
 public:
     /** Creates a default lighting environment for demos, which uses the file
-    on the noonclouds/noonclouds_*.jpg textures:
+    on the noonclouds/noonclouds_*.jpg textures.  The code that it uses is below.  Note that this loads
+    a cube map every time that it is invoked, so this should not be used within the rendering loop.
 
   <pre>
     Lighting::Ref lighting = Lighting::create();
@@ -328,7 +329,7 @@ public:
                           Texture::Preprocess::gamma(2.1f));
     lighting->environmentMapColor = Color3::one();
    </pre>
-*/
+   */
     static Lighting::Ref defaultLighting();
 
     /** Add your own debugging controls to this window.*/

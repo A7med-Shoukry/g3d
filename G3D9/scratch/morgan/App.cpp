@@ -67,6 +67,7 @@ public:
 
 int main(int argc, char** argv) {
 
+
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
     for (int y = 0; y < im->height(); ++y) {
@@ -110,6 +111,8 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
         // Let the debugger catch unhandled exceptions
         catchCommonExceptions = false;
 #   endif
+      
+    Random r;
 }
 
 class ImageLoader : public GThread {
