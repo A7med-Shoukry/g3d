@@ -227,6 +227,8 @@ void SurfaceElement::getBSDFImpulses
     debugAssert(n.isUnit());
 
     Color3 F(0,0,0);
+
+    // Track whether the Fresnel coefficient is initialized
     bool Finit = false;
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -246,8 +248,14 @@ void SurfaceElement::getBSDFImpulses
             debugAssert(imp.w.isUnit());
         }
     }
+    
+    // TODO: transmit should be conditioned on lambertian as well as glossy
 
     ////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: a constant transmit is not consistent with the extinction coefficient model--
+    // let the caller choose.
+
     if (material.transmit.nonZero()) {
         // Fresnel transmissive coefficient
         Color3 F_t;
