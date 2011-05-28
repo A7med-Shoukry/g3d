@@ -116,6 +116,22 @@ public:
     }
 
     std::string toString() const;
+
+    Vector3int16 operator<<(int i) const {
+        return Vector3int16(x << i, y << i, z << i);
+    }
+
+    Vector3int16 operator>>(int i) const {
+        return Vector3int16(x >> i, y >> i, z >> i);
+    }
+
+    Vector3int16 operator&(int16 i) const {
+        return Vector3int16(x & i, y & i, z & i);
+    }
+
+    Vector3int16 operator&(const Vector3int16& v) const {
+        return Vector3int16(x & v.x, y & v.y, z & v.z);
+    }
 }
 G3D_END_PACKED_CLASS(2)
 
