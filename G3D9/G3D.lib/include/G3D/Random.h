@@ -88,6 +88,7 @@ protected:
 
     Random& operator=(const Random&) {
         displayCopyAssertionMessage();
+        return *this;
     }
 
 public:

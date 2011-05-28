@@ -1077,8 +1077,9 @@ def _listCFilesVisitor(result, dirname, files, subdirectories):
         dir = dir[2:]
 
     if ((excludeFromCompilation != None) and
-        (excludeFromCompilation.search(dir) != None)):
-        # Don't recurse into subdirectories of excluded directories
+        ((excludeFromCompilation.search(dir) != None) or
+         (excludeFromCompilation.search(betterbasename(dir))))):
+        # Don't recurse into subdirectories of excluded directories either
         del subdirectories[:]
         return
 

@@ -545,7 +545,7 @@ def buildBinary(state):
 
     # Find all the c files
     cfiles = listCFiles(state.rootDir, state.excludeFromCompilation)
-    
+
     # All files on which something depends
     dependencySet = set()
 
