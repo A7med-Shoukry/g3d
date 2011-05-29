@@ -21,7 +21,7 @@ def createDoxyfile(state):
     f = open('Doxyfile', 'r+')
     text = f.read()
 
-    # TODO: excludes
+    # TODO: other excludes
     propertyMapping = {
     'PROJECT_NAME'            : '"' + state.projectName.capitalize() + '"',
     'OUTPUT_DIRECTORY'        : '"' + pathConcat(state.buildDir, 'doc') + '"',
@@ -37,6 +37,7 @@ def createDoxyfile(state):
     'SORT_BRIEF_DOCS'         : 'YES',
     'MACRO_EXPANSION'         : 'YES',
     'JAVADOC_AUTOBRIEF'       : 'YES',
+    'IMAGE_PATH'              : 'doc-files journal',
     'EXCLUDE'                 : 'build graveyard temp doc-files data-files',
     "ALIASES"                 : """ "cite=\par Referenced Code:\n " \
                                     "created=\par Created:\n" \
