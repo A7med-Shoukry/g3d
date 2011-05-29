@@ -179,13 +179,14 @@ TAB_SIZE = 4
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
+# \thumbnail{image.jpg}
 ALIASES =  "cite=\par Referenced Code:\n " \
                                     "created=\par Created:\n" \
                                     "edited=\par Last modified:\n" \
                                     "maintainer=\par Maintainer:\n" \
                                     "units=\par Units:\n" \
-                                    thumbnail{1}="\htmlonly<a href=\"\1\"><img src=\"\1\" border=1 height=120/></a>\endhtmlonly " \
-                                    thumbnail{2}="\htmlonly<table cellspacing=2 cellpadding=0 border=0><tr><td align=center><a href=\"\1\"><img src=\"\1\" border=1 height=120/></a></td></tr><tr><td align=center>\2</td></table>\endhtmlonly " 
+                                    thumbnail{1}="\htmlonly <a href=\"\1\"><img src=\"\1\" border=1 height=120/></a> <!-- \endhtmlonly \image html \1 \"\" width=0in \htmlonly --> \endhtmlonly " \
+                                    thumbnail{2}="\htmlonly<table cellspacing=2 cellpadding=0 border=0><tr><td align=center><a href=\"\1\"><img src=\"\1\" border=1 height=120/></a></td></tr><tr><td align=center>\2</td></table> <!-- \endhtmlonly \image html \1 \"\" width=0in \htmlonly --> \endhtmlonly " 
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C
 # sources only. Doxygen will then generate output that is more tailored for C.

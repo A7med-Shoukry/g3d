@@ -44,8 +44,8 @@ def createDoxyfile(state):
                                     "edited=\par Last modified:\\n" \\
                                     "maintainer=\\par Maintainer:\\n" \\
                                     "units=\par Units:\\n" \\
-                                    thumbnail{1}="\\htmlonly<a href=\\"\\1\\"><img src=\\"\\1\\" border=1 height=120/></a>\\endhtmlonly " \\
-                                    thumbnail{2}="\\htmlonly<table cellspacing=2 cellpadding=0 border=0><tr><td align=center><a href=\\"\\1\\"><img src=\\"\\1\\" border=1 height=120/></a></td></tr><tr><td align=center>\\2</td></table>\\endhtmlonly " """
+                                    thumbnail{1}="\\htmlonly<a href=\\"\\1\\"><img src=\\"\\1\\" border=1 height=120/></a> <!-- \\endhtmlonly \\image html \\1 \\"\\" width=0in \\htmlonly --> \\endhtmlonly " \\
+                                    thumbnail{2}="\\htmlonly<table cellspacing=2 cellpadding=0 border=0><tr><td align=center><a href=\\"\\1\\"><img src=\\"\\1\\" border=1 height=120/></a></td></tr><tr><td align=center>\\2</td></table> <!-- \\endhtmlonly \\image html \\1 \\"\\" width=0in \\htmlonly --> \\endhtmlonly " """
     }
 
     # Rewrite the text by replacing any of the above properties
