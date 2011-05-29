@@ -73,22 +73,21 @@ protected:
         public constructor.*/
     Random(void*);
 
-    void displayCopyAssertionMessage() {
+
+private:
+
+    Random& operator=(const Random&) {
         alwaysAssertM(false,
-            "There is no copy constructor for Random because you "
+            "There is no copy constructor or assignment operator for Random because you "
             "probably didn't actually want to copy the state--it would "
             "be slow and duplicate the state of a pseudo-random sequence.  Maybe you could "
             "provide arguments to a member variable in the constructor, "
             "or pass the Random by reference?");
+        return *this;
     }
 
     Random(const Random& r) {
-        displayCopyAssertionMessage();
-    }
-
-    Random& operator=(const Random&) {
-        displayCopyAssertionMessage();
-        return *this;
+        *this = r;
     }
 
 public:

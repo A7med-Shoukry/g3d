@@ -67,6 +67,7 @@ public:
 
 int main(int argc, char** argv) {
 
+//    Random r = Random();
 
 #if 0
     Image1::Ref im = Image1::createEmpty(32, 64);
