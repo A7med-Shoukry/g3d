@@ -5,7 +5,7 @@
   \cite Portions written by Aaron Orenstein, a@orenstein.name
  
   \created 2001-03-11
-  \edited  201-05-29
+  \edited  2011-05-29
 
   Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
   All rights reserved.
@@ -590,6 +590,62 @@ public:
         }
     }
 
+    void append(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5) {
+        if (inArray(&v1) || inArray(&v2) || inArray(&v3) || inArray(&v4) || inArray(&v5)) {
+            T t1 = v1;
+            T t2 = v2;
+            T t3 = v3;
+            T t4 = v4;
+            T t5 = v5;
+            append(t1, t2, t3, t4, t5);
+        } else if (num + 4 < numAllocated) {
+            // This is a simple situation; just stick it in the next free slot using
+            // the copy constructor.
+            new (data + num) T(v1);
+            new (data + num + 1) T(v2);
+            new (data + num + 2) T(v3);
+            new (data + num + 3) T(v4);
+            new (data + num + 4) T(v5);
+            num += 5;
+        } else {
+            resize(num + 5, DONT_SHRINK_UNDERLYING_ARRAY);
+            data[num - 5] = v1;
+            data[num - 4] = v2;
+            data[num - 3] = v3;
+            data[num - 2] = v4;
+            data[num - 1] = v5;
+        }
+    }
+
+    void append(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6) {
+        if (inArray(&v1) || inArray(&v2) || inArray(&v3) || inArray(&v4) || inArray(&v5) || inArray(&v6)) {
+            T t1 = v1;
+            T t2 = v2;
+            T t3 = v3;
+            T t4 = v4;
+            T t5 = v5;
+            T t6 = v6;
+            append(t1, t2, t3, t4, t5, t6);
+        } else if (num + 5 < numAllocated) {
+            // This is a simple situation; just stick it in the next free slot using
+            // the copy constructor.
+            new (data + num) T(v1);
+            new (data + num + 1) T(v2);
+            new (data + num + 2) T(v3);
+            new (data + num + 3) T(v4);
+            new (data + num + 4) T(v5);
+            new (data + num + 5) T(v6);
+            num += 6;
+        } else {
+            resize(num + 6, DONT_SHRINK_UNDERLYING_ARRAY);
+            data[num - 6] = v1;
+            data[num - 5] = v2;
+            data[num - 4] = v3;
+            data[num - 3] = v4;
+            data[num - 2] = v5;
+            data[num - 1] = v6;
+        }
+    }
     /**
      Returns true if the given element is in the array.
      */
