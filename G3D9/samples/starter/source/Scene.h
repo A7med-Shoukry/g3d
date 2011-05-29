@@ -79,9 +79,14 @@ public:
         Note that this may not return the closest Entity if another's bounds
         project in front of it.
 
+        \param ray World space ray
+
         \param distance Maximum distance at which to allow selection
         (e.g., finf()).  On return, this is the distance to the
         object.
+
+        \param exclude Entities to ignore when searching for occlusions.  This is
+        convenient to use when avoiding self-collisions, for example.
      */  
     Entity::Ref intersectBounds(const Ray& ray, float& distance, const Array<Entity::Ref>& exclude = Array<Entity::Ref>());
 
