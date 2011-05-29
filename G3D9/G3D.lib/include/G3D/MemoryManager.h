@@ -1,10 +1,11 @@
 /**
-  \file MemoryManager.h
+  @file MemoryManager.h
 
-  \created 2009-04-20
-  \edited  2011-05-16
+  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  @created 2009-04-20
+  @edited  2009-04-20
 
-  Copyright 2000-2011, Morgan McGuire.
+  Copyright 2000-2009, Morgan McGuire.
   All rights reserved.
  */
 #ifndef G3D_MemoryManager_h
@@ -17,7 +18,7 @@ namespace G3D {
 
 /** 
    Abstraction of memory management.
-   Default implementation uses G3D::System::memoryManager()->alloc and is threadsafe.
+   Default implementation uses G3D::System::malloc and is threadsafe.
 
    \sa LargePoolMemoryManager, CRTMemoryManager, AlignedMemoryManager, AreaMemoryManager */
 class MemoryManager : public ReferenceCountedObject {
@@ -32,43 +33,21 @@ public:
     /** Return a pointer to \a s bytes of memory that are unused by
         the rest of the program.  The contents of the memory are
         undefined */
-    virtual void* alloc(size_t s) = 0;
+    virtual void* alloc(size_t s);
 
     /** Invoke to declare that this memory will no longer be used by
         the program.  The memory manager is not required to actually
         reuse or release this memory. */
-    virtual void free(void* ptr) = 0;
+    virtual void free(void* ptr);
 
     /** Returns true if this memory manager is threadsafe (i.e., alloc
         and free can be called asychronously) */
-    virtual bool isThreadsafe() const = 0;
+    virtual bool isThreadsafe() const;
 
-    /** If the allocation size of \a block can be changed to newBytes, it does so and returns true.  Otherwise, it returns false and the block allocation is unmodified. Growing may fail because there is no adjacent space.  Shrinking may fail because the memory was allocated out of a pool of fixed-size buffers.  Note that a failed shrinking can be ignored without impacting program behavior, but a failed growth must be resolved explicitly  Sample usage:
-    <pre>
-    If shrinking, perform your C++ cleanup on the objects that will be freed
-
-    if (! mm->tryUpdateAllocSize(b, s) && (s > originalSize)) {
-         void* n = mm->alloc(s);
-         do your own C++ copy from b to n, if required, or simply System::memcpy if POD
-         mm->free(b);
-         b = n;
-    }
-    </pre>
-
-    Compare to C realloc(), which is not safe for C++ objects or those with embedded references.
-    */
-    virtual bool tryUpdateAllocSize(void* block, size_t newBytes) { return false; }
-
-    /// Allocates memory thrugh alloc then initializes all bytes to 0.
-    virtual void* allocZeroed(size_t bytes);
-
-    /// Returns implementation-specific string describing current allocation performance
-    virtual std::string describePerformance() const { return "Performance N/A"; }
-
-    /// Resets performance indicators used to create performance description
-    virtual void resetPerformance() { }
+    /** Return the instance. There's only one instance of the default
+        MemoryManager; it is cached after the first creation. */
+    static MemoryManager::Ref create();
 };
-
 
 /** 
    Allocates memory on 16-byte boundaries.
@@ -110,6 +89,6 @@ public:
     static CRTMemoryManager::Ref create();
 };
 
-} // namespace G3D
+}
 
-#endif // G3D_MemoryManager_h
+#endif

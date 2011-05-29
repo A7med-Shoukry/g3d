@@ -710,7 +710,7 @@ int main(int argc, char* argv[]) {
         // Pause so that we can see the values in the debugger
    //     getch();
 
-        printf("%s\n", System::memoryManager()->describePerformance().c_str());
+        printf("%s\n", System::mallocPerformance().c_str());
 
         perfArray();
 
@@ -879,8 +879,8 @@ int main(int argc, char* argv[]) {
         printf("  passed\n");
 #   endif
 
-    printf("%s\n", System::memoryManager()->describePerformance().c_str());
-    System::memoryManager()->resetPerformance();
+    printf("%s\n", System::mallocPerformance().c_str());
+    System::resetMallocPerformanceCounters();
 
     printf("\nAll tests succeeded.\n");
 #endif

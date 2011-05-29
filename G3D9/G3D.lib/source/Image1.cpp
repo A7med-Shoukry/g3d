@@ -80,7 +80,7 @@ void Image1::load(const std::string& filename, GImage::Format fmt) {
         
         uint16* src = NULL;
         int w, h, c;
-        MemoryManager::Ref memMan = System::memoryManager();
+        MemoryManager::Ref memMan = MemoryManager::create();
         GImage::decodePNG16(input, w, h, c, src, memMan);
         resize(w, h);
         int N = w * h;

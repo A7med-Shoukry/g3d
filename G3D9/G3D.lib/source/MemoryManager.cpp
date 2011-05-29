@@ -1,10 +1,11 @@
 /**
-  \file MemoryManager.cpp
+  @file MemoryManager.cpp
 
-  \created 2009-04-20
-  \edited  2011-05-16
+  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  @created 2009-04-20
+  @edited  2009-05-29
 
-  Copyright 2000-2011, Morgan McGuire.
+  Copyright 2000-2009, Morgan McGuire.
   All rights reserved.
  */
 
@@ -15,13 +16,27 @@ namespace G3D {
 
 MemoryManager::MemoryManager() {}
 
-void* MemoryManager::allocZeroed(size_t bytes) {
-    void* m = alloc(bytes);
-    if (m != NULL) {
-        System::memset(m, 0, bytes);
-    }
+
+void* MemoryManager::alloc(size_t s) {
+    return System::malloc(s);
+}
+
+
+void MemoryManager::free(void* ptr) {
+    System::free(ptr);
+}
+
+
+bool MemoryManager::isThreadsafe() const {
+    return true;
+}
+
+
+MemoryManager::Ref MemoryManager::create() {
+    static MemoryManager::Ref m = new MemoryManager();
     return m;
 }
+
 
 ///////////////////////////////////////////////////
 
@@ -73,5 +88,4 @@ CRTMemoryManager::Ref CRTMemoryManager::create() {
     static CRTMemoryManager::Ref m = new CRTMemoryManager();
     return m;
 }
-
-} // namespace G3D
+}

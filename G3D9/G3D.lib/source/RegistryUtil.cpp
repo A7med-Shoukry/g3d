@@ -157,7 +157,7 @@ bool RegistryUtil::readString(const std::string& key, const std::string& value, 
         dataSize += 1;
 
         if (result == ERROR_SUCCESS) {
-            char* tmpStr = static_cast<char*>(System::memoryManager()->alloc(dataSize));
+            char* tmpStr = static_cast<char*>(System::malloc(dataSize));
             System::memset(tmpStr, 0, dataSize);
 
             result = RegQueryValueExA(openKey, value.c_str(), NULL, NULL, reinterpret_cast<LPBYTE>(tmpStr), reinterpret_cast<LPDWORD>(&dataSize));
@@ -168,7 +168,7 @@ bool RegistryUtil::readString(const std::string& key, const std::string& value, 
             }
 
             RegCloseKey(openKey);
-            System::memoryManager()->free(tmpStr);
+            System::free(tmpStr);
         }
     }
     return (result == ERROR_SUCCESS);

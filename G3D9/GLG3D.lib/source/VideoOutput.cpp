@@ -408,7 +408,7 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
         throwException(format->colorSpace == ImageFormat::COLOR_SPACE_RGB, "Flipping is not implemented for this pixel format.");
 
         // borrowed for GImage and expanded to work for any rgb colorspace format with no padding
-        uint8* temp = (uint8*)System::memoryManager()->alloc(m_settings.width * format->cpuBitsPerPixel / 8);
+        uint8* temp = (uint8*)System::malloc(m_settings.width * format->cpuBitsPerPixel / 8);
         throwException(temp != NULL, "Out of memory."); 
 
         int oneRow = m_settings.width * format->cpuBitsPerPixel / 8;
@@ -422,7 +422,7 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
             System::memcpy(frame + topOff, frame + botOff, oneRow);
             System::memcpy(frame + botOff, temp,           oneRow);
         }
-        System::memoryManager()->free(temp);
+        System::free(temp);
 
     } else if (intermediateRequired) {
 

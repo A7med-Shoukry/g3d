@@ -270,7 +270,7 @@ void GImage::encodeJPEG(
     // Specify the destination for the compressed data.
     // (Overestimate the size)
     int buffer_size = m_width * m_height * 3 + 200;
-    JOCTET* compressed_data = (JOCTET*)System::memoryManager()->alloc(buffer_size);
+    JOCTET* compressed_data = (JOCTET*)System::malloc(buffer_size);
 	jpeg_memory_dest(&cinfo, compressed_data, buffer_size);
 
 
@@ -320,7 +320,7 @@ void GImage::encodeJPEG(
     out.writeBytes(compressed_data, outLength);
 
     // Free the conservative buffer.
-    System::memoryManager()->free(compressed_data);
+    System::free(compressed_data);
     compressed_data = NULL;
 }
 

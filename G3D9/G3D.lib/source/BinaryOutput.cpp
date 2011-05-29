@@ -114,6 +114,7 @@ void BinaryOutput::reallocBuffer(size_t bytes, size_t oldBufferLen) {
     //debugPrintf("reallocBuffer(%d, %d)\n", bytes, oldBufferLen);
 
     size_t newBufferLen = (int)(m_bufferLen * 1.5) + 100;
+    uint8* newBuffer = NULL;
 
     if ((m_filename == "<memory>") || (newBufferLen < MAX_BINARYOUTPUT_BUFFER_SIZE)) {
         // We're either writing to memory (in which case we *have* to
@@ -121,25 +122,21 @@ void BinaryOutput::reallocBuffer(size_t bytes, size_t oldBufferLen) {
         // reasonable size buffer.
 
         // debugPrintf("  realloc(%d)\n", newBufferLen); 
-        void* oldBuffer = m_buffer;
-
-        m_buffer = (uint8*)System::memoryManager()->alloc(newBufferLen);
-
-        if (oldBuffer) {
-            System::memcpy(m_buffer, oldBuffer, oldBufferLen);
-            System::memoryManager()->free(oldBuffer);
+        newBuffer = (uint8*)System::realloc(m_buffer, newBufferLen);
+        if (newBuffer != NULL) {
+            m_maxBufferLen = newBufferLen;
         }
-
-        m_maxBufferLen = newBufferLen;
     }
 
-    if ((m_buffer == NULL) && (bytes > 0)) {
+    if ((newBuffer == NULL) && (bytes > 0)) {
         // Realloc failed; we're probably out of memory.  Back out
         // the entire call and try to dump some data to disk.
         alwaysAssertM(m_filename != "<memory>", "Realloc failed while writing to memory.");
+        m_bufferLen = oldBufferLen;
         reserveBytesWhenOutOfMemory(bytes);
     } else {
         // Realloc succeeded
+        m_buffer = newBuffer;
         debugAssert(isValidHeapPointer(m_buffer));
     }
 }
@@ -258,7 +255,7 @@ void BinaryOutput::reset() {
 
 BinaryOutput::~BinaryOutput() {
     debugAssert((m_buffer == NULL) || isValidHeapPointer(m_buffer));
-    System::memoryManager()->free(m_buffer);
+    System::free(m_buffer);
     m_buffer = NULL;
     m_bufferLen = 0;
     m_maxBufferLen = 0;
@@ -291,7 +288,7 @@ void BinaryOutput::compress(int level) {
 
     // add space for the 4-byte header
     m_maxBufferLen = compressedSize + 4;
-    m_buffer = (uint8*)System::memoryManager()->alloc(m_maxBufferLen);
+    m_buffer = (uint8*)System::malloc(m_maxBufferLen);
     
     // Write the header containing the old buffer size, which is needed for decompression
     {
@@ -317,7 +314,7 @@ void BinaryOutput::compress(int level) {
     m_pos = m_bufferLen;
 
     // Free the old data
-    System::memoryManager()->free((void*)src);
+    System::free((void*)src);
 }
 
 

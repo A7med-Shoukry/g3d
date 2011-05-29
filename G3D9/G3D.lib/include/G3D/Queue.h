@@ -73,7 +73,7 @@ private:
     /** If a clear was needed, assumes it already occured */
     void _copy(const Queue& other) {
         debugAssert(data == NULL);
-        data = (T*)System::memoryManager()->alloc(sizeof(T) * other.numAllocated);
+        data = (T*)System::malloc(sizeof(T) * other.numAllocated);
         debugAssert(data);
         head = other.head;
         num = other.num;
@@ -105,7 +105,7 @@ private:
     void repackAndRealloc(int newSize) {
         // TODO: shrink queue
         T* old = data;
-        data = (T*)System::memoryManager()->alloc(newSize * sizeof(T));
+        data = (T*)System::malloc(newSize * sizeof(T));
         debugAssert(data != NULL);
 
         FIND_ENDS;
@@ -122,7 +122,7 @@ private:
         }
 
         head = 0;
-        System::memoryManager()->free(old);
+        System::free(old);
         numAllocated = newSize;
     }
 
@@ -266,7 +266,7 @@ public:
        head = 0;
        if (freeStorage) {
            numAllocated = 0;
-           System::memoryManager()->free(data);
+           System::free(data);
            data = NULL;
        }
    }

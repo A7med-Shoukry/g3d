@@ -201,7 +201,7 @@ void GImage::decodeBMP(
 
         int numColors = input.readUInt32();
 
-        palette = (uint8*)System::memoryManager()->alloc(numColors * 3);
+        palette = (uint8*)System::malloc(numColors * 3);
         debugAssert(palette);
 
         // Skip past the end of the header to the palette info
@@ -373,7 +373,7 @@ void GImage::decodeBMP(
 
         m_memMan->free(m_byte);
         m_byte = NULL;
-        System::memoryManager()->free(palette); 
+        System::free(palette); 
         palette = NULL;
     	throw Error("16-bit bitmaps not supported", input.getFilename());
 
@@ -415,7 +415,7 @@ void GImage::decodeBMP(
 
         m_memMan->free(m_byte);
         m_byte = NULL;
-        System::memoryManager()->free(palette); 
+        System::free(palette); 
         palette = NULL;
     	throw Error("32 bit bitmaps not supported", input.getFilename());
     
@@ -427,7 +427,7 @@ void GImage::decodeBMP(
         throw Error("Not a bitmap!", input.getFilename());
 	}
 
-    System::memoryManager()->free(palette); 
+    System::free(palette); 
     palette = NULL;
 }
 

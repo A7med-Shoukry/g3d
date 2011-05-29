@@ -188,12 +188,12 @@ bool ImageFormat::convert(const Array<const void*>& srcBytes, int srcWidth, int 
 
             if (toInterConverter && fromInterConverter) {
                 Array<void*> tmp;
-                tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * ImageFormat::RGBA32F()->cpuBitsPerPixel * 8));
+                tmp.append(System::malloc(srcWidth * srcHeight * ImageFormat::RGBA32F()->cpuBitsPerPixel * 8));
 
                 toInterConverter(srcBytes, srcWidth, srcHeight, srcFormat, srcRowPadBits, tmp, ImageFormat::RGBA32F(), 0, false, bayerAlg);
                 fromInterConverter(reinterpret_cast<Array<const void*>&>(tmp), srcWidth, srcHeight, ImageFormat::RGBA32F(), 0, dstBytes, dstFormat, dstRowPadBits, invertY, bayerAlg);
 
-                System::memoryManager()->free(tmp[0]);
+                System::free(tmp[0]);
 
                 conversionAvailable = true;
             }
@@ -991,42 +991,42 @@ static void rgb8_to_bayer_gbrg8(const int w, const int h,
 // =====================================================================
 static void rgba32f_to_bayer_rggb8(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     rgba32f_to_rgb8(srcBytes, srcWidth, srcHeight, ImageFormat::RGBA32F(), 0, tmp, ImageFormat::RGB8(), 0, invertY, bayerAlg);
     rgb8_to_bayer_rggb8(srcWidth, srcHeight, static_cast<uint8*>(tmp[0]), static_cast<uint8*>(dstBytes[0]));
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 static void rgba32f_to_bayer_gbrg8(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     rgba32f_to_rgb8(srcBytes, srcWidth, srcHeight, ImageFormat::RGBA32F(), 0, tmp, ImageFormat::RGB8(), 0, invertY, bayerAlg);
     rgb8_to_bayer_grbg8(srcWidth, srcHeight, static_cast<uint8*>(tmp[0]), static_cast<uint8*>(dstBytes[0]));
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 static void rgba32f_to_bayer_grbg8(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     rgba32f_to_rgb8(srcBytes, srcWidth, srcHeight, ImageFormat::RGBA32F(), 0, tmp, ImageFormat::RGB8(), 0, invertY, bayerAlg);
     rgb8_to_bayer_gbrg8(srcWidth, srcHeight, static_cast<uint8*>(tmp[0]), static_cast<uint8*>(dstBytes[0]));
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 static void rgba32f_to_bayer_bggr8(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     rgba32f_to_rgb8(srcBytes, srcWidth, srcHeight, ImageFormat::RGBA32F(), 0, tmp, ImageFormat::RGB8(), 0, invertY, bayerAlg);
     rgb8_to_bayer_bggr8(srcWidth, srcHeight, static_cast<uint8*>(tmp[0]), static_cast<uint8*>(dstBytes[0]));
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 // BAYER -> RGB color space
@@ -1145,42 +1145,42 @@ static void bayer_bggr8_to_rgb8_mhc(int w, int h,
 // =====================================================================
 static void bayer_rggb8_to_rgba32f(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     bayer_rggb8_to_rgb8_mhc(srcWidth, srcHeight, static_cast<const uint8*>(srcBytes[0]), static_cast<uint8*>(tmp[0]));
     rgb8_to_rgba32f(reinterpret_cast<Array<const void*>&>(tmp), srcWidth, srcHeight, ImageFormat::RGB8(), 0, dstBytes, ImageFormat::RGBA32F(), 0, invertY, bayerAlg);
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 static void bayer_gbrg8_to_rgba32f(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     bayer_grbg8_to_rgb8_mhc(srcWidth, srcHeight, static_cast<const uint8*>(srcBytes[0]), static_cast<uint8*>(tmp[0]));
     rgb8_to_rgba32f(reinterpret_cast<Array<const void*>&>(tmp), srcWidth, srcHeight, ImageFormat::RGB8(), 0, dstBytes, ImageFormat::RGBA32F(), 0, invertY, bayerAlg);
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 static void bayer_grbg8_to_rgba32f(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     bayer_gbrg8_to_rgb8_mhc(srcWidth, srcHeight, static_cast<const uint8*>(srcBytes[0]), static_cast<uint8*>(tmp[0]));
     rgb8_to_rgba32f(reinterpret_cast<Array<const void*>&>(tmp), srcWidth, srcHeight, ImageFormat::RGB8(), 0, dstBytes, ImageFormat::RGBA32F(), 0, invertY, bayerAlg);
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 static void bayer_bggr8_to_rgba32f(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits, const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY, ImageFormat::BayerAlgorithm bayerAlg) {
     Array<void*> tmp;
-    tmp.append(System::memoryManager()->alloc(srcWidth * srcHeight * sizeof(Color3uint8)));
+    tmp.append(System::malloc(srcWidth * srcHeight * sizeof(Color3uint8)));
 
     bayer_bggr8_to_rgb8_mhc(srcWidth, srcHeight, static_cast<const uint8*>(srcBytes[0]), static_cast<uint8*>(tmp[0]));
     rgb8_to_rgba32f(reinterpret_cast<Array<const void*>&>(tmp), srcWidth, srcHeight, ImageFormat::RGB8(), 0, dstBytes, ImageFormat::RGBA32F(), 0, invertY, bayerAlg);
 
-    System::memoryManager()->free(tmp[0]);
+    System::free(tmp[0]);
 }
 
 

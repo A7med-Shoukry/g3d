@@ -314,9 +314,6 @@
     <ClCompile Include="..\G3D.lib\source\RayGridIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\PoolMemoryManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\G3D.lib\include\G3D\AABox.h">
@@ -683,9 +680,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\BIN.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\PoolMemoryManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

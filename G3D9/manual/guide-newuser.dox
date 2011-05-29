@@ -196,7 +196,7 @@ linking against OpenGL or setting up an event handling routine.
   @subsection ref Memory Management
   
   You can allocate memory for your own objects as you would in any C++ program, using malloc, calloc, alloca, new, and heap allocation.
-  In addition, %G3D provides System::memoryManager, System::alignedMalloc, and a reference counting garabage collector that you may choose
+  In addition, %G3D provides System::malloc, System::alignedMalloc, and a reference counting garabage collector that you may choose
   to use.  %G3D::System's memory managment is faster than the provided C++ runtime on many systems and the reference counter is easier to 
 use.
 

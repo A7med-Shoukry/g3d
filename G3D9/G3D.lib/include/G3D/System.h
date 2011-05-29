@@ -18,7 +18,6 @@
 #include "G3D/g3dmath.h"
 #include "G3D/G3DGameUnits.h"
 #include "G3D/BinaryFormat.h"
-#include "G3D/MemoryManager.h"
 #include <string>
 
 #ifdef G3D_OSX
@@ -126,8 +125,6 @@ private:
 #endif
 
     std::string    m_version;
-
-    MemoryManager::Ref  m_memoryManager;
     OutOfMemoryCallback m_outOfMemoryCallback;
 
 #ifdef G3D_OSX
@@ -148,7 +145,7 @@ private:
 
         Used instead of a global variable to ensure that the order of
         intialization is correct, which is critical because other
-        globals may allocate memory using System::memoryManager.
+        globals may allocate memory using System::malloc.
      */
     static System& instance();
 
@@ -244,12 +241,44 @@ public:
     */
     static std::string currentDateString();
 
-    /// Returns the default system PoolMemoryManager instance
-    static MemoryManager::Ref memoryManager();
-
+    /**
+       Uses pooled storage to optimize small allocations (1 byte to 5
+       kilobytes).  Can be 10x to 100x faster than calling ::malloc or
+       new.
+       
+       The result must be freed with free.
+       
+       Threadsafe on Win32.
+       
+       @sa calloc realloc OutOfMemoryCallback free
+    */
     static void* malloc(size_t bytes);
+    
+    static void* calloc(size_t n, size_t x);
 
-    static void free(void* ptr);
+    /**
+     Version of realloc that works with System::malloc.
+     */
+    static void* realloc(void* block, size_t bytes);
+
+    /** Returns a string describing how well System::malloc is using
+        its internal pooled storage.  "heap" memory was slow to
+        allocate; the other data sizes are comparatively fast.*/
+    static std::string mallocPerformance();
+    static void resetMallocPerformanceCounters();
+
+    /** 
+       Returns a string describing the current usage of the buffer pools used for
+       optimizing System::malloc.
+     */
+    static std::string mallocStatus();
+
+    /**
+     Free data allocated with System::malloc.
+
+     Threadsafe on Win32.
+     */
+    static void free(void* p);
 
     /**
        Guarantees that the start of the array is aligned to the 
@@ -357,12 +386,12 @@ public:
     }
 
     /**
-     When System::memoryManager()->alloc fails to allocate memory because the system is
+     When System::malloc fails to allocate memory because the system is
      out of memory, it invokes this handler (if it is not NULL).
      The argument to the callback is the amount of memory that malloc
      was trying to allocate when it ran out.  If the callback returns
-     true, System::memoryManager()->alloc will attempt to allocate the memory again.
-     If the callback returns false, then System::memoryManager()->alloc will return NULL.
+     true, System::malloc will attempt to allocate the memory again.
+     If the callback returns false, then System::malloc will return NULL.
 
      You can use outOfMemoryCallback to free data structures or to 
      register the failure.

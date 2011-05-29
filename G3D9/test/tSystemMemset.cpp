@@ -26,13 +26,11 @@ void testSystemMemset() {
         // Test the internal debugAssertions
         for (int N = 100; N < 10000; N += 137) {
 
-            void* x = System::memoryManager()->alloc(N);
+            void* x = System::malloc(N);
             System::memset(x, 0, N);
-            System::memoryManager()->free(x);
-
-            x = System::memoryManager()->alloc(N * 2);
+            x = System::realloc(x, N * 2);
             System::memset(x, 0, N*2);
-            System::memoryManager()->free(x);
+            System::free(x);
         }
     }
 

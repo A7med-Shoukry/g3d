@@ -196,7 +196,7 @@ Any::Data* Any::Data::create(Any::Type t) {
     }
 
     // Allocate the data object
-    Data* p = new (System::memoryManager()->alloc(s)) Data(t);
+    Data* p = new (MemoryManager::create()->alloc(s)) Data(t);
 
     // Create the (empyt) value object at the end of the Data object
     switch (t) {
@@ -226,7 +226,7 @@ Any::Data* Any::Data::create(Any::Type t) {
 void Any::Data::destroy(Data* d) {
     if (d != NULL) {
         d->~Data();
-        System::memoryManager()->free(d);
+        MemoryManager::create()->free(d);
     }
 }
 

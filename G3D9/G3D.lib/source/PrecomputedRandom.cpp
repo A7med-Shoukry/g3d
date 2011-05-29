@@ -27,8 +27,8 @@ PrecomputedRandom::PrecomputedRandom(int dataSize, uint32 seed) :
 
     HemiUniformData* h;
     SphereBitsData* s;
-    m_hemiUniform = h = (HemiUniformData*) System::memoryManager()->alloc(sizeof(HemiUniformData) * dataSize);
-    m_sphereBits = s = (SphereBitsData*) System::memoryManager()->alloc(sizeof(SphereBitsData) * dataSize);
+    m_hemiUniform = h = (HemiUniformData*) System::malloc(sizeof(HemiUniformData) * dataSize);
+    m_sphereBits = s = (SphereBitsData*) System::malloc(sizeof(SphereBitsData) * dataSize);
 
     Random r;
 
@@ -57,8 +57,8 @@ PrecomputedRandom::PrecomputedRandom(const HemiUniformData* data1, const SphereB
 
 PrecomputedRandom::~PrecomputedRandom() {
     if (m_freeData) {
-        System::memoryManager()->free(const_cast<HemiUniformData*>(m_hemiUniform));
-        System::memoryManager()->free(const_cast<SphereBitsData*>(m_sphereBits));
+        System::free(const_cast<HemiUniformData*>(m_hemiUniform));
+        System::free(const_cast<SphereBitsData*>(m_sphereBits));
     }
 }
 

@@ -298,7 +298,7 @@ public:
      Creates an empty hash table using the default MemoryManager.
      */
     Table() : m_bucket(NULL) {
-        m_memoryManager = System::memoryManager();
+        m_memoryManager = MemoryManager::create();
         m_numBuckets = 0;
         m_size       = 0;
         m_bucket     = NULL;
@@ -334,7 +334,7 @@ public:
 
     /** Uses the default memory manager */
     Table(const ThisType& h) {
-        m_memoryManager = System::memoryManager();
+        m_memoryManager = MemoryManager::create();
         m_numBuckets = 0;
         m_size = 0;
         m_bucket = NULL;

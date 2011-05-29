@@ -325,7 +325,7 @@ public:
         int                 width = 0,
         int                 height = 0,
         int                 channels = 3,
-        const MemoryManager::Ref& m = System::memoryManager());
+        const MemoryManager::Ref& m = MemoryManager::create());
 
     /**
      Load an encoded image from disk and decode it.
@@ -334,7 +334,7 @@ public:
     GImage(
         const std::string&  filename,
         Format              format = AUTODETECT,
-        const MemoryManager::Ref& m = System::memoryManager());
+        const MemoryManager::Ref& m = MemoryManager::create());
 
     /**
      Decodes an image stored in a buffer.
@@ -343,11 +343,11 @@ public:
         const unsigned char*data,
         int                 length,
         Format              format = AUTODETECT,
-        const MemoryManager::Ref& m = System::memoryManager());
+        const MemoryManager::Ref& m = MemoryManager::create());
 
     GImage(
         const GImage&       other,
-        const MemoryManager::Ref& m = System::memoryManager());
+        const MemoryManager::Ref& m = MemoryManager::create());
 
     GImage& operator=(const GImage& other);
 
@@ -460,7 +460,7 @@ public:
     /** Decodes 16-bit per channel PNG. \beta */
     static void decodePNG16(BinaryInput& in, int& width, int& height, int& channels, 
                             uint16*&            byte,
-                            MemoryManager::Ref  mman = System::memoryManager());
+                            MemoryManager::Ref  mman = MemoryManager::create());
 
     /**
      Does not commit the BinaryOutput when done.

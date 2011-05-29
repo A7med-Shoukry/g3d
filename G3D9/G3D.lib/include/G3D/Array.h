@@ -16,7 +16,7 @@
 
 #include "G3D/platform.h"
 #include "G3D/debug.h"
-#include "G3D/System.h"
+#include "G3D/MemoryManager.h"
 #ifdef G3D_DEBUG
 //   For formatting error messages
 #    include "G3D/format.h"
@@ -115,7 +115,7 @@ private:
     }
 
     void _copy(const Array &other) {
-        init(other.num, System::memoryManager());
+        init(other.num, MemoryManager::create());
         for (int i = 0; i < num; i++) {
             data[i] = other.data[i];
         }
@@ -262,27 +262,27 @@ public:
 
     /** Creates a zero length array (no heap allocation occurs until resize). */
     Array() : num(0) {
-        init(0, System::memoryManager());
+        init(0, MemoryManager::create());
         debugAssert(num >= 0);
     }
     
 
     /**  Creates an array containing v0. */
     Array(const T& v0) {
-        init(1, System::memoryManager());
+        init(1, MemoryManager::create());
         (*this)[0] = v0;
     }
     
     /**  Creates an array containing v0 and v1. */
     Array(const T& v0, const T& v1) {
-        init(2, System::memoryManager());
+        init(2, MemoryManager::create());
         (*this)[0] = v0;
         (*this)[1] = v1;
     }
     
     /**  Creates an array containing v0...v2. */
     Array(const T& v0, const T& v1, const T& v2) {
-       init(3, System::memoryManager());
+       init(3, MemoryManager::create());
        (*this)[0] = v0;
        (*this)[1] = v1;
        (*this)[2] = v2;
@@ -290,7 +290,7 @@ public:
 
     /** Creates an array containing v0...v3. */
     Array(const T& v0, const T& v1, const T& v2, const T& v3) {
-       init(4, System::memoryManager());
+       init(4, MemoryManager::create());
        (*this)[0] = v0;
        (*this)[1] = v1;
        (*this)[2] = v2;
@@ -299,7 +299,7 @@ public:
 
     /** Creates an array containing v0...v4. */
     Array(const T& v0, const T& v1, const T& v2, const T& v3, const T& v4) {
-       init(5, System::memoryManager());
+       init(5, MemoryManager::create());
        (*this)[0] = v0;
        (*this)[1] = v1;
        (*this)[2] = v2;

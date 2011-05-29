@@ -114,11 +114,11 @@ protected:
 public:
 
     static void* operator new(size_t size) {
-        return System::memoryManager()->alloc(size);
+        return System::malloc(size);
     }
 
     static void operator delete(void* p) {
-        System::memoryManager()->free(p);
+        System::free(p);
     }
 
     virtual ~IFSModel();
