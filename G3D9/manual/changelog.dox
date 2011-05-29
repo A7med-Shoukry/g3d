@@ -26,6 +26,7 @@
      <li> G3D::Vector2int32
      <li> G3D::Texture::Visualization, G3D::Texture::visualization
      <li> G3D::RayGridIterator
+     <li> Array::deleteAll -> Array::invokeDeleteOnAllElements
      <li> Improved error reporting from Any and ParseError
      <li> PhysicsFrame::operator==, Quat::operator==, PhysicsFrameSpline::operator==
      <li> G3D::GEntity::toAny, G3D::PhysicsFrameSpline::toAny, G3D::PhysicsFrame::toAny, G3D::Quat::toAny

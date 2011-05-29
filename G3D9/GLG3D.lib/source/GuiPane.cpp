@@ -109,8 +109,8 @@ void GuiPane::setRect(const Rect2D& rect) {
 
 
 GuiPane::~GuiPane() {
-    controlArray.deleteAll();
-    labelArray.deleteAll();
+    controlArray.invokeDeleteOnAllElements();
+    labelArray.invokeDeleteOnAllElements();
 }
 
 

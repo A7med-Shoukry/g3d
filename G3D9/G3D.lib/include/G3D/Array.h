@@ -1,13 +1,13 @@
 /** 
-  @file Array.h
+  \file Array.h
  
-  @maintainer Morgan McGuire, graphics3d.com
-  @cite Portions written by Aaron Orenstein, a@orenstein.name
+  \maintainer Morgan McGuire, graphics3d.com
+  \cite Portions written by Aaron Orenstein, a@orenstein.name
  
-  @created 2001-03-11
-  @edited  2009-05-29
+  \created 2001-03-11
+  \edited  201-05-29
 
-  Copyright 2000-2009, Morgan McGuire, http://graphics.cs.williams.edu
+  Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
   All rights reserved.
  */
 
@@ -177,6 +177,29 @@ private:
     }
 
 public:
+   /**
+    Assignment operator.  Will be private in a future release because this is slow and can be invoked by accident by novide C++ programmers.
+    If you really want to copy an Array, use the explicit copy constructor.
+    */ 
+   Array& operator=(const Array& other) {
+       debugAssert(num >= 0);
+       resize(other.num);       
+       for (int i = 0; i < num; ++i) {
+           data[i] = other[i];
+       }
+       debugAssert(num >= 0);
+       return *this;
+   }
+
+   Array& operator=(const std::vector<T>& other) {
+       resize((int)other.size());
+       for (int i = 0; i < num; ++i) {
+           data[i] = other[i];
+       }
+       return *this;
+   }
+
+public:
 
     /**
      G3D C++ STL style iterator variable.  Call begin() to get 
@@ -210,7 +233,7 @@ public:
         return data;
     }
     /**
-     C++ STL style iterator method.  Returns one after the last iterator
+     C++ STL style iterator method.  Returns one after the last valid iterator
      element.
      */
     ConstIterator end() const {
@@ -286,11 +309,16 @@ public:
 
 
    /**
-    Copy constructor
+    Copy constructor.  Copying arrays is slow...perhaps you want to pass a reference or a pointer instead?
     */
-    Array(const Array& other) : num(0) {
+   //TODO: patch rest of the API to prevent returning Arrays by value, then make explicit 
+   Array(const Array& other) : num(0) {
        _copy(other);
        debugAssert(num >= 0);
+   }
+
+   explicit Array(const std::vector<T>& other) : num(0), data(NULL) {
+       *this = other;
    }
 
    /**
@@ -332,26 +360,6 @@ public:
       @deprecated*/
    void fastClear() {
        clear(false);
-   }
-
-   /**
-    Assignment operator.
-    */
-   Array& operator=(const Array& other) {
-       debugAssert(num >= 0);
-       resize(other.num);       for (int i = 0; i < num; ++i) {
-           data[i] = other[i];
-       }
-       debugAssert(num >= 0);
-       return *this;
-   }
-
-   Array& operator=(const std::vector<T>& other) {
-       resize((int)other.size());
-       for (int i = 0; i < num; ++i) {
-           data[i] = other[i];
-       }
-       return *this;
    }
 
    inline MemoryManager::Ref memoryManager() const {
@@ -820,11 +828,16 @@ public:
     Calls delete on all objects[0...size-1]
     and sets the size to zero.
     */
-    void deleteAll() {
+    void invokeDeleteOnAllElements() {
         for (int i = 0; i < num; i++) {
             delete data[i];
         }
         resize(0);
+    }
+
+    /** \deprecated */
+    void G3D_DEPRECATED deleteAll() {
+        invokeDeleteOnAllElements();
     }
 
     /**
