@@ -38,16 +38,18 @@ def createDoxyfile(state):
     'MACRO_EXPANSION'         : 'YES',
     'JAVADOC_AUTOBRIEF'       : 'YES',
     'EXCLUDE'                 : 'build graveyard temp doc-files data-files',
-    "ALIASES"                 : ('"cite=\par Referenced Code:\\n " ' +
-                                 '"created=\par Created:\\n" ' +
-                                 '"edited=\par Last modified:\\n" ' + 
-                                 '"maintainer=\par Maintainer:\\n" ' +
-                                 '"units=\par Units:\\n"')
+    "ALIASES"                 : """ "cite=\par Referenced Code:\n " \
+                                    "created=\par Created:\n" \
+                                    "edited=\par Last modified:\n" \
+                                    "maintainer=\\par Maintainer:\n" \
+                                    "units=\par Units:\n" \
+                                    thumbnail{1}="\htmlonly<a href=\"\1\"><img src=\"\1\" border=1 height=120/></a>\endhtmlonly " \
+                                    thumbnail{2}="\htmlonly<table cellspacing=2 cellpadding=0 border=0><tr><td align=center><a href=\"\1\"><img src=\"\1\" border=1 height=120/></a></td></tr><tr><td align=center>\2</td></table>\endhtmlonly " """
     }
 
     # Rewrite the text by replacing any of the above properties
     newText = ""
-    for line in text.split("\n"):
+    for line in text.split('\n'):
         newText += (doxyLineRewriter(line, propertyMapping) + "\n")
 
     # Write the file back out
