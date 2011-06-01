@@ -90,7 +90,7 @@ bool App::onEvent(const GEvent& e) {
 
 
 void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
-    GApp:::onSimulation(rdt, sdt, idt);
+    GApp::onSimulation(rdt, sdt, idt);
 
     // Make the camera spin when the debug controller is not active
     if (false) {
