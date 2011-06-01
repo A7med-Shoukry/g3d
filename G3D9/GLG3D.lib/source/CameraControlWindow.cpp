@@ -21,7 +21,7 @@ namespace G3D {
 
 enum {FILM_PANE_SIZE = 102};
 const Vector2 CameraControlWindow::sDefaultWindowSize(286 + 16, 46);
-const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 155 + FILM_PANE_SIZE);
+const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 170 + FILM_PANE_SIZE);
 
 static const std::string noSpline = "< None >";
 static const std::string untitled = "< Unsaved >";
