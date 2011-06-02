@@ -54,8 +54,8 @@ public:
     // You can override onGraphics if you want more control over the rendering loop.
     // virtual void onGraphics(RenderDevice* rd, Array<Surface::Ref>& surface, Array<Surface2D::Ref>& surface2D);
 
-    virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface);
-    virtual void onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& surface2D);
+    virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D);
+    virtual void onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D);
 
     virtual bool onEvent(const GEvent& e);
     virtual void onUserInput(UserInput* ui);
