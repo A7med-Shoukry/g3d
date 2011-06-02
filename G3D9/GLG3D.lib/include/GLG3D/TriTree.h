@@ -424,10 +424,11 @@ private:
 
         void getStats(Stats& s, int level, int valuesPerNode) const;
 
-        void __fastcall intersectRay
+        bool __fastcall intersectRay
         (const Ray&      ray,
          Tri::Intersector& intersectCallback, 
-         float&          distance) const;
+         float&          distance,
+         bool            exitOnAnyHit) const;
     };
 
     /** Memory manager used to allocate Nodes and Tri arrays. */
@@ -488,11 +489,14 @@ public:
                ...
            }
         </pre>
+
+        \param exitOnAnyHit If true, return any intersection, not the first (faster for shadow rays)
      */
     bool intersectRay
     (const Ray& ray,
      Tri::Intersector& intersectCallback, 
-     float& distance) const;
+     float& distance,
+     bool exitOnAnyHit = false) const;
 
     /** Returns all triangles that intersect or are contained within
         the sphere (technically, this is a ball intersection). */

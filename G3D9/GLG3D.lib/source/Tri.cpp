@@ -109,7 +109,7 @@ float Tri::area() const {
 #pragma float_control( precise, off )
 #endif
 
-void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distance) {
+bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distance) {
     // See RTR3 p.746 (RTR2 ch. 13.7) for the basic algorithm.
     static const float EPS = 1e-12f;
 
@@ -119,7 +119,7 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
     // Test for backfaces first because this eliminates 50% of all triangles.
     if (tri.n.dot(ray.direction()) >= -EPS) {
         // Backface or nearly parallel
-        return;
+        return false;
     }
 
     // Cache off eye direction
@@ -141,7 +141,7 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
     // after all u-v tests have passed gives a 6% speedup.
     if ((ua < -conservative) || (ua > a + conservative)) {
         // We hit the plane of the triangle, but outside the triangle
-        return;
+        return false;
     }
 
     const Vector3& q = s.cross(e1);
@@ -149,13 +149,13 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
 
     if ((va < -conservative) || ((ua + va) > a + conservative)) {
         // We hit the plane of the triangle, but outside the triangle.
-        return;
+        return false;
     }
 
     if (a < EPS) {
         // This ray was parallel, but passed the backface test. We don't test until
         // down here because this case happens really infrequently.
-        return;
+        return false;
     }
 
     // Divide by a
@@ -182,7 +182,7 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
 
             if (image->nearest(texCoord).a < alphaThreshold) {
                 // Alpha masked location--passed through this tri
-                return;
+                return false;
             }
 
             // Hit the opaque part
@@ -195,6 +195,9 @@ void Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
 
         distance = t;
         this->tri = &tri;
+        return true;
+    } else {
+        return false;
     }
 }
 

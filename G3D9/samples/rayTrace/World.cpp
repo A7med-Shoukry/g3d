@@ -99,7 +99,7 @@ bool World::lineOfSight(const Vector3& v0, const Vector3& v1) const {
     float distance = len;
     Tri::Intersector intersector;
 
-    return ! m_triTree.intersectRay(ray, intersector, distance);
+    return ! m_triTree.intersectRay(ray, intersector, distance, true);
 
 }
 
