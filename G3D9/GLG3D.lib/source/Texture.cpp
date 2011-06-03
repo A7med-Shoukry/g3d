@@ -2559,7 +2559,7 @@ Texture::InterpolateMode Texture::toInterpolateMode(const std::string& s) {
 
 
 Any Texture::Settings::toAny() const {
-    Any a(Any::TABLE);
+    Any a(Any::TABLE, "Texture::Settings");
     a["interpolateMode"] = toString(interpolateMode);
     a["wrapMode"]        = wrapMode.toAny();
     a["maxAnisotropy"]   = maxAnisotropy;
