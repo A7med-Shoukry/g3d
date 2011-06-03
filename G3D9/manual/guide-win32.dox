@@ -11,7 +11,7 @@ the 9.00 version of %G3D on Windows XP, Vista, and 7.
 href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.00-win32.zip</a> and configure Visual Studio's Include and Library paths.
 <li> Set your G3D9DATA environment variable to the G3D/data directory.
 <li> Add G3D/bin to your PATH environment variable (or remember to put the DLLs in each project, or rebuild G3D to statically link FFMPEG)
-<li> See <code><a href="../samples/starter">G3D\demos\starter</a></code> for a simple application framework.
+<li> See <code><a href="../samples/starter">G3D9\demos\starter</a></code> for a simple application framework.
 </ol>
 \endhtmlonly
 </p>
@@ -41,8 +41,8 @@ instead use the latest (free!) version of Visual Studio.
 Download <a
 href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.00-win32.zip</a>
 and unzip it into a directory like <code>c:\libraries</code>. This
-will create the directories <code>c:\libraries\G3D</code>,
-<code>c:\libraries\G3D\html</code>, etc.
+will create the directories <code>c:\libraries\G3D9</code>,
+<code>c:\libraries\G3D9\manual</code>, etc.
 
 </p>
 
@@ -52,14 +52,14 @@ will create the directories <code>c:\libraries\G3D</code>,
   <ul>
     <li> <b>Use the Property Manager</b>
      <ol>
-	    <li> Open <i>any</i> VC10 project, for example C:\G3D\samples\starter.sln
+	    <li> Open <i>any</i> VC10 project, for example C:\libraries\G3D9\samples\starter\starter.sln
 	    <li> Select View -&gt; Property Manager, as shown below:
 		<center><a href="vc10-property-menu.png"><img src="vc10-property-menu.png" border=1 align=top width=120></a></center></p>
 		<li> Select Debug | Win32 \&gt; Microsoft.Cpp.Win32.user in the Property Manager.
 		<li> Select Common Properties -&gt; VC++ Directories as shown below:
 		<center><a href="vc10-directories.png"><img src="vc10-directories.png" border=1 align=top width=50%></a></center></p>
-		<li> Add the G3D include directory (e.g., C:\G3D9\include) to the Include Directories
-		<li> Add the G3D lib directory (e.g., C:\G3D9\lib) to the Library Directories
+		<li> Add the G3D include directory (e.g., C:\libraries\G3D9\include) to the Include Directories
+		<li> Add the G3D lib directory (e.g., C:\libraries\G3D9\lib) to the Library Directories
 		<li> Press OK
      </ol>
     <li> <b>Edit XML Manually</b>
@@ -80,8 +80,8 @@ where <code>%USERNAME%</code> is your Windows login name.
 &lt;Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
 
   &lt;PropertyGroup&gt;
-    &lt;IncludePath&gt;&#36;(IncludePath);C:\G3D9\include&lt;/IncludePath&gt;
-    &lt;LibraryPath&gt;&#36;(LibraryPath);C:\G3D9\lib&lt;/LibraryPath&gt;
+    &lt;IncludePath&gt;&#36;(IncludePath);C:\libraries\G3D9\include&lt;/IncludePath&gt;
+    &lt;LibraryPath&gt;&#36;(LibraryPath);C:\libraries\G3D9\lib&lt;/LibraryPath&gt;
   &lt;/PropertyGroup&gt;
 
 &lt;/Project&gt;
@@ -101,8 +101,8 @@ where <code>%USERNAME%</code> is your Windows login name.
 <li><p>Push <b>Ok</b> to close the <b>Options</b> dialog.</p>
 
 <li><p>Quit Visual Studio to ensure that your changes are saved.</p>
-<li><p>Set the G3D9DATA environment variable to the directory containing the G3D data files (e.g., c:\G3D9\data).  Add
-the G3D\bin directory to your PATH environment variable. For instructions on setting environment variables
+<li><p>Set the G3D9DATA environment variable to the directory containing the G3D data files (e.g., c:\libraries\G3D9\data).  Add
+the G3D9\bin directory to your PATH environment variable. For instructions on setting environment variables
 for different versions of Windows, see:
 <ul>
  <li> <a href="http://support.microsoft.com/kb/311843">Windows 2000</a>
