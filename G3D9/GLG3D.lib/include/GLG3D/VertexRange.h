@@ -54,14 +54,14 @@ private:
     */
     void*               m_pointer;
     
-    /** Size of one element. For a void array, this is 1.*/
-    int                 m_elementSize;
+    /** Size of one element in bytes. For a void array, this is 1.*/
+    size_t              m_elementSize;
     
     /** For a void array, this is m_maxSize. */
     int                 m_numElements;
    
-    /** Space between subsequent elements, must be zero or >= m_elementSize */
-    int                 m_stride;
+    /** Space between subsequent elements in bytes, must be either zero or >= m_elementSize */
+    size_t              m_stride;
  
     uint64		        m_generation;
     
@@ -150,11 +150,13 @@ public:
         return m_numElements;
     }
 
-    int elementSize() const {
+    /** \copydoc m_elementSize */
+    size_t elementSize() const {
         return m_elementSize;
     }
 
-    int stride() const {
+    /** \copydoc m_stride */
+    size_t stride() const {
         return m_stride;
     }
 
