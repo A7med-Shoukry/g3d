@@ -268,7 +268,7 @@ public:
     
 
     /**  Creates an array containing v0. */
-    Array(const T& v0) {
+    explicit Array(const T& v0) {
         init(1, MemoryManager::create());
         (*this)[0] = v0;
     }
