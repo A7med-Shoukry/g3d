@@ -42,7 +42,7 @@ void App::onInit() {
 
 
 void App::makeGUI() {
-    GuiWindow::Ref window = GuiWindow::create("Controls", debugWindow->theme(), Rect2D(), GuiTheme::TOOL_WINDOW_STYLE);
+    GuiWindow::Ref window = GuiWindow::create("Controls", debugWindow->theme(), Rect2D::xywh(0,0,0,0), GuiTheme::TOOL_WINDOW_STYLE);
     GuiPane* pane = window->pane();
     pane->addLabel("Use WASD keys + right mouse to move");
     pane->addButton("Render High Res.", this, &App::onRender);
@@ -162,7 +162,7 @@ void App::onRender() {
     rayTraceImage(1.0f, m_raysPerPixel);
     timer.after("Trace");
     debugPrintf("%f s\n", timer.elapsedTime());
-    m_result->toImage3uint8()->save("result.png");
+//    m_result->toImage3uint8()->save("result.png");
 }
 
 
