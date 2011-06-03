@@ -2411,6 +2411,7 @@ void Texture::Specification::serialize(BinaryOutput& b) const {
     toAny().serialize(b);
 }
 
+
 void Texture::Specification::deserialize(BinaryInput& b) {
     Any a;
     a.deserialize(b);
