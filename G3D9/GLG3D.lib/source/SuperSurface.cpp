@@ -773,7 +773,9 @@ void SuperSurface::sendGeometry2(
 
     debugAssertGLOk();
 
-    CoordinateFrame o2w = rd->objectToWorldMatrix();
+    // Make a copy, not a reference; we're about to mutate the
+    // underlying state
+    const CoordinateFrame o2w = rd->objectToWorldMatrix();
     rd->setObjectToWorldMatrix(m_frame);
 
     rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
