@@ -1,10 +1,10 @@
 /**
-  @file ImageFormat.h
+  \file G3D/ImageFormat.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2003-05-23
-  @edited  2010-05-01
+  \created 2003-05-23
+  \edited  2011-05-01
 */
 
 #ifndef GLG3D_ImageFormat_H
@@ -59,6 +59,7 @@ public:
         CODE_RGB8I,
         CODE_RGB8UI,
 
+        CODE_RGBA8I,
         CODE_RGBA8UI,
 
         CODE_ARGB8,
@@ -302,6 +303,8 @@ public:
     static const ImageFormat* RGB8I();    
 
     static const ImageFormat* RGB8UI();    
+
+    static const ImageFormat* RGBA8I();    
 
     static const ImageFormat* RGBA8UI();    
     
