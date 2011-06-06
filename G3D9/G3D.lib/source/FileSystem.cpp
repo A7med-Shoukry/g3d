@@ -24,7 +24,7 @@
     // Needed for _findfirst
 #   include <io.h>
 
-#define stat64 _stat64
+#    define stat64 _stat64
 #else
 #   include <dirent.h>
 #   include <fnmatch.h>
@@ -33,7 +33,7 @@
 #   define _stat stat
 #   define stricmp strcasecmp 
 #   define strnicmp strncasecmp 
-#endif#endif
+#endif
 
 namespace G3D {
 
@@ -63,7 +63,7 @@ FileSystem::FileSystem() : m_cacheLifetime(10) {}
 
 /////////////////////////////////////////////////////////////
 
-    bool FileSystem::Dir::contains(const std::string& f, bool caseSensitive) const {
+bool FileSystem::Dir::contains(const std::string& f, bool caseSensitive) const {
     
     for (int i = 0; i < nodeArray.size(); ++i) {
         if (caseSensitive) {
@@ -602,7 +602,12 @@ int64 FileSystem::_size(const std::string& _filename) {
 }
 
 
-void FileSystem::listHelper(const std::string& shortSpec, const std::string& parentPath, Array<std::string>& result, const ListSettings& settings) {
+void FileSystem::listHelper
+(const std::string&  shortSpec,
+ const std::string&  parentPath, 
+ Array<std::string>& result, 
+ const ListSettings& settings) {
+
     Dir& dir = getContents(parentPath, false);
 
     if (! dir.exists) {
@@ -614,8 +619,10 @@ void FileSystem::listHelper(const std::string& shortSpec, const std::string& par
         // See if it matches the spec
         if (FilePath::matches(entry.name, shortSpec, settings.caseSensitive)) {
 
-            if ((entry.type == UNKNOWN) && ! (settings.files && settings.directories)) {
-                // Update the type
+            if ((entry.type == UNKNOWN) && 
+                (! (settings.files && settings.directories) ||
+                 settings.recursive)) {
+                // Update the type: it is unknown and we'll need to branch onit below
                 entry.type = isDirectory(FilePath::concat(parentPath, entry.name)) ? DIR_TYPE : FILE_TYPE;
             }
             
@@ -630,9 +637,15 @@ void FileSystem::listHelper(const std::string& shortSpec, const std::string& par
                 }
             }
         } // match
+  
+        if (settings.recursive) {
+            if (entry.type == UNKNOWN) {
+                entry.type = isDirectory(FilePath::concat(parentPath, entry.name)) ? DIR_TYPE : FILE_TYPE;
+            }
 
-        if (settings.recursive && (entry.type == DIR_TYPE)) {
-            listHelper(shortSpec, FilePath::concat(parentPath, entry.name), result, settings);
+            if (entry.type == DIR_TYPE) {
+                listHelper(shortSpec, FilePath::concat(parentPath, entry.name), result, settings);
+            }
         }
     } // for
 }

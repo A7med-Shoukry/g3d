@@ -819,7 +819,7 @@ void SuperSurface::sendGeometry(
             }
 
             debugAssertGLOk();
-            rd->sendIndices((RenderDevice::Primitive)m_gpuGeom->primitive, m_gpuGeom->index);
+            rd->sendIndices(m_gpuGeom->primitive, m_gpuGeom->index);
         }
         rd->endIndexedPrimitives();
 
