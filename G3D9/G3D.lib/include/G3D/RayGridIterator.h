@@ -164,19 +164,19 @@ public:
 
         \param cellSize The extent of one cell
 
-        \param gridOriginLocation The lowest corner of grid cell gridOriginIndex along each axis.  
+        \param minBoundsLocation The location of the lowest corner of grid cell minBoundsCellIndex along each axis.  
         This translates the grid relative to the ray's coordinate frame.
 
-        \param gridOriginIndex The index of the lowest grid cell.  This allows
+        \param minBoundsCellIndex The index of the first grid cell.  This allows
         operation with grids defined on negative indices.  This translates all
         grid indices.
     */
     RayGridIterator
     (Ray                    ray, 
      const Vector3int32&    numCells, 
-     const Vector3&         cellSize           = Vector3(1,1,1),
-     const Point3&          gridOriginLocation = Point3(0,0,0),
-     const Point3int32&     gridOriginIndex    = Point3int32(0,0,0));
+     const Vector3&         cellSize            = Vector3(1,1,1),
+     const Point3&          minBoundsLocation = Point3(0,0,0),
+     const Point3int32&     minBoundsCellIndex  = Point3int32(0,0,0));
 
     /** Increment the iterator, moving to the next grid cell */
     RayGridIterator& operator++() {
