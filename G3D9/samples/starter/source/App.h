@@ -23,6 +23,8 @@ class App : public GApp {
     /** Used for editing entity splines.*/
     PhysicsFrameSplineEditor::Ref   m_splineEditor;
 
+    GuiDropDownList*    m_entityList;
+
     /** Don't allow object editing */
     bool                m_preventEntityDrag;
     bool                m_preventEntitySelect;
@@ -40,6 +42,8 @@ class App : public GApp {
 
     /** Called from onInit */
     void makeGUI();
+
+    void selectEntity(const Entity::Ref& e);
 
 public:
     

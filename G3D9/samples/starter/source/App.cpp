@@ -100,9 +100,15 @@ void App::makeGUI() {
     scenePane->addCheckBox(GuiText("\xcf", iconFont, 20), &m_preventEntityDrag, GuiTheme::TOOL_CHECK_BOX_STYLE);
     scenePane->pack();
 
+    GuiPane* entityPane = debugPane->addPane("Entity", GuiTheme::ORNATE_PANE_STYLE);
+    entityPane->moveRightOf(scenePane);
+    entityPane->moveBy(10, 0);
+    m_entityList = entityPane->addDropDownList("Name");
+
     GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
-    infoPane->moveRightOf(scenePane);
+    infoPane->moveRightOf(entityPane);
     infoPane->moveBy(10, 0);
+
     // Example of how to add debugging controls
     infoPane->addLabel("You can add more GUI controls");
     infoPane->addLabel("in App::onInit().");
@@ -130,6 +136,16 @@ void App::loadScene() {
     try {
         m_scene = Scene::create(sceneName, defaultCamera);
         defaultController->setFrame(defaultCamera.coordinateFrame());
+
+        // Populate the entity list
+        Array<std::string> nameList;
+        m_scene->getEntityNames(nameList);
+        m_entityList->clear();
+        m_entityList->append("<none>");
+        for (int i = 0; i < nameList.size(); ++i) {
+            m_entityList->append(nameList[i]);
+        }
+
     } catch (const ParseError& e) {
         const std::string& msg = e.filename + format(":%d(%d): ", e.line, e.character) + e.message;
         drawMessage(msg);
@@ -189,14 +205,14 @@ bool App::onEvent(const GEvent& event) {
         const Ray& ray = defaultCamera.worldRay(event.button.x + 0.5f, event.button.y + 0.5f, renderDevice->viewport());
         
         float distance = finf();
-        m_selectedEntity = m_scene->intersect(ray, distance);
 
-        if (m_selectedEntity.notNull()) {
-            m_splineEditor->setSpline(m_selectedEntity->frameSpline());
-            m_splineEditor->setEnabled(! m_preventEntityDrag);
-        } else {
-            m_splineEditor->setEnabled(false);
-        }
+        selectEntity(m_scene->intersect(ray, distance));
+    }
+    
+
+    if (! m_preventEntitySelect && (event.type == GEventType::GUI_ACTION) && (event.gui.control == m_entityList)) {
+        // User clicked on dropdown list
+        selectEntity(m_scene->entity(m_entityList->selectedValue().text()));
     }
 
     // If you need to track individual UI events, manage them here.
@@ -208,6 +224,18 @@ bool App::onEvent(const GEvent& event) {
     // if ((event.type == GEventType::KEY_DOWN) && (event.key.keysym.sym == GKey::TAB)) { ... return true; }
 
     return false;
+}
+
+
+void App::selectEntity(const Entity::Ref& e) {
+    m_selectedEntity = e;
+
+    if (m_selectedEntity.notNull()) {
+        m_splineEditor->setSpline(m_selectedEntity->frameSpline());
+        m_splineEditor->setEnabled(! m_preventEntityDrag);
+    } else {
+        m_splineEditor->setEnabled(false);
+    }
 }
 
 

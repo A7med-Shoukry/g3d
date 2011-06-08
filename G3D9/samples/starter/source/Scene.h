@@ -47,7 +47,6 @@ public:
     */
     Any toAny() const;
 
-    
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
 
     virtual void onSimulation(GameTime deltaTime);
@@ -58,6 +57,22 @@ public:
 
     GameTime time() const {
         return m_time;
+    }
+
+    void getEntityNames(Array<std::string>& names) const {
+        for (int e = 0; e < m_entityArray.size(); ++e) {
+            names.append(m_entityArray[e]->name());
+        }
+    }
+
+    /** Get an entity by name */
+    const Entity::Ref entity(const std::string& name) const {
+        for (int e = 0; e < m_entityArray.size(); ++e) {
+            if (name == m_entityArray[e]->name()) {
+                return m_entityArray[e];
+            }
+        }
+        return NULL;
     }
 
     Texture::Ref skyBoxTexture() const {

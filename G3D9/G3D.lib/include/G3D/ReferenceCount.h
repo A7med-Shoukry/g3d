@@ -269,11 +269,11 @@ public:
     /**
       Explicit cast to a subclass.  Acts like dynamic cast; the result will be NULL if
       the cast cannot succeed.  Not supported on VC6.
-      <pre>
-        SubRef  s = new Sub();
-        BaseRef b = s;
+      <code>
+        Sub::Ref  s = new Sub();
+        Base::Ref b = s;
         s = b.downcast<Sub>();   // Note that the template argument is the object type, not the pointer type.
-      </pre>
+      </code>
       */
     template <class S>
     ReferenceCountedPointer<S> downcast() {
@@ -284,6 +284,18 @@ public:
     const ReferenceCountedPointer<S> downcast() const {
         return ReferenceCountedPointer<S>(dynamic_cast<const S*>(m_pointer));
     }
+    
+    /** \a Returns true if this is a non-NULL pointer to an object of type \a S.
+        <code>
+        GuiWindow::Ref c = ...;
+        if (c.pointsToA<CameraControlWindow>()) { ... }
+        </code>
+     */
+    template <class S>
+    bool pointsToA() const {
+        return dynamic_cast<const S*>(m_pointer) != NULL;
+    }
+
 #   endif
 
     // We need an explicit version of the copy constructor as well or 
