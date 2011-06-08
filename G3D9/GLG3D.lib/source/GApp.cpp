@@ -100,7 +100,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
     debugPane(NULL),
     renderDevice(NULL),
     userInput(NULL),
-    lastWaitTime(System::time()),
+    m_lastWaitTime(System::time()),
     m_desiredFrameRate(5000),
     m_simTimeStep(1.0f / 60.0f),
     m_realTime(0), 
@@ -256,7 +256,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 
     m_simTime     = 0;
     m_realTime    = 0;
-    lastWaitTime  = System::time();
+    m_lastWaitTime  = System::time();
 
     renderDevice->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
 }
@@ -707,9 +707,9 @@ void GApp::resize(int w, int h) {
 
 void GApp::oneFrame() {
     for (int repeat = 0; repeat < max(1, m_renderPeriod); ++repeat) {
-        lastTime = now;
-        now = System::time();
-        RealTime timeStep = now - lastTime;
+        m_lastTime = m_now;
+        m_now = System::time();
+        RealTime timeStep = m_now - m_lastTime;
 
         // User input
         m_userInputWatch.tick();
@@ -767,18 +767,18 @@ void GApp::oneFrame() {
 
     m_waitWatch.tick();
     {
-        RealTime now = System::time();
+        RealTime nowAfterLoop = System::time();
 
         // Compute accumulated time
-        RealTime cumulativeTime = now - lastWaitTime;
+        RealTime cumulativeTime = nowAfterLoop - m_lastWaitTime;
 
         // Perform wait for actual time needed
         RealTime desiredWaitTime = max(0.0, desiredFrameDuration() - cumulativeTime);
         onWait(max(0.0, desiredWaitTime - m_lastFrameOverWait) * 0.97);
 
         // Update wait timers
-        lastWaitTime = System::time();
-        RealTime actualWaitTime = lastWaitTime - now;
+        m_lastWaitTime = System::time();
+        RealTime actualWaitTime = m_lastWaitTime - nowAfterLoop;
 
         // Learn how much onWait appears to overshoot by and compensate
         double thisOverWait = actualWaitTime - desiredWaitTime;
@@ -815,9 +815,8 @@ void GApp::oneFrame() {
     renderDevice->endFrame();
 
     // Remove all expired debug shapes
-    RealTime now = System::time();
     for (int i = 0; i < debugShapeArray.size(); ++i) {
-        if (debugShapeArray[i].endTime <= now) {
+        if (debugShapeArray[i].endTime <= m_now) {
             debugShapeArray.fastRemove(i);
             --i;
         }
@@ -928,7 +927,7 @@ void GApp::beginRun() {
         defaultController->setFrame(defaultCamera.coordinateFrame());
     }
 
-    now = System::time() - 0.001;
+    m_now = System::time() - 0.001;
 }
 
 

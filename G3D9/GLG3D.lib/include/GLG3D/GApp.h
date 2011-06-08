@@ -521,10 +521,10 @@ public:
 private:
 
     /** Used by doSimulation for elapsed time. */
-    RealTime               now, lastTime;
+    RealTime               m_now, m_lastTime;
 
     /** Used by doWait for elapsed time. */
-    RealTime               lastWaitTime;
+    RealTime               m_lastWaitTime;
 
     /** FPS for ideal time */
     float                  m_desiredFrameRate;
