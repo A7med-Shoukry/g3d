@@ -340,8 +340,9 @@ href="classes.html">Classes</a>.
      <LI><B>Data structures</B> &nbsp; &nbsp;
         \link G3D::Any Any\endlink,
         \link G3D::AnyTableReader AnyTableReader\endlink,
-        \link G3D::KDTree KDTree\endlink,
         \link G3D::Array Array\endlink,
+		\link G3D::categorizeByDerivedType categorizeByDerivedType\endlink,
+        \link G3D::KDTree KDTree\endlink,
         \link G3D::Pointer Pointer\endlink,
         \link G3D::PointHashGrid PointHashGrid\endlink,
         \link G3D::PointKDTree PointKDTree\endlink,

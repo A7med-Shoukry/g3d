@@ -389,6 +389,32 @@ public:
         return ! hasTransmission();
     }
 
+    /** \brief Extract all Surface instances that are the same subclass as \a this.
+    
+     May subclasses of Surface need to bind shader and other state in order to render.
+     Such subclasses can amortize the cost of doing so by overriding this method.  The
+     caller will invoke it on each element of \a all.
+
+     Callers can then invoke the Array versions of methods.
+
+     If there are more than one moved to the mine array, 
+     renderArray will be called once for all of them, rather than each receiving an individual render() call. The typical override is:
+
+    <code>
+      virtual void extractArray(Array<Surface::Ref>& all, Array<Surface::Ref>& mine) {
+          for (int i = 0; i < all.size(); ++i) {
+               if (all[i].downcast<MyClass>().notNull()) {
+                    mine.append(all[i]);
+                    all.fastRemove(i);
+                    --i;
+               }
+          } 
+      }
+    </code>
+
+    This isn't a static method because it needs to be overridden.*/
+    virtual void extractArray(Array<Surface::Ref>& all, Array<Surface::Ref>& mine) {}
+
 protected:
 
     /**

@@ -985,29 +985,29 @@ public:
     /**
      Sort using a specific less-than function, e.g.:
 
-  <PRE>
+  \code
     bool __cdecl myLT(const MyClass& elem1, const MyClass& elem2) {
         return elem1.x < elem2.x;
     }
-    </PRE>
+    \endcode
 
   Note that for pointer arrays, the <CODE>const</CODE> must come 
   <I>after</I> the class name, e.g., <CODE>Array<MyClass*></CODE> uses:
 
-  <PRE>
+  \code
     bool __cdecl myLT(MyClass*const& elem1, MyClass*const& elem2) {
         return elem1->x < elem2->x;
     }
-    </PRE>
+    \endcode
 
     or a functor, e.g.,
-    <pre>
+    \code
 bool
 less_than_functor::operator()( const double& lhs, const double& rhs ) const
 {
 return( lhs < rhs? true : false );
 }
-</pre>
+\endcode
      */
     //    void sort(bool (__cdecl *lessThan)(const T& elem1, const T& elem2)) {
     //    std::sort(data, data + num, lessThan);
@@ -1023,14 +1023,14 @@ return( lhs < rhs? true : false );
      Sorts the array in increasing order using the > or < operator.  To 
      invoke this method on Array<T>, T must override those operator.
      You can overide these operators as follows:
-     <code>
+     \code
         bool T::operator>(const T& other) const {
            return ...;
         }
         bool T::operator<(const T& other) const {
            return ...;
         }
-     </code>
+     \endcode
      */
     void sort(int direction = SORT_INCREASING) {
         if (direction == SORT_INCREASING) {
@@ -1319,6 +1319,14 @@ return( lhs < rhs? true : false );
         }
     }
 
+
+    /** Ensures that future append() calls can grow up to size \a n without allocating memory.*/
+    void reserve(int n) {
+        debugAssert(n >= size());
+        const int oldSize = size();
+        resize(n);
+        resize(oldSize, false);
+    }
 
 };
 

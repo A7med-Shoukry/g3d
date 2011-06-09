@@ -1,11 +1,11 @@
 /**
-  @file HashTrait.h
+  \file G3D/HashTrait.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2008-10-01
-  @edited  2009-11-01
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2008-10-01
+  \edited  2011-06-09
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 
@@ -16,7 +16,7 @@
 #include "G3D/Crypto.h"
 #include "G3D/g3dmath.h"
 #include "G3D/uint128.h"
-
+#include <typeinfo>
 
 #include <stdint.h>
 #undef get16bits
@@ -90,6 +90,15 @@ template <typename T> struct HashTrait{};
 
 template <typename T> struct HashTrait<T*> {
     static size_t hashCode(const void* k) { return reinterpret_cast<size_t>(k); }
+};
+
+template <> struct HashTrait <std::type_info> {
+    static size_t hashCode(const std::type_info& t) { return t.hash_code(); }
+};
+
+/** For use with \code Table<std::type_info* const, ValueType> \endcode. */
+template <> struct HashTrait <std::type_info* const> {
+    static size_t hashCode(const std::type_info* const t) { return t->hash_code(); }
 };
 
 template <> struct HashTrait <G3D::int16> {

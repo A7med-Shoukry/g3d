@@ -303,6 +303,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\TextOutput.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ThreadSet.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Triangle.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\typeutils.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\uint128.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\units.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\UprightFrame.h" />
