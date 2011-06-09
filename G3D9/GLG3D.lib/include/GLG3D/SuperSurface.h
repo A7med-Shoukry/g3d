@@ -1,10 +1,10 @@
 /**
-  @file SuperSurface.h
+  \file GLG3D/SuperSurface.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2008-11-12
-  @edited  2010-02-22
+  \created 2008-11-12
+  \edited  2011-06-10
 */
 #ifndef G3D_SuperSurface_h
 #define G3D_SuperSurface_h
@@ -27,7 +27,7 @@
 namespace G3D {
 
 /**
-   @brief An optimized implementation G3D::Surface for
+   \brief An optimized implementation G3D::Surface for
    G3D::SuperShader / G3D::Material classes.
 
    Used by G3D::ArticulatedModel.
@@ -132,8 +132,11 @@ public:
                                  VertexRange& packedTangents, VertexRange& texCoord0, 
                                  VertexBuffer::UsageHint hint);
     };
-
+    
 protected:
+    virtual void defaultRender(RenderDevice* rd) const {
+        alwaysAssertM(false, "Not implemented");
+    }
 
     std::string             m_name;
 

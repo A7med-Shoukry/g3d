@@ -1,8 +1,8 @@
 /**
-  @file ShadowMap.cpp
+  \file GLG3D.lib/source/ShadowMap.cpp
 
-  @author Morgan McGuire, http://graphics.cs.williams.edu
-  @edited 2010-01-30
+  \author Morgan McGuire, http://graphics.cs.williams.edu
+  \edited 2011-06-08
  */
 #include "GLG3D/ShadowMap.h"
 #include "GLG3D/RenderDevice.h"

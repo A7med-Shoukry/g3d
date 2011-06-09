@@ -56,7 +56,7 @@
      <li> G3D::FileSystem::markFileUsed, G3D::FileSystem::usedFiles
      <li> G3D::Point2 typedef
      <li> G3D::Noise
-	 <li> G3D::TriTree::intersectRay can now be invoked to early exit on any hit for shadow rays
+     <li> G3D::TriTree::intersectRay can now be invoked to early exit on any hit for shadow rays
      <li> Replaced all instances of .hasMore() with .isValid(), deprecated hasMore, and added isValid to all iterators.
      <li> Flipped the GCamera::project Y-axis to match RenderDevice's Y-axis
      <li> Extended G3D::SuperSurface to work with inverted cameras for planar mirror rendering
@@ -88,6 +88,7 @@
      <li> G3D::FileSystem::exists now takes an optional caseSensitive argument
      <li> G3D::GFont::makeFontFile now requires .tga input
      <li> G3D::GImage::RGBAtoBGRA
+     <li> G3D::Surface::getObjectSpaceGeometry
      <li> G3D::BinaryOutput::writeString32 no longer writes a NULL.  This behavior is backwards compatible to G3D 8.xx
      <li> Added support for obsolete GL_EXT_framebuffer_object so that Film and ShadowMap will work on MacBooks with Intel GPUs
      <li> Sample programs, viewer, and test now statically link FFMPEG on Win32 to avoid DLL/PATH problems when distributing the binaries.
@@ -121,7 +122,9 @@
 
      <b>Backwards Incompatible Changes</b>:
      <ul>
-	 <li> G3D::GApp subclasses must now invoke the super version of any method that they override to ensure that Widgets work correctly.
+     <li> G3D::GApp subclasses must now invoke the super version of any method that they override to ensure that Widgets work correctly.
+     <li> Removed beginMarkShadows, endMarkShadows, markShadows, drawFeatureEdges
+     <li> Removed Surface::edges, Surface::faces, Surface::numBoundaryEdges, Surface::numWeldedBoundaryEdges, Surface::weldedEdges, Surface::weldedFaces, Surface::weldedVertices, Surface::getObjectSpaceFaceNormals, Surface::getWorldSpaceFaceNormals, Surface::getWorldSpaceGeometry, Surface::hasTexCoords, Surface::objectSpaceFaceNormals, Surface::objectSpaceGeometry, Surface::objectSpacePackedTangents
      <li> G3D::AABox default constructor returns the empty box, which is now distinct from the box at the origin
      <li> Removed G3D::SkyParameters and G3D::Sky </li>
      <li> Removed G3D::AnyVal (use G3D::Any now)

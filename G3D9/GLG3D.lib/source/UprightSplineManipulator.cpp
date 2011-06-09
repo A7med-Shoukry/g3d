@@ -1,10 +1,10 @@
 /**
-  @file UprightSplineManipulator.cpp
+  \file GLG3D/UprightSplineManipulator.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2007-06-01
-  @edited  2008-10-08
+  \created 2007-06-01
+  \edited  2011-06-10
 */
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
@@ -229,6 +229,15 @@ public:
     virtual const Array< MeshAlg::Vertex > & weldedVertices () const {
         static Array< MeshAlg::Vertex > x;
         return x;
+    }
+
+    virtual void sendGeometry(G3D::RenderDevice*) const {
+        alwaysAssertM(false, "Not implemented");
+    }
+
+
+    virtual void defaultRender(G3D::RenderDevice*) const {
+        alwaysAssertM(false, "Not implemented");
     }
 };
 

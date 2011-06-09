@@ -350,6 +350,14 @@ class TPMSurface : public EmptySurface {
     TPMSurface(ThirdPersonManipulator* m) : m_manipulator(m) {}
 
 public:
+    virtual void sendGeometry(RenderDevice* rd) const {
+        alwaysAssertM(false, "Not implemented");
+    }
+protected:
+    virtual void defaultRender(RenderDevice* rd) const {
+        alwaysAssertM(false, "Not implemented");
+    }
+public:
 
     virtual void render(RenderDevice* rd) const {
         m_manipulator->render(rd);

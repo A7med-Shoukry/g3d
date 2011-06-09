@@ -1,10 +1,10 @@
 /**
-  @file Surface.h
+  \file GLG3D/Surface.h
   
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2003-11-15
-  @edited  2010-08-27
+  \created 2003-11-15
+  \edited  2011-06-08
  */ 
 
 #ifndef GLG3D_Surface_h
@@ -159,7 +159,7 @@ public:
       transparent models.  Any data originally in the output arrays is
       cleared.
 
-      @param wsLookVector Sort axis; usually the -Z axis of the camera.
+      \param wsLookVector Sort axis; usually the -Z axis of the camera.
      */
     static void sortFrontToBack
        (Array<Surface::Ref>&       surfaces, 
@@ -185,65 +185,8 @@ public:
 
     virtual CoordinateFrame coordinateFrame() const;
 
-    /** Get the <B>object space</B> geometry (faster than getWorldSpaceGeometry). 
-        Object and world space geometry only differ by a CoordinateFrame transformation.*/
-    virtual const MeshAlg::Geometry& objectSpaceGeometry() const = 0;
-
-    /** Get the <B>world space</B> geometry. */
-    virtual void getWorldSpaceGeometry(MeshAlg::Geometry& geometry) const;
-
-    /** @deprecated Use objectSpaceFaceNormals() */
-    virtual void getObjectSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize = true) const;
-
-    virtual void getWorldSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize = true) const;
-
-    /** Return a pointer to an array of object space face normals. */
-    virtual const Array<Vector3>& objectSpaceFaceNormals(bool normalize = true) const = 0;
-
-    // Returns a reference rather than filling out an array because most
-    // Surfaces have this information available.
-    /**
-      Adjacency information respecting the underlying connectivity
-      of the mesh-- colocated vertices are treated as distinct.
-     */
-    virtual const Array<MeshAlg::Face>& faces() const = 0;
-
-    virtual const Array<MeshAlg::Edge>& edges() const = 0;
-
-    virtual const Array<MeshAlg::Vertex>& vertices() const = 0;
-
-    /** If this model has texture coordinates, returns per-vertex texture coordinates
-        in an array indexed the same as vertices() and geometry.vertexArray, otherwise
-        returns an array of size zero.  Default implementation returns an array of size zero.
-    */
-    virtual const Array<Vector2>& texCoords() const;
-
-    /** Returns per-vertex tangent vectors, if available. May return an empty array.
-     Packs two tangents, T1 and T2 that form a reference frame with the normal such that 
-            
-            - \f$ \vec{x} = \vec{T}_1 = \vec{t}_{xyz}\f$ 
-            - \f$ \vec{y} = \vec{T}_2 = \vec{t}_w * (\vec{n} \times \vec{t}_{xyz})  \f$
-            - \f$ \vec{z} = \vec{n} \f$ */
-    virtual const Array<Vector4>& objectSpacePackedTangents() const;
-
-    /** Returns true if this model has texture coordinates. */ 
-    virtual bool hasTexCoords() const {
-        return false;
-    }
-
-    /** Contain adjacency information that merges colocated vertices
-        (see MeshAlg::weldAdjacency) */
-    virtual const Array<MeshAlg::Face>& weldedFaces() const = 0;
-
-    virtual const Array<MeshAlg::Edge>& weldedEdges() const = 0;
-
-    virtual const Array<MeshAlg::Vertex>& weldedVertices() const = 0;
-
-    /**
-     Indices into the Geometry that create triangles.  May be welded or not, depending on 
-     the model.
-     */
-    virtual const Array<int>& triangleIndices() const = 0;
+    /** Clears the arrays and appends indexed triangle lists. Not required to be implemented.*/
+    virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord) {}
 
     virtual void getObjectSpaceBoundingSphere(Sphere&) const = 0;
 
@@ -268,18 +211,6 @@ public:
         Default implementation calls defaultRender.
         */
     virtual void render(class RenderDevice* renderDevice) const;
-
-    /**
-     Number of edges that have only one adjacent face in edges().
-     These boundary edges are all at the end of the edge list.
-     */
-    virtual int numBoundaryEdges() const = 0;
-
-    /**
-     Number of edges that have only one adjacent face in weldedEdges().
-     These boundary edges are all at the end of the edge list.
-     */
-    virtual int numWeldedBoundaryEdges() const = 0;
 
     /** 
      Render all terms that are independent of shadowing 
@@ -388,7 +319,7 @@ public:
       This is useful when applying your own G3D::Shader to an existing
       Surface.
     */
-    virtual void sendGeometry(RenderDevice* rd) const;
+    virtual void sendGeometry(RenderDevice* rd) const = 0;
 
 
     /**
@@ -457,6 +388,7 @@ public:
         (void)distanceToCamera;
         return ! hasTransmission();
     }
+
 protected:
 
     /**
@@ -466,60 +398,13 @@ protected:
        Default implementation renders the triangles returned by getIndices
        and getGeometry. 
     */
-    virtual void defaultRender(RenderDevice* rd) const;
+    virtual void defaultRender(RenderDevice* rd) const = 0;
 };
 
 
 /** A surface subclass that overrides the CPU geometry methods to do nothing. */
 class EmptySurface : public Surface {
 public:
-
-    virtual const MeshAlg::Geometry& objectSpaceGeometry() const {
-        static MeshAlg::Geometry x;
-        return x;
-    }
-
-    virtual const Array<Vector3>& objectSpaceFaceNormals
-    (bool normalize = true) const {
-        (void)normalize;
-        static Array<Vector3> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Face>& faces() const {
-        static Array<MeshAlg::Face> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Edge>& edges() const {
-        static Array<MeshAlg::Edge> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Vertex>& vertices() const {
-        static Array<MeshAlg::Vertex> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Face>& weldedFaces() const {
-        static Array<MeshAlg::Face> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Edge>& weldedEdges() const {
-        static Array<MeshAlg::Edge> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Vertex>& weldedVertices() const {
-        static Array<MeshAlg::Vertex> x;
-        return x;
-    }
-
-    virtual const Array<int>& triangleIndices() const {
-        static Array<int> x;
-        return x;
-    }
 
     virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
         s.radius = finf();
@@ -530,13 +415,6 @@ public:
         b = AABox::inf();
     }
 
-    virtual int numBoundaryEdges() const {
-        return 0;
-    }
-
-    virtual int numWeldedBoundaryEdges() const {
-        return 0;
-    }
 };
 
 

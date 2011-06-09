@@ -56,6 +56,14 @@ protected:
         virtual void getCoordinateFrame(CoordinateFrame& c) const {
             c = CFrame();
         }
+
+        virtual void sendGeometry(RenderDevice* rd) const {
+            alwaysAssertM(false, "Not implemented");
+        }
+    protected:
+        virtual void defaultRender(RenderDevice* rd) const {
+            alwaysAssertM(false, "Not implemented");
+        }
     };
     
     PhysicsFrameSplineEditor(const GuiText& caption, GuiTheme::Ref theme);

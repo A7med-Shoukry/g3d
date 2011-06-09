@@ -22,16 +22,6 @@
 
 namespace G3D {
 
-const Array<Vector2>& Surface::texCoords() const {
-    static Array<Vector2> t;
-    return t;
-}
-
-
-const Array<Vector4>& Surface::objectSpacePackedTangents() const {
-    static Array<Vector4> t;
-    return t;
-}
 
 void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D) {
     rd->pushState();
@@ -429,16 +419,6 @@ void Surface::sortFrontToBack(
 }
 
 
-void Surface::getWorldSpaceGeometry(MeshAlg::Geometry& geometry) const {
-    CoordinateFrame c;
-    getCoordinateFrame(c);
-
-    const MeshAlg::Geometry& osgeometry = objectSpaceGeometry();
-    c.pointToWorldSpace(osgeometry.vertexArray, geometry.vertexArray);
-    c.normalToWorldSpace(osgeometry.normalArray, geometry.normalArray);
-}
-
-
 CoordinateFrame Surface::coordinateFrame() const {
     CoordinateFrame c;
     getCoordinateFrame(c);
@@ -496,24 +476,6 @@ AABox Surface::worldSpaceBoundingBox() const {
     AABox b;
     getWorldSpaceBoundingBox(b);
     return b;
-}
-
-
-void Surface::getObjectSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize) const {
-    const MeshAlg::Geometry& geometry = objectSpaceGeometry();
-    const Array<MeshAlg::Face>& faceArray = faces();
-
-    MeshAlg::computeFaceNormals(geometry.vertexArray, faceArray, faceNormals, normalize);
-}
-
-
-void Surface::getWorldSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize) const {
-    MeshAlg::Geometry geometry;
-    getWorldSpaceGeometry(geometry);
-
-    const Array<MeshAlg::Face>& faceArray = faces();
-
-    MeshAlg::computeFaceNormals(geometry.vertexArray, faceArray, faceNormals, normalize);
 }
 
 
@@ -578,54 +540,9 @@ void Surface::renderShadowMappedLightPass(
 }
 
    
-void Surface::defaultRender(RenderDevice* rd) const {
-    const MeshAlg::Geometry& geometry = objectSpaceGeometry();
-
-    VertexBufferRef area = VertexBuffer::create(sizeof(Vector3)*2*geometry.vertexArray.size() + 16);
-
-    rd->pushState();
-        rd->setObjectToWorldMatrix(coordinateFrame());
-        rd->beginIndexedPrimitives();
-            rd->setNormalArray(VertexRange(geometry.normalArray, area));
-            rd->setVertexArray(VertexRange(geometry.vertexArray, area));
-            rd->sendIndices(PrimitiveType::TRIANGLES, triangleIndices());
-        rd->endIndexedPrimitives();
-    rd->popState();
-}
-
-
 void Surface::render(RenderDevice* rd) const {
     defaultRender(rd);
 }
-
-void Surface::sendGeometry(RenderDevice* rd) const {
-    const MeshAlg::Geometry& geom = objectSpaceGeometry();
-
-    size_t s = sizeof(Vector3) * geom.vertexArray.size() * 2;
-
-    if (hasTexCoords()) {
-        s += sizeof(Vector2) * texCoords().size();
-    }
-
-    VertexBufferRef area = VertexBuffer::create(s);
-    VertexRange vertex(geom.vertexArray, area);
-    VertexRange normal(geom.normalArray, area);
-    VertexRange texCoord;
-
-    if (hasTexCoords()) {
-        texCoord = VertexRange(texCoords(), area);
-    }
-
-    rd->beginIndexedPrimitives();
-        rd->setVertexArray(vertex);
-        rd->setNormalArray(normal);
-        if (hasTexCoords()) {
-            rd->setTexCoordArray(0, texCoord);
-        }
-        rd->sendIndices(PrimitiveType::TRIANGLES, triangleIndices());
-    rd->endIndexedPrimitives();
-}
-
 
 
 void Surface::renderTranslucent

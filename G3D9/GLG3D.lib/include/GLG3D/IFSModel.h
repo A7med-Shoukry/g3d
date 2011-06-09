@@ -1,12 +1,12 @@
 /**
-  @file IFSModel.h
+  \file GLG3D/IFSModel.h
   
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @cite Original IFS code by Nate Robbins
+  \cite Original IFS code by Nate Robbins
 
-  @created 2003-11-12
-  @edited  2010-08-10
+  \created 2003-11-12
+  \edited  2011-06-09
  */ 
 
 
@@ -69,6 +69,10 @@ protected:
         virtual int numWeldedBoundaryEdges() const;
         virtual const Array<Vector3>& objectSpaceFaceNormals(bool normalize = true) const;
         virtual void sendGeometry(RenderDevice* rd) const;
+    protected:
+        virtual void defaultRender(RenderDevice* rd) const {
+            alwaysAssertM(false, "Not implemented");
+        }
     };
 
     friend class PosedIFSModel;
