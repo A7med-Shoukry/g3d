@@ -95,7 +95,7 @@ template <typename T> struct HashTrait<T*> {
 /** For use with \code Table<std::type_info* const, ValueType> \endcode. */
 template <> struct HashTrait <std::type_info* const> {
     static size_t hashCode(const std::type_info* const t) { 
-#       ifdef _MSVC_VER
+#       ifdef _MSC_VER
             return t->hash_code(); 
 #       else
             return reinterpret_cast<size_t>(t) >> 1;
