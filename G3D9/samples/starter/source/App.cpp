@@ -257,7 +257,10 @@ void App::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
 }
 
 
-void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
+void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
+    Array< Array< Surface::Ref > > categorizedSurfaces;
+    categorizeByDerivedType(surface3D, categorizedSurfaces);
+
     if (m_scene.isNull()) {
         return;
     }
@@ -266,10 +269,10 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
     // ShadowMap as the final argument to create shadows.)
-    Surface::sortAndRender(rd, defaultCamera, posed3D, m_scene->lighting(), m_shadowMap);
+    Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
 
     if (m_showWireframe) {
-        Surface::renderWireframe(rd, posed3D);
+        Surface::renderWireframe(rd, surface3D);
     }
 
     //////////////////////////////////////////////////////
