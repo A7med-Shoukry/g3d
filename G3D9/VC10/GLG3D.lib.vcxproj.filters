@@ -621,5 +621,8 @@
     <None Include="..\data-files\SuperShader\SS_Refract.pix">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="..\data-files\SuperShader\Film_FXAA.pix">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

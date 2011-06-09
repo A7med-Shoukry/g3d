@@ -31,7 +31,8 @@ void App::onInit() {
     showRenderingStats = false;
     developerWindow->setVisible(false);
     developerWindow->cameraControlWindow->setVisible(false);
-    
+    m_film->setAntialiasingEnabled(true);
+
     // Starting position
     defaultCamera.setCoordinateFrame(CFrame::fromXYZYPRDegrees(24.3f, 0.4f, 2.5f, 68.7f, 1.2f, 0.0f));
     m_prevCFrame = defaultCamera.coordinateFrame();

@@ -290,6 +290,7 @@
     <ClInclude Include="..\GLG3D.lib\source\Load3DS.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\data-files\SuperShader\Film_FXAA.pix" />
     <None Include="..\data-files\SuperShader\SS_BumpMap.pix" />
     <None Include="..\data-files\SuperShader\SS_Components.pix" />
     <None Include="..\data-files\SuperShader\SS_GBuffer.pix" />

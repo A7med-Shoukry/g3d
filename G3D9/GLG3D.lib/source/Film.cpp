@@ -27,15 +27,13 @@ uniform float     sensitivity;\
 \
 /* 1.0 / monitorGamma.  Usually about invGamma = 0.45*/\
 uniform float     invGamma;\
-\
-void main(void) {\
-    /* TODO: should this use glFragCoord instead of texCoord[0]?*/\
 \n\
-#   if __VERSION__ >= 150\n\
-        vec3 src   = texelFetch(sourceTexture, ivec2(gl_TexCoord[0].st * g3d_sampler2DSize(sourceTexture)), 0).rgb;\n\
-#   else\n\
-        vec3 src   = texture2D(sourceTexture, gl_TexCoord[0].st).rgb;\n\
-#   endif\n\
+#if __VERSION__ < 150\n\
+#define texelFetch texelFetch2D\n\
+#endif\n\
+void main(void) {\
+\n\
+    vec3 src   = texelFetch(sourceTexture, ivec2(gl_TexCoord[0].st * g3d_sampler2DSize(sourceTexture)), 0).rgb;\n\
 \
     src *= sensitivity;\n\
 #   ifdef BLOOM\n\
@@ -60,13 +58,12 @@ void main(void) {\
 static const char* preBloomShaderCode = 
 "uniform sampler2D sourceTexture;\
 uniform float     sensitivity;\
-\
+\n\
+#if __VERSION__ < 150\n\
+#define texelFetch texelFetch2D\n\
+#endif\n\
 void main(void) {\n\
-#   if __VERSION__ >= 150\n\
-        vec3 src = texelFetch(sourceTexture, ivec2(gl_TexCoord[g3d_Index(sourceTexture)].st * g3d_sampler2DSize(sourceTexture)), 0).rgb * sensitivity;\n\
-#   else\n\
-        vec3 src = texture2D(sourceTexture, gl_TexCoord[g3d_Index(sourceTexture)].st).rgb * sensitivity;\n\
-#   endif\n\
+    vec3 src = texelFetch(sourceTexture, ivec2(gl_TexCoord[g3d_Index(sourceTexture)].st * g3d_sampler2DSize(sourceTexture)), 0).rgb * sensitivity;\n\
     float p  = max(max(src.r, src.g), src.b);\
     gl_FragColor.rgb = src * smoothstep(1.0, 2.0, p);\
 }";
@@ -191,9 +188,9 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
     // Allocate intermediate buffers, perhaps because the input size is different than was previously used.
     if (m_temp.isNull() || (m_temp->width() != w/2) || (m_temp->height() != h/2)) {
         // Make smaller to save fill rate, since it will be blurry anyway
-        m_preBloom = Texture::createEmpty("Film PreBloom", w,   h,  m_intermediateFormat, Texture::defaultDimension(), Texture::Settings::video());
-        m_temp     = Texture::createEmpty("Film Temp",    w/2, h/2, m_intermediateFormat, Texture::defaultDimension(), Texture::Settings::video());
-        m_blurry   = Texture::createEmpty("Film Blurry",  w/4, h/4, m_intermediateFormat, Texture::defaultDimension(), Texture::Settings::video());
+        m_preBloom = Texture::createEmpty("Film::m_preBloom", w,   h,  m_intermediateFormat, Texture::defaultDimension(), Texture::Settings::video());
+        m_temp     = Texture::createEmpty("Film::m_temp",    w/2, h/2, m_intermediateFormat, Texture::defaultDimension(), Texture::Settings::video());
+        m_blurry   = Texture::createEmpty("Film::m_blurry",  w/4, h/4, m_intermediateFormat, Texture::defaultDimension(), Texture::Settings::video());
         
         // This may need to be resized if there is cropping for the target
         m_postGamma = Texture::createEmpty("Film::m_postGamma", w, h, m_targetFormat, Texture::defaultDimension(), Texture::Settings::video());
@@ -210,58 +207,58 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
         m_postGammaFramebuffer->set(Framebuffer::COLOR0, m_postGamma);
     }
 
-    rd->push2D();
+    rd->push2D(); {
 
-    // Bloom
-    if (bloomStrength > 0) {
-        Framebuffer::Ref oldFB = rd->drawFramebuffer();
-        rd->setFramebuffer(m_framebuffer);
-        rd->clear();
-        m_preBloomShader->args.set("sourceTexture",  input);
-        m_preBloomShader->args.set("sensitivity", m_sensitivity);
-        rd->setShader(m_preBloomShader);
-        Draw::fastRect2D(m_preBloom->rect2DBounds(), rd);
+        // Bloom
+        if (bloomStrength > 0) {
+            Framebuffer::Ref oldFB = rd->drawFramebuffer();
+            rd->setFramebuffer(m_framebuffer);
+            rd->clear();
+            m_preBloomShader->args.set("sourceTexture",  input);
+            m_preBloomShader->args.set("sensitivity",    m_sensitivity);
+            rd->setShader(m_preBloomShader);
+            Draw::fastRect2D(m_preBloom->rect2DBounds(), rd);
 
-        rd->setFramebuffer(m_tempFramebuffer);
-        rd->clear();
-        // Blur vertically
-        GaussianBlur::apply(rd, m_preBloom, Vector2(0, 1), blurDiameter, m_temp->vector2Bounds());
+            rd->setFramebuffer(m_tempFramebuffer);
+            rd->clear();
+            // Blur vertically
+            GaussianBlur::apply(rd, m_preBloom, Vector2(0, 1), blurDiameter, m_temp->vector2Bounds());
 
-        // Blur horizontally
-        rd->setFramebuffer(m_blurryFramebuffer);
-        rd->clear();
-        GaussianBlur::apply(rd, m_temp, Vector2(1, 0), halfBlurDiameter, m_blurry->vector2Bounds());
+            // Blur horizontally
+            rd->setFramebuffer(m_blurryFramebuffer);
+            rd->clear();
+            GaussianBlur::apply(rd, m_temp, Vector2(1, 0), halfBlurDiameter, m_blurry->vector2Bounds());
 
-        rd->setFramebuffer(oldFB);
-    }
+            rd->setFramebuffer(oldFB);
+        }
 
-    if (m_antialiasingEnabled) {
-        // TODO: ensure that the target has the right size
-        rd->push2D(m_postGammaFramebuffer);
-    }
+        if (m_antialiasingEnabled) {
+            // TODO: ensure that the target has the right size
+            rd->push2D(m_postGammaFramebuffer);
+        }
 
-    {
-        // Combine, fix saturation, gamma correct and draw
-        m_shader->args.set("sourceTexture",  input);
-        m_shader->args.set("bloomTexture",   (bloomStrength > 0) ? m_blurry : Texture::zero());
-        m_shader->args.set("bloomStrengthScaled",  bloomStrength * 10.0);
-        m_shader->args.set("sensitivity",       m_sensitivity);
-        m_shader->args.set("invGamma",       1.0f / m_gamma);
-        rd->setShader(m_shader);
+        {
+            // Combine, fix saturation, gamma correct and draw
+            m_shader->args.set("sourceTexture",  input);
+            m_shader->args.set("bloomTexture",   (bloomStrength > 0) ? m_blurry : Texture::zero());
+            m_shader->args.set("bloomStrengthScaled",  bloomStrength * 10.0);
+            m_shader->args.set("sensitivity",    m_sensitivity);
+            m_shader->args.set("invGamma",       1.0f / m_gamma);
+            rd->setShader(m_shader);
 
-        Draw::fastRect2D(input->rect2DBounds(), rd);
-    }
+            Draw::fastRect2D(input->rect2DBounds(), rd);
+        }
 
-    if (m_antialiasingEnabled) {
-        // Unbind the m_postGammaFramebuffer
-        rd->pop2D();
+        if (m_antialiasingEnabled) {
+            // Unbind the m_postGammaFramebuffer
+            rd->pop2D();
 
-        m_antialiasingShader->args.set("sourceTexture", m_postGamma);
-        rd->setShader(m_antialiasingShader);
-        Draw::fastRect2D(m_postGamma->rect2DBounds(), rd);
-    }
+            m_antialiasingShader->args.set("sourceTexture", m_postGamma);
+            rd->setShader(m_antialiasingShader);
+            Draw::fastRect2D(m_postGamma->rect2DBounds(), rd);
+        }
 
-    rd->pop2D();
+    } rd->pop2D();
 }
 
 
