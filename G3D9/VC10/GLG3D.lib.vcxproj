@@ -117,7 +117,6 @@
     <ClCompile Include="..\GLG3D.lib\source\Discovery.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Draw.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DXCaps.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\edgeFeatures.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\FileDialog.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Film.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\FirstPersonManipulator.cpp" />
@@ -171,7 +170,6 @@
     <ClCompile Include="..\GLG3D.lib\source\SDLWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ShadowMap.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\shadowVolume.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shape.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperBSDF.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperShader.cpp" />
@@ -207,7 +205,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Discovery.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Draw.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\DXCaps.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\edgeFeatures.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\FileDialog.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Film.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\FirstPersonManipulator.h" />
@@ -266,7 +263,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SDLWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shader.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ShadowMap.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\shadowVolume.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shape.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Sky.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperBSDF.h" />
