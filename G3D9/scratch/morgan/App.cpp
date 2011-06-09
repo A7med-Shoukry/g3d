@@ -107,9 +107,11 @@ void categorizeByDerivedType(const Array<PointerType>& all, Array< Array<Pointer
 
 
 int main(int argc, char** argv) {
+    /*
     Array<Surface::Ref> all;
     Array< Array<Surface::Ref> > derivedArray;
     categorizeByDerivedType<Surface::Ref>(all, derivedArray);
+    */
 
 
 #if 0

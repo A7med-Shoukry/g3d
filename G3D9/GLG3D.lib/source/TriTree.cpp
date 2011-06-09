@@ -440,12 +440,7 @@ bool __fastcall TriTree::Node::intersectRay
                 // Early out
                 return true;
             }
-        }
-        
-        if (isLeaf()) {
-            // No children
-            return hit;
-        }
+        }        
     }
     
     // Test on the side farther from the ray origin.
@@ -457,11 +452,12 @@ bool __fastcall TriTree::Node::intersectRay
             // This test makes about a factor of two improvement in performance.
             const float distanceToSplittingPlane =
                 (splitLocation - ray.origin()[axis]) * ray.invDirection()[axis];
+
             if (distanceToSplittingPlane > distance) {
                 // We aren't going to hit anything else before hitting the splitting plane,
                 // so don't bother looking on the far side of the splitting plane at the other
                 // child.
-                return false;
+                return hit;
             }
         }
         
