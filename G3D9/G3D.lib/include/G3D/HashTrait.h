@@ -89,16 +89,18 @@ inline uint32_t superFastHash (const void* _data, int numBytes) {
 template <typename T> struct HashTrait{};
 
 template <typename T> struct HashTrait<T*> {
-    static size_t hashCode(const void* k) { return reinterpret_cast<size_t>(k); }
-};
-
-template <> struct HashTrait <std::type_info> {
-    static size_t hashCode(const std::type_info& t) { return t.hash_code(); }
+    static size_t hashCode(const void* k) { return reinterpret_cast<size_t>(k) >> 1; }
 };
 
 /** For use with \code Table<std::type_info* const, ValueType> \endcode. */
 template <> struct HashTrait <std::type_info* const> {
-    static size_t hashCode(const std::type_info* const t) { return t->hash_code(); }
+    static size_t hashCode(const std::type_info* const t) { 
+#       ifdef _MSVC_VER
+            return t->hash_code(); 
+#       else
+            return reinterpret_cast<size_t>(t) >> 1;
+#       endif
+    }
 };
 
 template <> struct HashTrait <G3D::int16> {
