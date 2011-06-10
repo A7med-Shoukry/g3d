@@ -55,7 +55,10 @@ void ArticulatedViewer::onInit(const std::string& filename) {
             
             //merges the bounding boxes of all the seperate parts into the bounding box of the entire object
             AABox temp;
-            Box partBounds = arrayModel[x]->worldSpaceBoundingBox();
+            CFrame cframe;
+            arrayModel[x]->getCoordinateFrame(cframe);
+            arrayModel[x]->getObjectSpaceBoundingBox(temp);
+            Box partBounds = cframe.toWorldSpace(temp);
             
             // Some models have screwed up bounding boxes
             if (partBounds.extent().isFinite()) {
@@ -187,14 +190,16 @@ void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef
     for (int p = 0; p < posed3D.size(); ++p) {
         SuperSurface::Ref s = posed3D[p].downcast<SuperSurface>();
         if (m_selectedGeom == s->gpuGeom()) {
-            rd->pushState();
-                rd->setObjectToWorldMatrix(s->coordinateFrame());
+            rd->pushState(); {
+                CFrame cframe;
+                s->getCoordinateFrame(cframe);
+                rd->setObjectToWorldMatrix(cframe);
                 rd->setRenderMode(RenderDevice::RENDER_WIREFRAME);
                 rd->setPolygonOffset(-1.0f);
                 rd->setColor(Color3::green() * 0.8f);
                 rd->setTexture(0, NULL);
                 s->sendGeometry(rd);
-            rd->popState();
+            } rd->popState();
             break;
         }
     }

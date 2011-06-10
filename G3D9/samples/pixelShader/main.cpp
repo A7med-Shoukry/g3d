@@ -90,7 +90,9 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
         rd->setShader(phongShader);
 
         // Send model geometry to the graphics card
-        rd->setObjectToWorldMatrix(posedModel->coordinateFrame());
+        CFrame cframe;
+        posedModel->getCoordinateFrame(cframe);
+        rd->setObjectToWorldMatrix(cframe);
         posedModel->sendGeometry(rd);
     } rd->popState();
 
