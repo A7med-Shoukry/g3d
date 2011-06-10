@@ -155,7 +155,9 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
         rd->setColor(Color3::black());
         rd->setLineWidth(1);
         for (int i = 0; i < surface3D.size(); ++i) {
-            rd->setObjectToWorldMatrix(surface3D[i]->coordinateFrame());
+            CFrame cframe;
+            surface3D[i]->getCoordinateFrame(cframe)
+            rd->setObjectToWorldMatrix(cframe);
             surface3D[i]->sendGeometry(rd);
         }
 

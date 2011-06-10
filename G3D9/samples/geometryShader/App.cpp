@@ -52,7 +52,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
         CFrame cframe;
-        surface->getCoordinateFrame(cframe)
+        surface->getCoordinateFrame(cframe);
         rd->setObjectToWorldMatrix(cframe);
         surface->sendGeometry(rd);
     }
@@ -64,7 +64,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
         CFrame cframe;
-        surface->getCoordinateFrame(cframe)
+        surface->getCoordinateFrame(cframe);
         rd->setObjectToWorldMatrix(cframe);
         surface->sendGeometry(rd);
     }
