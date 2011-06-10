@@ -8,14 +8,16 @@
 #include "G3D/platform.h"
 #include "G3D/ReferenceCount.h"
 #include "G3D/ImageFormat.h"
+#include "G3D/GCamera.h"
 #include "GLG3D/Framebuffer.h"
 #include "GLG3D/Texture.h"
 #include "GLG3D/Shader.h"
-#include "GLG3D/SuperSurface.h"
-#include "GLG3D/Surface.h"
+#include "GLG3D/Material.h"
 
 namespace G3D {
 
+typedef ReferenceCountedPointer<class Surface> SurfaceRef;
+typedef ReferenceCountedPointer<class SuperSurface> SuperSurfaceRef;
 class RenderDevice;
 
 /** \brief Saito and Takahashi's Geometry Buffers, typically used today for deferred shading. 
@@ -224,7 +226,7 @@ private:
         specification and material, checking against a cache of
         previously compiled shaders.  The shader is not yet configured
         for the material.*/
-    static Shader::Ref getShader(const Specification& specificiation, const Indices& indices, const Material::Ref& material);
+    static Shader::Ref getShader(const Specification& specification, const Indices& indices, const Material::Ref& material);
 
     GBuffer(const std::string& name, const Specification& specification);
 
@@ -233,11 +235,11 @@ private:
 
     void compute
     (RenderDevice* rd, 
-     const SuperSurface::Ref& model) const;
+     const SuperSurfaceRef& model) const;
 
     void computeArray
     (RenderDevice* rd, 
-     const Array<SuperSurface::Ref>& model) const;
+     const Array<SuperSurfaceRef>& model) const;
 
     // Intentionally unimplemented
     GBuffer& operator=(const GBuffer&);
@@ -356,7 +358,7 @@ public:
     void compute
     (RenderDevice*                  rd, 
      const GCamera&                 camera,
-     const Array<Surface::Ref>&     modelArray) const;
+     const Array<SurfaceRef>&       modelArray) const;
 
     const Specification& specification() const {
         return m_specification;

@@ -1,17 +1,14 @@
 /**
-  \file GBuffer.cpp
+  \file GLG3D.lib/source/GBuffer.cpp
   \author Morgan McGuire, http://graphics.cs.williams.edu
-
-  TODO: detect surfaces that need alpha testing and compile a special
-  shader for them.  Do this for shadow maps as well.
-
-  TODO: packed z
  */
 #include "GLG3D/GBuffer.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/SuperBSDF.h"
 #include "G3D/fileutils.h"
 #include "G3D/FileSystem.h"
+#include "GLG3D/SuperSurface.h"
+#include "GLG3D/Surface.h"
 
 namespace G3D {
 

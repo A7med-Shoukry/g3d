@@ -12,12 +12,12 @@
 
 #include "G3D/Array.h"
 #include "G3D/Color4.h"
-#include "G3D/MeshAlg.h"
+#include "G3D/units.h"
 #include "GLG3D/Texture.h"
 #include "GLG3D/SkyParameters.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/ShadowMap.h"
-#include "G3D/units.h"
+#include "GLG3D/GBuffer.h"
 
 namespace G3D {
 
@@ -61,28 +61,30 @@ public:
 
 typedef ReferenceCountedPointer<class Surface> SurfaceRef;
 
+
 /**
    \brief The surface of a model, posed and ready for rendering.
 
-   May subclasses of Surface need to bind shader and other state in
+   Many subclasses of Surface need to bind shader and other state in
    order to render.  To amortize the cost of doing so, renderers use
    categorizeByDerivedType<Surface::Ref> to distinguish subclasses and
-   then invoke individual rendering methods on arrays of surface
-   subclasses at once.
+   then invoke the methods with names ending in "Homogeneous" on
+   arrays of derived instances.
 
-   Most methods take a \a timeOffset argument.  This is the time in seconds
-   to offset the result from the time at which the model was posed.  The 
-   location of the rendered object is only an approximation when this value
-   is non-zero.  For most Surface subclasses, small negative offsets produce fairly
-   accurate positioning because the object can be interpolated from the previous pose-time state.
-   Positive offsets lead to extrapolation and are often less accurate.
-   Note that one could also render at multiple times by posing the original
-   models at different times.  However, models do not guarantee that they will
-   produce the same number of Surface%s, or Surface%s with the same topology
-   each time that they are posed.  The use of timeOffset allows the caller
-   to assume that the geometry deforms but has the same topology across an
-   interval.
-
+   Most methods take a \a timeOffset argument.  This is the time in
+   seconds to offset the result from the time at which the model was
+   posed.  The location of the rendered object is only an
+   approximation when this value is non-zero.  For most Surface
+   subclasses, small negative offsets produce fairly accurate
+   positioning because the object can be interpolated from the
+   previous pose-time state.  Positive offsets lead to extrapolation
+   and are often less accurate.  Note that one could also render at
+   multiple times by posing the original models at different times.
+   However, models do not guarantee that they will produce the same
+   number of Surface%s, or Surface%s with the same topology each time
+   that they are posed.  The use of timeOffset allows the caller to
+   assume that the geometry deforms but has the same topology across
+   an interval.
  */
 class Surface : public ReferenceCountedObject {
 protected:
@@ -93,74 +95,73 @@ public:
 
     typedef ReferenceCountedPointer<class Surface> Ref;
 
-    /** \brief How sortAndRender() configures the RenderDevice to process alpha */
+    /** \brief How sortAndRender() configures the RenderDevice to
+        process alpha */
     enum AlphaMode {
         /** Alpha > 0.5 is rendered, alpha <= 0.5 is discarded. */
         ALPHA_BINARY,
 
-        /** Convert alpha to coverage values using <code>glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB)</code>. 
+        /** Convert alpha to coverage values using
+           <code>glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB)</code>.
            Requires a MSAA framebuffer to be bound.*/
         // See http://www.dhpoware.com/samples/glMultiSampleAntiAliasing.html for an example.
         ALPHA_TO_COVERAGE,
         
-        /** Render surfaces with partial coverage from back to front, using Porter and Duff's OVER operator.
-            This leaves the depth buffer inconsistent with the color buffer and requires a sort, but often gives 
-            the best appearance.
-         */
+        /** Render surfaces with partial coverage from back to front,
+            using Porter and Duff's OVER operator.  This leaves the
+            depth buffer inconsistent with the color buffer and
+            requires a sort, but often gives the best appearance. */
         ALPHA_BLEND
     };
 
-    virtual void getCoordinateFrame(CoordinateFrame& cframe, float timeOffset = 0.0f * units::seconds()) const = 0;
+    virtual ~Surface() {}
+
+    virtual std::string name() const = 0;
+
+    virtual void getCoordinateFrame(CoordinateFrame& cframe, float timeOffset = 0.0f) const = 0;
 
     virtual void getObjectSpaceBoundingBox(AABox& box, float timeOffset = 0.0f) const = 0;
 
     virtual void getObjectSpaceBoundingSphere(Sphere& sphere, float timeOffset = 0.0f) const = 0;
 
-    /** \brief Clears the arrays and appends indexed triangle list information. 
+
+    /** \brief Clears the arrays and appends indexed triangle list
+        information.
     
      Most subclasses will ignore \a timeOffset because they only use
-     that for rigid-body transformations.  However, it is possible to include skinning
-     or keyframe information in a Surface and respond to timeOffset.
+     that for rigid-body transformations.  However, it is possible to
+     include skinning or keyframe information in a Surface and respond
+     to timeOffset.
     
      Not required to be implemented.*/
-    virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord, float timeOffset = 0.0f) {}
-
-#if 0
-
-    /**
-     Forward-render all illumination terms.
-
-     Invoking this with elements of \a surfaceArray that are not of the same most-derived type as \a this will result in an error.
-
-     \param timeOffset All lighting occurs at timeOffset = 0, but object positions should be moved to respect the timeOffset.
-     */
-    virtual void render(RenderDevice* rd, Array<Surface::Ref>& surface, const Lighting::Ref& lighting, float timeOffset = 0.0f) const;
-
-    /** 
-    \brief Render all instances of \a surfaceArray to the currently-bound Framebuffer using the fields and mapping 
-    dictated by \a specification.  This is also used for depth-only (z-prepass) rendering.
-
-    Invoking this with elements of \a surfaceArray that are not of the same most-derived type as \a this will result in an error.
-    */
-    virtual void renderGBuffer(RenderDevice* rd, Array<Surface::Ref>& surfaceArray, const GBufer::Specification& specification, float timeOffset = 0.0f) const = 0;
+    virtual void getObjectSpaceGeometry
+    (Array<int>&                  index, 
+     Array<Point3>&               vertex, 
+     Array<Vector3>&              normal, 
+     Array<Vector4>&              packedTangent, 
+     Array<Point2>&               texCoord, 
+     float                        timeOffset = 0.0f) {}
 
 
-    /** \brief Rendering a set of surfaces in wireframe, using the current blending mode. 
-       This is primarily used for debugging.
-       
-    Invoking this with elements of \a surfaceArray that are not of the same most-derived type as \a this will result in an error.
-       */
-    virtual void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black(), float timeOffset = 0.0f) const = 0;
+    /** If true, this object transmits light and depends on
+        back-to-front rendering order and should be rendered in sorted
+        order. 
 
-    // TODO: Why is renderShadowMappedLightPass deprecated?  
-    //
-    // Can we just use renderSuperShaderPass for everything?
+        The default implementation returns false.*/
+    virtual bool hasTransmission() const {
+        return false;
+    }
 
-#endif
 
-    virtual ~Surface() {}
+    /** If true, this object's material produces subpixel coverage
+        (i.e. alpha) and may require back-to-front rendering depending
+        on Surface::AlphaMode. 
 
-    virtual std::string name() const = 0;
+        The default implementation returns false.*/
+    virtual bool hasPartialCoverage() const {
+        return false;
+    }
+
 
     /** A hint to the renderer indicating that this surface should
         write to the depth buffer.  Typically overridden to return
@@ -172,23 +173,70 @@ public:
         return ! hasTransmission();
     }
 
-    /** If true, this object transmits light and depends on
-        back-to-front rendering order and should be rendered in sorted
-        order. 
+    ///////////////////////////////////////////////////////////////////////
+    // Aggregate methods
 
-        The default implementation returns false.*/
-    virtual bool hasTransmission() const {
-        return false;
-    }
+    /**
+     \brief Forward-render all illumination terms for each element of
+     \a surfaceArray, which must all be of the same most-derived type
+     as \a this.
 
-    /** If true, this object's material produces subpixel coverage
-        (i.e. alpha) and may require back-to-front rendering depending
-        on Surface::AlphaMode. 
+     Rendering proceeds in the order of elements in the surfaceArray.
+     Sort the array first to create back-to-front or front-to-back
+     ordering.
 
-        The default implementation returns false.*/
-    virtual bool hasPartialCoverage() const {
-        return false;
-    }
+     Elements may have partial coverage but are assumed to not have
+     transmission.
+
+     Invoking this with elements of \a surfaceArray that are not of
+     the same most-derived type as \a this will result in an error.
+
+     \param timeOffset All lighting occurs at timeOffset = 0, but
+     object positions should be moved to respect the timeOffset.
+
+     \param shadowMapArray Previously rendered shadow maps (at
+     timeOffset = 0) for each of the shadow casting lights in \a
+     lighting, in the order that those lights appear in
+     Lighting::lightArray.
+     */
+    virtual void renderOpaqueHomogeneous
+    (RenderDevice*                rd, 
+     const Array<Surface::Ref>&   surfaceArray, 
+     const Lighting::Ref&         lighting, 
+     const Array<ShadowMap::Ref>& shadowMapArray, 
+     float                        timeOffset = 0.0f) const {}//= 0;
+
+
+    /** 
+    \brief Render all instances of \a surfaceArray to the
+    currently-bound Framebuffer using the fields and mapping dictated
+    by \a specification.  This is also used for depth-only (e.g.,
+    z-prepass) rendering.
+
+    Invoking this with elements of \a surfaceArray that are not of the
+    same most-derived type as \a this will result in an error.
+    */
+    virtual void renderGBufferHomogeneous
+    (RenderDevice*                rd, 
+     Array<Surface::Ref>&         surfaceArray,
+     const GBuffer::Specification& specification,
+     float                        timeOffset = 0.0f) const {}//= 0;
+
+
+    /** \brief Rendering a set of surfaces in wireframe, using the
+       current blending mode.  This is primarily used for debugging.
+       
+       Invoking this with elements of \a surfaceArray that are not of
+       the same most-derived type as \a this will result in an error.
+       */
+    virtual void renderWireframeHomogeneous
+    (RenderDevice*                rd, 
+     const Array<Surface::Ref>&   surfaceArray, 
+     const Color4&                color = Color3::black(), 
+     float                        timeOffset = 0.0f) const {}//= 0;
+
+    ///////////////////////////////////////////////////////////////////////
+    // Static methods
 
     /** 
       Divides the inModels into a front-to-back sorted array of opaque
@@ -200,13 +248,40 @@ public:
      */
     static void sortFrontToBack
        (Array<Surface::Ref>&       surfaces, 
-        const Vector3&             wsLookVector);
+        const Vector3&             wsLookVector,
+        float                      timeOffset = 0.0f);
+
 
     static void sortBackToFront
        (Array<Surface::Ref>&       surfaces, 
-        const Vector3&             wsLookVector) {
-        sortFrontToBack(surfaces, -wsLookVector);
+        const Vector3&             wsLookVector,
+        float                      timeOffset = 0.0f) {
+        sortFrontToBack(surfaces, -wsLookVector, timeOffset);
     }
+
+
+    /** Utility function for rendering a set of surfaces in wireframe using the current blending mode. */
+    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black(), float timeOffset = 0.0f);
+
+    /** Computes the world-space bounding box of an array of Surface%s of any type.*/
+    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds, float timeOffset = 0.0f);
+
+    /** Computes the world-space bounding sphere of an array of Surface%s of any type.*/
+    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds, float timeOffset = 0.0f);
+
+    /** Computes the array of models that can be seen by \a camera*/
+    static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels, float timeOffset = 0.0f);
+
+    /**
+     Removes elements from \a all and puts them in \a translucent.
+     \a translucent is cleared first.
+     Always treats hasTransmissive() objects as translucent.
+     If \a partialCoverageIsTranslucent is true, also treats hasPartialCoverage as translucent.
+     */
+    static void extractTranslucent(Array<Surface::Ref>& all, Array<Surface::Ref>& translucent, bool partialCoverageIsTranslucent);
+
+    ///////////////////////////////////////////////////////////////////////
+    // Deprecated
 
     /** Render using current fixed function lighting environment. Do
         not change the current state. Behavior with regard to stencil,
@@ -285,6 +360,7 @@ public:
         return true;
     }
 
+
     /** @deprecated */
     virtual void renderShadowMappedLightPass
     (RenderDevice* rd, 
@@ -306,25 +382,6 @@ public:
 
     ///////////////////////////////////////////////////////////
 
-    /** Utility function for rendering a set of surfaces in wireframe using the current blending mode. */
-    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black());
-
-    /** Computes the world-space bounding box of an array of Surface%s.*/
-    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds);
-
-    /** Computes the world-space bounding sphere of an array of Surface%s.*/
-    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds);
-
-    /** Computes the array of models that can be seen by \a camera*/
-    static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels);
-
-    /**
-     Removes elements from \a all and puts them in \a translucent.
-     \a translucent is cleared first.
-     Always treats hasTransmissive() objects as translucent.
-     If \a partialCoverageIsTranslucent is true, also treats hasPartialCoverage as translucent.
-     */
-    static void extractTranslucent(Array<Surface::Ref>& all, Array<Surface::Ref>& translucent, bool partialCoverageIsTranslucent);
 
     /** 
         Sends the geometry for all of the specified surfaces, each with the corresponding coordinateFrame

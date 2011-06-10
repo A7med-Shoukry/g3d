@@ -1,12 +1,12 @@
 /**
- @file CoordinateFrame.cpp
+ \file CoordinateFrame.cpp
 
  Coordinate frame class
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2001-06-02
- @edited  2010-03-13
+ \created 2001-06-02
+ \edited  2011-06-10
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -276,6 +276,20 @@ Capsule CoordinateFrame::toWorldSpace(const Capsule& c) const {
         pointToWorldSpace(c.point(0)), 
         pointToWorldSpace(c.point(1)), 
         c.radius());
+}
+
+
+void CoordinateFrame::toWorldSpace(const AABox& b, AABox& result) const {
+    if (b.isEmpty()) {
+        result = b;
+    } else if (! b.isFinite()) {
+        // We can't combine infinite elements under a matrix
+        // multiplication: if the computation performs inf-inf we'll
+        // get NaN.  So treat the box as infinite in all directions.
+        result = AABox::inf();
+    } else {
+        toWorldSpace(Box(b)).getBounds(result);
+    }
 }
 
 

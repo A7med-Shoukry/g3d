@@ -37,23 +37,21 @@ void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3
 }
 
 
-void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds) {
+void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, float timeOffset) {
     bounds = AABox::empty();
-    float timeOffset = 0.0f;
 
     for (int i = 0; i < models.size(); ++i) {
         AABox temp;
         CFrame cframe;
         models[i]->getCoordinateFrame(cframe, timeOffset);
         models[i]->getObjectSpaceBoundingBox(temp, timeOffset);
-        cframe.toWorldSpace(temp).getBounds(temp);
+        cframe.toWorldSpace(temp, temp);
         bounds.merge(temp);
     }
 }
 
 
-void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color) {
-    float timeOffset = 0.0f;
+void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color, float timeOffset) {
     rd->pushState(); {
         rd->setDepthWrite(false);
         rd->setDepthTest(RenderDevice::DEPTH_LEQUAL);
@@ -74,15 +72,20 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
 }
 
 
-void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds) {
+void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, float timeOffset) {
     AABox temp;
-    getBoxBounds(models, temp);
+    getBoxBounds(models, temp, timeOffset);
     temp.getBounds(bounds);
 }
 
 
-void Surface::cull(const GCamera& camera, const Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels) {
-    static const float timeOffset = 0.0f;
+void Surface::cull
+(const GCamera&             camera, 
+ const Rect2D&              viewport, 
+ const Array<Surface::Ref>& allModels,
+ Array<Surface::Ref>&       outModels,
+ float                      timeOffset) {
+
     outModels.fastClear();
 
     Array<Plane> clipPlanes;
@@ -185,6 +188,8 @@ void Surface::sortAndRender
  const Array<SuperShader::PassRef>& extraAdditivePasses,
  AlphaMode                      alphaMode) {
 
+    const float timeOffset = 0.0f;
+
     static bool recurse = false;
 
     alwaysAssertM(! recurse, "Cannot call Surface::sortAndRender recursively");
@@ -225,8 +230,8 @@ void Surface::sortAndRender
                 
                 ShadowMap::computeMatrices(light, sceneBounds, lightFrame, lightProjectionMatrix);
                 
-                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible);
-                Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
+                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible, timeOffset);
+                Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector(), timeOffset);
                 shadowMaps[s]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
 
                 lightVisible.fastClear();
@@ -246,7 +251,7 @@ void Surface::sortAndRender
     static Array<Surface::Ref> visible;
 
     // Cull objects outside the view frustum
-    cull(camera, rd->viewport(), allModels, visible);
+    cull(camera, rd->viewport(), allModels, visible, timeOffset);
 
     rd->pushState();
 
@@ -277,8 +282,8 @@ void Surface::sortAndRender
         break;
     }
     // Get early-out depth test by rendering the closest objects first
-    Surface::sortFrontToBack(super,   viewVector);
-    Surface::sortFrontToBack(visible, viewVector);
+    Surface::sortFrontToBack(super,   viewVector, timeOffset);
+    Surface::sortFrontToBack(visible, viewVector, timeOffset);
 
     rd->setProjectionAndCameraMatrix(camera);
     rd->setObjectToWorldMatrix(CoordinateFrame());
@@ -396,15 +401,14 @@ void Surface2D::sortAndRender(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) 
 
 class ModelSorter {
 public:
-    float                     sortKey;
+    float                  sortKey;
     Surface::Ref           model;
 
     ModelSorter() {}
 
-    ModelSorter(const Surface::Ref& m, const Vector3& axis) : model(m) {
+    ModelSorter(const Surface::Ref& m, const Vector3& axis, float timeOffset) : model(m) {
         Sphere s;
         CFrame c;
-        const float timeOffset = 0.0f;
         m->getCoordinateFrame(c, timeOffset);
         m->getObjectSpaceBoundingSphere(s, timeOffset);
         sortKey = axis.dot(c.pointToWorldSpace(s.center));
@@ -420,14 +424,15 @@ public:
 };
 
 
-void Surface::sortFrontToBack(
-    Array<Surface::Ref>& surface, 
-    const Vector3&       wsLook) {
+void Surface::sortFrontToBack
+(Array<Surface::Ref>& surface, 
+ const Vector3&       wsLook,
+ float                timeOffset) {
 
     static Array<ModelSorter> sorter;
     
     for (int m = 0; m < surface.size(); ++m) {
-        sorter.append(ModelSorter(surface[m], wsLook));
+        sorter.append(ModelSorter(surface[m], wsLook, timeOffset));
     }
 
     sorter.sort(SORT_INCREASING);
