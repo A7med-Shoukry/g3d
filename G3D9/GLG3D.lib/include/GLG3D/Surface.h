@@ -393,7 +393,7 @@ public:
          - shadowMapArray has the length of lighting->shadowedLightArray and contains
            already computed shadow maps
 
-        Works correctly, but is inefficient, for non-translucent surfaces.
+        Works correctly, but is inefficient for non-translucent surfaces.
 
         \param alphaMode Mode for resolving partial coverage (which is independent of transmission)
       */
@@ -449,13 +449,6 @@ public:
     static void sortAndRender(RenderDevice* rd, Array<Surface2DRef>& array);
 };
 
+} // namespace G3D
 
-/** @deprecated Use Surface */
-typedef Surface PosedModel;
-
-/** @deprecated Use Surface2D */
-typedef Surface2D PosedModel2D;
-
-}
-
-#endif
+#endif // G3D_Surface_h
