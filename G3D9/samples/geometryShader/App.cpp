@@ -78,9 +78,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     m_extrudeShader->args.set("intensity", 0.1); 
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
+        CFrame cframe;
+        surface->getCoordinateFrame(cframe);
         m_extrudeShader->args.set("MVP", 
             rd->invertYMatrix() * rd->projectionMatrix() * (rd->cameraToWorldMatrix().inverse() * 
-            surface->coordinateFrame()));
+            cframe));
 
         surface->sendGeometry(rd);
     }
@@ -93,9 +95,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     m_extrudeShader->args.set("intensity", 1.0); 
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
+        CFrame cframe;
+        surface->getCoordinateFrame(cframe);
         m_extrudeShader->args.set("MVP", 
             rd->invertYMatrix() * rd->projectionMatrix() * (rd->cameraToWorldMatrix().inverse() * 
-            surface->coordinateFrame()));
+            cframe));
 
         surface->sendGeometry(rd);
     }
