@@ -73,7 +73,7 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& surface3D, Array<Sur
         rd->pop2D();
     }
 
-    PosedModel2D::sortAndRender(rd, surface2D);
+    Surface2D::sortAndRender(rd, surface2D);
 }
 
 
