@@ -116,18 +116,25 @@ public:
 
     virtual void getObjectSpaceBoundingSphere(Sphere& sphere, float timeOffset = 0.0f) const = 0;
 
-#if 0
-
-
-    /** Clears the arrays and appends indexed triangle lists. Not required to be implemented.*/
+    /** \brief Clears the arrays and appends indexed triangle list information. 
+    
+     Most subclasses will ignore \a timeOffset because they only use
+     that for rigid-body transformations.  However, it is possible to include skinning
+     or keyframe information in a Surface and respond to timeOffset.
+    
+     Not required to be implemented.*/
     virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord, float timeOffset = 0.0f) {}
+
+#if 0
 
     /**
      Forward-render all illumination terms.
 
      Invoking this with elements of \a surfaceArray that are not of the same most-derived type as \a this will result in an error.
+
+     \param timeOffset All lighting occurs at timeOffset = 0, but object positions should be moved to respect the timeOffset.
      */
-    virtual void render(RenderDevice* rd, Array<Surface::Ref>& surface, const Lighting::Ref& lighting, float timeOffset = 0.f) const;
+    virtual void render(RenderDevice* rd, Array<Surface::Ref>& surface, const Lighting::Ref& lighting, float timeOffset = 0.0f) const;
 
     /** 
     \brief Render all instances of \a surfaceArray to the currently-bound Framebuffer using the fields and mapping 
@@ -201,18 +208,6 @@ public:
         sortFrontToBack(surfaces, -wsLookVector);
     }
 
-    /** Utility function for rendering a set of surfaces in wireframe using the current blending mode. */
-    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black());
-
-    /** Computes the world-space bounding box of an array of Surface%s.*/
-    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds);
-
-    /** Computes the world-space bounding sphere of an array of Surface%s.*/
-    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds);
-
-    /** Computes the array of models that can be seen by \a camera*/
-    static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels);
-
     /** Render using current fixed function lighting environment. Do
         not change the current state. Behavior with regard to stencil,
         shadowing, etc. is intentionally undefinded.
@@ -266,34 +261,7 @@ public:
         const GLight& light,
         const ReferenceCountedPointer<ShadowMap>& shadowMap) const;
 
-    /**
-     Removes elements from \a all and puts them in \a translucent.
-     \a translucent is cleared first.
-     Always treats hasTransmissive() objects as translucent.
-     If \a partialCoverageIsTranslucent is true, also treats hasPartialCoverage as translucent.
-     */
-    static void extractTranslucent(Array<Surface::Ref>& all, Array<Surface::Ref>& translucent, bool partialCoverageIsTranslucent);
 
-    /** 
-        Sends the geometry for all of the specified surfaces, each with the corresponding coordinateFrame
-        bound as the RenderDevice objectToWorld matrix.
-        \deprecated
-     */
-    static void sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D);
-
-    /** Render geometry only (no shading), and ignore color (but do perform alpha testing).
-        Render only back or front faces (two-sided surfaces render no matter what).
-
-        Does not sort or cull based on the view frustum of the camera like other batch rendering routines.
-
-        Used for early-Z and shadow mapping.
-        \deprecated
-     */    
-    static void renderDepthOnly
-    (RenderDevice* rd, 
-     const Array<Surface::Ref>& surfaceArray, 
-     RenderDevice::CullFace cull);
-    
     /**
      Configures the SuperShader with the G3D::Material for this object
      and renders it.  If this object does not support G3D::Materials
@@ -336,6 +304,48 @@ public:
     */
     virtual void sendGeometry(RenderDevice* rd) const = 0;
 
+    ///////////////////////////////////////////////////////////
+
+    /** Utility function for rendering a set of surfaces in wireframe using the current blending mode. */
+    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black());
+
+    /** Computes the world-space bounding box of an array of Surface%s.*/
+    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds);
+
+    /** Computes the world-space bounding sphere of an array of Surface%s.*/
+    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds);
+
+    /** Computes the array of models that can be seen by \a camera*/
+    static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels);
+
+    /**
+     Removes elements from \a all and puts them in \a translucent.
+     \a translucent is cleared first.
+     Always treats hasTransmissive() objects as translucent.
+     If \a partialCoverageIsTranslucent is true, also treats hasPartialCoverage as translucent.
+     */
+    static void extractTranslucent(Array<Surface::Ref>& all, Array<Surface::Ref>& translucent, bool partialCoverageIsTranslucent);
+
+    /** 
+        Sends the geometry for all of the specified surfaces, each with the corresponding coordinateFrame
+        bound as the RenderDevice objectToWorld matrix.
+        \deprecated
+     */
+    static void sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D);
+
+    /** Render geometry only (no shading), and ignore color (but do perform alpha testing).
+        Render only back or front faces (two-sided surfaces render no matter what).
+
+        Does not sort or cull based on the view frustum of the camera like other batch rendering routines.
+
+        Used for early-Z and shadow mapping.
+        \deprecated
+     */    
+    static void renderDepthOnly
+    (RenderDevice* rd, 
+     const Array<Surface::Ref>& surfaceArray, 
+     RenderDevice::CullFace cull);
+    
     /**
        Renders an array of models with the full G3D illumination model
        (correct transparency, multiple direct lights, multiple shadow
@@ -394,10 +404,7 @@ public:
      const Array<SuperShader::PassRef>& extraAdditivePasses,
      const Array< ReferenceCountedPointer<ShadowMap> >&   shadowMapArray = Array<ShadowMap::Ref>(),
      RefractionQuality              maxRefractionQuality = RefractionQuality::BEST,
-     AlphaMode                      alphaMode = ALPHA_BINARY);
-
-
-    
+     AlphaMode                      alphaMode = ALPHA_BINARY);    
 
 protected:
 
