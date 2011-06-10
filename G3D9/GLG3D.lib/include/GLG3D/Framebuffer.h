@@ -1,5 +1,5 @@
 /**
- \file Framebuffer.h
+ \file GLG3D/Framebuffer.h
 
  \maintainer Morgan McGuire
 
@@ -7,7 +7,7 @@
  \cite http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
 
  \created 2006-01-07
- \edited  2010-11-17
+ \edited  2011-06-10
 */
 
 #ifndef GLG3D_Framebuffer_h
