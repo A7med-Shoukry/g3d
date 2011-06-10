@@ -498,20 +498,6 @@ void Surface::renderNonShadowed(
 }
 
 
-void Surface::renderShadowedLightPass(
-    RenderDevice* rd, 
-    const GLight& light) const {
-
-    rd->pushState();
-        rd->enableLighting();
-        rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
-        rd->setLight(0, light);
-        rd->setAmbientLightColor(Color3::black());
-        render(rd);
-    rd->popState();
-}
-
-
 void Surface::renderShadowMappedLightPass(
     RenderDevice* rd, 
     const GLight& light,

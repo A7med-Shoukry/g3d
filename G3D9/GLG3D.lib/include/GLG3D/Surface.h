@@ -61,55 +61,13 @@ public:
 typedef ReferenceCountedPointer<class Surface> SurfaceRef;
 
 /**
- Base class for posed models.  A posed model is a snapshot of geometry
- and other rendering information, frozen in time, of a potentially 
- animated or deformable "Model".  G3D has no API (but some conventions) for
- how you get a Surface from a model class.
- 
- <B>G3D does not provide a scene graph structure</B> (e.g. there is no Model base class)
- because the visible surface determination, rendering, and caching behavior of a scene
- graph are different for each application.  There is currently no one-size-fits-all
- scene graph design pattern.
- 
- G3D <B>does</B> provide some basic infrastructure for making your
- own scene graph, however.  Model classes (e.g. G3D::IFSModel, G3D::MD2Model),
- which have no common base class, should all implement a <CODE>pose</CODE> 
- method.  The arguments to this method are all of the parameters (e.g. 
- animation frame, limb position) needed for reducing the general purpose,
- poseable model to a specific world space mesh for rendering.  This
- instance specific mesh is a G3D::Surface.  Because all Surfaces
- have the same interface, they can be used interchangably.
+   \brief The surface of a model, posed and ready for rendering.
 
- Use G3D::SurfaceWrapper to encapsulate an existing posed model
- with your own.
-
- A common strategy when implementing Surface is to not compute "derived"
- values like the object space face normals until they are needed.  That is,
- the first call to a method might be very expensive because it goes off
- and computes some value that will be cached for future calls.
-
- <b>Rendering</b>
- The easiest way to render is Surface::render().  More sophisticated rendering, e.g., in the presence of shadows, can be accomplished with 
- the separate renderShadowMappedLightPass etc. routines.
-
- Surface also allows you to directly extract and operate on its geometry.  This is useful for adding effects like
- outlines in cartoon rendering, physics hit boxes, and shadow volume rendering.  You can directly render from the geometry
- using the following rendering code (it is much faster if you can avoid re-creating the VARs and VertexBuffer every frame!)
- <pre>
-        VertexBufferRef area = VertexBuffer::create(sizeof(Vector3) * posed->objectSpaceGeometry().vertexArray.size() * 2 + sizeof(Vector2) * posed->texCoords().size());
-        VertexRange vertex(posed->objectSpaceGeometry().vertexArray, area);
-        VertexRange normal(posed->objectSpaceGeometry().normalArray, area);
-        VertexRange texCoord(posed->texCoords(), area);
-
-        rd->setObjectToWorldMatrix(posed->coordinateFrame());
-        rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
-        rd->beginIndexedPrimitives();
-            rd->setVertexArray(vertex);
-            rd->setNormalArray(normal);
-            rd->setTexCoordArray(0, texCoord);
-            rd->sendIndices(PrimitiveType::TRIANGLES, posed->triangleIndices());
-        rd->endIndexedPrimitives();
- </pre>
+   May subclasses of Surface need to bind shader and other state in
+   order to render.  To amortize the cost of doing so, renderers use
+   categorizeByDerivedType<Surface::Ref> to distinguish subclasses and
+   then invoke individual rendering methods on arrays of surface
+   subclasses at once.
  */
 class Surface : public ReferenceCountedObject {
 protected:
@@ -117,6 +75,7 @@ protected:
     Surface() {}
 
 public:
+
     typedef ReferenceCountedPointer<class Surface> Ref;
 
     /** \brief How sortAndRender() configures the RenderDevice to process alpha */
@@ -136,19 +95,48 @@ public:
         ALPHA_BLEND
     };
 
+#if 0
+
+    virtual void getCFrame(CFrame& cframe, float timeOffset = 0.0f) const = 0;
+
+    virtual void getObjectSpaceBoundingBox(AABox& box, float timeOffset = 0.0f) const = 0;
+
+    virtual void getObjectSpaceBoundingSphere(Sphere& sphere, float timeOffset = 0.0f) const = 0;
+
+    /** Clears the arrays and appends indexed triangle lists. Not required to be implemented.*/
+    virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord, float timeOffset = 0.0f) {}
+
+
+    virtual void render(RenderDevice* rd, Array<Surface::Ref>& surface, const Lighting::Ref& lighting, float timeOffset = 0.f) const;
+
+    virtual void renderDepthOnly(RenderDevice* rd, Array<Surface::Ref>& surface, float timeOffset = 0.0f) const = 0;
+
+    virtual void renderGBuffer(RenderDevice* rd, Array<Surface::Ref>& surface, const GBufer::Specification& specification, float timeOffset = 0.f) const = 0;
+
+    // TODO: Why is renderShadowMappedLightPass deprecated?  
+    //
+    // Can we just use renderSuperShaderPass for everything?
+
+#endif
+
     virtual ~Surface() {}
 
     virtual std::string name() const = 0;
 
     /** If true, this object transmits light and depends on
         back-to-front rendering order and should be rendered in sorted
-        order. Default is false.*/
+        order. 
+
+        The default implementation returns false.*/
     virtual bool hasTransmission() const {
         return false;
     }
 
-    /** If true, this object's material produces subpixel coverage (i.e. alpha) and may require back-to-front rendering
-        depending on Surface::AlphaMode. */
+    /** If true, this object's material produces subpixel coverage
+        (i.e. alpha) and may require back-to-front rendering depending
+        on Surface::AlphaMode. 
+
+        The default implementation returns false.*/
     virtual bool hasPartialCoverage() const {
         return false;
     }
@@ -174,57 +162,68 @@ public:
     /** Utility function for rendering a set of surfaces in wireframe using the current blending mode. */
     static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black());
 
-    static void getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds);
-    static void getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds);
+    /** Computes the world-space bounding box of an array of Surface%s.*/
+    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds);
 
-    /** Computes the array of models that can be seen by @a camera*/
+    /** Computes the world-space bounding sphere of an array of Surface%s.*/
+    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds);
+
+    /** Computes the array of models that can be seen by \a camera*/
     static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels);
 
-    /** Object to world space coordinate frame.*/
-    virtual void getCoordinateFrame(CoordinateFrame& c) const = 0;
+    /** Object-to-world space coordinate frame.*/
+    virtual void getCoordinateFrame(CFrame& c) const = 0;
 
+    virtual void getObjectSpaceBoundingBox(AABox&) const = 0;
+
+    virtual void getObjectSpaceBoundingSphere(Sphere&) const = 0;
+
+    /** The default implementation invokes getCoordinateFrame(CFrame&) */
     virtual CoordinateFrame coordinateFrame() const;
 
     /** Clears the arrays and appends indexed triangle lists. Not required to be implemented.*/
     virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord) {}
 
-    virtual void getObjectSpaceBoundingSphere(Sphere&) const = 0;
 
+    /** The default implementation calls getObjectSpaceBoundingSphere */
     virtual Sphere objectSpaceBoundingSphere() const;
 
+    /** The default implementation calls getObjectSpaceBoundingBox */
     virtual AABox objectSpaceBoundingBox() const;
 
     virtual void getWorldSpaceBoundingSphere(Sphere& s) const;
 
     virtual Sphere worldSpaceBoundingSphere() const;
 
-    virtual void getObjectSpaceBoundingBox(AABox&) const = 0;
-
     virtual void getWorldSpaceBoundingBox(AABox& box) const;
 
     virtual AABox worldSpaceBoundingBox() const;
 
-    /** Render using current fixed function lighting environment. Do not 
-        change the steBehavior 
-        with regard to stencil, shadowing, etc. is intentionally undefinded. 
+    /** Render using current fixed function lighting environment. Do
+        not change the current state. Behavior with regard to stencil,
+        shadowing, etc. is intentionally undefinded.
 
         Default implementation calls defaultRender.
-        */
+    */
     virtual void render(class RenderDevice* renderDevice) const;
 
     /** 
-     Render all terms that are independent of shadowing 
-     (e.g., transparency, reflection, ambient illumination, 
-     emissive illumination, nonShadowCastingLights). Transparent objects are assumed to render additively 
-     (but should set the blend mode themselves). Restore all state to the original form
-     on exit.  Default implementation invokes render.
+     Render all terms that are independent of shadowing (e.g.,
+     transparency, reflection, ambient illumination, emissive
+     illumination, nonShadowCastingLights). Transparent objects are
+     assumed to render additively (but should set the blend mode
+     themselves). Restore all state to the original form on exit.
+     Default implementation invokes render.
 
-     Implementation must obey the current stencil, depth write, color write, and depth test modes.
-     Implementation may freely set the blending, and alpha test modes.
+     Implementation must obey the current stencil, depth write, color
+     write, and depth test modes.  Implementation may freely set the
+     blending, and alpha test modes.
 
-     The caller should invoke this in depth sorted back to front order for transparent objects.
+     The caller should invoke this in depth sorted back to front order
+     for transparent objects.
 
-     The default implementation configures the non-shadow casting lights and calls render.
+     The default implementation configures the non-shadow casting
+     lights and calls render.
 
      Implementation advice:
       <UL>
@@ -232,20 +231,12 @@ public:
         <LI> It may be convenient to support multiple lights by invoking renderShadowedLightPass multiple times.
       </UL>
 
-      The implementation must ignore shadow casting lights from \a lighting.
+     The implementation must ignore shadow casting lights from \a lighting.
 
     */
     virtual void renderNonShadowed(
         RenderDevice* rd,
         const LightingRef& lighting) const;
-
-    /** Render illumination from this light source additively. Implementation must set the
-        alpha blending mode to additive.  Must obey the current stencil, depth write, and depth test modes.
-        Default implementation enables a single light and calls render.
-    */
-    virtual void renderShadowedLightPass(
-        RenderDevice* rd, 
-        const GLight& light) const;
 
     /** Render illumination from this source additively, held out by the shadow map (which the caller 
         must have computed, probably using renderNonShadowed).  Default implementation
@@ -276,11 +267,11 @@ public:
 
         Used for early-Z and shadow mapping.
      */    
-    static void renderDepthOnly(
-        RenderDevice* rd, 
-        const Array<Surface::Ref>& allModels, 
-        RenderDevice::CullFace cull);
-
+    static void renderDepthOnly
+    (RenderDevice* rd, 
+     const Array<Surface::Ref>& surfaceArray, 
+     RenderDevice::CullFace cull);
+    
     /**
      Configures the SuperShader with the G3D::Material for this object
      and renders it.  If this object does not support G3D::Materials
@@ -295,21 +286,21 @@ public:
      to use "regular" culling and CULL_FRONT to invert the culling sense.
     @beta
      */
-    virtual bool renderSuperShaderPass(
-        RenderDevice* rd, 
-        const SuperShader::PassRef& pass,
-        RenderDevice::CullFace originalCullFace = RenderDevice::CULL_BACK) const {
+    virtual bool renderSuperShaderPass
+    (RenderDevice* rd, 
+     const SuperShader::PassRef& pass,
+     RenderDevice::CullFace originalCullFace = RenderDevice::CULL_BACK) const {
         (void) rd;
         (void) pass;
         return true;
     }
 
     /** @deprecated */
-    virtual void renderShadowMappedLightPass(
-        RenderDevice* rd, 
-        const GLight& light,
-        const Matrix4& lightMVP,
-        const Texture::Ref& shadowMap) const;
+    virtual void renderShadowMappedLightPass
+    (RenderDevice* rd, 
+     const GLight& light,
+     const Matrix4& lightMVP,
+     const Texture::Ref& shadowMap) const;
 
     /**
       Sends all geometry including texture coordinates (uploading it
@@ -320,7 +311,6 @@ public:
       Surface.
     */
     virtual void sendGeometry(RenderDevice* rd) const = 0;
-
 
     /**
        Renders an array of models with the full G3D illumination model
@@ -382,38 +372,28 @@ public:
      RefractionQuality              maxRefractionQuality = RefractionQuality::BEST,
      AlphaMode                      alphaMode = ALPHA_BINARY);
 
-    /** A hint to the renderer indicating that this surface should write to the depth buffer.  Typically overridden to return false for surfaces with very low
-        partial coverage (alpha) or transmission values, or to resolve artifacts for specific scenes.  The default value is ! hasTransmission().*/
+
+    /** A hint to the renderer indicating that this surface should
+        write to the depth buffer.  Typically overridden to return
+        false for surfaces with very low partial coverage (alpha) or
+        transmission values, or to resolve artifacts for specific
+        scenes.  The default value is ! hasTransmission().*/
     virtual bool depthWriteHint(float distanceToCamera) const {
         (void)distanceToCamera;
         return ! hasTransmission();
     }
 
-    /** \brief Extract all Surface instances that are the same subclass as \a this.
-    
-     May subclasses of Surface need to bind shader and other state in order to render.
-     Such subclasses can amortize the cost of doing so by overriding this method.  The
-     caller will invoke it on each element of \a all.
 
+    /** \brief Extract all Surface instances that are the same subclass as \a this.
+  
      Callers can then invoke the Array versions of methods.
 
      If there are more than one moved to the mine array, 
      renderArray will be called once for all of them, rather than each receiving an individual render() call. The typical override is:
 
-    <code>
-      virtual void extractArray(Array<Surface::Ref>& all, Array<Surface::Ref>& mine) {
-          for (int i = 0; i < all.size(); ++i) {
-               if (all[i].downcast<MyClass>().notNull()) {
-                    mine.append(all[i]);
-                    all.fastRemove(i);
-                    --i;
-               }
-          } 
-      }
-    </code>
+     This isn't a static method because it needs to be overridden.*/
 
-    This isn't a static method because it needs to be overridden.*/
-    virtual void extractArray(Array<Surface::Ref>& all, Array<Surface::Ref>& mine) {}
+    
 
 protected:
 
