@@ -34,8 +34,84 @@ class RenderDevice;
 class GBuffer : public ReferenceCountedObject {
 public:
 
+
+    /** If a format is NULL, it is not allocated or rendered. CS =
+        camera space, WS = world space, SS = screen space.*/
     class Specification {
     public:
+#if 0
+
+        /** Shading normal, after interpolation and bump-mapping.
+            Floating point formats (e.g., RGBF) will produced signed
+            normals, normalized formats (e.g., RGB8) will encode as n'
+            = (n+1)/2*/
+        const ImageFormat*    wsNormal;
+
+        const ImageFormat*    csNormal;
+
+        const ImageFormat*    wsFaceNormal;
+
+        const ImageFormat*    csFaceNormal;
+
+        /** Requires a normalized or float format because values are
+            on (0,1). Only RGB fields are written.*/
+        const ImageFormat*    lambertian;
+
+        /** RGB = magnitude; A = exponent.  See Material.*/
+        const ImageFormat*    glossy;
+
+        const ImageFormat*    transmissive;
+        
+        const ImageFormat*    emissive;
+
+        /** Requires a floating-point format */
+        const ImageFormat*    wsPosition;
+
+        const ImageFormat*    csPosition;
+
+        /** Floating point RG texture storing the screen-space pixel
+            displacement since the previous frame. */
+        const ImageFormat*    ssVelocity;
+
+        /** RGB floating point */
+        const ImageFormat*    wsVelocity;
+
+        /** RGB floating point */
+        const ImageFormat*    csVelocity;
+
+        /** Camera-space Z.  Must be a floating-point, R-only texture. */
+        const ImageFormat*    csZ;
+
+        /** For the depth buffer */
+        const ImageFormat*    depth;
+
+        enum DepthEncoding {
+            /** Traditional (n)/(f-n) * (1 - f/z) encoding.  Easy to
+             produce from a projection matrix, few good numerical
+             properties.*/
+            HYPERBOLIC,
+
+            /** (z-n)/(f-n), provides uniform precision for fixed
+                point formats like DEPTH24, and easy to reconstruct
+                csZ directly from the depth buffer. Poor precision
+                under floating-point formats.
+
+                Accomplished using a custom vertex shader; not possible
+                with a projection matrix.
+            */
+            LINEAR,
+            
+            /** (n)/(f-n) * (f/z-1) encoding, good for floating-point
+             formats like DEPTH32F.
+             
+             Accomplished using glDepthRange(1.0f, 0.0f) with a traditionl
+             projection matrix. */
+            COMPLEMENTARY
+        };
+
+        DepthEncoding         depthEncoding;
+
+#endif
 
         /** World-space shading normal in RGB (after bump mapping). */
         bool                  wsNormal;

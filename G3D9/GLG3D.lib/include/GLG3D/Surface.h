@@ -280,12 +280,18 @@ public:
 
     Invoking this with elements of \a surfaceArray that are not of the
     same most-derived type as \a this will result in an error.
+
+    \param velocityStartOffset Time at which the previous frame should
+    be sampled when computing the GBuffer velocity buffer.  Set to
+    -1/framerate if performing reverse reprojection using velocity
+    buffers.
     */
     virtual void renderGBufferHomogeneous
     (RenderDevice*                rd, 
      Array<Surface::Ref>&         surfaceArray,
      const GBuffer::Specification& specification,
-     float                        timeOffset = 0.0f) const {}//= 0;
+     float                        timeOffset = 0.0f,
+     float                        velocityStartOffset = -1.0f) const {}//= 0;
 
 
     /** \brief Rendering a set of surfaces in wireframe, using the
