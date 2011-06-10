@@ -316,33 +316,11 @@ public:
 
     virtual bool hasPartialCoverage() const;
 
-    virtual void getCoordinateFrame(CoordinateFrame& c) const;
+    virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const;
 
-    virtual const MeshAlg::Geometry& objectSpaceGeometry() const;
+    virtual void getObjectSpaceBoundingSphere(Sphere&, float timeOffset = 0.0f) const;
 
-    virtual const Array<Vector3>& objectSpaceFaceNormals(bool normalize = true) const;
-
-    virtual const Array<MeshAlg::Face>& faces() const;
-
-    virtual const Array<MeshAlg::Edge>& edges() const;
-
-    virtual const Array<MeshAlg::Vertex>& vertices() const;
-
-    virtual const Array<Vector2>& texCoords() const;
-
-    virtual bool hasTexCoords() const;
-
-    virtual const Array<MeshAlg::Face>& weldedFaces() const;
-
-    virtual const Array<MeshAlg::Edge>& weldedEdges() const;
-
-    virtual const Array<MeshAlg::Vertex>& weldedVertices() const;
-
-    virtual const Array<int>& triangleIndices() const;
-
-    virtual void getObjectSpaceBoundingSphere(Sphere&) const;
-
-    virtual void getObjectSpaceBoundingBox(AABox&) const;
+    virtual void getObjectSpaceBoundingBox(AABox&, float timeOffset = 0.0f) const;
 
     virtual void render(RenderDevice* renderDevice) const;
     
@@ -353,15 +331,9 @@ public:
     virtual void renderShadowMappedLightPass(RenderDevice* rd, const GLight& light, const Matrix4& lightMVP, const Texture::Ref& shadowMap) const;
 
     virtual void renderShadowMappedLightPass(RenderDevice* rd, const GLight& light, const ShadowMap::Ref& shadowMap) const;
-
-    virtual int numBoundaryEdges() const;
-
-    virtual int numWeldedBoundaryEdges() const;
-
+    
     virtual bool depthWriteHint(float distanceToCamera) const;
-
-    virtual const Array<Vector4>& objectSpacePackedTangents() const;
-   
+       
     virtual bool renderSuperShaderPass
     (RenderDevice* rd, 
      const SuperShader::PassRef& pass,

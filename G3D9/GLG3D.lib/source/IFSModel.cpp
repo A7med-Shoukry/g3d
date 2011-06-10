@@ -686,7 +686,7 @@ void IFSModel::PosedIFSModel::render(RenderDevice* renderDevice) const {
             renderDevice->setShadeMode(RenderDevice::SHADE_SMOOTH);
         }
 
-        renderDevice->setObjectToWorldMatrix(coordinateFrame());
+        renderDevice->setObjectToWorldMatrix(cframe);
     
         sendGeometry(renderDevice);
   //  renderDevice->popState();
@@ -698,7 +698,7 @@ std::string IFSModel::PosedIFSModel::name() const {
 }
 
 
-void IFSModel::PosedIFSModel::getCoordinateFrame(CoordinateFrame& c) const {
+void IFSModel::PosedIFSModel::getCoordinateFrame(CoordinateFrame& c, float timeOffset) const {
     c = cframe;
 }
 
@@ -750,12 +750,12 @@ const Array<Vector2>&  IFSModel::PosedIFSModel::texCoords() const {
     return model->texArray;
 }
 
-void IFSModel::PosedIFSModel::getObjectSpaceBoundingSphere(Sphere& s) const {
+void IFSModel::PosedIFSModel::getObjectSpaceBoundingSphere(Sphere& s, float timeOffset) const {
     s = model->boundingSphere;
 }
 
 
-void IFSModel::PosedIFSModel::getObjectSpaceBoundingBox(AABox& b) const {
+void IFSModel::PosedIFSModel::getObjectSpaceBoundingBox(AABox& b, float timeOffset) const {
     b = model->boundingBox;
 }
 

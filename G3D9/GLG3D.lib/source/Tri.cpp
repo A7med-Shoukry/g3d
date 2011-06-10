@@ -255,6 +255,7 @@ void Tri::Intersector::getResult
 #endif
 
 void Tri::getTris(const Surface::Ref& pmodel, Array<Tri>& triArray, const CFrame& xform) {
+    const float timeOffset = 0.0f;
     const SuperSurface::Ref& model = pmodel.downcast<SuperSurface>();
 
     alwaysAssertM(model.notNull(), "Non-SuperSurface present in World.");
@@ -281,7 +282,9 @@ void Tri::getTris(const Surface::Ref& pmodel, Array<Tri>& triArray, const CFrame
 
     // Object to world matrix.  Guaranteed to be an RT transformation,
     // so we can directly transform normals as if they were vectors.
-    CFrame cframe = xform * model->coordinateFrame();
+    CFrame modelFrame;
+    model->getCoordinateFrame(modelFrame, timeOffset);
+    CFrame cframe = xform *modelFrame;
 
     for (int i = 0; i < index.size(); i += 3) {
         const int v0 = index[i + 0];

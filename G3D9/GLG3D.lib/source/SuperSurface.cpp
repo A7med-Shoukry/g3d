@@ -425,6 +425,7 @@ bool SuperSurface::renderNonShadowedOpaqueTerms(
 bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
     RenderDevice*         rd,
     const Lighting::Ref&  lighting) const {
+    const float timeOffset = 0.0f;
 
     const Material::Ref&  material = m_gpuGeom->material;
     const SuperBSDF::Ref& bsdf     = material->bsdf();
@@ -460,7 +461,12 @@ bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
         // SuperShader only supports SuperShader::NonShadowedPass::LIGHTS_PER_PASS lights, so we have to make multiple passes
         Array<GLight> lights = reducedLighting->lightArray;
 
-        const Sphere& myBounds = worldSpaceBoundingSphere();
+        Sphere myBounds;
+        CFrame cframe;
+        getObjectSpaceBoundingSphere(myBounds, timeOffset);
+        getCoordinateFrame(cframe, timeOffset);
+        myBounds = cframe.toWorldSpace(myBounds);
+        
         // Remove lights that cannot affect this object
         for (int L = 0; L < lights.size(); ++L) {
             Sphere s = lights[L].effectSphere();
@@ -866,123 +872,18 @@ bool SuperSurface::hasPartialCoverage() const {
 }
 
 
-void SuperSurface::getCoordinateFrame(CoordinateFrame& c) const {
+void SuperSurface::getCoordinateFrame(CoordinateFrame& c, float timeOffset) const {
     c = m_frame;
 }
 
 
-const MeshAlg::Geometry& SuperSurface::objectSpaceGeometry() const {
-    return *(m_cpuGeom.geometry);
-}
-
-
-const Array<Vector4>& SuperSurface::objectSpacePackedTangents() const {
-    if (m_cpuGeom.packedTangent == NULL) {
-        const static Array<Vector4> x;
-        return x;
-    } else {
-        return *(m_cpuGeom.packedTangent);
-    }
-}
-
-
-const Array<Vector3>& SuperSurface::objectSpaceFaceNormals(bool normalize) const {
-    static Array<Vector3> n;
-    debugAssert(false);
-    return n;
-    // TODO
-}
-
-
-const Array<MeshAlg::Face>& SuperSurface::faces() const {
-    static Array<MeshAlg::Face> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<MeshAlg::Edge>& SuperSurface::edges() const {
-    static Array<MeshAlg::Edge> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<MeshAlg::Vertex>& SuperSurface::vertices() const {
-    static Array<MeshAlg::Vertex> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<Vector2>& SuperSurface::texCoords() const {
-    if (m_cpuGeom.texCoord0 == NULL) {
-        const static Array<Vector2> x;
-        return x;
-    } else {
-        return *(m_cpuGeom.texCoord0);
-    }
-}
-
-
-bool SuperSurface::hasTexCoords() const {
-    return (m_cpuGeom.texCoord0 != 0) && (m_cpuGeom.texCoord0->size() > 0);
-}
-
-
-const Array<MeshAlg::Face>& SuperSurface::weldedFaces() const {
-    static Array<MeshAlg::Face> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<MeshAlg::Edge>& SuperSurface::weldedEdges() const {
-    static Array<MeshAlg::Edge> e;
-    debugAssert(false);
-    return e;
-    // TODO
-}
-
-
-const Array<MeshAlg::Vertex>& SuperSurface::weldedVertices() const {
-    static Array<MeshAlg::Vertex> v;
-    return v;
-    debugAssert(false);
-    // TODO
-}
-
-
-const Array<int>& SuperSurface::triangleIndices() const {
-    alwaysAssertM(m_gpuGeom->primitive == PrimitiveType::TRIANGLES, "This model is not composed of triangles."); 
-    return *(m_cpuGeom.index);
-}
-
-
-void SuperSurface::getObjectSpaceBoundingSphere(Sphere& s) const {
+void SuperSurface::getObjectSpaceBoundingSphere(Sphere& s, float timeOffset) const {
     s = m_gpuGeom->sphereBounds;
 }
 
 
-void SuperSurface::getObjectSpaceBoundingBox(AABox& b) const {
+void SuperSurface::getObjectSpaceBoundingBox(AABox& b, float timeOffset) const {
     b = m_gpuGeom->boxBounds;
-}
-
-
-int SuperSurface::numBoundaryEdges() const {
-    // TODO
-    debugAssert(false);
-    return 0;
-}
-
-
-int SuperSurface::numWeldedBoundaryEdges() const {
-    // TODO
-    return 0;
 }
 
 

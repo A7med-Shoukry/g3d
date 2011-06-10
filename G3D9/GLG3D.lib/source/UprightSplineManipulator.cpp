@@ -19,7 +19,7 @@
 
 namespace G3D {
 
-class PosedCameraSpline : public Surface {
+class UprightSplineSurface : public Surface {
 private:
 
     UprightSpline* spline;
@@ -31,7 +31,7 @@ private:
 
 public:
 
-    PosedCameraSpline(UprightSpline* s, const Color3& c) : spline(s), color(c) {
+    UprightSplineSurface(UprightSpline* s, const Color3& c) : spline(s), color(c) {
         if (spline->control.size() > 1) {
             numVertices = spline->control.size() * 11 + 1;
 
@@ -84,7 +84,7 @@ public:
             return;
         }
 
-        rd->pushState();
+        rd->pushState(); {
             rd->setObjectToWorldMatrix(CoordinateFrame());
         
             Color4 c;
@@ -136,99 +136,27 @@ public:
             glDisable(GL_FOG);
             rd->endIndexedPrimitives();
         
-        rd->popState();
+        } rd->popState();
     }
-
-
-    virtual const Array< MeshAlg::Edge > & edges () const {
-        static Array< MeshAlg::Edge > x;
-        return x;
-    }
-
-    virtual const Array< MeshAlg::Face > & faces () const {
-        static Array< MeshAlg::Face > x;
-        return x;
-    }
-
-    virtual void getCoordinateFrame (CoordinateFrame &c) const {
+    
+    virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const {
         c = CoordinateFrame();
     }
 
-    virtual void getObjectSpaceBoundingBox(AABox& b) const {
+    virtual void getObjectSpaceBoundingBox(AABox& b, float timeOffset = 0.0f) const {
         b = boxBounds;
     }
 
-    virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
+    virtual void getObjectSpaceBoundingSphere(Sphere& s, float timeOffset = 0.0f) const {
         boxBounds.getBounds(s);
     }
-
-    virtual void getObjectSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize = true) const {
-        (void)faceNormals;
-        (void)normalize;
-    }
-
-    virtual void getWorldSpaceBoundingBox (AABox &box) const {
-        getObjectSpaceBoundingBox(box);
-    }
-
-    virtual void getWorldSpaceBoundingSphere (Sphere &s) const {
-        getObjectSpaceBoundingSphere(s);
-    }
-
-    virtual bool hasTexCoords () const {
-        return false;
-    }
-
+    
     virtual bool hasTransparency () const {
         return true;
     }
 
     virtual std::string name () const {
-        return "Camera Spline";
-    }
-
-    virtual int numBoundaryEdges () const {
-        return 0;
-    }
-
-    virtual int numWeldedBoundaryEdges () const {
-        return 0;
-    }
-
-    virtual const Array<Vector3>& objectSpaceFaceNormals(bool normalize = true) const {
-        static Array<Vector3> x;
-        (void)normalize;
-        return x;
-    }
-
-    virtual const MeshAlg::Geometry& objectSpaceGeometry() const {
-        static MeshAlg::Geometry x;
-        return x;
-    }
-
-    virtual const Array<int>& triangleIndices() const {
-        static Array<int> x;
-        return x;
-    }
-
-    virtual const Array< MeshAlg::Vertex > & vertices () const {
-        static Array< MeshAlg::Vertex > x;
-        return x;
-    }
-
-    virtual const Array< MeshAlg::Edge > & weldedEdges () const {
-        static Array< MeshAlg::Edge >  x;
-        return x;
-    }
-
-    virtual const Array< MeshAlg::Face > & weldedFaces () const {
-        static Array< MeshAlg::Face > x;
-        return x;
-    }
-
-    virtual const Array< MeshAlg::Vertex > & weldedVertices () const {
-        static Array< MeshAlg::Vertex > x;
-        return x;
+        return "UprightSplineSurface";
     }
 
     virtual void sendGeometry(G3D::RenderDevice*) const {
@@ -294,7 +222,7 @@ void UprightSplineManipulator::onPose
     (void)posed2DArray;
 
     if (m_showPath && (m_spline.control.size() > 0)) {
-        posedArray.append(new PosedCameraSpline(&m_spline, m_pathColor));
+        posedArray.append(new UprightSplineSurface(&m_spline, m_pathColor));
     }
 }
 

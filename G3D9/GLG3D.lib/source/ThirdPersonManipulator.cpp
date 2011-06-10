@@ -341,8 +341,8 @@ void ThirdPersonManipulator::render(RenderDevice* rd) const {
     rd->popState();
 }
 
-
-class TPMSurface : public EmptySurface {
+/** The Surface that renders a ThirdPersonManipulator */
+class TPMSurface : public Surface {
     friend class ThirdPersonManipulator;
 
     ThirdPersonManipulator* m_manipulator;
@@ -372,16 +372,16 @@ public:
         return "ThirdPersonManipulator";
     }
 
-    virtual void getCoordinateFrame(CoordinateFrame& c) const {
+    virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const {
         m_manipulator->getControlFrame(c);
     }
 
-    virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
+    virtual void getObjectSpaceBoundingSphere(Sphere& s, float timeOffset = 0.0f) const {
         s.radius = 2;
         s.center = Vector3::zero();
     }
 
-    virtual void getObjectSpaceBoundingBox(AABox& b) const {
+    virtual void getObjectSpaceBoundingBox(AABox& b, float timeOffset = 0.0f) const {
         b = AABox(Vector3(-2,-2,-2), Vector3(2,2,2));
     }
 };

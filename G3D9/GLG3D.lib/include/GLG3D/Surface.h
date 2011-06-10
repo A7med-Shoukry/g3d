@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2003-11-15
-  \edited  2011-06-08
+  \edited  2011-06-09
  */ 
 
 #ifndef GLG3D_Surface_h
@@ -17,6 +17,7 @@
 #include "GLG3D/SkyParameters.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/ShadowMap.h"
+#include "G3D/units.h"
 
 namespace G3D {
 
@@ -68,6 +69,20 @@ typedef ReferenceCountedPointer<class Surface> SurfaceRef;
    categorizeByDerivedType<Surface::Ref> to distinguish subclasses and
    then invoke individual rendering methods on arrays of surface
    subclasses at once.
+
+   Most methods take a \a timeOffset argument.  This is the time in seconds
+   to offset the result from the time at which the model was posed.  The 
+   location of the rendered object is only an approximation when this value
+   is non-zero.  For most Surface subclasses, small negative offsets produce fairly
+   accurate positioning because the object can be interpolated from the previous pose-time state.
+   Positive offsets lead to extrapolation and are often less accurate.
+   Note that one could also render at multiple times by posing the original
+   models at different times.  However, models do not guarantee that they will
+   produce the same number of Surface%s, or Surface%s with the same topology
+   each time that they are posed.  The use of timeOffset allows the caller
+   to assume that the geometry deforms but has the same topology across an
+   interval.
+
  */
 class Surface : public ReferenceCountedObject {
 protected:
@@ -95,13 +110,14 @@ public:
         ALPHA_BLEND
     };
 
-#if 0
-
-    virtual void getCoordinateFrame(CoordinateFrame& cframe, float timeOffset = 0.0f) const = 0;
+    virtual void getCoordinateFrame(CoordinateFrame& cframe, float timeOffset = 0.0f * units::seconds()) const = 0;
 
     virtual void getObjectSpaceBoundingBox(AABox& box, float timeOffset = 0.0f) const = 0;
 
     virtual void getObjectSpaceBoundingSphere(Sphere& sphere, float timeOffset = 0.0f) const = 0;
+
+#if 0
+
 
     /** Clears the arrays and appends indexed triangle lists. Not required to be implemented.*/
     virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord, float timeOffset = 0.0f) {}
@@ -196,37 +212,6 @@ public:
 
     /** Computes the array of models that can be seen by \a camera*/
     static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels);
-
-    /** Object-to-world space coordinate frame. 
-    \deprecated*/
-    virtual void getCoordinateFrame(CFrame& c) const = 0;
-
-    /** \deprecated */
-    virtual void getObjectSpaceBoundingBox(AABox&) const = 0;
-
-    /** \deprecated */
-    virtual void getObjectSpaceBoundingSphere(Sphere&) const = 0;
-
-    /** The default implementation invokes getCoordinateFrame(CFrame&). \deprecated */
-    virtual CoordinateFrame coordinateFrame() const;
-
-    /** The default implementation calls getObjectSpaceBoundingSphere. \deprecated */
-    virtual Sphere objectSpaceBoundingSphere() const;
-
-    /** The default implementation calls getObjectSpaceBoundingBox.  \deprecated */
-    virtual AABox objectSpaceBoundingBox() const;
-
-    /** \deprecated */
-    virtual void getWorldSpaceBoundingSphere(Sphere& s) const;
-
-    /** \deprecated */
-    virtual Sphere worldSpaceBoundingSphere() const;
-
-    /** \deprecated */
-    virtual void getWorldSpaceBoundingBox(AABox& box) const;
-
-    /** \deprecated */
-    virtual AABox worldSpaceBoundingBox() const;
 
     /** Render using current fixed function lighting environment. Do
         not change the current state. Behavior with regard to stencil,
@@ -427,23 +412,6 @@ protected:
     */
     virtual void defaultRender(RenderDevice* rd) const = 0;
 };
-
-
-/** A surface subclass that overrides the CPU geometry methods to do nothing. */
-class EmptySurface : public Surface {
-public:
-
-    virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
-        s.radius = finf();
-        s.center = Vector3::zero();
-    }
-
-    virtual void getObjectSpaceBoundingBox(AABox& b) const {
-        b = AABox::inf();
-    }
-
-};
-
 
 /////////////////////////////////////////////////////////////////
 

@@ -149,13 +149,19 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
     // Compute bounds
     m_lastBoxBounds = AABox::empty();
     m_lastSphereBounds = Sphere(m_frame.translation, 0);
+    const float timeOffset = 0.0f;
     for (int i = oldLen; i < surfaceArray.size(); ++i) {
         AABox b;
         Sphere s;
         const Surface::Ref& surf = surfaceArray[i];
-        
-        surf->getWorldSpaceBoundingBox(b);
-        surf->getWorldSpaceBoundingSphere(s);
+
+        CFrame cframe;
+        surf->getCoordinateFrame(cframe, timeOffset);
+
+        surf->getObjectSpaceBoundingBox(b);
+        surf->getObjectSpaceBoundingSphere(s);
+        cframe.toWorldSpace(b).getBounds(b);
+        s = cframe.toObjectSpace(s);
         m_lastBoxBounds.merge(b);
         m_lastSphereBounds.radius = max(m_lastSphereBounds.radius,
                                         (s.center - m_lastSphereBounds.center).length() + s.radius);

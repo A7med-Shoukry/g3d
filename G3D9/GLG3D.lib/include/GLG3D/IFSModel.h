@@ -6,7 +6,7 @@
   \cite Original IFS code by Nate Robbins
 
   \created 2003-11-12
-  \edited  2011-06-09
+  \edited  2011-06-10
  */ 
 
 
@@ -51,7 +51,7 @@ protected:
             const GMaterial& _mat, bool _useMat);
         virtual ~PosedIFSModel() {}
         virtual std::string name() const;
-        virtual void getCoordinateFrame(CoordinateFrame&) const;
+        virtual void getCoordinateFrame(CoordinateFrame&, float timeOffset = 0.0f) const;
         virtual const MeshAlg::Geometry& objectSpaceGeometry() const;
         virtual const Array<MeshAlg::Face>& faces() const;
         virtual const Array<MeshAlg::Edge>& edges() const;
@@ -62,8 +62,8 @@ protected:
         virtual const Array<Vector2>& texCoords() const;
         virtual bool hasTexCoords() const;
         virtual const Array<int>& triangleIndices() const;
-        virtual void getObjectSpaceBoundingSphere(Sphere&) const;
-        virtual void getObjectSpaceBoundingBox(AABox&) const;
+        virtual void getObjectSpaceBoundingSphere(Sphere&, float timeOffset = 0.0f) const;
+        virtual void getObjectSpaceBoundingBox(AABox&, float timeOffset = 0.0f) const;
         virtual void render(RenderDevice* renderDevice) const;
         virtual int numBoundaryEdges() const;
         virtual int numWeldedBoundaryEdges() const;
@@ -97,15 +97,15 @@ protected:
 
 
     /** Shared by all models */
-    static VertexBufferRef           varArea;
+    static VertexBufferRef      varArea;
 
     // Used by the last object to render.  If the
     // new model is the same as the old one, an upload
     // step can be avoided.
     static IFSModelRef          lastModel;
-    static VertexRange                  lastVertexVAR;
-    static VertexRange                  lastNormalVAR;
-    static VertexRange                  lastTexCoordVAR;
+    static VertexRange          lastVertexVAR;
+    static VertexRange          lastNormalVAR;
+    static VertexRange          lastTexCoordVAR;
 
     IFSModel();
     

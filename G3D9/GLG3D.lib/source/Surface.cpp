@@ -24,10 +24,13 @@ namespace G3D {
 
 
 void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D) {
+    const float timeOffset = 0.0f;
     rd->pushState();
     for (int i = 0; i < surface3D.size(); ++i) {
         const Surface::Ref& surface = surface3D[i];
-        rd->setObjectToWorldMatrix(surface->coordinateFrame());
+        CFrame coordinateFrame;
+        surface->getCoordinateFrame(coordinateFrame, timeOffset);
+        rd->setObjectToWorldMatrix(coordinateFrame);
         surface->sendGeometry(rd);
     }
     rd->popState();
@@ -36,16 +39,21 @@ void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3
 
 void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds) {
     bounds = AABox::empty();
+    float timeOffset = 0.0f;
 
     for (int i = 0; i < models.size(); ++i) {
         AABox temp;
-        models[i]->worldSpaceBoundingBox().getBounds(temp);
+        CFrame cframe;
+        models[i]->getCoordinateFrame(cframe, timeOffset);
+        models[i]->getObjectSpaceBoundingBox(temp, timeOffset);
+        cframe.toWorldSpace(temp).getBounds(temp);
         bounds.merge(temp);
     }
 }
 
 
 void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color) {
+    float timeOffset = 0.0f;
     rd->pushState(); {
         rd->setDepthWrite(false);
         rd->setDepthTest(RenderDevice::DEPTH_LEQUAL);
@@ -57,7 +65,9 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
         rd->setLineWidth(0.8f);
 
         for (int i = 0; i < surface3D.size(); ++i) {
-            rd->setObjectToWorldMatrix(surface3D[i]->coordinateFrame());
+            CFrame cframe;
+            surface3D[i]->getCoordinateFrame(cframe, timeOffset);
+            rd->setObjectToWorldMatrix(cframe);
             surface3D[i]->sendGeometry(rd);
         }
     } rd->popState();
@@ -72,12 +82,18 @@ void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds)
 
 
 void Surface::cull(const GCamera& camera, const Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels) {
+    static const float timeOffset = 0.0f;
     outModels.fastClear();
 
     Array<Plane> clipPlanes;
     camera.getClipPlanes(viewport, clipPlanes);
     for (int i = 0; i < allModels.size(); ++i) {
-        const Sphere& sphere = allModels[i]->worldSpaceBoundingSphere();
+        Sphere sphere;
+        CFrame c;
+        allModels[i]->getCoordinateFrame(c, timeOffset);
+        allModels[i]->getObjectSpaceBoundingSphere(sphere, timeOffset);
+        sphere = c.toWorldSpace(sphere);
+
         if (! sphere.culledBy(clipPlanes)) {
             outModels.append(allModels[i]);
         }
@@ -143,7 +159,9 @@ void Surface::renderDepthOnly
                     }
                 }
 
-                rd->setObjectToWorldMatrix(model->coordinateFrame());
+                CFrame cframe;
+                model->getCoordinateFrame(cframe);
+                rd->setObjectToWorldMatrix(cframe);
                 rd->setVARs(geom->vertex, VertexRange(), geom->texCoord0);
                 rd->sendIndices((RenderDevice::Primitive)geom->primitive, geom->index);
             
@@ -385,8 +403,11 @@ public:
 
     ModelSorter(const Surface::Ref& m, const Vector3& axis) : model(m) {
         Sphere s;
-        m->getWorldSpaceBoundingSphere(s);
-        sortKey = axis.dot(s.center);
+        CFrame c;
+        const float timeOffset = 0.0f;
+        m->getCoordinateFrame(c, timeOffset);
+        m->getObjectSpaceBoundingSphere(s, timeOffset);
+        sortKey = axis.dot(c.pointToWorldSpace(s.center));
     }
 
     inline bool operator>(const ModelSorter& s) const {
@@ -419,71 +440,11 @@ void Surface::sortFrontToBack(
 }
 
 
-CoordinateFrame Surface::coordinateFrame() const {
-    CoordinateFrame c;
-    getCoordinateFrame(c);
-    return c;
-}
-
-
-Sphere Surface::objectSpaceBoundingSphere() const {
-    Sphere s;
-    getObjectSpaceBoundingSphere(s);
-    return s;
-}
-
-
-void Surface::getWorldSpaceBoundingSphere(Sphere& s) const {
-    CoordinateFrame C;
-    getCoordinateFrame(C);
-    getObjectSpaceBoundingSphere(s);
-    s = C.toWorldSpace(s);
-}
-
-
-Sphere Surface::worldSpaceBoundingSphere() const {
-    Sphere s;
-    getWorldSpaceBoundingSphere(s);
-    return s;
-}
-
-
-AABox Surface::objectSpaceBoundingBox() const {
-    AABox b;
-    getObjectSpaceBoundingBox(b);
-    return b;
-}
-
-
-void Surface::getWorldSpaceBoundingBox(AABox& box) const {
-    getObjectSpaceBoundingBox(box);
-
-    if (box.isEmpty()) {
-        // Nothing to do!
-    } else if (! box.isFinite()) {
-        box = AABox::inf();
-    } else {
-        // Transform the object space box to world space and then re-bound
-        CoordinateFrame C;
-        getCoordinateFrame(C);
-        const Box& temp = C.toWorldSpace(box);        
-        temp.getBounds(box);
-    }
-}
-
-
-AABox Surface::worldSpaceBoundingBox() const {
-    AABox b;
-    getWorldSpaceBoundingBox(b);
-    return b;
-}
-
-
 void Surface::renderNonShadowed(
     RenderDevice* rd,
     const LightingRef& lighting) const {
 
-    rd->pushState();
+    rd->pushState(); {
         if (rd->colorWrite()) {
             rd->setAmbientLightColor(Color3::white() * 0.5);
             Array<GLight> ns;
@@ -494,7 +455,7 @@ void Surface::renderNonShadowed(
             rd->enableLighting();
         }
         render(rd);
-    rd->popState();
+    } rd->popState();
 }
 
 
@@ -540,6 +501,8 @@ void Surface::renderTranslucent
  RefractionQuality              maxRefractionQuality,
  AlphaMode                      alphaMode) {
 
+    const float timeOffset = 0.0f;
+
     rd->pushState();
 
     debugAssertGLOk();
@@ -574,7 +537,11 @@ void Surface::renderTranslucent
     for (int m = 0; m < modelArray.size(); ++m) {
         Surface::Ref model = modelArray[m];
 
-        const float distanceToCamera = (model->worldSpaceBoundingSphere().center - cameraFrame.translation).dot(cameraFrame.lookVector());
+        CFrame cframe;
+        Sphere sphere;
+        model->getCoordinateFrame(cframe, timeOffset);
+        model->getObjectSpaceBoundingSphere(sphere, timeOffset);
+        const float distanceToCamera = (sphere.center + cframe.translation - cameraFrame.translation).dot(cameraFrame.lookVector());
 
         rd->setDepthWrite(oldDepthWrite && model->depthWriteHint(distanceToCamera));
 
@@ -612,7 +579,7 @@ void Surface::renderTranslucent
                 {
                     rd->setDepthWrite(false);
                     rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
-                    const Sphere& bounds3D = gmodel->worldSpaceBoundingSphere();
+                    const Sphere& bounds3D = cframe.toWorldSpace(sphere);
                     
                     // Estimate of distance from object to background to
                     // be constant (we could read back depth buffer, but
@@ -638,7 +605,7 @@ void Surface::renderTranslucent
                     refractShader->args.set("lambertianMap", Texture::whiteIfNull(material->bsdf()->lambertian().texture()));
                     refractShader->args.set("lambertianConstant", material->bsdf()->lambertian().constant());
                     rd->setShader(refractShader);
-                    rd->setObjectToWorldMatrix(model->coordinateFrame());
+                    rd->setObjectToWorldMatrix(cframe);
                     gmodel->sendGeometry(rd);
                 }
                 rd->popState();

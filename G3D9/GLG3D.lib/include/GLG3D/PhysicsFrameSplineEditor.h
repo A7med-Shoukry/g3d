@@ -41,7 +41,7 @@ protected:
     ThirdPersonManipulator::Ref  m_nodeManipulator;
     GuiButton*                   m_removeSelectedButton;
 
-    class SplineSurface : public EmptySurface {
+    class SplineSurface : public Surface {
     public:
         PhysicsFrameSplineEditor* m_manipulator;
         
@@ -53,8 +53,16 @@ protected:
             return "PhysicsFrameSplineEditor";
         }
         
-        virtual void getCoordinateFrame(CoordinateFrame& c) const {
+        virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const {
             c = CFrame();
+        }
+
+        virtual void getObjectSpaceBoundingBox(G3D::AABox& b, float timeOffset = 0.0f) const {
+            b = AABox::inf();
+        }
+
+        virtual void getObjectSpaceBoundingSphere(G3D::Sphere& s, float timeOffset = 0.0f) const {
+            s = Sphere(Point3::zero(), finf());
         }
 
         virtual void sendGeometry(RenderDevice* rd) const {

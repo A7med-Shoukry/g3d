@@ -291,6 +291,8 @@ void GBuffer::compute
  const GCamera&                 camera,
  const Array<Surface::Ref>&     modelArray) const {
 
+    float timeOffset = 0.0f;
+
     m_camera = camera;
     Array<SuperSurface::Ref>  genericArray;
     Array<Surface::Ref>       nonGenericArray;
@@ -349,7 +351,9 @@ void GBuffer::compute
                 m_positionShader->args.set("lambertianMap", Texture::opaqueBlackIfNull(bsdf->lambertian().texture()));
                 m_positionShader->args.set("backside", 1.0f);
 
-                rd->setObjectToWorldMatrix(model->coordinateFrame());
+                CFrame cframe;
+                model->getCoordinateFrame(cframe, timeOffset);
+                rd->setObjectToWorldMatrix(cframe);
                 rd->setVARs(geom->vertex, geom->normal, geom->texCoord0, geom->packedTangent);
                 rd->sendIndices((RenderDevice::Primitive)geom->primitive, geom->index);
             
@@ -390,6 +394,7 @@ void GBuffer::compute
 (RenderDevice* rd,
  const SuperSurface::Ref& model) const {
 
+     float timeOffset = 0.0f;
     debugAssertGLOk();
 
     // Configure the shader with the coefficients
@@ -409,7 +414,9 @@ void GBuffer::compute
 
     // Render front faces
     rd->setShader(shader);
-    rd->setObjectToWorldMatrix(model->coordinateFrame());
+    CFrame cframe;
+    model->getCoordinateFrame(cframe, timeOffset);
+    rd->setObjectToWorldMatrix(cframe);
     rd->setVARs(geom->vertex, geom->normal, geom->texCoord0, geom->packedTangent);
     rd->sendIndices((RenderDevice::Primitive)geom->primitive, geom->index);
     
