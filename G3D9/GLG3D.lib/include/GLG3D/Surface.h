@@ -97,7 +97,7 @@ public:
 
 #if 0
 
-    virtual void getCFrame(CFrame& cframe, float timeOffset = 0.0f) const = 0;
+    virtual void getCoordinateFrame(CoordinateFrame& cframe, float timeOffset = 0.0f) const = 0;
 
     virtual void getObjectSpaceBoundingBox(AABox& box, float timeOffset = 0.0f) const = 0;
 
@@ -106,12 +106,28 @@ public:
     /** Clears the arrays and appends indexed triangle lists. Not required to be implemented.*/
     virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord, float timeOffset = 0.0f) {}
 
+    /**
+     Forward-render all illumination terms.
 
+     Invoking this with elements of \a surfaceArray that are not of the same most-derived type as \a this will result in an error.
+     */
     virtual void render(RenderDevice* rd, Array<Surface::Ref>& surface, const Lighting::Ref& lighting, float timeOffset = 0.f) const;
 
-    virtual void renderDepthOnly(RenderDevice* rd, Array<Surface::Ref>& surface, float timeOffset = 0.0f) const = 0;
+    /** 
+    \brief Render all instances of \a surfaceArray to the currently-bound Framebuffer using the fields and mapping 
+    dictated by \a specification.  This is also used for depth-only (z-prepass) rendering.
 
-    virtual void renderGBuffer(RenderDevice* rd, Array<Surface::Ref>& surface, const GBufer::Specification& specification, float timeOffset = 0.f) const = 0;
+    Invoking this with elements of \a surfaceArray that are not of the same most-derived type as \a this will result in an error.
+    */
+    virtual void renderGBuffer(RenderDevice* rd, Array<Surface::Ref>& surfaceArray, const GBufer::Specification& specification, float timeOffset = 0.0f) const = 0;
+
+
+    /** \brief Rendering a set of surfaces in wireframe, using the current blending mode. 
+       This is primarily used for debugging.
+       
+    Invoking this with elements of \a surfaceArray that are not of the same most-derived type as \a this will result in an error.
+       */
+    virtual void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black(), float timeOffset = 0.0f) const = 0;
 
     // TODO: Why is renderShadowMappedLightPass deprecated?  
     //
@@ -122,6 +138,16 @@ public:
     virtual ~Surface() {}
 
     virtual std::string name() const = 0;
+
+    /** A hint to the renderer indicating that this surface should
+        write to the depth buffer.  Typically overridden to return
+        false for surfaces with very low partial coverage (alpha) or
+        transmission values, or to resolve artifacts for specific
+        scenes.  The default value is ! hasTransmission().*/
+    virtual bool depthWriteHint(float distanceToCamera) const {
+        (void)distanceToCamera;
+        return ! hasTransmission();
+    }
 
     /** If true, this object transmits light and depends on
         back-to-front rendering order and should be rendered in sorted
@@ -171,32 +197,35 @@ public:
     /** Computes the array of models that can be seen by \a camera*/
     static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels);
 
-    /** Object-to-world space coordinate frame.*/
+    /** Object-to-world space coordinate frame. 
+    \deprecated*/
     virtual void getCoordinateFrame(CFrame& c) const = 0;
 
+    /** \deprecated */
     virtual void getObjectSpaceBoundingBox(AABox&) const = 0;
 
+    /** \deprecated */
     virtual void getObjectSpaceBoundingSphere(Sphere&) const = 0;
 
-    /** The default implementation invokes getCoordinateFrame(CFrame&) */
+    /** The default implementation invokes getCoordinateFrame(CFrame&). \deprecated */
     virtual CoordinateFrame coordinateFrame() const;
 
-    /** Clears the arrays and appends indexed triangle lists. Not required to be implemented.*/
-    virtual void getObjectSpaceGeometry(Array<int>& index, Array<Point3>& vertex, Array<Vector3>& normal, Array<Vector4>& packedTangent, Array<Point2>& texCoord) {}
-
-
-    /** The default implementation calls getObjectSpaceBoundingSphere */
+    /** The default implementation calls getObjectSpaceBoundingSphere. \deprecated */
     virtual Sphere objectSpaceBoundingSphere() const;
 
-    /** The default implementation calls getObjectSpaceBoundingBox */
+    /** The default implementation calls getObjectSpaceBoundingBox.  \deprecated */
     virtual AABox objectSpaceBoundingBox() const;
 
+    /** \deprecated */
     virtual void getWorldSpaceBoundingSphere(Sphere& s) const;
 
+    /** \deprecated */
     virtual Sphere worldSpaceBoundingSphere() const;
 
+    /** \deprecated */
     virtual void getWorldSpaceBoundingBox(AABox& box) const;
 
+    /** \deprecated */
     virtual AABox worldSpaceBoundingBox() const;
 
     /** Render using current fixed function lighting environment. Do
@@ -204,6 +233,8 @@ public:
         shadowing, etc. is intentionally undefinded.
 
         Default implementation calls defaultRender.
+
+        \deprecated
     */
     virtual void render(class RenderDevice* renderDevice) const;
 
@@ -233,6 +264,7 @@ public:
 
      The implementation must ignore shadow casting lights from \a lighting.
 
+        \deprecated
     */
     virtual void renderNonShadowed(
         RenderDevice* rd,
@@ -240,7 +272,10 @@ public:
 
     /** Render illumination from this source additively, held out by the shadow map (which the caller 
         must have computed, probably using renderNonShadowed).  Default implementation
-        configures the shadow map in texture unit 1 and calls render. */
+        configures the shadow map in texture unit 1 and calls render. 
+
+        \deprecated
+        */
     virtual void renderShadowMappedLightPass(
         RenderDevice* rd, 
         const GLight& light,
@@ -257,6 +292,7 @@ public:
     /** 
         Sends the geometry for all of the specified surfaces, each with the corresponding coordinateFrame
         bound as the RenderDevice objectToWorld matrix.
+        \deprecated
      */
     static void sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D);
 
@@ -266,6 +302,7 @@ public:
         Does not sort or cull based on the view frustum of the camera like other batch rendering routines.
 
         Used for early-Z and shadow mapping.
+        \deprecated
      */    
     static void renderDepthOnly
     (RenderDevice* rd, 
@@ -309,6 +346,8 @@ public:
 
       This is useful when applying your own G3D::Shader to an existing
       Surface.
+
+      \deprecated
     */
     virtual void sendGeometry(RenderDevice* rd) const = 0;
 
@@ -373,26 +412,6 @@ public:
      AlphaMode                      alphaMode = ALPHA_BINARY);
 
 
-    /** A hint to the renderer indicating that this surface should
-        write to the depth buffer.  Typically overridden to return
-        false for surfaces with very low partial coverage (alpha) or
-        transmission values, or to resolve artifacts for specific
-        scenes.  The default value is ! hasTransmission().*/
-    virtual bool depthWriteHint(float distanceToCamera) const {
-        (void)distanceToCamera;
-        return ! hasTransmission();
-    }
-
-
-    /** \brief Extract all Surface instances that are the same subclass as \a this.
-  
-     Callers can then invoke the Array versions of methods.
-
-     If there are more than one moved to the mine array, 
-     renderArray will be called once for all of them, rather than each receiving an individual render() call. The typical override is:
-
-     This isn't a static method because it needs to be overridden.*/
-
     
 
 protected:
@@ -403,6 +422,8 @@ protected:
 
        Default implementation renders the triangles returned by getIndices
        and getGeometry. 
+
+       \deprecated
     */
     virtual void defaultRender(RenderDevice* rd) const = 0;
 };
