@@ -267,18 +267,18 @@ void App::onInit() {
 //    GuiWindow::Ref g = GuiWindow::create();
 
     Framebuffer::Ref fb = Framebuffer::create("Framebuffer");
-    Texture::Ref rgb16f = Texture::createEmpty("rgb16f", 640, 400, ImageFormat::RGB16F(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+    Texture::Ref rg16f = Texture::createEmpty("rgb16f", 640, 400, ImageFormat::RG16F(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
     Texture::Ref rgb8 = Texture::createEmpty("rgb8", 640, 400, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
 
 
-    fb->set(Framebuffer::COLOR0, rgb16f);
+    fb->set(Framebuffer::COLOR0, rg16f);
     fb->set(Framebuffer::COLOR1, rgb8);
 
     renderDevice->push2D(fb);
     Draw::rect2D(Rect2D::xywh(10, 20, 100, 100), renderDevice);
     renderDevice->pop2D();
 
-
+    ::exit(0);
 
     GImage im(10,10,3);
     show(im);
