@@ -1,6 +1,6 @@
 /**
-  @file GBuffer.h
-  @author Morgan McGuire, http://graphics.cs.williams.edu
+  \file GLG3D/GBuffer.h
+  \author Morgan McGuire, http://graphics.cs.williams.edu
  */
 #ifndef GLG3D_GBuffer_h
 #define GLG3D_GBuffer_h
@@ -69,6 +69,15 @@ public:
         /** Camera-space position in RGB. */
         bool                  csPosition;
 
+        /** Screen-space velocity in RG */
+        bool                  ssVelocity;
+
+        /** Camera-space velocity in RGB */
+        bool                  csVelocity;
+
+        /** World-space velocity in RGB */
+        bool                  wsVelocity;
+
         /** Must contain four channels */
         const ImageFormat*    format;
 
@@ -93,6 +102,9 @@ public:
             custom(false),
             wsPosition(false),
             csPosition(false),
+            ssVelocity(false),
+            csVelocity(false),
+            wsVelocity(false),
             format(ImageFormat::RGBA8()),
             depthFormat(ImageFormat::DEPTH24()), 
             positionFormat(ImageFormat::RGB16F()) {
@@ -112,7 +124,10 @@ public:
                 (int(custom)      << 9)  |
                 (int(csPosition)  << 10) |
                 (int(wsPosition)  << 11) |
-                (int(normalsAreSigned) << 12);
+                (int(ssVelocity)  << 12) |
+                (int(csVelocity)  << 13) |
+                (int(wsVelocity)  << 14) |
+                (int(normalsAreSigned) << 15);
         }
 
         /** Can be used with G3D::Table as an Equals function */
