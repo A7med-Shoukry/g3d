@@ -176,14 +176,82 @@ public:
     ///////////////////////////////////////////////////////////////////////
     // Aggregate methods
 
+    /** \brief Per-frame lighting information passed to renderHomogeneous. */
+    class Environment {
+    protected:
+
+        Array<ShadowMap::Ref> m_shadowMapArray;
+
+        Texture::Ref          m_sourceScreenColorTexture;
+        Texture::Ref          m_sourceScreenDepthTexture;
+
+        /** True if the screen textures have been copied since the
+            last call to setData. Set to true in screenTexture() and
+            screenDepthTexture(). */ 
+        mutable bool          m_copiedScreenSinceLastSetData;
+        Texture::Ref          m_copiedScreenColorTexture;
+        Texture::Ref          m_copiedScreenDepthTexture;
+        
+    public:
+
+        Environment() {}
+        
+        void setData
+        (const Lighting::Ref&         lighting,
+         const Array<ShadowMap::Ref>& shadowMapArray,
+         const Texture::Ref&          sourceScreenColorTexture, 
+         const Texture::Ref&          sourceScreenDepthTexture);
+
+        virtual ~Environment() {}
+
+        const Lighting::Ref& lighting() const;
+
+        /** An array of the same length as lighting->lightArray whose
+            elements are NULL for non-shadow casting lights and
+            contain shadow maps that have already been rendered for
+            the shadow casting lights.
+            */
+        const Array<ShadowMap::Ref>& shadowMapArray() const;
+
+        /** An image of the color buffer.  This is a copy of the
+            previous buffer; it is never the Texture currently being
+            rendered to.
+
+            Commonly used for screen-space reflection and refraction
+            effects. This may be lazily computed on the first call.
+
+            \param updateNow If true, the texture is re-copied from
+            the source to include objects that have been rendered
+            since the previous call.  If false, the implementation may
+            choose whether to re-copy the data.  The default
+            implementation does not re-copy the texture unless
+            this is the first call.
+        */
+        virtual const Texture::Ref& screenColorTexture(bool updateNow) const;
+
+        /** Used for screen-space reflection and refraction
+            effects. 
+
+            \sa screenColorTexture
+        */
+        virtual const Texture::Ref& screenDepthTexture(bool updateNow) const;
+
+        /** More efficient than calling screenColorTexture and
+            screenDepthTexture independently when both are needed. */
+        virtual void getScreenTextures(Texture::Ref& color, Texture::Ref& depth, bool updateNow) const;
+    };
+
     /**
      \brief Forward-render all illumination terms for each element of
      \a surfaceArray, which must all be of the same most-derived type
      as \a this.
 
      Rendering proceeds in the order of elements in the surfaceArray.
-     Sort the array first to create back-to-front or front-to-back
-     ordering.
+     The caller may sort the array first to create back-to-front or
+     front-to-back ordering.  To improve the rendering of 
+
+     Implementations must obey the semantics of the current stencil,
+     viewport, clipping, and depth tests.
 
      Elements may have partial coverage but are assumed to not have
      transmission.
@@ -194,16 +262,13 @@ public:
      \param timeOffset All lighting occurs at timeOffset = 0, but
      object positions should be moved to respect the timeOffset.
 
-     \param shadowMapArray Previously rendered shadow maps (at
-     timeOffset = 0) for each of the shadow casting lights in \a
-     lighting, in the order that those lights appear in
-     Lighting::lightArray.
+     \param environment World-space, screen-space, and light-space
+     data needed for illumination.    
      */
-    virtual void renderOpaqueHomogeneous
+    virtual void renderHomogeneous
     (RenderDevice*                rd, 
      const Array<Surface::Ref>&   surfaceArray, 
-     const Lighting::Ref&         lighting, 
-     const Array<ShadowMap::Ref>& shadowMapArray, 
+     const Environment&           environment,
      float                        timeOffset = 0.0f) const {}//= 0;
 
 
@@ -270,7 +335,8 @@ public:
     static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds, float timeOffset = 0.0f);
 
     /** Computes the array of models that can be seen by \a camera*/
-    static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels, float timeOffset = 0.0f);
+    static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, 
+                     Array<Surface::Ref>& outModels, float timeOffset = 0.0f);
 
     /**
      Removes elements from \a all and puts them in \a translucent.

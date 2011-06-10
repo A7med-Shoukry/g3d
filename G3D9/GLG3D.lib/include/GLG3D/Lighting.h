@@ -1,9 +1,9 @@
 /**
- @file Lighting.h
+ \file GLG3D/Lighting.h
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- @created 2002-10-05
- @edited  2010-09-06
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2002-10-05
+ \edited  2011-06-10
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
