@@ -4,76 +4,6 @@
 
 //#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
-class BlockMemoryManager : public MemoryManager {
-private:
-    size_t  mBlockSize;
-    size_t  mNumBlocks;
-    uint8*  mPool;
-    uint8*  mPoolEnd;
-
-    size_t  mNextFreeIndex;
-
-    int     mDebugAllocCount;
-
-public:
-    typedef ReferenceCountedPointer<class MemoryManager> Ref;
-
-    BlockMemoryManager(int blockSize, int numBlocks) 
-        : mBlockSize(blockSize)
-        , mNumBlocks(numBlocks)
-        , mNextFreeIndex(0)
-        , mDebugAllocCount(0) {
-        
-        debugAssert(blockSize >= 16);
-        mPool = static_cast<uint8*>(System::alignedMalloc(mBlockSize * mNumBlocks, 16));
-        mPoolEnd = mPool + (mNumBlocks * mBlockSize);
-
-        while (mNextFreeIndex < mNumBlocks) {
-            size_t* block = reinterpret_cast<size_t*>(mPool + (mNextFreeIndex * mBlockSize));
-
-            *block = mNextFreeIndex + 1;
-
-            ++mNextFreeIndex;
-        }
-
-        mNextFreeIndex = 0;
-    }
-
-    virtual ~BlockMemoryManager() {
-        debugAssert(mDebugAllocCount == 0);
-        System::alignedFree(mPool);
-    }
-
-    virtual void* alloc(size_t s) {
-        if (mNextFreeIndex == mNumBlocks || s > mBlockSize) {
-            return NULL;
-        } else {
-            ++mDebugAllocCount;
-
-            void* block = mPool + (mNextFreeIndex * mBlockSize);
-            mNextFreeIndex = *reinterpret_cast<size_t*>(block);
-            return block;
-        }
-    }
-
-    virtual void free(void* ptr) {
-        debugAssert(ptr >= mPool && ptr < mPoolEnd);
-        --mDebugAllocCount;
-
-        size_t* block = reinterpret_cast<size_t*>(ptr);
-        *block = mNextFreeIndex;
-
-        // the alternative implementation is to write the block address instead of index
-        int blockOffset = mPoolEnd - static_cast<uint8*>(ptr);
-        debugAssert(blockOffset % mBlockSize == 0);
-
-        mNextFreeIndex = blockOffset / mBlockSize;
-    }
-
-    virtual bool isThreadsafe() const {
-        return false;
-    }
-};
 
 class App : public GApp {
 public:
@@ -157,26 +87,21 @@ void App::onInit() {
 
     //GuiTheme::Ref theme = GuiTheme::fromFile("osx_new.gtm");
     
-    //model = MD3Model::fromDirectory("C:\\dev\\data\\md3\\chaos-marine\\models\\players\\Chaos-Marine");
+    MD3Model::Skin::Ref skin = MD3Model::Skin::create(dataDir + "/md3/chaos-marine/models/players/chaos-marine/", "default");
+
+    MD3Model::Specification spec;
+    spec.directory = dataDir + "/md3/chaos-marine/models/players/chaos-marine/";
+    spec.defaultSkin = skin;
+
+    model = MD3Model::create(spec);
+
+    modelPose.anim[MD3Model::PART_LOWER] = MD3Model::LOWER_WALK;
+    modelPose.anim[MD3Model::PART_UPPER] = MD3Model::UPPER_STAND;
+
 
 	// start the sound engine with default parameters
 	//irrklangDevice = irrklang::createIrrKlangDevice();
     //debugAssert(irrklangDevice);
-
-    void* blocks[1024] = {0};
-    BlockMemoryManager::Ref mm = new BlockMemoryManager(1024, 1024);
-    for (int blockIndex = 0; blockIndex < 1024; ++blockIndex)
-    {
-        blocks[blockIndex] = mm->alloc(1024);
-        debugAssert(blocks[blockIndex] != NULL);
-    }
-
-    debugAssert(mm->alloc(1024) == 0);
-
-    for (int blockIndex = 0; blockIndex < 1024; ++blockIndex)
-    {
-        mm->free(blocks[blockIndex]);
-    }
 }
 
 
@@ -201,6 +126,9 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     // advancement based on any of the three arguments.
 
     //irrklangDevice->play2D("test.wmv");
+
+    modelPose.time[MD3Model::PART_LOWER] += sdt;
+    modelPose.time[MD3Model::PART_UPPER] += sdt;
 }
 
 
@@ -232,9 +160,7 @@ void App::onUserInput(UserInput* ui) {
 void App::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
     GApp::onPose(posed3D, posed2D);
 
-    //modelPose.legsTime = realTime();
-    //modelPose.torsoTime = realTime();
-    //model->pose(surfaceArray, CoordinateFrame(), modelPose);
+    model->pose(posed3D, CoordinateFrame(), modelPose);
 }
 
 

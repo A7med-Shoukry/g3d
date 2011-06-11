@@ -269,20 +269,39 @@ void testBasicSerialization() {
 }
 
 static void testStringSerialization() {
-    uint8 data[1024];
+    
+    {
+        uint8 data[1024];
 
-    BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
-    std::string src = "Hello";
-    bo.writeString(src);
-    bo.commit(data);
+        BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
+        std::string src = "Hello";
+        bo.writeString(src);
+        bo.commit(data);
 
-    BinaryInput bi(data, bo.size(), G3D_LITTLE_ENDIAN);
-    std::string dst = bi.readString();
+        BinaryInput bi(data, bo.size(), G3D_LITTLE_ENDIAN);
+        std::string dst = bi.readString();
 
-    debugAssert(bo.size() == 6);
-    debugAssert(src.length() == dst.length());
-    debugAssert(src == dst);
+        debugAssert(bo.size() == 6);
+        debugAssert(src.length() == dst.length());
+        debugAssert(src == dst);
+    }
 
+    {
+        uint8 data[1024];
+
+        BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
+        std::string src = "Hello";
+        bo.writeUInt32(src.length() + 1);
+        bo.writeString(src);
+        bo.commit(data);
+
+        BinaryInput bi(data, bo.size(), G3D_LITTLE_ENDIAN);
+        std::string dst = bi.readString32();
+
+        debugAssert(bo.size() == 10);
+        debugAssert(src.length() == dst.length());
+        debugAssert(src == dst);
+    }
 }
 
 void testBinaryIO() {
