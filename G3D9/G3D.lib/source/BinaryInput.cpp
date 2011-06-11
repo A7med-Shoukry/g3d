@@ -370,12 +370,13 @@ std::string BinaryInput::readString() {
     bool hasNull = true;
 
     while(m_buffer[m_pos + n] != '\0') {
-        if ((m_pos + m_alreadyRead + n + 1) == m_length) {
+        ++n;
+
+        if ((m_pos + m_alreadyRead + n) == m_length) {
             hasNull = false;
             break;
         }
 
-        ++n;
         prepareToRead(n + 1);
     }
 
@@ -426,10 +427,12 @@ std::string BinaryInput::readStringNewline() {
     if (hasNewline) {
         if ((m_pos + m_alreadyRead + 2) != m_length) {
             prepareToRead(2);
-            if (m_buffer[m_pos] == '\r' && m_buffer[m_pos] == '\n') {
+            if (m_buffer[m_pos] == '\r' && m_buffer[m_pos + 1] == '\n') {
                 skip(2);
-            } else if (m_buffer[m_pos] == '\n' && m_buffer[m_pos] == '\r') {
+            } else if (m_buffer[m_pos] == '\n' && m_buffer[m_pos + 1] == '\r') {
                 skip(2);
+            } else {
+                skip(1);
             }
         } else {
             skip(1);
