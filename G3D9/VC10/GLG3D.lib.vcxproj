@@ -270,7 +270,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperSurface.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Surface.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceElement.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceSample.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\tesselate.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Texture.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ThirdPersonManipulator.h" />

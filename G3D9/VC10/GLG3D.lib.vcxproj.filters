@@ -568,9 +568,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\GL\wglew.h">
       <Filter>Header Files\GL</Filter>
     </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceSample.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
