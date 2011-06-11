@@ -282,6 +282,24 @@ static void testStringSerialization() {
         std::string dst = bi.readString();
 
         debugAssert(bo.size() == 6);
+        debugAssert(bi.hasMore() == false);
+        debugAssert(src.length() == dst.length());
+        debugAssert(src == dst);
+    }
+
+    {
+        uint8 data[1024];
+
+        BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
+        std::string src = "Hello";
+        bo.writeBytes(src.c_str(), src.length());
+        bo.commit(data);
+
+        BinaryInput bi(data, bo.size(), G3D_LITTLE_ENDIAN);
+        std::string dst = bi.readString(src.length());
+
+        debugAssert(bo.size() == 5);
+        debugAssert(bi.hasMore() == false);
         debugAssert(src.length() == dst.length());
         debugAssert(src == dst);
     }
@@ -299,9 +317,28 @@ static void testStringSerialization() {
         std::string dst = bi.readString32();
 
         debugAssert(bo.size() == 10);
+        debugAssert(bi.hasMore() == false);
         debugAssert(src.length() == dst.length());
         debugAssert(src == dst);
     }
+
+    {
+        uint8 data[1024];
+
+        BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
+        std::string src = "Hello\n";
+        bo.writeString(src);
+        bo.commit(data);
+
+        BinaryInput bi(data, bo.size(), G3D_LITTLE_ENDIAN);
+        std::string dst = bi.readStringNewline();
+
+        debugAssert(bo.size() == 7);
+        debugAssert(dst == "Hello");
+        debugAssert(bi.hasMore() == true); // did not consume trailing NULL since it is after newline
+        debugAssert(bi.readString() == std::string()); // should return empty string since last character is NULL
+    }
+
 }
 
 void testBinaryIO() {

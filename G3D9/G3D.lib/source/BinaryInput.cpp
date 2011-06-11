@@ -369,25 +369,23 @@ std::string BinaryInput::readString() {
     int64 n = 0;
     bool hasNull = true;
 
-    while (m_buffer[m_pos + n] != '\0') {
-        ++n;
-
-        if (m_pos == (m_length - 1)) {
+    while(m_buffer[m_pos + n] != '\0') {
+        if ((m_pos + m_alreadyRead + n + 1) == m_length) {
             hasNull = false;
             break;
         }
 
+        ++n;
         prepareToRead(n + 1);
     }
 
     std::string s((char*)(m_buffer + m_pos), n);
-
-    if (hasNull) {
-        ++n;
-    }
-
     m_pos += n;
 
+    if (hasNull) {
+        skip(1);
+    }
+    
     return s;
 }
 
@@ -400,33 +398,43 @@ std::string BinaryInput::readStringNewline() {
 
     int64 n = 0;
     bool hasNull = true;
+    bool hasNewline = false;
 
-    while (m_buffer[m_pos + n] != '\0') {
-        ++n;
-
-        if (m_pos == (m_length - 1) || isNewline(m_buffer[m_pos + n])) {
+    while(m_buffer[m_pos + n] != '\0') {
+        if ((m_pos + m_alreadyRead + n + 1) == m_length) {
             hasNull = false;
             break;
         }
 
+        if (isNewline(m_buffer[m_pos + n])) {
+            hasNull = false;
+            hasNewline = true;
+            break;
+        }
+
+        ++n;
         prepareToRead(n + 1);
     }
 
     std::string s((char*)(m_buffer + m_pos), n);
+    m_pos += n;
 
     if (hasNull) {
-        ++n;
-    } else if (m_pos != (m_length - 1)) {
-        prepareToRead(n + 1);
-        if ((m_buffer[m_pos + n] == '\r') && isNewline(m_buffer[m_pos + n + 1])) {
-            ++n;
-        }
-        else if ((m_buffer[m_pos + n] == '\n') && isNewline(m_buffer[m_pos + n + 1])) {
-            ++n;
+        skip(1);
+    }
+    
+    if (hasNewline) {
+        if ((m_pos + m_alreadyRead + 2) != m_length) {
+            prepareToRead(2);
+            if (m_buffer[m_pos] == '\r' && m_buffer[m_pos] == '\n') {
+                skip(2);
+            } else if (m_buffer[m_pos] == '\n' && m_buffer[m_pos] == '\r') {
+                skip(2);
+            }
+        } else {
+            skip(1);
         }
     }
-
-    m_pos += n;
 
     return s;
 }
