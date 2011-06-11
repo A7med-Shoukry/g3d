@@ -126,6 +126,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mongoose.lib", "mongoose.li
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BuildScripts", "BuildScripts.vcxproj", "{985177F9-F95C-4815-88A1-D71C108D6C56}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deferredShading", "..\samples\deferredShading\deferredShading.vcxproj", "{9CE21191-CAEA-4169-8FCC-21884651B7DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -223,6 +225,10 @@ Global
 		{985177F9-F95C-4815-88A1-D71C108D6C56}.Debug|Win32.Build.0 = Debug|Win32
 		{985177F9-F95C-4815-88A1-D71C108D6C56}.Release|Win32.ActiveCfg = Release|Win32
 		{985177F9-F95C-4815-88A1-D71C108D6C56}.Release|Win32.Build.0 = Release|Win32
+		{9CE21191-CAEA-4169-8FCC-21884651B7DB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9CE21191-CAEA-4169-8FCC-21884651B7DB}.Debug|Win32.Build.0 = Debug|Win32
+		{9CE21191-CAEA-4169-8FCC-21884651B7DB}.Release|Win32.ActiveCfg = Release|Win32
+		{9CE21191-CAEA-4169-8FCC-21884651B7DB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
