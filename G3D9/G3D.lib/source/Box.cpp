@@ -378,9 +378,7 @@ Box Box::inf() {
 }
 
 
-void Box::getBounds(class AABox& aabb) const {
-    debugAssert(! aabb.isEmpty());
-
+void Box::getBounds(AABox& aabb) const {
     Point3 lo = _corner[0];
     Point3 hi = lo;
 
