@@ -3,16 +3,5 @@
     \author Morgan McGuire, http://graphics.cs.williams.edu */
 // This shader expects a prefix attached at runtime in SuperShader.cpp
 
-#if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
-    // Rename all of the outputs so that we can copy them over
-    // in the geometry shader without a name clash.
-#   define wsPosition wsPositionIn
-#   define texCoord   texCoordIn
-#   define _tsE       _tsEIn
-#   define tan_X      tan_XIn
-#   define tan_Y      tan_YIn
-#   define tan_Z      tan_ZIn
-#endif
-
 // Perform vertex transformation as if we were rendering a normal pass
 #include "SS_NonShadowedPass.vrt"

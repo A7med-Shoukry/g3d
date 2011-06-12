@@ -292,7 +292,6 @@
     <None Include="..\data-files\SuperShader\Film_FXAA.pix" />
     <None Include="..\data-files\SuperShader\SS_BumpMap.pix" />
     <None Include="..\data-files\SuperShader\SS_Components.pix" />
-    <None Include="..\data-files\SuperShader\SS_GBuffer.geo" />
     <None Include="..\data-files\SuperShader\SS_GBuffer.pix" />
     <None Include="..\data-files\SuperShader\SS_GBuffer.vrt" />
     <None Include="..\data-files\SuperShader\SS_GBufferPosition.pix" />

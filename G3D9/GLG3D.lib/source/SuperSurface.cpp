@@ -37,23 +37,15 @@ public:
 
         if (created) {
             // Create the shader
-
             static const std::string commonVertexSource    = readWholeFile(System::findDataFile("SS_GBuffer.vrt"));
-            static const std::string commonGeometrySource  = readWholeFile(System::findDataFile("SS_GBuffer.geo"));
             static const std::string commonPixelSource     = readWholeFile(System::findDataFile("SS_GBuffer.pix"));
 
             const std::string& vertexSource = prefixMacros + commonVertexSource;
 
-            // The geometry shader is only needed if face normals are required
-            const std::string& geometrySource =
-                (gbuffer->hasFaceNormals()) ?
-                (prefixMacros + commonGeometrySource) :
-                std::string("");
-
             const std::string& pixelSource = prefixMacros + commonPixelSource;
 
             // Compile
-            shader = Shader::fromStrings(vertexSource, geometrySource, 3, pixelSource);
+            shader = Shader::fromStrings(vertexSource, pixelSource);
             shader->setPreserveState(false);
         }
 

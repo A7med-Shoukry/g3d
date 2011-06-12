@@ -624,8 +624,5 @@
     <None Include="..\data-files\SuperShader\SS_GBuffer.vrt">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_GBuffer.geo">
-      <Filter>Shader Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

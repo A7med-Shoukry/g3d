@@ -42,11 +42,7 @@ varying vec3 wsPosition;
 #ifdef TRANSMITMAP
     uniform sampler2D   transmissiveMap;
 #endif
-
-#if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
-    varying vec3        wsFaceNormal;
-#endif
-
+    
 float backside = (gl_FrontFacing == g3d_InvertY) ?  1.0 : -1.0;
 
 #ifdef NORMALBUMPMAP
@@ -167,7 +163,17 @@ void main() {
 #   endif
 
     ///////////////////////// NORMALS //////////////////////////////
+#   ifdef WS_NORMAL
+        WS_NORMAL.xyz = wsN * 0.5 + vec3(0.5);
+#   endif
 
+#   ifdef CS_NORMAL
+        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)).xyz * 0.5 + vec3(0.5);
+#   endif
+
+#   if defined(WS_FACE_NORMAL) || (CS_FACE_NORMAL)
+        vec3 wsFaceNormal = normalize(cross(dFdy(wsPosition), dFdx(wsPosition)));
+#   endif
     // For simplicity, all normals are encoded regardless of format.
 #   ifdef WS_FACE_NORMAL
         WS_FACE_NORMAL.xyz = wsFaceNormal * 0.5 + vec3(0.5);
@@ -175,14 +181,6 @@ void main() {
 
 #   ifdef CS_FACE_NORMAL
         CS_FACE_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsFaceNormal, 0.0)).xyz * 0.5 + vec3(0.5);
-#   endif
-
-#   ifdef WS_NORMAL
-        WS_NORMAL.xyz = wsN * 0.5 + vec3(0.5);
-#   endif
-
-#   ifdef CS_NORMAL
-        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)).xyz * 0.5 + vec3(0.5);
 #   endif
 
     //////////////////////// POSITIONS /////////////////////////////
