@@ -1,3 +1,4 @@
+// -*- c++ -*-
 /** \file SS_GBuffer.geo 
     \author Morgan McGuire, http://graphics.cs.williams.edu */
 // This shader expects a prefix attached at runtime in SuperShader.cpp
