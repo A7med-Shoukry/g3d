@@ -1,19 +1,111 @@
 /**
- @file SuperSurface.cpp
+  \file GLG3D.lib/source/SuperSurface.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2004-11-20
-  @edited  2009-02-20
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+  \created 2004-11-20
+  \edited  2011-06-11
 
   Copyright 2001-2011, Morgan McGuire
  */
 #include "G3D/Log.h"
+#include "G3D/fileutils.h"
 #include "GLG3D/SuperSurface.h"
 #include "GLG3D/Lighting.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/SuperShader.h"
+#include "GLG3D/Draw.h" // TODO remove
 
 namespace G3D {
+
+class GBufferShaderCache {
+protected:
+    
+    typedef Table<std::string, Shader::Ref> Cache;
+    Cache cache;
+
+public:
+
+    Shader::Ref get(const GBuffer::Ref& gbuffer, const Material::Ref& material) {
+        static const std::string& version = "#version 120\n#extension GL_EXT_gpu_shader4 : require\n";
+
+        const std::string& prefixMacros = version + gbuffer->macros() + material->macros();
+
+        bool created = false;
+        Shader::Ref& shader = cache.getCreate(prefixMacros, created);
+
+        if (created) {
+            // Create the shader
+
+            static const std::string commonVertexSource    = readWholeFile(System::findDataFile("SS_GBuffer.vrt"));
+            static const std::string commonGeometrySource  = readWholeFile(System::findDataFile("SS_GBuffer.geo"));
+            static const std::string commonPixelSource     = readWholeFile(System::findDataFile("SS_GBuffer.pix"));
+            const std::string& vertexSource = prefixMacros + commonVertexSource;
+
+            // The geometry shader is only needed if face normals are required
+            std::string geometrySource;
+            if (gbuffer->hasFaceNormals()) {
+                geometrySource = prefixMacros + commonGeometrySource;
+            }
+
+            const std::string& pixelSource = prefixMacros + commonPixelSource;
+
+            // Compile
+            shader = Shader::fromStrings(vertexSource, geometrySource, pixelSource);
+            shader->setPreserveState(false);
+        }
+
+        return shader;
+    }
+};
+
+static GBufferShaderCache gbufferShaderCache;
+
+void SuperSurface::renderIntoGBufferHomogeneous
+(RenderDevice*                rd, 
+ Array<Surface::Ref>&         surfaceArray,
+ const GBuffer::Ref&          gbuffer,
+ float                        timeOffset,
+ float                        velocityStartOffset) const {
+    rd->pushState(); {
+        rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
+        const RenderDevice::CullFace oldCullFace = rd->cullFace();
+
+        for (int s = 0; s < surfaceArray.size(); ++s) {
+            const SuperSurface::Ref& surface = surfaceArray[s].downcast<SuperSurface>();
+            debugAssertM(surface != NULL, "Non SuperSurface element of surfaceArray in SuperSurface::renderIntoGBufferHomogeneous");
+
+            const GPUGeom::Ref& gpuGeom = surface->gpuGeom();
+            const Material::Ref& material = gpuGeom->material;
+
+            // This is frequently the same shader as on the previous iteration, and RenderDevice will
+            // optimize out the state change. 
+            const Shader::Ref& shader = gbufferShaderCache.get(gbuffer, material);
+            rd->setShader(shader);
+
+            CFrame cframe;
+            surface->getCoordinateFrame(cframe, timeOffset);
+            rd->setObjectToWorldMatrix(cframe);
+
+            if (gpuGeom->twoSided) {
+                rd->setCullFace(RenderDevice::CULL_NONE);
+            }
+
+            // Bind material arguments
+            material->configure(shader->args);
+            shader->args.set("backside", 1.0f);
+
+            // TODO: pass alpha threshold
+
+            surface->sendGeometry(rd);
+
+            if (gpuGeom->twoSided) {
+                rd->setCullFace(oldCullFace);
+            }
+        }
+    } rd->popState();
+}
+
 
 /** For fixed function, we detect
     reflection as having no glossy map but a packed specular
@@ -797,65 +889,33 @@ void SuperSurface::sendGeometry(
     debugAssertGLOk();
     ++debugNumSendGeometryCalls;
 
-    // TODO: Radeon mobility cards crash rendering VertexRange in wireframe mode.
-    // switch to begin/end in that case
-    bool useVAR = true || (rd->renderMode() == RenderDevice::RENDER_SOLID);
+    debugAssertGLOk();
+    rd->beginIndexedPrimitives();
+    {
+        rd->setVertexArray(m_gpuGeom->vertex);
+        debugAssertGLOk();
 
-    if (useVAR) {
+        debugAssert(m_gpuGeom->normal.valid());
+        rd->setNormalArray(m_gpuGeom->normal);
+        debugAssertGLOk();
+
+        if (m_gpuGeom->texCoord0.valid() && (m_gpuGeom->texCoord0.size() > 0)){
+            rd->setTexCoordArray(0, m_gpuGeom->texCoord0);
+            debugAssertGLOk();
+        }
+
+        // In programmable pipeline mode, load the tangents into tex coord 1
+        if (m_gpuGeom->packedTangent.valid() && (profile() == PS20) && (m_gpuGeom->packedTangent.size() > 0)) {
+            rd->setTexCoordArray(1, m_gpuGeom->packedTangent);
+            debugAssertGLOk();
+        }
 
         debugAssertGLOk();
-        rd->beginIndexedPrimitives();
-        {
-            rd->setVertexArray(m_gpuGeom->vertex);
-            debugAssertGLOk();
-
-            debugAssert(m_gpuGeom->normal.valid());
-            rd->setNormalArray(m_gpuGeom->normal);
-            debugAssertGLOk();
-
-            if (m_gpuGeom->texCoord0.valid() && (m_gpuGeom->texCoord0.size() > 0)){
-                rd->setTexCoordArray(0, m_gpuGeom->texCoord0);
-                debugAssertGLOk();
-            }
-
-            // In programmable pipeline mode, load the tangents into tex coord 1
-            if (m_gpuGeom->packedTangent.valid() && (profile() == PS20) && (m_gpuGeom->packedTangent.size() > 0)) {
-                rd->setTexCoordArray(1, m_gpuGeom->packedTangent);
-                debugAssertGLOk();
-            }
-
-            debugAssertGLOk();
-            rd->sendIndices(m_gpuGeom->primitive, m_gpuGeom->index);
-        }
-        rd->endIndexedPrimitives();
-
-    } else {
-
-        debugAssertM(m_cpuGeom.index != NULL, 
-                     "This graphics card cannot render in wireframe mode"
-                     " without explicit CPU data structures.");
-
-        if (m_cpuGeom.index != NULL) {
-
-            rd->beginPrimitive((RenderDevice::Primitive)m_gpuGeom->primitive);
-            for (int i = 0; i < m_cpuGeom.index->size(); ++i) {
-                int v = (*m_cpuGeom.index)[i];
-                if ((m_cpuGeom.texCoord0 != NULL) &&
-                    (m_cpuGeom.texCoord0->size() > 0)) { 
-                    rd->setTexCoord(0, (*m_cpuGeom.texCoord0)[v]);
-                }
-                if ((m_cpuGeom.packedTangent != NULL) &&
-                    (m_cpuGeom.packedTangent->size() > 0)) {
-                    rd->setTexCoord(1, (*m_cpuGeom.packedTangent)[v]);
-                }
-
-                rd->setNormal(m_cpuGeom.geometry->normalArray[v]);
-                rd->sendVertex(m_cpuGeom.geometry->vertexArray[v]);
-            }
-            rd->endPrimitive();
-        }
+        rd->sendIndices(m_gpuGeom->primitive, m_gpuGeom->index);
     }
+    rd->endIndexedPrimitives();
 }
+
 
 std::string SuperSurface::name() const {
     return m_name;

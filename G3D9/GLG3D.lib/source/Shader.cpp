@@ -281,6 +281,9 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
             if (! beginsWith(filename, "/")) {
                 filename = pathConcat(dir, filename);
             }
+            if (! FileSystem::exists(filename)) {
+                filename = System::findDataFile(filename);
+            }
             std::string includedFile = readWholeFile(filename);
             if (! endsWith(includedFile, "\n")) {
                 includedFile += "\n";

@@ -720,6 +720,14 @@ public:
         return new Shader(VertexAndPixelShader::fromStrings(vertexCode, pixelCode, s, DEBUG_SHADER), s);
     }
 
+    inline static ShaderRef fromStrings(
+        const std::string& vertexCode,
+        const std::string& geometryCode,
+        const std::string& pixelCode,
+        PreprocessorStatus s = PREPROCESSOR_ENABLED) {
+        return new Shader(VertexAndPixelShader::fromStrings("", vertexCode, "", geometryCode, "", pixelCode, s, DEBUG_SHADER), s);
+    }
+
     /** Names are purely for debugging purposes */
     inline static ShaderRef fromStrings(
         const std::string& vertexName,

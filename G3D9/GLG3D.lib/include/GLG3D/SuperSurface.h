@@ -340,6 +340,13 @@ public:
      RenderDevice::CullFace originalCullFace = RenderDevice::CULL_BACK) const;
 
     static void sortFrontToBack(Array<SuperSurface::Ref>& a, const Vector3& v);
+
+    virtual void renderIntoGBufferHomogeneous
+    (RenderDevice*                rd, 
+     Array<Surface::Ref>&         surfaceArray,
+     const GBuffer::Ref&          gbuffer,
+     float                        timeOffset,
+     float                        velocityStartOffset) const;
 };
 
 const char* toString(SuperSurface::GraphicsProfile p);

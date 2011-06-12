@@ -1,157 +1,204 @@
-// -*- c++ -*-
-/**
-  \file GBuffer.pix
-  \author Morgan McGuire, http://graphics.cs.williams.edu
+/** \file SS_GBuffer.pix 
+    \author Morgan McGuire, http://graphics.cs.williams.edu*/
 
-  The _INDEX macros are the output index of each draw buffer.  These
-  are -1 for buffers that aren't bound.
- */
-#include "SS_Globals.pix"
+// This shader expects a prefix attached at runtime in SuperShader.cpp
 
-// Turn off terms we don't need for a GBuffer
+/** Texture coordinate */
+varying vec2 texCoord;
 
-#if (CUSTOM_INDEX < 0)
-// We don't need these terms, so disable them
-#   ifdef CUSTOMMAP
-#       undef CUSTOMMAP
-#   endif
-#   ifdef CUSTOMCONSTANT
-#       undef CUSTOMCONSTANT
-#   endif
+varying vec3 wsPosition;
+
+// Material
+#ifdef SPECULARCONSTANT
+    uniform vec4        specularConstant;
 #endif
 
-#if (GLOSSY_INDEX < 0)
-#   ifdef GLOSSYMAP
-#       undef GLOSSYMAP
-#   endif
-#   ifdef GLOSSYCONSTANT
-#       undef GLOSSYCONSTANT
-#   endif
+#ifdef SPECULARMAP
+    uniform sampler2D   specularMap;
 #endif
 
-#if (EMISSIVE_INDEX >= 0)
-#    ifdef EMISSIVECONSTANT
-        uniform vec3        emissiveConstant;
-#   endif
-
-#   ifdef EMISSIVEMAP
-        uniform sampler2D   emissiveMap;
-#   endif
+#ifdef LAMBERTIANCONSTANT
+    uniform vec4        lambertianConstant;
 #endif
 
-#if (TRANSMISSIVE_INDEX >= 0)
-#    ifdef TRANSMISSIVECONSTANT
-        uniform vec3        transmissiveConstant;
-#    endif
-
-#    ifdef TRANSMISSIVEMAP
-        uniform sampler2D   transmissiveMap;
-#   endif
+#ifdef LAMBERTIANMAP
+    uniform sampler2D   lambertianMap;
 #endif
+
+#ifdef EMISSIVECONSTANT
+    uniform vec3        emissiveConstant;
+#endif
+
+#ifdef EMISSIVEMAP
+    uniform sampler2D   emissiveMap;
+#endif
+
+#ifdef TRANSMISSIVECONSTANT
+    // Index of refraction / 24 is in the alpha value
+    uniform vec4        transmissiveConstant;
+#endif
+
+#ifdef TRANSMITMAP
+    uniform sampler2D   transmissiveMap;
+#endif
+
+#if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
+    varying vec3        wsFaceNormal;
+#endif
+
+///** Set to -1 to flip the normal. */
+uniform float       backside;
+//float backside = (gl_FrontFacing ? 1.0 : -1.0);
+
+#ifdef NORMALBUMPMAP
+#   if (PARALLAXSTEPS > 0)
+        /** Multiplier for bump map.  Typically on the range [0, 0.05]
+          This increases with texture scale and bump height. */
+        uniform float       bumpMapScale;
+
+        /** How high is the 0-level of the bump map? On the range [0, 1] */
+        uniform float       bumpMapBias;
+
+        /** Un-normalized (interpolated) tangent space eye vector */
+        varying vec3        _tsE;
+#   endif    
+    /** xyz = normal, w = bump height */
+    uniform sampler2D   normalBumpMap;
+    varying vec3        tan_X, tan_Y;
+#endif
+varying vec3        tan_Z;
+
+/** Index of refraction / 24.0 */
+uniform float       normalizedIndexOfRefraction;
 
 #include "SS_BumpMap.pix"
+#line 72
 
-vec3 maybePackNormal(in vec3 n) {
-#   if defined(NORMALS_ARE_SIGNED)
-        return n;
+void main() {    
+    vec2 offsetTexCoord;
+    vec3 wsN;
+
+    applyBumpMap(wsN, offsetTexCoord);
+
+    //////////////////////// MATERIAL //////////////////////////////
+
+    float alpha;
+    vec3 lambertianColor;
+
+    // We have to always read alpha because there may be alpha testing
+#   if defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP)
+    {
+        vec4 temp = 
+#       ifdef LAMBERTIANCONSTANT
+            lambertianConstant
+#           ifdef LAMBERTIANMAP
+                * texture2D(lambertianMap, offsetTexCoord)
+#           endif
+#       else
+            texture2D(lambertianMap, offsetTexCoord)
+#       endif
+        ;
+        lambertianColor = temp.rgb;
+        alpha = temp.a;
+    }
 #   else
-        return n * 0.5 + vec3(0.5);
-#   endif
-}
-
-void main(void) {
-#include "SS_LambertianComponent.pix"
-
-#   if (defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP))
-        if (lambertianColor.a < 0.5) {
-            // Alpha masking
-            discard;
-        }
-#   else
-        vec4 lambertianColor = vec4(vec3(0.0), 1.0);
+        lambertianColor = vec3(0.0);
+        alpha = 1.0;
 #   endif
 
-#   if (LAMBERTIAN_INDEX >= 0)
-        gl_FragData[LAMBERTIAN_INDEX].rgba = lambertianColor.rgba;
+    // TODO: explict alpha test to discard; we can't rely on the hardware for it
+    // because the FBO specification doesn't say how it works.
+
+#   ifdef LAMBERTIAN
+        LAMBERTIAN.rgb = lambertianColor;
 #   endif
 
-#   if (GLOSSY_INDEX >= 0)
-        gl_FragData[GLOSSY_INDEX] =
-#       if defined(GLOSSYCONSTANT)
-            specularConstant
-#           ifdef GLOSSYMAP
-                * texture2D(specularMap, offsetTexCoord)
+#   ifdef GLOSSY
+        GLOSSY.rgba =
+#       if defined(SPECULARCONSTANT) || defined(SPECULARMAP)     
+#           ifdef SPECULARCONSTANT
+                specularConstant
+#               ifdef SPECULARMAP
+                    * texture2D(specularMap, offsetTexCoord)
+#               endif
+#           else
+                texture2D(specularMap, offsetTexCoord)
 #           endif
-#       elif defined(GLOSSYMAP)
-            texture2D(specularMap, offsetTexCoord)
 #       else
-            vec4(0.0);
+            vec4(0.0)
 #       endif
         ;
 #   endif
 
 
-#   if (TRANSMISSIVE_INDEX >= 0)
-        gl_FragData[TRANSMISSIVE_INDEX].a = eta;
-
-        gl_FragData[TRANSMISSIVE_INDEX].rgb =
-#       if defined(TRANSMISSIVECONSTANT)
-            transmissiveConstant
-#           ifdef TRANSMISSIVEMAP
-                * texture2D(transmissiveMap, offsetTexCoord).rgb
+#   ifdef EMISSIVE
+        EMISSIVE.rgb =
+#       if defined(EMISSIVECONSTANT) || defined(EMISSIVEMAP)     
+#           ifdef EMISSIVECONSTANT
+                emissiveConstant
+#               ifdef EMISSIVEMAP
+                    * texture2D(emissiveMap, offsetTexCoord).rgb
+#               endif
+#           else
+                texture2D(emissiveMap, offsetTexCoord).rgb
 #           endif
-#       elif defined(TRANSMISSIVEMAP)
-            texture2D(transmissiveMap, offsetTexCoord).rgb
 #       else
-            vec3(0.0);
+            vec3(0.0)
 #       endif
         ;
 #   endif
 
 
-#   if (EMISSIVE_INDEX >= 0)
-        gl_FragData[EMISSIVE_INDEX].rgb =
-#       if defined(EMISSIVECONSTANT)
-            emissiveConstant
-#           ifdef EMISSIVEMAP
-                * texture2D(emissiveMap, offsetTexCoord).rgb
+
+#   ifdef TRANSMISSIVE
+        TRANSMISSIVE.rgb =
+#       if defined(TRANSMISSIVECONSTANT) || defined(TRANSMISSIVEMAP)     
+#           ifdef TRANSMISSIVECONSTANT
+                transmissiveConstant
+#               ifdef TRANSMISSIVEMAP
+                    * texture2D(transmissiveMap, offsetTexCoord).rgb
+#               endif
+#           else
+                vec4(texture2D(transmissiveMap, offsetTexCoord).rgb
 #           endif
-#       elif defined(EMISSIVEMAP)
-            texture2D(emissiveMap, offsetTexCoord).rgb
 #       else
-            vec3(0.0);
+            vec3(0.0, 0.0, 0.0)
 #       endif
         ;
 #   endif
 
+    ///////////////////////// NORMALS //////////////////////////////
 
-#   if (WS_NORMAL_INDEX >= 0)
-        gl_FragData[WS_NORMAL_INDEX].xyz = maybePackNormal(wsN);
+    // For simplicity, all normals are encoded regardless of format.
+#   ifdef WS_FACE_NORMAL
+        WS_FACE_NORMAL.xyz = wsFaceNormal * 0.5 + vec3(0.5);
 #   endif
 
-
-#   if (CS_NORMAL_INDEX >= 0)
-        gl_FragData[CS_NORMAL_INDEX].xyz = maybePackNormal((g3d_WorldToCameraMatrix * vec4(wsN, 0.0)).xyz);
+#   ifdef CS_FACE_NORMAL
+        CS_FACE_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsFaceNormal, 0.0)).xyz * 0.5 + vec3(0.5);
 #   endif
 
-
-#   if (WS_FACE_NORMAL_INDEX >= 0 || CS_FACE_NORMAL_INDEX >= 0)
-        vec3 faceNormal = normalize(cross(dFdy(wsPosition), dFdx(wsPosition)));
+#   ifdef WS_NORMAL
+        WS_NORMAL.xyz = wsN * 0.5 + vec3(0.5);
 #   endif
 
-#   if (WS_FACE_NORMAL_INDEX >= 0)
-        gl_FragData[WS_FACE_NORMAL_INDEX].xyz = maybePackNormal(faceNormal);        
+#   ifdef CS_NORMAL
+        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)).xyz * 0.5 + vec3(0.5);
 #   endif
 
+    //////////////////////// POSITIONS /////////////////////////////
+    // NVIDIA drivers miscompile this unless we set WS_POSITION after the normal
 
-#   if (CS_FACE_NORMAL_INDEX >= 0)
-        vec3 csFaceNormal = (g3d_WorldToCameraMatrix * vec4(faceNormal, 0.0)).xyz;
-        gl_FragData[CS_FACE_NORMAL_INDEX].xyz = maybePackNormal(csFaceNormal);        
+#   ifdef WS_POSITION
+        WS_POSITION.xyz = wsPosition;
 #   endif
 
-
-#   if (PACKED_DEPTH_INDEX >= 0)
-#error "Unimplemented"
-//        gl_FragData[PACKED_DEPTH_INDEX].rgba = TODO
+#   ifdef CS_POSITION
+        CS_POSITION.xyz = (g3d_WorldToCameraMatrix * vec4(wsPosition, 1.0)).xyz;
 #   endif
+
+#   ifdef CS_Z
+        CS_Z.r = dot(g3d_WorldToCameraMatrix[3], vec4(wsPosition, 1.0));
+#   endif
+
 }

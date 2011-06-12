@@ -37,6 +37,8 @@
      <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
      <li> G3D::GCamera::exposureTime 
      <li> G3D::ArrowShape
+     <li> All-new streamlined interface for G3D::GBuffer, now no longer in "beta"
+     <li> G3D::GBuffer now supports face normals
      <li> G3D::Any::operator=(Array<T>)
      <li> G3D::debugDraw now allows specification of the display time
      <li> G3D::GImage::copySubImage &rarr; G3D::GImage::copyRect
@@ -124,6 +126,7 @@
 
      <b>Backwards Incompatible Changes</b>:
      <ul>
+     <li> All-new streamlined interface for G3D::Surface
      <li> G3D::GApp subclasses must now invoke the super version of any method that they override to ensure that Widgets work correctly.
      <li> Removed beginMarkShadows, endMarkShadows, markShadows, drawFeatureEdges
      <li> Removed Surface::edges, Surface::faces, Surface::numBoundaryEdges, Surface::numWeldedBoundaryEdges, Surface::weldedEdges, Surface::weldedFaces, Surface::weldedVertices, Surface::getObjectSpaceFaceNormals, Surface::getWorldSpaceFaceNormals, Surface::getWorldSpaceGeometry, Surface::hasTexCoords, Surface::objectSpaceFaceNormals, Surface::objectSpaceGeometry, Surface::objectSpacePackedTangents

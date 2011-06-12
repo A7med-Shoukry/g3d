@@ -271,7 +271,6 @@ public:
      const Environment&           environment,
      float                        timeOffset = 0.0f) const {}//= 0;
 
-
     /** 
     \brief Render all instances of \a surfaceArray to the
     currently-bound Framebuffer using the fields and mapping dictated
@@ -286,13 +285,12 @@ public:
     -1/framerate if performing reverse reprojection using velocity
     buffers.
     */
-    virtual void renderGBufferHomogeneous
+    virtual void renderIntoGBufferHomogeneous
     (RenderDevice*                rd, 
      Array<Surface::Ref>&         surfaceArray,
-     const GBuffer::Specification& specification,
-     float                        timeOffset = 0.0f,
-     float                        velocityStartOffset = -1.0f) const {}//= 0;
-
+     const GBuffer::Ref&          gbuffer,
+     float                        timeOffset,
+     float                        velocityStartOffset) const {}//= 0;
 
     /** \brief Rendering a set of surfaces in wireframe, using the
        current blending mode.  This is primarily used for debugging.
@@ -308,6 +306,23 @@ public:
 
     ///////////////////////////////////////////////////////////////////////
     // Static methods
+
+    /** Argument for timeOffset and velocityStartOffset for renderIntoGBuffer. */
+    static const int16 USE_GBUFFER_TIME = -10000;
+    
+    /**
+     Culling must be performed by the caller, since this can be used for both 2D and
+     3D rendering.
+     Sorts and then renders front-to-back using current stencil and depth operations.
+
+     \sa cull
+     */
+    static void renderIntoGBuffer
+    (RenderDevice*                rd, 
+     Array<Surface::Ref>&         surfaceArray,
+     const GBuffer::Ref&          gbuffer,
+     float                        timeOffset = USE_GBUFFER_TIME,
+     float                        velocityStartOffset = USE_GBUFFER_TIME);
 
     /** 
       Divides the inModels into a front-to-back sorted array of opaque

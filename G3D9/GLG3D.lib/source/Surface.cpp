@@ -1,10 +1,10 @@
 /**
-  @file Surface.cpp
+  \file Surface.cpp
   
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2003-11-15
-  @edited  2010-02-05
+  \created 2003-11-15
+  \edited  2011-06-10
  */ 
 
 #include "G3D/Sphere.h"
@@ -16,11 +16,46 @@
 #include "G3D/Log.h"
 #include "G3D/AABox.h"
 #include "G3D/Sphere.h"
+#include "G3D/typeutils.h"
 #include "GLG3D/Surface.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/SuperShader.h"
 
 namespace G3D {
+
+void Surface::renderIntoGBuffer
+   (RenderDevice*               rd,
+    Array<Surface::Ref>&        surfaceArray,
+    const GBuffer::Ref&         gbuffer,
+    float                       timeOffset,
+    float                       velocityStartTimeOffset) {
+       
+    // Default argument values
+    if (timeOffset == USE_GBUFFER_TIME) {
+        timeOffset = gbuffer->timeOffset();
+    }
+
+    if (velocityStartTimeOffset == USE_GBUFFER_TIME) {
+        velocityStartTimeOffset = gbuffer->velocityStartTimeOffset();
+    }
+
+    // Sort front-to-back for best early-depth performance
+    // (we avoid an early depth pass because we don't know if the depth complexity warrants it)
+    sortFrontToBack(surfaceArray, rd->cameraToWorldMatrix().lookVector(), timeOffset);
+
+    // Separate by type.  This preserves the sort order and ensures that the closest
+    // object will still render first.
+    Array< Array<Surface::Ref> > derivedTable;
+    categorizeByDerivedType(surfaceArray, derivedTable);
+
+    rd->pushState(gbuffer->framebuffer());
+    for (int t = 0; t < derivedTable.size(); ++t) {
+        Array<Surface::Ref>& derivedArray = derivedTable[t];
+        debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
+        derivedArray[0]->renderIntoGBufferHomogeneous(rd, derivedArray, gbuffer, timeOffset, velocityStartTimeOffset);
+    }
+    rd->popState();
+}
 
 
 void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D) {

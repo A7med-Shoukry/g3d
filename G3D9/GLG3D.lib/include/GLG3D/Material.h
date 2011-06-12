@@ -1,8 +1,8 @@
 /**
- @file   Material.h
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @date   2008-08-10
- @edited 2010-01-29
+ \file   GLG3D/Material.h
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \date   2008-08-10
+ \edited 2010-01-29
 */
 #ifndef GLG3D_Material_h
 #define GLG3D_Material_h
@@ -39,14 +39,14 @@ class Any;
   should be that of the medium that is being exited into--typically, air.  So a glass sphere is 
   a set of front faces with eta ~= 1.3 and a set of backfaces with eta = 1.0.
     
-  @sa G3D::SuperShader, G3D::BSDF, G3D::Component, G3D::Texture, G3D::BumpMap, G3D::ArticulatedModel
+  \sa G3D::SuperShader, G3D::BSDF, G3D::Component, G3D::Texture, G3D::BumpMap, G3D::ArticulatedModel, G3D::GBuffer
   */
 class Material : public ReferenceCountedObject {
 public:
 
     typedef ReferenceCountedPointer<Material> Ref;
 
-    /** @brief Specification of a material; used for loading.  
+    /** \brief Specification of a material; used for loading.  
     
         Can be written to a file or constructed from a series of calls.
         
@@ -337,6 +337,8 @@ protected:
 
     float                       m_depthWriteHintDistance;
 
+    std::string                 m_macros;
+
     Material();
 
 public:
@@ -418,8 +420,15 @@ public:
         @a defines that
         describe the specified components of this G3D::Material, as used by 
         G3D::SuperShader.
+        \deprecated
+        \sa macros()
       */
     void computeDefines(std::string& defines) const;
+
+    /** \brief Preprocessor macros for GLSL defining the fields used.*/
+    const std::string& macros() const {
+        return m_macros;
+    }
 
     /** Configure the properties of this material as optional
         arguments for a shader (e.g. G3D::SuperShader).  If an
@@ -456,27 +465,23 @@ public:
              (m_customConstant == other.m_customConstant));
     }
 
-    /** Can be used with G3D::Table as an Equals function */
-    class SimilarTo {
+    /** Can be used with G3D::Table as an Equals and Hash function */
+    class SimilarComponents {
     public:
         static bool equals(const Material& a, const Material& b) {
             return a.similarTo(b);
         }
+        
         static bool equals(const Material::Ref& a, const Material::Ref& b) {
             return a->similarTo(*b);
         }
-    };
 
-    /** Can be used with G3D::Table as a hash function; if two Materials
-        have the same SimilarHashCode then they are SimilarTo each other.*/
-    class SimilarHashCode {
-    public:
         static size_t hashCode(const Material& mat);
+        
         inline static size_t hashCode(const Material::Ref& mat) {
             return hashCode(*mat);
         }
     };
-
 
     /** Preferred level of refraction quality. The actual level available depends on the renderer.*/
     RefractionQuality refractionHint() const {

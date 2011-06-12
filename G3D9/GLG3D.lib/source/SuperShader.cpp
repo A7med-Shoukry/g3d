@@ -1,7 +1,7 @@
 /**
- @file SuperShader.cpp
+ \file GLG3D.lib/source/SuperShader.cpp
 
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
  */
 
 #include "GLG3D/ShadowMap.h"
@@ -355,7 +355,7 @@ ExtraLightPass::ExtraLightPass() :
 
     args.set("emissiveConstant", Color3::black(), OPTIONAL);
     args.set("reflectConstant", Color3::black(), OPTIONAL);
-    args.set("transmitConstant", Color3::black(), OPTIONAL);
+    args.set("transmissiveConstant", Color3::black(), OPTIONAL);
 }
 
 

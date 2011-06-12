@@ -11,8 +11,6 @@
 /** Texture coordinate */
 varying vec2 texCoord;
 
-varying vec3 wsEyePos;
-
 varying vec3 wsPosition;
 
 #ifdef NORMALBUMPMAP  
@@ -22,10 +20,7 @@ varying vec3 wsPosition;
 #   endif
 
 	/** Tangent space to world space.
-    Note that this will be linearly interpolated across the polygon.
-
-	NVIDIA drivers do not properly interpolate mat4, so we must pass
-	the columns along a separate vectors. */
+    Note that this will be linearly interpolated across the polygon. */
 	varying vec3 tan_X, tan_Y;
 #endif
 

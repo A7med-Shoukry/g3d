@@ -122,6 +122,7 @@ href="classes.html">Classes</a>.
  <UL>
   <LI><B>OpenGL Abstraction</B> &nbsp; &nbsp;
     \link G3D::Draw Draw\endlink,
+    \link G3D::DepthEncoding DepthEncoding\endlink,
     \link G3D::Framebuffer Framebuffer\endlink,
     \link G3D::GLCaps GLCaps\endlink,
     \link G3D::glClipToBox glClipToBox\endlink,

@@ -1,20 +1,13 @@
-/**
-  @file App.cpp
- */
 #include "App.h"
 
-// Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
 
-int main(int argc, char** argv) {
-    (void)argc; (void)argv;
-
-    GApp::Settings settings;
+int main(int argc, const char** argv) {
+    GApp::Settings settings(argc, argv);
 
     settings.window.caption = "G3D MultiView Demo";
-
-    settings.window.width       = 1024; 
-    settings.window.height      = 600;
+    settings.window.width       = 1280; 
+    settings.window.height      = 720;
 
     return App(settings).run();
 }
@@ -38,15 +31,7 @@ void App::onInit() {
     m_shadowMap = ShadowMap::create();
 
     m_scene = Scene::create();
-
-    GBuffer::Specification specification;
-    specification.wsPosition    = true;
-    specification.wsNormal      = true;
-    specification.lambertian    = true;
-    specification.specular      = true;
-    m_gbuffer = GBuffer::create("GBuffer", specification);
-    m_gbuffer->resize((window()->width() - 4) / 2, window()->height() - GUI_HEIGHT - 2);
-
+    
     GuiTheme::Ref theme = debugWindow->theme();
 
     /*
@@ -65,56 +50,7 @@ void App::onInit() {
     addWidget(toolBar);
     */
 
-
-    GuiWindow::Ref background = GuiWindow::create("", theme, renderDevice->viewport(), GuiTheme::NO_WINDOW_STYLE);
-
-    Vector2 gbufferViewSize(160, 160 * m_gbuffer->height() / m_gbuffer->width());
-    GuiPane* pane = background->pane();
-
-    pane->addLabel("Buffers:");
-    GuiTextureBox* posBox = pane->addTextureBox("Position", m_gbuffer->wsPosition());
-    posBox->setSizeFromInterior(gbufferViewSize);
-    posBox->setShowInfo(false);
-    posBox->zoomToFit();
-
-    GuiTextureBox* norBox = pane->addTextureBox("Normal", m_gbuffer->wsNormal());
-    norBox->moveRightOf(posBox);
-    norBox->setSizeFromInterior(gbufferViewSize);
-    norBox->setShowInfo(false);
-    norBox->zoomToFit();
-
-    GuiTextureBox* depBox = pane->addTextureBox("Depth", m_gbuffer->depth());
-    depBox->setSizeFromInterior(gbufferViewSize);
-    depBox->moveRightOf(norBox);
-    depBox->setShowInfo(false);
-    depBox->zoomToFit();
-
-    GuiTextureBox* lamBox = pane->addTextureBox("Lambertian", m_gbuffer->lambertian());
-    lamBox->setSizeFromInterior(gbufferViewSize);
-    lamBox->moveRightOf(depBox);
-    lamBox->setShowInfo(false);
-    lamBox->zoomToFit();
-
-    GuiTextureBox* gloBox = pane->addTextureBox("Specular", m_gbuffer->specular());
-    gloBox->setSizeFromInterior(gbufferViewSize);
-    gloBox->moveRightOf(lamBox);
-    gloBox->setShowInfo(false);
-    gloBox->zoomToFit();
-    
-    GuiTextureBox* shaBox = pane->addTextureBox("Shadow Map", m_shadowMap->depthTexture());
-    shaBox->setSizeFromInterior(gbufferViewSize);
-    shaBox->moveRightOf(gloBox);
-    shaBox->setShowInfo(false);
-    shaBox->zoomToFit();
-
-    pane->setHeight(GUI_HEIGHT);
-    pane->pack();
-    background->pack();
-    background->setRect(Rect2D::xywh(0, renderDevice->height() - GUI_HEIGHT, renderDevice->width(), GUI_HEIGHT));
-
-    addWidget(background);    
-
-    renderDevice->setColorClearValue(Color3::white());
+        renderDevice->setColorClearValue(Color3::white());
 }
 
 void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
@@ -124,57 +60,49 @@ void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surfa
     if (m_scene.notNull()) {
         m_scene->onPose(surfaceArray);
     }
-    (void)surface2D;
 }
 
 
-void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-    // Render G-Buffer
-    m_gbuffer->compute(rd, defaultCamera, surface3D);   
-
+void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) { 
     // Render full shading viewport
-    Rect2D shadeViewport = m_gbuffer->rect2DBounds() + Vector2(m_gbuffer->width(), 0) + Vector2(3, 1);
+    Rect2D shadeViewport = Rect2D::xywh(0, 0, rd->width() / 2, rd->height() / 2);
     rd->setViewport(shadeViewport);
     Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
-    // For convenience we'll just forward render again; a real
-    // application would actually use the G-Buffer to perform deferred
-    // shading.
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
 
-    // Render wireframe viewport
-    Rect2D wireViewport = m_gbuffer->rect2DBounds() + Vector2(1, 1);
-    rd->setViewport(wireViewport);
-    rd->push2D();
-        Draw::rect2D(wireViewport, rd, Color3::white() * 0.5f);
-    rd->pop2D();
-    rd->pushState();
-    {
-        rd->setProjectionAndCameraMatrix(defaultCamera);
-        Draw::axes(rd);
-        rd->setRenderMode(RenderDevice::RENDER_WIREFRAME);
-        rd->setColor(Color3::black());
-        rd->setLineWidth(1);
-        for (int i = 0; i < surface3D.size(); ++i) {
-            CFrame cframe;
-            surface3D[i]->getCoordinateFrame(cframe);
-            rd->setObjectToWorldMatrix(cframe);
-            surface3D[i]->sendGeometry(rd);
-        }
+    // Wireframe views
+    GCamera wireCamera[3];
+    wireCamera[0].setCoordinateFrame(CFrame::fromXYZYPRDegrees(0,8,0,0,-90));
+    wireCamera[1].setCoordinateFrame(CFrame::fromXYZYPRDegrees(0,0,8,0,0));
+    wireCamera[2].setCoordinateFrame(CFrame::fromXYZYPRDegrees(8,0,0,90,0));
 
-        rd->setRenderMode(RenderDevice::RENDER_SOLID);
-        Draw::lighting(m_scene->lighting(), rd, true);
+    Rect2D wireViewport[3];
+    wireViewport[0] = shadeViewport + Vector2(rd->width() / 2, 0.0f);
+    wireViewport[1] = shadeViewport + Vector2(rd->width() / 2, rd->height() / 2);
+    wireViewport[2] = shadeViewport + Vector2(0.0f, rd->height() / 2);
+
+    for (int i = 0; i < 3; ++i) {
+        rd->setViewport(wireViewport[i]);
+        rd->setProjectionAndCameraMatrix(wireCamera[i]);
+
+        Surface::renderWireframe(rd, surface3D);
+        Draw::axes(rd);
+        // Draw::lighting(m_scene->lighting(), rd, true);
 
         // Call to make the GApp show the output of debugDraw calls
         drawDebugShapes();
     }
-    rd->popState();
 }
 
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2DRef>& posed2D) {
-    Rect2D miniViewport = m_gbuffer->rect2DBounds() + Vector2(1, 1);
-    Draw::rect2DBorder(miniViewport, rd);
-    Draw::rect2DBorder(miniViewport + Vector2(2 + miniViewport.width(), 0), rd);
+    rd->setColor(Color3::black());
+    rd->beginPrimitive(PrimitiveType::LINES); {
+        rd->sendVertex(Point2(rd->width() / 2.0f, 0.0f)); 
+        rd->sendVertex(Point2(rd->width() / 2.0f, rd->height())); 
+        rd->sendVertex(Point2(0.0f, rd->height() / 2.0f)); 
+        rd->sendVertex(Point2(rd->width(), rd->height() / 2.0f)); 
+    } rd->endPrimitive();
 
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
     Surface2D::sortAndRender(rd, posed2D);

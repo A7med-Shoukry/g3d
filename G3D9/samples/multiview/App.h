@@ -1,9 +1,3 @@
-/**
-  @file App.h
-
-  Shows two methods for creating multiple views: GuiTextureBox windows
-  and multiple explicit viewports.
- */
 #ifndef App_h
 #define App_h
 
@@ -13,10 +7,6 @@
 #include "Scene.h"
 
 class App : public GApp {
-
-    enum {GUI_HEIGHT = 250};
-
-    GBuffer::Ref        m_gbuffer;
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;
 

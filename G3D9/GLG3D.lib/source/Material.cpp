@@ -1,8 +1,10 @@
 /**
- @file   Material.cpp
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @created  2009-03-19
- @edited   2010-03-19
+ \file   Material.cpp
+
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+
+ \created  2009-03-19
+ \edited   2011-06-11
 */
 #include "GLG3D/Material.h"
 #include "G3D/Table.h"
@@ -39,6 +41,8 @@ Material::Ref Material::create
     m->m_customMap = customMap;
     m->m_customConstant = customConstant;
     m->m_customShaderPrefix = customShaderPrefix;
+
+    m->computeDefines(m->m_macros);
 
     return m;
 }
@@ -100,6 +104,8 @@ Material::Ref Material::create(const Specification& specification) {
 
         // Update the cache
         cache.set(specification, value);
+
+        value->computeDefines(value->m_macros);
     }
 
     return value;
@@ -197,6 +203,19 @@ void Material::computeDefines(std::string& defines) const {
         }
     }
 
+    if (m_bsdf->transmissive().notBlack()) {
+        if (m_bsdf->transmissive().texture().notNull()) {
+            defines += "#define TRANSMISSIVEMAP\n";
+
+            // If the color is white, don't multiply by it
+            if (m_bsdf->transmissive().constant() != Color3::one()) {
+                defines += "#define TRANSMISSIVECONSTANT\n";
+            }
+        } else  {
+            defines += "#define TRANSMISSIVECONSTANT\n";
+        }
+    }
+
     if (m_bsdf->hasMirror()) {
         defines += "#define MIRROR\n";
     }
@@ -239,7 +258,7 @@ bool Material::similarTo(const Material& other) const {
 }
 
 
-size_t Material::SimilarHashCode::hashCode(const G3D::Material& mat) {
+size_t Material::SimilarComponents::hashCode(const G3D::Material& mat) {
     return 
         (mat.m_bsdf->lambertian().factors() << 10) ^
         (mat.m_bsdf->specular().factors() << 4) ^

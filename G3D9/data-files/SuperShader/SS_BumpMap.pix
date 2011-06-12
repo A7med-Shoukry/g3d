@@ -1,13 +1,13 @@
 // -*- c++ -*-
 /**
-  @file SS_BumpMap.pix
-  @author Morgan McGuire morgan@cs.williams.edu
+  \file SS_BumpMap.pix
+  \author Morgan McGuire, http://graphics.cs.williams.edu
 
   For use with G3D::SuperShader.
   This file is included into NonShadowedPass.pix and ShadowMappedLightPass.pix.
 
-  @edited  2009-03-24
-  @created 2007-12-18
+  \edited  2011-06-11
+  \created 2007-12-18
  */
 
 #ifdef NORMALBUMPMAP
@@ -31,7 +31,7 @@
         wsN = (tangentToWorld * tsN) * backside;
 
         // For very tiny geometry the tangent space can become degenerate and produce a bad normal
-        wsN = (dot(wsN, wsN) > 0.001) ? wsN : tan_Z;
+        wsN = normalize((dot(wsN, wsN) > 0.001) ? wsN : tan_Z);
     }
 
 #   elif (PARALLAXSTEPS <= 1)
@@ -61,7 +61,7 @@
         wsN = (tangentToWorld * tsN) * backside;
 
         // For very tiny geometry the tangent space can become degenerate and produce a bad normal
-        wsN = (dot(wsN, wsN) > 0.001) ? wsN : tan_Z;
+        wsN = normalize((dot(wsN, wsN) > 0.001) ? wsN : tan_Z);
      }
 
 #   else
@@ -167,8 +167,13 @@
         wsN = tangentToWorld * tsN;
 
         // For very tiny geometry the tangent space can become degenerate and produce a bad normal
-        wsN = (dot(wsN, wsN) > 0.001) ? wsN : tan_Z;
+        wsN = normalize((dot(wsN, wsN) > 0.001) ? wsN : tan_Z);
     }
 #   endif // Parallax Steps > 1
+#else
+    void applyBumpMap(out vec3 wsN, out vec2 offsetTexCoord) {
+        offsetTexCoord = texCoord;
+        wsN = normalize(tan_Z);
+    }
 #endif
 /* End SS_BumpMap.pix */
