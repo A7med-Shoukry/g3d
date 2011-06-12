@@ -156,6 +156,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     gbuffer->prepare(rd, defaultCamera, 0, -1.0f / desiredFrameRate());
     Array<Surface::Ref> visibleArray;
     Surface::cull(defaultCamera, rd->viewport(), surface3D, visibleArray);
+    glDisable(GL_DEPTH_CLAMP);
     Surface::renderIntoGBuffer(rd, visibleArray, gbuffer);
 
     // Make a pass over the screen, performing shading
