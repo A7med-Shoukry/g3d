@@ -53,7 +53,7 @@ public:
             const std::string& pixelSource = prefixMacros + commonPixelSource;
 
             // Compile
-            shader = Shader::fromStrings(vertexSource, geometrySource, pixelSource);
+            shader = Shader::fromStrings(vertexSource, geometrySource, 3, pixelSource);
             shader->setPreserveState(false);
         }
 

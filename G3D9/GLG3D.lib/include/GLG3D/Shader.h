@@ -342,7 +342,8 @@ public:
     (const std::string& vertexShaderName,
      const std::string& vertexShader,
      const std::string& geometryShaderName,
-     const std::string& geometryShader,       
+     const std::string& geometryShader,
+     const int maxGeometryOutputVertices,
      const std::string& pixelShaderName,
      const std::string& pixelShader,       
      PreprocessorStatus u,
@@ -731,9 +732,10 @@ public:
     inline static ShaderRef fromStrings(
         const std::string& vertexCode,
         const std::string& geometryCode,
+        const int maxGeometryOutputVertices,
         const std::string& pixelCode,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
-        return new Shader(VertexAndPixelShader::fromStrings("", vertexCode, "", geometryCode, "", pixelCode, s, DEBUG_SHADER), s);
+        return new Shader(VertexAndPixelShader::fromStrings("", vertexCode, "", geometryCode, maxGeometryOutputVertices, "", pixelCode, s, DEBUG_SHADER), s);
     }
 
     /** Names are purely for debugging purposes */
@@ -743,7 +745,7 @@ public:
         const std::string& pixelName,
         const std::string& pixelCode,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
-        return new Shader(VertexAndPixelShader::fromStrings(vertexName, vertexCode, "", "", pixelName, pixelCode, s, DEBUG_SHADER), s);
+        return new Shader(VertexAndPixelShader::fromStrings(vertexName, vertexCode, "", "", -1, pixelName, pixelCode, s, DEBUG_SHADER), s);
     }
 
     /** When true, any RenderDevice state that the shader configured before a primitive it restores at

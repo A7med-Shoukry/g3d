@@ -940,6 +940,7 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
  const std::string& vs,
  const std::string& gsName,
  const std::string& gs,
+ const int          gsMaxVerticesOut,
  const std::string& psName,
  const std::string& ps,
  PreprocessorStatus s,
@@ -948,7 +949,8 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
     return new VertexAndPixelShader
         (vs, vsName, false, 
          gs, gsName, false,
-         ps, psName, false, -1,
+         ps, psName, false, 
+         gsMaxVerticesOut,
          debugErrors, s);
 }
 
