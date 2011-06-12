@@ -1,5 +1,5 @@
 #version 120 
-#extension GL_EXT_geometry_shader4 : enable
+#extension GL_EXT_geometry_shader4 : require
 /**
 
  Extrudes each triangle into a triangular prism.  This is the geometry needed for several algorithms,
