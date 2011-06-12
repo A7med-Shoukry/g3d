@@ -1,10 +1,12 @@
 /**
- @file Shader.cpp
+ \file GLG3D.lib/source/Shader.cpp
  
- @maintainer Morgan McGuire, Jared Hoberock, and Qi Mo, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2004-04-24
- @edited  2009-11-31
+ \cite Thanks to Jared Hoberock and Qi Mo
+
+ \created 2004-04-24
+ \edited  2011-06-12
  */
 
 #include "G3D/fileutils.h"
@@ -302,15 +304,15 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
 
 
 void VertexAndPixelShader::GPUShader::init
-(const std::string&	    name,
- const std::string&	    code,
- bool			    _fromFile,
- bool			    debug,	
- GLenum			    glType,
- const std::string&	    type,
- PreprocessorStatus         preprocessor,
+(const std::string&	            name,
+ const std::string&	            code,
+ bool			                _fromFile,
+ bool			                debug,	
+ GLenum			                glType,
+ const std::string&	            type,
+ PreprocessorStatus             preprocessor,
  const Table<std::string, int>& samplerMappings,
- bool                       secondPass) {
+ bool                           secondPass) {
     
     _name		= name;
     _shaderType		= type;
@@ -943,11 +945,9 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
  PreprocessorStatus s,
  bool               debugErrors) {
 
-     (void)gs;
-     (void)gsName;
     return new VertexAndPixelShader
         (vs, vsName, false, 
-         "", "", false,
+         gs, gsName, false,
          ps, psName, false, -1,
          debugErrors, s);
 }

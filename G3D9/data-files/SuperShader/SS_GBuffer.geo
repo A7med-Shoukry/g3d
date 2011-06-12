@@ -2,9 +2,13 @@
 /** \file SS_GBuffer.geo 
     \author Morgan McGuire, http://graphics.cs.williams.edu */
 // This shader expects a prefix attached at runtime in SuperShader.cpp
+#line 6
+#extension GL_EXT_geometry_shader4 : require
 
-layout(triangles) in;
-layout(triangle_strip, max_vertices = 3) out;
+#if __VERSION__ >= 150
+    layout(triangles) in;
+    layout(triangle_strip, max_vertices = 3) out;
+#endif
 
 varying in  vec3 wsPositionIn[3];
 varying in  vec2 texCoordIn[3];
@@ -45,10 +49,10 @@ void main() {
 #           if PARALLAXSTEPS > 0
                 _tsE    = _tsEIn[v];
 #           endif
-            tan_X       = tanXIn[v];
-            tan_Y       = tanYIn[v];
+            tan_X       = tan_XIn[v];
+            tan_Y       = tan_YIn[v];
 #       endif
-        tanZ            = tan_ZIn[v];
+        tan_Z           = tan_ZIn[v];
 
         wsPosition      = wsPositionIn[v];
         wsFaceNormal    = N;
