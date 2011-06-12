@@ -94,6 +94,10 @@ void Shader::beforePrimitive(class RenderDevice* renderDevice) {
         if (uniformNames.contains("g3d_WorldToCameraMatrix")) {
             args.set("g3d_WorldToCameraMatrix", c2w.inverse());
         }
+
+        if (uniformNames.contains("g3d_InvertY")) {
+            args.set("g3d_InvertY", renderDevice->invertY());
+        }
     }
     debugAssertGLOk();
 
@@ -362,6 +366,7 @@ void VertexAndPixelShader::GPUShader::init
                 uniform int  g3d_NumTextures;
                 uniform vec4 g3d_ObjectLight0;
                 uniform vec4 g3d_WorldLight0;
+                uniform bool g3d_InvertY;
                 );
 
         

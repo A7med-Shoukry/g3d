@@ -95,7 +95,6 @@ void SuperSurface::renderIntoGBufferHomogeneous
 
             // Bind material arguments
             material->configure(shader->args);
-            shader->args.set("backside", 1.0f);
 
             // TODO: pass alpha threshold
 

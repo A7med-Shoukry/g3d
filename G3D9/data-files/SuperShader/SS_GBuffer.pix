@@ -1,3 +1,4 @@
+// -*- c++ -*-
 /** \file SS_GBuffer.pix 
     \author Morgan McGuire, http://graphics.cs.williams.edu*/
 
@@ -46,9 +47,7 @@ varying vec3 wsPosition;
     varying vec3        wsFaceNormal;
 #endif
 
-///** Set to -1 to flip the normal. */
-uniform float       backside;
-//float backside = (gl_FrontFacing ? 1.0 : -1.0);
+float backside = (gl_FrontFacing == g3d_InvertY) ?  1.0 : -1.0;
 
 #ifdef NORMALBUMPMAP
 #   if (PARALLAXSTEPS > 0)
