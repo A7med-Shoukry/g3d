@@ -29,7 +29,8 @@ public:
     Shader::Ref get(const GBuffer::Ref& gbuffer, const Material::Ref& material) {
         static const std::string& version = "#version 120\n#extension GL_EXT_gpu_shader4 : require\n";
 
-        const std::string& prefixMacros = version + gbuffer->macros() + material->macros();
+        const std::string& prefixMacros = version + "\n// GBuffer macros:\n" + gbuffer->macros() +
+            "\n// Material macros:\n\n" + material->macros() + "///////////////////\n\n";
 
         bool created = false;
         Shader::Ref& shader = cache.getCreate(prefixMacros, created);

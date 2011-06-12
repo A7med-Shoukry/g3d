@@ -419,6 +419,8 @@ void VertexAndPixelShader::GPUShader::init
             shifted = 0;
         }
         
+        lineDirective += "// End of G3D::Shader inserted code\n";
+
         _code = versionLine + insertString + lineDirective + _code + "\n";
     }
     
