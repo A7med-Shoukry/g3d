@@ -56,8 +56,10 @@ public:
     G3D_DECLARE_ENUM_CLASS_METHODS(DepthEncoding);
 
 }; // class DepthEncoding
-G3D_DECLARE_ENUM_CLASS_HASHCODE(DepthEncoding);
 
+} // namespace G3D
+G3D_DECLARE_ENUM_CLASS_HASHCODE(G3D::DepthEncoding);
+namespace G3D {
 
 /** \brief Saito and Takahashi's Geometry Buffers, typically 
     used today for deferred shading. 
@@ -360,8 +362,8 @@ public:
     void prepare(RenderDevice* rd, const GCamera& camera, float timeOffset, float velocityStartTimeOffset);
 };
 
-G3D_DECLARE_ENUM_CLASS_HASHCODE(GBuffer::Field);
-
 } // namespace G3D
+
+G3D_DECLARE_ENUM_CLASS_HASHCODE(G3D::GBuffer::Field);
 
 #endif
