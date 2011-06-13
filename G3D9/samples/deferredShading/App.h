@@ -9,6 +9,7 @@ protected:
     ArticulatedModel::Ref   model;
     GBuffer::Ref            gbuffer;
     Shader::Ref             shadingPass;
+    CFrame                  previousCameraFrame;
 
     void makeGBuffer();
     void makeScene();

@@ -4,17 +4,17 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2004-11-20
-  \edited  2011-06-11
+  \edited  2011-06-13
 
   Copyright 2001-2011, Morgan McGuire
  */
 #include "G3D/Log.h"
 #include "G3D/fileutils.h"
+#include "GLG3D/GApp.h" // TODO: remove
 #include "GLG3D/SuperSurface.h"
 #include "GLG3D/Lighting.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/SuperShader.h"
-#include "GLG3D/Draw.h" // TODO remove
 
 namespace G3D {
 
@@ -92,10 +92,10 @@ void SuperSurface::renderIntoGBufferHomogeneous
             if (gbuffer->specification().format[GBuffer::Field::SS_POSITION_CHANGE] != NULL) {
                 // Map (-1, 1) normalized device coordinates to actual pixel positions
                 const Matrix4& screenSize = 
-                    Matrix4(rd->width() / 2.0f, 0.0f, 0.0f, rd->width() / 2.0f,
-                            0.0f, rd->height() / 2.0f, 0.0f, rd->height() / 2.0f,
-                            0.0f, 0.0f, 1.0f, 0.0f,
-                            1.0f, 0.0f, 0.0f, 1.0f);
+                    Matrix4(rd->width() / 2.0f, 0.0f,                0.0f, rd->width() / 2.0f,
+                            0.0f,               rd->height() / 2.0f, 0.0f, rd->height() / 2.0f,
+                            0.0f,               0.0f,                1.0f, 0.0f,
+                            0.0f,               0.0f,                0.0f, 1.0f);
                 shader->args.set("ProjectToScreenMatrix", screenSize * rd->invertYMatrix() * rd->projectionMatrix());
             }
 

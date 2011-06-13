@@ -21,6 +21,7 @@ void App::onInit() {
     makeScene();
     makeShader();
     makeGUI();
+    setDesiredFrameRate(60);
 }
 
 
@@ -30,8 +31,7 @@ void App::makeGBuffer() {
     specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB16F();
     specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
-//    specification.format[GBuffer::Field::SS_POSITION_CHANGE]  = ImageFormat::RG16F();
-//    specification.format[GBuffer::Field::WS_FACE_NORMAL]  = ImageFormat::RGBA8();
+    specification.format[GBuffer::Field::SS_POSITION_CHANGE]  = ImageFormat::RG16F();
     specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH24();
     specification.depthEncoding = DepthEncoding::HYPERBOLIC;
 
@@ -132,8 +132,7 @@ void App::makeGUI() {
     debugPane->setCaption(GuiText("G-Buffers", GFont::fromFile(System::findDataFile("arial.fnt")), 16));
     debugPane->moveBy(2, 10);
     debugPane->beginRow();
-//    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_FACE_NORMAL));
-//    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE));
+    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE));
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_NORMAL));
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_POSITION))->moveBy(40, 0);
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::LAMBERTIAN))->moveBy(40, 0);
@@ -150,7 +149,7 @@ void App::onPose(Array<Surface::Ref>& surface, Array<Surface2D::Ref>& surface2D)
     
     const CFrame& previousFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
 
-    yaw += 2.0f * units::degrees();
+    yaw += 4.0f * units::degrees();
     const CFrame& currentFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
 
     model->pose(surface, currentFrame, ArticulatedModel::defaultPose(), previousFrame, ArticulatedModel::defaultPose());
@@ -164,7 +163,8 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Array<Surface::Ref> visibleArray;
     Surface::cull(defaultCamera, rd->viewport(), surface3D, visibleArray);
     glDisable(GL_DEPTH_CLAMP);
-    Surface::renderIntoGBuffer(rd, visibleArray, gbuffer);
+    Surface::renderIntoGBuffer(rd, visibleArray, gbuffer, previousCameraFrame);
+    previousCameraFrame = defaultCamera.coordinateFrame();
 
     // Make a pass over the screen, performing shading
     rd->push2D(); {
