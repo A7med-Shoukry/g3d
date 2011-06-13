@@ -139,15 +139,15 @@ public:
         } rd->popState();
     }
     
-    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) override const {
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) const override {
         c = CoordinateFrame();
     }
 
-    virtual void getObjectSpaceBoundingBox(AABox& b, bool previous = false) override const {
+    virtual void getObjectSpaceBoundingBox(AABox& b, bool previous = false) const override {
         b = boxBounds;
     }
 
-    virtual void getObjectSpaceBoundingSphere(Sphere& s, bool previous = false) override const {
+    virtual void getObjectSpaceBoundingSphere(Sphere& s, bool previous = false) const override {
         boxBounds.getBounds(s);
     }
     

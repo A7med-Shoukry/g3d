@@ -366,24 +366,24 @@ public:
 
     /** Force rendering after opaque objects so that it can try to
         always be on top. */
-    virtual bool hasTransmission() override const {
+    virtual bool hasTransmission() const override {
         return true;
     }
 
-    virtual std::string name() override const {
+    virtual std::string name() const override {
         return "ThirdPersonManipulator";
     }
 
-    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) override const {
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) const override {
         m_manipulator->getControlFrame(c);
     }
 
-    virtual void getObjectSpaceBoundingSphere(Sphere& s, bool previous = false) override const {
+    virtual void getObjectSpaceBoundingSphere(Sphere& s, bool previous = false) const override {
         s.radius = 2;
         s.center = Vector3::zero();
     }
 
-    virtual void getObjectSpaceBoundingBox(AABox& b, bool previous = false) override const {
+    virtual void getObjectSpaceBoundingBox(AABox& b, bool previous = false) const override {
         b = AABox(Vector3(-2,-2,-2), Vector3(2,2,2));
     }
 };

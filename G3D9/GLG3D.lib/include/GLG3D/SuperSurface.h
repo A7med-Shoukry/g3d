@@ -318,17 +318,17 @@ public:
 
     virtual void sendGeometry(RenderDevice* rd) const;
 
-    virtual std::string name() override const;
+    virtual std::string name() const override;
 
-    virtual bool hasTransmission() override const;
+    virtual bool hasTransmission() const override;
 
-    virtual bool hasPartialCoverage() override const;
+    virtual bool hasPartialCoverage() const override;
 
-    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) override const;
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) const override;
 
-    virtual void getObjectSpaceBoundingSphere(Sphere&, bool previous = false) override const;
+    virtual void getObjectSpaceBoundingSphere(Sphere&, bool previous = false) const override;
 
-    virtual void getObjectSpaceBoundingBox(AABox&, bool previous = false) override const;
+    virtual void getObjectSpaceBoundingBox(AABox&, bool previous = false) const override;
 
     virtual void render(RenderDevice* renderDevice) const;
     
@@ -340,7 +340,7 @@ public:
 
     virtual void renderShadowMappedLightPass(RenderDevice* rd, const GLight& light, const ShadowMap::Ref& shadowMap) const;
     
-    virtual bool depthWriteHint(float distanceToCamera) override const;
+    virtual bool depthWriteHint(float distanceToCamera) const override;
        
     virtual bool renderSuperShaderPass
     (RenderDevice* rd, 
@@ -353,7 +353,7 @@ public:
     (RenderDevice*                rd, 
      Array<Surface::Ref>&         surfaceArray,
      const GBuffer::Ref&          gbuffer,
-     const CFrame&                previousCameraFrame) override const;
+     const CFrame&                previousCameraFrame) const override;
 };
 
 const char* toString(SuperSurface::GraphicsProfile p);
