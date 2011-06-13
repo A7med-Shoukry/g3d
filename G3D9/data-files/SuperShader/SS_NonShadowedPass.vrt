@@ -8,17 +8,11 @@
     uniform vec4        customConstant;
 #endif
 
-#ifdef CS_POSITION_CHANGE
+#if defined(CS_POSITION_CHANGE) || defined(SS_POSITION_CHANGE)
     uniform mat4 PreviousObjectToCameraMatrix;
     varying vec3 csPrevPosition;
 #endif
-
-#ifdef SS_POSITION_CHANGE
-    uniform mat4 PreviousObjectToScreenMatrix;
-    // Homogeneous space
-    varying vec4 hsPrevPosition;
-#endif
-
+    
 /** Texture coordinate */
 varying vec2 texCoord;
 
@@ -42,13 +36,8 @@ void main(void) {
 
     wsPosition = (g3d_ObjectToWorldMatrix * gl_Vertex).xyz;
 
-#   ifdef CS_POSITION_CHANGE
+#   if defined(CS_POSITION_CHANGE) || defined(SS_POSITION_CHANGE)
         csPrevPosition = (PreviousObjectToCameraMatrix * gl_Vertex).xyz;
-#   endif
-
-#   ifdef SS_POSITION_CHANGE
-        // Homogeneous space
-        hsPrevPosition = PreviousObjectToScreenMatrix * gl_Vertex;
 #   endif
 
     tan_Z = g3d_ObjectToWorldNormalMatrix * gl_Normal.xyz;

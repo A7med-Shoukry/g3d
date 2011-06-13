@@ -30,6 +30,7 @@ void App::makeGBuffer() {
     specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB16F();
     specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
+//    specification.format[GBuffer::Field::SS_POSITION_CHANGE]  = ImageFormat::RG16F();
 //    specification.format[GBuffer::Field::WS_FACE_NORMAL]  = ImageFormat::RGBA8();
     specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH24();
     specification.depthEncoding = DepthEncoding::HYPERBOLIC;
@@ -132,6 +133,7 @@ void App::makeGUI() {
     debugPane->moveBy(2, 10);
     debugPane->beginRow();
 //    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_FACE_NORMAL));
+//    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE));
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_NORMAL));
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_POSITION))->moveBy(40, 0);
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::LAMBERTIAN))->moveBy(40, 0);
@@ -144,7 +146,7 @@ void App::makeGUI() {
 
 void App::onPose(Array<Surface::Ref>& surface, Array<Surface2D::Ref>& surface2D) {
     GApp::onPose(surface, surface2D);
-    static float yaw = 150 * units::degrees();
+    static float yaw = 150.0f * units::degrees();
     
     const CFrame& previousFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
 

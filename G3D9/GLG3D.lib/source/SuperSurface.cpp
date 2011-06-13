@@ -81,23 +81,22 @@ void SuperSurface::renderIntoGBufferHomogeneous
             surface->getCoordinateFrame(cframe, false);
             rd->setObjectToWorldMatrix(cframe);
 
-            if (gbuffer->specification().format[GBuffer::Field::CS_POSITION_CHANGE] != NULL) {
-                // Previous object-to-camera projection for 
+            if ((gbuffer->specification().format[GBuffer::Field::CS_POSITION_CHANGE] != NULL) || 
+                (gbuffer->specification().format[GBuffer::Field::SS_POSITION_CHANGE] != NULL)) {
+                // Previous object-to-camera projection for velocity buffer
                 CFrame previousFrame;
                 surface->getCoordinateFrame(previousFrame, true);
                 shader->args.set("PreviousObjectToCameraMatrix", previousCameraFrame.inverse() * previousFrame);
             }
 
             if (gbuffer->specification().format[GBuffer::Field::SS_POSITION_CHANGE] != NULL) {
-                // Previous object-to-camera projection for 
-                CFrame previousFrame;
-                surface->getCoordinateFrame(previousFrame, true);
+                // Map (-1, 1) normalized device coordinates to actual pixel positions
                 const Matrix4& screenSize = 
                     Matrix4(rd->width() / 2.0f, 0.0f, 0.0f, rd->width() / 2.0f,
                             0.0f, rd->height() / 2.0f, 0.0f, rd->height() / 2.0f,
                             0.0f, 0.0f, 1.0f, 0.0f,
                             1.0f, 0.0f, 0.0f, 1.0f);
-                shader->args.set("PreviousObjectToScreenMatrix", screenSize * rd->projectionMatrix() * previousCameraFrame.inverse() * previousFrame);
+                shader->args.set("ProjectToScreenMatrix", screenSize * rd->invertYMatrix() * rd->projectionMatrix());
             }
 
             if (gpuGeom->twoSided) {
