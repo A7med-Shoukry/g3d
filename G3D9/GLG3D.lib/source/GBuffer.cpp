@@ -156,6 +156,7 @@ void GBuffer::prepare
     float           velocityStartTimeOffset) {
 
     rd->pushState(m_framebuffer); {
+        rd->setColorClearValue(Color4::clear());
         rd->clear();
     } rd->popState();
     setCamera(camera);
