@@ -1,5 +1,11 @@
-#ifndef GLG3D_GEntity_H
-#define GLG3D_GEntity_H
+/**
+ \file GLG3D/GEntity.h
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+ Copyright 2011, Morgan McGuire
+ */
+#ifndef GLG3D_GEntity_h
+#define GLG3D_GEntity_h
 
 #include "G3D/CoordinateFrame.h"
 #include "G3D/PhysicsFrameSpline.h"
@@ -14,8 +20,6 @@ namespace G3D {
     G3D does not contain a mandatory Entity class in the API because
     it is a very application-specific role. However, this is a base
     class of how you might begin to structure one to get you started.
-
-    \beta
 */
 class GEntity : public ReferenceCountedObject {
 public:
@@ -39,6 +43,9 @@ protected:
     /** Current position */
     CFrame                          m_frame;
 
+    /** Frame before the previous onSimulation() */
+    CFrame                          m_previousFrame;
+
     /** The Any from which this was originally constructed */
     Any                             m_sourceAny;
 
@@ -54,6 +61,9 @@ protected:
 
     /** Current pose */
     ArticulatedModel::Pose          m_artPose;
+
+    /** Pose for the previous onSimulation */
+    ArticulatedModel::Pose          m_artPreviousPose;
 
     /** Pose over time. */
     ArticulatedModel::PoseSpline    m_artPoseSpline;
