@@ -529,7 +529,7 @@ void Surface::renderTranslucent
  RefractionQuality              maxRefractionQuality,
  AlphaMode                      alphaMode) {
 
-    const float timeOffset = 0.0f;
+    const bool previous = false;
 
     rd->pushState();
 
@@ -567,8 +567,8 @@ void Surface::renderTranslucent
 
         CFrame cframe;
         Sphere sphere;
-        model->getCoordinateFrame(cframe, timeOffset);
-        model->getObjectSpaceBoundingSphere(sphere, timeOffset);
+        model->getCoordinateFrame(cframe, previous);
+        model->getObjectSpaceBoundingSphere(sphere, previous);
         const float distanceToCamera = (sphere.center + cframe.translation - cameraFrame.translation).dot(cameraFrame.lookVector());
 
         rd->setDepthWrite(oldDepthWrite && model->depthWriteHint(distanceToCamera));
