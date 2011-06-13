@@ -151,7 +151,6 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
     // Compute bounds
     m_lastBoxBounds = AABox::empty();
     m_lastSphereBounds = Sphere(m_frame.translation, 0);
-    const float timeOffset = 0.0f;
     for (int i = oldLen; i < surfaceArray.size(); ++i) {
         AABox b;
         Sphere s;
