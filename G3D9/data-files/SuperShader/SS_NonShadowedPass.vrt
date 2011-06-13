@@ -2,10 +2,21 @@
  \file NonShadowedPass.vrt
  \author Morgan McGuire
  \created 2007-10-22
- \edited  2009-03-25 
+ \edited  2011-06-12 
  */
 #ifdef CUSTOMCONSTANT
     uniform vec4        customConstant;
+#endif
+
+#ifdef CS_POSITION_CHANGE
+    uniform mat4 PreviousObjectToCameraMatrix;
+    varying vec3 csPrevPosition;
+#endif
+
+#ifdef SS_POSITION_CHANGE
+    uniform mat4 PreviousObjectToScreenMatrix;
+    // Homogeneous space
+    varying vec4 hsPrevPosition;
 #endif
 
 /** Texture coordinate */
@@ -30,6 +41,15 @@ void main(void) {
     vec3 wsEyePos = g3d_CameraToWorldMatrix[3].xyz;
 
     wsPosition = (g3d_ObjectToWorldMatrix * gl_Vertex).xyz;
+
+#   ifdef CS_POSITION_CHANGE
+        csPrevPosition = (PreviousObjectToCameraMatrix * gl_Vertex).xyz;
+#   endif
+
+#   ifdef SS_POSITION_CHANGE
+        // Homogeneous space
+        hsPrevPosition = PreviousObjectToScreenMatrix * gl_Vertex;
+#   endif
 
     tan_Z = g3d_ObjectToWorldNormalMatrix * gl_Normal.xyz;
 

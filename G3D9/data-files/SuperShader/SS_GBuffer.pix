@@ -42,7 +42,16 @@ varying vec3 wsPosition;
 #ifdef TRANSMITMAP
     uniform sampler2D   transmissiveMap;
 #endif
-    
+
+#ifdef CS_POSITION_CHANGE
+    varying vec3 csPrevPosition;
+#endif
+
+#ifdef SS_POSITION_CHANGE
+    // Homogeneous space
+    varying vec4 hsPrevPosition;
+#endif
+
 float backside = (gl_FrontFacing == g3d_InvertY) ?  1.0 : -1.0;
 
 #ifdef NORMALBUMPMAP
@@ -184,18 +193,30 @@ void main() {
 #   endif
 
     //////////////////////// POSITIONS /////////////////////////////
-    // NVIDIA drivers miscompile this unless we set WS_POSITION after the normal
+    // NVIDIA drivers miscompile this unless we write WS_POSITION after the normals
 
 #   ifdef WS_POSITION
         WS_POSITION.xyz = wsPosition;
 #   endif
 
+#   if defined(CS_POSITION) || defined(CS_POSITION_CHANGE) || defined(SS_POSITION_CHANGE)
+        vec3 csPosition = (g3d_WorldToCameraMatrix * vec4(wsPosition, 1.0)).xyz;
+#   endif
+
 #   ifdef CS_POSITION
-        CS_POSITION.xyz = (g3d_WorldToCameraMatrix * vec4(wsPosition, 1.0)).xyz;
+        CS_POSITION.xyz = csPosition;
 #   endif
 
 #   ifdef CS_Z
         CS_Z.r = dot(g3d_WorldToCameraMatrix[3], vec4(wsPosition, 1.0));
 #   endif
 
+#   ifdef CS_POSITION_CHANGE
+        CS_POSITION_CHANGE = csPosition - csPrevPosition;
+#   endif
+
+#   ifdef SS_POSITION_CHANGE
+        vec2 ssPrevPosition = hsPrevPosition.xy / hsPrevPosition.w;
+        SS_POSITION_CHANGE = gl_FragCoord.xy - ssPrevPosition;
+#   endif
 }
