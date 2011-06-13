@@ -77,6 +77,11 @@ These control the version of Winsock used by G3D.
 /** \def G3D_64BIT */
 /** \def G3D_32BIT */
 
+#ifndef _MSC_VER
+#    define override
+#endif
+
+
 // Detect 64-bit under various compilers
 #if (defined(_M_X64) || defined(_WIN64) || defined(__LP64__) || defined(_LP64))
 #    define G3D_64BIT

@@ -349,8 +349,6 @@ std::string BinaryInput::readString(int64 maxLength) {
     prepareToRead(maxLength);
 
     int64 n = 0;
-    bool hasNull = true;
-
     while ((m_buffer[m_pos + n] != '\0') && (n != maxLength)) {
         ++n;
     }

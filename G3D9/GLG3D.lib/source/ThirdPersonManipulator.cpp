@@ -1,10 +1,10 @@
 /**
-  \file GLG3D/ThirdPersonManipulator.cpp
+  \file GLG3D.lib/source/ThirdPersonManipulator.cpp
 
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2006-06-09
-  \edited  2011-01-11
+  \edited  2011-06-12
 */
 
 #include "GLG3D/ThirdPersonManipulator.h"
@@ -33,8 +33,9 @@ Vector3 UIGeom::computeEye(RenderDevice* rd) {
     return eye;
 }
 
-bool UIGeom::contains(
-    const Vector2&  p, 
+
+bool UIGeom::contains
+   (const Vector2&  p, 
     float&          nearestDepth, 
     Vector2&        tangent2D,
     float&          projectionW,
@@ -363,25 +364,26 @@ public:
         m_manipulator->render(rd);
     }
 
-    /** Force rendering after opaque objects so that it can try to always be on top. */
-    virtual bool hasTransmission() const {
+    /** Force rendering after opaque objects so that it can try to
+        always be on top. */
+    virtual bool hasTransmission() override const {
         return true;
     }
 
-    virtual std::string name() const {
+    virtual std::string name() override const {
         return "ThirdPersonManipulator";
     }
 
-    virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const {
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) override const {
         m_manipulator->getControlFrame(c);
     }
 
-    virtual void getObjectSpaceBoundingSphere(Sphere& s, float timeOffset = 0.0f) const {
+    virtual void getObjectSpaceBoundingSphere(Sphere& s, bool previous = false) override const {
         s.radius = 2;
         s.center = Vector3::zero();
     }
 
-    virtual void getObjectSpaceBoundingBox(AABox& b, float timeOffset = 0.0f) const {
+    virtual void getObjectSpaceBoundingBox(AABox& b, bool previous = false) override const {
         b = AABox(Vector3(-2,-2,-2), Vector3(2,2,2));
     }
 };

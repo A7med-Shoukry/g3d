@@ -59,8 +59,8 @@ void SuperSurface::renderIntoGBufferHomogeneous
 (RenderDevice*                rd, 
  Array<Surface::Ref>&         surfaceArray,
  const GBuffer::Ref&          gbuffer,
- float                        timeOffset,
- float                        velocityStartOffset) const {
+ const CFrame&                previousCameraFrame) const {
+
     rd->pushState(); {
         rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
         const RenderDevice::CullFace oldCullFace = rd->cullFace();
@@ -78,7 +78,7 @@ void SuperSurface::renderIntoGBufferHomogeneous
             rd->setShader(shader);
 
             CFrame cframe;
-            surface->getCoordinateFrame(cframe, timeOffset);
+            surface->getCoordinateFrame(cframe, false);
             rd->setObjectToWorldMatrix(cframe);
 
             if (gpuGeom->twoSided) {
@@ -143,6 +143,7 @@ void SuperSurface::sortFrontToBack(Array<SuperSurface::Ref>& a, const Vector3& v
 SuperSurface::Ref SuperSurface::create
 (const std::string&       name,
  const CFrame&            frame, 
+ const CFrame&            previousFrame,
  const GPUGeom::Ref&      gpuGeom,
  const CPUGeom&           cpuGeom,
  const ReferenceCountedPointer<ReferenceCountedObject>& source) {
@@ -150,7 +151,7 @@ SuperSurface::Ref SuperSurface::create
 
 
     // Cannot check if the gpuGeom is valid because it might not be filled out yet
-    return new SuperSurface(name, frame, gpuGeom, cpuGeom, source);
+    return new SuperSurface(name, frame, previousFrame, gpuGeom, cpuGeom, source);
 }
 
 
@@ -510,7 +511,6 @@ bool SuperSurface::renderNonShadowedOpaqueTerms(
 bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
     RenderDevice*         rd,
     const Lighting::Ref&  lighting) const {
-    const float timeOffset = 0.0f;
 
     const Material::Ref&  material = m_gpuGeom->material;
     const SuperBSDF::Ref& bsdf     = material->bsdf();
@@ -548,8 +548,8 @@ bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
 
         Sphere myBounds;
         CFrame cframe;
-        getObjectSpaceBoundingSphere(myBounds, timeOffset);
-        getCoordinateFrame(cframe, timeOffset);
+        getObjectSpaceBoundingSphere(myBounds, false);
+        getCoordinateFrame(cframe, false);
         myBounds = cframe.toWorldSpace(myBounds);
         
         // Remove lights that cannot affect this object
@@ -925,17 +925,23 @@ bool SuperSurface::hasPartialCoverage() const {
 }
 
 
-void SuperSurface::getCoordinateFrame(CoordinateFrame& c, float timeOffset) const {
-    c = m_frame;
+void SuperSurface::getCoordinateFrame(CoordinateFrame& c, bool previous) const {
+    if (previous) {
+        c = m_previousFrame;
+    } else {
+        c = m_frame;
+    }
 }
 
 
-void SuperSurface::getObjectSpaceBoundingSphere(Sphere& s, float timeOffset) const {
+void SuperSurface::getObjectSpaceBoundingSphere(Sphere& s, bool previous) const {
+    (void) previous;
     s = m_gpuGeom->sphereBounds;
 }
 
 
-void SuperSurface::getObjectSpaceBoundingBox(AABox& b, float timeOffset) const {
+void SuperSurface::getObjectSpaceBoundingBox(AABox& b, bool previous) const {
+    (void) previous;
     b = m_gpuGeom->boxBounds;
 }
 

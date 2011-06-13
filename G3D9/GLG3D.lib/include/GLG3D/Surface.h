@@ -64,27 +64,36 @@ typedef ReferenceCountedPointer<class Surface> SurfaceRef;
 
 /**
    \brief The surface of a model, posed and ready for rendering.
+   
+   Most methods support efficient OpenGL rendering, but this class
+   also supports extracting a mesh that approximates the surface for
+   ray tracing or collision detection.
 
+   <b>"Homogeneous" Methods</b>:
    Many subclasses of Surface need to bind shader and other state in
    order to render.  To amortize the cost of doing so, renderers use
    categorizeByDerivedType<Surface::Ref> to distinguish subclasses and
    then invoke the methods with names ending in "Homogeneous" on
    arrays of derived instances.
 
-   Most methods take a \a timeOffset argument.  This is the time in
-   seconds to offset the result from the time at which the model was
-   posed.  The location of the rendered object is only an
-   approximation when this value is non-zero.  For most Surface
-   subclasses, small negative offsets produce fairly accurate
-   positioning because the object can be interpolated from the
-   previous pose-time state.  Positive offsets lead to extrapolation
-   and are often less accurate.  Note that one could also render at
-   multiple times by posing the original models at different times.
-   However, models do not guarantee that they will produce the same
-   number of Surface%s, or Surface%s with the same topology each time
-   that they are posed.  The use of timeOffset allows the caller to
-   assume that the geometry deforms but has the same topology across
-   an interval.
+   <b>"previous" Arguments</b>: To support motion blur and reverse
+   reprojection, Surface represents the surface at two times: the
+   "current" time, and some "previous" time that is usually the
+   previous frame.  The pose of the underlying model at these times is
+   specified to the class that created the Surface.  All rendering
+   methods, including shading, operate on the current-time version.  A
+   GBuffer can represent a forward difference estimate of velocity in
+   these with a GBuffer::Field::CS_POSITION_CHANGE field.  Access
+   methods on Surface take a boolean argument \a previous that
+   specifies whether the "current" or "previous" description of the
+   surface is desired.
+   
+   Note that one could also render at multiple times by posing the
+   original models at different times.  However, models do not
+   guarantee that they will produce the same number of Surface%s, or
+   Surface%s with the same topology each time that they are posed.
+   The use of timeOffset allows the caller to assume that the geometry
+   deforms but has the same topology across an interval.
  */
 class Surface : public ReferenceCountedObject {
 protected:
@@ -118,20 +127,21 @@ public:
 
     virtual std::string name() const = 0;
 
-    virtual void getCoordinateFrame(CoordinateFrame& cframe, float timeOffset = 0.0f) const = 0;
+    virtual void getCoordinateFrame(CoordinateFrame& cframe, bool previous = false) const = 0;
 
-    virtual void getObjectSpaceBoundingBox(AABox& box, float timeOffset = 0.0f) const = 0;
+    virtual void getObjectSpaceBoundingBox(AABox& box, bool previous = false) const = 0;
 
-    virtual void getObjectSpaceBoundingSphere(Sphere& sphere, float timeOffset = 0.0f) const = 0;
+    virtual void getObjectSpaceBoundingSphere(Sphere& sphere, bool previous = false) const = 0;
 
 
     /** \brief Clears the arrays and appends indexed triangle list
         information.
     
-     Most subclasses will ignore \a timeOffset because they only use
-     that for rigid-body transformations.  However, it is possible to
-     include skinning or keyframe information in a Surface and respond
-     to timeOffset.
+     Many subclasses will ignore \a previous because they only use
+     that for rigid-body transformations and can be represented by the
+     current geometry and moving coordinate frame.  However, it is
+     possible to include skinning or keyframe information in a Surface
+     and respond to timeOffset.
     
      Not required to be implemented.*/
     virtual void getObjectSpaceGeometry
@@ -140,7 +150,7 @@ public:
      Array<Vector3>&              normal, 
      Array<Vector4>&              packedTangent, 
      Array<Point2>&               texCoord, 
-     float                        timeOffset = 0.0f) {}
+     bool                         previous = false) {}
 
 
     /** If true, this object transmits light and depends on
@@ -268,8 +278,7 @@ public:
     virtual void renderHomogeneous
     (RenderDevice*                rd, 
      const Array<Surface::Ref>&   surfaceArray, 
-     const Environment&           environment,
-     float                        timeOffset = 0.0f) const {}//= 0;
+     const Environment&           environment) const {}//= 0;
 
     /** 
     \brief Render all instances of \a surfaceArray to the
@@ -284,36 +293,40 @@ public:
     be sampled when computing the GBuffer velocity buffer.  Set to
     -1/framerate if performing reverse reprojection using velocity
     buffers.
+
+    \param previousCameraFrame Used for rendering
+    GBuffer::CS_POSITION_CHANGE frames.
     */
     virtual void renderIntoGBufferHomogeneous
-    (RenderDevice*                rd, 
+    (RenderDevice*                rd,
      Array<Surface::Ref>&         surfaceArray,
      const GBuffer::Ref&          gbuffer,
-     float                        timeOffset,
-     float                        velocityStartOffset) const {}//= 0;
+     const CFrame&                previousCameraFrame) const {}//= 0;
 
     /** \brief Rendering a set of surfaces in wireframe, using the
        current blending mode.  This is primarily used for debugging.
        
        Invoking this with elements of \a surfaceArray that are not of
        the same most-derived type as \a this will result in an error.
-       */
+
+     \param previous If true, the caller should set the RenderDevice
+     camera transformation to the previous one.*/
     virtual void renderWireframeHomogeneous
     (RenderDevice*                rd, 
      const Array<Surface::Ref>&   surfaceArray, 
-     const Color4&                color = Color3::black(), 
-     float                        timeOffset = 0.0f) const {}//= 0;
+     const Color4&                color,
+     bool                         previous) const {}//= 0;
 
     ///////////////////////////////////////////////////////////////////////
     // Static methods
-
-    /** Argument for timeOffset and velocityStartOffset for renderIntoGBuffer. */
-    static const int16 USE_GBUFFER_TIME = -10000;
     
     /**
      Culling must be performed by the caller, since this can be used for both 2D and
      3D rendering.
      Sorts and then renders front-to-back using current stencil and depth operations.
+
+     \param previousCameraFrame Used for rendering
+     GBuffer::CS_POSITION_CHANGE frames.
 
      \sa cull
      */
@@ -321,8 +334,7 @@ public:
     (RenderDevice*                rd, 
      Array<Surface::Ref>&         surfaceArray,
      const GBuffer::Ref&          gbuffer,
-     float                        timeOffset = USE_GBUFFER_TIME,
-     float                        velocityStartOffset = USE_GBUFFER_TIME);
+     const CFrame&                previousCameraFrame = CFrame());
 
     /** 
       Divides the inModels into a front-to-back sorted array of opaque
@@ -334,30 +346,32 @@ public:
      */
     static void sortFrontToBack
        (Array<Surface::Ref>&       surfaces, 
-        const Vector3&             wsLookVector,
-        float                      timeOffset = 0.0f);
+        const Vector3&             wsLookVector);
 
 
     static void sortBackToFront
        (Array<Surface::Ref>&       surfaces, 
-        const Vector3&             wsLookVector,
-        float                      timeOffset = 0.0f) {
-        sortFrontToBack(surfaces, -wsLookVector, timeOffset);
+        const Vector3&             wsLookVector) {
+        sortFrontToBack(surfaces, -wsLookVector);
     }
 
 
-    /** Utility function for rendering a set of surfaces in wireframe using the current blending mode. */
-    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black(), float timeOffset = 0.0f);
+    /** Utility function for rendering a set of surfaces in wireframe
+     using the current blending mode.  
+
+     \param previous If true, the caller should set the RenderDevice
+     camera transformation to the previous one.*/
+    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black(), bool previous = false);
 
     /** Computes the world-space bounding box of an array of Surface%s of any type.*/
-    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds, float timeOffset = 0.0f);
+    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds, bool previous = false);
 
     /** Computes the world-space bounding sphere of an array of Surface%s of any type.*/
-    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds, float timeOffset = 0.0f);
+    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds, bool previous = false);
 
     /** Computes the array of models that can be seen by \a camera*/
     static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, 
-                     Array<Surface::Ref>& outModels, float timeOffset = 0.0f);
+                     Array<Surface::Ref>& outModels, bool previous = false);
 
     /**
      Removes elements from \a all and puts them in \a translucent.

@@ -53,15 +53,15 @@ protected:
             return "PhysicsFrameSplineEditor";
         }
         
-        virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const {
+        virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) const {
             c = CFrame();
         }
 
-        virtual void getObjectSpaceBoundingBox(G3D::AABox& b, float timeOffset = 0.0f) const {
+        virtual void getObjectSpaceBoundingBox(G3D::AABox& b, bool previous = false) const {
             b = AABox::inf();
         }
 
-        virtual void getObjectSpaceBoundingSphere(G3D::Sphere& s, float timeOffset = 0.0f) const {
+        virtual void getObjectSpaceBoundingSphere(G3D::Sphere& s, bool previous = false) const {
             s = Sphere(Point3::zero(), finf());
         }
 

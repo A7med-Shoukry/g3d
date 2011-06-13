@@ -908,34 +908,53 @@ const ArticulatedModel::Pose& ArticulatedModel::defaultPose() {
 }
 
 
-void ArticulatedModel::pose(
-    Array<Surface::Ref>&     posedArray, 
-    const CoordinateFrame&      cframe, 
-    const Pose&                 posex) {
+void ArticulatedModel::pose
+(Array<Surface::Ref>&        posedArray, 
+ const CoordinateFrame&      cframe, 
+ const Pose&                 posex) {
+    
+    pose(posedArray, cframe, posex, cframe, posex);
+}
 
+
+void ArticulatedModel::pose
+(Array<Surface::Ref>&        posedArray, 
+ const CoordinateFrame&      cframe, 
+ const Pose&                 posex,
+ const CoordinateFrame&      previousCFrame,
+ const Pose&                 previousPose) {
+    
     for (int p = 0; p < partArray.size(); ++p) {
         const Part& part = partArray[p];
         if (part.parent == -1) {
             // This is a root part, pose it
-            part.pose(this, p, posedArray, cframe, posex);
+            part.pose(this, p, posedArray, cframe, posex, previousCFrame, previousPose);
         }
     }
 }
 
 
 void ArticulatedModel::Part::pose
-    (const ArticulatedModel::Ref&      model,
-     int                               partIndex,
-     Array<Surface::Ref>&              posedArray,
-     const CoordinateFrame&            parent,
-     const Pose&                       posex) const {
+(const ArticulatedModel::Ref&      model,
+ int                               partIndex,
+ Array<Surface::Ref>&              posedArray,
+ const CoordinateFrame&            parent,
+ const Pose&                       posex,
+ const CoordinateFrame&            previousParent,
+ const Pose&                       previousPose) const {
 
-    CoordinateFrame frame;
+    CoordinateFrame frame, previousFrame;
 
     if (posex.cframe.containsKey(name)) {
         frame = parent * cframe * posex.cframe[name];
     } else {
         frame = parent * cframe;
+    }
+
+    if (previousPose.cframe.containsKey(name)) {
+        previousFrame = previousParent * cframe * previousPose.cframe[name];
+    } else {
+        previousFrame = previousParent * cframe;
     }
 
     debugAssert(! isNaN(frame.translation.x));
@@ -950,7 +969,7 @@ void ArticulatedModel::Part::pose
 
                 posedArray.append(SuperSurface::create
                                   (model->name + format(".part[\"%s\"].triList[%d]", name.c_str(), t), 
-                                   frame, triList[t], cpuGeom, model));
+                                   frame, previousFrame, triList[t], cpuGeom, model));
             }
         }
     }
@@ -961,7 +980,7 @@ void ArticulatedModel::Part::pose
         debugAssertM(model->partArray[p].parent == partIndex,
             "Parent and child pointers do not match.");(void)partIndex;
 
-        model->partArray[p].pose(model, p, posedArray, frame, posex);
+        model->partArray[p].pose(model, p, posedArray, frame, posex, previousFrame, previousPose);
     }
 }
 

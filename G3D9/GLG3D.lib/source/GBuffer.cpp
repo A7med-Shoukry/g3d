@@ -46,9 +46,8 @@ const char* GBuffer::Field::toString(int i, Value& v) {
         "TRANSMISSIVE",
         "EMISSIVE",
 
-        "WS_VELOCITY",
-        "CS_VELOCITY",
-        "SS_VELOCITY",
+        "CS_POSITION_CHANGE",
+        "SS_POSITION_CHANGE",
 
         "CS_Z",
 
@@ -68,9 +67,8 @@ const char* GBuffer::Field::toString(int i, Value& v) {
         TRANSMISSIVE,
         EMISSIVE,
 
-        WS_VELOCITY,
-        CS_VELOCITY,
-        SS_VELOCITY,
+        CS_POSITION_CHANGE,
+        SS_POSITION_CHANGE,
 
         CS_Z,
 

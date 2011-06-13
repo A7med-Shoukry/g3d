@@ -139,15 +139,15 @@ public:
         } rd->popState();
     }
     
-    virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const {
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) override const {
         c = CoordinateFrame();
     }
 
-    virtual void getObjectSpaceBoundingBox(AABox& b, float timeOffset = 0.0f) const {
+    virtual void getObjectSpaceBoundingBox(AABox& b, bool previous = false) override const {
         b = boxBounds;
     }
 
-    virtual void getObjectSpaceBoundingSphere(Sphere& s, float timeOffset = 0.0f) const {
+    virtual void getObjectSpaceBoundingSphere(Sphere& s, bool previous = false) override const {
         boxBounds.getBounds(s);
     }
     
@@ -216,8 +216,8 @@ UprightSplineManipulator::Mode UprightSplineManipulator::mode() const {
 
 
 void UprightSplineManipulator::onPose
-(Array< SurfaceRef > &posedArray, 
- Array< Surface2DRef > &posed2DArray) {
+(Array< SurfaceRef >& posedArray, 
+ Array< Surface2DRef >& posed2DArray) {
 
     (void)posed2DArray;
 

@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2008-11-12
-  \edited  2011-06-10
+  \edited  2011-06-12
 */
 #ifndef G3D_SuperSurface_h
 #define G3D_SuperSurface_h
@@ -142,6 +142,9 @@ protected:
 
     /** Object to world space transformation. */
     CoordinateFrame         m_frame;
+
+    /** Object to world transformation from the previous time step. */
+    CoordinateFrame         m_previousFrame;
     
     GPUGeom::Ref            m_gpuGeom;
 
@@ -156,11 +159,15 @@ protected:
     inline SuperSurface
     (const std::string&       name,
      const CFrame&            frame, 
+     const CFrame&            previousFrame,
      const GPUGeom::Ref&      gpuGeom,
      const CPUGeom&           cpuGeom,
      const ReferenceCountedPointer<ReferenceCountedObject>& source = NULL) :
         m_name(name),
-        m_frame(frame), m_gpuGeom(gpuGeom), m_cpuGeom(cpuGeom),
+        m_frame(frame),
+        m_previousFrame(previousFrame),
+        m_gpuGeom(gpuGeom),
+        m_cpuGeom(cpuGeom),
         m_source(source) {}
 
     /** Set object to world and then draw geometry.  Called from
@@ -304,23 +311,24 @@ public:
     static SuperSurface::Ref create
     (const std::string&       name,
      const CFrame&            frame, 
+     const CFrame&            previousFrame,
      const GPUGeom::Ref&      gpuGeom,
      const CPUGeom&           cpuGeom = CPUGeom(),
      const ReferenceCountedPointer<ReferenceCountedObject>& source = NULL);
 
     virtual void sendGeometry(RenderDevice* rd) const;
 
-    virtual std::string name() const;
+    virtual std::string name() override const;
 
-    virtual bool hasTransmission() const;
+    virtual bool hasTransmission() override const;
 
-    virtual bool hasPartialCoverage() const;
+    virtual bool hasPartialCoverage() override const;
 
-    virtual void getCoordinateFrame(CoordinateFrame& c, float timeOffset = 0.0f) const;
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) override const;
 
-    virtual void getObjectSpaceBoundingSphere(Sphere&, float timeOffset = 0.0f) const;
+    virtual void getObjectSpaceBoundingSphere(Sphere&, bool previous = false) override const;
 
-    virtual void getObjectSpaceBoundingBox(AABox&, float timeOffset = 0.0f) const;
+    virtual void getObjectSpaceBoundingBox(AABox&, bool previous = false) override const;
 
     virtual void render(RenderDevice* renderDevice) const;
     
@@ -332,7 +340,7 @@ public:
 
     virtual void renderShadowMappedLightPass(RenderDevice* rd, const GLight& light, const ShadowMap::Ref& shadowMap) const;
     
-    virtual bool depthWriteHint(float distanceToCamera) const;
+    virtual bool depthWriteHint(float distanceToCamera) override const;
        
     virtual bool renderSuperShaderPass
     (RenderDevice* rd, 
@@ -345,8 +353,7 @@ public:
     (RenderDevice*                rd, 
      Array<Surface::Ref>&         surfaceArray,
      const GBuffer::Ref&          gbuffer,
-     float                        timeOffset,
-     float                        velocityStartOffset) const;
+     const CFrame&                previousCameraFrame) override const;
 };
 
 const char* toString(SuperSurface::GraphicsProfile p);

@@ -98,8 +98,9 @@ public:
 
      These use the abbreviations CS = camera space, WS = world space, SS = screen space.
 
-     Normals are always encoded as n' = (n+1)/2, even if they are in floating point format,
-     to simplify the implemenation of routines that read and write GBuffers.
+     Normals are always encoded as n' = (n+1)/2, even if they are in
+     floating point format, to simplify the implemenation of routines
+     that read and write GBuffers.
      */
     class Field {
     public:
@@ -112,7 +113,8 @@ public:
             /** \copydoc WS_NORMAL */
             CS_NORMAL,
 
-            /** Geometric normal of the face, independent of the vertex normals. */
+            /** Geometric normal of the face, independent of the
+                vertex normals. */
             WS_FACE_NORMAL,
 
             /** \copydoc WS_FACE_NORMAL */
@@ -124,28 +126,45 @@ public:
             /** Must be a floating-point format */
             CS_POSITION,
 
-            /** Must be a floating-point or normalized fixed-point format. \sa SuperBSDF, Material.*/
+            /** Must be a floating-point or normalized fixed-point
+                format. \sa SuperBSDF, Material.*/
             LAMBERTIAN,
 
-            /** RGB = magnitude; A = exponent. Fresnel has not been applied. Must be a floating-point or normalized fixed-point format. \sa SuperBSDF, Material. */
+            /** RGB = magnitude; A = exponent. Fresnel has not been
+                applied. Must be a floating-point or normalized
+                fixed-point format. \sa SuperBSDF, Material. */
             GLOSSY,
 
-            /** Must be a RGBA floating-point or normalized fixed-point format. Index of refraction is in the A channel. \sa SuperBSDF, Material. */
+            /** Must be a RGBA floating-point or normalized
+                fixed-point format. Index of refraction is in the A
+                channel. \sa SuperBSDF, Material. */
             TRANSMISSIVE,
 
-            /** Must be a floating-point or normalized fixed-point format. \sa SuperBSDF, Material. */
+            /** Must be a floating-point or normalized fixed-point
+                format. \sa SuperBSDF, Material. */
             EMISSIVE,
 
-            /** Must be RGB floating-point, storing the world-space
-            displacement since the previous frame. */
-            WS_VELOCITY,
+            /** World-space position change since the previous frame,
+                according to a Surface.  Must be RGB floating-point.
+            
+                The name "velocity" is reserved for future use as
+                instantaneous velocity. 
 
-            /** Must be RGB floating-point */
-            CS_VELOCITY,
+                There is no "WS_POSITION_CHANGE" because there is no
+                application (for a screen-space buffer of position
+                changes that don't take the camera's own movement into
+                account) to justify the added implementation
+                complexity required for that.
+            */
+            CS_POSITION_CHANGE,
 
-            /** Floating point RG texture storing the screen-space pixel
-            displacement since the previous frame. */
-            SS_VELOCITY,
+            /** Texture storing the screen-space pixel displacement
+                since the previous frame. As a result, floating-point
+                textures will store the sub-pixel displacement and
+                signed integers (e.g., ImageFormat::RG8UI) will round
+                to the nearest pixel.
+            */
+            SS_POSITION_CHANGE,
 
             /** Camera-space Z.  Must be a floating-point, R-only texture. This is always a negative value
             if a perspective transformation has been applied.*/

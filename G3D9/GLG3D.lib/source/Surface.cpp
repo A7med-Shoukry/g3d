@@ -27,21 +27,11 @@ void Surface::renderIntoGBuffer
    (RenderDevice*               rd,
     Array<Surface::Ref>&        surfaceArray,
     const GBuffer::Ref&         gbuffer,
-    float                       timeOffset,
-    float                       velocityStartTimeOffset) {
-       
-    // Default argument values
-    if (timeOffset == USE_GBUFFER_TIME) {
-        timeOffset = gbuffer->timeOffset();
-    }
-
-    if (velocityStartTimeOffset == USE_GBUFFER_TIME) {
-        velocityStartTimeOffset = gbuffer->velocityStartTimeOffset();
-    }
+    const CFrame&               previousCameraFrame) {
 
     // Sort front-to-back for best early-depth performance
     // (we avoid an early depth pass because we don't know if the depth complexity warrants it)
-    sortFrontToBack(surfaceArray, rd->cameraToWorldMatrix().lookVector(), timeOffset);
+    sortFrontToBack(surfaceArray, rd->cameraToWorldMatrix().lookVector());
 
     // Separate by type.  This preserves the sort order and ensures that the closest
     // object will still render first.
@@ -52,19 +42,18 @@ void Surface::renderIntoGBuffer
     for (int t = 0; t < derivedTable.size(); ++t) {
         Array<Surface::Ref>& derivedArray = derivedTable[t];
         debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
-        derivedArray[0]->renderIntoGBufferHomogeneous(rd, derivedArray, gbuffer, timeOffset, velocityStartTimeOffset);
+        derivedArray[0]->renderIntoGBufferHomogeneous(rd, derivedArray, gbuffer, previousCameraFrame);
     }
     rd->popState();
 }
 
 
 void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D) {
-    const float timeOffset = 0.0f;
     rd->pushState();
     for (int i = 0; i < surface3D.size(); ++i) {
         const Surface::Ref& surface = surface3D[i];
         CFrame coordinateFrame;
-        surface->getCoordinateFrame(coordinateFrame, timeOffset);
+        surface->getCoordinateFrame(coordinateFrame, false);
         rd->setObjectToWorldMatrix(coordinateFrame);
         surface->sendGeometry(rd);
     }
@@ -72,21 +61,21 @@ void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3
 }
 
 
-void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, float timeOffset) {
+void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, bool previous) {
     bounds = AABox::empty();
 
     for (int i = 0; i < models.size(); ++i) {
         AABox temp;
         CFrame cframe;
-        models[i]->getCoordinateFrame(cframe, timeOffset);
-        models[i]->getObjectSpaceBoundingBox(temp, timeOffset);
+        models[i]->getCoordinateFrame(cframe, previous);
+        models[i]->getObjectSpaceBoundingBox(temp, previous);
         cframe.toWorldSpace(temp, temp);
         bounds.merge(temp);
     }
 }
 
 
-void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color, float timeOffset) {
+void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color, bool previous) {
     rd->pushState(); {
         rd->setDepthWrite(false);
         rd->setDepthTest(RenderDevice::DEPTH_LEQUAL);
@@ -99,7 +88,7 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
 
         for (int i = 0; i < surface3D.size(); ++i) {
             CFrame cframe;
-            surface3D[i]->getCoordinateFrame(cframe, timeOffset);
+            surface3D[i]->getCoordinateFrame(cframe, previous);
             rd->setObjectToWorldMatrix(cframe);
             surface3D[i]->sendGeometry(rd);
         }
@@ -107,9 +96,9 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
 }
 
 
-void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, float timeOffset) {
+void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, bool previous) {
     AABox temp;
-    getBoxBounds(models, temp, timeOffset);
+    getBoxBounds(models, temp, previous);
     temp.getBounds(bounds);
 }
 
@@ -119,7 +108,7 @@ void Surface::cull
  const Rect2D&              viewport, 
  const Array<Surface::Ref>& allModels,
  Array<Surface::Ref>&       outModels,
- float                      timeOffset) {
+ bool                       previous) {
 
     outModels.fastClear();
 
@@ -128,8 +117,8 @@ void Surface::cull
     for (int i = 0; i < allModels.size(); ++i) {
         Sphere sphere;
         CFrame c;
-        allModels[i]->getCoordinateFrame(c, timeOffset);
-        allModels[i]->getObjectSpaceBoundingSphere(sphere, timeOffset);
+        allModels[i]->getCoordinateFrame(c, previous);
+        allModels[i]->getObjectSpaceBoundingSphere(sphere, previous);
         sphere = c.toWorldSpace(sphere);
 
         if (! sphere.culledBy(clipPlanes)) {
@@ -223,7 +212,7 @@ void Surface::sortAndRender
  const Array<SuperShader::PassRef>& extraAdditivePasses,
  AlphaMode                      alphaMode) {
 
-    const float timeOffset = 0.0f;
+    const bool previous = false;
 
     static bool recurse = false;
 
@@ -265,8 +254,8 @@ void Surface::sortAndRender
                 
                 ShadowMap::computeMatrices(light, sceneBounds, lightFrame, lightProjectionMatrix);
                 
-                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible, timeOffset);
-                Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector(), timeOffset);
+                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible, previous);
+                Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
                 shadowMaps[s]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
 
                 lightVisible.fastClear();
@@ -286,7 +275,7 @@ void Surface::sortAndRender
     static Array<Surface::Ref> visible;
 
     // Cull objects outside the view frustum
-    cull(camera, rd->viewport(), allModels, visible, timeOffset);
+    cull(camera, rd->viewport(), allModels, visible, previous);
 
     rd->pushState();
 
@@ -317,8 +306,8 @@ void Surface::sortAndRender
         break;
     }
     // Get early-out depth test by rendering the closest objects first
-    Surface::sortFrontToBack(super,   viewVector, timeOffset);
-    Surface::sortFrontToBack(visible, viewVector, timeOffset);
+    Surface::sortFrontToBack(super,   viewVector);
+    Surface::sortFrontToBack(visible, viewVector);
 
     rd->setProjectionAndCameraMatrix(camera);
     rd->setObjectToWorldMatrix(CoordinateFrame());
@@ -441,11 +430,11 @@ public:
 
     ModelSorter() {}
 
-    ModelSorter(const Surface::Ref& m, const Vector3& axis, float timeOffset) : model(m) {
+    ModelSorter(const Surface::Ref& m, const Vector3& axis) : model(m) {
         Sphere s;
         CFrame c;
-        m->getCoordinateFrame(c, timeOffset);
-        m->getObjectSpaceBoundingSphere(s, timeOffset);
+        m->getCoordinateFrame(c, false);
+        m->getObjectSpaceBoundingSphere(s, false);
         sortKey = axis.dot(c.pointToWorldSpace(s.center));
     }
 
@@ -461,13 +450,12 @@ public:
 
 void Surface::sortFrontToBack
 (Array<Surface::Ref>& surface, 
- const Vector3&       wsLook,
- float                timeOffset) {
+ const Vector3&       wsLook) {
 
     static Array<ModelSorter> sorter;
     
     for (int m = 0; m < surface.size(); ++m) {
-        sorter.append(ModelSorter(surface[m], wsLook, timeOffset));
+        sorter.append(ModelSorter(surface[m], wsLook));
     }
 
     sorter.sort(SORT_INCREASING);

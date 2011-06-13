@@ -4,7 +4,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2003-08-07
- \edited  2010-04-19
+ \edited  2011-06-12
  */
 
 #include "G3D/platform.h"
@@ -183,9 +183,9 @@ MD2Model::Ref MD2Model::create(const Specification& s) {
 }
 
 
-void MD2Model::pose(Array<Surface::Ref>& surfaceArray, const CFrame& rootFrame, const MD2Model::Pose& pose) {
+void MD2Model::pose(Array<Surface::Ref>& surfaceArray, const CFrame& rootFrame, const CFrame& prevFrame, const MD2Model::Pose& pose) {
     for (int p = 0; p < m_part.size(); ++p) {
-        m_part[p]->pose(surfaceArray, rootFrame, pose, negateNormals);
+        m_part[p]->pose(surfaceArray, rootFrame, prevFrame, pose, negateNormals);
     }
 }
 
@@ -649,10 +649,10 @@ void MD2Model::Part::allocateVertexArrays(RenderDevice* renderDevice) {
 }
 
 
-void MD2Model::Part::pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const Pose& pose, bool negateNormals) {
+void MD2Model::Part::pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const CFrame& prevFrame, const Pose& pose, bool negateNormals) {
 
     // Keep a back pointer so that the index array can't be deleted
-    SuperSurface::Ref surface = SuperSurface::create(name(), cframe, SuperSurface::GPUGeom::create(), 
+    SuperSurface::Ref surface = SuperSurface::create(name(), cframe, prevFrame, SuperSurface::GPUGeom::create(), 
                                                      SuperSurface::CPUGeom(), this);
 
     // Use the internal storage of the surface

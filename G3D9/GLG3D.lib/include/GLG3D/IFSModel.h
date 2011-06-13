@@ -6,7 +6,7 @@
   \cite Original IFS code by Nate Robbins
 
   \created 2003-11-12
-  \edited  2011-06-10
+  \edited  2011-06-12
  */ 
 
 
@@ -51,7 +51,11 @@ protected:
             const GMaterial& _mat, bool _useMat);
         virtual ~PosedIFSModel() {}
         virtual std::string name() const;
-        virtual void getCoordinateFrame(CoordinateFrame&, float timeOffset = 0.0f) const;
+        virtual void getCoordinateFrame(CoordinateFrame&, bool previous = false) const;
+        virtual void getObjectSpaceBoundingSphere(Sphere&, bool previous = false) const;
+        virtual void getObjectSpaceBoundingBox(AABox&, bool previous = false) const;
+
+
         virtual const MeshAlg::Geometry& objectSpaceGeometry() const;
         virtual const Array<MeshAlg::Face>& faces() const;
         virtual const Array<MeshAlg::Edge>& edges() const;
@@ -62,8 +66,6 @@ protected:
         virtual const Array<Vector2>& texCoords() const;
         virtual bool hasTexCoords() const;
         virtual const Array<int>& triangleIndices() const;
-        virtual void getObjectSpaceBoundingSphere(Sphere&, float timeOffset = 0.0f) const;
-        virtual void getObjectSpaceBoundingBox(AABox&, float timeOffset = 0.0f) const;
         virtual void render(RenderDevice* renderDevice) const;
         virtual int numBoundaryEdges() const;
         virtual int numWeldedBoundaryEdges() const;
