@@ -79,7 +79,7 @@ varying vec3        tan_Z;
 uniform float       normalizedIndexOfRefraction;
 
 #include "SS_BumpMap.pix"
-#line 72
+#line 83
 
 void main() {    
     vec2 offsetTexCoord;
@@ -183,9 +183,10 @@ void main() {
         CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)).xyz * 0.5 + vec3(0.5);
 #   endif
 
-#   if defined(WS_FACE_NORMAL) || (CS_FACE_NORMAL)
+#   if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
         vec3 wsFaceNormal = normalize(cross(dFdy(wsPosition), dFdx(wsPosition)));
 #   endif
+
     // For simplicity, all normals are encoded regardless of format.
 #   ifdef WS_FACE_NORMAL
         WS_FACE_NORMAL.xyz = wsFaceNormal * 0.5 + vec3(0.5);
