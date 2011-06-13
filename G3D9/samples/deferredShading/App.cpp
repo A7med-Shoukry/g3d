@@ -145,8 +145,13 @@ void App::makeGUI() {
 void App::onPose(Array<Surface::Ref>& surface, Array<Surface2D::Ref>& surface2D) {
     GApp::onPose(surface, surface2D);
     static float yaw = 150 * units::degrees();
+    
+    const CFrame& previousFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
+
     yaw += 2.0f * units::degrees();
-    model->pose(surface, CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0));
+    const CFrame& currentFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
+
+    model->pose(surface, currentFrame, ArticulatedModel::defaultPose(), previousFrame, ArticulatedModel::defaultPose());
 }
 
 
