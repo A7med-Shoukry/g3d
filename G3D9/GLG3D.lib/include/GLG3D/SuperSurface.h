@@ -354,6 +354,10 @@ public:
      Array<Surface::Ref>&         surfaceArray,
      const GBuffer::Ref&          gbuffer,
      const CFrame&                previousCameraFrame) const override;
+
+    virtual void renderDepthOnlyHomogeneous
+    (RenderDevice*                rd, 
+     const Array<Surface::Ref>&   surfaceArray) const override;
 };
 
 const char* toString(SuperSurface::GraphicsProfile p);

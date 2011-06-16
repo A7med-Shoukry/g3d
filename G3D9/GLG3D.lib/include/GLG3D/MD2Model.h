@@ -348,7 +348,7 @@ public:
         class Primitive {
         public:
             /** PrimitiveType::TRIANGLE_STRIP or PrimitiveType::TRIANGLE_FAN */
-            RenderDevice::Primitive type;
+            PrimitiveType           type;
 
             class PVertex {
             public:

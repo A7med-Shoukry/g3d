@@ -193,7 +193,7 @@ void VertexRange::set(int index, const void* value, GLenum glformat, int eltSize
     debugAssertM(glformat == m_underlyingRepresentation, 
         "Value argument to VertexRange::set must match the intialization type.");
 
-    debugAssertM(eltSize == m_elementSize, 
+    debugAssertM((size_t)eltSize == m_elementSize, 
         "Value argument to VertexRange::set must match the intialization type's memory footprint.");
 
     uploadToCard(value, index * eltSize, eltSize);

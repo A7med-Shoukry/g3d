@@ -1,10 +1,10 @@
 /**
- @file RenderDevice.cpp
+ \file GLG3D.lib/source/RenderDevice.cpp
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2001-07-08
- @edited  2010-11-23
+ \created 2001-07-08
+ \edited  2011-06-12
  */
 
 #include "G3D/platform.h"
@@ -43,7 +43,7 @@ static void _glViewport(double a, double b, double c, double d) {
 }
 
 
-static GLenum primitiveToGLenum(RenderDevice::Primitive primitive) {
+static GLenum primitiveToGLenum(PrimitiveType primitive) {
     return GLenum(primitive);
 }
 
@@ -2672,7 +2672,7 @@ void RenderDevice::sendVertex(const Vector4& vertex) {
 }
 
 
-void RenderDevice::beginPrimitive(Primitive p) {
+void RenderDevice::beginPrimitive(PrimitiveType p) {
     debugAssertM(! m_inPrimitive, "Already inside a primitive");
     std::string why;
     debugAssertM( currentDrawFramebufferComplete(why), why);
@@ -2704,7 +2704,7 @@ void RenderDevice::endPrimitive() {
 }
 
 
-void RenderDevice::countTriangles(RenderDevice::Primitive primitive, int numVertices) {
+void RenderDevice::countTriangles(PrimitiveType primitive, int numVertices) {
     switch (primitive) {
     case PrimitiveType::LINES:
         m_stats.triangles += (numVertices / 2);
@@ -3218,7 +3218,7 @@ void RenderDevice::configureReflectionMap(
 
 
 void RenderDevice::sendSequentialIndices
-(RenderDevice::Primitive primitive, int numVertices, int start) {
+(PrimitiveType primitive, int numVertices, int start) {
 
     beforePrimitive();
 
@@ -3235,7 +3235,7 @@ void RenderDevice::sendSequentialIndices
 
 
 void RenderDevice::sendSequentialIndicesInstanced
-(RenderDevice::Primitive primitive, int numVertices, int numInstances) {
+(PrimitiveType primitive, int numVertices, int numInstances) {
 
     beforePrimitive();
 
@@ -3252,19 +3252,19 @@ void RenderDevice::sendSequentialIndicesInstanced
 
 
 void RenderDevice::sendIndices
-(RenderDevice::Primitive primitive, const VertexRange& indexVAR) {
+(PrimitiveType primitive, const VertexRange& indexVAR) {
     sendIndices(primitive, indexVAR, 1, false);
 }
 
 
 void RenderDevice::sendIndicesInstanced
-(RenderDevice::Primitive primitive, const VertexRange& indexVAR, int numInstances) {
+(PrimitiveType primitive, const VertexRange& indexVAR, int numInstances) {
     sendIndices(primitive, indexVAR, numInstances, true);
 }
 
 
 void RenderDevice::sendIndices
-(RenderDevice::Primitive primitive, const VertexRange& indexVAR,
+(PrimitiveType primitive, const VertexRange& indexVAR,
  int numInstances, bool useInstances) {
 
     std::string why;
@@ -3308,14 +3308,14 @@ void RenderDevice::sendIndices
 }
 
 
-void RenderDevice::internalSendIndices(
-    RenderDevice::Primitive primitive,
-    int                     indexSize, 
-    int                     numIndices, 
-    const void*             index,
-    int                     numInstances,
-    bool                    useInstances) {
-
+void RenderDevice::internalSendIndices
+(PrimitiveType           primitive,
+ int                     indexSize, 
+ int                     numIndices, 
+ const void*             index,
+ int                     numInstances,
+ bool                    useInstances) {
+    
     beforePrimitive();
 
     GLenum i;

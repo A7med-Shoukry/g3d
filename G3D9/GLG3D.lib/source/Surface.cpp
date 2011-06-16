@@ -129,77 +129,27 @@ void Surface::cull
 
 
 void Surface::renderDepthOnly
-(RenderDevice* rd, 
- const Array<Surface::Ref>& allModels, 
- RenderDevice::CullFace cull) {
+(RenderDevice*              rd, 
+ const Array<Surface::Ref>& surfaceArray,
+ RenderDevice::CullFace     cull) {
 
-    rd->pushState();
-    {
+    rd->pushState(); {
+
         rd->setCullFace(cull);
         rd->setDepthWrite(true);
         rd->setColorWrite(false);
-        rd->setAlphaTest(RenderDevice::ALPHA_GEQUAL, 0.5f);
 
-        // Maintain sort order while extracting generics
-        Array<SuperSurface::Ref> superSurfaces;
+        Array< Array<Surface::Ref> > derivedTable;
+        categorizeByDerivedType(surfaceArray, derivedTable);
 
-        // Render non-generics while filtering
-        for (int i = 0; i < allModels.size(); ++i) {
-            const SuperSurface::Ref& g = allModels[i].downcast<SuperSurface>();
-            if (g.notNull()) {
-                superSurfaces.append(g);
-            } else {
-                allModels[i]->render(rd);
-            }
+        for (int t = 0; t < derivedTable.size(); ++t) {
+            Array<Surface::Ref>& derivedArray = derivedTable[t];
+            debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
+            // debugPrintf("Invoking on type %s\n", typeid(*derivedArray[0]).raw_name());
+            derivedArray[0]->renderDepthOnlyHomogeneous(rd, derivedArray);
         }
 
-        // Render generics
-        rd->setCullFace(cull);
-        rd->beginIndexedPrimitives();
-        {
-            rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
-            rd->setTexture(0, NULL);
-            bool alphaOn = false;
-
-            // It is important to only enable alpha testing when needed; otherwise we lose the z-only
-            // optimization built into GPUs.
-            for (int g = 0; g < superSurfaces.size(); ++g) {
-                const SuperSurface::Ref& model = superSurfaces[g];
-                const SuperSurface::GPUGeom::Ref& geom = model->gpuGeom();
-
-                if (geom->twoSided) {
-                    rd->setCullFace(RenderDevice::CULL_NONE);
-                }
-
-                const Texture::Ref& lambertian = geom->material->bsdf()->lambertian().texture();
-                bool a = lambertian.notNull() && ! lambertian->opaque();
-
-                if (a != alphaOn) {
-                    alphaOn = a;
-                    if (alphaOn) {
-                        // We need the texture for alpha masking
-                        rd->setTexture(0, lambertian);
-                        rd->setAlphaTest(RenderDevice::ALPHA_GEQUAL, 0.5f);
-                    } else {
-                        rd->setTexture(0, NULL);
-                        rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
-                    }
-                }
-
-                CFrame cframe;
-                model->getCoordinateFrame(cframe);
-                rd->setObjectToWorldMatrix(cframe);
-                rd->setVARs(geom->vertex, VertexRange(), geom->texCoord0);
-                rd->sendIndices((RenderDevice::Primitive)geom->primitive, geom->index);
-            
-                if (geom->twoSided) {
-                    rd->setCullFace(cull);
-                }
-            }
-        }
-        rd->endIndexedPrimitives();
-    }
-    rd->popState();
+    } rd->popState();
 }
 
 

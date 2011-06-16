@@ -167,8 +167,6 @@ class VertexRange;
 class RenderDevice {
 public:
 
-    typedef PrimitiveType Primitive;
-   	
     /** \sa RenderDevice::setRenderMode */
     enum RenderMode {
         RENDER_SOLID, 
@@ -242,7 +240,7 @@ private:
     void forceSetViewport(const Rect2D& v);
 
     /** Argument to last beginPrimitive() */
-    Primitive                   m_currentPrimitive;
+    PrimitiveType               m_currentPrimitive;
 
     /** Number of vertices since last beginPrimitive() */
     int                         m_currentPrimitiveVertexCount;
@@ -259,7 +257,7 @@ private:
     /** Updates the triangle count based on the primitive.
         
         LINE and POINT primitives are given one triangle count each. */
-    void countTriangles(RenderDevice::Primitive primitive, int numVertices);
+    void countTriangles(PrimitiveType primitive, int numVertices);
 
     /**
      Sets the milestones on the m_currentVARArea.
@@ -268,7 +266,7 @@ private:
 
     /** Called by sendIndices. */
     void internalSendIndices
-    (RenderDevice::Primitive primitive,
+    (PrimitiveType           primitive,
      int                     indexSize, 
      int                     numIndices, 
      const void*             index,
@@ -1096,7 +1094,7 @@ public:
      Analogous to glBegin.  See the example in the detailed description
      section of this page.
      */
-    void beginPrimitive(Primitive p);
+    void beginPrimitive(PrimitiveType p);
 
     /**
      Analogous to glEnd.  See the example in the detailed description
@@ -1201,11 +1199,11 @@ public:
     /**
      Draws the specified kind of primitive from the current vertex array.
 
-     @deprecated Use sendIndices(RenderDevice::Primitive, const VertexRange&)
+     \deprecated Use sendIndices(PrimitiveType, const VertexRange&)
      */
     template<class T>
     void sendIndices
-    (RenderDevice::Primitive primitive, int numIndices, const T* index) {
+    (PrimitiveType primitive, int numIndices, const T* index) {
         debugAssertM(currentDrawFramebufferComplete(), "Incomplete Framebuffer");
         internalSendIndices(primitive, sizeof(T), numIndices, index, 1, false);
         
@@ -1220,7 +1218,7 @@ public:
      memory on most GPUs.
     */
     void sendIndices
-    (RenderDevice::Primitive primitive, const VertexRange& indexVAR);
+    (PrimitiveType primitive, const VertexRange& indexVAR);
 
     /** Send indices from an index buffer stored inside a vertex
      buffer. This is faster than sending from main
@@ -1235,7 +1233,7 @@ public:
      \param numInstances number of instances of these indices to send
     */
     void sendIndicesInstanced
-    (RenderDevice::Primitive primitive, 
+    (PrimitiveType primitive, 
      const VertexRange&              indexVAR,
      int                     numInstances);
 
@@ -1243,7 +1241,7 @@ private:
 
     /** Called by both sendIndices and sendIndicesInstanced */
     void sendIndices
-    (RenderDevice::Primitive primitive, 
+    (PrimitiveType primitive, 
      const VertexRange&              indexVAR,
      int                     numInstances, 
      bool                    drawInstanced);
@@ -1255,7 +1253,7 @@ public:
      (Equivalent to glDrawArrays)
      */
     void sendSequentialIndices
-    (RenderDevice::Primitive primitive, 
+    (PrimitiveType primitive, 
      int                     numVertices,
      int                     startVertex = 0);
 
@@ -1272,15 +1270,15 @@ public:
      \param numInstances number of instances of these indices to send
      */
     void sendSequentialIndicesInstanced
-    (RenderDevice::Primitive primitive, int numVertices, int numInstances);
+    (PrimitiveType primitive, int numVertices, int numInstances);
 
     /**
      Draws the specified kind of primitive from the current vertex array.
      
-     @deprecated Use sendIndices(RenderDevice::Primitive, const VertexRange&)
+     @deprecated Use sendIndices(PrimitiveType, const VertexRange&)
      */
     template<class T>
-    void sendIndices(RenderDevice::Primitive primitive, 
+    void sendIndices(PrimitiveType primitive, 
                      const Array<T>& index) {
         sendIndices(primitive, index.size(), index.getCArray());
     }

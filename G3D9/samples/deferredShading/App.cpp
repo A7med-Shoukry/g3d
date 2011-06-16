@@ -67,58 +67,7 @@ void App::makeScene() {
 
 
 void App::makeShader() {
-
-    shadingPass = Shader::fromStrings("",
-        std::string("#version 120\n#extension GL_EXT_gpu_shader4 : require\n#define PI 3.1415926\n") +      
-        STR(
-        uniform sampler2D wsPosition;
-        uniform sampler2D wsNormal;
-        uniform sampler2D lambertian;
-        uniform sampler2D glossy;
-        uniform vec3      wsEye;
-
-        // Direction to the light in world space
-        const vec3 w_i            = vec3(0.0, 0.71, 0.71);
-        const vec3 lightRadiance  = vec3(5.0, 5.0, 4.5);
-        const vec3 ambient        = vec3(0.3, 0.4, 0.5);
-
-        void main() {
-            // Screen-space point being shaded
-            ivec2 C = ivec2(gl_FragCoord.xy);
-
-            // Surface normal
-            vec3 n = texelFetch2D(wsNormal, C, 0).xyz;
-            if (dot(n, n) < 0.01) {
-                // This is a background pixel, not part of an object
-                discard;
-            } else {
-                n = n * 2.0 - 1.0;
-            }
-
-            // Lambertian coefficient in BSDF
-            vec3 p_L  = texelFetch2D(lambertian, C, 0).rgb / PI;
-
-            // Glossy coefficient in BSDF (this code unpacks G3D::SuperBSDF's encoding)
-            vec4 temp = texelFetch2D(glossy, C, 0);
-            float exponent = (temp.a * temp.a) * 1024.0 + 1.0;
-            vec3 p_G = temp.rgb * ((exponent + 8.0) / (8.0 * PI));
-
-            // Point being shaded
-            vec3 X = texelFetch2D(wsPosition, C, 0).xyz;
-            
-            // View vector
-            vec3 w_o = normalize(wsEye - X);
-
-            // Half vector
-            vec3 w_h = normalize(w_i + w_o);
-
-            // Energy-conserving Phong shading
-            gl_FragColor.rgb =
-                ambient * p_L +
-
-                lightRadiance * 
-                (p_L + p_G * pow(max(dot(n, w_h), 0.0), exponent)) * max(dot(n, w_i), 0.0);
-        }));
+    shadingPass = Shader::fromFiles("", "deferred.pix");
 }
 
 

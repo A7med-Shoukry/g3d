@@ -18,6 +18,66 @@
 
 namespace G3D {
 
+void SuperSurface::renderDepthOnlyHomogeneous
+(RenderDevice*                rd, 
+ const Array<Surface::Ref>&         surfaceArray) const override {
+
+    rd->beginIndexedPrimitives(); {
+
+        rd->setTexture(0, NULL);
+        rd->setShader(NULL);
+
+        // It is important to only enable alpha testing when needed; otherwise we lose the z-only
+        // optimization built into GPUs.
+        rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
+        bool alphaOn = false;
+
+        const RenderDevice::CullFace cull = rd->cullFace();
+
+        for (int g = 0; g < surfaceArray.size(); ++g) {
+            const SuperSurface::Ref&          surface = surfaceArray[g].downcast<SuperSurface>();
+            debugAssertM(surface.notNull(), "Surface::renderDepthOnlyHomogeneous passed the wrong subclass");
+            const SuperSurface::GPUGeom::Ref& geom = surface->gpuGeom();
+            
+            if (geom->twoSided) {
+                rd->setCullFace(RenderDevice::CULL_NONE);
+            }
+            
+            const Texture::Ref& lambertian = geom->material->bsdf()->lambertian().texture();
+            bool a = lambertian.notNull() && ! lambertian->opaque();
+            
+            if (a != alphaOn) {
+                alphaOn = a;
+                if (alphaOn) {
+                    // We need the texture for alpha masking
+                    rd->setTexture(0, lambertian);
+                    rd->setAlphaTest(RenderDevice::ALPHA_GEQUAL, 0.5f);
+                } else {
+                    rd->setTexture(0, NULL);
+                    rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
+                }
+            }
+            
+            CFrame cframe;
+            surface->getCoordinateFrame(cframe, false);
+            rd->setObjectToWorldMatrix(cframe);
+            rd->setVARs(geom->vertex, VertexRange(), geom->texCoord0);
+            rd->sendIndices(geom->primitive, geom->index);
+            
+            if (geom->twoSided) {
+                rd->setCullFace(cull);
+            }
+        } // for each surface
+
+        // Turn alpha testing back off
+        if (alphaOn) {
+            rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
+        }
+    } rd->endIndexedPrimitives();
+
+}
+
+
 class GBufferShaderCache {
 protected:
     

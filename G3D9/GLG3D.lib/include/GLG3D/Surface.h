@@ -296,6 +296,8 @@ public:
 
     \param previousCameraFrame Used for rendering
     GBuffer::CS_POSITION_CHANGE frames.
+
+    \sa renderIntoGBuffer
     */
     virtual void renderIntoGBufferHomogeneous
     (RenderDevice*                rd,
@@ -309,13 +311,26 @@ public:
        Invoking this with elements of \a surfaceArray that are not of
        the same most-derived type as \a this will result in an error.
 
-     \param previous If true, the caller should set the RenderDevice
-     camera transformation to the previous one.*/
+       \param previous If true, the caller should set the RenderDevice
+       camera transformation to the previous one.  This is provided
+       for debugging previous frame data.
+
+       \sa renderWireframe
+    */
     virtual void renderWireframeHomogeneous
     (RenderDevice*                rd, 
      const Array<Surface::Ref>&   surfaceArray, 
      const Color4&                color,
      bool                         previous) const {}//= 0;
+
+
+    /** Use the current RenderDevice::cullFace. 
+
+        \sa renderDepthOnly
+     */
+    virtual void renderDepthOnlyHomogeneous
+    (RenderDevice*               rd, 
+     const Array<Surface::Ref>&  surfaceArray) const {} // = 0;
 
     ///////////////////////////////////////////////////////////////////////
     // Static methods
@@ -323,7 +338,9 @@ public:
     /**
      Culling must be performed by the caller, since this can be used for both 2D and
      3D rendering.
-     Sorts and then renders front-to-back using current stencil and depth operations.
+
+     Sorts and then renders front-to-back using current stencil and
+     depth operations.
 
      \param previousCameraFrame Used for rendering
      GBuffer::CS_POSITION_CHANGE frames.
@@ -331,10 +348,10 @@ public:
      \sa cull
      */
     static void renderIntoGBuffer
-    (RenderDevice*                rd, 
-     Array<Surface::Ref>&         surfaceArray,
-     const GBuffer::Ref&          gbuffer,
-     const CFrame&                previousCameraFrame = CFrame());
+    (RenderDevice*               rd, 
+     Array<Surface::Ref>&        surfaceArray,
+     const GBuffer::Ref&         gbuffer,
+     const CFrame&               previousCameraFrame = CFrame());
 
     /** 
       Divides the inModels into a front-to-back sorted array of opaque
@@ -345,13 +362,13 @@ public:
       \param wsLookVector Sort axis; usually the -Z axis of the camera.
      */
     static void sortFrontToBack
-       (Array<Surface::Ref>&       surfaces, 
-        const Vector3&             wsLookVector);
+    (Array<Surface::Ref>&       surfaces, 
+     const Vector3&             wsLookVector);
 
 
     static void sortBackToFront
-       (Array<Surface::Ref>&       surfaces, 
-        const Vector3&             wsLookVector) {
+    (Array<Surface::Ref>&       surfaces, 
+     const Vector3&             wsLookVector) {
         sortFrontToBack(surfaces, -wsLookVector);
     }
 
@@ -361,25 +378,50 @@ public:
 
      \param previous If true, the caller should set the RenderDevice
      camera transformation to the previous one.*/
-    static void renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& models, const Color4& color = Color3::black(), bool previous = false);
+    static void renderWireframe
+    (RenderDevice*              rd, 
+     const Array<Surface::Ref>& surfaceArray, 
+     const Color4&              color = Color3::black(), 
+     bool                       previous = false);
 
-    /** Computes the world-space bounding box of an array of Surface%s of any type.*/
-    static void getBoxBounds(const Array<Surface::Ref>& surfaceArray, AABox& bounds, bool previous = false);
 
-    /** Computes the world-space bounding sphere of an array of Surface%s of any type.*/
-    static void getSphereBounds(const Array<Surface::Ref>& surfaceArray, Sphere& bounds, bool previous = false);
+    /** Computes the world-space bounding box of an array of Surface%s
+        of any type.*/
+    static void getBoxBounds
+    (const Array<Surface::Ref>& surfaceArray,
+     AABox&                     bounds, 
+     bool                       previous = false);
+
+
+    /** Computes the world-space bounding sphere of an array of
+        Surface%s of any type.*/
+    static void getSphereBounds
+    (const Array<Surface::Ref>& surfaceArray, 
+     Sphere&                    bounds,
+     bool                       previous = false);
+
 
     /** Computes the array of models that can be seen by \a camera*/
-    static void cull(const class GCamera& camera, const class Rect2D& viewport, const Array<Surface::Ref>& allModels, 
-                     Array<Surface::Ref>& outModels, bool previous = false);
+    static void cull
+    (const class GCamera&       camera, 
+     const class Rect2D&        viewport, 
+     const Array<Surface::Ref>& allModels, 
+     Array<Surface::Ref>&       outModels, 
+     bool                       previous = false);
 
     /**
      Removes elements from \a all and puts them in \a translucent.
      \a translucent is cleared first.
+
      Always treats hasTransmissive() objects as translucent.
-     If \a partialCoverageIsTranslucent is true, also treats hasPartialCoverage as translucent.
+
+     If \a treatPartialCoverageAsTranslucent is true, also treats
+     hasPartialCoverage as translucent.
      */
-    static void extractTranslucent(Array<Surface::Ref>& all, Array<Surface::Ref>& translucent, bool partialCoverageIsTranslucent);
+    static void extractTranslucent
+    (Array<Surface::Ref>& all, 
+     Array<Surface::Ref>& translucent,
+     bool treatPartialCoverageAsTranslucent);
 
     ///////////////////////////////////////////////////////////////////////
     // Deprecated
@@ -491,18 +533,21 @@ public:
      */
     static void sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D);
 
-    /** Render geometry only (no shading), and ignore color (but do perform alpha testing).
-        Render only back or front faces (two-sided surfaces render no matter what).
+    /** Render geometry only (no shading), and ignore color (but do
+        perform alpha testing).  Render only back or front faces
+        (two-sided surfaces render no matter what).
 
-        Does not sort or cull based on the view frustum of the camera like other batch rendering routines.
+        Does not sort or cull based on the view frustum of the camera
+        like other batch rendering routines--sort before invoking
+        if you want that.
 
         Used for early-Z and shadow mapping.
         \deprecated
      */    
     static void renderDepthOnly
-    (RenderDevice* rd, 
-     const Array<Surface::Ref>& surfaceArray, 
-     RenderDevice::CullFace cull);
+    (RenderDevice*               rd, 
+     const Array<Surface::Ref>&  surfaceArray, 
+     RenderDevice::CullFace      cull);
     
     /**
        Renders an array of models with the full G3D illumination model
