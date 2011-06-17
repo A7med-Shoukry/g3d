@@ -290,7 +290,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data-files\SuperShader\Film_FXAA.pix" />
-    <None Include="..\data-files\SuperShader\SS_BumpMap.pix" />
+    <None Include="..\data-files\SuperShader\SS_BumpMap.glsl" />
     <None Include="..\data-files\SuperShader\SS_GBuffer.pix" />
     <None Include="..\data-files\SuperShader\SS_GBuffer.vrt" />
     <None Include="..\data-files\SuperShader\SS_GBufferPosition.pix" />

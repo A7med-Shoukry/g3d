@@ -1,6 +1,6 @@
 // -*- c++ -*-
 /**
-  \file SS_BumpMap.pix
+  \file SS_BumpMap.glsl
   \author Morgan McGuire, http://graphics.cs.williams.edu
 
   For use with G3D::SuperShader.
@@ -9,7 +9,7 @@
   \created 2007-12-18
   \edited  2011-06-17
 
-  This file defines the following function:
+  This file defines three variations of the following function:
 
   void bumpMap(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord);
 
@@ -28,16 +28,7 @@
   wsN            world-space shading normal at offsetTexCoord
   offsetTexCoord shading texture coordinate
 
-  The specific implementation depends on the value of PARALLAXSTEPS. All implementations are revealed by name for explicit control by other shaders.
  */
-
-#if (PARALLAXSTEPS == 0)
-#   define bumpMap bumpMapBlinn78
-#elif (PARALLAXSTEPS <= 1)
-#   define bumpMap bumpMapWelsh04
-#else // PARALLAXSETPS > 1
-#   define bumpMap bumpMapTatarchuk06
-#endif
 
 /**
   Normal mapping
@@ -190,4 +181,4 @@ void bumpMapTatarchuk06(in sampler2D normalBumpMap, in float bumpMapScale, in fl
     wsN = normalize((dot(wsN, wsN) > 0.001) ? wsN : tan_Z);
 }
 
-/* End SS_BumpMap.pix */
+/* End SS_BumpMap.glsl */

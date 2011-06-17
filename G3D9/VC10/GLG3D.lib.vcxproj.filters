@@ -588,9 +588,6 @@
     <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.vrt">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_BumpMap.pix">
-      <Filter>Shader Files</Filter>
-    </None>
     <None Include="..\data-files\SuperShader\SS_GBuffer.pix">
       <Filter>Shader Files</Filter>
     </None>
@@ -619,6 +616,9 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="..\data-files\SuperShader\SS_GBuffer.vrt">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_BumpMap.glsl">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>
