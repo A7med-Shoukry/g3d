@@ -20,7 +20,7 @@ namespace G3D {
 
 void SuperSurface::renderDepthOnlyHomogeneous
 (RenderDevice*                rd, 
- const Array<Surface::Ref>&         surfaceArray) const override {
+ const Array<Surface::Ref>&         surfaceArray) const {
 
     rd->beginIndexedPrimitives(); {
 
