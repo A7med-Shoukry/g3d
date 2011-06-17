@@ -1,17 +1,21 @@
 #version 120 // -*- c++ -*-
 /**
-  @file NonShadowedPass.pix
-  @author Morgan McGuire morgan@cs.williams.edu
+  \file SS_NonShadowedPass.pix
+  \author Morgan McGuire, http://graphics.cs.williams.edu
 
   For use with G3D::SuperShader.
 
-  @edited  2010-09-03
-  @created 2007-12-18
+  \edited  2010-09-03
+  \created 2007-12-18
  */
 
 #include "SS_Globals.pix"
 #include "SS_Light.pix"
+
+#ifdef NORMALBUMPMAP
 #include "SS_BumpMap.pix"
+#endif
+#line 19
 
 uniform vec4        lightPosition1;
 uniform vec3        lightColor1;
@@ -44,7 +48,14 @@ void main(void) {
 #define pi (3.1415926)
 #define invPi (0.318309886)
 #include "SS_LambertianComponent.pix"
-#include "SS_Components.pix"
+
+#   if defined(SPECULARCONSTANT) || defined(SPECULARMAP)
+        // Eye vector
+        vec3 wsE = normalize(wsEyePos - wsPosition);
+        // or... (tangentToWorld * vec4(tsE, 0.0)).xyz;
+#   else
+        vec3 wsE = BLACK;
+#   endif
 
     // Sample the highest MIP-level
     vec3 ambientTop    = textureCubeLod(environmentMap, vec3(0.0,  1.0, 0.0), 100.0).rgb;
@@ -157,3 +168,4 @@ gl_FragColor.rgb = wsN.xyz * 0.5 + 0.5;
 #       endif
         ;        
 }
+/* end of SS_NonShadowedPass.pix */

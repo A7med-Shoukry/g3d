@@ -9,6 +9,14 @@ int main(int argc, const char* argv[]) {
     settings.window.height      = 720;
     settings.window.caption     = "G3D Deferred Shading Sample";
 
+
+#   ifdef G3D_WIN32
+	if (! FileSystem::exists("deferred.pix", false)) {
+        // Running on Windows, building from the G3D.sln project
+        chdir("../samples/deferredShading");
+    }
+#   endif
+
     return App(settings).run();
 }
 
@@ -31,7 +39,6 @@ void App::makeGBuffer() {
     specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB16F();
     specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
-    specification.format[GBuffer::Field::SS_POSITION_CHANGE]  = ImageFormat::RG16F();
     specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH24();
     specification.depthEncoding = DepthEncoding::HYPERBOLIC;
 
@@ -81,7 +88,6 @@ void App::makeGUI() {
     debugPane->setCaption(GuiText("G-Buffers", GFont::fromFile(System::findDataFile("arial.fnt")), 16));
     debugPane->moveBy(2, 10);
     debugPane->beginRow();
-    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE));
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_NORMAL));
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_POSITION))->moveBy(40, 0);
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::LAMBERTIAN))->moveBy(40, 0);

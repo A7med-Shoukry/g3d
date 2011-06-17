@@ -1,8 +1,9 @@
 // -*- c++ -*-
 /** \file SS_GBuffer.pix 
-    \author Morgan McGuire, http://graphics.cs.williams.edu*/
-
-// This shader expects a prefix attached at runtime in SuperShader.cpp
+    \author Morgan McGuire, http://graphics.cs.williams.edu
+    
+     This shader expects a prefix attached at runtime in SuperShader.cpp
+    */
 
 /** Texture coordinate */
 varying vec2 texCoord;
@@ -72,20 +73,32 @@ float backside = (gl_FrontFacing == g3d_InvertY) ?  1.0 : -1.0;
     /** xyz = normal, w = bump height */
     uniform sampler2D   normalBumpMap;
     varying vec3        tan_X, tan_Y;
+
+#include "SS_BumpMap.pix"
 #endif
 varying vec3        tan_Z;
 
 /** Index of refraction / 24.0 */
 uniform float       normalizedIndexOfRefraction;
 
-#include "SS_BumpMap.pix"
-#line 83
+#line 84
 
 void main() {    
-    vec2 offsetTexCoord;
-    vec3 wsN;
+#   if defined(NORMALBUMPMAP)
+        vec3 wsN;
+        vec2 offsetTexCoord;
+#       if (PARALLAXSTEPS > 0)
+            bumpMap(normalBumpMap, bumpMapScale, bumpMapBias, texCoord, tan_X, tan_Y, tan_Z, backside, normalize(_tsE), wsN, offsetTexCoord);
+#       else
+            // Vanilla normal mapping
+            bumpMap(normalBumpMap, 0.0, 0.0, texCoord, tan_X, tan_Y, tan_Z, backside, vec3(0.0), wsN, offsetTexCoord);
+#       endif    
 
-    applyBumpMap(wsN, offsetTexCoord);
+#   else
+        // World space normal
+        vec3 wsN = normalize(tan_Z.xyz * backside);
+        vec2 offsetTexCoord = texCoord;
+#   endif
 
     //////////////////////// MATERIAL //////////////////////////////
 
@@ -227,3 +240,4 @@ void main() {
         }
 #   endif
 }
+/* end of SS_GBuffer.pix */

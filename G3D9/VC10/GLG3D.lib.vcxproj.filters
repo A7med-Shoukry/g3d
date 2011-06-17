@@ -591,9 +591,6 @@
     <None Include="..\data-files\SuperShader\SS_BumpMap.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_Components.pix">
-      <Filter>Shader Files</Filter>
-    </None>
     <None Include="..\data-files\SuperShader\SS_GBuffer.pix">
       <Filter>Shader Files</Filter>
     </None>
