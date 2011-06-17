@@ -48,7 +48,10 @@ void App::onInit() {
     lighting->environmentMapConstant = 0.3f;
     // TODO: load better lighting map
     defaultCamera.setFarPlaneZ(-1000);
-    defaultCamera.setNearPlaneZ(-0.2f);
+    defaultCamera.setNearPlaneZ(-0.05f);
+
+    // Don't clip to the near plane
+    glDisable(GL_DEPTH_CLAMP);
 
 	
     colorClear = Color3::white();
