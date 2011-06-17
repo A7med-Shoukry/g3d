@@ -618,7 +618,7 @@
     <None Include="..\data-files\SuperShader\SS_GBuffer.vrt">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_BumpMap.glsl">
+    <None Include="..\data-files\SuperShader\BumpMap.glsl">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

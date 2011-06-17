@@ -18,8 +18,8 @@
   bumpMapScale   Multiplies the net displacement
   bumpMapBias    Added to normalBumpMap.a
   texCoord       texture coordinate in normalBumpMap
-  tan_X          unit tangent-space X vector (usually, the texture-space "u" axis) in world space.  aka. "tangent"
-  tan_Y          unit tangent-space Y vector (usually, the texture-space "v" axis) in world space.  aka. "binormal"
+  tan_X          unit tangent-space X vector (usually, the texture-space "u" axis) in world space.  a.k.a. "tangent"
+  tan_Y          unit tangent-space Y vector (usually, the texture-space "v" axis) in world space.  a.k.a. "binormal"
   tan_Z          unit tangent-space Z vector (usually the surface normal)
   backside       1.0 if this is is a front face, -1.0 if this is a backface with two-sided lighting
   tsE            unit vector to the center of projection, in tangent space
@@ -28,6 +28,7 @@
   wsN            world-space shading normal at offsetTexCoord
   offsetTexCoord shading texture coordinate
 
+  \sa G3D::BumpMap, G3D::Material
  */
 
 /**

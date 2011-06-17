@@ -74,7 +74,7 @@ float backside = (gl_FrontFacing == g3d_InvertY) ?  1.0 : -1.0;
     uniform sampler2D   normalBumpMap;
     varying vec3        tan_X, tan_Y;
 
-#include "SS_BumpMap.glsl"
+#include "BumpMap.glsl"
 #   if (PARALLAXSTEPS == 0)
 #       define bumpMap bumpMapBlinn78
 #   elif (PARALLAXSTEPS <= 1)

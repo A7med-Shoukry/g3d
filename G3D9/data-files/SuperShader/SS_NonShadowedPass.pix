@@ -13,7 +13,7 @@
 #include "SS_Light.pix"
 
 #ifdef NORMALBUMPMAP
-#include "SS_BumpMap.glsl"
+#include "BumpMap.glsl"
 #   if (PARALLAXSTEPS == 0)
 #       define bumpMap bumpMapBlinn78
 #   elif (PARALLAXSTEPS <= 1)
