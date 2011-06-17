@@ -36,7 +36,7 @@ public:
         eta(1.0f) {}
 
     Material::Ref createMaterial(const ArticulatedModel::Preprocess& preprocess) const {
-        debugPrintf("Creating material %s...", name.c_str());
+        debugPrintf("Creating material '%s'...", name.c_str());
         Material::Specification spec;
 
         if ((diffuseMap != "") && ! preprocess.stripMaterials) {
@@ -88,8 +88,8 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
     set.generateNewlineTokens = true;
 
     if (! FileSystem::exists(filename)) {
-        logPrintf("WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
-        debugPrintf("WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
+        logPrintf("OBJ WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
+        debugPrintf("OBJ WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
         return;
     }
 
@@ -124,7 +124,7 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
 
             // Reset to defaults
             matSpec = MatSpec();
-            matSpec.name = ti.readUntilNewlineAsString();
+            matSpec.name = trimWhitespace(ti.readUntilNewlineAsString());
 
         } else if ((cmd == "d") || (cmd == "Tr")) {
             // alpha on range [0,1]
@@ -151,9 +151,17 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
         } else if (cmd == "Km") {
             // Scalar---mirror?
         } else if (cmd == "map_Kd") {
-            matSpec.diffuseMap = FilePath::concat(basePath, removeLeadingSlash(ti.readUntilNewlineAsString()));
+            matSpec.diffuseMap = FilePath::concat(basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+            if (! FileSystem::exists(matSpec.diffuseMap)) {
+                debugPrintf("OBJ WARNING: Missing diffuse texture map '%s'\n", matSpec.diffuseMap.c_str());
+                matSpec.diffuseMap = "";
+            }
         } else if (cmd == "map_Bump") {
-            matSpec.bumpMap = FilePath::concat(basePath, removeLeadingSlash(ti.readUntilNewlineAsString()));
+            matSpec.bumpMap = FilePath::concat(basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+            if (! FileSystem::exists(matSpec.bumpMap)) {
+                debugPrintf("OBJ WARNING: Missing bump map '%s'\n", matSpec.bumpMap.c_str());
+                matSpec.bumpMap = "";
+            }
         }
 
         // Read until the end of the line
@@ -281,13 +289,13 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
             if (cmd == "mtllib") {
 
                 // Specify material library 
-                const std::string& mtlFilename = ti.readUntilNewlineAsString();
+                const std::string& mtlFilename = trimWhitespace(ti.readUntilNewlineAsString());
                 loadMTL(FilePath::concat(basePath, mtlFilename), materialLibrary, preprocess);
 
             } else if (cmd == "g") {
 
                 // New trilist
-                const std::string& name = ti.readUntilNewlineAsString();
+                const std::string& name = trimWhitespace(ti.readUntilNewlineAsString());
                 if (! groupTable.containsKey(name)) {
                     currentTriList = new TriListSpec();
                     currentTriList->name = name;            
@@ -299,7 +307,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
 
             } else if (cmd == "usemtl") {
                 if (currentTriList) {
-                    currentTriList->materialName = ti.readUntilNewlineAsString();
+                    currentTriList->materialName = trimWhitespace(ti.readUntilNewlineAsString());
                 }
             } else if (cmd == "v") {
                 rawVertex.append(readVertex(ti, preprocess.xform));
@@ -420,7 +428,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
             material = materialLibrary[s->materialName];
         } else {
             material = Material::createDiffuse(Color3::white() * 0.8f);
-            debugPrintf("Warning: unrecognized material: %s\n", s->materialName.c_str());
+            debugPrintf("OBJ WARNING: unrecognized material: '%s'\n", s->materialName.c_str());
         }
 
         Part::TriList::Ref triList = part.newTriList(material);
