@@ -1014,10 +1014,12 @@ Texture::Ref Texture::fromMemory(
 
     if ((preprocess.modulate != Color4::one()) || (preprocess.gammaAdjust != 1.0f)) {
         debugAssert((bytesFormat->code == ImageFormat::CODE_RGB8) ||
-            (bytesFormat->code == ImageFormat::CODE_RGBA8));
+                    (bytesFormat->code == ImageFormat::CODE_RGBA8) ||
+                    (bytesFormat->code == ImageFormat::CODE_L8));
 
         // Allow brightening to fail silently in release mode
-        if (( bytesFormat->code == ImageFormat::CODE_RGB8) ||
+        if (( bytesFormat->code == ImageFormat::CODE_L8) ||
+            ( bytesFormat->code == ImageFormat::CODE_RGB8) ||
             ( bytesFormat->code == ImageFormat::CODE_RGBA8)) {
 
             bytesPtr = new MipArray();
@@ -1038,12 +1040,12 @@ Texture::Ref Texture::fromMemory(
                     System::memcpy(const_cast<void*>(face[f]), _bytes[m][f], numBytes);
 
                     // Apply the processing to the copy
-                    modulateImage(
-                        bytesFormat->code,
-                        const_cast<void*>(face[f]),
-                        numBytes,
-                        preprocess.modulate,
-                        preprocess.gammaAdjust);
+                    modulateImage
+                        (bytesFormat->code,
+                         const_cast<void*>(face[f]),
+                         numBytes,
+                         preprocess.modulate,
+                         preprocess.gammaAdjust);
                 }
             }
         }
@@ -2363,7 +2365,9 @@ static void modulateImage(ImageFormat::Code fmt, void* _byte, int n, const Color
 
     debugAssert(
         (fmt == ImageFormat::CODE_RGB8) ||
-        (fmt == ImageFormat::CODE_RGBA8));
+        (fmt == ImageFormat::CODE_RGBA8) ||
+        (fmt == ImageFormat::CODE_R8) ||
+        (fmt == ImageFormat::CODE_L8));
 
     uint8* byte = static_cast<uint8*>(_byte);
 
@@ -2376,19 +2380,32 @@ static void modulateImage(ImageFormat::Code fmt, void* _byte, int n, const Color
         }
     }
 
-    if (fmt == ImageFormat::CODE_RGBA8) {
+    switch (fmt) {
+    case ImageFormat::CODE_RGBA8:
         // 4 channels (we duplicate the loop so that it can be unrolled by the compiler)
         for (int i = 0; i < n; ) {
             for (int c = 0; c < 4; ++c, ++i) {
                 byte[i] = adjust[c][byte[i]];
             }
         }
-    } else {
+        break;
+
+    case ImageFormat::CODE_RGB8:
         for (int i = 0; i < n; ) {
             for (int c = 0; c < 3; ++c, ++i) {
                 byte[i] = adjust[c][byte[i]];
             }
         }
+        break;
+
+    case ImageFormat::CODE_R8:
+    case ImageFormat::CODE_L8:
+        for (int i = 0; i < n; ++i) {
+            byte[i] = adjust[0][byte[i]];
+        }
+        break;
+
+    default:;
     }
 }
 
