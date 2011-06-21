@@ -1,20 +1,20 @@
 /**
- @file ArticulatedViewer.cpp
+ \file ArticulatedViewer.cpp
  
  Viewer for .3ds models
  
- @author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
+ \author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
  
- @created 2007-05-31
- @edited  2007-06-08
+ \created 2007-05-31
+ \edited  2011-06-12
  */
 #include "ArticulatedViewer.h"
 
 ArticulatedViewer::ArticulatedViewer() :
-	m_model(NULL),
-	m_numEdges(0),
-	m_numFaces(0),
-	m_numVertices(0)
+    m_model(NULL),
+    m_numEdges(0),
+    m_numFaces(0),
+    m_numVertices(0)
 	{}
 
 
@@ -23,6 +23,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
     m_selectedPartIndex = -1;
     m_selectedTriListIndex = -1;
 
+    const RealTime start = System::time();
     if (toLower(filenameExt(filename)) == "any") {
         Any any;
         any.load(filename);
@@ -31,6 +32,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
     } else {
         m_model = ArticulatedModel::fromFile(filename, ArticulatedModel::Preprocess());
     }
+    debugPrintf("%s loaded in %f seconds\n", filename.c_str(), System::time() - start);
 
     Array<Surface::Ref> arrayModel;
     m_model->pose(arrayModel);

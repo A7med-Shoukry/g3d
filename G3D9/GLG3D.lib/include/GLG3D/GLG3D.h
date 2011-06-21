@@ -7,7 +7,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2002-08-07
- \edited  2011-02-04
+ \edited  2011-06-21
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -118,6 +118,7 @@
 #include "GLG3D/GuiTabPane.h"
 #include "GLG3D/FileDialog.h"
 #include "GLG3D/IconSet.h"
+#include "GLG3D/SpeedLoad.h"
 
 #include "GLG3D/UprightSplineManipulator.h"
 #include "GLG3D/CameraControlWindow.h"

@@ -130,7 +130,7 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, int bounce) {
                 const Vector3& offset = impulse.w * sign(impulse.w.dot(surfel.geometric.normal)) * BUMP_DISTANCE;
                 const Ray& secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location + offset, impulse.w);
 				debugAssert(secondaryRay.direction().isFinite());
-                radiance += rayTrace(secondaryRay, world, bounce + 1) * impulse.coefficient;
+                radiance += rayTrace(secondaryRay, world, bounce + 1) * impulse.magnitude;
 				debugAssert(radiance.isFinite());
             }
         }

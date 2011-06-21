@@ -17,6 +17,8 @@
 
 namespace G3D {
 
+class SpeedLoadIdentifier;
+
 class Any;
 
 /** 
@@ -106,7 +108,8 @@ public:
 		  Some simple examples follow.
 
 		  All fields as texture maps:
-		  <pre>
+
+		  \code
 		  Material::Specification {
 		      lambertian = "diffusemap.png",
 		      specular = "specmap.png",
@@ -126,36 +129,36 @@ public:
 		      mirrorHint = "STATIC_ENV",
 		      customShaderPrefix = "",
 		      depthWriteHintDistance = nan()
-		      }	       
-		  </pre>
+                  }
+                  \endcode
 
 		  Mirror:
-		  <pre>
+		  \code
 		  Material::Specification {
 		      lambertian = Color3(0.01),
 		      specular = Color3(0.9),
 		      shininess = mirror()
-		      }
-		  </pre>
+		  }
+		  \endcode
 
 		  Red plastic:
-		  <pre>
-          Material::Specification {
+		  \code
+                  Material::Specification {
 		      lambertian = Color3(0.95, 0.2, 0.05),
 		      specular = Color3(0.3),
 		      shininess = glossyExponent(200)
 		  }
-		  </pre>
+                  \endcode
 		  
 		  Green glass:
-		  <pre>
+		  \code
 		  Material::Specification {
-	      	  lambertian = Color3(0.01, 0.1, 0.05),
+	      	      lambertian = Color3(0.01, 0.1, 0.05),
 		      transmissive = Color3(0.01, 0.9, 0.01),
 		      specular = Color3(0.4),
 		      shininess = mirror()
 		  }		    
-		  </pre>
+		  \endcode
 
          \sa G3D::RefractionQuality, \sa G3D::MirrorQuality, \sa G3D::BumpMapSpecification
 	 \beta */
@@ -350,14 +353,14 @@ public:
 
     /** The Material::create(const Settings& settings) factor method is recommended 
        over this one because it performs caching and argument validation. */ 
-    static Material::Ref create(
-        const SuperBSDF::Ref&               bsdf,
-        const Component3&                   emissive        = Component3(),
-        const BumpMap::Ref&                 bump            = NULL,
-        const MapComponent<Image4>::Ref&    customMap       = NULL,
-        const Color4&                       customConstant  = Color4::inf(),
-        const std::string&                  customShaderPrefix = "");
-
+    static Material::Ref create
+    (const SuperBSDF::Ref&               bsdf,
+     const Component3&                   emissive        = Component3(),
+     const BumpMap::Ref&                 bump            = NULL,
+     const MapComponent<Image4>::Ref&    customMap       = NULL,
+     const Color4&                       customConstant  = Color4::inf(),
+     const std::string&                  customShaderPrefix = "");
+    
     /**
        Caches previously created Materials, and the textures 
        within them, to minimize loading time.
@@ -373,7 +376,38 @@ public:
      Create a G3D::Material using a Lambertian (pure diffuse) G3D::BSDF with color @a p_Lambertian.
      */
     static Material::Ref createDiffuse(const Color3& p_Lambertian);
+    
     static Material::Ref createDiffuse(const std::string& textureFilename);
+
+    /** Serialize to G3D SpeedLoad format.  See the notes on the SpeedLoad doc item.
+
+        Not threadsafe, and must be invoked on the OpenGL thread.
+
+        Returns the SpeedLoadIdentifier.
+
+        \sa Material::Ref create(BinaryInput& b)
+        \sa computeSpeedLoadIdentifier()
+    */
+    void serialize(SpeedLoadIdentifier& s, BinaryOutput& b) const;
+
+    /**
+       If \a s matches a previously-created Material that is in the
+       material cache, returns that one, otherwise loads the data from
+       \a b and updates the cache.  Either way, \a b is advanced to
+       the end of this material.
+
+       Returns the SpeedLoadIdentifier for this material
+
+       \sa serialize
+     */
+    static Material::Ref create(SpeedLoadIdentifier& s, BinaryInput& b);
+
+protected:
+
+    void deserialize(SpeedLoadIdentifier& s, BinaryInput& b);
+
+public:
+    
 
     void setStorage(ImageStorage s) const;
 

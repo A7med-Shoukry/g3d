@@ -4,7 +4,7 @@
  \author Morgan McGuire, http://graphics.cs.williams.edu
 
  \created  2009-03-19
- \edited   2011-06-11
+ \edited   2011-06-21
 */
 #include "GLG3D/Material.h"
 #include "G3D/Table.h"
@@ -15,6 +15,7 @@
 #endif
 
 namespace G3D {
+
 
 Material::Material() : m_customConstant(Color4::inf()), m_depthWriteHintDistance(nan()) {
 }

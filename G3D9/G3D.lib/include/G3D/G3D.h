@@ -39,6 +39,7 @@
 #include "G3D/Vector2int32.h"
 #include "G3D/Vector3.h"
 #include "G3D/Vector4.h"
+#include "G3D/Vector4int16.h"
 #include "G3D/Color1.h"
 #include "G3D/Color3.h"
 #include "G3D/Color4.h"

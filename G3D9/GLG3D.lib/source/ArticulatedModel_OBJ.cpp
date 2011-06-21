@@ -1,9 +1,9 @@
 /**
- @file ArticulatedModel_OBJ.cpp
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \file ArticulatedModel_OBJ.cpp
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2010-07-03
- @edited  2010-07-03
+ \created 2010-07-03
+ \edited  2011-06-20
  */
 
 #include "GLG3D/ArticulatedModel.h"
@@ -76,7 +76,11 @@ static std::string removeLeadingSlash(const std::string& s) {
     }
 }
 
-static void loadMTL(const std::string& filename, Table<std::string, Material::Ref>& mtlTable, const ArticulatedModel::Preprocess& preprocess) {
+static void loadMTL
+(const std::string&                   filename,
+ Table<std::string, Material::Ref>&   mtlTable, 
+ const ArticulatedModel::Preprocess&  preprocess) {
+
     // http://people.sc.fsu.edu/~burkardt/data/mtl/mtl.html
 
     const std::string& basePath = FilePath::parent(FileSystem::resolve(filename));
@@ -113,8 +117,10 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
             // Create the previous material (TODO: note that this code is duplicated below)
             if (matSpec.name != "") {
                 if (matSpec.diffuseMap != "" && diffuseCache.containsKey(matSpec.diffuseMap)) {
+                    // Already in the cache based on diffuse texture map
                     mtlTable.set(matSpec.name, diffuseCache[matSpec.diffuseMap]);
                 } else {
+                    // Not in the diffuse texture map cache
                     mtlTable.set(matSpec.name, matSpec.createMaterial(preprocess));
                     if (matSpec.diffuseMap != "") {
                         diffuseCache.set(matSpec.diffuseMap, mtlTable[matSpec.name]);

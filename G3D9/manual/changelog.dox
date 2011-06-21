@@ -19,8 +19,9 @@
      <li> G3D::ArticulatedModel::intersect
      <li> G3D::Color3 and G3D::Color4 now initialize to zero
      <li> G3D::Matrix3::fromUnitAxisAngle
-	 <li> G3D::HashTrait<std::type_info* const> specialization
-	 <li> G3D::categorizeByDerivedType
+     <li> G3D::HashTrait<std::type_info* const> specialization
+     <li> G3D::categorizeByDerivedType
+     <li> G3D::Vector4int16
      <li> Made alpha-testing optional in G3D::TriTree
      <li> Extended G3D::GCamera to have lens parameters
      <li> Lighting::Specification::Any toAny()
@@ -133,6 +134,7 @@
      <li> G3D::AABox default constructor returns the empty box, which is now distinct from the box at the origin
      <li> Removed G3D::SkyParameters and G3D::Sky </li>
      <li> Removed G3D::AnyVal (use G3D::Any now)
+     <li> G3D::SurfaceElement::Impulse::coefficient &rarr; G3D::SurfaceElement::Impulse::magnitude
      <li> Removed AUX RenderDevice::ReadBuffer options (deprecated from OpenGL)
      <li> G3D::GuiTextureBox::Settings &rarr; G3D::Texture::Visualization
      <li> Removed incident power arguments from SuperBSDF::evaluate

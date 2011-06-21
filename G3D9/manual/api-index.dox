@@ -1,5 +1,5 @@
 /**
-  @page apiindex All APIs by Level
+  \page apiindex All APIs by Level
 
 APIs at the top of this page are the highest-level, providing the most
 functionality and requiring the most dependencies.  Each section
@@ -227,6 +227,7 @@ href="classes.html">Classes</a>.
     \link G3D::Vector3int32 Vector3int32\endlink,
     \link G3D::Vector4 Vector4\endlink,
     \link G3D::Vector4int8 Vector4int8\endlink,
+    \link G3D::Vector4int16 Vector4int8\endlink
 
   <li><b>Radiometry</b>  &nbsp;&nbsp;
     \link G3D::Color1 Color1\endlink,
@@ -424,6 +425,7 @@ href="classes.html">Classes</a>.
 
     <li><b>Hash Functions</b> &nbsp; &nbsp;
        \link G3D::Crypto Crypto\endlink,
+       \link G3D::MD5Hash MD5Hash\endlink,
        \link G3D::superFastHash superFastHash\endlink,
        \link HashTrait HashTrait\endlink
 

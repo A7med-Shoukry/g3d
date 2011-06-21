@@ -4,13 +4,13 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2002-08-07
- \edited  2010-09-24
+ \edited  2011-06-19
 
  Copyright 2002-2011, Morgan McGuire.
  All rights reserved.
 */
-#ifndef GLFORMAT_H
-#define GLFORMAT_H
+#ifndef glFormat_h
+#define glFormat_h
 
 #include "glheaders.h"
 #include "G3D/g3dmath.h"
@@ -82,10 +82,17 @@ namespace G3D {                                      \
 }
 
 DECLARE_GLFORMATOF( Vector2,       GL_FLOAT,          false)
-DECLARE_GLFORMATOF( Vector3,       GL_FLOAT,          false)
-DECLARE_GLFORMATOF( Vector4,       GL_FLOAT,          false)
-DECLARE_GLFORMATOF( Vector3int16,  GL_SHORT,          false)
 DECLARE_GLFORMATOF( Vector2int16,  GL_SHORT,          false)
+DECLARE_GLFORMATOF( Vector2int32,  GL_INT,            false)
+
+DECLARE_GLFORMATOF( Vector3,       GL_FLOAT,          false)
+DECLARE_GLFORMATOF( Vector3int16,  GL_SHORT,          false)
+DECLARE_GLFORMATOF( Vector3int32,  GL_INT,            false)
+
+DECLARE_GLFORMATOF( Vector4,       GL_FLOAT,          false)
+DECLARE_GLFORMATOF( Vector4int16,  GL_SHORT,          false)
+DECLARE_GLFORMATOF( Vector4int8,   GL_BYTE,           false)
+
 DECLARE_GLFORMATOF( Color3uint8,   GL_UNSIGNED_BYTE,  false)
 DECLARE_GLFORMATOF( Color3,        GL_FLOAT,          false)
 DECLARE_GLFORMATOF( Color4,        GL_FLOAT,          false)

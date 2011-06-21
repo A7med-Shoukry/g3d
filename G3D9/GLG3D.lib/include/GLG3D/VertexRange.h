@@ -63,7 +63,7 @@ private:
     /** Space between subsequent elements in bytes, must be either zero or >= m_elementSize */
     size_t              m_stride;
  
-    uint64		        m_generation;
+    uint64              m_generation;
     
     /** GL_NONE for a "void" array */
     GLenum              m_underlyingRepresentation;
