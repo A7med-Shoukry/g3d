@@ -104,14 +104,15 @@ public:
 } // namespace G3D
 
 template <> struct HashTrait<G3D::Vector4int16> {
-    static size_t hashCode(const G3D::Vector4int16& key) {
-        // This was empircally determined to be a good and fast hash function
-        // for small magnitude vectors
-        const G3D::uint32* c = (const G3D::uint32*)&key;
-        G3D::uint32 h = (c[0] * 0x9e3779b9) + c[1] + (key[0] << 3) + (key[3] << 4);
-        h = h ^ ((key[1] >> 6) * (key[2] >> 9));
-        h = h ^ (h >> 22);
-        return h;
+    static size_t hashCode(const G3D::Vector4int16& vertex) {
+        // http://www.concentric.net/~ttwang/tech/inthash.htm                                                                                                        
+        G3D::int64 key = *(G3D::int64*)&vertex;
+        key = (~key) + (key << 18); // key = (key << 18) - key - 1;                                                                                                  
+        key = key ^ (key >> 31);
+        key = key * 21; // key = (key + (key << 2)) + (key << 4);                                                                                                    
+        key = key ^ (key >> 11);
+        key = key + (key << 6);
+        return size_t(key) ^ size_t(key >> 22);
     }
 };
 
