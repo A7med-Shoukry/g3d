@@ -321,7 +321,7 @@ public:
     (RenderDevice*                rd, 
      const Array<Surface::Ref>&   surfaceArray, 
      const Color4&                color,
-     bool                         previous) const {}//= 0;
+     bool                         previous) const;
 
 
     /** Use the current RenderDevice::cullFace. 

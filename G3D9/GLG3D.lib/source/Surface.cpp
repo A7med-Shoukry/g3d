@@ -75,7 +75,7 @@ void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, boo
 }
 
 
-void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color, bool previous) {
+void Surface::renderWireframeHomogeneous(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color, bool previous) const {
     rd->pushState(); {
         rd->setDepthWrite(false);
         rd->setDepthTest(RenderDevice::DEPTH_LEQUAL);
@@ -93,6 +93,20 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
             surface3D[i]->sendGeometry(rd);
         }
     } rd->popState();
+}
+
+
+void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfaceArray, const Color4& color, bool previous) {
+    // Separate by type.  This preserves the sort order and ensures that the closest
+    // object will still render first.
+    Array< Array<Surface::Ref> > derivedTable;
+    categorizeByDerivedType(surfaceArray, derivedTable);
+
+    for (int t = 0; t < derivedTable.size(); ++t) {
+        Array<Surface::Ref>& derivedArray = derivedTable[t];
+        debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
+        derivedArray[0]->renderWireframe(rd, derivedArray, color, previous);
+    }
 }
 
 
