@@ -105,7 +105,7 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
     for (int t = 0; t < derivedTable.size(); ++t) {
         Array<Surface::Ref>& derivedArray = derivedTable[t];
         debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
-        derivedArray[0]->renderWireframe(rd, derivedArray, color, previous);
+        derivedArray[0]->renderWireframeHomogeneous(rd, derivedArray, color, previous);
     }
 }
 
