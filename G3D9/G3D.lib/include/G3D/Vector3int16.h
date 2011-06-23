@@ -1,16 +1,17 @@
 /**
-  @file Vector3int16.h
+  \file G3D/Vector3int16.h
   
-  @maintainer Morgan McGuire, matrix@brown.edu
+  \maintainer Morgan McGuire, matrix@brown.edu
 
-  @created 2003-04-07
-  @edited  2011-01-24
+  \created 2003-04-07
+  \edited  2011-06-24
+
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
  */
 
-#ifndef G3D_VECTOR3INT16_H
-#define G3D_VECTOR3INT16_H
+#ifndef G3D_Vector3int16_h
+#define G3D_Vector3int16_h
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
@@ -98,6 +99,9 @@ public:
         z *= other.z;
         return *this;
     }
+
+    static Vector3int16 floor(const Vector3& v);
+    static Vector3int16 ceil(const Vector3& v);
 
     inline bool operator== (const Vector3int16& rkVector) const {
         return ( x == rkVector.x && y == rkVector.y && z == rkVector.z );
