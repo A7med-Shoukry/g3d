@@ -131,7 +131,15 @@ These control the version of Winsock used by G3D.
 #  pragma warning (disable : 4127)
 
 /** \def G3D_DEPRECATED()
-    Creates deprecated warning. */
+    Creates deprecated warning at compile time when used. 
+
+    Example:
+    \code
+        int G3D_DEPRECATED sum(int a, int b) {
+            return a + b;
+        }
+    \endcode
+    */
 #  define G3D_DEPRECATED __declspec(deprecated)
 
 // Prevent Winsock conflicts by hiding the winsock API
@@ -321,7 +329,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 
 
     See G3D::Color3uint8 for an example.*/
-#ifdef _MSC_VER
+#ifdef _DOXYGEN_RUNNING
+#   define G3D_BEGIN_PACKED_CLASS(byteAlign) class
+#elif defined(_MSC_VER)
 #    define G3D_BEGIN_PACKED_CLASS(byteAlign)  PRAGMA( pack(push, byteAlign) ) class
 #elif defined(__GNUC__)
 #    define G3D_BEGIN_PACKED_CLASS(byteAlign)  class __attribute((__packed__))

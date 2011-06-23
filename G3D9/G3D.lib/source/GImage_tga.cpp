@@ -154,8 +154,10 @@ void GImage::decodeTGA(
 
     if (colorDepth == 32) {
         m_channels = 4;
+        m_imageFormat = ImageFormat::RGBA8();
     } else {
         m_channels = 3;
+        m_imageFormat = ImageFormat::RGB8();
     }
 
     // Image descriptor contains overlay data as well

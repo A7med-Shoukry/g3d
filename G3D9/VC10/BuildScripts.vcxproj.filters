@@ -4,5 +4,6 @@
     <None Include="..\BUILD_INSTRUCTIONS.txt" />
     <None Include="..\buildg3d" />
     <None Include="..\buildg3d.bat" />
+    <None Include="..\Doxyfile" />
   </ItemGroup>
 </Project>

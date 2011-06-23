@@ -14,6 +14,7 @@
     <None Include="..\buildg3d" />
     <None Include="..\buildg3d.bat" />
     <None Include="..\BUILD_INSTRUCTIONS.txt" />
+    <None Include="..\Doxyfile" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{985177F9-F95C-4815-88A1-D71C108D6C56}</ProjectGuid>

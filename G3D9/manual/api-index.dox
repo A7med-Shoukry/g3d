@@ -232,6 +232,7 @@ href="classes.html">Classes</a>.
   <li><b>Radiometry</b>  &nbsp;&nbsp;
     \link G3D::Color1 Color1\endlink,
     \link G3D::Color1uint8 Color1uint8\endlink,
+    \link G3D::Color1uint8 Color2uint8\endlink,
     \link G3D::Color3 Color3\endlink,
     \link G3D::Power3 Power3\endlink, 
     \link G3D::Radiance3 Radiance3\endlink, 
@@ -488,10 +489,14 @@ href="classes.html">Classes</a>.
 
         
      <li><b>Platform Abstraction Macros</b> &nbsp; &nbsp;
-     G3D_WIN32, G3D_OSX, G3D_LINUX, G3D_FREEBSD,     
+     \link G3D_WIN32() G3D_WIN32\endlink,
+	 G3D_OSX, G3D_LINUX, G3D_FREEBSD,     
      PRAGMA(), G3D_BEGIN_PACKED_CLASS(), G3D_END_PACKED_CLASS(),
      G3D_CHECK_PRINTF_METHOD_ARGS(), G3D_CHECK_VPRINTF_METHOD_ARGS(),
      G3D_CHECK_PRINTF_ARGS(), G3D_CHECK_VPRINTF_ARGS(),
-     G3D_START_AT_MAIN(), G3D_DEPRECATED(), G3D_DEBUG, G3D_STATIC_LINK_FFMPEG
+     G3D_START_AT_MAIN(),
+	 \link G3D_REPRECATED() G3D_DEPRECATED\endlink, 
+	 \link G3D_DEBUG() G3D_DEBUG\endlink,
+	 G3D_STATIC_LINK_FFMPEG
    </UL>
  */

@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2003-05-23
-  \edited  2011-05-01
+  \edited  2011-06-23
 */
 
 #ifndef GLG3D_ImageFormat_H
@@ -422,6 +422,18 @@ public:
 
     /* Checks if a conversion between two formats is available. */
     static bool conversionAvailable(const ImageFormat* srcFormat, int srcRowPadBits, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY = false);
+
+    /** Does this contain exactly one uint8 component? */
+    bool representableAsColor1uint8() const;
+
+    /** Does this contain exactly two uint8 components? */
+    bool representableAsColor2uint8() const;
+
+    /** Does this contain exactly three uint8 components? */
+    bool representableAsColor3uint8() const;
+
+    /** Does this contain exactly four uint8 components? */
+    bool representableAsColor4uint8() const;
 };
 
 typedef ImageFormat TextureFormat;

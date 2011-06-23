@@ -1,10 +1,10 @@
 /**
- @file ImageFormat.cpp
+ \file ImageFormat.cpp
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2003-05-23
- @edited  2010-03-30
+ \created 2003-05-23
+ \edited  2011-06-23
  */
 
 #include "GLG3D/glheaders.h"
@@ -440,6 +440,38 @@ const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
     default:
         return NULL;
     }
+}
+
+
+bool ImageFormat::representableAsColor1uint8() const {
+    return (numComponents == 1) &&
+        (cpuBitsPerPixel == 8) &&
+        ((luminanceBits == 8) ||
+         (redBits == 8) ||
+         (alphaBits == 8));
+}
+
+
+bool ImageFormat::representableAsColor2uint8() const {
+    return (numComponents == 2) &&
+        (cpuBitsPerPixel == 16) &&
+        ((redBits == 8 && greenBits == 8) ||
+         (luminanceBits == 8 && alphaBits == 8) ||
+         (redBits == 8 && alphaBits == 8));
+
+}
+
+
+bool ImageFormat::representableAsColor3uint8() const {
+    return (numComponents == 3) &&
+        (cpuBitsPerPixel == 24) &&
+        (redBits == 8 && greenBits == 8 && blueBits == 8);
+}
+
+bool ImageFormat::representableAsColor4uint8() const {
+    return (numComponents == 4) &&
+        (cpuBitsPerPixel == 32) &&
+        (redBits == 8 && greenBits == 8 && blueBits == 8 && alphaBits == 8);
 }
 
 // Helper variables for defining texture formats

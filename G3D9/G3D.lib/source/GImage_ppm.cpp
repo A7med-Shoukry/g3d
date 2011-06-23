@@ -124,6 +124,7 @@ void GImage::decodePPMASCII(
     m_width = ppmWidth;
     m_height = ppmHeight;
     m_channels = 3;
+    m_imageFormat = ImageFormat::RGB8();
     // always scale down to 1 byte per channel
     m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
 

@@ -333,6 +333,7 @@ void GImage::decodeJPEG(
     int                             loc = 0;
 
     m_channels = 3;
+    m_imageFormat = ImageFormat::RGB8();
     // We have to set up the error handler, in case initialization fails.
 	cinfo.err = jpeg_std_error(&jerr);
 
