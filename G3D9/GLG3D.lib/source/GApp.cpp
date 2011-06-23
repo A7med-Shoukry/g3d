@@ -67,7 +67,11 @@ DebugID debugDraw
         s.solidColor        = solidColor;
         s.wireColor         = wireColor;
         s.frame             = frame;
-        s.endTime           = System::time() + displayTime;
+        if (displayTime == 0) {
+            s.endTime = 0;
+        } else {
+            s.endTime       = System::time() + displayTime;
+        }
         s.id                = lastGApp->m_lastDebugID++;
         return s.id;
     } else {
