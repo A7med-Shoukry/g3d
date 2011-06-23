@@ -407,7 +407,7 @@ std::string System::findDataFile
         }
 
         static const std::string subdirs[] = 
-            {"font", "gui", "SuperShader", "cubemap", "icon", "material", "image", "md2", "md3", "ifs", "3ds", "sky", ""};
+            {"font", "gui", "SuperShader", "models", "cubemap", "icon", "material", "image", "md2", "md3", "ifs", "3ds", "sky", ""};
         for (int j = 0; j < baseDirArray.size(); ++j) {
             std::string d = baseDirArray[j];
             if ((d == "") || FileSystem::exists(d)) {
