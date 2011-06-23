@@ -258,9 +258,6 @@ void App::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
 
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-    Array< Array< Surface::Ref > > categorizedSurfaces;
-    categorizeByDerivedType(surface3D, categorizedSurfaces);
-
     if (m_scene.isNull()) {
         return;
     }
