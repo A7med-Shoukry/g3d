@@ -1,0 +1,124 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  3.5.7.1088
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl sprljci
+Ka 0 0 0
+Kd 0.784314 0.784314 0.784314
+Ks 0 0 0
+illum 2
+Ns 8
+
+newmtl staklo
+Ka 0 0 0
+Kd 0.784314 0.784314 0.784314
+Ks 0.784314 0.784314 0.784314
+illum 2
+Ns 256
+d 0.1
+
+newmtl kamen_zid
+Ka 0 0 0
+Kd 0.734118 0.730588 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd KAMEN.tga
+
+newmtl stupovi
+Ka 0 0 0
+Kd 0.734118 0.730588 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd KAMEN-stup.tga
+
+newmtl pod
+Ka 0 0 0
+Kd 0.734118 0.709412 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd MRAMOR6X6.tga
+
+newmtl pod_tepih
+Ka 0 0 0
+Kd 0.546274 0.219608 0.183922
+Ks 0 0 0
+illum 2
+Ns 8
+
+newmtl pod_rub
+Ka 0 0 0
+Kd 0.734118 0.730588 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd KAMEN.tga
+
+newmtl kamen_zid_prozor
+Ka 0 0 0
+Kd 0.734118 0.730588 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd KAMEN.tga
+
+newmtl zid_vani
+Ka 0 0 0
+Kd 0.734118 0.730588 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd KAMEN.tga
+
+newmtl kamen_zid_parapet
+Ka 0 0 0
+Kd 0.734118 0.730588 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd KAMEN-stup.tga
+
+newmtl staklo_crveno
+Ka 0 0 0
+Kd 0.441176 0.103922 0.0490196
+Ks 0.882353 0.207843 0.0980392
+illum 2
+Ns 256
+d 0.8
+
+newmtl rozeta
+Ka 0 0 0
+Kd 0.734118 0.730588 0.674118
+Ks 0 0 0
+illum 2
+Ns 8
+map_Kd KAMEN-stup.tga
+
+newmtl staklo_zeleno
+Ka 0 0 0
+Kd 0.0333333 0.315686 0.0372549
+Ks 0.0666667 0.631373 0.0745098
+illum 2
+Ns 256
+d 0.8
+
+newmtl staklo_plavo
+Ka 0 0 0
+Kd 0.0411765 0.072549 0.392157
+Ks 0.0823529 0.145098 0.784314
+illum 2
+Ns 256
+d 0.8
+
+newmtl staklo_zuto
+Ka 0 0 0
+Kd 0.5 0.445098 0.00392157
+Ks 1 0.890196 0.00784314
+illum 2
+Ns 256
+d 0.8

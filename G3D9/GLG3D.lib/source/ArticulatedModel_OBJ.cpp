@@ -18,7 +18,9 @@ class MatSpec {
 public:
     std::string     name;
 
-    Color4          diffuseConstant;
+    float           opacity;
+
+    Color3          color;
     std::string     diffuseMap;
 
     std::string     bumpMap;
@@ -29,7 +31,8 @@ public:
     float           eta;
 
     MatSpec() : 
-        diffuseConstant(0.8f, 0.8f, 0.8f, 1.0f),
+        opacity(1.0f),
+        color(0.8f, 0.8f, 0.8f),
         // The default specular constant of one doesn't work well for G3D
         specularConstant(Color3::zero()),
         shininess(0.0f),
@@ -50,7 +53,12 @@ public:
             spec.setLambertian(s);
             
         } else {
-            spec.setLambertian(diffuseConstant);
+            if (opacity == 1.0f) {
+                spec.setLambertian(color);
+            } else {
+                spec.setLambertian(color * opacity);
+                spec.setTransmissive(color * (1.0 - opacity));
+            }
         }
 
         // Assume in air
@@ -99,7 +107,7 @@ static void loadMTL
 
     TextInput ti(filename, set);
 
-    // Hack: merge anything sharing diffuse textures
+    // Merge any materials that have the same non-empty diffuse texture map
     Table<std::string, Material::Ref> diffuseCache;
 
     MatSpec matSpec;
@@ -119,6 +127,7 @@ static void loadMTL
                 if (matSpec.diffuseMap != "" && diffuseCache.containsKey(matSpec.diffuseMap)) {
                     // Already in the cache based on diffuse texture map
                     mtlTable.set(matSpec.name, diffuseCache[matSpec.diffuseMap]);
+                    debugPrintf(" Merging %s with previous material that also uses diffuse map %s\n", matSpec.name.c_str(), matSpec.diffuseMap.c_str());
                 } else {
                     // Not in the diffuse texture map cache
                     mtlTable.set(matSpec.name, matSpec.createMaterial(preprocess));
@@ -134,7 +143,7 @@ static void loadMTL
 
         } else if ((cmd == "d") || (cmd == "Tr")) {
             // alpha on range [0,1]
-            matSpec.diffuseConstant.a = ti.readNumber();
+            matSpec.opacity = ti.readNumber();
         } else if (cmd == "Ns") {
             // spec exponent on range [0, 1000]
             matSpec.shininess = ti.readNumber();
@@ -146,9 +155,9 @@ static void loadMTL
             // We ignore this
         } else if (cmd == "Kd") {
             // rgb diffuse on range [0,1]
-            matSpec.diffuseConstant.r = ti.readNumber();
-            matSpec.diffuseConstant.g = ti.readNumber();
-            matSpec.diffuseConstant.b = ti.readNumber();
+            matSpec.color.r = ti.readNumber();
+            matSpec.color.g = ti.readNumber();
+            matSpec.color.b = ti.readNumber();
         } else if (cmd == "Ks") {
             // rgb specular on range [0,1]
             matSpec.specularConstant.r = ti.readNumber();
@@ -277,6 +286,9 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     const std::string& basePath = FilePath::parent(FileSystem::resolve(filename));
 
     {
+        // Name of the current triList with no material name appended
+        std::string currentTriListRawName;
+
         TextInput ti(filename, set);
         while (ti.hasMore()) {
             // Consume comments/newlines
@@ -301,19 +313,42 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
             } else if (cmd == "g") {
 
                 // New trilist
-                const std::string& name = trimWhitespace(ti.readUntilNewlineAsString());
-                if (! groupTable.containsKey(name)) {
+                currentTriListRawName = trimWhitespace(ti.readUntilNewlineAsString());
+                if (! groupTable.containsKey(currentTriListRawName)) {
                     currentTriList = new TriListSpec();
-                    currentTriList->name = name;            
-                    groupTable.set(name, currentTriList);
+                    currentTriList->name = currentTriListRawName;            
+                    groupTable.set(currentTriListRawName, currentTriList);
                 } else {
-                    currentTriList = groupTable[name];
+                    currentTriList = groupTable[currentTriListRawName];
                 }
 
-
             } else if (cmd == "usemtl") {
+
+                // If the current tri list is empty, assign a material to it.  Otherwise break
+                // the trilist here and start a new one.
                 if (currentTriList) {
-                    currentTriList->materialName = trimWhitespace(ti.readUntilNewlineAsString());
+                    const std::string& materialName = trimWhitespace(ti.readUntilNewlineAsString());
+                    if (currentTriList->cpuIndex.size() != 0) {
+                        const std::string& triListName = currentTriListRawName + "_" + materialName;
+                        debugAssertM(groupTable.containsKey(currentTriListRawName), "Hit a usemtl block when currentTriList != NULL but the tri list had no name.");
+
+                        if (groupTable[currentTriListRawName]->materialName == materialName) {
+                            // Switch back to the base trilist, which uses this material
+                            currentTriList = groupTable[currentTriListRawName];
+                        } else {
+                            // Find or create the trilist that uses this material
+
+                            if (! groupTable.containsKey(triListName)) {
+                                currentTriList = new TriListSpec();
+                                currentTriList->name = triListName;            
+                                groupTable.set(triListName, currentTriList);
+                            } else {
+                                currentTriList = groupTable[triListName];
+                            }
+                        }
+                    }
+
+                    currentTriList->materialName = materialName;
                 }
             } else if (cmd == "v") {
                 rawVertex.append(readVertex(ti, preprocess.xform));
