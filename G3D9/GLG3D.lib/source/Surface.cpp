@@ -87,10 +87,13 @@ void Surface::renderWireframeHomogeneous(RenderDevice* rd, const Array<Surface::
         rd->setLineWidth(0.8f);
 
         for (int i = 0; i < surface3D.size(); ++i) {
+            surface3D[i]->render(rd);
+            /*
             CFrame cframe;
             surface3D[i]->getCoordinateFrame(cframe, previous);
             rd->setObjectToWorldMatrix(cframe);
             surface3D[i]->sendGeometry(rd);
+            */
         }
     } rd->popState();
 }
