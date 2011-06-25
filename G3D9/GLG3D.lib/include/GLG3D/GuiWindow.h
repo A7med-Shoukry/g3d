@@ -255,6 +255,11 @@ public:
         return m_skin;
     }
 
+    /** Change the window style.  May lead to inconsistent layout. */
+    void setStyle(GuiTheme::WindowStyle style) {
+        m_style = style;
+    }
+
     /**
      Set the border bounds relative to the OSWindow. 
      The window may render outside the bounds because of drop shadows
