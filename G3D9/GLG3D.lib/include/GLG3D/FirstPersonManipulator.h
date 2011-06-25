@@ -1,14 +1,14 @@
 /**
-  @file FirstPersonManipulator.h
+  \file GLG3D/FirstPersonManipulator.h
 
-  @maintainer Morgan McGuire, morgan@cs.brown.edu
+  \maintainer Morgan McGuire, morgan@cs.brown.edu
 
-  @created 2002-07-28
-  @edited  2006-02-28
+  \created 2002-07-28
+  \edited  2011-06-24
 */
 
-#ifndef G3D_ManualCameraController_H
-#define G3D_ManualCameraController_H
+#ifndef G3D_FirstPersonManipulator_h
+#define G3D_FirstPersonManipulator_h
 
 #include "G3D/platform.h"
 #include "G3D/Vector3.h"
@@ -58,6 +58,8 @@ public:
         MOUSE_SCROLL_AT_EDGE,
         MOUSE_PUSH_AT_EDGE
     };
+
+    typedef ReferenceCountedPointer<FirstPersonManipulator> Ref;
 
 private:
 
