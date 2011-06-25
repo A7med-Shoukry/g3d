@@ -73,12 +73,16 @@ pascal OSStatus OnAppQuit(EventHandlerCallRef handlerRef, EventRef event, void *
 pascal OSStatus OnActivation(EventHandlerCallRef handlerRef, EventRef event, void *userData) {
     CarbonWindow* pWindow = (CarbonWindow*)userData;
 	
-    if(pWindow) {
+    if (pWindow) {
         GEvent e;
         pWindow->_windowActive = true;
         e.active.type = GEventType::ACTIVE;
         e.active.gain = 1;
         e.active.state = SDL_APPMOUSEFOCUS|SDL_APPINPUTFOCUS|SDL_APPACTIVE;
+        pWindow->fireEvent(e);
+
+        e.focus.type = GEventType::FOCUS;
+        e.focus.hasFocus = true;
         pWindow->fireEvent(e);
     }
     
@@ -94,6 +98,10 @@ pascal OSStatus OnDeactivation(EventHandlerCallRef handlerRef, EventRef event, v
         e.active.type = GEventType::ACTIVE;
         e.active.gain = 0;
         e.active.state = SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS | SDL_APPACTIVE;
+        pWindow->fireEvent(e);
+
+        e.focus.type = GEventType::FOCUS;
+        e.focus.hasFocus = false;
         pWindow->fireEvent(e);
     }
 

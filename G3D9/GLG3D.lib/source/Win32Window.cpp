@@ -1590,7 +1590,18 @@ LRESULT CALLBACK Win32Window::windowProc(HWND     window,
             }
             return 0;
 
+        case WM_SETFOCUS:
+            e.type = GEventType::FOCUS;
+            e.focus.hasFocus = true;
+            this_window->m_sysEventQueue->pushBack(e);
+            return 0;
+
         case WM_KILLFOCUS:
+            e.type = GEventType::FOCUS;
+            e.focus.hasFocus = false;
+            this_window->m_sysEventQueue->pushBack(e);
+
+            // Release keys held down so that they do not get stuck
             for (int i = 0; i < sizeof(this_window->m_keyboardButtons); ++i) {
                 if (this_window->m_keyboardButtons[i]) {
                     ::PostMessage(window, WM_KEYUP, i, 0);
