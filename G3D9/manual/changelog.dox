@@ -1,5 +1,5 @@
 /**
- @page changelog Change Log
+ \page changelog Change Log
 
 <P>
    Major version numbers introduce API changes that are not backwards
@@ -18,6 +18,8 @@
    <ul>
      <li> G3D::ArticulatedModel::intersect
      <li> G3D::Color3 and G3D::Color4 now initialize to zero
+     <li> G3D::Color2uint8
+     <li> GApp::m_useFilm may now be changed after construction to disable Film per-frame
      <li> G3D::Matrix3::fromUnitAxisAngle
      <li> G3D::HashTrait<std::type_info* const> specialization
      <li> G3D::categorizeByDerivedType

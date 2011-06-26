@@ -513,10 +513,11 @@ GImage::GImage
     const MemoryManager::Ref& m) : 
     m_memMan(m),
     m_byte(NULL), 
+    m_imageFormat(NULL),
     m_channels(0),
     m_width(0),
     m_height(0),
-    m_imageFormat(NULL)  {
+{
     
     load(filename, format);
 }
@@ -549,10 +550,10 @@ GImage::GImage
     const MemoryManager::Ref& m) : 
     m_memMan(m),
     m_byte(NULL),
+    m_imageFormat(NULL),
     m_channels(0),
     m_width(0),
-    m_height(0),
-    m_imageFormat(NULL) {
+    m_height(0) {
 
     BinaryInput b(data, length, G3D_LITTLE_ENDIAN);
     // It is safe to cast away the const because we
@@ -569,10 +570,10 @@ GImage::GImage
     const MemoryManager::Ref& mem) : 
     m_memMan(mem),
     m_byte(0),
+    m_imageFormat(NULL),
     m_channels(0), 
     m_width(0), 
-    m_height(0),
-    m_imageFormat(NULL)  {
+    m_height(0) {
     
     resize(width, height, channels);
 }
@@ -585,10 +586,10 @@ GImage::GImage
     const MemoryManager::Ref& mem) : 
     m_memMan(mem),
     m_byte(0),
+    m_imageFormat(NULL),
     m_channels(0), 
     m_width(0), 
-    m_height(0),
-    m_imageFormat(NULL)  {
+    m_height(0) {
     
     resize(width, height, im);
 }

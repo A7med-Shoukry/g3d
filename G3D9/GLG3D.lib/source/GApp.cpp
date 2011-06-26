@@ -199,18 +199,18 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
         addWidget(console);
     }
 
-    if (m_useFilm) {
+    if (settings.film.enabled) {
         if (! GLCaps::supports_GL_ARB_shading_language_100() || ! GLCaps::supports_GL_ARB_texture_non_power_of_two() ||
             (! GLCaps::supports_GL_ARB_framebuffer_object() && ! GLCaps::supports_GL_EXT_framebuffer_object())) {
             // This GPU can't support the film class
-            *const_cast<bool*>(&m_useFilm) = false;
-            logPrintf("Warning: Disabled GApp::Settings::film.enabled because it could not be supported on this GPU.");
+            m_useFilm = false;
+            logPrintf("Warning: Disabled GApp::Settings::FilmSettings:enabled because it could not be supported on this GPU.");
         } else {
             const ImageFormat* colorFormat = GLCaps::firstSupportedTexture(m_settings.film.preferredColorFormats);
 
             if (colorFormat == NULL) {
                 // This GPU can't support the film class
-                *const_cast<bool*>(&m_useFilm) = false;
+                m_useFilm = false;
                 logPrintf("Warning: Disabled GApp::Settings::film.enabled because none of the provided color formats could be supported on this GPU.");
             } else {
                 m_film = Film::create(colorFormat);
@@ -629,7 +629,13 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
     // Clear the entire screen (needed even though we'll render over it because
     // AFR uses clear() to detect that the buffer is not re-used.)
     rd->clear();
-    if (m_useFilm) {
+    
+    // Ignore changes to this value inside of onGraphics, when it is
+    // too late to switch
+    const bool useFilmThisFrame = m_useFilm;
+    debugAssertM(! m_useFilm || (m_useFilm && m_film.notNull()), 
+                 "GApp::Settings::FilmSettings::enabled must be true when the GApp is constructed to later set GApp::m_useFilm = true");
+    if (m_film.notNull() && useFilmThisFrame) {
         // Clear the frameBuffer
         rd->pushState(m_frameBuffer);
         rd->clear();
@@ -646,7 +652,7 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
     onGraphics3D(rd, posed3D);
 
     rd->popState();
-    if (m_useFilm) {
+    if (m_film.notNull() && useFilmThisFrame) {
         // Expose the film
         m_film->exposeAndRender(rd, m_colorBuffer0, 1);
         rd->setMinLineWidth(0);
@@ -675,7 +681,9 @@ void GApp::removeWidget(const Widget::Ref& module) {
 
 
 void GApp::resize(int w, int h) {
-    if (m_useFilm &&
+    // Does the film need to be reallocated?  Do this even if we
+    // aren't using it at the moment.
+    if (m_film.notNull() &&
         (m_colorBuffer0.isNull() ||
         (m_colorBuffer0->width() != w) ||
         (m_colorBuffer0->height() != h))) {

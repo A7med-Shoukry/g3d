@@ -140,6 +140,10 @@ public:
         public:
             /** If true, allocate GApp::m_frameBuffer and use the m_film class when rendering.  
                 On older GPUs the Film class may add too much memory or processing overhead.
+
+                GApp::m_useFilm can be toggled to selectively disable use of Film outside of
+                the GApp::onGraphics method (it is too late inside GApp::onGraphics).
+
                 Defaults to true.*/
             bool                        enabled;
 
@@ -291,9 +295,19 @@ protected:
 
     static void staticConsoleCallback(const std::string& command, void* me);
 
-    /** If true, configure 3D rendering to use m_frameBuffer and m_film. */
-    const bool              m_useFilm;
+    /** If true, configure 3D rendering to use m_frameBuffer and m_film in GApp::onGraphics. 
+        m_film must be non-null to use this.
 
+        \sa setFilmEnabled, filmEnabled, m_film
+    */
+    bool                    m_useFilm;
+
+    /** Allocated if GApp::Settings::FilmSettings::enabled was true
+        when the constructor executed.  Automatically resized by
+        resize() when the screen size changes. 
+
+        \sa setFilmEnabled, filmEnabled, m_useFilm
+    */
     Film::Ref               m_film;
 
     /** Framebuffer used for rendering the 3D portion of the scene. */
@@ -315,6 +329,7 @@ protected:
     RealTime                m_lastFrameOverWait;
 
 public:
+
     /** Creates a default lighting environment for demos, which uses the file
     on the noonclouds/noonclouds_*.jpg textures.  The code that it uses is below.  Note that this loads
     a cube map every time that it is invoked, so this should not be used within the rendering loop.
@@ -340,6 +355,16 @@ public:
     void vscreenPrintf
     (const char*                 fmt,
      va_list                     argPtr) G3D_CHECK_VPRINTF_METHOD_ARGS;;
+
+    void setFilmEnabled(bool e) {
+        m_useFilm = e;
+        debugAssertM(! m_useFilm || (m_useFilm && m_film.notNull()), 
+                     "GApp::Settings::FilmSettings::enabled must be true when the GApp is constructed to later set GApp::m_useFilm = true");
+    }
+
+    bool filmEnabled() const {
+        return m_useFilm;
+    }
 
     const Stopwatch& graphicsWatch() const {
         return m_graphicsWatch;
