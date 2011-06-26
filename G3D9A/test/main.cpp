@@ -99,6 +99,8 @@ void testReliableConduit(NetworkDevice*);
 
 void perfSystemMemcpy();
 void testSystemMemcpy();
+
+void perfSystemMemset();
 void testSystemMemset();
 
 void testMap2D();
@@ -388,31 +390,6 @@ public:
         printf("Destruct %d\n", x);
     }
 };
-
-
-
-void measureMemsetPerformance() {
-    printf("----------------------------------------------------------\n");
-
-    uint64 native = 0, g3d = 0;
-
-    int n = 1024 * 1024;
-    void* m1 = malloc(n);
-
-    // First iteration just primes the system
-    for (int i=0; i < 2; ++i) {
-        System::beginCycleCount(native);
-            memset(m1, 31, n);
-        System::endCycleCount(native);
-        System::beginCycleCount(g3d);
-            System::memset(m1, 31, n);
-        System::endCycleCount(g3d);
-    }
-    free(m1);
-
-    printf("System::memset:                     %d cycles/kb\n", (int)(g3d / (n / 1024)));
-    printf("::memset      :                     %d cycles/kb\n", (int)(native / (n / 1024)));
-}
 
 
 
@@ -732,24 +709,26 @@ int main(int argc, char* argv[]) {
 
 #    ifndef _DEBUG
         printf("Performance analysis:\n\n");
+
+        perfSystemMemcpy();
+        perfSystemMemset();
+
+        // Pause so that we can see the values in the debugger
+   //     getch();
+
+        printf("%s\n", System::mallocPerformance().c_str());
+
+        perfArray();
+
         perfBinaryIO();
 
         perfTable();
 
         perfHashTrait();
-        // Pause so that we can see the values in the debugger
-        getch();
-
 
         perfKDTree();
 
-
         perfCollisionDetection();
-
-        perfArray();
-
-
-        printf("%s\n", System::mallocPerformance().c_str());
 
         perfQueue();
 
@@ -757,12 +736,8 @@ int main(int argc, char* argv[]) {
 
         perfTextOutput();
 
-        perfSystemMemcpy();
-
         perfPointHashGrid();
 
-
-        measureMemsetPerformance();
         measureNormalizationPerformance();
 
         OSWindow::Settings settings;
@@ -773,7 +748,7 @@ int main(int argc, char* argv[]) {
         settings.stencilBits = 0;
         settings.msaaSamples = 1;
 
-        if (!renderDevice) {
+        if (! renderDevice) {
             renderDevice = new RenderDevice();
         }
     
@@ -795,6 +770,12 @@ int main(int argc, char* argv[]) {
 
     printf("\n\nTests:\n\n");
 
+    testBinaryIO();
+
+#   ifndef G3D_ANDROID
+      testReliableConduit(NetworkDevice::instance());
+#   endif
+
     testAny();
 
     testFileSystem();
@@ -804,7 +785,6 @@ int main(int argc, char* argv[]) {
     testTextInput();
     testTextInput2();
     printf("  passed\n");
-
 
     testSphere();
 
@@ -835,14 +815,9 @@ int main(int argc, char* argv[]) {
 
     testTable();
 
-    testTableTable();
-  
+    testTableTable();  
 
     testCoordinateFrame();
-
-#ifndef G3D_ANDROID
-    testReliableConduit(NetworkDevice::instance());
-#endif
 
     testQuat();
 
@@ -908,8 +883,6 @@ int main(int argc, char* argv[]) {
     testCallback();
 
     testPointHashGrid();
-
-    testBinaryIO();
 
 #   ifdef RUN_SLOW_TESTS
         testHugeBinaryIO();

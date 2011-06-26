@@ -7,7 +7,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2002-08-07
- \edited  2011-02-04
+ \edited  2011-06-21
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -47,9 +47,9 @@
 #   endif
 
 #   ifdef _DEBUG
-#		pragma comment(lib, "GLG3Dd")
+#	pragma comment(lib, "GLG3Dd")
 #   else
-#		pragma comment(lib, "GLG3D")
+#	pragma comment(lib, "GLG3D")
 #   endif
 
 #endif
@@ -64,8 +64,6 @@
 #include "GLG3D/VertexBuffer.h"
 #include "GLG3D/VertexRange.h"
 #include "GLG3D/GFont.h"
-#include "GLG3D/SkyParameters.h"
-#include "GLG3D/Sky.h"
 #include "GLG3D/UserInput.h"
 #include "GLG3D/FirstPersonManipulator.h"
 #include "GLG3D/Draw.h"
@@ -75,10 +73,8 @@
 #include "GLG3D/IFSModel.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"
-#include "GLG3D/shadowVolume.h"
 #include "GLG3D/OSWindow.h"
 #include "GLG3D/SDLWindow.h"
-#include "GLG3D/edgeFeatures.h"
 #include "GLG3D/Shader.h"
 #include "GLG3D/GLCaps.h"
 #include "GLG3D/Shape.h"
@@ -122,8 +118,8 @@
 #include "GLG3D/GuiTabPane.h"
 #include "GLG3D/FileDialog.h"
 #include "GLG3D/IconSet.h"
+#include "GLG3D/SpeedLoad.h"
 
-#include "GLG3D/BackgroundWidget.h"
 #include "GLG3D/UprightSplineManipulator.h"
 #include "GLG3D/CameraControlWindow.h"
 #include "GLG3D/DeveloperWindow.h"
@@ -137,6 +133,7 @@
 #include "GLG3D/Discovery.h"
 #include "GLG3D/GEntity.h"
 
+#include "GLG3D/PhysicsFrameSplineEditor.h"
 
 #ifdef G3D_OSX
 #include "GLG3D/CarbonWindow.h"

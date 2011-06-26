@@ -1,12 +1,12 @@
 /**
-  @file Quat.h
+  \file G3D/Quat.h
  
   Quaternion
   
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   
-  @created 2002-01-23
-  @edited  2009-05-10
+  \created 2002-01-23
+  \edited  2011-05-10
  */
 
 #ifndef G3D_Quat_h
@@ -21,7 +21,7 @@
 namespace G3D {
 
 /**
-  Arbitrary quaternion (not necessarily unit)
+  Arbitrary quaternion (not necessarily unit).
 
   Unit quaternions are used in computer graphics to represent
   rotation about an axis.  Any 3x3 rotation matrix can
@@ -72,6 +72,8 @@ public:
     /** Expects "Quat(x,y,z,w)" or a Matrix3 constructor. */
     Quat(const class Any& a);
 
+    Any toAny() const;
+
     Quat(const Matrix3& rot);
 
     Quat(float _x, float _y, float _z, float _w) :
@@ -81,6 +83,12 @@ public:
     Quat(const Vector3& v, float _w = 0) : x(v.x), y(v.y), z(v.z), w(_w) {
     }
 
+    /** True if the components are exactly equal.  Note that two quaternations may
+        be unequal but map to the same rotation. */
+    bool operator==(const Quat& q) const {
+        return x == q.x && y == q.y && z == q.z && w == q.w;
+    }
+    
     /**
      The real part of the quaternion.
      */
@@ -92,9 +100,9 @@ public:
         return w;
     }
 
-	Quat operator-() const {
-		return Quat(-x, -y, -z, -w);
-	}
+    Quat operator-() const {
+        return Quat(-x, -y, -z, -w);
+    }
 
     Quat operator-(const Quat& other) const {
         return Quat(x - other.x, y - other.y, z - other.z, w - other.w);

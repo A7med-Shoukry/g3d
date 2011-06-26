@@ -1,14 +1,14 @@
 /**
-  @file GLG3D/ThirdPersonManipulator.h
+  \file GLG3D/ThirdPersonManipulator.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2006-06-09
-  @edited  2006-07-18
+  \created 2006-06-09
+  \edited  2011-05-01
 */
 
-#ifndef G3D_THIRDPERSONMANIPULATOR_H
-#define G3D_THIRDPERSONMANIPULATOR_H
+#ifndef G3D_ThirdPersonManipulator_h
+#define G3D_ThirdPersonManipulator_h
 
 #include "G3D/Array.h"
 #include "G3D/Vector3.h"
@@ -224,7 +224,7 @@ private:
 
     friend class TPMSurface;
 
-    Surface::Ref           m_posedModel;
+    Surface::Ref            m_posedModel;
 
     /** The frame of the control for movement purposes.  */
     CoordinateFrame         m_offsetFrame;
@@ -291,6 +291,7 @@ public:
 
     typedef ReferenceCountedPointer<ThirdPersonManipulator> Ref;
 
+    /** Called by the surface */
     virtual void render(RenderDevice* rd) const;
 
     /** Called when it has been determined that the user first began a
@@ -373,5 +374,6 @@ public:
     virtual void onAI();
 };
 
-}
-#endif
+} // namespace G3D
+
+#endif // ThirdPersonManipulator_h

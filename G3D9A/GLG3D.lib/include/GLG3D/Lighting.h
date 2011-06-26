@@ -1,9 +1,9 @@
 /**
- @file Lighting.h
+ \file GLG3D/Lighting.h
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- @created 2002-10-05
- @edited  2010-09-06
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2002-10-05
+ \edited  2011-06-10
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -20,103 +20,7 @@
 
 namespace G3D {
 
-#define BROWN_UNIVERSITY_LATITUDE 41.7333f
-#define BROWN_UNIVERSITY_LONGITUDE 71.4333f
-
-#define WILLIAMS_COLLEGE_LATITUDE 42.71f
-#define WILLIAMS_COLLEGE_LONGITUDE -73.20f
-
-/* Definition of a sidereal day */
-#define SIDEREAL_DAY ((23*HOUR)+(56*MINUTE)+(4.071f*SECOND))
-
 typedef ReferenceCountedPointer<class Lighting> LightingRef;
-typedef ReferenceCountedPointer<class Sky> SkyRef;
-/**
- Provides a reasonable (but not 100% physically correct) set of lighting 
- parameters based on the time of day.  See also G3D::Lighting, which describes
- a rich lighting environment.
-
- \deprecated
- */
-class SkyParameters {
-public:
-    /** Multiply this by all emissive values when rendering.  
-        Some algorithms (e.g. contrib/ArticulatedModel/ToneMap) scale
-        down light intensity to preserve dynamic range.*/
-    Color3                  emissiveScale;
-
-    /** Modulate sky box color */
-    Color3                  skyAmbient;
-
-    /**
-     Use this for objects that do not receive directional lighting
-     (e.g. billboards).
-     */
-    Color3                  diffuseAmbient;
-
-    /**
-     Directional light color.
-     */
-    Color3                  lightColor;
-    Color3                  ambient;
-
-    /** Only one light source, the sun or moon, is active at a given time. */
-    Vector3                 lightDirection;
-    enum {SUN, MOON}        source;
-
-    /** Using physically correct parameters.  When false, the sun and moon
-        travel in a perfectly east-west arc where +x = east and -x = west. */
-    bool                    physicallyCorrect;
-
-    /** The vector <B>to</B> the sun */
-    Vector3		            trueSunPosition;
-    Vector3                 sunPosition;
-
-    /** The vector <B>to</B> the moon */
-    Vector3		            trueMoonPosition;
-    Vector3                 moonPosition;
-	double			        moonPhase;	
-
-    /** The coordinate frame and vector related to the starfield */
-    CoordinateFrame	        starFrame;
-	CoordinateFrame		    trueStarFrame;
-    Vector3		            starVec;
-
-    /** Geographic position */
-    float                   geoLatitude;
-	
-    SkyParameters();
-
-    /**
-     Sets light parameters for the sun/moon based on the
-     specified time since midnight, as well as geographic 
-     latitude for starfield orientation (positive for north 
-     of the equator and negative for south) and geographic 
-     longitude for sun positioning (postive for east of 
-     Greenwich, and negative for west). The latitude and 
-     longitude is set by default to that of Williamstown, MA, 
-     USA.
-     */
-     SkyParameters(
-	     const GameTime     _time,
-	     bool 	            _physicallyCorrect = true,
-	     float              _latitude = WILLIAMS_COLLEGE_LATITUDE);
-
-    void setTime(const GameTime _time);
-	void setLatitude(float _latitude);
-
-    /**
-     Returns a directional light composed from the light direction
-     and color.
-     */
-    GLight directionalLight() const;
-
-};
-
-
-// TODO: Remove
-/** @deprecated */
-typedef SkyParameters SkyParameters;
 
 /**
    A rich environment lighting model that contains both global and local sources.
@@ -136,10 +40,10 @@ public:
         float                             environmentMapConstant;
         Array<GLight>                     lightArray;
 
-        Specification() : emissiveScale(Color3::white()), environmentMapConstant(1.0f) {
-            environmentMapTexture.filename = "<white>";
+        Specification() : emissiveScale(Color3::white()), environmentMapConstant(0.0f) {
+            environmentMapTexture.filename  = "<white>";
             environmentMapTexture.dimension = Texture::DIM_CUBE_MAP;
-            environmentMapTexture.settings = Texture::Settings::cubeMap();
+            environmentMapTexture.settings  = Texture::Settings::cubeMap();
         }
 
         Specification(const class Any&);
@@ -151,9 +55,6 @@ private:
     Lighting() : emissiveScale(Color3::white()), environmentMapConstant(1.0f) {}
 
 public:
-
-    /** \deprecated */
-    static Lighting::Ref fromSky(const SkyRef& sky, const SkyParameters&, const Color3& groundColor);
 
     /** Multiply this by all emissive values when rendering.  
         Some algorithms (e.g., G3D::ToneMap) scale

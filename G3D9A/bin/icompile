@@ -545,7 +545,7 @@ def buildBinary(state):
 
     # Find all the c files
     cfiles = listCFiles(state.rootDir, state.excludeFromCompilation)
-    
+
     # All files on which something depends
     dependencySet = set()
 
@@ -911,6 +911,7 @@ def configureGpp(state):
         state.linkerOptions  += ['-shared']
 
     state.compilerWarningOptions = ['-Wall', '-Wformat=2', '-Wno-format-nonliteral']
+    # , '-Woverloaded-virtual']  # removed: this created too many false warnings
     
     if state.os == 'osx':
         # G3D's use of CarbonWindow on OS X generates tons of annoying
@@ -976,7 +977,7 @@ def processStatistics(state):
         note = ''
         if len(oldLog) > 1:
             # Read the note from the last row
-            lastLine = next(csv.reader([lastLine], skipinitialspace=True))
+            lastLine = next(csv.reader([oldLog[-1]], skipinitialspace=True))
             if len(lastLine) >= 10:
                 note = lastLine[9]
         info += ',"' + note + '"\n'

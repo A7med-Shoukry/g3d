@@ -52,8 +52,9 @@ uniform vec4        lightAttenuation0;
     uniform sampler2D   lambertianMap;
 #endif
 
-/** Set to -1 to flip the normal. */
+///** Set to -1 to flip the normal. */
 uniform float       backside;
+//float backside = (gl_FrontFacing ? 1.0 : -1.0);
 
 varying vec2        texCoord;
 varying vec3        tan_Z;

@@ -14,11 +14,11 @@
 namespace G3D {
 
 GuiContainer::GuiContainer(class GuiWindow* gui, const class GuiText& text) :
-    GuiControl(gui, text) {}
+    GuiControl(gui, text), m_clientRect(Rect2D::xywh(0,0,0,0)) {}
 
 
 GuiContainer::GuiContainer(class GuiContainer* parent, const class GuiText& text) :
-    GuiControl(parent, text) {}
+    GuiControl(parent, text), m_clientRect(Rect2D::xywh(0,0,0,0)) {}
 
     
 void GuiContainer::setRect(const Rect2D& rect) {
@@ -37,7 +37,9 @@ void GuiContainer::increaseBounds(const Vector2& extent) {
         newExtent += m_rect.wh() - m_clientRect.wh();
 
         // The new window has the old position and the new width
+        debugAssert(! m_rect.isEmpty());
         setRect(Rect2D::xywh(m_rect.x0y0(), newExtent));
+        debugAssert(! m_clientRect.isEmpty());
 
         if (m_parent != NULL) {
             m_parent->increaseBounds(m_rect.x1y1());

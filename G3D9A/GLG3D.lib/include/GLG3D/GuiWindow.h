@@ -167,7 +167,7 @@ protected:
     Modal*              modal;
 
     /** Window label */
-    GuiText          m_text;
+    GuiText             m_text;
 
     /** Window border bounds. Actual rendering may be outside these bounds. */
     Rect2D              m_rect;
@@ -253,6 +253,11 @@ public:
 
     GuiThemeRef theme() const {
         return m_skin;
+    }
+
+    /** Change the window style.  May lead to inconsistent layout. */
+    void setStyle(GuiTheme::WindowStyle style) {
+        m_style = style;
     }
 
     /**
@@ -364,9 +369,9 @@ public:
         return m_text;
     }
 
-    virtual Rect2D bounds () const;
+    virtual Rect2D bounds() const;
 
-    virtual float depth () const;
+    virtual float depth() const;
 
 };
 

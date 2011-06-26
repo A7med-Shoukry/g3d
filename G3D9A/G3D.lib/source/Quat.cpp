@@ -1,12 +1,12 @@
 /**
-  @file Quat.cpp
+   \file G3D/Quat.cpp
  
   Quaternion implementation based on Watt & Watt page 363
   
-  @author Morgan McGuire, graphics3d.com
+  \uthor Morgan McGuire, graphics3d.com
   
-  @created 2002-01-23
-  @edited  2010-03-31
+  \created 2002-01-23
+  \edited  2010-05-31
  */
 
 #include "G3D/Quat.h"
@@ -42,6 +42,13 @@ Quat::Quat(const class Any& a) {
         z = a[2];
         w = a[3];
     }
+}
+
+
+Any Quat::toAny() const {
+    Any a(Any::ARRAY, "Quat");
+    a.append(x, y, z, w);
+    return a;
 }
 
 

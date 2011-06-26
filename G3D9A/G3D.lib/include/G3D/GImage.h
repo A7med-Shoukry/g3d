@@ -1,20 +1,12 @@
 /**
-  \file GImage.h
+  \file G3D/GImage.h
 
   See G3D::GImage for details.
-
-  @cite JPEG compress/decompressor is the <A HREF="http://www.ijg.org/files/">IJG library</A>, used in accordance with their license.
-  @cite JPG code by John Chisholm, using the IJG Library
-  @cite TGA code by Morgan McGuire
-  @cite BMP code by John Chisholm, based on code by Edward "CGameProgrammer" Resnick <A HREF="mailto:cgp@gdnmail.net">mailto:cgp@gdnmail.net</A> at <A HREF="ftp://ftp.flipcode.com/cotd/LoadPicture.txt">ftp://ftp.flipcode.com/cotd/LoadPicture.txt</A>
-  @cite PCX format described in the ZSOFT PCX manual http://www.nist.fss.ru/hr/doc/spec/pcx.htm#2
-  @cite PNG compress/decompressor is the <A HREF="http://www.libpng.org/pub/png/libpng.html">libpng library</A>, used in accordance with their license.
-  @cite PPM code by Morgan McGuire based on http://netpbm.sourceforge.net/doc/ppm.html
 
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2002-05-27
-  \edited  2010-01-04
+  \edited  2011-06-23
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
@@ -33,8 +25,10 @@
 #include "G3D/Color4uint8.h"
 #include "G3D/MemoryManager.h"
 #include "G3D/BumpMapPreprocess.h"
+#include "G3D/ImageFormat.h"
 
 namespace G3D {
+
 class BinaryInput;
 class BinaryOutput;
 
@@ -50,7 +44,7 @@ class BinaryOutput;
 
   Sample usage:
 
-  \verbatim
+  \code
     // Loading from disk:
     G3D::GImage im1("test.jpg");
     
@@ -70,7 +64,7 @@ class BinaryOutput;
 
     // Saving to disk
     im3.save("out.jpg");
-  \endverbatim
+  \endcode
 
   The free Image Magick Magick Wand API 
   (http://www.imagemagick.org/www/api/magick_wand.html) provides a more powerful
@@ -80,21 +74,18 @@ class BinaryOutput;
 
   \cite http://tfcduke.developpez.com/tutoriel/format/tga/fichiers/tga_specs.pdf
 
-  \sa Image3, Image3uint8, Image4, Image4uint8, Image1, Image1uint8, Texture, Map2D
+  \sa Image3, Image3uint8, Image4, Image4uint8, Image1, Image1uint8, Texture, Map2D, Component, SuperBSDF
+
+  \cite JPEG compress/decompressor is the <A HREF="http://www.ijg.org/files/">IJG library</A>, used in accordance with their license.
+  \cite JPG code by John Chisholm, using the IJG Library
+  \cite TGA code by Morgan McGuire
+  \cite BMP code by John Chisholm, based on code by Edward "CGameProgrammer" Resnick <A HREF="mailto:cgp@gdnmail.net">mailto:cgp@gdnmail.net</A> at <A HREF="ftp://ftp.flipcode.com/cotd/LoadPicture.txt">ftp://ftp.flipcode.com/cotd/LoadPicture.txt</A>
+  \cite PCX format described in the ZSOFT PCX manual http://www.nist.fss.ru/hr/doc/spec/pcx.htm#2
+  \cite PNG compress/decompressor is the <A HREF="http://www.libpng.org/pub/png/libpng.html">libpng library</A>, used in accordance with their license.
+  \cite PPM code by Morgan McGuire based on http://netpbm.sourceforge.net/doc/ppm.html
 
   */
 class GImage {
-private:
-
-    /** Used exclusively for allocating m_byte; this may be an 
-     implementation that allocates directly on a GPU.*/
-    MemoryManager::Ref      m_memMan;
-    uint8*                  m_byte;
-
-    int                     m_channels;
-    int                     m_width;
-    int                     m_height;
-
 public:
 
     class Error {
@@ -123,9 +114,93 @@ public:
         PPM_ASCII, PGM_ASCII = PPM_ASCII,
         AUTODETECT, UNKNOWN};
 
+private:
+
+    /** Used exclusively for allocating m_byte; beware that this may be an 
+     implementation that allocates directly on a GPU.*/
+    MemoryManager::Ref      m_memMan;
+
+    /** Pointer to the beginning of the data (which may not actually be uint8's)*/
+    uint8*                  m_byte;
+
+    const ImageFormat*      m_imageFormat;
+
+    /** \deprecated Use m_imageFormat */
+    int                     m_channels;
+    int                     m_width;
+    int                     m_height;
+    
+    void encodeBMP
+       (BinaryOutput&       out) const;
+
+    /**
+     The TGA file will be either 24- or 32-bit depending
+     on the number of channels.
+     */
+    void encodeTGA
+       (BinaryOutput&       out) const;
+
+    /**
+     Converts this image into a JPEG
+     */
+    void encodeJPEG
+       (BinaryOutput&       out) const;
+
+    /**
+     Converts this image into a JPEG
+     */
+    void encodePNG
+       (BinaryOutput&       out) const;
+
+    void encodePPM
+       (BinaryOutput&       out) const;
+
+    void encodePPMASCII
+       (BinaryOutput&       out) const;
+
+    void decodeTGA
+       (BinaryInput&        input);
+
+    void decodeBMP
+       (BinaryInput&        input);
+
+    void decodeJPEG
+       (BinaryInput&        input);
+
+    void decodePCX
+       (BinaryInput&        input);
+
+    void decodeICO
+       (BinaryInput&        input);
+
+    void decodePNG
+       (BinaryInput&        input);
+
+    void decodePPM
+       (BinaryInput&        input);
+
+    void decodePPMASCII
+       (BinaryInput&        input);
+
+    /**
+     Given [maybe] a filename, memory buffer, and [maybe] a format, 
+     returns the most likely format of this file.
+     */
+    static Format resolveFormat
+       (const std::string&  filename,
+        const uint8*        data,
+        int                 dataLen,
+        Format              maybeFormat);
+
+    void _copy
+       (const GImage&       other);
+
+public:
 
     /**
      The number of channels; either 1 (luminance), 3 (RGB), or 4 (RGBA)
+
+     \deprecated Use imageFormat()
      */
     int channels() const {
         return m_channels;
@@ -146,6 +221,11 @@ public:
         return m_byte;
     }
 
+    /** Format of the data in memory.  Not all ImageFormat%s are supported by all methods. */
+    const ImageFormat* imageFormat() {
+        return m_imageFormat;
+    }
+
     /** Returns a pointer to the underlying data, which is stored
         in row-major order without row padding.
         e.g., <code>uint8* ptr = image.rawData<uint8>();
@@ -162,24 +242,34 @@ public:
     }
 
     inline const Color1uint8* pixel1() const {
+        debugAssertM(m_imageFormat->representableAsColor1uint8(), 
+            format("Tried to call GImage::pixel1 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssertM(m_channels == 1, format("Tried to call GImage::pixel1 on an image with %d channels", m_channels));            
         return (Color1uint8*)m_byte;
     }
 
     inline Color1uint8* pixel1() {
+        debugAssertM(m_imageFormat->representableAsColor1uint8(), 
+            format("Tried to call GImage::pixel1 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssertM(m_channels == 1, format("Tried to call GImage::pixel1 on an image with %d channels", m_channels));            
         return (Color1uint8*)m_byte;
     }
 
     /** Returns a pointer to the upper left pixel
         as Color4uint8.
+
+        The imageFormat() must be representable by four 8-bit channels.
      */
     inline const Color4uint8* pixel4() const {
+        debugAssertM(m_imageFormat->representableAsColor4uint8(), 
+            format("Tried to call GImage::pixel4 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssertM(m_channels == 4, format("Tried to call GImage::pixel4 on an image with %d channels", m_channels));            
         return (Color4uint8*)m_byte;
     }
 
     inline Color4uint8* pixel4() {
+        debugAssertM(m_imageFormat->representableAsColor4uint8(), 
+            format("Tried to call GImage::pixel4 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssert(m_channels == 4);
         return (Color4uint8*)m_byte;
     }
@@ -188,18 +278,21 @@ public:
         as Color3uint8.
      */
     inline const Color3uint8* pixel3() const {
+        debugAssertM(m_imageFormat->representableAsColor3uint8(), 
+            format("Tried to call GImage::pixel3 on an image in %s format.", m_imageFormat->name().c_str()));
          debugAssertM(m_channels == 3, format("Tried to call GImage::pixel3 on an image with %d channels", m_channels));            
          return (Color3uint8*)m_byte;
     }
 
     inline Color3uint8* pixel3() {
+        debugAssertM(m_imageFormat->representableAsColor3uint8(), 
+            format("Tried to call GImage::pixel3 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssert(m_channels == 3);
         return (Color3uint8*)m_byte;
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
     inline const Color1uint8& pixel1(int x, int y) const {
-        debugAssert(x >= 0 && x < m_width);
         debugAssert(y >= 0 && y < m_height);
         return pixel1()[x + y * m_width];
     }
@@ -241,75 +334,6 @@ public:
         return m_byte;
     }
 
-private:
-
-    void encodeBMP(
-        BinaryOutput&       out) const;
-
-    /**
-     The TGA file will be either 24- or 32-bit depending
-     on the number of channels.
-     */
-    void encodeTGA(
-        BinaryOutput&       out) const;
-
-    /**
-     Converts this image into a JPEG
-     */
-    void encodeJPEG(
-        BinaryOutput&       out) const;
-
-    /**
-     Converts this image into a JPEG
-     */
-    void encodePNG(
-        BinaryOutput&       out) const;
-
-    void encodePPM(
-        BinaryOutput&       out) const;
-
-    void encodePPMASCII(
-        BinaryOutput&       out) const;
-
-    void decodeTGA(
-        BinaryInput&        input);
-
-    void decodeBMP(
-        BinaryInput&        input);
-
-    void decodeJPEG(
-        BinaryInput&        input);
-
-    void decodePCX(
-        BinaryInput&        input);
-
-    void decodeICO(
-        BinaryInput&        input);
-
-    void decodePNG(
-        BinaryInput&        input);
-
-    void decodePPM(
-        BinaryInput&        input);
-
-    void decodePPMASCII(
-        BinaryInput&        input);
-
-    /**
-     Given [maybe] a filename, memory buffer, and [maybe] a format, 
-     returns the most likely format of this file.
-     */
-    static Format resolveFormat(
-        const std::string&  filename,
-        const uint8*        data,
-        int                 dataLen,
-        Format              maybeFormat);
-
-    void _copy(
-        const GImage&       other);
-
-public:
-
     /** Predicts the image file format of \a filename */
     static Format resolveFormat(const std::string& filename);
 
@@ -320,33 +344,46 @@ public:
     /**
      Create an empty image of the given size.
      \sa load()
+
+     \deprecated Use the version that takes an ImageFormat
      */
-    GImage(
-        int                 width = 0,
+    G3D_DEPRECATED GImage
+       (int                 width,
+        int                 height,
+        int                 channels,
+        const MemoryManager::Ref& m = MemoryManager::create());
+
+
+    /**
+     Create an empty image of the given size.
+     \sa load()
+     */
+    GImage
+       (int                 width = 0,
         int                 height = 0,
-        int                 channels = 3,
+        const ImageFormat*  imageFormat = ImageFormat::RGB8(),
         const MemoryManager::Ref& m = MemoryManager::create());
 
     /**
      Load an encoded image from disk and decode it.
      Throws GImage::Error if something goes wrong.
      */
-    GImage(
-        const std::string&  filename,
+    GImage
+       (const std::string&  filename,
         Format              format = AUTODETECT,
         const MemoryManager::Ref& m = MemoryManager::create());
 
     /**
-     Decodes an image stored in a buffer.
+     Decodes an image file format stored in a buffer.
     */
-    GImage(
-        const unsigned char*data,
+    GImage
+       (const unsigned char*data,
         int                 length,
         Format              format = AUTODETECT,
         const MemoryManager::Ref& m = MemoryManager::create());
 
-    GImage(
-        const GImage&       other,
+    GImage
+       (const GImage&       other,
         const MemoryManager::Ref& m = MemoryManager::create());
 
     GImage& operator=(const GImage& other);
@@ -370,8 +407,8 @@ public:
       Loads an image from disk (clearing the old one first),
       using the existing memory manager.
       */
-    void load(
-        const std::string&  filename,
+    void load
+       (const std::string&  filename,
         Format              format = AUTODETECT);
 
     /**
@@ -389,8 +426,19 @@ public:
      number of \a channels specified.  
      
      \param zero If true, all data is set to 0 (black).
+
+     \deprecated Use the version that takes an ImageFormat
      */
-    void resize(int width, int height, int channels, bool zero = true);
+    void G3D_DEPRECATED resize(int width, int height, int channels, bool zero = true);
+
+    /**
+     Resizes the internal buffer to (\a width x \a height) with the
+     number of \a channels specified.  
+     
+     \param zero If true, all data is set to 0 (black).  If false, the values
+     are unspecified.
+     */
+    void resize(int width, int height, const ImageFormat* imageFormat, bool zero = true);
 
     /**
      Copies \a src sub-image data into \a dest at a certain offset.  
@@ -398,10 +446,10 @@ public:
      enough to contain the \a src sub-image at the specified offset.
      Returns true on success and false if the \a src sub-image cannot
      completely fit within dest at the specified offset.  Both
-     \a src and \a dest must have the same number of channels.
+     \a src and \a dest must have the same imageFormat().
      */
-    static bool copyRect(
-        GImage& dest, 
+    static bool copyRect
+       (GImage& dest, 
         const GImage& src,
         int destX, 
         int destY, 
@@ -435,8 +483,8 @@ public:
     /**
      Converts a string to an enum, returns UNKNOWN if not recognized.
      */
-    static Format stringToFormat(
-        const std::string& format);
+    static Format stringToFormat
+       (const std::string& format);
 
     /**
      Encode and save to disk.
@@ -465,16 +513,16 @@ public:
     /**
      Does not commit the BinaryOutput when done.
      */
-    void encode(
-        Format              format,
+    void encode
+       (Format              format,
         BinaryOutput&       out) const;
 
     /**
      Decodes the buffer into this image.
-     @param format Must be the correct format.
+     \param format Must be the correct format.
      */
-    void decode(
-        BinaryInput&        input,
+    void decode
+       (BinaryInput&        input,
         Format              format);
 
     /** Returns the size of this object in bytes */
@@ -502,14 +550,14 @@ public:
         int                     numPixels);
 
     static void LtoRGB
-    (const uint8*            in,
-     uint8*                  out,
-     int                     numPixels);
+    (const uint8*               in,
+     uint8*                     out,
+     int                        numPixels);
 
     static void LtoRGBA
-    (const uint8*            in,
-     uint8*                  out,
-     int                     numPixels);
+    (const uint8*               in,
+     uint8*                     out,
+     int                        numPixels);
     
     /** Safe for in == out */
     static void RGBtoBGR(

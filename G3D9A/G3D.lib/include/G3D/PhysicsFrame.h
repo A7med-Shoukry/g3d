@@ -1,14 +1,14 @@
 /**
- @file PhysicsFrame.h
+ \file PhysicsFrame.h
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2002-07-08
- @edited  2006-01-10
+ \created 2002-07-08
+ \edited  2011-05-10
 */
 
-#ifndef G3D_PHYSICSFRAME_H
-#define G3D_PHYSICSFRAME_H
+#ifndef G3D_PhysicsFrame_h
+#define G3D_PhysicsFrame_h
 
 #include "G3D/platform.h"
 #include "G3D/Vector3.h"
@@ -59,6 +59,8 @@ public:
      */
     PhysicsFrame(const class Any& any);
 
+    Any toAny() const;
+
     /** Compose: create the transformation that is <I>other</I> followed by <I>this</I>.*/
     PhysicsFrame operator*(const PhysicsFrame& other) const;
 
@@ -100,6 +102,16 @@ public:
         translation += f.translation;
         return *this;
     }
+
+    bool operator==(const PhysicsFrame& other) const {
+        return (translation == other.translation) && 
+            ((rotation == other.rotation) || (rotation == -other.rotation));
+    }
+
+    bool operator!=(const PhysicsFrame& other) const {
+        return ! ((*this) == other);
+    }
+
 };
 
 typedef PhysicsFrame PFrame;

@@ -169,6 +169,7 @@ void GImage::decodeBMP(
     }
 
     m_channels = 3;
+    m_imageFormat = ImageFormat::RGB8();
 	// Skip to the BITMAPINFOHEADER's width and height
 	input.skip(16);
 
@@ -446,6 +447,7 @@ void GImage::decodeICO(
 	int count = input.readUInt16();
 
 	m_channels = 4;
+    m_imageFormat = ImageFormat::RGBA8();
 
 	debugAssert(count > 0);
 

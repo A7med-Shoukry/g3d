@@ -41,16 +41,17 @@ void App::onInit() {
     showRenderingStats = false;
     window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
 
-    sky = Sky::fromFile(System::findDataFile("sky"));
-    skyParameters = SkyParameters( G3D::toSeconds(10, 00, 00, AM) );
-    lighting = Lighting::fromSky( sky, skyParameters, Color3::white() );
+    lighting = Lighting::create();
     lighting->lightArray.clear();
     lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(10)));
     lighting->lightArray.append( GLight::directional(Vector3(-1,0,-1), Radiance3(0.8f, 0.9f, 1), false));
     lighting->environmentMapConstant = 0.3f;
     // TODO: load better lighting map
     defaultCamera.setFarPlaneZ(-1000);
-    defaultCamera.setNearPlaneZ(-0.2f);
+    defaultCamera.setNearPlaneZ(-0.05f);
+
+    // Don't clip to the near plane
+    glDisable(GL_DEPTH_CLAMP);
 
 	
     colorClear = Color3::white();
@@ -92,6 +93,8 @@ bool App::onEvent(const GEvent& e) {
 
 
 void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
+    GApp::onSimulation(rdt, sdt, idt);
+
     // Make the camera spin when the debug controller is not active
     if (false) {
         static float angle = 0;

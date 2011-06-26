@@ -696,9 +696,14 @@ public:
     void save(const std::string& filename) const;
 
     void serialize(TextOutput& to) const;
+
+    void serialize(class BinaryOutput& b) const;
+
     /** Parse from a stream.
      \sa load, parse */
     void deserialize(TextInput& ti);
+
+    void deserialize(class BinaryInput& b);
 
     const Source& source() const;
 

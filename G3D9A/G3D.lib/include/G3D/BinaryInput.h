@@ -122,14 +122,8 @@ private:
     void loadIntoMemory(int64 startPosition, int64 minLength = 0);
 
     /** Verifies that at least this number of bytes can be read.*/
-    inline void prepareToRead(int64 nbytes) {
-        debugAssertM(m_length > 0, m_filename + " not found or corrupt.");
-        debugAssertM(m_pos + nbytes + m_alreadyRead <= m_length, "Read past end of file.");
+    void prepareToRead(int64 nbytes);
 
-        if (m_pos + nbytes > m_bufferLength) {
-            loadIntoMemory(m_pos + m_alreadyRead, nbytes);    
-        }
-    }
 
     // Not implemented on purpose, don't use
     BinaryInput(const BinaryInput&);
@@ -216,7 +210,7 @@ public:
      Seeks to the new position before reading (and leaves 
      that as the current position)
      */
-    inline uint8 operator[](int64 n) {
+   uint8 operator[](int64 n) {
         setPosition(n);
         return readUInt8();
     }
@@ -224,11 +218,11 @@ public:
     /**
      Returns the length of the file in bytes.
      */
-    inline int64 getLength() const {
+   int64 getLength() const {
         return m_length;
     }
 
-    inline int64 size() const {
+   int64 size() const {
         return getLength();
     }
 
@@ -236,7 +230,7 @@ public:
      Returns the current byte position in the file,
      where 0 is the beginning and getLength() - 1 is the end.
      */
-    inline int64 getPosition() const {
+   int64 getPosition() const {
         return m_pos + m_alreadyRead;
     }
 
@@ -244,7 +238,7 @@ public:
      Sets the position.  Cannot set past length.
      May throw a char* when seeking backwards more than 10 MB on a huge file.
      */
-    inline void setPosition(int64 p) {
+    void setPosition(int64 p) {
         debugAssertM(p <= m_length, "Read past end of file");
         m_pos = p - m_alreadyRead;
         if ((m_pos < 0) || (m_pos > m_bufferLength)) {
@@ -255,25 +249,27 @@ public:
     /**
      Goes back to the beginning of the file.
      */
-    inline void reset() {
+   void reset() {
         setPosition(0);
     }
 
-    inline int8 readInt8() {
+    void readBytes(void* bytes, int64 n);
+
+   int8 readInt8() {
         prepareToRead(1);
         return m_buffer[m_pos++];
     }
 
-    inline bool readBool8() {
+   bool readBool8() {
         return (readInt8() != 0);
     }
 
-    inline uint8 readUInt8() {
+   uint8 readUInt8() {
         prepareToRead(1);
         return ((uint8*)m_buffer)[m_pos++];
     }
 
-    uint16 inline readUInt16() {
+    uint16 readUInt16() {
         prepareToRead(2);
 
         m_pos += 2;
@@ -295,12 +291,12 @@ public:
 
     }
 
-    inline int16 readInt16() {
+   int16 readInt16() {
         uint16 a = readUInt16();
         return *(int16*)&a;
     }
 
-    inline uint32 readUInt32() {
+   uint32 readUInt32() {
         prepareToRead(4);
 
         m_pos += 4;
@@ -326,19 +322,19 @@ public:
     }
 
 
-    inline int32 readInt32() {
+   int32 readInt32() {
         uint32 a = readUInt32();
         return *(int32*)&a;
     }
 
     uint64 readUInt64();
 
-    inline int64 readInt64() {
+   int64 readInt64() {
         uint64 a = readUInt64();
         return *(int64*)&a;
     }
 
-    inline float32 readFloat32() {
+   float32 readFloat32() {
         union {
             uint32 a;
             float32 b;
@@ -347,7 +343,7 @@ public:
         return b;
     }    
 
-    inline float64 readFloat64() {
+   float64 readFloat64() {
         union {
             uint64 a;
             float64 b;
@@ -356,31 +352,30 @@ public:
         return b;
     }
 
-    void readBytes(void* bytes, int64 n);
-
     /**
-     Reads an n character string.  The string is not
-     required to end in NULL in the file but will
-     always be a proper std::string when returned.
+     Always consumes \a maxLength characters.  Reads a string until NULL or \a maxLength characters. Does not require NULL termination.
      */
-    std::string readString(int64 n);
+    std::string readString(int64 maxLength);
 
     /**
-     Reads until NULL or the end of the file is encountered.
+     Reads a string until NULL or end of file.
      */
     std::string readString();
 
-    /** Reads until newline ("&#92;r", "&#92;r&#92;n", "&#92;n&#92;r", "&#92;n") or the end of the file is encountered. Consumes the newline.*/
+    /** 
+     Reads a string until NULL, newline ("&#92;r", "&#92;n", "&#92;r&#92;n", "&#92;n&#92;r") or the end of the file is encountered. Consumes the newline.
+     */
     std::string readStringNewline();
 
     /**
      Reads until NULL or the end of the file is encountered.
      If the string has odd length (including NULL), reads 
-     another byte.
+     another byte.  This is a common format for 16-bit alignment
+     in files.
      */
     std::string readStringEven();
 
-
+    /** Reads a uint32 and then calls readString(maxLength) with that value as the length. */
     std::string readString32();
 
     Vector4 readVector4();
@@ -393,14 +388,14 @@ public:
     /**
      Skips ahead n bytes.
      */
-    inline void skip(int64 n) {
+   void skip(int64 n) {
         setPosition(m_pos + m_alreadyRead + n);
     }
 
     /**
       Returns true if the position is not at the end of the file
     */
-    inline bool hasMore() const {
+   bool hasMore() const {
 	return m_pos + m_alreadyRead < m_length;
     }
 

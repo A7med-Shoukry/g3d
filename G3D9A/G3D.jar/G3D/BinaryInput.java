@@ -280,7 +280,7 @@ public class BinaryInput {
     }
 
     public String readString(int length) {
-        String s = new String(data, position, length);
+        String s = new String(data, position, length - 1);
         position += length;
         return s;
     }

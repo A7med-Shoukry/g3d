@@ -2,20 +2,24 @@
 #include "G3D/Box.h"
 #include "G3D/AABox.h"
 #include "G3D/Sphere.h"
+#include "G3D/Ray.h"
 
 namespace G3D {
 
-GEntity::GEntity() {}
+GEntity::GEntity() : m_frameSplineChanged(false) {}
 
 GEntity::GEntity
 (const std::string& name,
  AnyTableReader&    propertyTable,
  const ModelTable&  modelTable) 
     : m_name(name),
-      m_modelType(ARTICULATED_MODEL) {
+      m_modelType(ARTICULATED_MODEL),
+      m_frameSplineChanged(false) {
 
-    const Any& modelNameAny = propertyTable["model"];
-    const std::string& modelName = modelNameAny.string();
+    m_sourceAny = propertyTable.any();
+
+    const Any&         modelNameAny  = propertyTable["model"];
+    const std::string& modelName     = modelNameAny.string();
     
     const ReferenceCountedPointer<ReferenceCountedObject>* model = modelTable.getPointer(modelName);
     modelNameAny.verify((model != NULL), 
@@ -37,21 +41,26 @@ GEntity::GEntity
     if (! propertyTable.getIfPresent("position", m_frameSpline)) {
         // Create a default value
         m_frameSpline.append(CFrame());
+        m_frameSplineChanged = true;
     }
 }
 
 
 GEntity::GEntity
-(const std::string& n, const PhysicsFrameSpline& frameSpline, 
-const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
-const MD2Model::Ref& md2Model,
-const MD3Model::Ref& md3Model) : 
+(const std::string&                  n, 
+ const PhysicsFrameSpline&           frameSpline, 
+ const ArticulatedModel::Ref&        artModel, 
+ const ArticulatedModel::PoseSpline& artPoseSpline,
+ const MD2Model::Ref&                md2Model,
+ const MD3Model::Ref&                md3Model) : 
     m_name(n), 
     m_modelType(ARTICULATED_MODEL),
     m_frameSpline(frameSpline),
+    m_frameSplineChanged(false),
     m_artPoseSpline(artPoseSpline), 
     m_artModel(artModel),
-    m_md2Model(md2Model), m_md3Model(md3Model) {
+    m_md2Model(md2Model), 
+    m_md3Model(md3Model) {
 
     m_name  = n;
     m_frameSpline = frameSpline;
@@ -96,6 +105,7 @@ GEntity::Ref GEntity::create(const std::string& n, const PhysicsFrameSpline& fra
 void GEntity::simulatePose(GameTime absoluteTime, GameTime deltaTime) {
     switch (m_modelType) {
     case ARTICULATED_MODEL:
+        m_artPreviousPose = m_artPose;
         m_artPoseSpline.get(float(absoluteTime), m_artPose);
         break;
 
@@ -114,6 +124,7 @@ void GEntity::simulatePose(GameTime absoluteTime, GameTime deltaTime) {
 
 
 void GEntity::onSimulation(GameTime absoluteTime, GameTime deltaTime) {
+    m_previousFrame = m_frame;
     m_frame = m_frameSpline.evaluate(float(absoluteTime));
 
     simulatePose(absoluteTime, deltaTime);
@@ -121,9 +132,11 @@ void GEntity::onSimulation(GameTime absoluteTime, GameTime deltaTime) {
 
 
 void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
+    const int oldLen = surfaceArray.size();
+
     switch (m_modelType) {
     case ARTICULATED_MODEL:
-        m_artModel->pose(surfaceArray, m_frame, m_artPose);
+        m_artModel->pose(surfaceArray, m_frame, m_artPose, m_previousFrame, m_artPreviousPose);
         break;
 
     case MD2_MODEL:
@@ -134,28 +147,98 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
         m_md3Model->pose(surfaceArray, m_frame, m_md3Pose);
         break;
     }
+
+    // Compute bounds
+    m_lastBoxBounds = AABox::empty();
+    m_lastSphereBounds = Sphere(m_frame.translation, 0);
+    for (int i = oldLen; i < surfaceArray.size(); ++i) {
+        AABox b;
+        Sphere s;
+        const Surface::Ref& surf = surfaceArray[i];
+
+        CFrame cframe;
+        surf->getCoordinateFrame(cframe, false);
+
+        surf->getObjectSpaceBoundingBox(b);
+        surf->getObjectSpaceBoundingSphere(s);
+        cframe.toWorldSpace(b).getBounds(b);
+        s = cframe.toObjectSpace(s);
+        m_lastBoxBounds.merge(b);
+        m_lastSphereBounds.radius = max(m_lastSphereBounds.radius,
+                                        (s.center - m_lastSphereBounds.center).length() + s.radius);
+    }
 }
 
-#if 0
-void GEntity::getBounds(AABox& box) const {
-    box = AABox(-Vector3::inf(), Vector3::inf());
+
+void GEntity::getLastBounds(AABox& box) const {
+    box = m_lastBoxBounds;
 }
 
 
-void GEntity::getBounds(Box& box) const {
-    box = Box(-Vector3::inf(), Vector3::inf());
+void GEntity::getLastBounds(Box& box) const {
+    box = m_lastBoxBounds;
 }
 
 
-void GEntity::getBounds(Sphere& sphere) const {
-    sphere = Sphere(m_frame.translation, finf());
+void GEntity::getLastBounds(Sphere& sphere) const {
+    sphere = m_lastSphereBounds;
 }
 
 
-float GEntity::intersectBounds(const Ray& R, float maxDistance) const {
-    // TODO
-    return finf();
+bool GEntity::intersectBounds(const Ray& R, float& maxDistance) const {
+    float t = R.intersectionTime(m_lastBoxBounds);
+    if (t < maxDistance) {
+        maxDistance = t;
+        return true;
+    } else {
+        return false;
+    }
 }
-#endif
+
+
+bool GEntity::intersect(const Ray& R, float& maxDistance) const {
+    switch (m_modelType) {
+    case ARTICULATED_MODEL:
+        {
+            int partIndex    = -1;
+            int triListIndex = -1; 
+            int triIndex     = -1;
+            float u = 0, v = 0;
+            return m_artModel->intersect(R, m_frame, m_artPose, maxDistance, partIndex, triListIndex, triIndex, u, v);
+        }
+        break;
+
+    case MD2_MODEL:
+    case MD3_MODEL:
+        return intersectBounds(R, maxDistance);
+        break;
+    }
+
+    return false;
+}
+
+
+Any GEntity::toAny() const {
+    Any a = m_sourceAny;
+    debugAssert(! a.isNone());
+    if (a.isNone()) {
+        return a;
+    }
+
+    // Update if the position is out of date
+    if (m_frameSpline.control.size() == 1) {
+        // Write out in short form
+        const PhysicsFrame& p = m_frameSpline.control[0];
+        if (p.rotation == Quat()) {
+            a["position"] = p.translation;
+        } else {
+            a["position"] = CFrame(p);
+        }
+    } else {
+        a["position"] = m_frameSpline;
+    }
+
+    return a;
+}
 
 }

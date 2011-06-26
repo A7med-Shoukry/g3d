@@ -155,7 +155,7 @@ public:
     float intersectionTime(
         const Vector3& v0, const Vector3& v1, const Vector3& v2,
         const Vector3& edge01, const Vector3& edge02,
-        double& w0, double& w1, double& w2) const;
+        float& w0, float& w1, float& w2) const;
 
      /**
      Ray-triangle intersection for a 1-sided triangle.  Fastest version.
@@ -183,12 +183,13 @@ public:
         const Point3&  vert0,
         const Point3&  vert1,
         const Point3&  vert2,
-        double&         w0,
-        double&         w1,
-        double&         w2) const {
+        float&         w0,
+        float&         w1,
+        float&         w2) const {
 
         return intersectionTime(vert0, vert1, vert2, vert1 - vert0, vert2 - vert0, w0, w1, w2);
     }
+
 
     /* One-sided triangle 
        */
@@ -198,11 +199,12 @@ public:
             triangle.edge01(), triangle.edge02());
     }
 
-    float intersectionTime(
-        const Triangle& triangle,
-        double&         w0,
-        double&         w1,
-        double&         w2) const {
+
+    float intersectionTime
+    (const Triangle& triangle,
+     float&         w0,
+     float&         w1,
+     float&         w2) const {
         return intersectionTime(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2),
             triangle.edge01(), triangle.edge02(), w0, w1, w2);
     }
@@ -298,15 +300,15 @@ inline float Ray::intersectionTime(
 }
 
 
-inline float Ray::intersectionTime(
-    const Point3&  vert0,
-    const Point3&  vert1,
-    const Point3&  vert2,
-    const Vector3&  edge1,
-    const Vector3&  edge2,
-    double&         w0,
-    double&         w1,
-    double&         w2) const {
+inline float Ray::intersectionTime
+(const Point3&  vert0,
+ const Point3&  vert1,
+ const Point3&  vert2,
+ const Vector3&  edge1,
+ const Vector3&  edge2,
+ float&         w0,
+ float&         w1,
+ float&         w2) const {
 
     (void)vert1;
     (void)vert2;

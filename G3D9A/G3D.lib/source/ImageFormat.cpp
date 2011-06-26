@@ -1,10 +1,10 @@
 /**
- @file ImageFormat.cpp
+ \file ImageFormat.cpp
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2003-05-23
- @edited  2010-03-30
+ \created 2003-05-23
+ \edited  2011-06-23
  */
 
 #include "GLG3D/glheaders.h"
@@ -129,6 +129,7 @@ const ImageFormat* ImageFormat::stencil(int bits) {
         "RGB8I",
         "RGB8UI",
 
+        "RGBA8I",
         "RGBA8UI",
 
         "ARGB8",
@@ -441,6 +442,38 @@ const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
     }
 }
 
+
+bool ImageFormat::representableAsColor1uint8() const {
+    return (numComponents == 1) &&
+        (cpuBitsPerPixel == 8) &&
+        ((luminanceBits == 8) ||
+         (redBits == 8) ||
+         (alphaBits == 8));
+}
+
+
+bool ImageFormat::representableAsColor2uint8() const {
+    return (numComponents == 2) &&
+        (cpuBitsPerPixel == 16) &&
+        ((redBits == 8 && greenBits == 8) ||
+         (luminanceBits == 8 && alphaBits == 8) ||
+         (redBits == 8 && alphaBits == 8));
+
+}
+
+
+bool ImageFormat::representableAsColor3uint8() const {
+    return (numComponents == 3) &&
+        (cpuBitsPerPixel == 24) &&
+        (redBits == 8 && greenBits == 8 && blueBits == 8);
+}
+
+bool ImageFormat::representableAsColor4uint8() const {
+    return (numComponents == 4) &&
+        (cpuBitsPerPixel == 32) &&
+        (redBits == 8 && greenBits == 8 && blueBits == 8 && alphaBits == 8);
+}
+
 // Helper variables for defining texture formats
 
 // Is floating point format
@@ -533,9 +566,11 @@ DEFINE_TEXTUREFORMAT_METHOD(R11G11B10F, 3, UNCOMP_FORMAT,   GL_R11F_G11F_B10F_EX
 DEFINE_TEXTUREFORMAT_METHOD(RGB9E5F,    3, UNCOMP_FORMAT,   GL_RGB9_E5_EXT,                     GL_RGB,     0,  0, 14, 14, 14, 0, 0,   32,   32,    GL_FLOAT, OPAQUE_FORMAT, FLOAT_FORMAT, ImageFormat::CODE_RGB9E5F, ImageFormat::COLOR_SPACE_RGB);
 
 // The base format for integer formats must be *_INTEGER even though the spec doesn't state this
-DEFINE_TEXTUREFORMAT_METHOD(RGB8I,      3, UNCOMP_FORMAT,   GL_RGB8I_EXT,                       GL_RGB_INTEGER,     0,  0,  8,  8,  8,  0,  0, 32, 24,      GL_UNSIGNED_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RGB8I, ImageFormat::COLOR_SPACE_RGB);
+DEFINE_TEXTUREFORMAT_METHOD(RGB8I,      3, UNCOMP_FORMAT,   GL_RGB8I_EXT,                       GL_RGB_INTEGER,     0,  0,  8,  8,  8,  0,  0, 32, 24,      GL_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RGB8I, ImageFormat::COLOR_SPACE_RGB);
 
 DEFINE_TEXTUREFORMAT_METHOD(RGB8UI,     3, UNCOMP_FORMAT,   GL_RGB8UI_EXT,                      GL_RGB_INTEGER,     0,  0,  8,  8,  8,  0,  0, 32, 24,      GL_UNSIGNED_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RGB8UI, ImageFormat::COLOR_SPACE_RGB);
+
+DEFINE_TEXTUREFORMAT_METHOD(RGBA8I,     4, UNCOMP_FORMAT,   GL_RGBA8I_EXT,                      GL_RGBA_INTEGER,    0,  0,  8,  8,  8,  8,  0, 32, 32,      GL_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RGBA8I, ImageFormat::COLOR_SPACE_RGB);
 
 DEFINE_TEXTUREFORMAT_METHOD(RGBA8UI,    4, UNCOMP_FORMAT,   GL_RGBA8UI_EXT,                     GL_RGBA_INTEGER,    0,  0,  8,  8,  8,  8,  0, 32, 32,      GL_UNSIGNED_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RGBA8UI, ImageFormat::COLOR_SPACE_RGB);
 

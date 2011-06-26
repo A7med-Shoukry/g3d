@@ -58,7 +58,7 @@ Map::~Map() {
     delete lightVolumes;
     delete visData.bitsets;
     
-    faceArray.deleteAll();
+    faceArray.invokeDeleteOnAllElements();
 }
 
 

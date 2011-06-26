@@ -4,7 +4,7 @@
    \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
    \created 2003-11-03
-   \edited  2010-09-12
+   \edited  2011-05-12
 */
 
 #ifndef G3D_GApp_h
@@ -92,6 +92,9 @@ DebugID debugDraw
 
  onWait runs before onGraphics because the beginning of onGraphics causes the CPU to block, waiting for the GPU
  to complete the previous frame.
+
+ When you override a method, invoke the GApp version of that method to ensure that Widget%s still work
+ properly.  This allows you to control whether your per-app operations occur before or after the Widget ones.
 
  \sa GApp::Settings, OSWindow, RenderDevice, G3D_START_AT_MAIN
 */
@@ -317,7 +320,8 @@ protected:
 
 public:
     /** Creates a default lighting environment for demos, which uses the file
-    on the noonclouds/noonclouds_*.jpg textures:
+    on the noonclouds/noonclouds_*.jpg textures.  The code that it uses is below.  Note that this loads
+    a cube map every time that it is invoked, so this should not be used within the rendering loop.
 
   <pre>
     Lighting::Ref lighting = Lighting::create();
@@ -329,7 +333,7 @@ public:
                           Texture::Preprocess::gamma(2.1f));
     lighting->environmentMapColor = Color3::one();
    </pre>
-*/
+   */
     static Lighting::Ref defaultLighting();
 
 #ifndef G3D_ANDROID
@@ -527,10 +531,10 @@ public:
 private:
 
     /** Used by doSimulation for elapsed time. */
-    RealTime               now, lastTime;
+    RealTime               m_now, m_lastTime;
 
     /** Used by doWait for elapsed time. */
-    RealTime               lastWaitTime;
+    RealTime               m_lastWaitTime;
 
     /** FPS for ideal time */
     float                  m_desiredFrameRate;
@@ -850,7 +854,7 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
             // Add console processing here
 
             TextInput t(TextInput::FROM_STRING, str);
-            if (t.hasMore() && (t.peek().type() == Token::SYMBOL)) {
+            if (t.isValid() && (t.peek().type() == Token::SYMBOL)) {
                 std::string cmd = toLower(t.readSymbol());
                 if (cmd == "exit") {
                     setExitCode(0);

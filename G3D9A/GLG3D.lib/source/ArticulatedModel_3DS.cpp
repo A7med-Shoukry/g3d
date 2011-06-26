@@ -57,7 +57,7 @@ void ArticulatedModel::init3DS(const std::string& filename, const Preprocess& pr
     Matrix3 R = xform.upper3x3();
 
     Table<std::string, Material::Ref> materialSubstitution;
-    for (Table<std::string, Material::Specification>::Iterator it = preprocess.materialSubstitution.begin(); it.hasMore(); ++it) {
+    for (Table<std::string, Material::Specification>::Iterator it = preprocess.materialSubstitution.begin(); it.isValid(); ++it) {
         materialSubstitution.set(it->key, Material::create(it->value));
     }
 

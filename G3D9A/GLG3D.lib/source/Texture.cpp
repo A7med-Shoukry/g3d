@@ -1,10 +1,10 @@
 /**
- @file Texture.cpp
+ \file Texture.cpp
 
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2001-02-28
- @edited  2010-03-18
+ \created 2001-02-28
+ \edited  2011-05-18
 */
 #include "G3D/Log.h"
 #include "G3D/Any.h"
@@ -207,7 +207,7 @@ Texture::Preprocess::Preprocess(const Any& any) {
     *this = Preprocess::defaults();
     any.verifyNameBeginsWith("Texture::Preprocess");
     if (any.type() == Any::TABLE) {
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = it->key;
             if (key == "modulate") {
                 modulate = Color4(it->value);
@@ -1014,10 +1014,12 @@ Texture::Ref Texture::fromMemory(
 
     if ((preprocess.modulate != Color4::one()) || (preprocess.gammaAdjust != 1.0f)) {
         debugAssert((bytesFormat->code == ImageFormat::CODE_RGB8) ||
-            (bytesFormat->code == ImageFormat::CODE_RGBA8));
+                    (bytesFormat->code == ImageFormat::CODE_RGBA8) ||
+                    (bytesFormat->code == ImageFormat::CODE_L8));
 
         // Allow brightening to fail silently in release mode
-        if (( bytesFormat->code == ImageFormat::CODE_RGB8) ||
+        if (( bytesFormat->code == ImageFormat::CODE_L8) ||
+            ( bytesFormat->code == ImageFormat::CODE_RGB8) ||
             ( bytesFormat->code == ImageFormat::CODE_RGBA8)) {
 
             bytesPtr = new MipArray();
@@ -1038,12 +1040,12 @@ Texture::Ref Texture::fromMemory(
                     System::memcpy(const_cast<void*>(face[f]), _bytes[m][f], numBytes);
 
                     // Apply the processing to the copy
-                    modulateImage(
-                        bytesFormat->code,
-                        const_cast<void*>(face[f]),
-                        numBytes,
-                        preprocess.modulate,
-                        preprocess.gammaAdjust);
+                    modulateImage
+                        (bytesFormat->code,
+                         const_cast<void*>(face[f]),
+                         numBytes,
+                         preprocess.modulate,
+                         preprocess.gammaAdjust);
                 }
             }
         }
@@ -1553,7 +1555,7 @@ Image1uint8Ref Texture::toDepthImage1uint8() const {
     
     // Float to int conversion
     for (int i = m_width * m_height - 1; i >= 0; --i) {
-        d[i] = s[i];
+        d[i] = Color1uint8(s[i]);
     }
     
     return dst;
@@ -2363,7 +2365,9 @@ static void modulateImage(ImageFormat::Code fmt, void* _byte, int n, const Color
 
     debugAssert(
         (fmt == ImageFormat::CODE_RGB8) ||
-        (fmt == ImageFormat::CODE_RGBA8));
+        (fmt == ImageFormat::CODE_RGBA8) ||
+        (fmt == ImageFormat::CODE_R8) ||
+        (fmt == ImageFormat::CODE_L8));
 
     uint8* byte = static_cast<uint8*>(_byte);
 
@@ -2376,19 +2380,32 @@ static void modulateImage(ImageFormat::Code fmt, void* _byte, int n, const Color
         }
     }
 
-    if (fmt == ImageFormat::CODE_RGBA8) {
+    switch (fmt) {
+    case ImageFormat::CODE_RGBA8:
         // 4 channels (we duplicate the loop so that it can be unrolled by the compiler)
         for (int i = 0; i < n; ) {
             for (int c = 0; c < 4; ++c, ++i) {
                 byte[i] = adjust[c][byte[i]];
             }
         }
-    } else {
+        break;
+
+    case ImageFormat::CODE_RGB8:
         for (int i = 0; i < n; ) {
             for (int c = 0; c < 3; ++c, ++i) {
                 byte[i] = adjust[c][byte[i]];
             }
         }
+        break;
+
+    case ImageFormat::CODE_R8:
+    case ImageFormat::CODE_L8:
+        for (int i = 0; i < n; ++i) {
+            byte[i] = adjust[0][byte[i]];
+        }
+        break;
+
+    default:;
     }
 }
 
@@ -2404,6 +2421,18 @@ Any Texture::Specification::toAny() const {
     a["visualization"] = visualization;
 
     return a;
+}
+
+
+void Texture::Specification::serialize(BinaryOutput& b) const {
+    toAny().serialize(b);
+}
+
+
+void Texture::Specification::deserialize(BinaryInput& b) {
+    Any a;
+    a.deserialize(b);
+    *this = a;
 }
 
 
@@ -2429,7 +2458,7 @@ Texture::Specification::Specification(const Any& any) {
         }
     } else {
         any.verifyNameBeginsWith("Texture::Specification");
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = it->key;
             if (key == "filename") {
                 filename = it->value.resolveStringAsFilename();
@@ -2548,7 +2577,7 @@ Texture::InterpolateMode Texture::toInterpolateMode(const std::string& s) {
 
 
 Any Texture::Settings::toAny() const {
-    Any a(Any::TABLE);
+    Any a(Any::TABLE, "Texture::Settings");
     a["interpolateMode"] = toString(interpolateMode);
     a["wrapMode"]        = wrapMode.toAny();
     a["maxAnisotropy"]   = maxAnisotropy;

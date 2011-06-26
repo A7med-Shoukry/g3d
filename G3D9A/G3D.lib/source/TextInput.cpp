@@ -824,7 +824,7 @@ numLabel:
 
     } // end of special case tokens
 
-    if (c == EOF) {
+    if (c == EOF || c == '\0') {
         t._type = Token::END;
         t._extendedType = Token::END_TYPE;
         t._string = "";

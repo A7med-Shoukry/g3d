@@ -1,7 +1,7 @@
 /**
- @file SuperShader.cpp
+ \file GLG3D.lib/source/SuperShader.cpp
 
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
  */
 
 #include "GLG3D/ShadowMap.h"
@@ -261,7 +261,7 @@ void configureSingleLightShaderArgs(
         const float angle = light.spotHalfAngle;
 
         cosThresh = cos(angle);
-        if (shadowMapPass && light.spotSquare) {
+        if (light.spotSquare) {
             // Increase the effective angle for a "square" spotlight
             cosThresh /= 1.41421356f;
         }
@@ -355,7 +355,7 @@ ExtraLightPass::ExtraLightPass() :
 
     args.set("emissiveConstant", Color3::black(), OPTIONAL);
     args.set("reflectConstant", Color3::black(), OPTIONAL);
-    args.set("transmitConstant", Color3::black(), OPTIONAL);
+    args.set("transmissiveConstant", Color3::black(), OPTIONAL);
 }
 
 

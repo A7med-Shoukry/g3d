@@ -98,7 +98,6 @@ shader-driven GPU rendering and CPU ray tracing.
 <tr><td></td><td>\link G3D::GEvent <b>GEvent</b>\endlink, \link G3D::GEventType <b>GEventType</b>\endlink</td><td>Event class and type enum, used inside an event handler</td></tr>
 <tr><td></td><td>\link G3D::GFont <b>GFont</b>\endlink</td><td>Explicitly render text</td></tr>
 <tr><td></td><td>\link G3D::GApp::onEvent <b>GApp::onEvent</b>\endlink, \link G3D::GApp::onUserInput<b>GApp::onUserInput</b>\endlink</td><td>Overridable event handlers</td></tr>
-<tr><td></td><td>\link G3D::BackgroundWidget BackgroundWidget\endlink</td><td>\copybrief G3D::BackgroundWidget</td></tr>
 <tr><td></td><td>\link G3D::UserInput UserInput\endlink</td><td>Pollable keyboard, mouse, and joystick state used inside an event handler </td></tr>
 <tr><td></td><td>\link G3D::GuiButton GuiButton\endlink, \link G3D::GuiCheckBox GuiCheckBox\endlink, \link G3D::GuiDropDownList GuiDropDownList\endlink, \link G3D::GuiSlider GuiSlider\endlink, \link G3D::GuiRadioButton GuiRadioButton\endlink, \link G3D::GuiLabel GuiLabel\endlink, \link G3D::GuiTextBox GuiTextBox\endlink, \link G3D::GuiTextureBox GuiTextureBox\endlink, \link G3D::GuiTabPane GuiTabPane\endlink</td><td>GUI controls created by GuiPanel </td></tr>
 <tr><td></td><td>\link G3D::Widget Widget\endlink</td><td></td></tr>

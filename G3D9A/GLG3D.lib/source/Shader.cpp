@@ -1,10 +1,12 @@
 /**
- @file Shader.cpp
+ \file GLG3D.lib/source/Shader.cpp
  
- @maintainer Morgan McGuire, Jared Hoberock, and Qi Mo, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2004-04-24
- @edited  2009-11-31
+ \cite Thanks to Jared Hoberock and Qi Mo
+
+ \created 2004-04-24
+ \edited  2011-06-12
  */
 
 #include "G3D/fileutils.h"
@@ -93,6 +95,10 @@ void Shader::beforePrimitive(class RenderDevice* renderDevice) {
 
         if (uniformNames.contains("g3d_WorldToCameraMatrix")) {
             args.set("g3d_WorldToCameraMatrix", c2w.inverse());
+        }
+
+        if (uniformNames.contains("g3d_InvertY")) {
+            args.set("g3d_InvertY", renderDevice->invertY());
         }
     }
     debugAssertGLOk();
@@ -281,6 +287,9 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
             if (! beginsWith(filename, "/")) {
                 filename = pathConcat(dir, filename);
             }
+            if (! FileSystem::exists(filename)) {
+                filename = System::findDataFile(filename);
+            }
             std::string includedFile = readWholeFile(filename);
             if (! endsWith(includedFile, "\n")) {
                 includedFile += "\n";
@@ -295,15 +304,15 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
 
 
 void VertexAndPixelShader::GPUShader::init
-(const std::string&	    name,
- const std::string&	    code,
- bool			    _fromFile,
- bool			    debug,	
- GLenum			    glType,
- const std::string&	    type,
- PreprocessorStatus         preprocessor,
+(const std::string&	            name,
+ const std::string&	            code,
+ bool			                _fromFile,
+ bool			                debug,	
+ GLenum			                glType,
+ const std::string&	            type,
+ PreprocessorStatus             preprocessor,
  const Table<std::string, int>& samplerMappings,
- bool                       secondPass) {
+ bool                           secondPass) {
     
     _name		= name;
     _shaderType		= type;
@@ -359,6 +368,7 @@ void VertexAndPixelShader::GPUShader::init
                 uniform int  g3d_NumTextures;
                 uniform vec4 g3d_ObjectLight0;
                 uniform vec4 g3d_WorldLight0;
+                uniform bool g3d_InvertY;
                 );
 
         
@@ -416,6 +426,8 @@ void VertexAndPixelShader::GPUShader::init
             shifted = 0;
         }
         
+        lineDirective += "// End of G3D::Shader inserted code\n";
+
         _code = versionLine + insertString + lineDirective + _code + "\n";
     }
     
@@ -932,17 +944,17 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
  const std::string& vs,
  const std::string& gsName,
  const std::string& gs,
+ const int          gsMaxVerticesOut,
  const std::string& psName,
  const std::string& ps,
  PreprocessorStatus s,
  bool               debugErrors) {
 
-     (void)gs;
-     (void)gsName;
     return new VertexAndPixelShader
         (vs, vsName, false, 
-         "", "", false,
-         ps, psName, false, -1,
+         gs, gsName, false,
+         ps, psName, false, 
+         gsMaxVerticesOut,
          debugErrors, s);
 }
 

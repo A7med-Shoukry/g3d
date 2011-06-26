@@ -20,7 +20,7 @@ BumpMap::Specification::Specification(const Any& any) {
         texture.filename = any.resolveStringAsFilename();
         texture.preprocess = Texture::Preprocess::normalMap();
     } else {
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = toLower(it->key);
             if (key == "texture") {
                 texture = it->value;
@@ -73,7 +73,7 @@ bool BumpMap::similarTo(const BumpMap::Ref& other) const {
 BumpMap::Settings::Settings(const Any& any) {
     *this = Settings();
     any.verifyName("BumpMap::Settings");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "iterations") {
             iterations = iMax(0, iRound(it->value.number()));

@@ -7,7 +7,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2001-08-25
- \edited  2010-12-01
+ \edited  2011-06-23
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -39,6 +39,7 @@
 #include "G3D/Vector2int32.h"
 #include "G3D/Vector3.h"
 #include "G3D/Vector4.h"
+#include "G3D/Vector4int16.h"
 #include "G3D/Color1.h"
 #include "G3D/Color3.h"
 #include "G3D/Color4.h"
@@ -104,6 +105,8 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #include "G3D/Capsule.h"
 #include "G3D/Cylinder.h"
 #include "G3D/Triangle.h"
+#include "G3D/Color1uint8.h"
+#include "G3D/Color2uint8.h"
 #include "G3D/Color3uint8.h"
 #include "G3D/Color4uint8.h"
 #include "G3D/Vector2int16.h"
@@ -140,6 +143,7 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #include "G3D/Pointer.h"
 #include "G3D/Matrix.h"
 #include "G3D/ImageFormat.h"
+#include "G3D/typeutils.h"
 
 #ifdef _MSC_VER
 #   pragma comment(lib, "zlib")

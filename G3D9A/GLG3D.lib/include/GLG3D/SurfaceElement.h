@@ -50,7 +50,7 @@ public:
             coefficient on the recursive path's radiance. Do not
             multiply this by a cosine factor; that has already been
             factored in if necessary.*/
-        Color3    coefficient;
+        Color3    magnitude;
 
         /** For use under refraction */
         float     eta;
@@ -167,8 +167,8 @@ private:
      G3D::Random&   r,
      Vector3&       w_o) const;
 
-    /** Samples just the emission using the existing texCoord, leaving
-        other fields unchanged. Called from set(Tri::Intersector, ...).*/
+    /** Sets the material.emit field by sampling at the shading.texCoord, leaving
+        other fields of material unchanged. Called from set(Tri::Intersector, ...).*/
     void setEmit();
     
     /** Sets the SurfaceElement::shading fields, using the existing SurfaceElement::interpolated fields.
@@ -288,7 +288,7 @@ public:
        the individual wavelengths always have distorted probabilities for a non-white surface.
        For an incident photon with power_i, power_o is the outgoing power adjusted to take
        this distortion into account. You can apply the function with power_i = Color3::white()
-       when path tracing and power_o will be the coefficient to scale scattered radiance by.
+       when path tracing and power_o will be the weight to scale scattered radiance by.
 
        \param densityHack Returns a
        number that increases with the probability density of the

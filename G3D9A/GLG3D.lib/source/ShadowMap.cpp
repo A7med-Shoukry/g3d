@@ -1,8 +1,8 @@
 /**
-  @file ShadowMap.cpp
+  \file GLG3D.lib/source/ShadowMap.cpp
 
-  @author Morgan McGuire, http://graphics.cs.williams.edu
-  @edited 2010-01-30
+  \author Morgan McGuire, http://graphics.cs.williams.edu
+  \edited 2011-06-08
  */
 #include "GLG3D/ShadowMap.h"
 #include "GLG3D/RenderDevice.h"
@@ -229,7 +229,7 @@ void ShadowMap::renderDepthOnly(RenderDevice* renderDevice, const Array<Surface:
 
 void ShadowMap::computeMatrices
 (const GLight&  light, 
- const AABox&   sceneBounds,
+ AABox          sceneBounds,
  GCamera&       lightFrame,
  Matrix4&       lightProjectionMatrix,
  float          lightProjX,
@@ -237,6 +237,11 @@ void ShadowMap::computeMatrices
  float          lightProjNearMin,
  float          lightProjFarMax,
  float          intensityCutoff) {
+
+    if (! sceneBounds.isFinite() || sceneBounds.isEmpty()) {
+        // Produce some reasonable bounds
+        sceneBounds = AABox(Point3(-20, -20, -20), Point3(20, 20, 20));
+    }
 
     lightFrame.setCoordinateFrame(light.frame());
 

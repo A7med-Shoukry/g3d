@@ -1,8 +1,9 @@
 /**
- @file MD3Model.cpp
+ \file GLG3D.lib/source/MD3Model.cpp
 
  Quake III MD3 model loading and posing
 
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  */
 
 #include "G3D/BinaryInput.h"
@@ -151,7 +152,7 @@ MD3Model::Skin::Ref MD3Model::Skin::create(const Any& any) {
         if (src.type() == Any::STRING) {
             loadSkinFile(src.resolveStringAsFilename(), dst);
         } else {
-            for (Table<std::string, Any>::Iterator it = src.table().begin(); it.hasMore(); ++it) {
+            for (Table<std::string, Any>::Iterator it = src.table().begin(); it.isValid(); ++it) {
                 if (it->value.type() == Any::NONE) {
                     dst.set(it->key, NULL);
                 } else {
@@ -170,7 +171,7 @@ MD3Model::Specification::Specification(const Any& any) {
         directory = any.resolveStringAsFilename();
     } else {
         any.verifyName("MD3Model::Specification");
-        for (Table<std::string, Any>::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Table<std::string, Any>::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = toLower(it->key);
             if (key == "directory") {
                 directory = it->value.resolveStringAsFilename();
@@ -654,10 +655,11 @@ void MD3Model::loadAnimationCfg(const std::string& filename) {
 }
 
 
-void MD3Model::pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame& cframe, const Pose& pose) {
+void MD3Model::pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame& cframe, const CFrame& previousFrame, const Pose& pose) {
 
     // Coordinate frame built up from lower part
-    CoordinateFrame baseFrame = cframe;
+    CFrame baseFrame = cframe;
+    CFrame previousBaseFrame = previousFrame;
 
     // Pose lower part
     if (! m_parts[PART_LOWER]) {
@@ -665,9 +667,11 @@ void MD3Model::pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame&
     }
 
     baseFrame.rotation *= pose.rotation[PART_LOWER];
-    posePart(PART_LOWER, pose, posedModelArray, baseFrame);
+    previousBaseFrame.rotation *= pose.rotation[PART_LOWER];
 
-    float legsFrameNum = findFrameNum(pose.anim[PART_LOWER], pose.time[PART_LOWER]);
+    posePart(PART_LOWER, pose, posedModelArray, baseFrame, previousBaseFrame);
+
+    const float legsFrameNum = findFrameNum(pose.anim[PART_LOWER], pose.time[PART_LOWER]);
 
     // Pose upper part
     if (! m_parts[PART_UPPER]) {
@@ -676,9 +680,13 @@ void MD3Model::pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame&
 
     baseFrame = baseFrame * m_parts[PART_LOWER]->tag(legsFrameNum, "tag_torso");
     baseFrame.rotation *= pose.rotation[PART_UPPER];
-    posePart(PART_UPPER, pose, posedModelArray, baseFrame);
 
-    float torsoFrameNum = findFrameNum(pose.anim[PART_UPPER], pose.time[PART_UPPER]);
+    previousBaseFrame = previousBaseFrame * m_parts[PART_LOWER]->tag(legsFrameNum, "tag_torso");
+    previousBaseFrame.rotation *= pose.rotation[PART_UPPER];
+
+    posePart(PART_UPPER, pose, posedModelArray, baseFrame, previousBaseFrame);
+
+    const float torsoFrameNum = findFrameNum(pose.anim[PART_UPPER], pose.time[PART_UPPER]);
 
     // Pose head part
     if (! m_parts[PART_HEAD]) {
@@ -687,7 +695,11 @@ void MD3Model::pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame&
 
     baseFrame = baseFrame * m_parts[PART_UPPER]->tag(torsoFrameNum, "tag_head");
     baseFrame.rotation *= pose.rotation[PART_HEAD];
-    posePart(PART_HEAD, pose, posedModelArray, baseFrame);
+
+    previousBaseFrame = previousBaseFrame * m_parts[PART_UPPER]->tag(torsoFrameNum, "tag_head");
+    previousBaseFrame.rotation *= pose.rotation[PART_HEAD];
+
+    posePart(PART_HEAD, pose, posedModelArray, baseFrame, previousBaseFrame);
 }
 
 
@@ -720,7 +732,8 @@ struct BlendWeights {
     }
 };
 
-void MD3Model::posePart(PartType partType, const Pose& pose, Array<Surface::Ref>& posedModelArray, const CoordinateFrame& cframe) {
+
+void MD3Model::posePart(PartType partType, const Pose& pose, Array<Surface::Ref>& posedModelArray, const CFrame& cframe, const CFrame& previousFrame) {
     const MD3Part* part = m_parts[partType];
 
     Skin::Ref skin;
@@ -776,6 +789,9 @@ void MD3Model::posePart(PartType partType, const Pose& pose, Array<Surface::Ref>
         CFrame partFrame = cframe;
         partFrame.translation += cframe.rotation * (part->m_frames[b.frame[0]].m_localOrigin.lerp(part->m_frames[b.frame[1]].m_localOrigin, b.weight[1]));
 
+        CFrame previousPartFrame = previousFrame;
+        previousPartFrame.translation += previousFrame.rotation * (part->m_frames[b.frame[0]].m_localOrigin.lerp(part->m_frames[b.frame[1]].m_localOrigin, b.weight[1]));
+
         /////////////////////////////////////////////////////////////////
 
         // The final "this" argument is a back pointer so that the index array can't be 
@@ -784,6 +800,7 @@ void MD3Model::posePart(PartType partType, const Pose& pose, Array<Surface::Ref>
             SuperSurface::create
                (part->m_modelName + "::" + triList.m_name, 
                 partFrame, 
+                previousPartFrame,
                 SuperSurface::GPUGeom::create(), 
                 SuperSurface::CPUGeom(), 
                 this);

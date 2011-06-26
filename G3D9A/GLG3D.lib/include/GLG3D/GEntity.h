@@ -1,5 +1,11 @@
-#ifndef GLG3D_GEntity_H
-#define GLG3D_GEntity_H
+/**
+ \file GLG3D/GEntity.h
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+ Copyright 2011, Morgan McGuire
+ */
+#ifndef GLG3D_GEntity_h
+#define GLG3D_GEntity_h
 
 #include "G3D/CoordinateFrame.h"
 #include "G3D/PhysicsFrameSpline.h"
@@ -14,8 +20,6 @@ namespace G3D {
     G3D does not contain a mandatory Entity class in the API because
     it is a very application-specific role. However, this is a base
     class of how you might begin to structure one to get you started.
-
-    \beta
 */
 class GEntity : public ReferenceCountedObject {
 public:
@@ -39,13 +43,27 @@ protected:
     /** Current position */
     CFrame                          m_frame;
 
-    /** Root position over time */
+    /** Frame before the previous onSimulation() */
+    CFrame                          m_previousFrame;
+
+    /** The Any from which this was originally constructed */
+    Any                             m_sourceAny;
+
+    /** Root position over time.  Set m_frameSplineChanged if this
+        changes. */
     PhysicsFrameSpline              m_frameSpline;
+
+    /** True if the spline was mutated since load.  Used by toAny() to
+        decide if m_sourceAny is out of date. */
+    bool                            m_frameSplineChanged;
 
     //////////////////////////////////////////////
 
     /** Current pose */
     ArticulatedModel::Pose          m_artPose;
+
+    /** Pose for the previous onSimulation */
+    ArticulatedModel::Pose          m_artPreviousPose;
 
     /** Pose over time. */
     ArticulatedModel::PoseSpline    m_artPoseSpline;
@@ -62,14 +80,25 @@ protected:
     MD3Model::Ref                   m_md3Model;
     MD3Model::Pose                  m_md3Pose;
 
+    //////////////////////////////////////////////
+
+    /** Bounds at the last pose() call, in world space. */ 
+    AABox                           m_lastBoxBounds;
+
+    /** Bounds at the last pose() call, in world space. */ 
+    Sphere                          m_lastSphereBounds;
+
     GEntity();
 
     /** \deprecated */
-    GEntity(const std::string& n, const PhysicsFrameSpline& frameSpline, 
-        const ArticulatedModel::Ref& artModel, const ArticulatedModel::PoseSpline& artPoseSpline,
-        const MD2Model::Ref& md2Model,
-        const MD3Model::Ref& md3Model);
-
+    GEntity
+    (const std::string& n, 
+     const PhysicsFrameSpline& frameSpline, 
+     const ArticulatedModel::Ref& artModel,
+     const ArticulatedModel::PoseSpline& artPoseSpline,
+     const MD2Model::Ref& md2Model,
+     const MD3Model::Ref& md3Model);
+    
 
     /**\brief Construct a GEntity.
 
@@ -127,6 +156,7 @@ public:
         return new GEntity(name, propertyTable, modelTable);
     }
 
+    /** Current position, i.e., as of last onSimulation call */
     const CFrame& frame() const {
         return m_frame;
     }
@@ -134,6 +164,23 @@ public:
     const std::string& name() const {
         return m_name;
     }
+
+    /** Provides access to the underlying spline */
+    const PhysicsFrameSpline& frameSpline() const {
+        return m_frameSpline;
+    }
+
+    void setFrameSpline(const PhysicsFrameSpline& s) {
+        if (m_frameSpline != s) {
+            m_frameSplineChanged = true;
+        }
+        m_frameSpline = s;
+    }
+
+    /** Converts the current GEntity to an Any.  Subclasses should
+        modify at least the name of the Table, which will be "GEntity"
+        if not changed. */
+    virtual Any toAny() const;
 
     /** 
         \brief Physical simulation callback.
@@ -145,26 +192,26 @@ public:
 
     /** Pose as of the last simulation time */
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
-#if 0
-    /** Return a world-space axis-aligned bounding box. */
-    virtual void getBounds(class AABox& box) const;
 
-    /** Return a world-space bounding sphere. */
-    virtual void getBounds(class Sphere& sphere) const;
+    /** Return a world-space axis-aligned bounding box as of the last call to onPose(). */
+    virtual void getLastBounds(class AABox& box) const;
 
-    /** Return a world-space bounding box. */
-    virtual void getBounds(class Box& box) const;
+    /** Return a world-space bounding sphere as of the last call to onPose(). */
+    virtual void getLastBounds(class Sphere& sphere) const;
+    
+    /** Return a world-space bounding box as of the last call to onPose(). */
+    virtual void getLastBounds(class Box& box) const;
 
-    /** Return the distance to the first intersection of the GEntity's bounds
-        with ray \a R at distance
-        less than \a maxDistance.  Returns finf() if there is no such intersection.
+    /** Returns true if there is conservatively some intersection
+        with the object's bounds closer than \a maxDistance to the
+        ray origin.  If so, updates maxDistance with the intersection distance.
         
-        The bounds used may be more accurate than any of the given getBounds() results
-        because the method may recurse into individual parts of the scene graph
-        within the GEntity.
-    */
-    float intersectBounds(const Ray& R, float maxDistance = finf()) const;
-#endif
+        The bounds used may be more accurate than any of the given
+        getLastBounds() results because the method may recurse into
+        individual parts of the scene graph within the GEntity. */
+    virtual bool intersectBounds(const Ray& R, float& maxDistance) const;
+
+    virtual bool intersect(const Ray& R, float& maxDistance) const;
 };
 
 }

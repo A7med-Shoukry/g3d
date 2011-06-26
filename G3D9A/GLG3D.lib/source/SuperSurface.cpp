@@ -1,19 +1,182 @@
 /**
- @file SuperSurface.cpp
+  \file GLG3D.lib/source/SuperSurface.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2004-11-20
-  @edited  2009-02-20
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+  \created 2004-11-20
+  \edited  2011-06-13
 
   Copyright 2001-2011, Morgan McGuire
  */
 #include "G3D/Log.h"
+#include "G3D/fileutils.h"
+#include "GLG3D/GApp.h" // TODO: remove
 #include "GLG3D/SuperSurface.h"
 #include "GLG3D/Lighting.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/SuperShader.h"
 
 namespace G3D {
+
+void SuperSurface::renderDepthOnlyHomogeneous
+(RenderDevice*                rd, 
+ const Array<Surface::Ref>&         surfaceArray) const {
+
+    rd->beginIndexedPrimitives(); {
+
+        rd->setTexture(0, NULL);
+        rd->setShader(NULL);
+
+        // It is important to only enable alpha testing when needed; otherwise we lose the z-only
+        // optimization built into GPUs.
+        rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
+        bool alphaOn = false;
+
+        const RenderDevice::CullFace cull = rd->cullFace();
+
+        for (int g = 0; g < surfaceArray.size(); ++g) {
+            const SuperSurface::Ref&          surface = surfaceArray[g].downcast<SuperSurface>();
+            debugAssertM(surface.notNull(), "Surface::renderDepthOnlyHomogeneous passed the wrong subclass");
+            const SuperSurface::GPUGeom::Ref& geom = surface->gpuGeom();
+            
+            if (geom->twoSided) {
+                rd->setCullFace(RenderDevice::CULL_NONE);
+            }
+            
+            const Texture::Ref& lambertian = geom->material->bsdf()->lambertian().texture();
+            bool a = lambertian.notNull() && ! lambertian->opaque();
+            
+            if (a != alphaOn) {
+                alphaOn = a;
+                if (alphaOn) {
+                    // We need the texture for alpha masking
+                    rd->setTexture(0, lambertian);
+                    rd->setAlphaTest(RenderDevice::ALPHA_GEQUAL, 0.5f);
+                } else {
+                    rd->setTexture(0, NULL);
+                    rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
+                }
+            }
+            
+            CFrame cframe;
+            surface->getCoordinateFrame(cframe, false);
+            rd->setObjectToWorldMatrix(cframe);
+            rd->setVARs(geom->vertex, VertexRange(), geom->texCoord0);
+            rd->sendIndices(geom->primitive, geom->index);
+            
+            if (geom->twoSided) {
+                rd->setCullFace(cull);
+            }
+        } // for each surface
+
+        // Turn alpha testing back off
+        if (alphaOn) {
+            rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
+        }
+    } rd->endIndexedPrimitives();
+
+}
+
+
+class GBufferShaderCache {
+protected:
+    
+    typedef Table<std::string, Shader::Ref> Cache;
+    Cache cache;
+
+public:
+
+    Shader::Ref get(const GBuffer::Ref& gbuffer, const Material::Ref& material) {
+        static const std::string version = "#version 120\n#extension GL_EXT_gpu_shader4 : require\n";
+
+        const std::string& prefixMacros = version + "\n// GBuffer macros:\n" + gbuffer->macros() +
+            "\n// Material macros:\n\n" + material->macros() + "///////////////////\n\n";
+
+        bool created = false;
+        Shader::Ref& shader = cache.getCreate(prefixMacros, created);
+
+        if (created) {
+            // Create the shader
+            static const std::string commonVertexSource    = readWholeFile(System::findDataFile("SS_GBuffer.vrt"));
+            static const std::string commonPixelSource     = readWholeFile(System::findDataFile("SS_GBuffer.pix"));
+
+            const std::string& vertexSource = prefixMacros + commonVertexSource;
+
+            const std::string& pixelSource = prefixMacros + commonPixelSource;
+
+            // Compile
+            shader = Shader::fromStrings(vertexSource, pixelSource);
+            shader->setPreserveState(false);
+        }
+
+        return shader;
+    }
+};
+
+static GBufferShaderCache gbufferShaderCache;
+
+void SuperSurface::renderIntoGBufferHomogeneous
+(RenderDevice*                rd, 
+ Array<Surface::Ref>&         surfaceArray,
+ const GBuffer::Ref&          gbuffer,
+ const CFrame&                previousCameraFrame) const {
+
+    rd->pushState(); {
+        rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
+        const RenderDevice::CullFace oldCullFace = rd->cullFace();
+
+        for (int s = 0; s < surfaceArray.size(); ++s) {
+            const SuperSurface::Ref& surface = surfaceArray[s].downcast<SuperSurface>();
+            debugAssertM(surface != NULL, "Non SuperSurface element of surfaceArray in SuperSurface::renderIntoGBufferHomogeneous");
+
+            const GPUGeom::Ref& gpuGeom = surface->gpuGeom();
+            const Material::Ref& material = gpuGeom->material;
+
+            // This is frequently the same shader as on the previous iteration, and RenderDevice will
+            // optimize out the state change. 
+            const Shader::Ref& shader = gbufferShaderCache.get(gbuffer, material);
+            rd->setShader(shader);
+
+            CFrame cframe;
+            surface->getCoordinateFrame(cframe, false);
+            rd->setObjectToWorldMatrix(cframe);
+
+            if ((gbuffer->specification().format[GBuffer::Field::CS_POSITION_CHANGE] != NULL) || 
+                (gbuffer->specification().format[GBuffer::Field::SS_POSITION_CHANGE] != NULL)) {
+                // Previous object-to-camera projection for velocity buffer
+                CFrame previousFrame;
+                surface->getCoordinateFrame(previousFrame, true);
+                shader->args.set("PreviousObjectToCameraMatrix", previousCameraFrame.inverse() * previousFrame);
+            }
+
+            if (gbuffer->specification().format[GBuffer::Field::SS_POSITION_CHANGE] != NULL) {
+                // Map (-1, 1) normalized device coordinates to actual pixel positions
+                const Matrix4& screenSize = 
+                    Matrix4(rd->width() / 2.0f, 0.0f,                0.0f, rd->width() / 2.0f,
+                            0.0f,               rd->height() / 2.0f, 0.0f, rd->height() / 2.0f,
+                            0.0f,               0.0f,                1.0f, 0.0f,
+                            0.0f,               0.0f,                0.0f, 1.0f);
+                shader->args.set("ProjectToScreenMatrix", screenSize * rd->invertYMatrix() * rd->projectionMatrix());
+            }
+
+            if (gpuGeom->twoSided) {
+                rd->setCullFace(RenderDevice::CULL_NONE);
+            }
+
+            // Bind material arguments
+            material->configure(shader->args);
+
+            // TODO: pass alpha threshold
+
+            surface->sendGeometry(rd);
+
+            if (gpuGeom->twoSided) {
+                rd->setCullFace(oldCullFace);
+            }
+        }
+    } rd->popState();
+}
+
 
 /** For fixed function, we detect
     reflection as having no glossy map but a packed specular
@@ -58,6 +221,7 @@ void SuperSurface::sortFrontToBack(Array<SuperSurface::Ref>& a, const Vector3& v
 SuperSurface::Ref SuperSurface::create
 (const std::string&       name,
  const CFrame&            frame, 
+ const CFrame&            previousFrame,
  const GPUGeom::Ref&      gpuGeom,
  const CPUGeom&           cpuGeom,
  const ReferenceCountedPointer<ReferenceCountedObject>& source) {
@@ -65,7 +229,7 @@ SuperSurface::Ref SuperSurface::create
 
 
     // Cannot check if the gpuGeom is valid because it might not be filled out yet
-    return new SuperSurface(name, frame, gpuGeom, cpuGeom, source);
+    return new SuperSurface(name, frame, previousFrame, gpuGeom, cpuGeom, source);
 }
 
 
@@ -460,7 +624,12 @@ bool SuperSurface::renderPS20NonShadowedOpaqueTerms(
         // SuperShader only supports SuperShader::NonShadowedPass::LIGHTS_PER_PASS lights, so we have to make multiple passes
         Array<GLight> lights = reducedLighting->lightArray;
 
-        const Sphere& myBounds = worldSpaceBoundingSphere();
+        Sphere myBounds;
+        CFrame cframe;
+        getObjectSpaceBoundingSphere(myBounds, false);
+        getCoordinateFrame(cframe, false);
+        myBounds = cframe.toWorldSpace(myBounds);
+        
         // Remove lights that cannot affect this object
         for (int L = 0; L < lights.size(); ++L) {
             Sphere s = lights[L].effectSphere();
@@ -773,7 +942,9 @@ void SuperSurface::sendGeometry2(
 
     debugAssertGLOk();
 
-    CoordinateFrame o2w = rd->objectToWorldMatrix();
+    // Make a copy, not a reference; we're about to mutate the
+    // underlying state
+    const CoordinateFrame o2w = rd->objectToWorldMatrix();
     rd->setObjectToWorldMatrix(m_frame);
 
     rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
@@ -789,65 +960,33 @@ void SuperSurface::sendGeometry(
     debugAssertGLOk();
     ++debugNumSendGeometryCalls;
 
-    // TODO: Radeon mobility cards crash rendering VertexRange in wireframe mode.
-    // switch to begin/end in that case
-    bool useVAR = true || (rd->renderMode() == RenderDevice::RENDER_SOLID);
+    debugAssertGLOk();
+    rd->beginIndexedPrimitives();
+    {
+        rd->setVertexArray(m_gpuGeom->vertex);
+        debugAssertGLOk();
 
-    if (useVAR) {
+        debugAssert(m_gpuGeom->normal.valid());
+        rd->setNormalArray(m_gpuGeom->normal);
+        debugAssertGLOk();
+
+        if (m_gpuGeom->texCoord0.valid() && (m_gpuGeom->texCoord0.size() > 0)){
+            rd->setTexCoordArray(0, m_gpuGeom->texCoord0);
+            debugAssertGLOk();
+        }
+
+        // In programmable pipeline mode, load the tangents into tex coord 1
+        if (m_gpuGeom->packedTangent.valid() && (profile() == PS20) && (m_gpuGeom->packedTangent.size() > 0)) {
+            rd->setTexCoordArray(1, m_gpuGeom->packedTangent);
+            debugAssertGLOk();
+        }
 
         debugAssertGLOk();
-        rd->beginIndexedPrimitives();
-        {
-            rd->setVertexArray(m_gpuGeom->vertex);
-            debugAssertGLOk();
-
-            debugAssert(m_gpuGeom->normal.valid());
-            rd->setNormalArray(m_gpuGeom->normal);
-            debugAssertGLOk();
-
-            if (m_gpuGeom->texCoord0.valid() && (m_gpuGeom->texCoord0.size() > 0)){
-                rd->setTexCoordArray(0, m_gpuGeom->texCoord0);
-                debugAssertGLOk();
-            }
-
-            // In programmable pipeline mode, load the tangents into tex coord 1
-            if (m_gpuGeom->packedTangent.valid() && (profile() == PS20) && (m_gpuGeom->packedTangent.size() > 0)) {
-                rd->setTexCoordArray(1, m_gpuGeom->packedTangent);
-                debugAssertGLOk();
-            }
-
-            debugAssertGLOk();
-            rd->sendIndices((RenderDevice::Primitive)m_gpuGeom->primitive, m_gpuGeom->index);
-        }
-        rd->endIndexedPrimitives();
-
-    } else {
-
-        debugAssertM(m_cpuGeom.index != NULL, 
-                     "This graphics card cannot render in wireframe mode"
-                     " without explicit CPU data structures.");
-
-        if (m_cpuGeom.index != NULL) {
-
-            rd->beginPrimitive((RenderDevice::Primitive)m_gpuGeom->primitive);
-            for (int i = 0; i < m_cpuGeom.index->size(); ++i) {
-                int v = (*m_cpuGeom.index)[i];
-                if ((m_cpuGeom.texCoord0 != NULL) &&
-                    (m_cpuGeom.texCoord0->size() > 0)) { 
-                    rd->setTexCoord(0, (*m_cpuGeom.texCoord0)[v]);
-                }
-                if ((m_cpuGeom.packedTangent != NULL) &&
-                    (m_cpuGeom.packedTangent->size() > 0)) {
-                    rd->setTexCoord(1, (*m_cpuGeom.packedTangent)[v]);
-                }
-
-                rd->setNormal(m_cpuGeom.geometry->normalArray[v]);
-                rd->sendVertex(m_cpuGeom.geometry->vertexArray[v]);
-            }
-            rd->endPrimitive();
-        }
+        rd->sendIndices(m_gpuGeom->primitive, m_gpuGeom->index);
     }
+    rd->endIndexedPrimitives();
 }
+
 
 std::string SuperSurface::name() const {
     return m_name;
@@ -864,123 +1003,24 @@ bool SuperSurface::hasPartialCoverage() const {
 }
 
 
-void SuperSurface::getCoordinateFrame(CoordinateFrame& c) const {
-    c = m_frame;
-}
-
-
-const MeshAlg::Geometry& SuperSurface::objectSpaceGeometry() const {
-    return *(m_cpuGeom.geometry);
-}
-
-
-const Array<Vector4>& SuperSurface::objectSpacePackedTangents() const {
-    if (m_cpuGeom.packedTangent == NULL) {
-        const static Array<Vector4> x;
-        return x;
+void SuperSurface::getCoordinateFrame(CoordinateFrame& c, bool previous) const {
+    if (previous) {
+        c = m_previousFrame;
     } else {
-        return *(m_cpuGeom.packedTangent);
+        c = m_frame;
     }
 }
 
 
-const Array<Vector3>& SuperSurface::objectSpaceFaceNormals(bool normalize) const {
-    static Array<Vector3> n;
-    debugAssert(false);
-    return n;
-    // TODO
-}
-
-
-const Array<MeshAlg::Face>& SuperSurface::faces() const {
-    static Array<MeshAlg::Face> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<MeshAlg::Edge>& SuperSurface::edges() const {
-    static Array<MeshAlg::Edge> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<MeshAlg::Vertex>& SuperSurface::vertices() const {
-    static Array<MeshAlg::Vertex> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<Vector2>& SuperSurface::texCoords() const {
-    if (m_cpuGeom.texCoord0 == NULL) {
-        const static Array<Vector2> x;
-        return x;
-    } else {
-        return *(m_cpuGeom.texCoord0);
-    }
-}
-
-
-bool SuperSurface::hasTexCoords() const {
-    return (m_cpuGeom.texCoord0 != 0) && (m_cpuGeom.texCoord0->size() > 0);
-}
-
-
-const Array<MeshAlg::Face>& SuperSurface::weldedFaces() const {
-    static Array<MeshAlg::Face> f;
-    debugAssert(false);
-    return f;
-    // TODO
-}
-
-
-const Array<MeshAlg::Edge>& SuperSurface::weldedEdges() const {
-    static Array<MeshAlg::Edge> e;
-    debugAssert(false);
-    return e;
-    // TODO
-}
-
-
-const Array<MeshAlg::Vertex>& SuperSurface::weldedVertices() const {
-    static Array<MeshAlg::Vertex> v;
-    return v;
-    debugAssert(false);
-    // TODO
-}
-
-
-const Array<int>& SuperSurface::triangleIndices() const {
-    alwaysAssertM(m_gpuGeom->primitive == PrimitiveType::TRIANGLES, "This model is not composed of triangles."); 
-    return *(m_cpuGeom.index);
-}
-
-
-void SuperSurface::getObjectSpaceBoundingSphere(Sphere& s) const {
+void SuperSurface::getObjectSpaceBoundingSphere(Sphere& s, bool previous) const {
+    (void) previous;
     s = m_gpuGeom->sphereBounds;
 }
 
 
-void SuperSurface::getObjectSpaceBoundingBox(AABox& b) const {
+void SuperSurface::getObjectSpaceBoundingBox(AABox& b, bool previous) const {
+    (void) previous;
     b = m_gpuGeom->boxBounds;
-}
-
-
-int SuperSurface::numBoundaryEdges() const {
-    // TODO
-    debugAssert(false);
-    return 0;
-}
-
-
-int SuperSurface::numWeldedBoundaryEdges() const {
-    // TODO
-    return 0;
 }
 
 

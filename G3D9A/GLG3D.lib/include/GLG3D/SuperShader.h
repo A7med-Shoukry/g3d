@@ -1,12 +1,13 @@
 /** 
-  @file SuperShader.h
+  \file GLG3D/SuperShader.h
 
   A one-size-fits-all shader that combines most common illumination effects
   efficiently.
 
-  @created 2005-01-01
-  @edited  2010-03-27
-  @author Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2005-01-01
+  \edited  2010-03-27
+  
+  \author Morgan McGuire, http://graphics.cs.williams.edu
  */
 
 #ifndef GLG3D_SuperShader_h
@@ -164,13 +165,13 @@ private:
 
         /** Adds a shader to the list of cached ones.  Only call when 
             getSimilar returned NULL.
-            @param key vertexFilename + pixelFilename
+            \param key vertexFilename + pixelFilename
             \param macros: Material.computeDefines() + extraDefines */
         void add(const std::string& key, const std::string& macros, const ShaderRef& shader);
 
         /** Returns the shader for a similar material or 
             NULL if one does not exist. 
-            @param key vertexFilename + pixelFilename 
+            \param key vertexFilename + pixelFilename 
             \param macros: Material.computeDefines() + extraDefines */
         ShaderRef getSimilar(const std::string& key, const std::string& macros) const;
 

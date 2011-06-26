@@ -87,6 +87,13 @@
     <ClCompile Include="source\Entity.cpp" />
     <ClCompile Include="source\Scene.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="journal\journal.dox" />
+    <None Include="mainpage.dox" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -10,7 +10,7 @@ void perfSystemMemcpy() {
     static const int M = 8;
 
     //  Repeats per memory size
-    static const int trials = 200;
+    static const int trials = 300;
 
     size_t size[M];
     for (int i = 0; i < M; ++i) {
@@ -23,8 +23,11 @@ void perfSystemMemcpy() {
 
     for (int m = 0; m < M; ++m) {
         int n = (int)size[m];
-        void* m1 = System::alignedMalloc(n, 1024*4);
-        void* m2 = System::alignedMalloc(n, 1024*4);
+        void* m1 = System::alignedMalloc(n, 16);
+        void* m2 = System::alignedMalloc(n, 16);
+
+        alwaysAssertM((((int)m1) % 16) == 0, "Memory is not aligned correctly");
+        alwaysAssertM((((int)m2) % 16) == 0, "Memory is not aligned correctly");
 
         // First iteration just primes the system
         ::memcpy(m1, m2, n);
@@ -64,8 +67,16 @@ void perfSystemMemcpy() {
         double k = trials * (double)size[m] / 1024;
         printf(" %6d", (int)(g3d[m] / k));
     }
-    printf("\n");
-    
+    printf("\n        --------------------------------------------------\n");
+    printf("    Outcome         ");
+    for (int m = 0; m < M; ++m) {
+        if (g3d[m] <= native[m] * 1.1) {
+            printf("    ok ");
+        } else {
+            printf("   FAIL");
+        }
+    }
+    printf("\n");    
 
     if (System::hasSSE2() && System::hasMMX()) {
         printf("      * MMX on this machine\n");

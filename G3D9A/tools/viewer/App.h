@@ -19,8 +19,6 @@ class Viewer;
 class App : public GApp {
 private:
     Lighting::Ref	   lighting;
-    SkyParameters      skyParameters;
-    SkyRef             sky;
     Viewer*	           viewer;
     std::string	       filename;
 	

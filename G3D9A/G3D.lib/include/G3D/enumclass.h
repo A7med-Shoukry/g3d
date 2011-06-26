@@ -86,12 +86,12 @@ public:\
         fromString(x);\
     }\
 \
-    explicit Classname(const Any& a) : value((Value)0) {\
+    explicit Classname(const G3D::Any& a) : value((Value)0) {   \
         fromString(a.string());\
     }\
 \
-    Any toAny() const {\
-        return Any(toString());\
+    G3D::Any toAny() const {                    \
+        return G3D::Any(toString());            \
     }\
 \
     Classname(char v) : value((Value)v) {}\
@@ -196,15 +196,16 @@ public:\
         return (unsigned int)value;\
     }\
 \
-    void serialize(BinaryOutput& b) const {\
+    void serialize(G3D::BinaryOutput& b) const {    \
         b.writeInt32(value);\
     }\
 \
-    void deserialize(BinaryInput& b) {\
+    void deserialize(G3D::BinaryInput& b) {         \
         value = (Value)b.readInt32();\
     }
 
 /** \def G3D_DECLARE_ENUM_CLASS_HASHCODE
+   Must be used at top level (i.e., not inside a class or namespace), with a fully qualified class name.
 */
 #define G3D_DECLARE_ENUM_CLASS_HASHCODE(Classname)\
 template <> struct HashTrait<Classname::Value>                                              \

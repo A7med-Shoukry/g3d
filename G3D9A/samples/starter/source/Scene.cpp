@@ -83,6 +83,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
 
     Any any;
     any.load(filename);
+    s->m_sourceAny = any;
 
     // Load the lighting
     s->m_lighting = Lighting::create(any.get("lighting", Lighting::Specification()));
@@ -91,16 +92,18 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     Any models = any["models"];
     typedef ReferenceCountedPointer<ReferenceCountedObject> ModelRef;
     Table< std::string, ModelRef > modelTable;
-    for (Any::AnyTable::Iterator it = models.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = models.table().begin(); it.isValid(); ++it) {
         ModelRef m;
         Any v = it->value;
         if (v.nameBeginsWith("ArticulatedModel")) {
             m = ArticulatedModel::create(v);
+            m.downcast<ArticulatedModel>()->name = it->key;
         } else if (v.nameBeginsWith("MD2Model")) {
             m = MD2Model::create(v);
         } else if (v.nameBeginsWith("MD3Model")) {
             m = MD3Model::create(v);
         } else {
+            // TODO: Add your own model formats here!
             debugAssertM(false, "Unrecognized model type: " + v.name());
         }
 
@@ -109,13 +112,13 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
 
     // Instance the models
     Any entities = any["entities"];
-    for (Table<std::string, Any>::Iterator it = entities.table().begin(); it.hasMore(); ++it) {
+    for (Table<std::string, Any>::Iterator it = entities.table().begin(); it.isValid(); ++it) {
         const std::string& name = it->key;
 
         AnyTableReader propertyTable(it->value);
         if (it->value.nameEquals("Entity")) {
             s->m_entityArray.append(Entity::create(name, propertyTable, modelTable));
-        } /* else if (it->value.nameEquals("...")) {  TODO: add your own subclasses here! } */
+        } /* else if (it->value.nameEquals("...")) {  TODO: add your own GEntity subclasses here! } */
         
         propertyTable.verifyDone();
     }
@@ -123,6 +126,8 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     // Load the camera
     camera = any["camera"];
 
+
+    // Use the environment map as a skybox if there isn't one already, and vice versa
     if (any.containsKey("skyBox")) {
         Any sky = any["skyBox"];
 		sky.verifyType(Any::TABLE);
@@ -168,21 +173,43 @@ void Scene::onPose(Array<Surface::Ref>& surfaceArray) {
 }
 
 
-Entity::Ref Scene::intersectBounds(const Ray& ray, const Array<Entity::Ref>& exclude) {
+Entity::Ref Scene::intersectBounds(const Ray& ray, float& distance, const Array<Entity::Ref>& exclude) {
     Entity::Ref closest = NULL;
-#if 0
-    float distance = finf();
     
     for (int e = 0; e < m_entityArray.size(); ++e) {
         const Entity::Ref& entity = m_entityArray[e];
-        if (! exclude.contains(entity)) {
-            float intersection = entity->intersectBounds(ray, distance);
-            if (intersection < distance) {
-                closest = entity;
-                distance = intersection;
-            }
+        if (! exclude.contains(entity) && entity->intersectBounds(ray, distance)) {
+            closest = entity;
         }
     }
-# endif
+
     return closest;
+}
+
+
+Entity::Ref Scene::intersect(const Ray& ray, float& distance, const Array<Entity::Ref>& exclude) {
+    Entity::Ref closest = NULL;
+    
+    for (int e = 0; e < m_entityArray.size(); ++e) {
+        const Entity::Ref& entity = m_entityArray[e];
+        if (! exclude.contains(entity) && entity->intersect(ray, distance)) {
+            closest = entity;
+        }
+    }
+
+    return closest;
+}
+
+
+Any Scene::toAny() const {
+    Any a = m_sourceAny;
+
+    // Overwrite the entity table
+    Any entityTable(Any::TABLE);
+    for (int i = 0; i < m_entityArray.size(); ++i) {
+        const Entity::Ref& entity = m_entityArray[i];
+        entityTable[entity->name()] = entity->toAny();
+    }
+
+    return a;
 }

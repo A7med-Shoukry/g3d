@@ -1,6 +1,6 @@
 /**
-  @file GBuffer.h
-  @author Morgan McGuire, http://graphics.cs.williams.edu
+  \file GLG3D/GBuffer.h
+  \author Morgan McGuire, http://graphics.cs.williams.edu
  */
 #ifndef GLG3D_GBuffer_h
 #define GLG3D_GBuffer_h
@@ -8,221 +8,266 @@
 #include "G3D/platform.h"
 #include "G3D/ReferenceCount.h"
 #include "G3D/ImageFormat.h"
+#include "G3D/GCamera.h"
+#include "G3D/enumclass.h"
 #include "GLG3D/Framebuffer.h"
 #include "GLG3D/Texture.h"
 #include "GLG3D/Shader.h"
-#include "GLG3D/SuperSurface.h"
-#include "GLG3D/Surface.h"
+#include "GLG3D/Material.h"
 
 namespace G3D {
 
+typedef ReferenceCountedPointer<class Surface> SurfaceRef;
+typedef ReferenceCountedPointer<class SuperSurface> SuperSurfaceRef;
 class RenderDevice;
 
-/** \brief Saito and Takahashi's Geometry Buffers, typically used today for deferred shading. 
-    Contains position, normal, depth, and BSDF parameters.
+/** Encoding of the depth buffer (not the GBuffer::Field::CS_Z buffer) */
+class DepthEncoding {
+public:
 
-    Used for rendering a G3D::SuperBSDF with deferred shading. 
+    enum Value {
+        /** Traditional (n)/(f-n) * (1 - f/z) encoding.  Easy to
+            produce from a projection matrix, few good numerical
+            properties.*/
+        HYPERBOLIC,
 
-    Requires SS_GBuffer.pix, SS_GBufferPosition.pix, and
-    SS_NonShadowedPass.vrt at runtime, which can be found in the
-    G3D/data-files/SuperShader directory of the G3D distribution.
+        /** (z-n)/(f-n), provides uniform precision for fixed
+            point formats like DEPTH24, and easy to reconstruct
+            csZ directly from the depth buffer. Poor precision
+            under floating-point formats.
 
-    \beta
+            Accomplished using a custom vertex shader; not possible
+            with a projection matrix.
+        */
+        LINEAR,
+            
+        /** (n)/(f-n) * (f/z-1) encoding, good for floating-point
+            formats like DEPTH32F.
+             
+            Accomplished using glDepthRange(1.0f, 0.0f) with a traditionl
+            projection matrix. 
+
+            \cite http://portal.acm.org/citation.cfm?id=311579&dl=ACM&coll=DL&CFID=28183902&CFTOKEN=63987370*/
+        COMPLEMENTARY
+    } value;
+
+    static const char* toString(int i, Value& v);
+
+    G3D_DECLARE_ENUM_CLASS_METHODS(DepthEncoding);
+
+}; // class DepthEncoding
+
+} // namespace G3D
+G3D_DECLARE_ENUM_CLASS_HASHCODE(G3D::DepthEncoding);
+namespace G3D {
+
+/** \brief Saito and Takahashi's Geometry Buffers, typically 
+    used today for deferred shading. 
+
+    Optionally contains position, normal, depth, velocity, and BSDF parameters
+    as well as depth and stencil.
+    
+    Example:
+    \code
+    GBuffer::Specification specification;
+    specification.format[GBuffer::Field::WS_NORMAL]   = ImageFormat::RGB8();
+    specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB16F();
+    specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
+    specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
+    specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH24();
+    specification.depthEncoding = GBuffer::DepthEncoding::HYPERBOLIC;
+    
+    gbuffer = GBuffer::create(specification);
+    gbuffer->setSize(w, h);
+
+    ...
+
+    gbuffer->prepare(rd, defaultCamera, 0, -1.0f / desiredFrameRate());
+    Surface::renderIntoGBuffer(rd, surface3D, gbuffer);
+    \endcode
+
+    \sa Surface, Shader, Texture
 */
 class GBuffer : public ReferenceCountedObject {
 public:
+    
+    typedef ReferenceCountedPointer<GBuffer> Ref;
 
-    class Specification {
+    /**
+     \brief Names of fields that may be present in a GBuffer.
+
+     These use the abbreviations CS = camera space, WS = world space, SS = screen space.
+
+     Normals are always encoded as n' = (n+1)/2, even if they are in
+     floating point format, to simplify the implemenation of routines
+     that read and write GBuffers.
+     */
+    class Field {
     public:
 
-        /** World-space shading normal in RGB (after bump mapping). */
-        bool                  wsNormal;
+        enum Value {
 
-        /** Camera-space shading normal in RGB (after bump mapping). */
-        bool                  csNormal;
+            /** Shading normal, after interpolation and bump-mapping.*/
+            WS_NORMAL,
 
-        bool                  lambertian;
-        bool                  specular;
-        bool                  transmissive;
-        bool                  emissive;
+            /** \copydoc WS_NORMAL */
+            CS_NORMAL,
 
-        /** World-space triangle normal in RGB. */
-        bool                  wsFaceNormal;
+            /** Geometric normal of the face, independent of the
+                vertex normals. */
+            WS_FACE_NORMAL,
 
-        /** Camera-space triangle normal in RGB. */
-        bool                  csFaceNormal;
+            /** \copydoc WS_FACE_NORMAL */
+            CS_FACE_NORMAL,
 
-        /** If false, normal channels are encoded as \f$ \vec{n}'_i = (\vec{n}_i + 1)/n\f$. 
-            This is typically desirable for 8-bit formats.
-            Defaults to false.*/
-        bool                  normalsAreSigned;
+            /** Must be a floating-point format */
+            WS_POSITION,
 
-        /** Packed camera-space depth. */
-        bool                  packedDepth;
+            /** Must be a floating-point format */
+            CS_POSITION,
 
-        /** The G3D::Material "custom" channel */
-        bool                  custom;
+            /** Must be a floating-point or normalized fixed-point
+                format. \sa SuperBSDF, Material.*/
+            LAMBERTIAN,
 
-        /** World-space position in RGB. */
-        bool                  wsPosition;
+            /** RGB = magnitude; A = exponent. Fresnel has not been
+                applied. Must be a floating-point or normalized
+                fixed-point format. \sa SuperBSDF, Material. */
+            GLOSSY,
 
-        /** Camera-space position in RGB. */
-        bool                  csPosition;
+            /** Must be a RGBA floating-point or normalized
+                fixed-point format. Index of refraction is in the A
+                channel. \sa SuperBSDF, Material. */
+            TRANSMISSIVE,
 
-        /** Must contain four channels */
-        const ImageFormat*    format;
+            /** Must be a floating-point or normalized fixed-point
+                format. \sa SuperBSDF, Material. */
+            EMISSIVE,
 
-        const ImageFormat*    depthFormat;
+            /** World-space position change since the previous frame,
+                according to a Surface.  Must be RGB floating-point.
+            
+                The name "velocity" is reserved for future use as
+                instantaneous velocity. 
 
-        /** Must have at least three channels */
-        const ImageFormat*    positionFormat;
+                There is no "WS_POSITION_CHANGE" because there is no
+                application (for a screen-space buffer of position
+                changes that don't take the camera's own movement into
+                account) to justify the added implementation
+                complexity required for that.
+            */
+            CS_POSITION_CHANGE,
 
+            /** Texture storing the screen-space pixel displacement
+                since the previous frame. As a result, floating-point
+                textures will store the sub-pixel displacement and
+                signed integers (e.g., ImageFormat::RG8UI) will round
+                to the nearest pixel.
+            */
+            SS_POSITION_CHANGE,
+
+            /** Camera-space Z.  Must be a floating-point, R-only texture. This is always a negative value
+            if a perspective transformation has been applied.*/
+            CS_Z,
+
+            /** The depth buffer, used for depth write and test.  Not camera-space Z.
+            This may include stencil bits */
+            DEPTH_AND_STENCIL,
+        
+            /** Not a valid */
+            COUNT
+        } value;
+  
+        static const char* toString(int i, Value& v);
+
+        bool isUnitVector() const {
+            return (value == WS_NORMAL) || (value == CS_NORMAL);
+        }
+
+        G3D_DECLARE_ENUM_CLASS_METHODS(Field);
+    }; // class Field
+
+    
+    class Specification {
+    public:
+        /**
+        Formats corresponding to the values of Field.
+        If a format is NULL, it is not allocated or rendered. 
+        */
+        const ImageFormat*      format[Field::COUNT];
+        
+        DepthEncoding           depthEncoding;
+        
         /** All fields for specific buffers default to false.  In the future, more buffers may be added, which will also 
             default to false for backwards compatibility. */
-        Specification() : 
-            wsNormal(false),
-            csNormal(false),
-            lambertian(false),
-            specular(false),
-            transmissive(false),
-            emissive(false),
-            wsFaceNormal(false),
-            csFaceNormal(false),
-            normalsAreSigned(false),
-            packedDepth(false),
-            custom(false),
-            wsPosition(false),
-            csPosition(false),
-            format(ImageFormat::RGBA8()),
-            depthFormat(ImageFormat::DEPTH24()), 
-            positionFormat(ImageFormat::RGB16F()) {
+        Specification() {
+            for (int f = 0; f < Field::COUNT; ++f) {
+                format[f] = NULL;
+            }
+            depthEncoding = DepthEncoding::HYPERBOLIC;
         }
 
         size_t hashCode() const {
-            return 
-                 int(wsNormal)           |
-                (int(csNormal)    << 1)  |
-                (int(lambertian)  << 2)  |
-                (int(specular)    << 3)  |
-                (int(transmissive)<< 4)  |
-                (int(emissive)    << 5)  |
-                (int(csFaceNormal)<< 6)  |
-                (int(wsFaceNormal)<< 7)  |
-                (int(packedDepth) << 8)  |
-                (int(custom)      << 9)  |
-                (int(csPosition)  << 10) |
-                (int(wsPosition)  << 11) |
-                (int(normalsAreSigned) << 12);
+            return
+                superFastHash(format, sizeof(ImageFormat*) * Field::COUNT) +
+                depthEncoding.hashCode();
         }
+        
+        /** Can be used with G3D::Table as an Equals and Hash function for a GBuffer::Specification.
 
-        /** Can be used with G3D::Table as an Equals function */
-        class Similar {
+          For example, 
+        \code
+        typedef Table<GBuffer::Specification, Shader::Ref, GBuffer::Specification::SameFields, GBuffer::Specification::SameFields> ShaderCache;
+        \endcode
+
+        */
+        class SameFields {
         public:
+            static size_t hashCode(const Specification& s) {
+                size_t h = 0;
+                for (int f = 0; f < Field::COUNT; ++f) {
+                    h = (h << 1) | (s.format[f] != NULL);
+                }
+                return h;
+            }
+
             static bool equals(const Specification& a, const Specification& b) {
                 return hashCode(a) == hashCode(b);
-            }
-            static size_t hashCode(const Specification& s) {
-                return s.hashCode();
             }
         };
     };
 
-    typedef ReferenceCountedPointer<GBuffer> Ref;
 
-private:
-
-    class Indices {
-    public:
-        int L;
-        int s;
-        int t;
-        int e;
-        int csN;
-        int wsN;
-        int csF;
-        int wsF;
-        int z;
-        int c;
-        
-        int csP;
-        int wsP;
-
-        /** For the primary pass, which includes normals */
-        int numPrimaryAttach;
-
-        /** For the position pass */
-        int numPositionAttach;
-        
-        /** Indices of the FBO fields.  */
-        Indices(const Specification& spec);
-
-        /** For the primary pass */
-        std::string computeDefines() const;
-
-        /** For the position pass */
-        std::string computePositionDefines() const;
-    };
-
+protected:
+    
     std::string                 m_name;
 
     const Specification         m_specification;
+        
+    GCamera                     m_camera;
 
-    const Indices               m_indices;
+    float                       m_timeOffset;
 
-    Shader::Ref                 m_positionShader;
-    
-    mutable GCamera             m_camera;
+    float                       m_velocityStartTimeOffset;
 
     /** The other buffers are permanently bound to this framebuffer */
     Framebuffer::Ref            m_framebuffer;
 
-    Framebuffer::Ref            m_positionFramebuffer;
+    Framebuffer::AttachmentPoint m_fieldToAttachmentPoint[Field::COUNT];
 
-    /** RGB = diffuse reflectance (Fresnel is not applied), A = alpha */
-    Texture::Ref                m_lambertian;
+    std::string                 m_macroString;
 
-    /** RGB = F0, A = \f$\sigma\f$ (packed specular exponent).  Fresnel
-        is not applied */
-    Texture::Ref                m_specular;
+    /** True when the textures have been allocated */
+    bool                        m_texturesAllocated;
 
-    /** RGB = T0, A = eta.  Fresnel is not applied */
-    Texture::Ref                m_transmissive;
+    bool                        m_depthOnly;
 
-    Texture::Ref                m_emissive;
-
-    Texture::Ref                m_csNormal;
-    Texture::Ref                m_wsNormal;
-
-    Texture::Ref                m_wsFaceNormal;
-    Texture::Ref                m_csFaceNormal;
-
-    Texture::Ref                m_packedDepth;
-
-    /** World-space position */
-    Texture::Ref                m_wsPosition;
-    Texture::Ref                m_csPosition;
-
-    /** Depth texture. */
-    Texture::Ref                m_depth;
-
-    /** Returns the appropriate shader for this combination of
-        specification and material, checking against a cache of
-        previously compiled shaders.  The shader is not yet configured
-        for the material.*/
-    static Shader::Ref getShader(const Specification& specificiation, const Indices& indices, const Material::Ref& material);
-
+    bool                        m_hasFaceNormals;
+    
     GBuffer(const std::string& name, const Specification& specification);
 
-    /** Called from the constructor */
-    Shader::Ref makePositionShader();
-
-    void compute
-    (RenderDevice* rd, 
-     const SuperSurface::Ref& model) const;
-
-    void computeArray
-    (RenderDevice* rd, 
-     const Array<SuperSurface::Ref>& model) const;
+    // Intentionally unimplemented
+    GBuffer(const GBuffer&);
 
     // Intentionally unimplemented
     GBuffer& operator=(const GBuffer&);
@@ -233,10 +278,8 @@ public:
     static bool supported();
 
     static Ref create
-    (const std::string& name = "GBuffer",
-     const Specification& specification = Specification());
-
-    virtual ~GBuffer();
+    (const Specification& specification,
+     const std::string& name = "GBuffer");
 
     int width() const;
 
@@ -244,115 +287,102 @@ public:
 
     Rect2D rect2DBounds() const;
 
-    /** The other buffers are permanently bound to this framebuffer */
-    Framebuffer::Ref framebuffer() const {
-        return m_framebuffer;
-    }
+    /**
+    \brief A series of macros to prepend before a Surface's shader
+    for rendering to GBuffers.  
+    
+    This defines each of the fields
+    in use and maps it to a GLSL output variable.  For example,
+    it might contain:
 
-    Framebuffer::Ref positionFramebuffer() const {
-        return m_positionFramebuffer;
-    }
-
-    /** The camera from which these buffers were rendered */
-    const GCamera& camera() const {
-        return m_camera;
-    }
-
-    /** RGB = diffuse reflectance (Fresnel is not applied), A =
-        partial coverage. */
-    Texture::Ref lambertian() const {
-        return m_lambertian;
-    }
-
-    /** RGB = F0, A = \f$\sigma\f$ (packed specular exponent).  Fresnel
-        is not applied */
-    Texture::Ref specular() const {
-        return m_specular;
-    }
-
-    /** RGB = T0, A = eta.  Fresnel is not applied */
-    Texture::Ref transmissive() const {
-        return m_transmissive;
-    }
-
-    /** RGB = T0, A = eta.  */
-    Texture::Ref emissive() const {
-        return m_emissive;
-    }
-
-    /** World-space position */
-    Texture::Ref wsPosition() const {
-        return m_wsPosition;
-    }
-
-    /** Camera-space position */
-    Texture::Ref csPosition() const {
-        return m_csPosition;
-    }
-
-    /** Camera-space unit shading normal, after bump mapping. */
-    Texture::Ref csNormal() const {
-        return m_csNormal;
-    }
-
-    /** World-space unit shading normal, after bump mapping. */
-    Texture::Ref wsNormal() const {
-        return m_wsNormal;
-    }
-
-    /** World-space geometric normal */
-    Texture::Ref wsFaceNormal() const {
-        return m_wsFaceNormal;
-    }
-
-    /** World-space geometric normal */
-    Texture::Ref csFaceNormal() const {
-        return m_csFaceNormal;
-    }
-
-    /** Camera space depth */
-    Texture::Ref packedDepth() const {
-        return m_packedDepth;
-    }
-
-    /** Depth texture. */
-    Texture::Ref depth() const {
-        return m_depth;
-    }
-
-    const std::string& name() const {
-        return m_name;
-    }
-
-    /** Reallocate all buffers to this size if they are not already */
-    virtual void resize(int width, int height);
-
-    /** Render the models to this GBuffer set (clearing first).  Depth
-        is only cleared if RenderDevice::depthWrite is true.
-
-        Assumes that \a modelArray has already been culled and sorted
-        for the camera.
-
-        Performs binary alpha testing using Lambertian.a.
-
-        Only renders elements of \a modelArray that are SuperSurface
-        instances.
+    \code
+    #define WS_NORMAL   gl_FragData[0]
+    #define LAMBERTIAN  gl_FragData[1]
+    #define DEPTH       gl_FragDepth
+    \endcode
     */
-    void compute
-    (RenderDevice*                  rd, 
-     const GCamera&                 camera,
-     const Array<Surface::Ref>&     modelArray) const;
+    const std::string macros() const {
+        return m_macroString;
+    }
+
+    /** Returns the attachment point on framebuffer() for \a field.*/
+    Framebuffer::AttachmentPoint attachmentPoint(Field field) const {
+        return m_fieldToAttachmentPoint[field.value];
+    }
 
     const Specification& specification() const {
         return m_specification;
     }
 
+    /** The other buffers are permanently bound to this framebuffer */
+    const Framebuffer::Ref& framebuffer() const {
+        return m_framebuffer;
+    }
+
+    Framebuffer::Ref framebuffer() {
+        return m_framebuffer;
+    }
+
+    /** The camera from which these buffers were rendered. */
+    const GCamera& camera() const {
+        return m_camera;
+    }
+
+    /** For debugging in programs with many GBuffers. */
+    const std::string& name() const {
+        return m_name;
+    }
+
+    /** Reallocate all buffers to this size if they are not already. */
+    virtual void resize(int width, int height);
+
 	/** Explicitly override the camera stored in the GBuffer. */
     void setCamera(const GCamera& camera) {
         m_camera = camera;
     }
+
+    /** \sa Surface::renderGBufferHomogeneous */
+    void setTimeOffsets(float timeOffset, float velocityStartTimeOffset) {
+        m_timeOffset = timeOffset;
+        m_velocityStartTimeOffset = velocityStartTimeOffset;
+    }
+
+    /** \sa Surface::renderGBufferHomogeneous */
+    float timeOffset() const {
+        return m_timeOffset;
+    }
+
+    /** \sa Surface::renderGBufferHomogeneous */
+    float velocityStartTimeOffset() const {
+        return m_velocityStartTimeOffset;
+    }
+
+    /** True iff this G-buffer renders only depth and stencil. */
+    bool isDepthAndStencilOnly() const {
+        return m_depthOnly;
+    }
+
+    /** True if this contains non-NULL Field::CS_FACE_NORMAL or Field::WS_FACE_NORMAL in the specificationl. */
+    bool hasFaceNormals() const {
+        return m_hasFaceNormals;
+    }
+
+    /** Returns the Texture bound to \a f, or NULL if there is not one */
+    Texture::Ref texture(Field f) const {
+        return m_framebuffer->get(m_fieldToAttachmentPoint[f])->texture();
+    }
+
+    /** Returns the Renderbuffer bound to \a f, or NULL if there is not one */
+    Renderbuffer::Ref renderbuffer(Field f) const {
+        return m_framebuffer->get(m_fieldToAttachmentPoint[f])->renderbuffer();
+    }
+
+    /** Bind the framebuffer and clear it, then set the camera and time offsets */
+    void prepare(RenderDevice* rd, const GCamera& camera, float timeOffset, float velocityStartTimeOffset);
 };
 
 } // namespace G3D
+
+G3D_DECLARE_ENUM_CLASS_HASHCODE(G3D::GBuffer::Field);
 
 #endif

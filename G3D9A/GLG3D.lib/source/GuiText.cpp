@@ -34,13 +34,13 @@ GuiText::GuiText
  float size, 
  const Color4& color,
  const Color4& outlineColor,
- const Vector2& offset) {
+ const Vector2& offset) : m_sourceRect(Rect2D::empty()) {
     append(text, font, size, color, outlineColor, offset);
 }
 
 
 GuiText::GuiText
-(const char* text) {
+(const char* text) : m_sourceRect(Rect2D::empty()) {
     append(text);
 }
 

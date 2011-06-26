@@ -50,7 +50,9 @@ protected:
         Widget and its manager. */
     WidgetManager* m_manager;
 
-    Widget() : m_manager(NULL) {}
+    float          m_depth;
+
+    Widget() : m_manager(NULL), m_depth(0.5f) {}
 
 public:
 
@@ -112,8 +114,17 @@ public:
         return AABox2D(-Vector2::inf(), Vector2::inf());
     }
 
-    /** Inherited from Surface2D */
-    virtual float depth() const { return 0.5f; }
+    /** Inherited from Surface2D.  Controls the depth of objects when rendering.  Subclasses may override this but it can 
+     interfere with the normal handling of rendering and event delivery. depth = 0 is usually the "top" widget and depth = 1 is usually the "bottom" widget. */
+    virtual float depth() const { 
+        return m_depth; 
+    }
+
+    /** Called by the WidgetManager.  This is the depth that the Widget is expected to use when posed as a Surface2D.
+      Subclasses may override or ignore this but it can interfere with the normal handling of rendering. */
+    virtual void setDepth(float d) {
+        m_depth = d;
+    }
 };
 
 
@@ -131,20 +142,7 @@ public:
     typedef ReferenceCountedPointer<class WidgetManager> Ref;
 
 private:
-    
-    /** Events are delivered in decreasing index order, except
-        rendering, which is processed in increasing order.  */
-    Array<Widget::Ref>   m_moduleArray;
-
-    bool                 m_locked;
-
-    /** The widget that will receive events first. This is usually but
-        not always the top Widget in m_moduleArray. */
-    Widget::Ref          m_focusedModule;
-
-    WidgetManager();
-
-    /** Manager events that have been delayed by a lock.  Not related
+    /** Manages events that have been delayed by a lock.  Not related
         to GEvent in any way. */
     class DelayedEvent {
     public:
@@ -156,10 +154,28 @@ private:
         DelayedEvent(Type type = ADD, const Widget::Ref& module = NULL) : type(type), module(module) {}
     };
     
+    /** Events are delivered in DECREASING index order.  */
+    Array<Widget::Ref>   m_moduleArray;
+
+    bool                 m_locked;
+
+    /** The widget that will receive events first. This is usually but
+        not always the top Widget in m_moduleArray. */
+    Widget::Ref          m_focusedModule;
+
+ 
     /** To be processed in endLock */
     Array<DelayedEvent> m_delayedEvent;
 
-    OSWindow*  m_window;
+    /** Operating system window */
+    OSWindow*           m_window;
+
+    WidgetManager();
+
+    /** Assigns a depth to each widget based on its current position in m_moduleArray and then
+        sorts by depth.  The sorting pass is needed because some widgets will not accept
+        their assigned position and will move up or down the array anyway. */
+    void updateWidgetDepths();
 
 public:
 

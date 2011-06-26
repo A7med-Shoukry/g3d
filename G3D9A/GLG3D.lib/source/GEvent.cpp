@@ -17,6 +17,9 @@ std::string GEvent::toString() const {
     case GEventType::ACTIVE:
         return "ActiveEvent";
 
+    case GEventType::FOCUS:
+        return format("FocusEvent ('%d')", focus.hasFocus);
+
     case GEventType::KEY_UP:
         return format("KeyboardEvent key %d ('%c') + %d up", key.keysym.sym, 
                       (key.keysym.unicode >= 32) ? key.keysym.unicode &0x7F : ' ', 

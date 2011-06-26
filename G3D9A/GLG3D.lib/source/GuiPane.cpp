@@ -104,12 +104,13 @@ void GuiPane::pack() {
 void GuiPane::setRect(const Rect2D& rect) {
     m_rect = rect;       
     m_clientRect = theme()->paneToClientBounds(m_rect, m_caption, GuiTheme::PaneStyle(m_style));
+    debugAssert(! m_clientRect.isEmpty());
 }
 
 
 GuiPane::~GuiPane() {
-    controlArray.deleteAll();
-    labelArray.deleteAll();
+    controlArray.invokeDeleteOnAllElements();
+    labelArray.invokeDeleteOnAllElements();
 }
 
 
@@ -376,16 +377,20 @@ void GuiPane::render(RenderDevice* rd, const GuiThemeRef& skin) const {
 void GuiPane::renderChildren(RenderDevice* rd, const GuiThemeRef& skin) const {
     skin->pushClientRect(m_clientRect);
 
-    for (int L = 0; L < labelArray.size(); ++L) {
-        labelArray[L]->render(rd, skin);
-    }
+    const Rect2D& clipRect = rd->clip2D();
+    if (! clipRect.isEmpty()) {
 
-    for (int c = 0; c < controlArray.size(); ++c) {
-        controlArray[c]->render(rd, skin);
-    }
+        for (int L = 0; L < labelArray.size(); ++L) {
+            labelArray[L]->render(rd, skin);
+        }
 
-    for (int p = 0; p < containerArray.size(); ++p) {
-        containerArray[p]->render(rd, skin);
+        for (int c = 0; c < controlArray.size(); ++c) {
+            controlArray[c]->render(rd, skin);
+        }
+
+        for (int p = 0; p < containerArray.size(); ++p) {
+            containerArray[p]->render(rd, skin);
+        }
     }
 
     skin->popClientRect();

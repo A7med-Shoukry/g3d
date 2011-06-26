@@ -52,15 +52,18 @@ GuiWindow::GuiWindow()
 
 
 GuiWindow::GuiWindow(const GuiText& text, GuiThemeRef skin, const Rect2D& rect, GuiTheme::WindowStyle style, CloseAction close) 
-    : modal(NULL), m_text(text), m_rect(rect), m_visible(true), 
+    : modal(NULL), m_text(text), m_rect(rect),
+      m_clientRect(rect), m_visible(true), 
       m_style(style), m_closeAction(close), m_skin(skin), 
       inDrag(false),
+      dragOriginalRect(Rect2D::empty()),
       mouseOverGuiControl(NULL), 
       keyFocusGuiControl(NULL),
       m_enabled(true),
       m_focused(false),
       m_mouseVisible(false) {
 
+    debugAssertM(! rect.isEmpty(), "Pass a non-empty rectangle for the initial bounds.  Rect2D() creates an empty rectangle, which now is different from a zero-area rectangle at zero.");
     setRect(rect);
     m_rootPane = new GuiPane(this, "", clientRect() - clientRect().x0y0(), GuiTheme::NO_PANE_STYLE);
 }
@@ -98,11 +101,13 @@ void GuiWindow::morphTo(const Rect2D& r) {
     // Terminate any drag
     inDrag = false;
 
+    debugAssert(! r.isEmpty());
     m_morph.morphTo(rect(), r);
 }
 
 
 void GuiWindow::setRect(const Rect2D& r) {
+    debugAssert(! r.isEmpty());
     m_rect = r;
     m_morph.active = false;
     
@@ -158,7 +163,7 @@ void GuiWindow::onUserInput(UserInput* ui) {
     if (m_rect.contains(mouse)) {
         // The mouse is over this window, update the mouseOver control
         
-        if ((m_closeAction != NO_CLOSE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
+        if ((m_closeAction != NO_CLOSE) && (m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::PANEL_WINDOW_STYLE)) {
             m_closeButton.mouseOver = 
                 m_skin->windowToCloseButtonBounds(m_rect, GuiTheme::WindowStyle(m_style)).contains(mouse);
         }
@@ -234,7 +239,7 @@ bool GuiWindow::onEvent(const GEvent& event) {
 
         if (! focused()) {
             // Set focus
-            bool moveToFront = (m_style != GuiTheme::NO_WINDOW_STYLE);
+            bool moveToFront = (m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::PANEL_WINDOW_STYLE);
             m_manager->setFocusedWidget(this, moveToFront);
             m_focused = true;
 
@@ -248,7 +253,7 @@ bool GuiWindow::onEvent(const GEvent& event) {
 
         Rect2D titleRect;
         Rect2D closeRect;
-        if (m_style == GuiTheme::NO_WINDOW_STYLE) {
+        if ((m_style == GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
             // Prevent anyone from clicking here.
             titleRect = Rect2D::xyxy(-1,-1,-1,-1);
             closeRect = titleRect;
@@ -380,41 +385,44 @@ void GuiWindow::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     }    
 }
 
+
 void GuiWindow::render(RenderDevice* rd) const {
-    m_skin->beginRendering(rd);
-    {
+    m_skin->beginRendering(rd); {
         bool hasClose = m_closeAction != NO_CLOSE;
 
-        if (m_style != GuiTheme::NO_WINDOW_STYLE) {
+        if ((m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
             m_skin->renderWindow(m_rect, focused(), hasClose, m_closeButton.down,
                                m_closeButton.mouseOver, m_text, GuiTheme::WindowStyle(m_style));
         } else {
             debugAssertM(m_closeAction == NO_CLOSE, "Windows without frames cannot have a close button.");
         }
         
-        m_skin->pushClientRect(m_clientRect);
+        static const bool DEBUG_WINDOW_SIZE = false;
+
+        m_skin->pushClientRect(m_clientRect); {
+
             m_rootPane->render(rd, m_skin);
-  /*
-  // Code for debugging window sizes
-rd->endPrimitive();
-rd->pushState();
-rd->setTexture(0, NULL);
-Draw::rect2D(Rect2D::xywh(-100, -100, 1000, 1000), rd, Color3::red());
-rd->popState();
-rd->beginPrimitive(PrimitiveType::QUADS);
-*/
-        m_skin->popClientRect();
-        /*
-  // Code for debugging window sizes
-rd->endPrimitive();
-rd->pushState();
-rd->setTexture(0, NULL);
-Draw::rect2D(m_rect + Vector2(20,0), rd, Color3::blue());
-rd->popState();
-rd->beginPrimitive(PrimitiveType::QUADS);
-*/
-    }
-    m_skin->endRendering();
+            if (DEBUG_WINDOW_SIZE) {
+                // Code for debugging window sizes
+                rd->endPrimitive();
+                rd->pushState();
+                rd->setTexture(0, NULL);
+                Draw::rect2D(Rect2D::xywh(-100, -100, 1000, 1000), rd, Color3::red());
+                rd->popState();
+                rd->beginPrimitive(PrimitiveType::QUADS);
+            }
+
+        } m_skin->popClientRect();
+        if (DEBUG_WINDOW_SIZE) {        
+            // Code for debugging window sizes
+            rd->endPrimitive();
+            rd->pushState();
+            rd->setTexture(0, NULL);
+            Draw::rect2D(m_rect + Vector2(20,0), rd, Color3::blue());
+            rd->popState();
+            rd->beginPrimitive(PrimitiveType::QUADS);
+        }
+    } m_skin->endRendering();
     
 }
 
@@ -609,13 +617,18 @@ void GuiWindow::Modal::processEventQueue() {
 }
 
 
-Rect2D GuiWindow::bounds () const {
+Rect2D GuiWindow::bounds() const {
     return m_rect;
 }
 
 
-float GuiWindow::depth () const {
-    return 0;
+float GuiWindow::depth() const {
+    if ((m_style == GuiTheme::NO_WINDOW_STYLE) || (m_style == GuiTheme::PANEL_WINDOW_STYLE)) {
+        // Stay in back
+        return 1.0;
+    } else {
+        return m_depth;
+    }
 }
 
 }

@@ -69,7 +69,11 @@ DebugID debugDraw
         s.solidColor        = solidColor;
         s.wireColor         = wireColor;
         s.frame             = frame;
-        s.endTime           = System::time() + displayTime;
+        if (displayTime == 0) {
+            s.endTime = 0;
+        } else {
+            s.endTime       = System::time() + displayTime;
+        }
         s.id                = lastGApp->m_lastDebugID++;
         return s.id;
     } else {
@@ -106,7 +110,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 #endif
     renderDevice(NULL),
     userInput(NULL),
-    lastWaitTime(System::time()),
+    m_lastWaitTime(System::time()),
     m_desiredFrameRate(5000),
     m_simTimeStep(1.0f / 60.0f),
     m_realTime(0), 
@@ -232,14 +236,15 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
         UprightSplineManipulator::Ref splineManipulator = UprightSplineManipulator::create(&defaultCamera);
         addWidget(splineManipulator);
         
-        GFont::Ref arialFont = GFont::fromFile(System::findDataFile("icon.fnt"));
-        GuiTheme::Ref theme = GuiTheme::fromFile(System::findDataFile("osx.gtm"), arialFont);
+        GFont::Ref      arialFont   = GFont::fromFile(System::findDataFile("icon.fnt"));
+        GuiTheme::Ref   theme       = GuiTheme::fromFile(System::findDataFile("osx.gtm"), arialFont);
 
-        debugWindow = GuiWindow::create("Debug Controls", theme, 
-            Rect2D::xywh(0, settings.window.height - 150, 150, 150), GuiTheme::TOOL_WINDOW_STYLE, GuiWindow::HIDE_ON_CLOSE);
-        debugWindow->setVisible(false);
+        debugWindow = GuiWindow::create("Control Window", theme, 
+            Rect2D::xywh(0, 0, settings.window.width, 150), GuiTheme::PANEL_WINDOW_STYLE, GuiWindow::NO_CLOSE);
         debugPane = debugWindow->pane();
+        debugWindow->setVisible(false);
         addWidget(debugWindow);
+
 
         developerWindow = DeveloperWindow::create
             (this,
@@ -263,7 +268,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 
     m_simTime     = 0;
     m_realTime    = 0;
-    lastWaitTime  = System::time();
+    m_lastWaitTime  = System::time();
 
     renderDevice->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
 }
@@ -593,7 +598,8 @@ void GApp::renderDebugInfo() {
 bool GApp::onEvent(const GEvent& event) {
     if (event.type == GEventType::VIDEO_RESIZE) {
         resize(event.resize.w, event.resize.h);
-        return true;
+        // Don't consume the resize event--we want subclasses to be able to handle it as well
+        return false;
     }
 
     return false;
@@ -724,9 +730,9 @@ void GApp::resize(int w, int h) {
 
 void GApp::oneFrame() {
     for (int repeat = 0; repeat < max(1, m_renderPeriod); ++repeat) {
-        lastTime = now;
-        now = System::time();
-        RealTime timeStep = now - lastTime;
+        m_lastTime = m_now;
+        m_now = System::time();
+        RealTime timeStep = m_now - m_lastTime;
 
         // User input
         m_userInputWatch.tick();
@@ -735,20 +741,17 @@ void GApp::oneFrame() {
         }
         debugAssertGLOk();
         onUserInput(userInput);
-        m_widgetManager->onUserInput(userInput);
         m_userInputWatch.tock();
 
         // Network
         m_networkWatch.tick();
         onNetwork();
-        m_widgetManager->onNetwork();
         m_networkWatch.tock();
 
         // Logic
         m_logicWatch.tick();
         {
             onAI();
-            m_widgetManager->onAI();
         }
         m_logicWatch.tock();
 
@@ -761,7 +764,6 @@ void GApp::oneFrame() {
 
             onBeforeSimulation(rdt, sdt, idt);
             onSimulation(rdt, sdt, idt);
-            m_widgetManager->onSimulation(rdt, sdt, idt);
             onAfterSimulation(rdt, sdt, idt);
 
             if (m_cameraManipulator.notNull()) {
@@ -778,7 +780,6 @@ void GApp::oneFrame() {
     // Pose
     m_posed3D.fastClear();
     m_posed2D.fastClear();
-    m_widgetManager->onPose(m_posed3D, m_posed2D);
     onPose(m_posed3D, m_posed2D);
 
     // Wait 
@@ -789,18 +790,18 @@ void GApp::oneFrame() {
 
     m_waitWatch.tick();
     {
-        RealTime now = System::time();
+        RealTime nowAfterLoop = System::time();
 
         // Compute accumulated time
-        RealTime cumulativeTime = now - lastWaitTime;
+        RealTime cumulativeTime = nowAfterLoop - m_lastWaitTime;
 
         // Perform wait for actual time needed
         RealTime desiredWaitTime = max(0.0, desiredFrameDuration() - cumulativeTime);
         onWait(max(0.0, desiredWaitTime - m_lastFrameOverWait) * 0.97);
 
         // Update wait timers
-        lastWaitTime = System::time();
-        RealTime actualWaitTime = lastWaitTime - now;
+        m_lastWaitTime = System::time();
+        RealTime actualWaitTime = m_lastWaitTime - nowAfterLoop;
 
         // Learn how much onWait appears to overshoot by and compensate
         double thisOverWait = actualWaitTime - desiredWaitTime;
@@ -839,9 +840,8 @@ void GApp::oneFrame() {
     renderDevice->endFrame();
 
     // Remove all expired debug shapes
-    RealTime now = System::time();
     for (int i = 0; i < debugShapeArray.size(); ++i) {
-        if (debugShapeArray[i].endTime <= now) {
+        if (debugShapeArray[i].endTime <= m_now) {
             debugShapeArray.fastRemove(i);
             --i;
         }
@@ -910,9 +910,7 @@ void GApp::onCleanup() {}
 
 
 void GApp::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
-    (void)idt;
-    (void)rdt;
-    (void)sdt;
+    m_widgetManager->onSimulation(rdt, sdt, idt);
 }
 
 
@@ -929,14 +927,17 @@ void GApp::onAfterSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 }
 
 void GApp::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
-    (void)posed3D;
-    (void)posed2D;
+    m_widgetManager->onPose(posed3D, posed2D);
 }
 
-void GApp::onNetwork() {}
+void GApp::onNetwork() {
+    m_widgetManager->onNetwork();
+}
 
 
-void GApp::onAI() {}
+void GApp::onAI() {
+    m_widgetManager->onAI();
+}
 
 
 void GApp::beginRun() {
@@ -951,7 +952,7 @@ void GApp::beginRun() {
         defaultController->setFrame(defaultCamera.coordinateFrame());
     }
 
-    now = System::time() - 0.001;
+    m_now = System::time() - 0.001;
 }
 
 
@@ -989,7 +990,9 @@ void GApp::onConsoleCommand(const std::string& cmd) {
 
 
 void GApp::onUserInput(UserInput* userInput) {
+    m_widgetManager->onUserInput(userInput);
 }
+
 
 void GApp::processGEventQueue() {
     userInput->beginEvents();
@@ -997,6 +1000,9 @@ void GApp::processGEventQueue() {
     // Event handling
     GEvent event;
     while (window()->pollEvent(event)) {
+        // userInput always gets to process events, so that it
+        // maintains the current state correctly
+        userInput->processEvent(event);
         
         // For event debugging
         //if (event.type != GEventType::MOUSE_MOTION) {
@@ -1057,8 +1063,6 @@ void GApp::processGEventQueue() {
 
         default:;
         }
-
-        userInput->processEvent(event);
     }
 
     userInput->endEvents();

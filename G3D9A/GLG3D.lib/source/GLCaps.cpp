@@ -233,7 +233,9 @@ void GLCaps::init() {
     // Remove all pending errors
     while (glGetError() != GL_NONE);
 
-    if (glGetString(GL_SHADING_LANGUAGE_VERSION) && (glGetError() != GL_NONE)) { 
+    const char* v = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    GLenum e = glGetError();
+    if ((v != NULL) && (e == GL_NONE)) {
         #ifdef G3D_ANDROID
             // See http://www.khronos.org/opengles/sdk/docs/man/xhtml/glGetString.xml
             #define SL_VERSION_PREFIX_LEN (strlen("OpenGL ES GLSL ES "))
@@ -986,17 +988,17 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
 
     int smajor = 1;
     int sminor = 0;
-
-	bool hasGLSL330 = false;
+    
+    bool hasGLSL330 = false;
     if (glGetString(GL_SHADING_LANGUAGE_VERSION)) { 
-		sscanf((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION), "%d.%d", &smajor, &sminor);
-		hasGLSL330 = ((smajor > 3) || (smajor == 3 && sminor >= 30));
-	}
-
-	supported = supported && hasGLSL330;
+        sscanf((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION), "%d.%d", &smajor, &sminor);
+        hasGLSL330 = ((smajor > 3) || (smajor == 3 && sminor >= 30));
+    }
+    
+    supported = supported && hasGLSL330;
     explanation += format("GLSL version 3.30                   %s (GLSL version on this driver is %d.%d)\n",
                           hasGLSL330 ? "yes" : "NO", smajor, sminor);
-
+    
     if (major > 3 || (major == 3 && minor >= 3)) {
         supported = true;
         explanation += format("GPU Supports OpenGL 3.3 or later  (OpenGL version on this driver is %d.%d)\n", major, minor);

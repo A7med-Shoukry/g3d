@@ -393,17 +393,20 @@ float TriTree::Node::SAHCost(Vector3::Axis axis, float offset, const Array<Poly>
 }
 
 
-void __fastcall TriTree::Node::intersectRay
+bool __fastcall TriTree::Node::intersectRay
 (const Ray&          ray,
  Tri::Intersector&   intersectCallback, 
- float&              distance) const {
+ float&              distance,
+ bool                exitOnAnyHit) const {
+
+    bool hit = false;
     
     // Don't bother paying the bounding box intersection at
     // leaves, since we have to pay it again below.
     if (! isLeaf() && ! intersect(ray, bounds, distance)) {
         // The ray doesn't hit this node, so it can't hit the
         // children of the node either--stop searching.
-        return;
+        return false;
     }
     
     enum {NONE = -1};
@@ -417,7 +420,10 @@ void __fastcall TriTree::Node::intersectRay
     
     // Test on the side closer to the ray origin.
     if (firstChild != NONE) {
-        child(firstChild).intersectRay(ray, intersectCallback, distance);
+        hit = child(firstChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit) || hit;
+        if (exitOnAnyHit && hit) {
+            return true;
+        }
     }
     
     // Test the contents of the node. If the value array is
@@ -428,13 +434,13 @@ void __fastcall TriTree::Node::intersectRay
         intersect(ray, valueArray->bounds, distance)) {
 
         // Test for intersection against every object at this node.
-        for (int v = 0; v < valueArray->size; ++v) {        
-            intersectCallback(ray, *valueArray->data[v], distance);
-        }
-        
-        if (isLeaf()) {
-            return;
-        }
+        for (int v = 0; v < valueArray->size; ++v) { 
+            hit = intersectCallback(ray, *valueArray->data[v], distance) || hit;
+            if (exitOnAnyHit && hit) {
+                // Early out
+                return true;
+            }
+        }        
     }
     
     // Test on the side farther from the ray origin.
@@ -446,16 +452,19 @@ void __fastcall TriTree::Node::intersectRay
             // This test makes about a factor of two improvement in performance.
             const float distanceToSplittingPlane =
                 (splitLocation - ray.origin()[axis]) * ray.invDirection()[axis];
+
             if (distanceToSplittingPlane > distance) {
                 // We aren't going to hit anything else before hitting the splitting plane,
                 // so don't bother looking on the far side of the splitting plane at the other
                 // child.
-                return;
+                return hit;
             }
         }
         
-        child(secondChild).intersectRay(ray, intersectCallback, distance);
+        hit = child(secondChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit) || hit;
     }
+
+    return hit;
 }
 
 
@@ -697,13 +706,14 @@ void TriTree::draw(RenderDevice* rd, int level, bool showBoxes, int minNodeSize)
 bool TriTree::intersectRay
 (const Ray& ray,
  Tri::Intersector& intersectCallback, 
- float& distance) const {
-    
-    const float initialDistance = distance;
+ float& distance,
+ bool exitOnAnyHit) const {
+
+    bool hit = false;
     if (m_root != NULL) {
-        m_root->intersectRay(ray, intersectCallback, distance);
+        hit = m_root->intersectRay(ray, intersectCallback, distance, exitOnAnyHit);
     }
-    return distance < initialDistance;
+    return hit;
 }
 
 }

@@ -168,6 +168,17 @@ void TextOutput::printf(const char* formatString, ...) {
 }
 
 
+bool TextOutput::deleteSpace() {
+    if ((currentColumn > 0) && (data.last() == ' ')) {
+        data.popDiscard();
+        --currentColumn;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 void TextOutput::convertNewlines(const std::string& in, std::string& out) {
     // TODO: can be significantly optimized in cases where
     // single characters are copied in order by walking through

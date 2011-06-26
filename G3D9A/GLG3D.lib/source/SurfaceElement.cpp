@@ -227,6 +227,8 @@ void SurfaceElement::getBSDFImpulses
     debugAssert(n.isUnit());
 
     Color3 F(0,0,0);
+
+    // Track whether the Fresnel coefficient is initialized
     bool Finit = false;
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -240,14 +242,20 @@ void SurfaceElement::getBSDFImpulses
             // Mirror                
             Impulse& imp     = impulseArray.next();
             imp.w            = w_i.reflectAbout(n);
-            imp.coefficient  = F;
+            imp.magnitude    = F;
             imp.eta          = material.etaReflect;
             imp.extinction   = material.extinctionReflect;
             debugAssert(imp.w.isUnit());
         }
     }
+    
+    // TODO: transmit should be conditioned on lambertian as well as glossy
 
     ////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: a constant transmit is not consistent with the extinction coefficient model--
+    // let the caller choose.
+
     if (material.transmit.nonZero()) {
         // Fresnel transmissive coefficient
         Color3 F_t;
@@ -270,7 +278,7 @@ void SurfaceElement::getBSDFImpulses
         //debugAssertM(w_i.dot(n) >= -0.001, format("w_i dot n = %f", w_i.dot(n)));
         Impulse& imp     = impulseArray.next();
 
-        imp.coefficient  = p_transmit;
+        imp.magnitude    = p_transmit;
         imp.w            = (-w_i).refractionDirection(n, material.etaTransmit, material.etaReflect);
         imp.eta          = material.etaTransmit;
         imp.extinction   = material.extinctionTransmit;

@@ -1,10 +1,10 @@
 /**
-  @file GLG3D/ThirdPersonManipulator.cpp
+  \file GLG3D.lib/source/ThirdPersonManipulator.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2006-06-09
-  @edited  2010-01-11
+  \created 2006-06-09
+  \edited  2011-06-12
 */
 
 #include "GLG3D/ThirdPersonManipulator.h"
@@ -33,8 +33,9 @@ Vector3 UIGeom::computeEye(RenderDevice* rd) {
     return eye;
 }
 
-bool UIGeom::contains(
-    const Vector2&  p, 
+
+bool UIGeom::contains
+   (const Vector2&  p, 
     float&          nearestDepth, 
     Vector2&        tangent2D,
     float&          projectionW,
@@ -128,7 +129,7 @@ void UIGeom::computeProjection(RenderDevice* rd) {
     }
 }
 
-#define HIDDEN_LINE_ALPHA (0.1f)
+#define HIDDEN_LINE_ALPHA (0.3f)
 
 void UIGeom::render(RenderDevice* rd, const Color3& color, float lineScale) const {
     if (! visible) {
@@ -256,6 +257,7 @@ ThirdPersonManipulatorRef ThirdPersonManipulator::create() {
     return new ThirdPersonManipulator();
 }
 
+
 void ThirdPersonManipulator::render(RenderDevice* rd) const {
     rd->pushState();
     // Highlight the appropriate axis
@@ -305,9 +307,13 @@ void ThirdPersonManipulator::render(RenderDevice* rd) const {
                      RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA);
     rd->setShadeMode(RenderDevice::SHADE_SMOOTH);
 
+    // Regardless of what the caller wanted, ensure that we always
+    // get to write
+    rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0);
+
+    // Draw the background in LEQUAL mode
     // The Draw::axes command automatically doubles whatever scale we give it
     Draw::axes(m_controlFrame, rd, color[0], color[1], color[2], m_axisScale * 0.5f);
-
     // Hidden line
     rd->setDepthTest(RenderDevice::DEPTH_GREATER);
     Draw::axes(m_controlFrame, rd,
@@ -319,6 +325,7 @@ void ThirdPersonManipulator::render(RenderDevice* rd) const {
 
     rd->setObjectToWorldMatrix(m_controlFrame);
 
+    // These do their own hidden-line rendering
     if (m_translationEnabled) {
         for (int g = FIRST_TRANSLATION; g <= LAST_TRANSLATION; ++g) {
             m_geomArray[g].render(rd, color[g]);
@@ -335,7 +342,7 @@ void ThirdPersonManipulator::render(RenderDevice* rd) const {
     rd->popState();
 }
 
-
+/** The Surface that renders a ThirdPersonManipulator */
 class TPMSurface : public Surface {
     friend class ThirdPersonManipulator;
 
@@ -344,82 +351,40 @@ class TPMSurface : public Surface {
     TPMSurface(ThirdPersonManipulator* m) : m_manipulator(m) {}
 
 public:
+    virtual void sendGeometry(RenderDevice* rd) const {
+        alwaysAssertM(false, "Not implemented");
+    }
+protected:
+    virtual void defaultRender(RenderDevice* rd) const {
+        alwaysAssertM(false, "Not implemented");
+    }
+public:
 
     virtual void render(RenderDevice* rd) const {
         m_manipulator->render(rd);
     }
 
-    
-    virtual std::string name() const {
+    /** Force rendering after opaque objects so that it can try to
+        always be on top. */
+    virtual bool hasTransmission() const override {
+        return true;
+    }
+
+    virtual std::string name() const override {
         return "ThirdPersonManipulator";
     }
 
-    virtual void getCoordinateFrame(CoordinateFrame& c) const {
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) const override {
         m_manipulator->getControlFrame(c);
     }
 
-    virtual const MeshAlg::Geometry& objectSpaceGeometry() const {
-        static MeshAlg::Geometry x;
-        return x;
-    }
-
-    virtual const Array<Vector3>& objectSpaceFaceNormals
-    (bool normalize = true) const {
-        (void)normalize;
-        static Array<Vector3> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Face>& faces() const {
-        static Array<MeshAlg::Face> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Edge>& edges() const {
-        static Array<MeshAlg::Edge> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Vertex>& vertices() const {
-        static Array<MeshAlg::Vertex> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Face>& weldedFaces() const {
-        static Array<MeshAlg::Face> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Edge>& weldedEdges() const {
-        static Array<MeshAlg::Edge> x;
-        return x;
-    }
-
-    virtual const Array<MeshAlg::Vertex>& weldedVertices() const {
-        static Array<MeshAlg::Vertex> x;
-        return x;
-    }
-
-    virtual const Array<int>& triangleIndices() const {
-        static Array<int> x;
-        return x;
-    }
-
-    virtual void getObjectSpaceBoundingSphere(Sphere& s) const {
+    virtual void getObjectSpaceBoundingSphere(Sphere& s, bool previous = false) const override {
         s.radius = 2;
         s.center = Vector3::zero();
     }
 
-    virtual void getObjectSpaceBoundingBox(AABox& b) const {
+    virtual void getObjectSpaceBoundingBox(AABox& b, bool previous = false) const override {
         b = AABox(Vector3(-2,-2,-2), Vector3(2,2,2));
-    }
-
-    virtual int numBoundaryEdges() const {
-        return 0;
-    }
-
-    virtual int numWeldedBoundaryEdges() const {
-        return 0;
     }
 };
 

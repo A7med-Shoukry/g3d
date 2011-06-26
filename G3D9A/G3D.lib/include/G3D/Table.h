@@ -381,20 +381,15 @@ public:
     */
     float debugGetAverageBucketSize() const {
         size_t num = 0;
-        size_t count = 0;
 
         for (size_t b = 0; b < m_numBuckets; b++) {
             Node* node = m_bucket[b];
             if (node != NULL) {
                 ++num;
-                while (node != NULL) {
-                    node = node->next;
-                    ++count;
-                }
             }
         }
 
-        return (float)((double)count / num);
+        return (float)((double)size() / num);
     }
 
     /**
@@ -405,7 +400,7 @@ public:
      many keys to the same code.
      */
     double debugGetLoad() const {
-        return debugGetDeepestBucketSize() / (double)size();
+        return (double)size() / m_numBuckets;
     }
 
     /**
@@ -540,8 +535,12 @@ public:
             return &(node->entry);
         }
 
-        /** False if this entry is invalid */
-		bool hasMore() const {
+        bool isValid() const {
+            return ! isDone;
+        }
+
+        /** @deprecated  Use isValid */
+        bool hasMore() const {
 			return ! isDone;
 		}
     };

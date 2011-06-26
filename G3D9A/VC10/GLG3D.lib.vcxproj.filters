@@ -26,9 +26,6 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\BackgroundWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,9 +57,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\DXCaps.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\edgeFeatures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\FileDialog.cpp">
@@ -215,16 +209,7 @@
     <ClCompile Include="..\GLG3D.lib\source\ShadowMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\shadowVolume.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\Shape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\Sky.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\SkyParameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\SuperBSDF.cpp">
@@ -302,6 +287,12 @@
     <ClCompile Include="..\GLG3D.lib\source\SurfaceElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\Lighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\PhysicsFrameSplineEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\source\directinput8.h">
@@ -311,9 +302,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\BackgroundWidget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h">
@@ -344,9 +332,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\DXCaps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\edgeFeatures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\FileDialog.h">
@@ -511,16 +496,10 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ShadowMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\shadowVolume.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Sky.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SkyParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperBSDF.h">
@@ -589,10 +568,10 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\GL\wglew.h">
       <Filter>Header Files\GL</Filter>
     </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceSample.h">
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceElement.h">
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\PhysicsFrameSplineEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -607,12 +586,6 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.vrt">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\data-files\SuperShader\SS_BumpMap.pix">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\data-files\SuperShader\SS_Components.pix">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="..\data-files\SuperShader\SS_GBuffer.pix">
@@ -637,6 +610,15 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="..\data-files\SuperShader\SS_Refract.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\Film_FXAA.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\SS_GBuffer.vrt">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\SuperShader\BumpMap.glsl">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

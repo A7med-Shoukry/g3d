@@ -3,11 +3,13 @@
 
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   \created 2006-10-20
-  \edited  2010-12-31
+  \edited  2011-06-25
 */
 #ifndef G3D_GEvent_h
 #define G3D_GEvent_h
 
+#include "G3D/BinaryInput.h"
+#include "G3D/BinaryOutput.h"
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
 #include "GLG3D/GKey.h"
@@ -176,6 +178,20 @@ public:
         </pre>
      */
     uint16          unicode;
+
+    void serialize(G3D::BinaryOutput& b) const {
+        b.writeUInt8(scancode);
+        b.writeInt32(sym);
+        b.writeInt32(mod);
+        b.writeUInt16(unicode);
+    }
+
+    void deserialize(G3D::BinaryInput& b) {
+        scancode = b.readUInt8();
+        sym = static_cast<GKey::Value>(b.readInt32());
+        mod = static_cast<GKeyMod::Value>(b.readInt32());
+        unicode = b.readUInt16();
+    }
 };
 
 ///////////////////////////////////////////////////////////
@@ -185,7 +201,7 @@ class GEventType {
 public:
     enum Value { 
        NONE = 0,	        /** Unused (do not remove) */
-       ACTIVE,	        	/** Application loses/gains visibility */
+       ACTIVE,	        	/** Application loses/gains visibility \deprecated.  Use FOCUS */
        KEY_DOWN,	        /** Keys pressed */
        KEY_UP,	                /** Keys released */
        MOUSE_MOTION,		/** Mouse moved */
@@ -220,6 +236,8 @@ public:
        MOUSE_BUTTON_CLICK,  /** A 2D button click (in addition to mouse released event).  Uses MouseButtonEvent. */
        KEY_REPEAT,          /** Operating system virtual key press from the key being held down. This is not fired on the physical key press.*/
 
+       FOCUS,               /** Application gains or loses keyboard focus */
+
        /** This last event is only for bounding internal arrays
   	     It is the number of bits in the event mask datatype -- uint32 */
        NUMEVENTS
@@ -228,7 +246,7 @@ private:
     static const char* toString(int i, Value& v) {
         static const char* str[] = {
             "NONE",	        /* Unused (do not remove) */
-       "ACTIVE",	        	/* Application loses/gains visibility */
+       "ACTIVE",	        /* Application loses/gains visibility \deprecated.  Use FOCUS */
        "KEY_DOWN",	        /* Keys pressed */
        "KEY_UP",	            /* Keys released */
        "MOUSE_MOTION",		/* Mouse moved */
@@ -262,10 +280,11 @@ private:
        "MOUSE_SCROLL_2D",     /* A 2D scroll event has occured */
        "MOUSE_BUTTON_CLICK",  /* A 2D button click (in addition to mouse released event).  Uses MouseButtonEvent. */
        "KEY_REPEAT",/** Operating system virtual key press from the key being held down. This is not fired on the physical key press.*/
+       "FOCUS",
 
         "NUMEVENTS", NULL};
        static const Value val[] = {NONE,	        /* Unused (do not remove) */
-       ACTIVE,	        	/* Application loses/gains visibility */
+       ACTIVE,	        	/* Application loses/gains visibility \deprecated.  Use FOCUS */
        KEY_DOWN,	        /* Keys pressed */
        KEY_UP,	            /* Keys released */
        MOUSE_MOTION,		/* Mouse moved */
@@ -299,7 +318,9 @@ private:
        MOUSE_SCROLL_2D,     /* A 2D scroll event has occured */
        MOUSE_BUTTON_CLICK,  /* A 2D button click (in addition to mouse released event).  Uses MouseButtonEvent. */
        KEY_REPEAT,
-         NUMEVENTS};
+       FOCUS,
+
+       NUMEVENTS};
 
         const char* s = str[i];
         if (s) {
@@ -327,7 +348,7 @@ namespace G3D {
 #define SDL_APPACTIVE		0x04		/** \def SDL_APPACTIVE  The application is active */
 #endif
 
-/** Application visibility event structure */
+/** Application visibility event structure \deprecated */
 class ActiveEvent {
 public:
     /** GEventType::ACTIVE */
@@ -338,6 +359,13 @@ public:
 
     /** A mask of the focus states */
     uint8 state;
+};
+
+class FocusEvent {
+public:
+    /** GEventType::FOCUS */
+    uint8 type;
+    bool  hasFocus;
 };
 
 
@@ -610,6 +638,7 @@ public:
         does not call the constructor because GEvent is a union. */
     uint8                   type;
     
+    /** \deprecated */
     ActiveEvent             active;
     KeyboardEvent           key;
     MouseMotionEvent        motion;
@@ -626,6 +655,7 @@ public:
     GuiCloseEvent           guiClose;
     FileDropEvent           drop;
     MouseScroll2DEvent      scroll2d;
+    FocusEvent              focus;
 
     std::string toString() const;
 };

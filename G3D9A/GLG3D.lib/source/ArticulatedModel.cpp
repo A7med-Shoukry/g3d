@@ -1,9 +1,9 @@
 /**
- @file ArticulatedModel.cpp
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \file source/ArticulatedModel.cpp
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2003-09-14
- @edited  2010-09-18
+ \created 2003-09-14
+ \edited  2011-06-18
  */
 
 #include "GLG3D/ArticulatedModel.h"
@@ -11,6 +11,7 @@
 #include "G3D/ThreadSet.h"
 #include "GLG3D/GLCaps.h"
 #include "G3D/Any.h"
+#include "G3D/Ray.h"
 #include "G3D/FileSystem.h"
 #include "GLG3D/BSPMAP.h"
 
@@ -25,7 +26,7 @@ ArticulatedModel::Specification::Specification(const Any& any) {
         filename = any.resolveStringAsFilename();
     } else {
         any.verifyName("ArticulatedModel::Specification");
-        for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+        for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
             const std::string& key = toLower(it->key);
             if (key == "filename") {
                 filename = it->value.resolveStringAsFilename();
@@ -54,7 +55,7 @@ Any ArticulatedModel::Specification::toAny() const {
 ArticulatedModel::Preprocess::Preprocess(const Any& any) {
     *this = Preprocess();
     any.verifyName("ArticulatedModel::Preprocess");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "stripmaterials") {
             stripMaterials = it->value.boolean();
@@ -73,7 +74,7 @@ ArticulatedModel::Preprocess::Preprocess(const Any& any) {
         } else if (key == "normalmapwhiteheightinpixels") {
             normalMapWhiteHeightInPixels = it->value;
         } else if (key == "materialsubstitution") {
-            for (Any::AnyTable::Iterator m = it->value.table().begin(); m.hasMore(); ++m) {
+            for (Any::AnyTable::Iterator m = it->value.table().begin(); m.isValid(); ++m) {
                 materialSubstitution.set(m->key, m->value);
             }
         } else if (key == "materialoverride") {
@@ -106,7 +107,7 @@ Any ArticulatedModel::Preprocess::toAny() const {
     a.set("replaceTwoSidedWithGeometry",  replaceTwoSidedWithGeometry);
     
     Any t(Any::TABLE);
-    for (Table<std::string, Material::Specification>::Iterator it = materialSubstitution.begin(); it.hasMore(); ++it) {
+    for (Table<std::string, Material::Specification>::Iterator it = materialSubstitution.begin(); it.isValid(); ++it) {
         t[it->key] = it->value;
     }
     a["materialSubstitution"] = t;
@@ -119,7 +120,7 @@ Any ArticulatedModel::Preprocess::toAny() const {
 ArticulatedModel::Settings::Settings(const Any& any) {
     *this = Settings();
     any.verifyName("ArticulatedModel::Settings");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "weld") {
             weld = it->value;
@@ -169,6 +170,29 @@ void ArticulatedModel::setStorage(ImageStorage s) {
             part.triList[t]->material->setStorage(s);
         }
     }
+}
+
+
+bool ArticulatedModel::intersect
+(const Ray& R, const CFrame& cframe, const Pose& pose, float& maxDistance, int& partIndex, 
+ int& triListIndex, int& triIndex, float& u, float& v) const {
+ 
+    // Take the ray to object space
+    const Ray& osRay = cframe.toObjectSpace(R);
+
+    const ArticulatedModel::Ref ptr = this;
+    bool result = false;
+    // Start with the roots
+    for (int i = 0; i < partArray.size(); ++i) {
+        if (partArray[i].parent == -1) {
+            // This is a root
+            if (partArray[i].intersect(osRay, i, ptr, pose, maxDistance, partIndex, triListIndex, triIndex, u, v)) {
+                result = true;
+            }
+        }
+    }
+   
+    return result;
 }
 
 
@@ -429,6 +453,77 @@ void ArticulatedModel::initBSP(const std::string& filename, const Preprocess& pr
         }
     }
     // s.after("Create parts");
+}
+
+
+bool ArticulatedModel::Part::intersect
+(const Ray& R, int myPartIndex, const ArticulatedModel::Ref& model, const Pose& pose, float& maxDistance,
+ int& partIndex, int& triListIndex, int& triIndex, float& u, float& v) const {
+    CoordinateFrame frame;
+
+    if (pose.cframe.containsKey(name)) {
+        frame = cframe * pose.cframe[name];
+    } else {
+        frame = cframe;
+    }
+
+    debugAssert(! isNaN(frame.translation.x));
+    debugAssert(! isNaN(frame.rotation[0][0]));
+
+    const Ray& osRay = frame.toObjectSpace(R);
+
+    bool result = false;
+    if (hasGeometry()) {
+
+        for (int t = 0; t < triList.size(); ++t) {
+            const TriList::Ref& list = triList[t];
+
+            const Point3* vertex = geometry.vertexArray.getCArray();
+
+            if (list.notNull() && (list->indexArray.size() > 0) && (osRay.intersectionTime(list->boxBounds) < maxDistance)) {
+                const Array<int>& indexArray = list->indexArray;
+                const int N = indexArray.size();
+                const int* index = indexArray.getCArray();
+
+                // Check for intersections
+                for (int i = 0; i < N; i += 3) {
+                    
+                    float w0 = 0, w1 = 0, w2 = 0;
+                    const float temp = osRay.intersectionTime
+                        (vertex[index[i]], 
+                         vertex[index[i + 1]],
+                         vertex[index[i + 2]],
+                         w0,
+                         w1,
+                         w2);
+
+                    if (temp < maxDistance) {
+                        maxDistance = temp;
+                        partIndex = myPartIndex;
+                        triIndex = i;
+                        triListIndex = t;
+                        result = true;
+                        u = w0;
+                        v = w1;
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Recursively check subparts and pass along our coordinate frame.
+    for (int i = 0; i < subPartArray.size(); ++i) {
+        const int p = subPartArray[i];
+        debugAssertM(model->partArray[p].parent == myPartIndex,
+            "Parent and child pointers do not match.");(void)myPartIndex;
+
+        if (model->partArray[p].intersect(osRay, p, model, pose, maxDistance, partIndex, triListIndex, triIndex, u, v)) {
+            result = true;
+        }
+    }
+
+    return result;
 }
 
 
@@ -813,34 +908,53 @@ const ArticulatedModel::Pose& ArticulatedModel::defaultPose() {
 }
 
 
-void ArticulatedModel::pose(
-    Array<Surface::Ref>&     posedArray, 
-    const CoordinateFrame&      cframe, 
-    const Pose&                 posex) {
+void ArticulatedModel::pose
+(Array<Surface::Ref>&        posedArray, 
+ const CoordinateFrame&      cframe, 
+ const Pose&                 posex) {
+    
+    pose(posedArray, cframe, posex, cframe, posex);
+}
 
+
+void ArticulatedModel::pose
+(Array<Surface::Ref>&        posedArray, 
+ const CoordinateFrame&      cframe, 
+ const Pose&                 posex,
+ const CoordinateFrame&      previousCFrame,
+ const Pose&                 previousPose) {
+    
     for (int p = 0; p < partArray.size(); ++p) {
         const Part& part = partArray[p];
         if (part.parent == -1) {
             // This is a root part, pose it
-            part.pose(this, p, posedArray, cframe, posex);
+            part.pose(this, p, posedArray, cframe, posex, previousCFrame, previousPose);
         }
     }
 }
 
 
 void ArticulatedModel::Part::pose
-    (const ArticulatedModel::Ref&      model,
-     int                               partIndex,
-     Array<Surface::Ref>&              posedArray,
-     const CoordinateFrame&            parent, 
-     const Pose&                       posex) const {
+(const ArticulatedModel::Ref&      model,
+ int                               partIndex,
+ Array<Surface::Ref>&              posedArray,
+ const CoordinateFrame&            parent,
+ const Pose&                       posex,
+ const CoordinateFrame&            previousParent,
+ const Pose&                       previousPose) const {
 
-    CoordinateFrame frame;
+    CoordinateFrame frame, previousFrame;
 
     if (posex.cframe.containsKey(name)) {
         frame = parent * cframe * posex.cframe[name];
     } else {
         frame = parent * cframe;
+    }
+
+    if (previousPose.cframe.containsKey(name)) {
+        previousFrame = previousParent * cframe * previousPose.cframe[name];
+    } else {
+        previousFrame = previousParent * cframe;
     }
 
     debugAssert(! isNaN(frame.translation.x));
@@ -853,8 +967,9 @@ void ArticulatedModel::Part::pose
                 SuperSurface::CPUGeom cpuGeom(&triList[t]->indexArray, &geometry, 
                                               &texCoordArray, &packedTangentArray);
 
-                posedArray.append(SuperSurface::create(model->name, frame, triList[t],
-                                                            cpuGeom, model));
+                posedArray.append(SuperSurface::create
+                                  (model->name + format(".part[\"%s\"].triList[%d]", name.c_str(), t), 
+                                   frame, previousFrame, triList[t], cpuGeom, model));
             }
         }
     }
@@ -865,7 +980,7 @@ void ArticulatedModel::Part::pose
         debugAssertM(model->partArray[p].parent == partIndex,
             "Parent and child pointers do not match.");(void)partIndex;
 
-        model->partArray[p].pose(model, p, posedArray, frame, posex);
+        model->partArray[p].pose(model, p, posedArray, frame, posex, previousFrame, previousPose);
     }
 }
 
@@ -1044,13 +1159,13 @@ ArticulatedModel::PoseSpline::PoseSpline() {}
 
 ArticulatedModel::PoseSpline::PoseSpline(const Any& any) {
     any.verifyName("ArticulatedModel::PoseSpline");
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         partSpline.getCreate(it->key) = it->value;
     }
 }
  
 void ArticulatedModel::PoseSpline::get(float t, ArticulatedModel::Pose& pose) {
-    for (SplineTable::Iterator it = partSpline.begin(); it.hasMore(); ++it) {
+    for (SplineTable::Iterator it = partSpline.begin(); it.isValid(); ++it) {
         if (it->value.control.size() > 0) {
             pose.cframe.set(it->key, it->value.evaluate(t));
         }

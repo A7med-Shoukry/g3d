@@ -92,18 +92,29 @@ public:
     enum SliderScale {NO_SLIDER, LINEAR_SLIDER, LOG_SLIDER};
 
     /** Controls the appearance of the window's borders and background.
-        NORMAL - regular border and title
-        TOOL   - small title, thin border
-        DIALOG - thicker border
-        MENU   - Menu; no title-bar
-        NO     - do not render any background at all
      */
     enum WindowStyle {
+        /** Regular border and title */
         NORMAL_WINDOW_STYLE,
+
+        /** small title, thin border */
         TOOL_WINDOW_STYLE,
+
+        /** thicker border */
         DIALOG_WINDOW_STYLE,
+
+        /** Reserved for future use */
         DRAWER_WINDOW_STYLE,
+
+        /** Menu; no title-bar, stays on top */
         MENU_WINDOW_STYLE,
+
+        /** Looks like Menu, but stays in back. */
+        PANEL_WINDOW_STYLE,
+
+        /** Do not render a background, stay behind other windows, and do not 
+          process events that occur in space not covered by controls. Useful for 
+          giving the appearance of controls embedded directly on the screen. */
         NO_WINDOW_STYLE,
 
         WINDOW_STYLE_COUNT
@@ -122,12 +133,14 @@ public:
 
     /** Controls the appearance of the button.  Tool buttons are
         square and less 3D.  They are also able to shrink to smaller
-        sizes.  The NO_STYLE creates buttons with a caption but no
-        visible borders.
+        sizes.  
      */
     enum ButtonStyle {
         NORMAL_BUTTON_STYLE,
         TOOL_BUTTON_STYLE,
+
+        /*** creates buttons with a caption but no
+        visible borders.*/
         NO_BUTTON_STYLE,
 
         BUTTON_STYLE_COUNT
@@ -232,6 +245,7 @@ private:
          */
         Rect2D          source;
 
+        Fill() : source(Rect2D::empty()) {}
         void load(const Any& any);
         void render(class RenderDevice* rd, const Rect2D& bounds, const Vector2& texOffset) const;        
     };
@@ -244,6 +258,8 @@ private:
         Rect2D         left;
         Fill           center;
         Rect2D         right;
+
+        StretchRectH() : left(Rect2D::empty()), right(Rect2D::empty()) {}
 
         void load(const Any& any);
 
@@ -417,6 +433,7 @@ private:
         public:
             Rect2D    checked;
             Rect2D    unchecked;
+            Pair() : checked(Rect2D::empty()), unchecked(Rect2D::empty()) {}
             void load(const Any& any);
         };
 
@@ -458,6 +475,7 @@ private:
         Vector2      defocused;
         Vector2      windowDefocused;
 
+        WindowButton() : base(Rect2D::empty()) {}
         void load(const Any& any);
     };
 
@@ -512,6 +530,7 @@ private:
             Focus            enabled;
             Vector2          disabled;
 
+            Thumb() : base(Rect2D::empty()) {}
             void load(const Any& any);
         };
 

@@ -85,6 +85,11 @@ public:
     /** Returns true if this vector has finite length */
     bool isFinite() const;
 
+    /** True if any field is NaN */
+    bool isNaN() const {
+        return G3D::isNaN(x) || G3D::isNaN(y);
+    }
+
     /** Returns true if this vector has length == 0 */
     bool isZero() const;
 

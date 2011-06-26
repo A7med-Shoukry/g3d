@@ -72,9 +72,6 @@ void TextureViewer::onInit(const std::string& filename) {
 		m_isSky = true;
 
 		m_texture = Texture::fromFile(wildcardBase + "*." + ext, ImageFormat::AUTO(), Texture::DIM_CUBE_MAP_NPOT, Texture::Settings::cubeMap());
-
-		m_sky = Sky::fromCubeMap(m_texture, path, false); 
-		m_skyParameters = SkyParameters(G3D::toSeconds(11, 00, 00, AM));
 	} else {
 		m_texture = Texture::fromFile( filename, ImageFormat::AUTO(), Texture::DIM_2D_NPOT, Texture::Settings::video() );
 		m_height = m_texture->height();
@@ -87,7 +84,7 @@ void TextureViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& li
 	if (m_isSky) {
 
 		rd->disableLighting();
-		m_sky->render(rd, m_skyParameters);
+        Draw::skyBox(rd, m_texture);
 
 	} else {
 

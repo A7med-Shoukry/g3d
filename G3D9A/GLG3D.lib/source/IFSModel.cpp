@@ -1,12 +1,12 @@
 /**
-  @file IFSModel.cpp
+  \file IFSModel.cpp
   
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @cite Original IFS code by Nate Robbins
+  \cite Original IFS code by Nate Robbins
 
-  @created 2003-11-12
-  @edited  2009-11-31
+  \created 2003-11-12
+  \edited  2011-06-12
  */ 
 
 
@@ -23,8 +23,8 @@
 namespace G3D {
 
 // Cached between render calls
-VertexBufferRef  IFSModel::varArea;
-IFSModelRef IFSModel::lastModel;
+VertexBufferRef     IFSModel::varArea;
+IFSModelRef         IFSModel::lastModel;
 VertexRange         IFSModel::lastVertexVAR;
 VertexRange         IFSModel::lastNormalVAR;
 VertexRange         IFSModel::lastTexCoordVAR;
@@ -254,7 +254,7 @@ void IFSModel::load(
         }
         
         std::string header = bi.readString32();
-        if (header != "IFS") {
+        if (strcmp(header.c_str(), "IFS") != 0) {
             throw std::string("File is not an IFS file");
         }
         float32 ifsversion  = bi.readFloat32();
@@ -268,7 +268,7 @@ void IFSModel::load(
         while (bi.hasMore()) {
             std::string str = bi.readString32();
             
-            if (str == "VERTICES") {
+            if (strcmp(str.c_str(), "VERTICES") == 0) {
                 debugAssertM(vertex.size() == 0, "Multiple vertex fields!");
                 uint32 num = bi.readUInt32();
                 
@@ -686,7 +686,7 @@ void IFSModel::PosedIFSModel::render(RenderDevice* renderDevice) const {
             renderDevice->setShadeMode(RenderDevice::SHADE_SMOOTH);
         }
 
-        renderDevice->setObjectToWorldMatrix(coordinateFrame());
+        renderDevice->setObjectToWorldMatrix(cframe);
     
         sendGeometry(renderDevice);
   //  renderDevice->popState();
@@ -698,7 +698,7 @@ std::string IFSModel::PosedIFSModel::name() const {
 }
 
 
-void IFSModel::PosedIFSModel::getCoordinateFrame(CoordinateFrame& c) const {
+void IFSModel::PosedIFSModel::getCoordinateFrame(CoordinateFrame& c, bool previous) const {
     c = cframe;
 }
 
@@ -750,12 +750,12 @@ const Array<Vector2>&  IFSModel::PosedIFSModel::texCoords() const {
     return model->texArray;
 }
 
-void IFSModel::PosedIFSModel::getObjectSpaceBoundingSphere(Sphere& s) const {
+void IFSModel::PosedIFSModel::getObjectSpaceBoundingSphere(Sphere& s, bool previous) const {
     s = model->boundingSphere;
 }
 
 
-void IFSModel::PosedIFSModel::getObjectSpaceBoundingBox(AABox& b) const {
+void IFSModel::PosedIFSModel::getObjectSpaceBoundingBox(AABox& b, bool previous) const {
     b = model->boundingBox;
 }
 

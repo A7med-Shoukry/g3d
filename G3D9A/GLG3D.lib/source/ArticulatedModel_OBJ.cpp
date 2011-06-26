@@ -1,9 +1,9 @@
 /**
- @file ArticulatedModel_OBJ.cpp
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \file ArticulatedModel_OBJ.cpp
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2010-07-03
- @edited  2010-07-03
+ \created 2010-07-03
+ \edited  2011-06-20
  */
 
 #include "GLG3D/ArticulatedModel.h"
@@ -18,7 +18,9 @@ class MatSpec {
 public:
     std::string     name;
 
-    Color4          diffuseConstant;
+    float           opacity;
+
+    Color3          color;
     std::string     diffuseMap;
 
     std::string     bumpMap;
@@ -29,14 +31,15 @@ public:
     float           eta;
 
     MatSpec() : 
-        diffuseConstant(0.8f, 0.8f, 0.8f, 1.0f),
+        opacity(1.0f),
+        color(0.8f, 0.8f, 0.8f),
         // The default specular constant of one doesn't work well for G3D
         specularConstant(Color3::zero()),
         shininess(0.0f),
         eta(1.0f) {}
 
     Material::Ref createMaterial(const ArticulatedModel::Preprocess& preprocess) const {
-        debugPrintf("Creating material %s...", name.c_str());
+        debugPrintf("Creating material '%s'...", name.c_str());
         Material::Specification spec;
 
         if ((diffuseMap != "") && ! preprocess.stripMaterials) {
@@ -50,7 +53,12 @@ public:
             spec.setLambertian(s);
             
         } else {
-            spec.setLambertian(diffuseConstant);
+            if (opacity == 1.0f) {
+                spec.setLambertian(color);
+            } else {
+                spec.setLambertian(color * opacity);
+                spec.setTransmissive(color * (1.0 - opacity));
+            }
         }
 
         // Assume in air
@@ -76,7 +84,11 @@ static std::string removeLeadingSlash(const std::string& s) {
     }
 }
 
-static void loadMTL(const std::string& filename, Table<std::string, Material::Ref>& mtlTable, const ArticulatedModel::Preprocess& preprocess) {
+static void loadMTL
+(const std::string&                   filename,
+ Table<std::string, Material::Ref>&   mtlTable, 
+ const ArticulatedModel::Preprocess&  preprocess) {
+
     // http://people.sc.fsu.edu/~burkardt/data/mtl/mtl.html
 
     const std::string& basePath = FilePath::parent(FileSystem::resolve(filename));
@@ -88,14 +100,14 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
     set.generateNewlineTokens = true;
 
     if (! FileSystem::exists(filename)) {
-        logPrintf("WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
-        debugPrintf("WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
+        logPrintf("OBJ WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
+        debugPrintf("OBJ WARNING: \"%s\" not found while loading OBJ file.\n", filename.c_str());
         return;
     }
 
     TextInput ti(filename, set);
 
-    // Hack: merge anything sharing diffuse textures
+    // Merge any materials that have the same non-empty diffuse texture map
     Table<std::string, Material::Ref> diffuseCache;
 
     MatSpec matSpec;
@@ -113,8 +125,11 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
             // Create the previous material (TODO: note that this code is duplicated below)
             if (matSpec.name != "") {
                 if (matSpec.diffuseMap != "" && diffuseCache.containsKey(matSpec.diffuseMap)) {
+                    // Already in the cache based on diffuse texture map
                     mtlTable.set(matSpec.name, diffuseCache[matSpec.diffuseMap]);
+                    debugPrintf(" Merging %s with previous material that also uses diffuse map %s\n", matSpec.name.c_str(), matSpec.diffuseMap.c_str());
                 } else {
+                    // Not in the diffuse texture map cache
                     mtlTable.set(matSpec.name, matSpec.createMaterial(preprocess));
                     if (matSpec.diffuseMap != "") {
                         diffuseCache.set(matSpec.diffuseMap, mtlTable[matSpec.name]);
@@ -124,11 +139,11 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
 
             // Reset to defaults
             matSpec = MatSpec();
-            matSpec.name = ti.readUntilNewlineAsString();
+            matSpec.name = trimWhitespace(ti.readUntilNewlineAsString());
 
         } else if ((cmd == "d") || (cmd == "Tr")) {
             // alpha on range [0,1]
-            matSpec.diffuseConstant.a = ti.readNumber();
+            matSpec.opacity = ti.readNumber();
         } else if (cmd == "Ns") {
             // spec exponent on range [0, 1000]
             matSpec.shininess = ti.readNumber();
@@ -140,9 +155,9 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
             // We ignore this
         } else if (cmd == "Kd") {
             // rgb diffuse on range [0,1]
-            matSpec.diffuseConstant.r = ti.readNumber();
-            matSpec.diffuseConstant.g = ti.readNumber();
-            matSpec.diffuseConstant.b = ti.readNumber();
+            matSpec.color.r = ti.readNumber();
+            matSpec.color.g = ti.readNumber();
+            matSpec.color.b = ti.readNumber();
         } else if (cmd == "Ks") {
             // rgb specular on range [0,1]
             matSpec.specularConstant.r = ti.readNumber();
@@ -151,9 +166,17 @@ static void loadMTL(const std::string& filename, Table<std::string, Material::Re
         } else if (cmd == "Km") {
             // Scalar---mirror?
         } else if (cmd == "map_Kd") {
-            matSpec.diffuseMap = FilePath::concat(basePath, removeLeadingSlash(ti.readUntilNewlineAsString()));
+            matSpec.diffuseMap = FilePath::concat(basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+            if (! FileSystem::exists(matSpec.diffuseMap)) {
+                debugPrintf("OBJ WARNING: Missing diffuse texture map '%s'\n", matSpec.diffuseMap.c_str());
+                matSpec.diffuseMap = "";
+            }
         } else if (cmd == "map_Bump") {
-            matSpec.bumpMap = FilePath::concat(basePath, removeLeadingSlash(ti.readUntilNewlineAsString()));
+            matSpec.bumpMap = FilePath::concat(basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+            if (! FileSystem::exists(matSpec.bumpMap)) {
+                debugPrintf("OBJ WARNING: Missing bump map '%s'\n", matSpec.bumpMap.c_str());
+                matSpec.bumpMap = "";
+            }
         }
 
         // Read until the end of the line
@@ -183,7 +206,7 @@ public:
 };
 
 
-static Vector3 readVertex(TextInput& ti, const Matrix4& xform) {
+static Point3 readVertex(TextInput& ti, const Matrix4& xform) {
     // Vertex
     Vector4 v;
     v.x = ti.readNumber();
@@ -232,9 +255,9 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     // Negative indices are relative to the last coordinate seen.
 
     // Raw arrays with independent indexing, as imported from the file
-    Array<Vector3> rawVertex;
+    Array<Point3>  rawVertex;
     Array<Vector3> rawNormal;
-    Array<Vector2> rawTexCoord;
+    Array<Point2>  rawTexCoord;
 
     // part.geometry.vertexArray[i] = rawVertex[cookVertex[i]];
     Array<int>      cookVertex;
@@ -253,7 +276,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     Array<int>     faceTempIndex;
 
     Table<std::string, Material::Ref> materialLibrary;
-    Table<std::string, TriListSpec*> groupTable;
+    Table<std::string, TriListSpec*>  groupTable;
 
     TriListSpec* currentTriList = NULL;
     int numTris = 0;
@@ -263,6 +286,9 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     const std::string& basePath = FilePath::parent(FileSystem::resolve(filename));
 
     {
+        // Name of the current triList with no material name appended
+        std::string currentTriListRawName;
+
         TextInput ti(filename, set);
         while (ti.hasMore()) {
             // Consume comments/newlines
@@ -281,25 +307,48 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
             if (cmd == "mtllib") {
 
                 // Specify material library 
-                const std::string& mtlFilename = ti.readUntilNewlineAsString();
+                const std::string& mtlFilename = trimWhitespace(ti.readUntilNewlineAsString());
                 loadMTL(FilePath::concat(basePath, mtlFilename), materialLibrary, preprocess);
 
             } else if (cmd == "g") {
 
                 // New trilist
-                const std::string& name = ti.readUntilNewlineAsString();
-                if (! groupTable.containsKey(name)) {
+                currentTriListRawName = trimWhitespace(ti.readUntilNewlineAsString());
+                if (! groupTable.containsKey(currentTriListRawName)) {
                     currentTriList = new TriListSpec();
-                    currentTriList->name = name;            
-                    groupTable.set(name, currentTriList);
+                    currentTriList->name = currentTriListRawName;            
+                    groupTable.set(currentTriListRawName, currentTriList);
                 } else {
-                    currentTriList = groupTable[name];
+                    currentTriList = groupTable[currentTriListRawName];
                 }
 
-
             } else if (cmd == "usemtl") {
+
+                // If the current tri list is empty, assign a material to it.  Otherwise break
+                // the trilist here and start a new one.
                 if (currentTriList) {
-                    currentTriList->materialName = ti.readUntilNewlineAsString();
+                    const std::string& materialName = trimWhitespace(ti.readUntilNewlineAsString());
+                    if (currentTriList->cpuIndex.size() != 0) {
+                        const std::string& triListName = currentTriListRawName + "_" + materialName;
+                        debugAssertM(groupTable.containsKey(currentTriListRawName), "Hit a usemtl block when currentTriList != NULL but the tri list had no name.");
+
+                        if (groupTable[currentTriListRawName]->materialName == materialName) {
+                            // Switch back to the base trilist, which uses this material
+                            currentTriList = groupTable[currentTriListRawName];
+                        } else {
+                            // Find or create the trilist that uses this material
+
+                            if (! groupTable.containsKey(triListName)) {
+                                currentTriList = new TriListSpec();
+                                currentTriList->name = triListName;            
+                                groupTable.set(triListName, currentTriList);
+                            } else {
+                                currentTriList = groupTable[triListName];
+                            }
+                        }
+                    }
+
+                    currentTriList->materialName = materialName;
                 }
             } else if (cmd == "v") {
                 rawVertex.append(readVertex(ti, preprocess.xform));
@@ -327,6 +376,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
                     int t = 0;
 
                     if (ti.peek().type() == Token::SYMBOL) {
+                        // Optional texcoord and normal
                         ti.readSymbol("/");
                         if (ti.peek().type() == Token::NUMBER) {
                             t = ti.readNumber();
@@ -411,7 +461,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     }
 
     // Create trilists
-    for (Table<std::string, TriListSpec*>::Iterator it = groupTable.begin(); it.hasMore(); ++it) {
+    for (Table<std::string, TriListSpec*>::Iterator it = groupTable.begin(); it.isValid(); ++it) {
         TriListSpec* s = it->value;
 
         Material::Ref material;
@@ -419,7 +469,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
             material = materialLibrary[s->materialName];
         } else {
             material = Material::createDiffuse(Color3::white() * 0.8f);
-            debugPrintf("Warning: unrecognized material: %s\n", s->materialName.c_str());
+            debugPrintf("OBJ WARNING: unrecognized material: '%s'\n", s->materialName.c_str());
         }
 
         Part::TriList::Ref triList = part.newTriList(material);

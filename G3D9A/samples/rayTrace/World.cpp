@@ -45,7 +45,7 @@ World::World() : m_mode(TRACE) {
 
         insert(sphere, CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
     }
-    std::string filename = pathConcat(System::findDataFile("3ds"), "fantasy/sponza/sponza.3DS");
+    std::string filename = pathConcat(System::findDataFile("models"), "dabrovic_sponza/sponza.3DS");
     insert(ArticulatedModel::fromFile(filename), Vector3(8.2f, -6, 0));
     
     end();
@@ -99,7 +99,7 @@ bool World::lineOfSight(const Vector3& v0, const Vector3& v1) const {
     float distance = len;
     Tri::Intersector intersector;
 
-    return ! m_triTree.intersectRay(ray, intersector, distance);
+    return ! m_triTree.intersectRay(ray, intersector, distance, true);
 
 }
 

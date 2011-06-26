@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
   \created 2003-11-13
-  \created 2010-11-16
+  \created 2011-06-16
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
@@ -117,6 +117,8 @@ private:
         return false;
     }
 
+    /** Uninitialized constructor */
+    Rect2D(bool b) {}
 public:
 
     /** \param any Must either Rect2D::xywh(#, #, #, #) or Rect2D::xyxy(#, #, #, #)*/
@@ -125,20 +127,28 @@ public:
     /** Converts the Rect2D to an Any. */
     Any toAny() const;
 
-    Rect2D() : min(0, 0), max(0, 0) {}
+    Rect2D(const Rect2D& r) : min(r.min), max(r.max) {}
+
+    /** Creates the empty set rectangle.
+    */
+    Rect2D() : min(fnan(), fnan()), max(fnan(), fnan()) {}
+
+    static const Rect2D& empty();
+
+    /** Returns true if this is the empty set, which is distinct from a zero-area rectangle. */
+    inline bool isEmpty() const {
+        return min.isNaN() && max.isNaN();
+    }
 
     /** Creates a rectangle at 0,0 with the given width and height*/
     Rect2D(const Vector2& wh) : min(0, 0), max(wh.x, wh.y) {}
 
-    /** Computes a rectangle that contains both @a a and @a b.  
-        Note that even if @a or @b has zero area, its origin will be included.*/
-    Rect2D(const Rect2D& a, const Rect2D& b) {
-        min = a.min.min(b.min);
-        max = a.max.max(b.max);
-    }
-
     Vector2 extent() const {
-        return max - min;
+        if (isEmpty()) {
+            return Vector2::zero();
+        } else {
+            return max - min;
+        }
     }
 
     /** @brief Uniformly random point on the interior */
@@ -148,11 +158,19 @@ public:
     }
 
     float width() const {
-        return max.x - min.x;
+        if (isEmpty()) {
+            return 0;
+        } else {
+            return max.x - min.x;
+        }
     }
 
     float height() const {
-        return max.y - min.y;
+        if (isEmpty()) {
+            return 0;
+        } else {
+            return max.y - min.y;
+        }
     }
 
     float x0() const {
@@ -191,7 +209,11 @@ public:
 
     /** Width and height */
     Vector2 wh() const {
-        return max - min;
+        if (isEmpty()) {
+            return Vector2::zero();
+        } else {
+            return max - min;
+        }
     }
 
     Point2 center() const {
@@ -207,7 +229,7 @@ public:
     }
 
     Rect2D lerp(const Rect2D& other, float alpha) const {
-        Rect2D out;
+        Rect2D out(false);
         
         out.min = min.lerp(other.min, alpha);
         out.max = max.lerp(other.max, alpha);
@@ -216,7 +238,7 @@ public:
     }
 
     static Rect2D xyxy(float x0, float y0, float x1, float y1) {
-        Rect2D r;
+        Rect2D r(false);
         
         r.min.x = G3D::min(x0, x1);
         r.min.y = G3D::min(y0, y1);
@@ -227,7 +249,7 @@ public:
     }
 
     static Rect2D xyxy(const Point2& v0, const Point2& v1) {
-        Rect2D r;
+        Rect2D r(false);
 
         r.min = v0.min(v1);
         r.max = v0.max(v1);
@@ -251,10 +273,12 @@ public:
     }
 
     bool contains(const Point2& v) const {
+        // This will automatically return false if isEmpty()
         return (v.x >= min.x) && (v.y >= min.y) && (v.x <= max.x) && (v.y <= max.y);
     }
 
     bool contains(const Rect2D& r) const {
+        // This will automatically return false if isEmpty()
         return (min.x <= r.min.x) && (min.y <= r.min.y) &&
                (max.x >= r.max.x) && (max.y >= r.max.y);
     }
@@ -263,12 +287,14 @@ public:
         Note that two rectangles that are adjacent do not intersect because there is
         zero area to the overlap, even though one of them "contains" the corners of the other.*/
     bool intersects(const Rect2D& r) const {
+        // This will automatically return false if isEmpty()
         return (min.x < r.max.x) && (min.y < r.max.y) &&
                (max.x > r.min.x) && (max.y > r.min.y);
     }
 
     /** Like intersection, but counts the adjacent case as touching. */
     bool intersectsOrTouches(const Rect2D& r) const {
+        // This will automatically return false if isEmpty()
         return (min.x <= r.max.x) && (min.y <= r.max.y) &&
                (max.x >= r.min.x) && (max.y >= r.min.y);
     }
@@ -353,6 +379,22 @@ public:
         return Rect2D::xywh(newX, newY, newW, newH);
     }
 
+    void merge(const Rect2D& other) {
+        if (isEmpty()) {
+            *this = other;
+        } else if (! other.isEmpty()) {
+            min = min.min(other.min);
+            max = max.max(other.max);
+        }
+    }
+
+    /** Computes a rectangle that contains both @a a and @a b.  
+        Note that even if @a or @b has zero area, its origin will be included.*/
+    Rect2D(const Rect2D& a, const Rect2D& b) {
+        *this = a;
+        merge(b);
+    }
+
     /** 
      Clips so that the rightmost point of the outPoly is at rect.x1 (e.g. a 800x600 window produces
      rightmost point 799, not 800).  The results are suitable for pixel rendering if iRounded.
@@ -406,15 +448,16 @@ public:
     }
 
     /**
-     Returns the overlap region between the two rectangles.  This may have zero area
-     if they do not intersect.  See the two-Rect2D constructor for a way to compute
-     a union-like rectangle.
+     Returns the overlap region between the two rectangles.  This may
+     have zero area if they do not intersect.  See the two-Rect2D
+     constructor and merge() for a way to compute a union-like
+     rectangle.
      */
     Rect2D intersect(const Rect2D& other) const {
         if (intersects(other)) {
             return Rect2D::xyxy(min.max(other.min), max.min(other.max));
-        }else{
-            return Rect2D::xywh(0, 0, 0, 0);
+        } else {
+            return empty();
         }
     }
 };

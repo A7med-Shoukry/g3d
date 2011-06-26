@@ -1,10 +1,10 @@
 /**
-  @file Surface.cpp
+  \file Surface.cpp
   
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2003-11-15
-  @edited  2010-02-05
+  \created 2003-11-15
+  \edited  2011-06-10
  */ 
 
 #include "G3D/Sphere.h"
@@ -16,64 +16,128 @@
 #include "G3D/Log.h"
 #include "G3D/AABox.h"
 #include "G3D/Sphere.h"
+#include "G3D/typeutils.h"
 #include "GLG3D/Surface.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/SuperShader.h"
 
 namespace G3D {
 
-const Array<Vector2>& Surface::texCoords() const {
-    static Array<Vector2> t;
-    return t;
+void Surface::renderIntoGBuffer
+   (RenderDevice*               rd,
+    Array<Surface::Ref>&        surfaceArray,
+    const GBuffer::Ref&         gbuffer,
+    const CFrame&               previousCameraFrame) {
+
+    // Sort front-to-back for best early-depth performance
+    // (we avoid an early depth pass because we don't know if the depth complexity warrants it)
+    sortFrontToBack(surfaceArray, rd->cameraToWorldMatrix().lookVector());
+
+    // Separate by type.  This preserves the sort order and ensures that the closest
+    // object will still render first.
+    Array< Array<Surface::Ref> > derivedTable;
+    categorizeByDerivedType(surfaceArray, derivedTable);
+
+    rd->pushState(gbuffer->framebuffer());
+    for (int t = 0; t < derivedTable.size(); ++t) {
+        Array<Surface::Ref>& derivedArray = derivedTable[t];
+        debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
+        derivedArray[0]->renderIntoGBufferHomogeneous(rd, derivedArray, gbuffer, previousCameraFrame);
+    }
+    rd->popState();
 }
 
-
-const Array<Vector4>& Surface::objectSpacePackedTangents() const {
-    static Array<Vector4> t;
-    return t;
-}
 
 void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3D) {
     rd->pushState();
     for (int i = 0; i < surface3D.size(); ++i) {
         const Surface::Ref& surface = surface3D[i];
-        rd->setObjectToWorldMatrix(surface->coordinateFrame());
+        CFrame coordinateFrame;
+        surface->getCoordinateFrame(coordinateFrame, false);
+        rd->setObjectToWorldMatrix(coordinateFrame);
         surface->sendGeometry(rd);
     }
     rd->popState();
 }
 
 
-void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds) {
-    if (models.size() == 0) {
-        bounds = AABox();
-        return;
-    }
+void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, bool previous) {
+    bounds = AABox::empty();
 
-    models[0]->worldSpaceBoundingBox().getBounds(bounds);
-
-    for (int i = 1; i < models.size(); ++i) {
+    for (int i = 0; i < models.size(); ++i) {
         AABox temp;
-        models[i]->worldSpaceBoundingBox().getBounds(temp);
+        CFrame cframe;
+        models[i]->getCoordinateFrame(cframe, previous);
+        models[i]->getObjectSpaceBoundingBox(temp, previous);
+        cframe.toWorldSpace(temp, temp);
         bounds.merge(temp);
     }
 }
 
 
-void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds) {
-    AABox temp;
-    getBoxBounds(models, temp);
-    bounds = Sphere(temp.center(), temp.extent().length() / 2.0f);
+void Surface::renderWireframeHomogeneous(RenderDevice* rd, const Array<Surface::Ref>& surface3D, const Color4& color, bool previous) const {
+    rd->pushState(); {
+        rd->setDepthWrite(false);
+        rd->setDepthTest(RenderDevice::DEPTH_LEQUAL);
+        rd->setRenderMode(RenderDevice::RENDER_WIREFRAME);
+        rd->setPolygonOffset(-0.5f);
+
+        rd->setColor(color);
+        rd->setShader(NULL);
+        rd->setLineWidth(0.8f);
+
+        for (int i = 0; i < surface3D.size(); ++i) {
+            surface3D[i]->render(rd);
+            /*
+            CFrame cframe;
+            surface3D[i]->getCoordinateFrame(cframe, previous);
+            rd->setObjectToWorldMatrix(cframe);
+            surface3D[i]->sendGeometry(rd);
+            */
+        }
+    } rd->popState();
 }
 
 
-void Surface::cull(const GCamera& camera, const Rect2D& viewport, const Array<Surface::Ref>& allModels, Array<Surface::Ref>& outModels) {
+void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfaceArray, const Color4& color, bool previous) {
+    // Separate by type.  This preserves the sort order and ensures that the closest
+    // object will still render first.
+    Array< Array<Surface::Ref> > derivedTable;
+    categorizeByDerivedType(surfaceArray, derivedTable);
+
+    for (int t = 0; t < derivedTable.size(); ++t) {
+        Array<Surface::Ref>& derivedArray = derivedTable[t];
+        debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
+        derivedArray[0]->renderWireframeHomogeneous(rd, derivedArray, color, previous);
+    }
+}
+
+
+void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, bool previous) {
+    AABox temp;
+    getBoxBounds(models, temp, previous);
+    temp.getBounds(bounds);
+}
+
+
+void Surface::cull
+(const GCamera&             camera, 
+ const Rect2D&              viewport, 
+ const Array<Surface::Ref>& allModels,
+ Array<Surface::Ref>&       outModels,
+ bool                       previous) {
+
     outModels.fastClear();
 
     Array<Plane> clipPlanes;
     camera.getClipPlanes(viewport, clipPlanes);
     for (int i = 0; i < allModels.size(); ++i) {
-        const Sphere& sphere = allModels[i]->worldSpaceBoundingSphere();
+        Sphere sphere;
+        CFrame c;
+        allModels[i]->getCoordinateFrame(c, previous);
+        allModels[i]->getObjectSpaceBoundingSphere(sphere, previous);
+        sphere = c.toWorldSpace(sphere);
+
         if (! sphere.culledBy(clipPlanes)) {
             outModels.append(allModels[i]);
         }
@@ -82,75 +146,27 @@ void Surface::cull(const GCamera& camera, const Rect2D& viewport, const Array<Su
 
 
 void Surface::renderDepthOnly
-(RenderDevice* rd, 
- const Array<Surface::Ref>& allModels, 
- RenderDevice::CullFace cull) {
+(RenderDevice*              rd, 
+ const Array<Surface::Ref>& surfaceArray,
+ RenderDevice::CullFace     cull) {
 
-    rd->pushState();
-    {
+    rd->pushState(); {
+
         rd->setCullFace(cull);
         rd->setDepthWrite(true);
         rd->setColorWrite(false);
-        rd->setAlphaTest(RenderDevice::ALPHA_GEQUAL, 0.5f);
 
-        // Maintain sort order while extracting generics
-        Array<SuperSurface::Ref> superSurfaces;
+        Array< Array<Surface::Ref> > derivedTable;
+        categorizeByDerivedType(surfaceArray, derivedTable);
 
-        // Render non-generics while filtering
-        for (int i = 0; i < allModels.size(); ++i) {
-            const SuperSurface::Ref& g = allModels[i].downcast<SuperSurface>();
-            if (g.notNull()) {
-                superSurfaces.append(g);
-            } else {
-                allModels[i]->render(rd);
-            }
+        for (int t = 0; t < derivedTable.size(); ++t) {
+            Array<Surface::Ref>& derivedArray = derivedTable[t];
+            debugAssertM(derivedArray.size() > 0, "categorizeByDerivedType produced an empty subarray");
+            // debugPrintf("Invoking on type %s\n", typeid(*derivedArray[0]).raw_name());
+            derivedArray[0]->renderDepthOnlyHomogeneous(rd, derivedArray);
         }
 
-        // Render generics
-        rd->setCullFace(cull);
-        rd->beginIndexedPrimitives();
-        {
-            rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
-            rd->setTexture(0, NULL);
-            bool alphaOn = false;
-
-            // It is important to only enable alpha testing when needed; otherwise we lose the z-only
-            // optimization built into GPUs.
-            for (int g = 0; g < superSurfaces.size(); ++g) {
-                const SuperSurface::Ref& model = superSurfaces[g];
-                const SuperSurface::GPUGeom::Ref& geom = model->gpuGeom();
-
-                if (geom->twoSided) {
-                    rd->setCullFace(RenderDevice::CULL_NONE);
-                }
-
-                const Texture::Ref& lambertian = geom->material->bsdf()->lambertian().texture();
-                bool a = lambertian.notNull() && ! lambertian->opaque();
-
-                if (a != alphaOn) {
-                    alphaOn = a;
-                    if (alphaOn) {
-                        // We need the texture for alpha masking
-                        rd->setTexture(0, lambertian);
-                        rd->setAlphaTest(RenderDevice::ALPHA_GEQUAL, 0.5f);
-                    } else {
-                        rd->setTexture(0, NULL);
-                        rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0.5f);
-                    }
-                }
-
-                rd->setObjectToWorldMatrix(model->coordinateFrame());
-                rd->setVARs(geom->vertex, VertexRange(), geom->texCoord0);
-                rd->sendIndices((RenderDevice::Primitive)geom->primitive, geom->index);
-            
-                if (geom->twoSided) {
-                    rd->setCullFace(cull);
-                }
-            }
-        }
-        rd->endIndexedPrimitives();
-    }
-    rd->popState();
+    } rd->popState();
 }
 
 
@@ -162,6 +178,8 @@ void Surface::sortAndRender
  const Array<ShadowMap::Ref>&   shadowMaps,
  const Array<SuperShader::PassRef>& extraAdditivePasses,
  AlphaMode                      alphaMode) {
+
+    const bool previous = false;
 
     static bool recurse = false;
 
@@ -203,7 +221,7 @@ void Surface::sortAndRender
                 
                 ShadowMap::computeMatrices(light, sceneBounds, lightFrame, lightProjectionMatrix);
                 
-                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible);
+                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible, previous);
                 Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
                 shadowMaps[s]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
 
@@ -224,7 +242,7 @@ void Surface::sortAndRender
     static Array<Surface::Ref> visible;
 
     // Cull objects outside the view frustum
-    cull(camera, rd->viewport(), allModels, visible);
+    cull(camera, rd->viewport(), allModels, visible, previous);
 
     rd->pushState();
 
@@ -374,15 +392,17 @@ void Surface2D::sortAndRender(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) 
 
 class ModelSorter {
 public:
-    float                     sortKey;
+    float                  sortKey;
     Surface::Ref           model;
 
     ModelSorter() {}
 
     ModelSorter(const Surface::Ref& m, const Vector3& axis) : model(m) {
         Sphere s;
-        m->getWorldSpaceBoundingSphere(s);
-        sortKey = axis.dot(s.center);
+        CFrame c;
+        m->getCoordinateFrame(c, false);
+        m->getObjectSpaceBoundingSphere(s, false);
+        sortKey = axis.dot(c.pointToWorldSpace(s.center));
     }
 
     inline bool operator>(const ModelSorter& s) const {
@@ -395,9 +415,9 @@ public:
 };
 
 
-void Surface::sortFrontToBack(
-    Array<Surface::Ref>& surface, 
-    const Vector3&       wsLook) {
+void Surface::sortFrontToBack
+(Array<Surface::Ref>& surface, 
+ const Vector3&       wsLook) {
 
     static Array<ModelSorter> sorter;
     
@@ -415,95 +435,11 @@ void Surface::sortFrontToBack(
 }
 
 
-void Surface::getWorldSpaceGeometry(MeshAlg::Geometry& geometry) const {
-    CoordinateFrame c;
-    getCoordinateFrame(c);
-
-    const MeshAlg::Geometry& osgeometry = objectSpaceGeometry();
-    c.pointToWorldSpace(osgeometry.vertexArray, geometry.vertexArray);
-    c.normalToWorldSpace(osgeometry.normalArray, geometry.normalArray);
-}
-
-
-CoordinateFrame Surface::coordinateFrame() const {
-    CoordinateFrame c;
-    getCoordinateFrame(c);
-    return c;
-}
-
-
-Sphere Surface::objectSpaceBoundingSphere() const {
-    Sphere s;
-    getObjectSpaceBoundingSphere(s);
-    return s;
-}
-
-
-void Surface::getWorldSpaceBoundingSphere(Sphere& s) const {
-    CoordinateFrame C;
-    getCoordinateFrame(C);
-    getObjectSpaceBoundingSphere(s);
-    s = C.toWorldSpace(s);
-}
-
-
-Sphere Surface::worldSpaceBoundingSphere() const {
-    Sphere s;
-    getWorldSpaceBoundingSphere(s);
-    return s;
-}
-
-
-AABox Surface::objectSpaceBoundingBox() const {
-    AABox b;
-    getObjectSpaceBoundingBox(b);
-    return b;
-}
-
-
-void Surface::getWorldSpaceBoundingBox(AABox& box) const {
-    getObjectSpaceBoundingBox(box);
-    if (! box.isFinite()) {
-        box = AABox::inf();
-    } else {
-        CoordinateFrame C;
-        getCoordinateFrame(C);
-        const Box& temp = C.toWorldSpace(box);        
-        temp.getBounds(box);
-    }
-}
-
-
-AABox Surface::worldSpaceBoundingBox() const {
-    AABox b;
-    getWorldSpaceBoundingBox(b);
-    return b;
-}
-
-
-void Surface::getObjectSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize) const {
-    const MeshAlg::Geometry& geometry = objectSpaceGeometry();
-    const Array<MeshAlg::Face>& faceArray = faces();
-
-    MeshAlg::computeFaceNormals(geometry.vertexArray, faceArray, faceNormals, normalize);
-}
-
-
-void Surface::getWorldSpaceFaceNormals(Array<Vector3>& faceNormals, bool normalize) const {
-    MeshAlg::Geometry geometry;
-    getWorldSpaceGeometry(geometry);
-
-    const Array<MeshAlg::Face>& faceArray = faces();
-
-    MeshAlg::computeFaceNormals(geometry.vertexArray, faceArray, faceNormals, normalize);
-}
-
-
 void Surface::renderNonShadowed(
     RenderDevice* rd,
     const LightingRef& lighting) const {
 
-    rd->pushState();
+    rd->pushState(); {
         if (rd->colorWrite()) {
             rd->setAmbientLightColor(Color3::white() * 0.5);
             Array<GLight> ns;
@@ -514,21 +450,7 @@ void Surface::renderNonShadowed(
             rd->enableLighting();
         }
         render(rd);
-    rd->popState();
-}
-
-
-void Surface::renderShadowedLightPass(
-    RenderDevice* rd, 
-    const GLight& light) const {
-
-    rd->pushState();
-        rd->enableLighting();
-        rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
-        rd->setLight(0, light);
-        rd->setAmbientLightColor(Color3::black());
-        render(rd);
-    rd->popState();
+    } rd->popState();
 }
 
 
@@ -560,54 +482,9 @@ void Surface::renderShadowMappedLightPass(
 }
 
    
-void Surface::defaultRender(RenderDevice* rd) const {
-    const MeshAlg::Geometry& geometry = objectSpaceGeometry();
-
-    VertexBufferRef area = VertexBuffer::create(sizeof(Vector3)*2*geometry.vertexArray.size() + 16);
-
-    rd->pushState();
-        rd->setObjectToWorldMatrix(coordinateFrame());
-        rd->beginIndexedPrimitives();
-            rd->setNormalArray(VertexRange(geometry.normalArray, area));
-            rd->setVertexArray(VertexRange(geometry.vertexArray, area));
-            rd->sendIndices(PrimitiveType::TRIANGLES, triangleIndices());
-        rd->endIndexedPrimitives();
-    rd->popState();
-}
-
-
 void Surface::render(RenderDevice* rd) const {
     defaultRender(rd);
 }
-
-void Surface::sendGeometry(RenderDevice* rd) const {
-    const MeshAlg::Geometry& geom = objectSpaceGeometry();
-
-    size_t s = sizeof(Vector3) * geom.vertexArray.size() * 2;
-
-    if (hasTexCoords()) {
-        s += sizeof(Vector2) * texCoords().size();
-    }
-
-    VertexBufferRef area = VertexBuffer::create(s);
-    VertexRange vertex(geom.vertexArray, area);
-    VertexRange normal(geom.normalArray, area);
-    VertexRange texCoord;
-
-    if (hasTexCoords()) {
-        texCoord = VertexRange(texCoords(), area);
-    }
-
-    rd->beginIndexedPrimitives();
-        rd->setVertexArray(vertex);
-        rd->setNormalArray(normal);
-        if (hasTexCoords()) {
-            rd->setTexCoordArray(0, texCoord);
-        }
-        rd->sendIndices(PrimitiveType::TRIANGLES, triangleIndices());
-    rd->endIndexedPrimitives();
-}
-
 
 
 void Surface::renderTranslucent
@@ -618,6 +495,8 @@ void Surface::renderTranslucent
  const Array<ShadowMap::Ref>&   shadowMapArray,
  RefractionQuality              maxRefractionQuality,
  AlphaMode                      alphaMode) {
+
+    const bool previous = false;
 
     rd->pushState();
 
@@ -653,7 +532,11 @@ void Surface::renderTranslucent
     for (int m = 0; m < modelArray.size(); ++m) {
         Surface::Ref model = modelArray[m];
 
-        const float distanceToCamera = (model->worldSpaceBoundingSphere().center - cameraFrame.translation).dot(cameraFrame.lookVector());
+        CFrame cframe;
+        Sphere sphere;
+        model->getCoordinateFrame(cframe, previous);
+        model->getObjectSpaceBoundingSphere(sphere, previous);
+        const float distanceToCamera = (sphere.center + cframe.translation - cameraFrame.translation).dot(cameraFrame.lookVector());
 
         rd->setDepthWrite(oldDepthWrite && model->depthWriteHint(distanceToCamera));
 
@@ -691,7 +574,7 @@ void Surface::renderTranslucent
                 {
                     rd->setDepthWrite(false);
                     rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
-                    const Sphere& bounds3D = gmodel->worldSpaceBoundingSphere();
+                    const Sphere& bounds3D = cframe.toWorldSpace(sphere);
                     
                     // Estimate of distance from object to background to
                     // be constant (we could read back depth buffer, but
@@ -717,7 +600,7 @@ void Surface::renderTranslucent
                     refractShader->args.set("lambertianMap", Texture::whiteIfNull(material->bsdf()->lambertian().texture()));
                     refractShader->args.set("lambertianConstant", material->bsdf()->lambertian().constant());
                     rd->setShader(refractShader);
-                    rd->setObjectToWorldMatrix(model->coordinateFrame());
+                    rd->setObjectToWorldMatrix(cframe);
                     gmodel->sendGeometry(rd);
                 }
                 rd->popState();

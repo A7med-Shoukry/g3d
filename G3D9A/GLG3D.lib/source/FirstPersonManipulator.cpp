@@ -167,8 +167,7 @@ void FirstPersonManipulator::setTurnRate(double radiansPerSecond) {
 }
 
 
-void FirstPersonManipulator::lookAt(
-    const Vector3&      position) {
+void FirstPersonManipulator::lookAt(const Point3& position) {
 
     const Vector3 look = (position - m_translation);
 
@@ -277,10 +276,10 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
             }
 
             if (mouse.y <= hotRegion.y0()) {
-                delta.y = -square(1.0 - (mouse.y - viewport.y0()) / hotExtent.y) * 0.6;
+                delta.y = -square(1.0 - (mouse.y - viewport.y0()) / hotExtent.y) * 0.6f;
                 // - pitch
             } else if (mouse.y >= hotRegion.y1()) {
-                delta.y = square(1.0 - (viewport.y1() - mouse.y) / hotExtent.y) * 0.6;
+                delta.y = square(1.0 - (viewport.y1() - mouse.y) / hotExtent.y) * 0.6f;
                 // + pitch
             }
 
@@ -311,6 +310,30 @@ void FirstPersonManipulator::onUserInput(UserInput* ui) {
 
 
 bool FirstPersonManipulator::onEvent(const GEvent& event) {
+    if (m_active && (m_mouseMode == MOUSE_DIRECT_RIGHT_BUTTON) && (event.type == GEventType::MOUSE_BUTTON_DOWN)) {
+        // This may be the "right-click" (OS dependent) that will
+        // start camera movement.  If it is, we don't want other
+        // Widgets to see the event.
+
+        //debugPrintf("Button = %d\n", event.button.button);
+
+        if (event.button.button == 1) {
+            // Right click
+            return true;
+        }
+
+#       ifdef G3D_OSX
+        if ((m_userInput != NULL) && 
+            (event.button.button == 0) &&
+            (m_userInput->keyDown(GKey::LSHIFT) ||
+             m_userInput->keyDown(GKey::RSHIFT) ||
+             m_userInput->keyDown(GKey::LCTRL)  ||
+             m_userInput->keyDown(GKey::RCTRL))) {
+            // "Right click"
+            return true;
+        }
+#       endif
+    }
     return false;
 }
 

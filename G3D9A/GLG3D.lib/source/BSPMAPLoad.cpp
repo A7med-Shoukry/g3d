@@ -496,7 +496,7 @@ void Map::loadFaces(
 
     alwaysAssertM(lump.length < 1e9, "Corrupt file");
     int facesCount = lump.length / sizeof(Q3BSPFace);
-    faceArray.deleteAll();
+    faceArray.invokeDeleteOnAllElements();
     faceArray.resize(facesCount);
     alwaysAssertM(facesCount < 1e6, "Corrupt file");
     Q3BSPFace* faceData = new Q3BSPFace[facesCount];

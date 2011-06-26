@@ -32,6 +32,17 @@
 namespace G3D {
 
 Vector3::Vector3(const Any& any) {
+    if (any.name() == "Vector3::inf" || any.name() == "Point3::inf") {
+        *this = inf();
+        return;
+    } else if (any.name() == "Vector3::zero" || any.name() == "Point3::zero") {
+        *this = zero();
+        return;
+    } else if (any.name() == "Vector3::nan" || any.name() == "Point3::nan") {
+        *this = nan();
+        return;
+    }
+
     any.verifyName("Vector3", "Point3");
     any.verifyType(Any::TABLE, Any::ARRAY);
     any.verifySize(3);
@@ -46,6 +57,11 @@ Vector3::Vector3(const Any& any) {
         y = any["y"];
         z = any["z"];
     }
+}
+
+
+bool Vector3::isNaN() const {
+    return G3D::isNaN(x) || G3D::isNaN(y) || G3D::isNaN(z);
 }
 
 

@@ -5,7 +5,7 @@
 from __future__ import print_function
 
 import sys, string, os, os.path, fileinput, tempfile, shutil, re
-import subprocess, pickle, time, subprocess
+import subprocess, pickle, time
 try:
   from subprocess import getoutput
 except ImportError:
@@ -1046,6 +1046,7 @@ def isCFile(file):
     return ((ext == 'cpp') or
            (ext == 'c') or
            (ext == 'c++') or
+           (ext == 'cc') or
            (ext == 'cxx') or
            (ext == 'i') or
            (ext == 'ii') or
@@ -1076,8 +1077,9 @@ def _listCFilesVisitor(result, dirname, files, subdirectories):
         dir = dir[2:]
 
     if ((excludeFromCompilation != None) and
-        (excludeFromCompilation.search(dir) != None)):
-        # Don't recurse into subdirectories of excluded directories
+        ((excludeFromCompilation.search(dir) != None) or
+         (excludeFromCompilation.search(betterbasename(dir))))):
+        # Don't recurse into subdirectories of excluded directories either
         del subdirectories[:]
         return
 

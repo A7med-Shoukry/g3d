@@ -1,16 +1,14 @@
 /**
-   @file Framebuffer.cpp
+   \file Framebuffer.cpp
 
-   @author Daniel Hilferty, djhilferty@users.sourceforge.net
-   @maintainer Morgan McGuire
+   \author Daniel Hilferty, djhilferty@users.sourceforge.net
+   \maintainer Morgan McGuire
    
    Notes:
-   <UL>
-   <LI>http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
-   </UL>
-   
-   @created 2006-01-07
-   @edited  2009-04-11
+   http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
+      
+   \created 2006-01-07
+   \edited  2011-06-11
 */
 
 #include "GLG3D/Framebuffer.h"

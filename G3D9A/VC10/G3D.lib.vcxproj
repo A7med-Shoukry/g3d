@@ -214,6 +214,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\CollisionDetection.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Color1.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Color1uint8.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\Color2uint8.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Color3.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Color3uint8.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Color4.h" />
@@ -303,6 +304,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\TextOutput.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ThreadSet.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Triangle.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\typeutils.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\uint128.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\units.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\UprightFrame.h" />

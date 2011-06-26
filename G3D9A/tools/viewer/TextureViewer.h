@@ -22,11 +22,7 @@ private:
 	TextureRef	    m_texture;
 	int				m_width;
 	int				m_height;
-
-	bool			m_isSky;
-    SkyParameters   m_skyParameters;
-    SkyRef          m_sky;
-
+    bool            m_isSky;
 
 public:
 	TextureViewer();

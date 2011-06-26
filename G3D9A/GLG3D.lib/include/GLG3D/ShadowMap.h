@@ -105,7 +105,7 @@ public:
     Set to 0 to cast shadows as far as the entire scene.
     */
     static void computeMatrices
-    (const GLight& light, const AABox& sceneBounds, GCamera& lightCamera, Matrix4& lightProjectionMatrix,
+    (const GLight& light, AABox sceneBounds, GCamera& lightCamera, Matrix4& lightProjectionMatrix,
      float lightProjX = 20, float lightProjY = 20, float lightProjNearMin = 0.3f, float lightProjFarMax = 500.0f,
      float intensityCutoff = 1/255.0f);
 

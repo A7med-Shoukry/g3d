@@ -244,12 +244,6 @@ public:
     static std::string currentDateString();
 
     /**
-       Guarantees that the start of the array is aligned to the 
-       specified number of bytes.
-    */
-    static void* alignedMalloc(size_t bytes, size_t alignment);
-    
-    /**
        Uses pooled storage to optimize small allocations (1 byte to 5
        kilobytes).  Can be 10x to 100x faster than calling ::malloc or
        new.
@@ -288,6 +282,12 @@ public:
      */
     static void free(void* p);
 
+    /**
+       Guarantees that the start of the array is aligned to the 
+       specified number of bytes.
+    */
+    static void* alignedMalloc(size_t bytes, size_t alignment);
+    
     /**
      Frees memory allocated with alignedMalloc.
      */

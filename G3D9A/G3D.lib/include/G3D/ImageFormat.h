@@ -1,10 +1,10 @@
 /**
-  @file ImageFormat.h
+  \file G3D/ImageFormat.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2003-05-23
-  @edited  2010-05-01
+  \created 2003-05-23
+  \edited  2011-06-23
 */
 
 #ifndef GLG3D_ImageFormat_H
@@ -27,6 +27,7 @@ public:
 
     // Must update ImageFormat::name() when this enum changes.
     enum Code {
+        CODE_AUTO = -2,
         CODE_NONE = -1,
         CODE_L8,
         CODE_L16,
@@ -58,6 +59,7 @@ public:
         CODE_RGB8I,
         CODE_RGB8UI,
 
+        CODE_RGBA8I,
         CODE_RGBA8UI,
 
         CODE_ARGB8,
@@ -302,6 +304,8 @@ public:
 
     static const ImageFormat* RGB8UI();    
 
+    static const ImageFormat* RGBA8I();    
+
     static const ImageFormat* RGBA8UI();    
     
     static const ImageFormat* RGB_DXT1();
@@ -418,6 +422,18 @@ public:
 
     /* Checks if a conversion between two formats is available. */
     static bool conversionAvailable(const ImageFormat* srcFormat, int srcRowPadBits, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY = false);
+
+    /** Does this contain exactly one uint8 component? */
+    bool representableAsColor1uint8() const;
+
+    /** Does this contain exactly two uint8 components? */
+    bool representableAsColor2uint8() const;
+
+    /** Does this contain exactly three uint8 components? */
+    bool representableAsColor3uint8() const;
+
+    /** Does this contain exactly four uint8 components? */
+    bool representableAsColor4uint8() const;
 };
 
 typedef ImageFormat TextureFormat;

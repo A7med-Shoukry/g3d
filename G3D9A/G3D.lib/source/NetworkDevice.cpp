@@ -450,7 +450,7 @@ bool NetworkDevice::init() {
     }
 
     // Extract all interesting adapters from the table
-    for (AdapterTable::Iterator it = table.begin(); it.hasMore(); ++it) {
+    for (AdapterTable::Iterator it = table.begin(); it.isValid(); ++it) {
         const EthernetAdapter& adapter = it->value;
         
         // Only add adapters that have IP addresses

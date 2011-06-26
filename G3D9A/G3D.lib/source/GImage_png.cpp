@@ -448,17 +448,20 @@ void GImage::decodePNG(
         ((color_type == PNG_COLOR_TYPE_PALETTE) && (png_ptr->num_trans > 0)) ) {
 
         m_channels = 4;
+        m_imageFormat = ImageFormat::RGBA8();
         m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 4);
 
     } else if ((color_type == PNG_COLOR_TYPE_RGB) || 
                (color_type == PNG_COLOR_TYPE_PALETTE)) {
 
         m_channels = 3;
+        m_imageFormat = ImageFormat::RGB8();
         m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
 
     } else if (color_type == PNG_COLOR_TYPE_GRAY) {
 
         m_channels = 1;
+        m_imageFormat = ImageFormat::R8();
 
         // Round up to the nearest 8 rows to avoid a bug in the PNG decoder
         int h = iCeil(m_height / 8) * 8;

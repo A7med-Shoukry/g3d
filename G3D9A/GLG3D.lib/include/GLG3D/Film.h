@@ -1,8 +1,8 @@
 /**
- @file Film.h
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @created 2008-07-01
- @edited  2010-02-01
+ \file GLG3D/Film.h
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2008-07-01
+ \edited  2011-05-31
  */
 
 #ifndef G3D_Film_h
@@ -17,18 +17,19 @@
 
 namespace G3D {
 
-/** \brief Tone mapping controls for simulating bloom and gamma correction.
+/** \brief Post processing: gamma correction, exposure, bloom, and
+    screen-space antialiasing.
 
-   Computer displays are not capable of representing the range of values
-   that are rendered by a physically based system.  For example, the brightest
-   point on a monitor rarely has the intensity of a light bulb.  Furthermore,
-   for historical (and 2D GUI rendering) reasons, monitors apply a power
-   ("gamma") curve to values.  So rendering code that directly displays
-   radiance values on a monitor will neither capture the desired tonal range
-   nor even present the values scaled linearly.
-
-   The Film class corrects for this using the simple tone mapping algorithm
-   presented in Pharr and Humphreys 2004.
+   Computer displays are not capable of representing the range of
+   values that are rendered by a physically based system.  For
+   example, the brightest point on a monitor rarely has the intensity
+   of a light bulb.  Furthermore, for historical (and 2D GUI
+   rendering) reasons, monitors apply a power ("gamma") curve to
+   values.  So rendering code that directly displays radiance values
+   on a monitor will neither capture the desired tonal range nor even
+   present the values scaled linearly.  The Film class corrects for
+   this using the simple tone mapping algorithm presented in Pharr and
+   Humphreys 2004 extended with color desaturation.
 
    To use, render to a G3D::Texture using G3D::Framebuffer, then pass that
    texture to exposeAndDraw() to produce the final image for print or display
@@ -69,12 +70,26 @@ public:
 
 private:
 
-    const ImageFormat* m_intermediateFormat;
+    /** Used for all buffers except m_postGamma */
+    const ImageFormat*      m_intermediateFormat;
+
+    /** Used for m_postGamma */
+    const ImageFormat*      m_targetFormat;
 
     /** Working framebuffer */
     Framebuffer::Ref        m_framebuffer;
     Framebuffer::Ref        m_tempFramebuffer;
     Framebuffer::Ref        m_blurryFramebuffer;
+
+    /** Used to make the last step of gamma write to the m_postGamma
+     texture instead of the current framebuffer.*/
+    Framebuffer::Ref        m_postGammaFramebuffer;
+
+    /** Post-bloom, pre-AA texture. */
+    Texture::Ref            m_postGamma;
+
+    /** Performs screen-space antialiasing */
+    Shader::Ref             m_antialiasingShader;
 
     /** Expose, invert gamma and correct out-of-gamut colors */
     Shader::Ref             m_shader;
@@ -107,22 +122,28 @@ private:
      of the larger of image width/height.*/
     float                   m_bloomRadiusFraction;
 
+    bool                    m_antialiasingEnabled;
+
     /** Loads the shaders. Called from expose. */
     void init();
 
-    Film(const ImageFormat* f);
+    Film(const ImageFormat* f, const ImageFormat* t);
 
 public:
     
     /** \brief Create a new Film instance.
     
-        @param intermediateFormat Intermediate precision to use when processing images.  Defaults to 
-         16F to conserve space (and bandwidth); a float texture is used in case values are not on the range (0, 1).
+        \param intermediateFormat Intermediate precision to use when processing images during bloom.  This should usually
+        match your source format. Defaults to 
+         ImageFormat::RGB16F. A floating-point texture is used in case values are not on the range (0, 1).
          If you know that your data is on a smaller range, try ImageFormat::RGB8() or 
-         ImageFormat::RGB10A2() for increased
-         space savings or performance.
+         ImageFormat::RGB10A2() for increased space savings or performance.
+
+         \param targetFormat Intermediate precision used when processing images after bloom, during antialiasing.
+         This should usually match your destination format.  Defaults ot ImageFormat::RGB8().
       */
-    static Ref create(const ImageFormat* intermediateFormat = ImageFormat::RGB16F());
+    static Ref create(const ImageFormat* intermediateFormat = ImageFormat::RGB16F(), 
+                      const ImageFormat* targetFormat = ImageFormat::RGB8());
 
     /** \brief Monitor gamma used in tone-mapping. Default is 2.0. */
     float gamma() const {
@@ -145,6 +166,21 @@ public:
         return m_bloomRadiusFraction;
     }
 
+    /** Enabled antialiasing post-processing. This reduces the
+     artifacts from undersampling edges but may blur textures.
+    By default, this is disabled.
+
+    The current antialiasing algorithm is "FXAA 1" by Timothy Lottes.
+    This may change in future implementations.
+    */
+    void setAntialiasingEnabled(bool e) {
+        m_antialiasingEnabled = e;
+    }
+
+    bool antialiasingEnabled() const {
+        return m_antialiasingEnabled;
+    }
+
     void setGamma(float g) {
         m_gamma = g;
     }
@@ -162,7 +198,11 @@ public:
     }
 
     /** Adds controls for this Film to the specified GuiPane. */
-    void makeGui(class GuiPane*, float maxSensitivity = 10.0f, float sliderWidth = GuiContainer::CONTROL_WIDTH, float controlIndent = 0);
+    void makeGui
+    (class GuiPane*, 
+     float maxSensitivity = 10.0f, 
+     float sliderWidth    = GuiContainer::CONTROL_WIDTH, 
+     float controlIndent  = 0.0f);
 
     /** \brief Renders the input as filtered by the film settings to the currently bound framebuffer.
         \param downsample One side of the downsampling filter in pixels. 1 = no downsampling. 2 = 2x2 downsampling (antialiasing). Not implemented.

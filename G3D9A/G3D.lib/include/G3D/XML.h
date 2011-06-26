@@ -117,7 +117,7 @@ public:
         return m_attribute;
     }
 
-    const Array<XML> childArray() const {
+    const Array<XML>& childArray() const {
         return m_child;
     }
     

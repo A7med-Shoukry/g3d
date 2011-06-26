@@ -1,20 +1,20 @@
 /**
- @file ArticulatedViewer.cpp
+ \file ArticulatedViewer.cpp
  
  Viewer for .3ds models
  
- @author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
+ \author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
  
- @created 2007-05-31
- @edited  2007-06-08
+ \created 2007-05-31
+ \edited  2011-06-12
  */
 #include "ArticulatedViewer.h"
 
 ArticulatedViewer::ArticulatedViewer() :
-	m_model(NULL),
-	m_numEdges(0),
-	m_numFaces(0),
-	m_numVertices(0)
+    m_model(NULL),
+    m_numEdges(0),
+    m_numFaces(0),
+    m_numVertices(0)
 	{}
 
 
@@ -23,6 +23,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
     m_selectedPartIndex = -1;
     m_selectedTriListIndex = -1;
 
+    const RealTime start = System::time();
     if (toLower(filenameExt(filename)) == "any") {
         Any any;
         any.load(filename);
@@ -31,6 +32,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
     } else {
         m_model = ArticulatedModel::fromFile(filename, ArticulatedModel::Preprocess());
     }
+    debugPrintf("%s loaded in %f seconds\n", filename.c_str(), System::time() - start);
 
     Array<Surface::Ref> arrayModel;
     m_model->pose(arrayModel);
@@ -55,7 +57,10 @@ void ArticulatedViewer::onInit(const std::string& filename) {
             
             //merges the bounding boxes of all the seperate parts into the bounding box of the entire object
             AABox temp;
-            Box partBounds = arrayModel[x]->worldSpaceBoundingBox();
+            CFrame cframe;
+            arrayModel[x]->getCoordinateFrame(cframe);
+            arrayModel[x]->getObjectSpaceBoundingBox(temp);
+            Box partBounds = cframe.toWorldSpace(temp);
             
             // Some models have screwed up bounding boxes
             if (partBounds.extent().isFinite()) {
@@ -117,6 +122,47 @@ void ArticulatedViewer::onInit(const std::string& filename) {
             m_model->partArray[partIndex].updateVAR();
         }
     }
+
+//    saveGeometry();
+}
+
+
+void ArticulatedViewer::saveGeometry() {
+    const MeshAlg::Geometry& geometry = m_model->partArray[0].geometry;
+    const Array<Point2>& texCoord     = m_model->partArray[0].texCoordArray;
+
+    const ArticulatedModel::Part& part = m_model->partArray[0];
+
+    int numIndices = 0;
+    for (int t = 0; t < part.triList.size(); ++t) { 
+        numIndices += part.triList[t]->indexArray.size();
+    }
+
+    BinaryOutput b("d:/out.bin", G3D_LITTLE_ENDIAN);
+    b.writeInt32(numIndices);
+    b.writeInt32(geometry.vertexArray.size());
+    for (int t = 0; t < part.triList.size(); ++t) {
+        const Array<int>& index = part.triList[t]->indexArray;
+        for (int i = 0; i < index.size(); ++i) {
+            b.writeInt32(index[i]);
+        }
+    }
+    for (int i = 0; i < geometry.vertexArray.size(); ++i) {
+        part.cframe.pointToWorldSpace(geometry.vertexArray[i]).serialize(b);
+    }
+    for (int i = 0; i < geometry.normalArray.size(); ++i) {
+        part.cframe.vectorToWorldSpace(geometry.normalArray[i]).serialize(b);
+    }
+    if (texCoord.size() > 0) {
+        for (int i = 0; i < texCoord.size(); ++i) {
+            texCoord[i].serialize(b);
+        }
+    } else {
+        for (int i = 0; i < geometry.vertexArray.size(); ++i) {
+            Point2::zero().serialize(b);
+        }
+    }
+    b.commit();
 }
 
 
@@ -141,18 +187,21 @@ void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef
     
     m_model->pose(posed3D);
     Surface::sortAndRender(rd, app->defaultCamera, posed3D, lighting, app->shadowMap);
+    //Surface::renderWireframe(rd, posed3D);
 
     for (int p = 0; p < posed3D.size(); ++p) {
         SuperSurface::Ref s = posed3D[p].downcast<SuperSurface>();
         if (m_selectedGeom == s->gpuGeom()) {
-            rd->pushState();
-                rd->setObjectToWorldMatrix(s->coordinateFrame());
+            rd->pushState(); {
+                CFrame cframe;
+                s->getCoordinateFrame(cframe);
+                rd->setObjectToWorldMatrix(cframe);
                 rd->setRenderMode(RenderDevice::RENDER_WIREFRAME);
                 rd->setPolygonOffset(-1.0f);
                 rd->setColor(Color3::green() * 0.8f);
                 rd->setTexture(0, NULL);
                 s->sendGeometry(rd);
-            rd->popState();
+            } rd->popState();
             break;
         }
     }

@@ -258,8 +258,9 @@ public:
             SurfaceElement s;
             Intersector hit;
             float distance = finf();
-            for (int t = 0; t < array.size(); ++t) {
-                hit(ray, array[t], distance);
+            bool continueTracing = true;
+            for (int t = 0; t < array.size()) && continueTracing; ++t) {
+                hit(ray, array[t], distance, continueTracing);
             }
 
             if (hit.tri != NULL) {
@@ -285,8 +286,10 @@ public:
           
           (This corresponds to an "AnyHit program" in the NVIDIA OptiX
           API.)
+
+          \return true if there was an intersection between the ray and triangle
           */
-        void operator()(const Ray& ray, const Tri& tri, float& distance);
+        bool operator()(const Ray& ray, const Tri& tri, float& distance);
 
         /** Computes information about the intersection from an
             established Intersector.  The normal will have unit

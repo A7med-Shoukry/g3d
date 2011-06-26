@@ -1,13 +1,14 @@
 /**
- @file MD2Model.h
+   \file GLG3D/MD2Model.h
 
- Quake II MD2 file structure.
+   Quake II MD2 file structure.
+   
+   \cite http://tfc.duke.free.fr/us/tutorials/models/md2.htm
 
- @cite http://tfc.duke.free.fr/us/tutorials/models/md2.htm
-
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- @created 2003-02-21
- @edited  2010-04-18
+   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ 
+   \created 2003-02-21
+   \edited  2011-06-12
  */
 
 #ifndef G3D_MD2Model_h
@@ -347,7 +348,7 @@ public:
         class Primitive {
         public:
             /** PrimitiveType::TRIANGLE_STRIP or PrimitiveType::TRIANGLE_FAN */
-            RenderDevice::Primitive type;
+            PrimitiveType           type;
 
             class PVertex {
             public:
@@ -497,7 +498,8 @@ public:
 
         virtual ~Part() {}
 
-        void pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const Pose& pose, bool negateNormals = false);
+        /** The current implementation does not reflect character animation in GBuffer::CS_POSITION_CHANGE, only root motion*/
+        void pose(Array<Surface::Ref>& surfaceArray, const CoordinateFrame& cframe, const CFrame& prevFrame, const Pose& pose, bool negateNormals = false);
 
         const Array<Vector2>& texCoordArray() const {
             return _texCoordArray;
@@ -601,9 +603,12 @@ public:
         return m_numTriangles;
     }
 
-    void pose(Array<Surface::Ref>& surfaceArray, const CFrame& rootFrame = CFrame(), const Pose& pose = Pose());
+    void pose(Array<Surface::Ref>& surfaceArray, const CFrame& rootFrame, const CFrame& prevRootFrame, const Pose& pose = Pose());
+    void pose(Array<Surface::Ref>& surfaceArray, const CFrame& rootFrame = CFrame(), const Pose& currentPose = Pose()) {
+        pose(surfaceArray, rootFrame, rootFrame, currentPose);
+    }
 };
 
-}
+} // namespace G3D
 
-#endif
+#endif // G3D_MD2Model_h

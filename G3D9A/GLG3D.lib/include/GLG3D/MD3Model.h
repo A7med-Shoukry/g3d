@@ -259,7 +259,7 @@ private:
     /** Calculates relative frame number for part */
     float findFrameNum(AnimType animType, GameTime animTime) const;
 
-    void posePart(PartType partType, const Pose& pose, Array<Surface::Ref>& posedModelArray, const CoordinateFrame& cframe);
+    void posePart(PartType partType, const Pose& pose, Array<Surface::Ref>& posedModelArray, const CFrame& cframe, const CFrame& prevFrame);
 
 public:
 
@@ -280,10 +280,13 @@ public:
         The initial \a cframe transformation is applied to the base 
         lower.md3 part before the whole model is posed.
      */
-    void pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame& cframe = CoordinateFrame(), const Pose& pose = Pose());
+    void pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame& cframe, const CFrame& previousFrame, const Pose& currentPose = Pose());
+    void pose(Array<Surface::Ref>& posedModelArray, const CoordinateFrame& cframe = CoordinateFrame(), const Pose& currentPose = Pose()) {
+        pose(posedModelArray, cframe, cframe, currentPose);
+    }
 
     /** Return the coordinate frame of the tag_weapon; this is where a simulator should place objects carried by the character.*/
-    CoordinateFrame weaponFrame(const CFrame& cframe = CoordinateFrame(), const Pose& pose = Pose()) const;
+    CFrame weaponFrame(const CFrame& cframe = CFrame(), const Pose& pose = Pose()) const;
 
     const Skin::Ref defaultSkin() const {
         return m_defaultSkin;

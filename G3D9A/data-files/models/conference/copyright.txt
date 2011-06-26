@@ -1,0 +1,14 @@
+Greg Ward's Conference Room model converted to OBJ format.
+
+Downloaded from http://code.google.com/p/understanding-the-efficiency-of-ray-traversal-on-gpus/source/browse/#svn%2Ftrunk%2Fscenes%2Frt%2Fconference
+
+--------------
+
+Originally from:
+
+http://radsite.lbl.gov/mgf/scenes.html
+http://www.siggraph.org/education/materials/HyperGraph/radiosity/overview_4.htm
+The "conference room" image is courtesy of Greg Ward. Copyright 1990 Lawrence Berkeley Laboratory, by Anat Grynberg and Greg Ward. It was rendered with the RADIANCE global illumination package.
+
+The "conference room" photograph is courtesy of Greg Ward. The "Theater" images are courtesy of Dan Baum. The radiosity algorithms and software used in the creation of these images are described in:
+

@@ -1,16 +1,28 @@
 // -*- c++ -*-
 /**
-  @file ShadowMappedLightPass.pix
-  @author Morgan McGuire morgan@cs.williams.edu
+  \file ShadowMappedLightPass.pix
+  \author Morgan McGuire morgan@cs.williams.edu
 
   For use with G3D::SuperShader.
-  @edited 2009-07-30
+
+  \edited 2011-06-17
  */
 
 #include "SS_Globals.pix"
 #include "SS_Light.pix"
-#include "SS_BumpMap.pix"
-#line 14
+
+#ifdef NORMALBUMPMAP
+#include "BumpMap.glsl"
+#if (PARALLAXSTEPS == 0)
+#   define bumpMap bumpMapBlinn78
+#elif (PARALLAXSTEPS <= 1)
+#   define bumpMap bumpMapWelsh04
+#else // PARALLAXSETPS > 1
+#   define bumpMap bumpMapTatarchuk06
+#endif
+#endif
+
+#line 19
 
 uniform sampler2DShadow shadowMap;
 
@@ -70,8 +82,14 @@ void main(void) {
     if (shadow == 0.0) {
         discard;
     }
-
-#include "SS_Components.pix"
+    
+#   if defined(SPECULARCONSTANT) || defined(SPECULARMAP)
+        // Eye vector
+        vec3 wsE = normalize(wsEyePos - wsPosition);
+        // or... (tangentToWorld * vec4(tsE, 0.0)).xyz;
+#   else
+        vec3 wsE = BLACK;
+#   endif
 
     float shininess = 0.0;
 
@@ -123,3 +141,4 @@ void main(void) {
 #       endif
         );
 }
+/* end of SS_ShadowMappedLightPass.pix */

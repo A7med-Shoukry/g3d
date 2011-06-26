@@ -1,10 +1,10 @@
 /**
-  @file SuperSurface.h
+  \file GLG3D/SuperSurface.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2008-11-12
-  @edited  2010-02-22
+  \created 2008-11-12
+  \edited  2011-06-12
 */
 #ifndef G3D_SuperSurface_h
 #define G3D_SuperSurface_h
@@ -27,7 +27,7 @@
 namespace G3D {
 
 /**
-   @brief An optimized implementation G3D::Surface for
+   \brief An optimized implementation G3D::Surface for
    G3D::SuperShader / G3D::Material classes.
 
    Used by G3D::ArticulatedModel.
@@ -132,13 +132,19 @@ public:
                                  VertexRange& packedTangents, VertexRange& texCoord0, 
                                  VertexBuffer::UsageHint hint);
     };
-
+    
 protected:
+    virtual void defaultRender(RenderDevice* rd) const {
+        alwaysAssertM(false, "Not implemented");
+    }
 
     std::string             m_name;
 
     /** Object to world space transformation. */
     CoordinateFrame         m_frame;
+
+    /** Object to world transformation from the previous time step. */
+    CoordinateFrame         m_previousFrame;
     
     GPUGeom::Ref            m_gpuGeom;
 
@@ -153,11 +159,15 @@ protected:
     inline SuperSurface
     (const std::string&       name,
      const CFrame&            frame, 
+     const CFrame&            previousFrame,
      const GPUGeom::Ref&      gpuGeom,
      const CPUGeom&           cpuGeom,
      const ReferenceCountedPointer<ReferenceCountedObject>& source = NULL) :
         m_name(name),
-        m_frame(frame), m_gpuGeom(gpuGeom), m_cpuGeom(cpuGeom),
+        m_frame(frame),
+        m_previousFrame(previousFrame),
+        m_gpuGeom(gpuGeom),
+        m_cpuGeom(cpuGeom),
         m_source(source) {}
 
     /** Set object to world and then draw geometry.  Called from
@@ -301,45 +311,24 @@ public:
     static SuperSurface::Ref create
     (const std::string&       name,
      const CFrame&            frame, 
+     const CFrame&            previousFrame,
      const GPUGeom::Ref&      gpuGeom,
      const CPUGeom&           cpuGeom = CPUGeom(),
      const ReferenceCountedPointer<ReferenceCountedObject>& source = NULL);
 
     virtual void sendGeometry(RenderDevice* rd) const;
 
-    virtual std::string name() const;
+    virtual std::string name() const override;
 
-    virtual bool hasTransmission() const;
+    virtual bool hasTransmission() const override;
 
-    virtual bool hasPartialCoverage() const;
+    virtual bool hasPartialCoverage() const override;
 
-    virtual void getCoordinateFrame(CoordinateFrame& c) const;
+    virtual void getCoordinateFrame(CoordinateFrame& c, bool previous = false) const override;
 
-    virtual const MeshAlg::Geometry& objectSpaceGeometry() const;
+    virtual void getObjectSpaceBoundingSphere(Sphere&, bool previous = false) const override;
 
-    virtual const Array<Vector3>& objectSpaceFaceNormals(bool normalize = true) const;
-
-    virtual const Array<MeshAlg::Face>& faces() const;
-
-    virtual const Array<MeshAlg::Edge>& edges() const;
-
-    virtual const Array<MeshAlg::Vertex>& vertices() const;
-
-    virtual const Array<Vector2>& texCoords() const;
-
-    virtual bool hasTexCoords() const;
-
-    virtual const Array<MeshAlg::Face>& weldedFaces() const;
-
-    virtual const Array<MeshAlg::Edge>& weldedEdges() const;
-
-    virtual const Array<MeshAlg::Vertex>& weldedVertices() const;
-
-    virtual const Array<int>& triangleIndices() const;
-
-    virtual void getObjectSpaceBoundingSphere(Sphere&) const;
-
-    virtual void getObjectSpaceBoundingBox(AABox&) const;
+    virtual void getObjectSpaceBoundingBox(AABox&, bool previous = false) const override;
 
     virtual void render(RenderDevice* renderDevice) const;
     
@@ -350,21 +339,25 @@ public:
     virtual void renderShadowMappedLightPass(RenderDevice* rd, const GLight& light, const Matrix4& lightMVP, const Texture::Ref& shadowMap) const;
 
     virtual void renderShadowMappedLightPass(RenderDevice* rd, const GLight& light, const ShadowMap::Ref& shadowMap) const;
-
-    virtual int numBoundaryEdges() const;
-
-    virtual int numWeldedBoundaryEdges() const;
-
-    virtual bool depthWriteHint(float distanceToCamera) const;
-
-    virtual const Array<Vector4>& objectSpacePackedTangents() const;
-   
+    
+    virtual bool depthWriteHint(float distanceToCamera) const override;
+       
     virtual bool renderSuperShaderPass
     (RenderDevice* rd, 
      const SuperShader::PassRef& pass,
      RenderDevice::CullFace originalCullFace = RenderDevice::CULL_BACK) const;
 
     static void sortFrontToBack(Array<SuperSurface::Ref>& a, const Vector3& v);
+
+    virtual void renderIntoGBufferHomogeneous
+    (RenderDevice*                rd, 
+     Array<Surface::Ref>&         surfaceArray,
+     const GBuffer::Ref&          gbuffer,
+     const CFrame&                previousCameraFrame) const override;
+
+    virtual void renderDepthOnlyHomogeneous
+    (RenderDevice*                rd, 
+     const Array<Surface::Ref>&   surfaceArray) const override;
 };
 
 const char* toString(SuperSurface::GraphicsProfile p);

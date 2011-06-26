@@ -23,7 +23,8 @@
 namespace G3D {
 
 namespace _internal {    
-    Morph::Morph() : active(false) {}
+
+Morph::Morph() : active(false), start(Rect2D::empty()), end(Rect2D::empty()) {}
 
 void Morph::morphTo(const Rect2D& startPos, const Rect2D& endPos) {
     active = true;
@@ -97,7 +98,9 @@ GuiThemeRef GuiTheme::fromFile(
 void GuiTheme::loadTheme(BinaryInput& b) {
     std::string f = b.readString32();
     (void)f;
-    debugAssert(f == "G3D Skin File");
+    // G3D 8.x and earlier had two nulls at the end of a string written to a file,
+    // so we can't use std::string comparison on them.
+    debugAssert(strcmp(f.c_str(), "G3D Skin File") == 0);
 
     float version = b.readFloat32();
     (void)version;
@@ -162,14 +165,17 @@ void GuiTheme::loadCoords(const Any& any) {
     m_osxWindowButtons = (any["windowButtonStyle"] == "osx");
 
 
-    static std::string windowStyleName[WINDOW_STYLE_COUNT] = {"window", "toolWindow", "dialogWindow", "drawer", "menu", "no"};
+    static std::string windowStyleName[WINDOW_STYLE_COUNT] = {"window", "toolWindow", "dialogWindow", "drawer", "menu", "panel", "no"};
     debugAssert(windowStyleName[WINDOW_STYLE_COUNT - 1] == "no");
     // Skip the no-style window
     for (int i = 0; i < WINDOW_STYLE_COUNT - 1; ++i) {
-        m_window[i].textStyle = m_textStyle;
-        m_window[i].defocusedTextStyle = m_textStyle;
-        m_window[i].load(any[windowStyleName[i]]);
+        if (i != PANEL_WINDOW_STYLE) {
+            m_window[i].textStyle = m_textStyle;
+            m_window[i].defocusedTextStyle = m_textStyle;
+            m_window[i].load(any[windowStyleName[i]]);
+        }
     }
+    m_window[PANEL_WINDOW_STYLE] = m_window[MENU_WINDOW_STYLE];
 
     m_hSlider.textStyle = m_textStyle;
     m_hSlider.disabledTextStyle = m_disabledTextStyle;
@@ -860,6 +866,10 @@ float GuiTheme::paneTopPadding(const GuiText& caption, PaneStyle paneStyle) cons
 
 Rect2D GuiTheme::paneToClientBounds(const Rect2D& bounds, const GuiText& caption, PaneStyle paneStyle) const {
     const Vector2 captionSpace(0, paneTopPadding(caption, paneStyle));
+
+    debugAssert(! bounds.isEmpty());
+    debugAssert(captionSpace.isFinite() && m_pane[paneStyle].clientPad.topLeft.isFinite() && m_pane[paneStyle].clientPad.wh().isFinite());
+
     return Rect2D::xywh(bounds.x0y0() + m_pane[paneStyle].clientPad.topLeft + captionSpace,
                         bounds.wh() - m_pane[paneStyle].clientPad.wh() - captionSpace);
 }
@@ -919,6 +929,7 @@ void GuiTheme::makeThemeFromSourceFiles(
 }
 
 void GuiTheme::pushClientRect(const Rect2D& r) {
+    debugAssert(! r.isEmpty());
     debugAssert(m_inRendering);
 
     // Must draw old text since we don't keep track of which text 
@@ -932,8 +943,8 @@ void GuiTheme::pushClientRect(const Rect2D& r) {
     m_scissorStack.append(oldRect);
 
     Rect2D newRect = r + oldMatrix.translation.xy();
-    newRect = oldRect.intersect(newRect);
-    m_rd->setClip2D(newRect);
+    const Rect2D& afterIntersectRect = oldRect.intersect(newRect);
+    m_rd->setClip2D(afterIntersectRect);
 
     const CoordinateFrame& newMatrix = oldMatrix * CoordinateFrame(Vector3(r.x0y0(), 0));
     m_rd->setObjectToWorldMatrix(newMatrix);

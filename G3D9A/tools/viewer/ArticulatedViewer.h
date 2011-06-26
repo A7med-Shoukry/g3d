@@ -32,6 +32,8 @@ private:
     float                       m_scale;
     Vector3                     m_offset;
 
+    /** Saves the geometry for the first part to a flat file */
+    void saveGeometry();
 
 public:
 	ArticulatedViewer();

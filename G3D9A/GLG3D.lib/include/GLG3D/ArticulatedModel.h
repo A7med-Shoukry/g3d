@@ -246,7 +246,7 @@ public:
         MeshAlg::Geometry           geometry;
 	
         /** CPU texture coordinates. */
-        Array<Vector2>              texCoordArray;
+        Array<Point2>               texCoordArray;
         
         /** CPU per-vertex tangent vectors, typically computed by computeNormalsAndTangentSpace.
             Packs two tangents, T1 and T2 that form a reference frame with the normal such that 
@@ -281,6 +281,12 @@ public:
         }
 
 
+        /** \param R in the parent's reference frame 
+         */
+        bool intersect(const Ray& R, int myPartIndex, const ArticulatedModel::Ref& model, const Pose& pose, float& maxDistance,
+                       int& partIndex, int& triListIndex, int& triIndex, float& u, float& v) const;
+
+
         /** Creates a new tri list, adds it to the Part, and returns it.
             If \a mat is NULL, creates a default white material. */
         TriList::Ref newTriList(const Material::Ref& mat = NULL);
@@ -294,12 +300,14 @@ public:
         void render(RenderDevice* rd, const CoordinateFrame& parent, const Pose& pose) const;
 
         /** Called by ArticulatedModel::pose */
-        void pose(
-            const ArticulatedModel::Ref& model,
-            int                     partIndex,
-            Array<Surface::Ref>&    posedArray,
-            const CoordinateFrame&  parent, 
-            const Pose&             posex) const;
+        void pose
+        (const ArticulatedModel::Ref& model,
+         int                     partIndex,
+         Array<Surface::Ref>&    posedArray,
+         const CoordinateFrame&  parent, 
+         const Pose&             posex,
+         const CFrame&           previousParent,
+         const Pose&             previousPose) const;
 
         /** Some parts have no geometry because they are interior nodes in the hierarchy. */
         inline bool hasGeometry() const {
@@ -675,9 +683,9 @@ private:
 
         @param path Current file load path*/
     static Material::Specification compute3DSMaterial
-        (const void* material, 
-         const std::string& path, 
-         const Preprocess& preprocess);
+    (const void*        material, 
+     const std::string& path, 
+     const Preprocess&  preprocess);
 
 public:
 
@@ -686,16 +694,20 @@ public:
 
     /** Appends one posed model per sub-part with geometry.
 
-        If the lighting environment is NULL the system will
-        default using to whatever fixed function state is enabled
-        (e.g., with renderDevice->setLight).  If the lighting
-        environment is specified, the SuperShader will be used,
-        providing detailed illuminaton.
+        Poses an object with no motion (see the other overloaded
+        version for expressing motion)
     */
-    void pose(
-        Array<Surface::Ref>&  posedModelArray,
-        const CoordinateFrame&   cframe = CoordinateFrame(),
-        const Pose&              pose = defaultPose());
+    void pose
+    (Array<Surface::Ref>&     posedModelArray,
+     const CoordinateFrame&   cframe = CoordinateFrame(),
+     const Pose&              pose   = defaultPose());
+
+    void pose
+    (Array<Surface::Ref>&     posedModelArray,
+     const CoordinateFrame&   cframe,
+     const Pose&              pose,
+     const CoordinateFrame&   prevCFrame,
+     const Pose&              prevPose);
   
 
     /** Converts a part name to an index.  Returns -1 if the part name is not found.*/
@@ -786,6 +798,22 @@ public:
     /** Doubles the geometry for any twoSided triList and then removes the flag. 
       You need to call updateAll() after invoking this. */
     void replaceTwoSidedWithGeometry();
+
+    /**
+       Returns true if ray \a R intersects this model, when it has \a
+       cframe and \a pose, at a distance less than \a maxDistance.  If
+       so, sets maxDistance to the intersection distance and sets the
+       indices of the part, triList within the part, and triangle
+       first vertex index within the triList.  \a u and \a v are the
+       barycentric coordinates of vertices triIndex and triIndex + 1.
+       The barycentric coordinate of vertex <code>triIndex + 2</code>
+       is <code>1 - u - v</code>.
+
+       This is primarily intended for mouse selection.  For ray tracing
+       or physics, consider G3D::TriTree instead.
+     */
+    bool intersect(const Ray& R, const CFrame& cframe, const Pose& pose, float& maxDistance, int& partIndex, 
+                   int& triListIndex, int& triIndex, float& u, float& v) const;
 };
 
 }

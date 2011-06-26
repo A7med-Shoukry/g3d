@@ -31,7 +31,8 @@ void App::onInit() {
     showRenderingStats = false;
     developerWindow->setVisible(false);
     developerWindow->cameraControlWindow->setVisible(false);
-    
+    m_film->setAntialiasingEnabled(true);
+
     // Starting position
     defaultCamera.setCoordinateFrame(CFrame::fromXYZYPRDegrees(24.3f, 0.4f, 2.5f, 68.7f, 1.2f, 0.0f));
     m_prevCFrame = defaultCamera.coordinateFrame();
@@ -42,7 +43,7 @@ void App::onInit() {
 
 
 void App::makeGUI() {
-    GuiWindow::Ref window = GuiWindow::create("Controls", debugWindow->theme(), Rect2D(), GuiTheme::TOOL_WINDOW_STYLE);
+    GuiWindow::Ref window = GuiWindow::create("Controls", debugWindow->theme(), Rect2D::xywh(0,0,0,0), GuiTheme::TOOL_WINDOW_STYLE);
     GuiPane* pane = window->pane();
     pane->addLabel("Use WASD keys + right mouse to move");
     pane->addButton("Render High Res.", this, &App::onRender);
@@ -72,7 +73,7 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& surface3D, Array<Sur
         rd->pop2D();
     }
 
-    PosedModel2D::sortAndRender(rd, surface2D);
+    Surface2D::sortAndRender(rd, surface2D);
 }
 
 
@@ -129,7 +130,7 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, int bounce) {
                 const Vector3& offset = impulse.w * sign(impulse.w.dot(surfel.geometric.normal)) * BUMP_DISTANCE;
                 const Ray& secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location + offset, impulse.w);
 				debugAssert(secondaryRay.direction().isFinite());
-                radiance += rayTrace(secondaryRay, world, bounce + 1) * impulse.coefficient;
+                radiance += rayTrace(secondaryRay, world, bounce + 1) * impulse.magnitude;
 				debugAssert(radiance.isFinite());
             }
         }
@@ -162,7 +163,7 @@ void App::onRender() {
     rayTraceImage(1.0f, m_raysPerPixel);
     timer.after("Trace");
     debugPrintf("%f s\n", timer.elapsedTime());
-    m_result->toImage3uint8()->save("result.png");
+//    m_result->toImage3uint8()->save("result.png");
 }
 
 

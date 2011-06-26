@@ -51,7 +51,9 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     rd->setColor(Color3::white() * 0.10f);
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
-        rd->setObjectToWorldMatrix(surface->coordinateFrame());
+        CFrame cframe;
+        surface->getCoordinateFrame(cframe);
+        rd->setObjectToWorldMatrix(cframe);
         surface->sendGeometry(rd);
     }
     rd->popState();
@@ -61,7 +63,9 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     rd->setRenderMode(RenderDevice::RENDER_WIREFRAME);
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
-        rd->setObjectToWorldMatrix(surface->coordinateFrame());
+        CFrame cframe;
+        surface->getCoordinateFrame(cframe);
+        rd->setObjectToWorldMatrix(cframe);
         surface->sendGeometry(rd);
     }
     rd->popState();
@@ -74,9 +78,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     m_extrudeShader->args.set("intensity", 0.1); 
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
+        CFrame cframe;
+        surface->getCoordinateFrame(cframe);
         m_extrudeShader->args.set("MVP", 
             rd->invertYMatrix() * rd->projectionMatrix() * (rd->cameraToWorldMatrix().inverse() * 
-            surface->coordinateFrame()));
+            cframe));
 
         surface->sendGeometry(rd);
     }
@@ -89,9 +95,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     m_extrudeShader->args.set("intensity", 1.0); 
     for (int i = 0; i < m_sceneGeometry.size(); ++i) {
         const Surface::Ref& surface = m_sceneGeometry[i];
+        CFrame cframe;
+        surface->getCoordinateFrame(cframe);
         m_extrudeShader->args.set("MVP", 
             rd->invertYMatrix() * rd->projectionMatrix() * (rd->cameraToWorldMatrix().inverse() * 
-            surface->coordinateFrame()));
+            cframe));
 
         surface->sendGeometry(rd);
     }

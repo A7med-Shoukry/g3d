@@ -1,13 +1,13 @@
 /** 
-  @file Array.h
+  \file Array.h
  
-  @maintainer Morgan McGuire, graphics3d.com
-  @cite Portions written by Aaron Orenstein, a@orenstein.name
+  \maintainer Morgan McGuire, graphics3d.com
+  \cite Portions written by Aaron Orenstein, a@orenstein.name
  
-  @created 2001-03-11
-  @edited  2009-05-29
+  \created 2001-03-11
+  \edited  2011-05-29
 
-  Copyright 2000-2009, Morgan McGuire, http://graphics.cs.williams.edu
+  Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
   All rights reserved.
  */
 
@@ -177,6 +177,29 @@ private:
     }
 
 public:
+   /**
+    Assignment operator.  Will be private in a future release because this is slow and can be invoked by accident by novide C++ programmers.
+    If you really want to copy an Array, use the explicit copy constructor.
+    */ 
+   Array& operator=(const Array& other) {
+       debugAssert(num >= 0);
+       resize(other.num);       
+       for (int i = 0; i < num; ++i) {
+           data[i] = other[i];
+       }
+       debugAssert(num >= 0);
+       return *this;
+   }
+
+   Array& operator=(const std::vector<T>& other) {
+       resize((int)other.size());
+       for (int i = 0; i < num; ++i) {
+           data[i] = other[i];
+       }
+       return *this;
+   }
+
+public:
 
     /**
      G3D C++ STL style iterator variable.  Call begin() to get 
@@ -210,7 +233,7 @@ public:
         return data;
     }
     /**
-     C++ STL style iterator method.  Returns one after the last iterator
+     C++ STL style iterator method.  Returns one after the last valid iterator
      element.
      */
     ConstIterator end() const {
@@ -245,7 +268,7 @@ public:
     
 
     /**  Creates an array containing v0. */
-    Array(const T& v0) {
+    explicit Array(const T& v0) {
         init(1, MemoryManager::create());
         (*this)[0] = v0;
     }
@@ -286,11 +309,16 @@ public:
 
 
    /**
-    Copy constructor
+    Copy constructor.  Copying arrays is slow...perhaps you want to pass a reference or a pointer instead?
     */
-    Array(const Array& other) : num(0) {
+   //TODO: patch rest of the API to prevent returning Arrays by value, then make explicit 
+   Array(const Array& other) : num(0) {
        _copy(other);
        debugAssert(num >= 0);
+   }
+
+   explicit Array(const std::vector<T>& other) : num(0), data(NULL) {
+       *this = other;
    }
 
    /**
@@ -332,26 +360,6 @@ public:
       @deprecated*/
    void fastClear() {
        clear(false);
-   }
-
-   /**
-    Assignment operator.
-    */
-   Array& operator=(const Array& other) {
-       debugAssert(num >= 0);
-       resize(other.num);       for (int i = 0; i < num; ++i) {
-           data[i] = other[i];
-       }
-       debugAssert(num >= 0);
-       return *this;
-   }
-
-   Array& operator=(const std::vector<T>& other) {
-       resize((int)other.size());
-       for (int i = 0; i < num; ++i) {
-           data[i] = other[i];
-       }
-       return *this;
    }
 
    inline MemoryManager::Ref memoryManager() const {
@@ -582,6 +590,62 @@ public:
         }
     }
 
+    void append(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5) {
+        if (inArray(&v1) || inArray(&v2) || inArray(&v3) || inArray(&v4) || inArray(&v5)) {
+            T t1 = v1;
+            T t2 = v2;
+            T t3 = v3;
+            T t4 = v4;
+            T t5 = v5;
+            append(t1, t2, t3, t4, t5);
+        } else if (num + 4 < numAllocated) {
+            // This is a simple situation; just stick it in the next free slot using
+            // the copy constructor.
+            new (data + num) T(v1);
+            new (data + num + 1) T(v2);
+            new (data + num + 2) T(v3);
+            new (data + num + 3) T(v4);
+            new (data + num + 4) T(v5);
+            num += 5;
+        } else {
+            resize(num + 5, DONT_SHRINK_UNDERLYING_ARRAY);
+            data[num - 5] = v1;
+            data[num - 4] = v2;
+            data[num - 3] = v3;
+            data[num - 2] = v4;
+            data[num - 1] = v5;
+        }
+    }
+
+    void append(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6) {
+        if (inArray(&v1) || inArray(&v2) || inArray(&v3) || inArray(&v4) || inArray(&v5) || inArray(&v6)) {
+            T t1 = v1;
+            T t2 = v2;
+            T t3 = v3;
+            T t4 = v4;
+            T t5 = v5;
+            T t6 = v6;
+            append(t1, t2, t3, t4, t5, t6);
+        } else if (num + 5 < numAllocated) {
+            // This is a simple situation; just stick it in the next free slot using
+            // the copy constructor.
+            new (data + num) T(v1);
+            new (data + num + 1) T(v2);
+            new (data + num + 2) T(v3);
+            new (data + num + 3) T(v4);
+            new (data + num + 4) T(v5);
+            new (data + num + 5) T(v6);
+            num += 6;
+        } else {
+            resize(num + 6, DONT_SHRINK_UNDERLYING_ARRAY);
+            data[num - 6] = v1;
+            data[num - 5] = v2;
+            data[num - 4] = v3;
+            data[num - 3] = v4;
+            data[num - 2] = v5;
+            data[num - 1] = v6;
+        }
+    }
     /**
      Returns true if the given element is in the array.
      */
@@ -820,11 +884,16 @@ public:
     Calls delete on all objects[0...size-1]
     and sets the size to zero.
     */
-    void deleteAll() {
+    void invokeDeleteOnAllElements() {
         for (int i = 0; i < num; i++) {
             delete data[i];
         }
         resize(0);
+    }
+
+    /** \deprecated */
+    void G3D_DEPRECATED deleteAll() {
+        invokeDeleteOnAllElements();
     }
 
     /**
@@ -916,29 +985,29 @@ public:
     /**
      Sort using a specific less-than function, e.g.:
 
-  <PRE>
+  \code
     bool __cdecl myLT(const MyClass& elem1, const MyClass& elem2) {
         return elem1.x < elem2.x;
     }
-    </PRE>
+    \endcode
 
   Note that for pointer arrays, the <CODE>const</CODE> must come 
   <I>after</I> the class name, e.g., <CODE>Array<MyClass*></CODE> uses:
 
-  <PRE>
+  \code
     bool __cdecl myLT(MyClass*const& elem1, MyClass*const& elem2) {
         return elem1->x < elem2->x;
     }
-    </PRE>
+    \endcode
 
     or a functor, e.g.,
-    <pre>
+    \code
 bool
 less_than_functor::operator()( const double& lhs, const double& rhs ) const
 {
 return( lhs < rhs? true : false );
 }
-</pre>
+\endcode
      */
     //    void sort(bool (__cdecl *lessThan)(const T& elem1, const T& elem2)) {
     //    std::sort(data, data + num, lessThan);
@@ -954,14 +1023,14 @@ return( lhs < rhs? true : false );
      Sorts the array in increasing order using the > or < operator.  To 
      invoke this method on Array<T>, T must override those operator.
      You can overide these operators as follows:
-     <code>
+     \code
         bool T::operator>(const T& other) const {
            return ...;
         }
         bool T::operator<(const T& other) const {
            return ...;
         }
-     </code>
+     \endcode
      */
     void sort(int direction = SORT_INCREASING) {
         if (direction == SORT_INCREASING) {
@@ -1250,6 +1319,14 @@ return( lhs < rhs? true : false );
         }
     }
 
+
+    /** Ensures that future append() calls can grow up to size \a n without allocating memory.*/
+    void reserve(int n) {
+        debugAssert(n >= size());
+        const int oldSize = size();
+        resize(n);
+        resize(oldSize, false);
+    }
 
 };
 

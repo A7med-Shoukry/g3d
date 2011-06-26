@@ -1,10 +1,10 @@
 /**
- @file Shader.h
+ \file GLG3D/Shader.h
   
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2004-04-25
- @edited  2009-11-30
+ \created 2004-04-25
+ \edited  2011-06-12
  */
 
 #ifndef G3D_Shader_h
@@ -346,7 +346,8 @@ public:
     (const std::string& vertexShaderName,
      const std::string& vertexShader,
      const std::string& geometryShaderName,
-     const std::string& geometryShader,       
+     const std::string& geometryShader,
+     const int maxGeometryOutputVertices,
      const std::string& pixelShaderName,
      const std::string& pixelShader,       
      PreprocessorStatus u,
@@ -551,7 +552,15 @@ typedef ReferenceCountedPointer<Shader> ShaderRef;
     uniform mat4 g3d_CameraToWorldMatrix;
     uniform mat3 g3d_ObjectToWorldNormalMatrix; // Upper 3x3 matrix (assumes that the transformation is RT so that the inverse transpose of the upper 3x3 is just R)
     uniform mat3 g3d_WorldToObjectNormalMatrix; // Upper 3x3 matrix (assumes that the transformation is RT so that the inverse transpose of the upper 3x3 is just R)
+    uniform bool g3d_InvertY; // Current RenderDevice::invertY value
   \endcode
+
+  Because RenderDevice inverts the coordinate system and winding
+  direction so that rendering to texture and rendering to the
+  window-system frame buffer use the same coordinate frame, a triangle
+  is a true front face if <code>(gl_FrontFacing ==
+  g3d_InvertY)</code>.
+  
 
    Macros:
    \code
@@ -724,6 +733,15 @@ public:
         return new Shader(VertexAndPixelShader::fromStrings(vertexCode, pixelCode, s, DEBUG_SHADER), s);
     }
 
+    inline static ShaderRef fromStrings(
+        const std::string& vertexCode,
+        const std::string& geometryCode,
+        const int maxGeometryOutputVertices,
+        const std::string& pixelCode,
+        PreprocessorStatus s = PREPROCESSOR_ENABLED) {
+        return new Shader(VertexAndPixelShader::fromStrings("", vertexCode, "", geometryCode, maxGeometryOutputVertices, "", pixelCode, s, DEBUG_SHADER), s);
+    }
+
     /** Names are purely for debugging purposes */
     inline static ShaderRef fromStrings(
         const std::string& vertexName,
@@ -731,7 +749,7 @@ public:
         const std::string& pixelName,
         const std::string& pixelCode,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
-        return new Shader(VertexAndPixelShader::fromStrings(vertexName, vertexCode, "", "", pixelName, pixelCode, s, DEBUG_SHADER), s);
+        return new Shader(VertexAndPixelShader::fromStrings(vertexName, vertexCode, "", "", -1, pixelName, pixelCode, s, DEBUG_SHADER), s);
     }
 
     /** When true, any RenderDevice state that the shader configured before a primitive it restores at

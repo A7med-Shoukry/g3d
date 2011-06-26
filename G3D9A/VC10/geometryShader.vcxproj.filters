@@ -24,4 +24,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\samples\geometryShader\data-files\extrude.geo" />
+    <None Include="..\samples\geometryShader\data-files\extrude.pix" />
+    <None Include="..\samples\geometryShader\data-files\extrude.vrt" />
+  </ItemGroup>
 </Project>

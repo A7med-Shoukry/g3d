@@ -47,7 +47,7 @@ Material::Specification::Specification(const Any& any) {
     
     any.verifyName("Material::Specification");
 
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
+    for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "lambertian") {
             if (it->value.type() == Any::STRING) {

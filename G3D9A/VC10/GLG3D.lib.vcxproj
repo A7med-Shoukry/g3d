@@ -103,7 +103,6 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\BackgroundWidget.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAPLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BumpMap.cpp" />
@@ -118,7 +117,6 @@
     <ClCompile Include="..\GLG3D.lib\source\Discovery.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Draw.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DXCaps.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\edgeFeatures.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\FileDialog.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Film.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\FirstPersonManipulator.cpp" />
@@ -157,6 +155,7 @@
     <ClCompile Include="..\GLG3D.lib\source\GuiWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\IconSet.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\IFSModel.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\Lighting.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material_Specification.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\MD2Model.cpp" />
@@ -164,16 +163,14 @@
     <ClCompile Include="..\GLG3D.lib\source\MD3Model.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Milestone.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\OSWindow.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\PhysicsFrameSplineEditor.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Profiler.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Renderbuffer.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\RenderDevice.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SDLWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ShadowMap.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\shadowVolume.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shape.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\Sky.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\SkyParameters.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperBSDF.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperShader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperSurface.cpp" />
@@ -198,7 +195,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\BackgroundWidget.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BumpMap.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\CameraControlWindow.h" />
@@ -209,7 +205,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Discovery.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Draw.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\DXCaps.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\edgeFeatures.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\FileDialog.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Film.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\FirstPersonManipulator.h" />
@@ -261,22 +256,20 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Milestone.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\NSAutoreleasePoolWrapper.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\OSWindow.h" />
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\PhysicsFrameSplineEditor.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Profiler.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Renderbuffer.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\RenderDevice.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SDLWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shader.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ShadowMap.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\shadowVolume.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shape.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Sky.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SkyParameters.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperBSDF.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperShader.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SuperSurface.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Surface.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceElement.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SurfaceSample.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\tesselate.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Texture.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ThirdPersonManipulator.h" />
@@ -296,9 +289,10 @@
     <ClInclude Include="..\GLG3D.lib\source\Load3DS.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\data-files\SuperShader\SS_BumpMap.pix" />
-    <None Include="..\data-files\SuperShader\SS_Components.pix" />
+    <None Include="..\data-files\SuperShader\BumpMap.glsl" />
+    <None Include="..\data-files\SuperShader\Film_FXAA.pix" />
     <None Include="..\data-files\SuperShader\SS_GBuffer.pix" />
+    <None Include="..\data-files\SuperShader\SS_GBuffer.vrt" />
     <None Include="..\data-files\SuperShader\SS_GBufferPosition.pix" />
     <None Include="..\data-files\SuperShader\SS_Globals.pix" />
     <None Include="..\data-files\SuperShader\SS_LambertianComponent.pix" />

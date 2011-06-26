@@ -1,11 +1,11 @@
 /**
- @file Any.cpp
+ \file Any.cpp
 
- @author Morgan McGuire
- @author Shawn Yarbrough
+ \author Morgan McGuire
+ \author Shawn Yarbrough
   
- @created 2006-06-11
- @edited  2010-07-24
+ \created 2006-06-11
+ \edited  2011-05-24
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -14,6 +14,8 @@
 #include "G3D/Any.h"
 #include "G3D/TextOutput.h"
 #include "G3D/TextInput.h"
+#include "G3D/BinaryOutput.h"
+#include "G3D/BinaryInput.h"
 #include "G3D/stringutils.h"
 #include "G3D/fileutils.h"
 #include "G3D/FileSystem.h"
@@ -21,6 +23,19 @@
 #include <iostream>
 
 namespace G3D {
+
+void Any::serialize(BinaryOutput& b) const {
+    b.writeInt32(1);
+    b.writeString32(unparse());
+}
+
+
+void Any::deserialize(BinaryInput& b) {
+    const int version = b.readInt32();
+    alwaysAssertM(version == 1, "Wrong Any serialization version");
+    parse(b.readString32());
+}
+
 
 std::string Any::resolveStringAsFilename() const {
     verifyType(STRING);
@@ -693,7 +708,7 @@ bool Any::operator==(const Any& x) const {
         }
         const Table<std::string, Any>& table1 = table();
         const Table<std::string, Any>& table2 = x.table();
-        for (Table<std::string, Any>::Iterator it = table1.begin(); it.hasMore(); ++it) {
+        for (Table<std::string, Any>::Iterator it = table1.begin(); it.isValid(); ++it) {
             const Any* p2 = table2.getPointer(it->key);
             if (p2 == NULL) {
                 // Key not found
@@ -867,6 +882,7 @@ void Any::serialize(TextOutput& to) const {
             to.writeSymbol("=");
             table[keys[i]].serialize(to);
 
+            to.deleteSpace();
             to.writeSymbol(";");
 
             // Skip an extra line between table entries that are longer than a line
@@ -902,6 +918,7 @@ void Any::serialize(TextOutput& to) const {
         for (int ii = 0; ii < size(); ++ii) {
             array[ii].serialize(to);
             if (ii < size() - 1) {
+                to.deleteSpace();
                 if (longForm) {
                     // Probably a long-form array
                     to.writeSymbol(";");
@@ -925,7 +942,7 @@ void Any::serialize(TextOutput& to) const {
 void Any::deserializeComment(TextInput& ti, Token& token, std::string& comment) {
     // Parse comments
     while (token.type() == Token::COMMENT) {
-        comment += trimWhitespace(token.string()) + "\n";
+        comment += trimWhitespace(token.string());
 
         // Allow comments to contain newlines.
         do {
@@ -936,6 +953,7 @@ void Any::deserializeComment(TextInput& ti, Token& token, std::string& comment) 
 
     comment = trimWhitespace(comment);
 }
+
 
 /** True if \a c is an open paren of some form */
 static bool isOpen(const char c) {

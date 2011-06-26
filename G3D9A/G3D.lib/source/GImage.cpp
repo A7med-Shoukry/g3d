@@ -4,7 +4,7 @@
   Copyright 2002-2011, Morgan McGuire
 
   \created 2002-05-27
-  \edited  2010-01-04
+  \edited  2011-06-23
  */
 #include "G3D/platform.h"
 #include "G3D/GImage.h"
@@ -320,6 +320,7 @@ void GImage::decodePCX(
     m_width  = xmax - xmin + 1;
     m_height = ymax - ymin + 1;
     m_channels = 3;
+    m_imageFormat = ImageFormat::RGB8();
 
     if ((manufacturer != 0x0A) || (encoding != 0x01)) {
         throw GImage::Error("PCX file is corrupted", input.getFilename());
@@ -506,22 +507,23 @@ GImage::Format GImage::resolveFormat(
 }
 
 
-GImage::GImage(
-    const std::string&  filename,
+GImage::GImage
+   (const std::string&  filename,
     Format              format,
     const MemoryManager::Ref& m) : 
     m_memMan(m),
     m_byte(NULL), 
     m_channels(0),
     m_width(0),
-    m_height(0) {
+    m_height(0),
+    m_imageFormat(NULL)  {
     
     load(filename, format);
 }
 
 
-void GImage::load(
-    const std::string&  filename,
+void GImage::load
+   (const std::string&  filename,
     Format              format) {
 
     clear();
@@ -540,8 +542,8 @@ void GImage::load(
 }
 
 
-GImage::GImage(
-    const uint8*        data,
+GImage::GImage
+   (const uint8*        data,
     int                 length,
     Format              format,
     const MemoryManager::Ref& m) : 
@@ -549,7 +551,8 @@ GImage::GImage(
     m_byte(NULL),
     m_channels(0),
     m_width(0),
-    m_height(0) {
+    m_height(0),
+    m_imageFormat(NULL) {
 
     BinaryInput b(data, length, G3D_LITTLE_ENDIAN);
     // It is safe to cast away the const because we
@@ -559,8 +562,8 @@ GImage::GImage(
 }
 
 
-GImage::GImage(
-    int                 width,
+GImage::GImage
+   (int                 width,
     int                 height,
     int                 channels,
     const MemoryManager::Ref& mem) : 
@@ -568,28 +571,71 @@ GImage::GImage(
     m_byte(0),
     m_channels(0), 
     m_width(0), 
-    m_height(0) {
+    m_height(0),
+    m_imageFormat(NULL)  {
     
     resize(width, height, channels);
 }
 
 
-void GImage::resize(
-    int                 width,
+GImage::GImage
+   (int                 width,
+    int                 height,
+    const ImageFormat*  im,
+    const MemoryManager::Ref& mem) : 
+    m_memMan(mem),
+    m_byte(0),
+    m_channels(0), 
+    m_width(0), 
+    m_height(0),
+    m_imageFormat(NULL)  {
+    
+    resize(width, height, im);
+}
+
+
+void GImage::resize
+   (int                 width,
     int                 height,
     int                 channels,
     bool                zero) {
 
+    const ImageFormat* im = ImageFormat::RGB8();
+
+    switch (channels) {
+    case 1:
+        im = ImageFormat::R8();
+        break;
+    case 3:
+        im = ImageFormat::RGB8();
+        break;
+    case 4:
+        im = ImageFormat::RGBA8();
+        break;
+    default:
+        alwaysAssertM(false, "Illegal number of channels.");
+    }
+    resize(width, height, im, zero);
+}
+
+
+void GImage::resize
+   (int                 width,
+    int                 height,
+    const ImageFormat*  im,
+    bool                zero) {
+
     debugAssert(width >= 0);
     debugAssert(height >= 0);
-    debugAssert(channels >= 1);
+    debugAssert(im != NULL);
 
     clear();
 
     m_width = width;
     m_height = height;
-    m_channels = channels;
-    size_t sz = width * height * channels;
+    m_channels = im->numComponents;
+    m_imageFormat = im;
+    const size_t sz = width * height * iCeil(im->cpuBitsPerPixel / 8.0f);
 
     if (sz > 0) {
         m_byte = (uint8*)m_memMan->alloc(sz);
@@ -601,14 +647,15 @@ void GImage::resize(
 }
 
 
-void GImage::_copy(
-    const GImage&       other) {
+void GImage::_copy
+   (const GImage&       other) {
 
     clear();
 
     m_width  = other.m_width;
     m_height = other.m_height;
     m_channels = other.m_channels;
+    m_imageFormat = other.m_imageFormat;
     int s  = m_width * m_height * m_channels * sizeof(uint8);
     m_byte  = (uint8*)m_memMan->alloc(s);
     debugAssert(isValidHeapPointer(m_byte));
@@ -928,7 +975,7 @@ void GImage::computeNormalMap(
     const int h = height;
     const int stride = channels;
 
-    normal.resize(w, h, 4);
+    normal.resize(w, h, ImageFormat::RGBA8());
 
     const uint8* const B = src;
     Color4uint8* const N = normal.pixel4();
