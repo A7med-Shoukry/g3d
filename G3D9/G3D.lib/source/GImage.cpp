@@ -516,8 +516,7 @@ GImage::GImage
     m_imageFormat(NULL),
     m_channels(0),
     m_width(0),
-    m_height(0),
-{
+    m_height(0) {
     
     load(filename, format);
 }
