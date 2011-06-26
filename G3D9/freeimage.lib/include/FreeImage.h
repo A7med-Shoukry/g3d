@@ -36,6 +36,10 @@
 
 #include <wchar.h>	// needed for UNICODE functions
 
+#ifndef FREEIMAGE_LIB
+    #define FREEIMAGE_LIB // always build as static library under G3D
+#endif
+
 #if defined(FREEIMAGE_LIB)
 	#define DLL_API
 	#define DLL_CALLCONV

@@ -153,8 +153,6 @@ These control the version of Winsock used by G3D.
 // TODO: remove
 #   pragma warning (disable : 4244)
 
-#   define ZLIB_WINAPI
-
 #   define restrict
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()

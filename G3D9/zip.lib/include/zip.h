@@ -47,6 +47,7 @@ extern "C" {
 #include <time.h>
 
 #ifdef _MSC_VER
+    #include <Windows.h>
     #define ssize_t SSIZE_T
 #endif
 

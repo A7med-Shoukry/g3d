@@ -272,9 +272,6 @@
     <ClCompile Include="..\GLG3D.lib\source\GL\glew.c">
       <Filter>Source Files\GL</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\CarbonWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
