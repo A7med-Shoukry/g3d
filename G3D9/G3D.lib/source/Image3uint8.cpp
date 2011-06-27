@@ -1,10 +1,10 @@
 /**
-  @file Image3uint8.cpp
+  \file Image3uint8.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2007-01-31
-  @edited  2008-01-08
+  \created 2007-01-31
+  \edited  2011-06-27
 */
 
 #include "G3D/Image1uint8.h"
@@ -16,8 +16,45 @@
 #include "G3D/Color4.h"
 #include "G3D/Color4uint8.h"
 #include "G3D/ImageFormat.h"
+#include "G3D/BinaryInput.h"
+#include "G3D/BinaryOutput.h"
 
 namespace G3D {
+
+void Image3uint8::speedSerialize(class BinaryOutput& b) const {
+    b.writeInt32(w);
+    b.writeInt32(h);
+    _wrapMode.serialize(b);
+    b.writeInt32(ImageFormat::CODE_RGB8);
+    
+    // Write the data
+    GImage temp(GImage::SHARE_DATA, (uint8*)data.getCArray(), w, h, format());
+    temp.encode(GImage::PNG, b);
+}
+
+    
+Image3uint8::Ref Image3uint8::speedCreate(class BinaryInput& b) {
+    const int w = b.readInt32();
+    const int h = b.readInt32();
+    WrapMode wrap;
+    wrap.deserialize(b);
+
+    ImageFormat::Code fmt = ImageFormat::Code(b.readInt32());
+
+    alwaysAssertM(fmt == ImageFormat::CODE_RGB8, 
+                  G3D::format("Cannot SpeedCreate an Image3uint8 from %s",
+                         ImageFormat::fromCode(fmt)->name().c_str()));
+
+    Ref im = createEmpty(w, h, wrap);
+
+    // Read the data
+    GImage temp(GImage::SHARE_DATA, (uint8*)im->data.getCArray(), im->w, im->h, im->format());
+    temp.decode(b, GImage::PNG);
+
+    return im;
+}
+
+    
 
 Image3uint8::Ref Image3uint8::fromImage1uint8(const ReferenceCountedPointer<class Image1uint8>& im) {
     return fromArray(im->getCArray(), im->width(), im->height(), im->wrapMode());

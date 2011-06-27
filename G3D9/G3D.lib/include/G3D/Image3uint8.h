@@ -1,10 +1,10 @@
 /**
-  @file Image3uint8.h
+  \file G3D/Image3uint8.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2007-01-31
-  @edited  2007-01-31
+  \created 2007-01-31
+  \edited  2011-06-27
 */
 
 #ifndef G3D_IMAGE3UINT8_H
@@ -44,6 +44,12 @@ protected:
     void copyArray(const Color4uint8* src, int w, int h);
 
 public:
+
+    /** \sa SpeedLoad */
+    void speedSerialize(class BinaryOutput& b) const;
+
+    /** \sa SpeedLoad */
+    static Ref speedCreate(class BinaryInput& b);
 
     const class ImageFormat* format() const;
 

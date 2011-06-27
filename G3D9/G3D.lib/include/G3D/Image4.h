@@ -36,8 +36,6 @@ public:
 
     typedef Image4      Type;
     typedef ReferenceCountedPointer<class Image4>   Ref;
-    typedef Color4      Storage;
-    typedef Color4      Compute;
 
 protected:
 

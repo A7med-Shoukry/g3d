@@ -79,6 +79,8 @@ protected:
     /**
        - rgb = tangent-space normal
        - a   = bump height
+
+       (Note that this is compressed to Image4uint8 on the GPU)
      */
     MapComponent<Image4>::Ref   m_normalBump;
 
@@ -90,8 +92,8 @@ public:
 
     typedef ReferenceCountedPointer<BumpMap> Ref;
 
-    /** @param normalBump Has tangent-space normals in rgb and bump elevation in a
-        @param settings Settings 
+    /** \param normalBump Has tangent-space normals in rgb and bump elevation in a
+        \param settings Settings 
         */
     static BumpMap::Ref create(const MapComponent<Image4>::Ref& normalBump, const Settings& settings);
 

@@ -1,7 +1,8 @@
 /**
- @file   Component.h
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @date   2009-02-19
+ \file    GLG3D/Component.h
+ \author  Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2009-02-19
+ \edited  2011-06-27
 */
 #ifndef G3D_Component_h
 #define G3D_Component_h
@@ -46,6 +47,8 @@ public:
 /** Manages CPU and GPU versions of image data and performs
     conversions as needed.
 
+    \param Image the CPU floating-point image format to use.  On the GPU, the corresponding uint8 format is used.
+
     Primarily used by Component. */
 template<class Image>
 class MapComponent : public ReferenceCountedObject {
@@ -59,9 +62,9 @@ private:
 
     ReferenceCountedPointer<Image> m_cpuImage;
     Texture::Ref                   m_gpuImage;
-    typename Image::Storage        m_min;
-    typename Image::Storage        m_max;
-    typename Image::Compute        m_mean;
+    typename Image::StorageType    m_min;
+    typename Image::StorageType    m_max;
+    typename Image::ComputeType    m_mean;
 
     static void getTexture(const ReferenceCountedPointer<Image>& im, Texture::Ref& tex) {
             
@@ -94,8 +97,8 @@ private:
     }
 
     inline MapComponent(const class ReferenceCountedPointer<Image>& im, const Texture::Ref& tex) : 
-        m_cpuImage(im), m_gpuImage(tex), m_min(Image::Storage::one()), m_max(Image::Storage::zero()),
-        m_mean(Image::Compute::zero()) {
+        m_cpuImage(im), m_gpuImage(tex), m_min(Image::StorageType::one()), m_max(Image::StorageType::zero()),
+        m_mean(Image::ComputeType::zero()) {
 
         // Compute min, max, mean
         if (m_gpuImage.notNull() && m_gpuImage->min().isFinite()) {
@@ -111,13 +114,13 @@ private:
             }
 
             if (m_cpuImage.notNull()) {
-                const typename Image::Storage* ptr = m_cpuImage->getCArray();
-                typename Image::Compute sum = Image::Compute::zero();
+                const typename Image::StorageType* ptr = m_cpuImage->getCArray();
+                typename Image::ComputeType sum = Image::ComputeType::zero();
                 const int N = m_cpuImage->width() * m_cpuImage->height();
                 for (int i = 0; i < N; ++i) {
                     m_min  = m_min.min(ptr[i]);
                     m_max  = m_max.min(ptr[i]);
-                    sum   += typename Image::Compute(ptr[i]);
+                    sum   += typename Image::ComputeType(ptr[i]);
                 }
                 m_mean = sum / (float)N;
             }
@@ -129,33 +132,59 @@ private:
         }
     }
 
+
 public:
 
+    /** \sa SpeedLoad */
+    static Ref speedCreate(BinaryInput& b) {
+        Ref m = new MapComponent();
+        
+        m->m_min.deserialize(b);
+        m->m_max.deserialize(b);
+        m->m_mean.deserialize(b);
+
+        m->m_cpuImage = Image::speedCreate(b);
+
+        return m;
+    }
+
+
+    /** \sa SpeedLoad */
+    void speedSerialize(BinaryOutput& b) const {
+        m_min.serialize(b);
+        m_max.serialize(b);
+        m_mean.serialize(b);
+        image();
+        m_cpuImage->speedSerialize(b);
+    }
+
     /** Returns NULL if both are NULL */
-    static Ref create(const class ReferenceCountedPointer<Image>& im, const Texture::Ref& tex) {
+    static Ref create
+    (const class ReferenceCountedPointer<Image>& im, 
+     const Texture::Ref&                         tex) {
+
         if (im.isNull() && tex.isNull()) {
             return NULL;
         } else {
-            return new MapComponent(im, tex);
+            return new MapComponent<Image>(im, tex);
         }
     }
 
 
     /** Largest value in each channel of the image */
-    const typename Image::Storage& max() const {
+    const typename Image::StorageType& max() const {
         return m_max;
     }
 
     /** Smallest value in each channel of the image */
-    const typename Image::Storage& min() const {
+    const typename Image::StorageType& min() const {
         return m_min;
     }
 
     /** Average value in each channel of the image */
-    const typename Image::Compute& mean() const {
+    const typename Image::ComputeType& mean() const {
         return m_mean;
     }
-
            
     /** Returns the CPU image portion of this component, synthesizing
         it if necessary.  Returns NULL if there is no GPU data to 
@@ -217,7 +246,7 @@ public:
 };
 
 
-/** @brief Common code for G3D::Component1, G3D::Component3, and G3D::Component4.
+/** \brief Common code for G3D::Component1, G3D::Component3, and G3D::Component4.
 
     Product of a constant and an image. 
 
@@ -276,9 +305,9 @@ private:
         }
 
         if (m_map.notNull()) {
-            m_max  = m_constant * m_map->max();
-            m_min  = m_constant * m_map->min();
-            m_mean = m_constant * m_map->mean();
+            m_max  = m_constant * Color(m_map->max());
+            m_min  = m_constant * Color(m_map->min());
+            m_mean = m_constant * Color(m_map->mean());
         } else {
             m_max  = m_constant;
             m_min  = m_constant;
@@ -294,6 +323,50 @@ private:
     }
     static float alpha(const Color4& c) {
         return c.a;
+    }
+
+
+    friend class Material;
+    friend class SuperBSDF;
+
+    /** \sa SpeedLoad */
+    void speedSerialize(BinaryOutput& b) const {
+        b.writeInt32(m_factors);
+
+        // Save the size of the color field to help ensure that
+        // this was properly deserialized
+        b.writeInt32(sizeof(Color));
+
+        m_min.serialize(b);
+        m_max.serialize(b);
+        m_mean.serialize(b);
+        
+        m_constant.serialize(b);
+        b.writeBool8(m_map.notNull());
+        
+        if (m_map.notNull()) {
+            m_map->speedSerialize(b);
+        }
+    }
+
+
+    /** \sa SpeedLoad */
+    void speedDeserialize(BinaryInput& b) {
+        m_factors = b.readInt32();
+        
+        const size_t colorSize = b.readInt32();
+        alwaysAssertM(colorSize == sizeof(Color), 
+                      "Tried to SpeedLoad a component in the wrong format.");
+
+        m_min.deserialize(b);
+        m_max.deserialize(b);
+        m_mean.deserialize(b);
+
+        m_constant.deserialize(b);
+        bool hasMap = b.readBool8();
+        if (hasMap) {
+            m_map = MapComponent<Image>::speedCreate(b);
+        }
     }
 
 public:

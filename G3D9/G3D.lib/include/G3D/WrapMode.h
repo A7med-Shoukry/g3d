@@ -1,10 +1,10 @@
 /** 
-  @file WrapMode.h
+  \file G3D/WrapMode.h
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
-  @created 2007-04-17
-  @edited  2010-04-17
+  \created 2007-04-17
+  \edited  2010-04-17
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.

@@ -30,8 +30,6 @@ public:
 
     typedef Image3      Type;
     typedef ReferenceCountedPointer<class Image3>   Ref;
-    typedef Color3      Storage;
-    typedef Color3      Compute;
 
 protected:
 

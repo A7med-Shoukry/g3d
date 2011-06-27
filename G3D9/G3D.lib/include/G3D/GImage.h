@@ -120,6 +120,9 @@ private:
      implementation that allocates directly on a GPU.*/
     MemoryManager::Ref      m_memMan;
 
+    /** If false, the data is not freed on destruction. */
+    bool                    m_ownsData;
+
     /** Pointer to the beginning of the data (which may not actually be uint8's)*/
     uint8*                  m_byte;
 
@@ -196,6 +199,11 @@ private:
        (const GImage&       other);
 
 public:
+    
+    enum ShareData {SHARE_DATA};
+
+    /** Creates a GImage that does not own (or deallocate) its underlying data as long as it is not resized. */
+    GImage(ShareData s, uint8* data, int w, int h, const ImageFormat* fmt, const MemoryManager::Ref& memMan = MemoryManager::create());
 
     /**
      The number of channels; either 1 (luminance), 3 (RGB), or 4 (RGBA)

@@ -58,13 +58,19 @@ namespace G3D {
 
 
 /**
-   ArticulatedModel and Material support "SpeedLoad" file formats. 
+   ArticulatedModel and Material support "SpeedLoad" file formats.
    These are intended for use in reducing load times by caching
-   expensive-to-load materials in an efficient binary representation
-   and is not an archival format or one for interchange between tools.
+   expensive-to-load materials in an efficient binary representation.
+   It is not an archival format or one for interchange between tools.
    The format is subject to change in future versions of G3D.  When it
    changes, you should be prepared to regenerate your serialized
-   materials from their original sources. 
+   materials from their original sources.
+
+   Some classes have speedCreate(), speedSerialize() and speedDeserialize()
+   methods to support this functionality.  These should only be considered
+   safe for caching data on a local machine.
+
+   \sa SpeedLoadIdentifier
 */
 class SpeedLoad {};
 

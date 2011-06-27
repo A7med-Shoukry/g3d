@@ -289,6 +289,40 @@ void GImage::decode(
 }
 
 
+GImage::GImage(ShareData s, uint8* data, int w, int h, const ImageFormat* fmt, const MemoryManager::Ref& memMan) {
+    m_memMan = memMan;
+    m_ownsData = false;
+    m_byte = data;
+    m_imageFormat = fmt;
+    m_width = w;
+    m_height = h;
+
+    switch (m_imageFormat->code) {
+    case ImageFormat::CODE_R8:
+    case ImageFormat::CODE_L8:
+        m_channels = 1;
+        break;
+
+    case ImageFormat::CODE_RG8:
+    case ImageFormat::CODE_LA8:
+        m_channels = 2;
+        break;
+
+    case ImageFormat::CODE_RGB8:
+        m_channels = 3;
+        break;
+
+    case ImageFormat::CODE_RGBA8:
+        m_channels = 4;
+        break;
+
+    default:
+        alwaysAssertM(false, "Unsupported image format for GImage");
+    }
+}
+
+
+
 void GImage::decodePCX(
     BinaryInput&                input) {
 
@@ -512,6 +546,7 @@ GImage::GImage
     Format              format,
     const MemoryManager::Ref& m) : 
     m_memMan(m),
+    m_ownsData(true),
     m_byte(NULL), 
     m_imageFormat(NULL),
     m_channels(0),
@@ -568,6 +603,7 @@ GImage::GImage
     int                 channels,
     const MemoryManager::Ref& mem) : 
     m_memMan(mem),
+    m_ownsData(true),
     m_byte(0),
     m_imageFormat(NULL),
     m_channels(0), 
@@ -584,6 +620,7 @@ GImage::GImage
     const ImageFormat*  im,
     const MemoryManager::Ref& mem) : 
     m_memMan(mem),
+    m_ownsData(true),
     m_byte(0),
     m_imageFormat(NULL),
     m_channels(0), 
@@ -644,6 +681,7 @@ void GImage::resize
         }
         debugAssert(isValidHeapPointer(m_byte));
     }
+    m_ownsData = true;
 }
 
 
@@ -688,7 +726,12 @@ void GImage::flipVertical() {
         System::memcpy(m_byte + y * rowBytes, old + (m_height - y - 1) * rowBytes, rowBytes);
     }
 
-    m_memMan->free(old);
+    if (m_ownsData) {
+        m_memMan->free(old);
+    } else {
+        // No matter what, we own the data at the end
+        m_ownsData = true;
+    }
 }
 
 
@@ -721,14 +764,19 @@ void GImage::rotate90CW(int numTimes) {
             }
         }
     }
-    m_memMan->free(old);
+    if (m_ownsData) {
+        m_memMan->free(old);
+    } else {
+        // No matter what, we own the data at the end
+        m_ownsData = true;
+    }
 }
 
 
 
 GImage::GImage(
     const GImage&        other,
-    const MemoryManager::Ref& m) : m_memMan(m), m_byte(NULL) {
+    const MemoryManager::Ref& m) : m_memMan(m), m_ownsData(true), m_byte(NULL) {
 
     _copy(other);
 }
@@ -742,7 +790,10 @@ GImage::~GImage() {
 void GImage::clear() {
     m_width = 0;
     m_height = 0;
-    m_memMan->free(m_byte);
+    if (m_ownsData) {
+        m_memMan->free(m_byte);
+    }
+    m_ownsData = true;
     m_byte = NULL;
 }
 
@@ -1070,7 +1121,12 @@ void GImage::convertToL8() {
                 uint8&              d = m_byte[i]; 
                 d = ((int)s.r + (int)s.g + (int)s.b) / 3;
             }
-            m_memMan->free(src);
+            if (m_ownsData) {
+                m_memMan->free(src);
+            } else {
+                // No matter what, we own the data at the end
+                m_ownsData = true;
+            }
         }
         break;
 
@@ -1085,7 +1141,12 @@ void GImage::convertToL8() {
                 uint8&              d = m_byte[i]; 
                 d = ((int)s.r + (int)s.g + (int)s.b) / 3;
             }
-            m_memMan->free(src);
+            if (m_ownsData) {
+                m_memMan->free(src);
+            } else {
+                // No matter what, we own the data at the end
+                m_ownsData = true;
+            }
         }
         return;
 
@@ -1109,7 +1170,12 @@ void GImage::convertToRGBA() {
                 d.r = d.g = d.b = s;
                 d.a = 255;
             }
-            m_memMan->free(m_byte);
+            if (m_ownsData) {
+                m_memMan->free(old);
+            } else {
+                // No matter what, we own the data at the end
+                m_ownsData = true;
+            }
         }
         break;
 
@@ -1127,7 +1193,12 @@ void GImage::convertToRGBA() {
                 d.b = s.b;
                 d.a = 255;
             }
-            m_memMan->free(old);
+            if (m_ownsData) {
+                m_memMan->free(old);
+            } else {
+                // No matter what, we own the data at the end
+                m_ownsData = true;
+            }
         }
         break;
 
@@ -1154,7 +1225,12 @@ void GImage::convertToRGB() {
                 Color3uint8& d = ((Color3uint8*)m_byte)[i]; 
                 d.r = d.g = d.b = s;
             }
-            m_memMan->free(old);
+            if (m_ownsData) {
+                m_memMan->free(old);
+            } else {
+                // No matter what, we own the data at the end
+                m_ownsData = true;
+            }
         }
         break;
 
@@ -1174,7 +1250,12 @@ void GImage::convertToRGB() {
                 d.g = s.g;
                 d.b = s.b;
             }
-            m_memMan->free(old);
+            if (m_ownsData) {
+                m_memMan->free(old);
+            } else {
+                // No matter what, we own the data at the end
+                m_ownsData = true;
+            }
         }
         break;
 

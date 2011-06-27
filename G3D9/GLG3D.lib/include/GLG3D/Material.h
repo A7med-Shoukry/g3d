@@ -2,7 +2,7 @@
  \file   GLG3D/Material.h
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \date   2008-08-10
- \edited 2010-01-29
+ \edited 2011-06-27
 */
 #ifndef GLG3D_Material_h
 #define GLG3D_Material_h
@@ -404,7 +404,8 @@ public:
 
 protected:
 
-    void deserialize(SpeedLoadIdentifier& s, BinaryInput& b);
+    /** Read the part that comes after the SpeedLoadIdentifier and chunk size. */
+    void speedDeserialize(BinaryInput& b);
 
 public:
     

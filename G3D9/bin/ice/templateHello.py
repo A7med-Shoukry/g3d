@@ -6,7 +6,7 @@ from .utils import *
 from .variables import *
 import datetime
 
-defaultMainCppContents = """
+defaultMainCppContents = r"""
 /** \file main.cpp
  */
 #include <stdio.h>
@@ -17,7 +17,7 @@ int main(int argc, const char** argv) {
 }
 """
 
-defaultMainpage = """
+defaultMainpage = r"""
 /** \file mainpage.dox
 \mainpage
 
@@ -43,13 +43,13 @@ See your \link Journal Development Journal \endlink.
 */
 """
 
-defaultJournal = """
+defaultJournal = r"""
 /** \file journal/journal.dox
 \page Journal Development Journal
 
 <i>Newest entries are at the top</i>
 
-<hr><h2>""" + datetime.date.today().strftime('%a %b %d, %Y') + """: Project started</h2>
+<hr><h2>""" + datetime.date.today().strftime('%a %b %d, %Y') + r""": Project started</h2>
 This file was created today.
 
 You can embed images in this file using the Doxygen commands:

@@ -165,7 +165,7 @@ protected:
     Color3              m_extinction_r;
 
     inline SuperBSDF() : 
-        m_lambertian(Color4(Color3::white() * 0.85f, 1.0f)), 
+        m_lambertian(Color4uint8(Color4(Color3::white() * 0.85f, 1.0f))), 
         m_eta_t(1.0f), 
         m_extinction_t(Color3::zero()),
         m_eta_r(1.0f), 
