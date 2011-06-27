@@ -88,7 +88,6 @@ varying vec3        tan_Z;
 /** Index of refraction / 24.0 */
 uniform float       normalizedIndexOfRefraction;
 
-#line 84
 
 void main() {    
 #   if defined(NORMALBUMPMAP)

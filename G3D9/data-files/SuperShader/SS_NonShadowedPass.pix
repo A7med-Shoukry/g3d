@@ -22,7 +22,6 @@
 #       define bumpMap bumpMapTatarchuk06
 #   endif
 #endif
-#line 19
 
 uniform vec4        lightPosition1;
 uniform vec3        lightColor1;

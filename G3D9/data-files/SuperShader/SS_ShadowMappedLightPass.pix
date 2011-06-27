@@ -22,8 +22,6 @@
 #endif
 #endif
 
-#line 19
-
 uniform sampler2DShadow shadowMap;
 
 /** Coordinate to use in the shadow map */
@@ -41,7 +39,6 @@ void main(void) {
             1.0
 #       endif
         ;
-#line 31
 
     float shadow = 0.0;
     

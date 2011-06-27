@@ -114,7 +114,7 @@ void bumpMapTatarchuk06(in sampler2D normalBumpMap, in float bumpMapScale, in fl
     // Increase the number of steps taken as the eye vector begins 
     // to point more horizontally (ala Tatarchuk).  Expand the range of tsE.z; it rarely gets near zero on its own.
 
-    float numSteps = mix(max(float(PARALLAXSTEPS) * bumpMapScale * 2, MIN_STEPS), MIN_STEPS,  max(0.0, (tsE.z - 0.4) / 0.6) );
+    float numSteps = mix(max(float(PARALLAXSTEPS) * bumpMapScale * 2.0, MIN_STEPS), MIN_STEPS,  max(0.0, (tsE.z - 0.4) / 0.6) );
     vec3 tsStep;
 
     // Distance that we'll step in z (normal direction) for each 

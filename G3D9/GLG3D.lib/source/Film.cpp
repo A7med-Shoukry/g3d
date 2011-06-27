@@ -219,6 +219,8 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
             rd->setShader(m_preBloomShader);
             Draw::fastRect2D(m_preBloom->rect2DBounds(), rd);
 
+            // TODO: eliminate the prebloom pass and roll it into the horizontal blur
+
             rd->setFramebuffer(m_tempFramebuffer);
             rd->clear();
             // Blur vertically
