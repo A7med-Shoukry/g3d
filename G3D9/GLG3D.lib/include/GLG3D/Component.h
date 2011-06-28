@@ -148,16 +148,51 @@ private:
 
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
         since Component knows that there is only 8-bit data in the
-        floats. */
-    static void speedDeserialize(Image3::Ref& im, BinaryInput& b) {
-        im = Image3::fromImage3uint8(Image3uint8::speedCreate(b));
+        floats. 
+
+        Note that the im is never actually used, since we don't want
+        to waste time converting to float!
+    */
+    static void speedDeserialize(Image3::Ref& ignore, Texture::Ref& tex, BinaryInput& b) {
+        Image3uint8::Ref im = Image3uint8::speedCreate(b);
+
+        Texture::Dimension dim;
+        if (isPow2(im->width()) && isPow2(im->height())) {
+            dim = Texture::DIM_2D;
+        } else {
+            dim = Texture::DIM_2D_NPOT;
+        }
+            
+        Texture::Settings settings;
+        settings.wrapMode = im->wrapMode();
+
+        tex = Texture::fromMemory
+            ("SpeedLoaded", im->getCArray(), im->format(),
+             im->width(), im->height(), 1, im->format(),
+             dim, settings);
     }
 
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
         since Component knows that there is only 8-bit data in the
-        floats. */
-    static void speedDeserialize(Image4::Ref& im, BinaryInput& b) {
-        im = Image4::fromImage4uint8(Image4uint8::speedCreate(b));
+        floats. 
+    */
+    static void speedDeserialize(Image4::Ref ignore, Texture::Ref& tex, BinaryInput& b) {
+        Image4uint8::Ref im = Image4uint8::speedCreate(b);
+
+        Texture::Dimension dim;
+        if (isPow2(im->width()) && isPow2(im->height())) {
+            dim = Texture::DIM_2D;
+        } else {
+            dim = Texture::DIM_2D_NPOT;
+        }
+            
+        Texture::Settings settings;
+        settings.wrapMode = im->wrapMode();
+
+        tex = Texture::fromMemory
+            ("SpeedLoaded", im->getCArray(), im->format(),
+             im->width(), im->height(), 1, im->format(),
+             dim, settings);
     }
     
     /** For speedCreate */
@@ -173,7 +208,7 @@ public:
         m->m_max.deserialize(b);
         m->m_mean.deserialize(b);
 
-        speedDeserialize(m->m_cpuImage, b);
+        speedDeserialize(m->m_cpuImage, m->m_gpuImage, b);
 
         return m;
     }
@@ -403,6 +438,8 @@ public:
     
     /** \sa SpeedLoad */
     void speedSerialize(BinaryOutput& b) const {
+        b.writeString32("Component");
+
         b.writeInt32(m_factors);
 
         // Save the size of the color field to help ensure that
@@ -424,6 +461,10 @@ public:
 
     /** \sa SpeedLoad */
     void speedDeserialize(BinaryInput& b) {
+        std::string header = b.readString32();
+
+        alwaysAssertM(header == "Component", "Invoked Component::speedDeserialize at the wrong point");
+
         m_factors = (Factors)b.readInt32();
         
         const size_t colorSize = (size_t)b.readInt32();

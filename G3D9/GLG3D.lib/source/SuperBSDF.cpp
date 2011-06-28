@@ -16,14 +16,32 @@ float SuperBSDF::ignoreFloat;
 
 
 SuperBSDF::Ref SuperBSDF::speedCreate(BinaryInput& b) {
-    SuperBSDF::Ref s;
-    alwaysAssertM(false, "TODO");
+    SuperBSDF::Ref s = new SuperBSDF();
+    
+    std::string header = b.readString32();
+    alwaysAssertM(header == "SuperBSDF", "SuperBSDF::speedCreate called with something that was not a SuperBSDF");
+    s->m_lambertian.speedDeserialize(b);
+    s->m_specular.speedDeserialize(b);
+    s->m_transmissive.speedDeserialize(b);
+    s->m_eta_t = b.readFloat32();
+    s->m_extinction_t.deserialize(b);
+    s->m_eta_r = b.readFloat32();
+    s->m_extinction_r.deserialize(b);
+
     return s;
 }
 
 
 void SuperBSDF::speedSerialize(BinaryOutput& b) const {
-    alwaysAssertM(false, "TODO");
+    b.writeString32("SuperBSDF");
+
+    m_lambertian.speedSerialize(b);
+    m_specular.speedSerialize(b);
+    m_transmissive.speedSerialize(b);
+    b.writeFloat32(m_eta_t);
+    m_extinction_t.serialize(b);
+    b.writeFloat32(m_eta_r);
+    m_extinction_r.serialize(b);
 }
 
 

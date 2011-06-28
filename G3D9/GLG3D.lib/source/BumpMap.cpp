@@ -39,12 +39,22 @@ BumpMap::Specification::Specification(const Any& any) {
 
 
 BumpMap::Ref BumpMap::speedCreate(BinaryInput& b) {
-    alwaysAssertM(false, "TODO");
+    BumpMap::Ref bump = new BumpMap();
+
+    std::string header = b.readString32();
+    alwaysAssertM(header == "BumpMap", "BumpMap::speedCreate failed");
+
+    bump->m_normalBump = MapComponent<Image4>::speedCreate(b);
+    bump->m_settings.deserialize(b);
+    
+    return bump;
 }
 
     
 void BumpMap::speedSerialize(BinaryOutput& b) const {
-    alwaysAssertM(false, "TODO");
+    b.writeString32("BumpMap");
+    m_normalBump->speedSerialize(b);
+    m_settings.serialize(b);
 }
 
 

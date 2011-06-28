@@ -1,10 +1,11 @@
 /**
- @file   SuperBSDF.h
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @date   2008-08-10
+ \file    GLG3D/SuperBSDF.h
+ \author  Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2008-08-10
+ \edited  2011-06-28
 */
-#ifndef G3D_SuperBSDF_h
-#define G3D_SuperBSDF_h
+#ifndef GLG3D_SuperBSDF_h
+#define GLG3D_SuperBSDF_h
 
 #include "GLG3D/Component.h"
 #include "G3D/SmallArray.h"

@@ -45,6 +45,18 @@ public:
 
         Settings(const Any& any);
 
+        void serialize(BinaryOutput& b) const {
+            b.writeFloat32(scale);
+            b.writeFloat32(bias);
+            b.writeInt32(iterations);
+        }
+
+        void deserialize(BinaryInput& b) {
+            scale = b.readFloat32();
+            bias = b.readFloat32();
+            iterations = b.readInt32();
+        }
+
         Any toAny() const;
 
         bool operator==(const Settings& s) const;
@@ -88,6 +100,9 @@ protected:
 
     BumpMap(const MapComponent<Image4>::Ref& normalBump, const Settings& settings);
 
+    /** For speedCreate*/
+    BumpMap() {}
+    
 public:
 
     typedef ReferenceCountedPointer<BumpMap> Ref;
