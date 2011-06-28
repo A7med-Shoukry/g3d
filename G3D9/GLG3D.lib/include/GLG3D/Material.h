@@ -383,24 +383,24 @@ public:
 
         Not threadsafe, and must be invoked on the OpenGL thread.
 
-        Returns the SpeedLoadIdentifier.
+        Returns the SpeedLoadIdentifier, which is a hash of the material.
 
         \sa Material::Ref create(BinaryInput& b)
         \sa computeSpeedLoadIdentifier()
     */
-    void serialize(SpeedLoadIdentifier& s, BinaryOutput& b) const;
+    void speedSerialize(SpeedLoadIdentifier& s, BinaryOutput& b) const;
 
     /**
        If \a s matches a previously-created Material that is in the
        material cache, returns that one, otherwise loads the data from
        \a b and updates the cache.  Either way, \a b is advanced to
-       the end of this material.
+       the end of this material and a valid material is returned.
 
-       Returns the SpeedLoadIdentifier for this material
+       Returns the SpeedLoadIdentifier for this material.
 
        \sa serialize
      */
-    static Material::Ref create(SpeedLoadIdentifier& s, BinaryInput& b);
+    static Material::Ref speedCreate(SpeedLoadIdentifier& s, BinaryInput& b);
 
 protected:
 

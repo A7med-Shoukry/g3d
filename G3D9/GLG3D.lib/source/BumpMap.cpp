@@ -1,11 +1,12 @@
 /**
- @file   BumpMap.cpp
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @edited 2009-03-25
- @date   2010-01-30
+ \file    BumpMap.cpp
+ \author  Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2009-03-25
+ \edited  2011-06-28
 */
 #include "GLG3D/BumpMap.h"
 #include "G3D/Any.h"
+#include "GLG3D/SpeedLoad.h"
 
 namespace G3D {
 
@@ -41,8 +42,7 @@ BumpMap::Specification::Specification(const Any& any) {
 BumpMap::Ref BumpMap::speedCreate(BinaryInput& b) {
     BumpMap::Ref bump = new BumpMap();
 
-    std::string header = b.readString32();
-    alwaysAssertM(header == "BumpMap", "BumpMap::speedCreate failed");
+    SpeedLoad::readHeader(b, "BumpMap");
 
     bump->m_normalBump = MapComponent<Image4>::speedCreate(b);
     bump->m_settings.deserialize(b);
@@ -52,7 +52,7 @@ BumpMap::Ref BumpMap::speedCreate(BinaryInput& b) {
 
     
 void BumpMap::speedSerialize(BinaryOutput& b) const {
-    b.writeString32("BumpMap");
+    SpeedLoad::writeHeader(b, "BumpMap");
     m_normalBump->speedSerialize(b);
     m_settings.serialize(b);
 }

@@ -14,6 +14,7 @@
 #include "G3D/Image3.h"
 #include "G3D/Image4.h"
 #include "GLG3D/Texture.h"
+#include "GLG3D/SpeedLoad.h"
 
 namespace G3D {
 
@@ -154,6 +155,7 @@ private:
         to waste time converting to float!
     */
     static void speedDeserialize(Image3::Ref& ignore, Texture::Ref& tex, BinaryInput& b) {
+        
         Image3uint8::Ref im = Image3uint8::speedCreate(b);
 
         Texture::Dimension dim;
@@ -438,7 +440,7 @@ public:
     
     /** \sa SpeedLoad */
     void speedSerialize(BinaryOutput& b) const {
-        b.writeString32("Component");
+        SpeedLoad::writeHeader(b, "Component");
 
         b.writeInt32(m_factors);
 
@@ -461,9 +463,7 @@ public:
 
     /** \sa SpeedLoad */
     void speedDeserialize(BinaryInput& b) {
-        std::string header = b.readString32();
-
-        alwaysAssertM(header == "Component", "Invoked Component::speedDeserialize at the wrong point");
+        SpeedLoad::readHeader(b, "Component");
 
         m_factors = (Factors)b.readInt32();
         

@@ -330,6 +330,20 @@ public:
         writeString(s.c_str());
     }
 
+    /** Write a string that always consumes len bytes, truncating or padding as necessary*/
+    inline void writeString(const std::string& s, int len) {
+        const int pad = len - (s.length() + 1);
+        if (pad >= 0) {
+            writeString(s.c_str());
+            for (int i = 0; i < pad; ++i) {
+                writeUInt8(0);
+            }
+        } else {
+            // Truncate
+            writeString(s.substr(len - 1));
+        }
+    }
+
     void writeString(const char* s);
 
     /**

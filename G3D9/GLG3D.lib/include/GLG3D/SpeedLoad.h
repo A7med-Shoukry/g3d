@@ -72,7 +72,16 @@ namespace G3D {
 
    \sa SpeedLoadIdentifier
 */
-class SpeedLoad {};
+namespace SpeedLoad {
+
+    /** Most classes prefix their data chunk with a 20-byte string that is the
+        class name. */
+    enum {HEADER_LENGTH = 20};
+
+    void readHeader(class BinaryInput& b, const std::string& expectedString);
+    void writeHeader(class BinaryOutput& b, const std::string& header);
+
+};
 
 } // G3D
 
