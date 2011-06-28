@@ -99,6 +99,12 @@ public:
 
     static BumpMap::Ref create(const Specification& spec);
 
+    /** \sa SpeedLoad */
+    static BumpMap::Ref speedCreate(BinaryInput& b);
+
+    /** \sa SpeedLoad */
+    void speedSerialize(BinaryOutput& b) const;
+
     //static BumpMap::Ref fromNormalFile(const std::string& filename, );
 
     inline const Settings& settings() const {

@@ -50,7 +50,7 @@ public:
     void speedSerialize(class BinaryOutput& b) const;
 
     /** \sa SpeedLoad */
-    Ref speedCreate(class BinaryInput& b);
+    static Ref speedCreate(class BinaryInput& b);
 
     const class ImageFormat* format() const;
 

@@ -38,6 +38,16 @@ BumpMap::Specification::Specification(const Any& any) {
 }
 
 
+BumpMap::Ref BumpMap::speedCreate(BinaryInput& b) {
+    alwaysAssertM(false, "TODO");
+}
+
+    
+void BumpMap::speedSerialize(BinaryOutput& b) const {
+    alwaysAssertM(false, "TODO");
+}
+
+
 BumpMap::BumpMap(const MapComponent<Image4>::Ref& normalBump, const Settings& settings) : 
     m_normalBump(normalBump), m_settings(settings) {
 }

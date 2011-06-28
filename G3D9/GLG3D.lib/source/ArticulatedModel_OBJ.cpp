@@ -141,9 +141,18 @@ static void loadMTL
             matSpec = MatSpec();
             matSpec.name = trimWhitespace(ti.readUntilNewlineAsString());
 
-        } else if ((cmd == "d") || (cmd == "Tr")) {
-            // alpha on range [0,1]
+        } else if (cmd == "d") {
+            // "dissolve"; alpha on range [0,1]
+            if (ti.peek().type() == Token::SYMBOL) {
+                // Optional "-halo" 
+                ti.readSymbol();
+            }
             matSpec.opacity = ti.readNumber();
+        } else if (cmd == "Tr") {
+            // 1 - alpha on range [0,1]
+            matSpec.opacity = 1.0f - ti.readNumber();
+
+            // TODO: "Tf" = 1 - transmission
         } else if (cmd == "Ns") {
             // spec exponent on range [0, 1000]
             matSpec.shininess = ti.readNumber();

@@ -1,7 +1,9 @@
 /**
- @file   SuperBSDF.cpp
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @date   2008-08-10
+ \file      SuperBSDF.cpp
+ \author    Morgan McGuire, http://graphics.cs.williams.edu
+
+ \created   2008-08-10
+ \edited    2011-6-28
 */
 #include "GLG3D/SuperBSDF.h"
 
@@ -11,6 +13,19 @@ float SuperBSDF::ignoreFloat;
 
 #define INV_PI  (0.318309886f)
 #define INV_8PI (0.0397887358f)
+
+
+SuperBSDF::Ref SuperBSDF::speedCreate(BinaryInput& b) {
+    SuperBSDF::Ref s;
+    alwaysAssertM(false, "TODO");
+    return s;
+}
+
+
+void SuperBSDF::speedSerialize(BinaryOutput& b) const {
+    alwaysAssertM(false, "TODO");
+}
+
 
 SuperBSDF::Ref SuperBSDF::create
 (const Component4& lambertian,

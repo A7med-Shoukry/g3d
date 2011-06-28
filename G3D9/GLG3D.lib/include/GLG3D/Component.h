@@ -132,18 +132,48 @@ private:
         }
     }
 
+    /** Overloads to allow conversion of Image3 and Image4 to uint8,
+        since Component knows that there is only 8-bit data in the
+        floats. */
+    static void speedSerialize(Image3::Ref im, BinaryOutput& b) {
+        Image3uint8::fromImage3(im)->speedSerialize(b);
+    }
+
+    /** Overloads to allow conversion of Image3 and Image4 to uint8,
+        since Component knows that there is only 8-bit data in the
+        floats. */
+    static void speedSerialize(Image4::Ref im, BinaryOutput& b) {
+        Image4uint8::fromImage4(im)->speedSerialize(b);
+    }
+
+    /** Overloads to allow conversion of Image3 and Image4 to uint8,
+        since Component knows that there is only 8-bit data in the
+        floats. */
+    static void speedDeserialize(Image3::Ref& im, BinaryInput& b) {
+        im = Image3::fromImage3uint8(Image3uint8::speedCreate(b));
+    }
+
+    /** Overloads to allow conversion of Image3 and Image4 to uint8,
+        since Component knows that there is only 8-bit data in the
+        floats. */
+    static void speedDeserialize(Image4::Ref& im, BinaryInput& b) {
+        im = Image4::fromImage4uint8(Image4uint8::speedCreate(b));
+    }
+    
+    /** For speedCreate */
+    MapComponent() {}
 
 public:
 
     /** \sa SpeedLoad */
     static Ref speedCreate(BinaryInput& b) {
-        Ref m = new MapComponent();
+        Ref m = new MapComponent<Image>();
         
         m->m_min.deserialize(b);
         m->m_max.deserialize(b);
         m->m_mean.deserialize(b);
 
-        m->m_cpuImage = Image::speedCreate(b);
+        speedDeserialize(m->m_cpuImage, b);
 
         return m;
     }
@@ -154,8 +184,13 @@ public:
         m_min.serialize(b);
         m_max.serialize(b);
         m_mean.serialize(b);
-        image();
-        m_cpuImage->speedSerialize(b);
+
+        // Save 8-bit data.  If the CPU image was NULL, we end up
+        // reading it from the GPU to the CPU, converting to float,
+        // and then converting back to uint8.  But we don't serialize
+        // very often--this is a preprocess--so the perf hit is
+        // irrelevant.
+        speedSerialize(image(), b);
     }
 
     /** Returns NULL if both are NULL */
@@ -193,7 +228,10 @@ public:
         MyType* me = const_cast<MyType*>(this);
         if (me->m_cpuImage.isNull()) {
             debugAssert(me->m_gpuImage.notNull());
-            // Download from GPU
+            // Download from GPU.  This works because C++
+            // dispatches the override on the static type,
+            // so it doesn't matter that the pointer is NULL
+            // before the call.
             m_gpuImage->getImage(me->m_cpuImage);
         }
                 
@@ -326,49 +364,6 @@ private:
     }
 
 
-    friend class Material;
-    friend class SuperBSDF;
-
-    /** \sa SpeedLoad */
-    void speedSerialize(BinaryOutput& b) const {
-        b.writeInt32(m_factors);
-
-        // Save the size of the color field to help ensure that
-        // this was properly deserialized
-        b.writeInt32(sizeof(Color));
-
-        m_min.serialize(b);
-        m_max.serialize(b);
-        m_mean.serialize(b);
-        
-        m_constant.serialize(b);
-        b.writeBool8(m_map.notNull());
-        
-        if (m_map.notNull()) {
-            m_map->speedSerialize(b);
-        }
-    }
-
-
-    /** \sa SpeedLoad */
-    void speedDeserialize(BinaryInput& b) {
-        m_factors = b.readInt32();
-        
-        const size_t colorSize = b.readInt32();
-        alwaysAssertM(colorSize == sizeof(Color), 
-                      "Tried to SpeedLoad a component in the wrong format.");
-
-        m_min.deserialize(b);
-        m_max.deserialize(b);
-        m_mean.deserialize(b);
-
-        m_constant.deserialize(b);
-        bool hasMap = b.readBool8();
-        if (hasMap) {
-            m_map = MapComponent<Image>::speedCreate(b);
-        }
-    }
-
 public:
 
     /** All zero */
@@ -406,6 +401,46 @@ public:
         init(Color::one());
     }
     
+    /** \sa SpeedLoad */
+    void speedSerialize(BinaryOutput& b) const {
+        b.writeInt32(m_factors);
+
+        // Save the size of the color field to help ensure that
+        // this was properly deserialized
+        b.writeInt32(sizeof(Color));
+
+        m_min.serialize(b);
+        m_max.serialize(b);
+        m_mean.serialize(b);
+        
+        m_constant.serialize(b);
+        b.writeBool8(m_map.notNull());
+        
+        if (m_map.notNull()) {
+            m_map->speedSerialize(b);
+        }
+    }
+
+
+    /** \sa SpeedLoad */
+    void speedDeserialize(BinaryInput& b) {
+        m_factors = (Factors)b.readInt32();
+        
+        const size_t colorSize = (size_t)b.readInt32();
+        alwaysAssertM(colorSize == sizeof(Color), 
+                      "Tried to SpeedLoad a component in the wrong format.");
+
+        m_min.deserialize(b);
+        m_max.deserialize(b);
+        m_mean.deserialize(b);
+
+        m_constant.deserialize(b);
+        bool hasMap = b.readBool8();
+        if (hasMap) {
+            m_map = MapComponent<Image>::speedCreate(b);
+        }
+    }
+
     bool operator==(const Component<Color, Image>& other) const {
         return 
             (m_factors == other.m_factors) &&

@@ -183,6 +183,12 @@ public:
      float             eta_reflect = 1.0f,
      const Color3&     extinction_reflect = Color3::zero());
 
+    /** \sa SpeedLoad */
+    static Ref speedCreate(BinaryInput& b);
+
+    /** \sa SpeedLoad */
+    void speedSerialize(BinaryOutput& b) const;
+
     /** Computes F_r, given the cosine of the angle of incidence and 
        the reflectance at normal incidence. */
     // Must match SuperShader/sS_Globals.pix

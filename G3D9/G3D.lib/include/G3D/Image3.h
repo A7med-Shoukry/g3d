@@ -55,7 +55,7 @@ public:
 
     static Ref fromFile(const std::string& filename, WrapMode wrap = WrapMode::ERROR, GImage::Format fmt = GImage::AUTODETECT);
     
-	static Ref fromArray(const class Color1uint8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
+    static Ref fromArray(const class Color1uint8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
     static Ref fromArray(const class Color3uint8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
     static Ref fromArray(const class Color4uint8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
     static Ref fromArray(const class Color1* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
@@ -67,10 +67,10 @@ public:
     static Ref fromGImage(const class GImage& im, WrapMode wrap = WrapMode::ERROR);
 
     /** Loads from any of the file formats supported by G3D::GImage.  If there is an alpha channel on the input,
-        it is stripped. */
+        it is stripped. Converts 8-bit formats to the range (0, 1) */
     void load(const std::string& filename, GImage::Format fmt = GImage::AUTODETECT);
 
-    /** Saves in any of the formats supported by G3D::GImage. */
+    /** Saves in any of the formats supported by G3D::GImage. Assumes the data is on the range (0, 1) if saving to an 8-bit format.*/
     void save(const std::string& filename, GImage::Format fmt = GImage::AUTODETECT);
 };
 
