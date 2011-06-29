@@ -136,8 +136,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deferredShading", "deferred
 		{4109E1AD-E10F-412C-9917-1E381D82EEE6} = {4109E1AD-E10F-412C-9917-1E381D82EEE6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freeimage.lib", "freeimage.lib.vcxproj", "{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -239,10 +237,6 @@ Global
 		{9CE21191-CAEA-4169-8FCC-21884651B7DB}.Debug|Win32.Build.0 = Debug|Win32
 		{9CE21191-CAEA-4169-8FCC-21884651B7DB}.Release|Win32.ActiveCfg = Release|Win32
 		{9CE21191-CAEA-4169-8FCC-21884651B7DB}.Release|Win32.Build.0 = Release|Win32
-		{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}.Debug|Win32.Build.0 = Debug|Win32
-		{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}.Release|Win32.ActiveCfg = Release|Win32
-		{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

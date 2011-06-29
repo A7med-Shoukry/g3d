@@ -169,6 +169,7 @@
     <ClCompile Include="..\GLG3D.lib\source\Shader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ShadowMap.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shape.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\SpeedLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperBSDF.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperShader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperSurface.cpp" />
