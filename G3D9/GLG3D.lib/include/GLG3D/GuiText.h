@@ -1,6 +1,10 @@
 /**
-  @file GuiText.h
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \file GLG3D/GuiText.h
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  
+  \created 2010-01-01
+  \edited  2011-06-29
+
   Copyright 2000-2011, Morgan McGuire
  */
 
@@ -27,7 +31,7 @@ class Icon;
     implicitly by a cast from std::string or by G3D::IconSet, but can be
     created explicitly when more information needs to be specified.
 
-    @sa G3D::GuiLabel, G3D::GuiTextBox, G3D::IconSet, G3D::Icon
+    \sa G3D::GuiLabel, G3D::GuiTextBox, G3D::IconSet, G3D::Icon, G3D::Texture
  */
 class GuiText {
 public:
@@ -108,6 +112,8 @@ private:
 
     /** If not NULL, this is an icon */
     Texture::Ref       m_texture;
+
+    /** In pixels.*/
     Rect2D             m_sourceRect;
     
 public:
@@ -130,7 +136,7 @@ public:
 
     /** Create an icon.  
         \param texture The source texture.
-        \param srcRect The source rectangle, in texture coordinates.
+        \param srcRect The source rectangle, in pixels of \a texture
         \sa G3D::IconSet. */
     GuiText(const Texture::Ref& texture, const Rect2D& srcRect);
 
@@ -147,24 +153,6 @@ public:
 
     const Rect2D& iconSourceRect() const {
         return m_sourceRect;
-    }
-
-    /** For an icon, the width in pixels.  Undefined for non-icons.*/
-    int width() const {
-        if (isIcon()) {
-            return m_texture->width();
-        } else {
-            return -1;
-        }
-    }
-
-    /** For an icon, the height in pixels.  Undefined for non-icons.*/
-    int height() const {
-        if (isIcon()) {
-            return m_texture->height();
-        } else {
-            return -1;
-        }
     }
     
     /** True if this is an empty caption */

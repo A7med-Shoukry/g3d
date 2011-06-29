@@ -56,7 +56,7 @@ GuiTheme::GuiTheme(const std::string& filename,
         const GFont::Ref&   fallbackFont,
         float               fallbackSize, 
         const Color4&       fallbackColor, 
-        const Color4&       fallbackOutlineColor) : m_delayedTextCount(0), m_inRendering(false){
+        const Color4&       fallbackOutlineColor) : m_delayedStringsCount(0), m_delayedImagesCount(0), m_inRendering(false){
 
     alwaysAssertM(FileSystem::exists(filename), "Cannot find " + filename);
 
@@ -310,18 +310,22 @@ void GuiTheme::addDelayedText
  GFont::XAlign              xalign,
  GFont::YAlign              yalign,
  float                      wordWrapWidth) const {
-    if (text.numElements() == 0) {
-        return;
-    }
+    if (text.isIcon()) {
+        addDelayedText(text.iconTexture(), text.iconSourceRect(), position, xalign, yalign);
+    } else {
+        if (text.numElements() == 0) {
+            return;
+        }
     
-    const GuiText::Element& element = text.element(0);
+        const GuiText::Element& element = text.element(0);
 
-    float size                  = element.size(defaults.size);
-    const GFont::Ref& font      = element.font(defaults.font);
-    const Color4& color         = element.color(defaults.color);
-    const Color4& outlineColor  = element.outlineColor(defaults.outlineColor);
+        float size                  = element.size(defaults.size);
+        const GFont::Ref& font      = element.font(defaults.font);
+        const Color4& color         = element.color(defaults.color);
+        const Color4& outlineColor  = element.outlineColor(defaults.outlineColor);
  
-    addDelayedText(font, element.text(), position, size, color, outlineColor, xalign, yalign, wordWrapWidth);
+        addDelayedText(font, element.text(), position, size, color, outlineColor, xalign, yalign, wordWrapWidth);
+    }
 }
 
 
@@ -739,22 +743,23 @@ void GuiTheme::renderLabel(const Rect2D& bounds, const GuiText& text, GFont::XAl
 
 
 void GuiTheme::drawDelayedText() const {
-    if (m_delayedTextCount == 0) {
-        return;
-    }
-
-    // Only clean out old fonts periodically to avoid frequent
-    // memory allocation costs.
-    bool cleanOldFonts = iRandom(0, 10000) == 0;
-    
     beginText();
-    {
-        static Array<GFont::Ref> delayedFont;
-        m_delayedText.getKeys(delayedFont);
-        
-        for (int f = 0; f < delayedFont.size(); ++f) {
-            const GFont::Ref& thisFont = delayedFont[f];
-            const Array<Text>& label = m_delayedText[thisFont];
+
+    drawDelayedStrings();
+    drawDelayedImages();
+
+    endText();
+}
+
+
+void GuiTheme::drawDelayedImages() const {
+
+    if (m_delayedImagesCount > 0) {
+        // TODO
+        /*
+        for (Table<GFont::Ref, Array<Text> >::Iterator it = m_delayedStrings.begin(); it.isValid(); ++it) {
+            const GFont::Ref& thisFont = it->key;
+            const Array<Text>& label = it->value;
             
             if (label.size() > 0) {
                 // Load this font
@@ -769,27 +774,69 @@ void GuiTheme::drawDelayedText() const {
                 for (int t = 0; t < label.size(); ++t) {
                     const Text& text = label[t];
                     thisFont->send2DQuadsWordWrap(m_rd, text.wrapWidth, text.text, text.position, text.size, text.color, 
-                                          text.outlineColor, text.xAlign, text.yAlign);
+                                            text.outlineColor, text.xAlign, text.yAlign);
                 }
                 thisFont->end2DQuads(m_rd);
 
                 // Fast clear to avoid memory allocation and deallocation
-                const_cast<Array<Text>&>(label).fastClear();
-                
-            } else if (cleanOldFonts) {
-                // Old font that is no longer in use.  Remove the reference in case the font itself
-                // needs to be garbage collected
-                const_cast<GuiTheme*>(this)->m_delayedText.remove(thisFont);
+                const_cast<Array<Text>&>(label).fastClear();                
             }
         }
+        */
+        // Reset the count
+        const_cast<GuiTheme*>(this)->m_delayedImagesCount = 0;
     }
-    endText();
-
-    // Reset the count
-    const_cast<GuiTheme*>(this)->m_delayedTextCount = 0;
 }
 
+
+void GuiTheme::drawDelayedStrings() const {
+    if (m_delayedStringsCount > 0) {
+        for (Table<GFont::Ref, Array<Text> >::Iterator it = m_delayedStrings.begin(); it.isValid(); ++it) {
+            const GFont::Ref& thisFont = it->key;
+            const Array<Text>& label = it->value;
+            
+            if (label.size() > 0) {
+                // Load this font
+
+                thisFont->begin2DQuads(m_rd);
+
+                glBindTexture(GL_TEXTURE_2D, thisFont->texture()->openGLID());
+                glMatrixMode(GL_TEXTURE);
+                glLoadMatrix(thisFont->textureMatrix());
+
+                // Render the text in this font
+                for (int t = 0; t < label.size(); ++t) {
+                    const Text& text = label[t];
+                    thisFont->send2DQuadsWordWrap(m_rd, text.wrapWidth, text.text, text.position, text.size, text.color, 
+                                            text.outlineColor, text.xAlign, text.yAlign);
+                }
+                thisFont->end2DQuads(m_rd);
+
+                // Fast clear to avoid memory allocation and deallocation
+                const_cast<Array<Text>&>(label).fastClear();                
+            }
+        }
+
+        // Reset the count
+        const_cast<GuiTheme*>(this)->m_delayedStringsCount = 0;
+    }
+}
+
+
+void GuiTheme::addDelayedText(const Texture::Ref& t, const Rect2D& srcRectPixels, const Point2& position, 
+                    GFont::XAlign xalign, GFont::YAlign yalign) const {
+    GuiTheme* me = const_cast<GuiTheme*>(this);
+
+    bool created = false;    
+    Image& im = me->m_delayedImages.getCreate(t, created).next();
+    im.position = position;
+    im.srcRect  = srcRectPixels;
+    im.xAlign   = xalign;
+    im.yAlign   = yalign;
+    ++me->m_delayedImagesCount;
+}
     
+
 void GuiTheme::addDelayedText
 (GFont::Ref         font,
  const std::string& label, 
@@ -812,13 +859,10 @@ void GuiTheme::addDelayedText
 
     GuiTheme* me = const_cast<GuiTheme*>(this);
     
-    ++(me->m_delayedTextCount);
+    ++(me->m_delayedStringsCount);
 
-    if (! m_delayedText.containsKey(font)) {
-        me->m_delayedText.set(font, Array<Text>());
-    }
-    
-    Text& text = me->m_delayedText[font].next();
+    bool created = false;    
+    Text& text = me->m_delayedStrings.getCreate(font, created).next();
     text.text       = label;
     text.position   = position;
     text.xAlign     = xalign;
@@ -853,7 +897,7 @@ float GuiTheme::paneTopPadding(const GuiText& caption, PaneStyle paneStyle) cons
     if (caption.empty()) {
         return 0.0f;
     } else if (caption.isIcon()) {
-        return caption.height();
+        return caption.iconSourceRect().height();
     } else {
         // Space for text
         if (m_pane[paneStyle].textStyle.size >= 0) {

@@ -1233,4 +1233,8 @@ template <> struct HashTrait<G3D::Texture::Settings> {
 };
 
 
+template <> struct HashTrait<G3D::Texture::Ref> {
+    static size_t hashCode(const G3D::Texture::Ref& key) { return reinterpret_cast<size_t>(key.pointer()); }
+};
+
 #endif

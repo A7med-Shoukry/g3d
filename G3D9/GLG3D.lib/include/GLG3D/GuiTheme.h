@@ -188,7 +188,7 @@ private:
     /** Used for delayed text rendering. */
     class Text {
     public:
-        Vector2             position;
+        Point2              position;
         std::string         text;
         GFont::XAlign       xAlign;
         GFont::YAlign       yAlign;
@@ -199,16 +199,30 @@ private:
         Text() : size(0), wrapWidth(finf()) {}
     };
 
-    /** Delayed text, organized by the associated font.*/
-    Table<GFont::Ref, Array<Text> >     m_delayedText;
+    /** Used for delayed image rendering */
+    class Image {
+    public:
+        Point2              position;
+        Rect2D              srcRect;
+        GFont::XAlign       xAlign;
+        GFont::YAlign       yAlign;
+    };
 
+    /** Delayed text, organized by the associated font.*/
+    Table<GFont::Ref, Array<Text> >     m_delayedStrings;
     /** Number of values in delayedText's arrays.  Used to 
         detect when we need to enter font rendering mode. */
-    int                                 m_delayedTextCount;
+    int                                 m_delayedStringsCount;
+
+    Table<Texture::Ref, Array<Image> >  m_delayedImages;
+    int                                 m_delayedImagesCount;
 
 
-    /** Clears the delayedText array. */
+    /** Clears the delayedText and delayedImage data. */
     void drawDelayedText() const;
+
+    void drawDelayedStrings() const;
+    void drawDelayedImages() const;
 
     /** Postpones rendering the specified text until later. Switching
         between the GUI texture and the font texture is relatively
@@ -217,12 +231,15 @@ private:
 
         Note that delayed text must be drawn before the clipping region is changed or another window is rendered.
     */
-    void addDelayedText(GFont::Ref font, const std::string& text, const Vector2& position, float size, 
+    void addDelayedText(GFont::Ref font, const std::string& text, const Point2& position, float size, 
                         const Color4& color, const Color4& outlineColor, GFont::XAlign xalign, 
                         GFont::YAlign yalign = GFont::YALIGN_CENTER, float wordWrapWidth = finf()) const;
 
-    void addDelayedText(const GuiText& text, const TextStyle& defaults, const Vector2& position, 
+    void addDelayedText(const GuiText& text, const TextStyle& defaults, const Point2& position, 
                         GFont::XAlign xalign, GFont::YAlign yalign = GFont::YALIGN_CENTER, float wordWrapWidth = finf()) const;
+
+    void addDelayedText(const Texture::Ref& t, const Rect2D& srcRectPixels, const Point2& position, 
+                        GFont::XAlign xalign, GFont::YAlign yalign = GFont::YALIGN_CENTER) const;
 
 
     enum {TEXTURE_UNIT = 0};
