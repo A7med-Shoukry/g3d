@@ -755,34 +755,75 @@ void GuiTheme::drawDelayedText() const {
 void GuiTheme::drawDelayedImages() const {
 
     if (m_delayedImagesCount > 0) {
-        // TODO
-        /*
-        for (Table<GFont::Ref, Array<Text> >::Iterator it = m_delayedStrings.begin(); it.isValid(); ++it) {
-            const GFont::Ref& thisFont = it->key;
-            const Array<Text>& label = it->value;
+        glMatrixMode(GL_TEXTURE);
+        glLoadIdentity();
+
+        for (Table<Texture::Ref, Array<Image> >::Iterator it = m_delayedImages.begin(); it.isValid(); ++it) {
+            const Texture::Ref& texture    = it->key;
+            const Array<Image>& imageArray = it->value;
             
-            if (label.size() > 0) {
-                // Load this font
+            if (imageArray.size() > 0) {
+                const Vector2 scale(1.0f / texture->width(), 1.0f / texture->height());
 
-                thisFont->begin2DQuads(m_rd);
+                // Configure this texture
 
-                glBindTexture(GL_TEXTURE_2D, thisFont->texture()->openGLID());
-                glMatrixMode(GL_TEXTURE);
-                glLoadMatrix(thisFont->textureMatrix());
+                glBindTexture(GL_TEXTURE_2D, texture->openGLID());
+                glBegin(GL_QUADS);
 
-                // Render the text in this font
-                for (int t = 0; t < label.size(); ++t) {
-                    const Text& text = label[t];
-                    thisFont->send2DQuadsWordWrap(m_rd, text.wrapWidth, text.text, text.position, text.size, text.color, 
-                                            text.outlineColor, text.xAlign, text.yAlign);
+                // Render the images that use this texture font
+                for (int t = 0; t < imageArray.size(); ++t) {
+                    const Image& im = imageArray[t];
+                    Point2 pos0 = im.position;
+
+                    switch (im.xAlign) {
+                    case GFont::XALIGN_LEFT:
+                        break;
+
+                    case GFont::XALIGN_CENTER:
+                        pos0.x -= im.srcRect.width() / 2;
+                        break;
+
+                    case GFont::XALIGN_RIGHT:
+                        pos0.x -= im.srcRect.width();
+                        break;
+                    }
+
+                    switch (im.yAlign) {
+                    case GFont::YALIGN_TOP:
+                        break;
+
+                    case GFont::YALIGN_CENTER:
+                        pos0.y -= im.srcRect.height() / 2;
+                        break;
+
+                    case GFont::YALIGN_BOTTOM:
+                    case GFont::YALIGN_BASELINE:
+                        pos0.y -= im.srcRect.height();
+                        break;
+                    }
+
+                    glTexCoord(im.srcRect.x0y0() * scale);
+                    glVertex(pos0);
+
+                    glTexCoord(im.srcRect.x0y1() * scale);
+                    glVertex(pos0 + Vector2(0, im.srcRect.height()));
+
+                    glTexCoord(im.srcRect.x1y1() * scale);
+                    glVertex(pos0 + im.srcRect.wh());
+
+                    glTexCoord(im.srcRect.x1y0() * scale);
+                    glVertex(pos0 + Vector2(im.srcRect.width(), 0));
                 }
-                thisFont->end2DQuads(m_rd);
+
+                glEnd();
+                glBindTexture(GL_TEXTURE_2D, GL_ZERO);
+
 
                 // Fast clear to avoid memory allocation and deallocation
-                const_cast<Array<Text>&>(label).fastClear();                
+                const_cast<Array<Image>&>(imageArray).fastClear();
             }
         }
-        */
+
         // Reset the count
         const_cast<GuiTheme*>(this)->m_delayedImagesCount = 0;
     }
