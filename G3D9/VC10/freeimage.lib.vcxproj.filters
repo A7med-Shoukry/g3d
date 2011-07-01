@@ -42,6 +42,9 @@
     <Filter Include="Source Files\FreeImageToolkit">
       <UniqueIdentifier>{3e2f53e2-4ff5-4a2f-8790-6810b9fc90e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FreeImagePlus">
+      <UniqueIdentifier>{ac71edd8-b71f-4828-9bb1-8c9b98e11c68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\freeimage.lib\source\DeprecationManager\DeprecationMgr.h">
@@ -681,6 +684,9 @@
       <Filter>Source Files\FreeImage</Filter>
     </ClInclude>
     <ClInclude Include="..\freeimage.lib\include\FreeImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\freeimage.lib\include\FreeImagePlus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1623,6 +1629,27 @@
     </ClCompile>
     <ClCompile Include="..\freeimage.lib\source\FreeImageToolkit\Resize.cpp">
       <Filter>Source Files\FreeImageToolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipImage.cpp">
+      <Filter>Source Files\FreeImagePlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipMemoryIO.cpp">
+      <Filter>Source Files\FreeImagePlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipMetadataFind.cpp">
+      <Filter>Source Files\FreeImagePlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipMultiPage.cpp">
+      <Filter>Source Files\FreeImagePlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipTag.cpp">
+      <Filter>Source Files\FreeImagePlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipWinImage.cpp">
+      <Filter>Source Files\FreeImagePlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\FreeImagePlus.cpp">
+      <Filter>Source Files\FreeImagePlus</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

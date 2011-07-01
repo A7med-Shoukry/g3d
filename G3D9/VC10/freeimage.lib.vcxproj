@@ -39,13 +39,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)..\freeimage.lib\source\libRawLite\src;$(SolutionDir)..\freeimage.lib\source\LibRawLite\internal;$(SolutionDir)..\freeimage.lib\source\LibRawLite\dcraw;$(SolutionDir)..\freeimage.lib\source\LibRawLite;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Imath;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmThread;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmImf;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Iex;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Half;$(SolutionDir)..\freeimage.lib\source\OpenEXR;$(SolutionDir)..\freeimage.lib\source\LibOpenJPEG;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\source\LibTIFF;$(SolutionDir)..\freeimage.lib\source\LibPNG;$(SolutionDir)..\freeimage.lib\source\LibMNG;$(SolutionDir)..\freeimage.lib\source\LibJPEG;$(SolutionDir)..\freeimage.lib\source\FreeImageToolkit;$(SolutionDir)..\freeimage.lib\source\Metadata;$(SolutionDir)..\freeimage.lib\source;$(SolutionDir)..\freeimage.lib\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
-    <TargetName>freeimaged.lib</TargetName>
+    <TargetName>freeimaged</TargetName>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)..\freeimage.lib\source\libRawLite\src;$(SolutionDir)..\freeimage.lib\source\LibRawLite\internal;$(SolutionDir)..\freeimage.lib\source\LibRawLite\dcraw;$(SolutionDir)..\freeimage.lib\source\LibRawLite;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Imath;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmThread;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmImf;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Iex;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Half;$(SolutionDir)..\freeimage.lib\source\OpenEXR;$(SolutionDir)..\freeimage.lib\source\LibOpenJPEG;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\source\LibTIFF;$(SolutionDir)..\freeimage.lib\source\LibPNG;$(SolutionDir)..\freeimage.lib\source\LibMNG;$(SolutionDir)..\freeimage.lib\source\LibJPEG;$(SolutionDir)..\freeimage.lib\source\FreeImageToolkit;$(SolutionDir)..\freeimage.lib\source\Metadata;$(SolutionDir)..\freeimage.lib\source;$(SolutionDir)..\freeimage.lib\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
-    <TargetName>freeimage.lib</TargetName>
+    <TargetName>freeimage</TargetName>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -90,6 +90,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\freeimage.lib\include\FreeImage.h" />
+    <ClInclude Include="..\freeimage.lib\include\FreeImagePlus.h" />
     <ClInclude Include="..\freeimage.lib\source\CacheFile.h" />
     <ClInclude Include="..\freeimage.lib\source\DeprecationManager\DeprecationMgr.h" />
     <ClInclude Include="..\freeimage.lib\source\FreeImageIO.h" />
@@ -306,6 +307,13 @@
   <ItemGroup>
     <ClCompile Include="..\freeimage.lib\source\DeprecationManager\Deprecated.cpp" />
     <ClCompile Include="..\freeimage.lib\source\DeprecationManager\DeprecationMgr.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipImage.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipMemoryIO.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipMetadataFind.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipMultiPage.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipTag.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipWinImage.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\FreeImagePlus.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImageToolkit\Background.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImageToolkit\BSplineRotate.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImageToolkit\Channels.cpp" />
