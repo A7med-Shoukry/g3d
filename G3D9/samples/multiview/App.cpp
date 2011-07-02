@@ -39,7 +39,6 @@ void App::onInit() {
     IconSet::Ref icons = IconSet::fromFile(System::findDataFile("tango.icn"));
     GuiPane* toolPane = toolBar->pane();
 
-
     toolPane->addButton(icons->get("22x22/uwe/CreateCylinder.png"), GuiTheme::TOOL_BUTTON_STYLE);
     toolPane->addButton(icons->get("22x22/uwe/CreateBox.png"), GuiTheme::TOOL_BUTTON_STYLE);
     toolPane->addButton(icons->get("22x22/uwe/Emitter.png"), GuiTheme::TOOL_BUTTON_STYLE);
@@ -52,6 +51,7 @@ void App::onInit() {
 
     renderDevice->setColorClearValue(Color3::white());
 }
+
 
 void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
     GApp::onPose(surfaceArray, surface2D);
@@ -72,9 +72,9 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
     // Wireframe views
     GCamera wireCamera[3];
-    wireCamera[0].setCoordinateFrame(CFrame::fromXYZYPRDegrees(0,8,0,0,-90));
-    wireCamera[1].setCoordinateFrame(CFrame::fromXYZYPRDegrees(0,0,8,0,0));
-    wireCamera[2].setCoordinateFrame(CFrame::fromXYZYPRDegrees(8,0,0,90,0));
+    wireCamera[0].setCoordinateFrame(CFrame::fromXYZYPRDegrees(0,40,0,0,-90));
+    wireCamera[1].setCoordinateFrame(CFrame::fromXYZYPRDegrees(0,0,40,0,0));
+    wireCamera[2].setCoordinateFrame(CFrame::fromXYZYPRDegrees(40,0,0,90,0));
 
     Rect2D wireViewport[3];
     wireViewport[0] = shadeViewport + Vector2(rd->width() / 2, 0.0f);

@@ -97,11 +97,12 @@
 \htmlonly <IMG SRC="demo-multiview.png" width=250 > \endhtmlonly
 </td>
 <td>
-Two ways of creating multiple views: render to texture and explicit viewports.
+Rendering to multiple viewports to create a CAD-like application
 <ul>
- <li> G3D::GuiTextureBox
  <li> G3D::RenderDevice::setViewport
- <li> G3D::RenderDevice::setRenderMode
+ <li> G3D::Surface::renderWireframe
+ <li> G3D::GuiWindow
+ <li> G3D::IconSet
  <li> G3D::Draw
 </ul>
 </td>

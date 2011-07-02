@@ -711,7 +711,7 @@ void GuiTheme::renderHorizontalSlider
 void GuiTheme::renderLabel(const Rect2D& bounds, const GuiText& text, GFont::XAlign xalign, GFont::YAlign yalign, bool enabled, bool wordWrap) const {
     debugAssert(m_inRendering);
 
-    if (text.numElements() > 0) {
+    if (text.isIcon() || (text.numElements() > 0)) {
         Vector2 pos;
 
         switch (xalign) {
@@ -1017,6 +1017,7 @@ void GuiTheme::makeThemeFromSourceFiles(
     b.compress();
     b.commit();
 }
+
 
 void GuiTheme::pushClientRect(const Rect2D& r) {
     debugAssert(! r.isEmpty());
