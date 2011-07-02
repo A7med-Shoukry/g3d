@@ -2,7 +2,7 @@
  \file GLG3D/GuiWindow.h
 
  \created 2006-05-01
- \edited  2011-01-21
+ \edited  2011-07-02
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
@@ -211,6 +211,7 @@ protected:
         intialize OpenGL. */
     GuiWindow();
 
+    virtual void renderBackground(RenderDevice* rd) const;
     virtual void render(RenderDevice* rd) const;
 
     /** Take the specified close action.  May be overriden. */

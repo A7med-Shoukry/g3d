@@ -386,16 +386,22 @@ void GuiWindow::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 }
 
 
+void GuiWindow::renderBackground(RenderDevice* rd) const {
+    bool hasClose = m_closeAction != NO_CLOSE;
+
+    if ((m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
+        m_skin->renderWindow(m_rect, focused(), hasClose, m_closeButton.down,
+                            m_closeButton.mouseOver, m_text, GuiTheme::WindowStyle(m_style));
+    } else {
+        debugAssertM(m_closeAction == NO_CLOSE, "Windows without frames cannot have a close button.");
+    }
+}
+
+
 void GuiWindow::render(RenderDevice* rd) const {
     m_skin->beginRendering(rd); {
-        bool hasClose = m_closeAction != NO_CLOSE;
 
-        if ((m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
-            m_skin->renderWindow(m_rect, focused(), hasClose, m_closeButton.down,
-                               m_closeButton.mouseOver, m_text, GuiTheme::WindowStyle(m_style));
-        } else {
-            debugAssertM(m_closeAction == NO_CLOSE, "Windows without frames cannot have a close button.");
-        }
+        renderBackground(rd);
         
         static const bool DEBUG_WINDOW_SIZE = false;
 
