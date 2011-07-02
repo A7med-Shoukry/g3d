@@ -3,7 +3,7 @@
 
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   \created 2010-01-04
-  \edited  2010-01-04
+  \edited  2011-07-02
 */
 #ifndef G3D_Icon_h
 #define G3D_Icon_h
@@ -25,25 +25,28 @@ public:
     Icon() {}
 
     /** Create a new icon.  
+
+        \param r In pixels
         \sa G3D::IconSet */
-    Icon(const Texture::Ref& t, const Rect2D& r = Rect2D::xywh(0,0,1,1)) : m_texture(t), m_sourceRect(r) {}
+    Icon(const Texture::Ref& t, const Rect2D& r) : m_texture(t), m_sourceRect(r) {}
+
+    Icon(const Texture::Ref& t) : m_texture(t), m_sourceRect(Rect2D::xywh(0,0,t->width(), t->height())) {}
 
     const Texture::Ref& texture() const {
         return m_texture;
     }
 
-    /** Position within texture() of this icon, in texture coordinates
-        (not pixels).*/
+    /** Position within texture() of this icon, in pixels.*/
     const Rect2D& sourceRect() const {
         return m_sourceRect;
     }
 
     int width() const {
-        return iRound(m_texture->width() * m_sourceRect.width());
+        return iRound(m_sourceRect.width());
     }
 
     int height() const {
-        return iRound(m_texture->height() * m_sourceRect.height());
+        return iRound(m_sourceRect.height());
     }
 };
 

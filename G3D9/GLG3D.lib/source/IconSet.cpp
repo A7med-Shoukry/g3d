@@ -1,10 +1,10 @@
 /**
-  @file IconSet.cpp
+  \file IconSet.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2010-01-04
-  @edited  2010-03-04
+  \created 2010-01-04
+  \edited  2011-07-02
 */
 
 #include "GLG3D/IconSet.h"
@@ -133,7 +133,7 @@ void IconSet::makeIconSet(const std::string& baseDir, const std::string& outFile
     b.writeInt32(sourceArray.size());
 
     GImage packed(width, height, maxChannels);
-    w = 0; h = 0; 
+    w = 0; h = 0;
     int y = 0;
     for (int i = 0; i < sourceArray.size(); ++i) {
         // Walk until we hit the end of the row
@@ -146,10 +146,10 @@ void IconSet::makeIconSet(const std::string& baseDir, const std::string& outFile
         }
 
         b.writeString32(s.filename);
-        b.writeFloat32(w / float(width));
-        b.writeFloat32(y / float(height));
-        b.writeFloat32(s.width / float(width));
-        b.writeFloat32(s.height / float(height));
+        b.writeFloat32(w);
+        b.writeFloat32(y);
+        b.writeFloat32(s.width);
+        b.writeFloat32(s.height);
 
         GImage src;
         if (s.channels == maxChannels) {

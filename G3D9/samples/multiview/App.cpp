@@ -34,11 +34,12 @@ void App::onInit() {
     
     GuiTheme::Ref theme = debugWindow->theme();
 
-    /*
-    GuiWindow::Ref toolBar = GuiWindow::create("Tools", theme, Rect2D(), GuiTheme::TOOL_WINDOW_STYLE);
+    GuiWindow::Ref toolBar = GuiWindow::create("Tools", theme, Rect2D::xywh(0,0,0,0), GuiTheme::TOOL_WINDOW_STYLE);
 
     IconSet::Ref icons = IconSet::fromFile(System::findDataFile("tango.icn"));
     GuiPane* toolPane = toolBar->pane();
+
+
     toolPane->addButton(icons->get("22x22/uwe/CreateCylinder.png"), GuiTheme::TOOL_BUTTON_STYLE);
     toolPane->addButton(icons->get("22x22/uwe/CreateBox.png"), GuiTheme::TOOL_BUTTON_STYLE);
     toolPane->addButton(icons->get("22x22/uwe/Emitter.png"), GuiTheme::TOOL_BUTTON_STYLE);
@@ -48,9 +49,8 @@ void App::onInit() {
     toolPane->addButton(icons->get("22x22/categories/applications-system.png"), GuiTheme::TOOL_BUTTON_STYLE);
     toolBar->pack();
     addWidget(toolBar);
-    */
 
-        renderDevice->setColorClearValue(Color3::white());
+    renderDevice->setColorClearValue(Color3::white());
 }
 
 void App::onPose(Array<Surface::Ref>& surfaceArray, Array<Surface2D::Ref>& surface2D) {
