@@ -437,7 +437,11 @@ void GuiTheme::renderTextBox
 }
 
 
-    Vector2 GuiTheme::bounds(const GuiText& text) const {
+Vector2 GuiTheme::bounds(const GuiText& text) const {
+    if (text.isIcon()) {
+        return text.iconSourceRect().wh();
+    }
+
     if (text.numElements() == 0) {
         return Vector2::zero();
     }
@@ -755,6 +759,7 @@ void GuiTheme::drawDelayedText() const {
 void GuiTheme::drawDelayedImages() const {
 
     if (m_delayedImagesCount > 0) {
+        m_rd->setColor(Color3::white());
         glMatrixMode(GL_TEXTURE);
         glLoadIdentity();
 
