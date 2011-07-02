@@ -135,6 +135,25 @@ public:
 
     std::string toString() const;
 
+    Vector3int32 operator<<(int i) const {
+        return Vector3int32(x << i, y << i, z << i);
+    }
+
+    Vector3int32 operator>>(int i) const {
+        return Vector3int32(x >> i, y >> i, z >> i);
+    }
+
+    Vector3int32 operator>>(const Vector3int32& v) const {
+        return Vector3int32(x >> v.x, y >> v.y, z >> v.z);
+    }
+
+    Vector3int32 operator<<(const Vector3int32& v) const {
+        return Vector3int32(x << v.x, y << v.y, z << v.z);
+    }
+
+    Vector3int32 operator&(int16 i) const {
+        return Vector3int32(x & i, y & i, z & i);
+    }
 
     // 2-char swizzles
 

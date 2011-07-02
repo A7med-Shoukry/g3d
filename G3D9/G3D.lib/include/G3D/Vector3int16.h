@@ -121,12 +121,13 @@ public:
 
     std::string toString() const;
 
-    Vector3int16 operator<<(int i) const {
-        return Vector3int16(x << i, y << i, z << i);
-    }
 
     Vector3int16 operator-() const {
         return Vector3int16(-x, -y, -z);
+    }
+
+    Vector3int16 operator<<(int i) const {
+        return Vector3int16(x << i, y << i, z << i);
     }
 
     Vector3int16 operator>>(int i) const {
