@@ -272,6 +272,9 @@ GuiLabel* GuiPane::addLabel(const GuiText& text, GFont::XAlign xalign, GFont::YA
                             bounds.max(Vector2(min(m_clientRect.width(), (float)CONTROL_WIDTH), 
                                                CONTROL_HEIGHT))));
     
+    if (text.isIcon()) {
+        b->setSize(text.iconSourceRect().wh());
+    }
     labelArray.append(b);
 
     return b;
