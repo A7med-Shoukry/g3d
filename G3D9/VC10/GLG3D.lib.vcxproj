@@ -156,6 +156,7 @@
     <ClCompile Include="..\GLG3D.lib\source\Lighting.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material_Specification.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\Material_SpeedLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\MD2Model.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\MD2Model_load.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\MD3Model.cpp" />
@@ -169,7 +170,6 @@
     <ClCompile Include="..\GLG3D.lib\source\Shader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ShadowMap.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shape.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\SpeedLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperBSDF.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperShader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SuperSurface.cpp" />

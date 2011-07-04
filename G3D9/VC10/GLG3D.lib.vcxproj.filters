@@ -290,7 +290,7 @@
     <ClCompile Include="..\GLG3D.lib\source\PhysicsFrameSplineEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\SpeedLoad.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\Material_SpeedLoad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

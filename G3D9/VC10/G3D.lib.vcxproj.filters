@@ -314,6 +314,9 @@
     <ClCompile Include="..\G3D.lib\source\RayGridIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\G3D.lib\source\SpeedLoad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\G3D.lib\include\G3D\AABox.h">
@@ -686,6 +689,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\Color2uint8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\SpeedLoad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

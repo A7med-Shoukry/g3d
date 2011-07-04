@@ -41,7 +41,27 @@ void App::onInit() {
     BumpMap::Settings b;
     b.iterations = 1;
     mat.setBump(base + "B.png", b);
-    model->partArray[0].triList[0]->material = Material::create(mat);
+
+    Material::Ref material = Material::create(mat);
+
+    // Save material
+    {
+        BinaryOutput b("material.mat.sl", G3D_LITTLE_ENDIAN);
+        SpeedLoadIdentifier sid;
+        material->speedSerialize(sid, b);
+        b.commit();
+    }
+
+    // Load material
+    {
+        BinaryInput b("material.mat.sl", G3D_LITTLE_ENDIAN);
+        SpeedLoadIdentifier sid;
+        material = Material::speedCreate(sid, b);
+    }
+
+    model->partArray[0].triList[0]->material = material;
+
+
 
     lighting = defaultLighting();
 }
