@@ -136,7 +136,7 @@ private:
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
         since Component knows that there is only 8-bit data in the
         floats. */
-    static void speedSerialize(Image3::Ref im, const Color3& minValue, BinaryOutput& b) {
+    static void speedSerialize(const Image3::Ref& im, const Color3& minValue, BinaryOutput& b) {
         (void)minValue;
         // uint8x3
         b.writeUInt8('u');
@@ -148,15 +148,17 @@ private:
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
         since Component knows that there is only 8-bit data in the
         floats. */
-    static void speedSerialize(Image4::Ref im,const Color4& minValue,  BinaryOutput& b) {
+    static void speedSerialize(const Image4::Ref& im, const Color4& minValue,  BinaryOutput& b) {
         b.writeUInt8('u');
         b.writeUInt8('c');
         if (minValue.a < 1.0f) {
             b.writeUInt8(4);
             Image4uint8::fromImage4(im)->speedSerialize(b);
         } else {
+            // The alpha channel is unused, so compress this to RGB8.
             b.writeUInt8(3);
-            Image3uint8::fromImage4(im)->speedSerialize(b);
+            Image3uint8::Ref im3 = Image3uint8::fromImage4(im);
+            im3->speedSerialize(b);
         }
     }
 

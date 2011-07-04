@@ -376,8 +376,8 @@ void GImage::decodePNG16
 }
 
 
-void GImage::decodePNG(
-    BinaryInput&        input) {
+void GImage::decodePNG
+   (BinaryInput&        input) {
 
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, png_error, png_warning);
     if (png_ptr == NULL) {
@@ -415,8 +415,8 @@ void GImage::decodePNG(
         throw GImage::Error("Unsupported PNG color type - PNG_COLOR_TYPE_GRAY_ALPHA.", input.getFilename());
     }
 
-    m_width  = static_cast<uint32>(png_width);
-    m_height = static_cast<uint32>(png_height);
+    int width  = static_cast<uint32>(png_width);
+    int height = static_cast<uint32>(png_height);
 
     //swap bytes of 16 bit files to least significant byte first
     png_set_swap(png_ptr);
@@ -447,26 +447,22 @@ void GImage::decodePNG(
     if ((color_type == PNG_COLOR_TYPE_RGBA) ||
         ((color_type == PNG_COLOR_TYPE_PALETTE) && (png_ptr->num_trans > 0)) ) {
 
-        m_channels = 4;
-        m_imageFormat = ImageFormat::RGBA8();
-        m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 4);
+        resize(width, height, ImageFormat::RGBA8());
 
     } else if ((color_type == PNG_COLOR_TYPE_RGB) || 
                (color_type == PNG_COLOR_TYPE_PALETTE)) {
 
-        m_channels = 3;
-        m_imageFormat = ImageFormat::RGB8();
-        m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
+        resize(width, height, ImageFormat::RGB8());
 
     } else if (color_type == PNG_COLOR_TYPE_GRAY) {
 
-        m_channels = 1;
-        m_imageFormat = ImageFormat::R8();
-
         // Round up to the nearest 8 rows to avoid a bug in the PNG decoder
-        int h = iCeil(m_height / 8) * 8;
-        int sz = m_width * h;
-        m_byte = (uint8*)m_memMan->alloc(sz);
+        int h = iCeil(height / 8) * 8;
+        m_height = h;
+        resize(width, h, ImageFormat::R8());
+
+        // Shrink down the size reported.
+        m_height = height;
 
     } else {
         throw GImage::Error("Unsupported PNG bit-depth or type.", input.getFilename());

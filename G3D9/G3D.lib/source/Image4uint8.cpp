@@ -49,6 +49,7 @@ Image4uint8::Ref Image4uint8::speedCreate(class BinaryInput& b) {
     // Read the data
     GImage temp(GImage::SHARE_DATA, (uint8*)im->data.getCArray(), im->w, im->h, im->format());
     temp.decode(b, GImage::PNG);
+    alwaysAssertM(im->data.getCArray() == temp.pixel4(), "GImage::decode failed to use the memory provided");
 
     return im;
 }

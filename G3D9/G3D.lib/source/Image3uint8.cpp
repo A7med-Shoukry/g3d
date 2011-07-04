@@ -48,9 +48,11 @@ Image3uint8::Ref Image3uint8::speedCreate(class BinaryInput& b) {
 
     Ref im = createEmpty(w, h, wrap);
 
-    // Read the data
+    // Read the data (note that this code would not work for R8() data due to a bug in the PNG loader as of July 4, 2011, but it will work for 
+    // RGB8 data)
     GImage temp(GImage::SHARE_DATA, (uint8*)im->data.getCArray(), im->w, im->h, im->format());
     temp.decode(b, GImage::PNG);
+    alwaysAssertM(im->data.getCArray() == temp.pixel3(), "GImage::decode failed to use the memory provided");
 
     return im;
 }

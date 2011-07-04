@@ -666,6 +666,11 @@ void GImage::resize
     debugAssert(height >= 0);
     debugAssert(im != NULL);
 
+    if ((m_width == width) && (m_height == height) && (m_imageFormat == im) && (zero == false)) {
+        // Nothing to do
+        return;
+    }
+
     clear();
 
     m_width = width;

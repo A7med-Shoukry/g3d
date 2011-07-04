@@ -437,7 +437,7 @@ public:
 
      \deprecated Use the version that takes an ImageFormat
      */
-    void G3D_DEPRECATED resize(int width, int height, int channels, bool zero = true);
+    void G3D_DEPRECATED resize(int width, int height, int channels, bool zero = false);
 
     /**
      Resizes the internal buffer to (\a width x \a height) with the
@@ -445,8 +445,11 @@ public:
      
      \param zero If true, all data is set to 0 (black).  If false, the values
      are unspecified.
+
+     Guaranteed not to allocate new memory if \a zero == false and the current image
+     matches these specifications.
      */
-    void resize(int width, int height, const ImageFormat* imageFormat, bool zero = true);
+    void resize(int width, int height, const ImageFormat* imageFormat, bool zero = false);
 
     /**
      Copies \a src sub-image data into \a dest at a certain offset.  
@@ -527,6 +530,12 @@ public:
 
     /**
      Decodes the buffer into this image.
+
+     This will not allocate new memory for the GImage provided it is already
+     in the correct width and height and format (known bugs: 
+     only PNG RGBA8, PNG RGB8, and PNG R8 with a height that is a multiple of 8 currently
+     implement this behavior.)  
+
      \param format Must be the correct format.
      */
     void decode
