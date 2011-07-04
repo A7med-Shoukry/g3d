@@ -66,6 +66,10 @@ void Material::speedSerialize(SpeedLoadIdentifier& sli, BinaryOutput& b) const {
 
 
 void Material::speedDeserialize(BinaryInput& b) {
+    // Ignore the size
+    size_t size = b.readUInt32();
+    (void)size;
+
     const bool hasBSDF = b.readBool8();
     if (hasBSDF) {
         m_bsdf = SuperBSDF::speedCreate(b);

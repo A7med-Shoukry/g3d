@@ -108,6 +108,7 @@
     <ClCompile Include="..\test\tRandom.cpp" />
     <ClCompile Include="..\test\tReferenceCount.cpp" />
     <ClCompile Include="..\test\tReliableConduit.cpp" />
+    <ClCompile Include="..\test\tSpeedLoad.cpp" />
     <ClCompile Include="..\test\tSpline.cpp" />
     <ClCompile Include="..\test\tSystemMemcpy.cpp" />
     <ClCompile Include="..\test\tSystemMemset.cpp" />

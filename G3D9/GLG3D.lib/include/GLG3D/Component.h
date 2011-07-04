@@ -136,15 +136,28 @@ private:
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
         since Component knows that there is only 8-bit data in the
         floats. */
-    static void speedSerialize(Image3::Ref im, BinaryOutput& b) {
+    static void speedSerialize(Image3::Ref im, const Color3& minValue, BinaryOutput& b) {
+        (void)minValue;
+        // uint8x3
+        b.writeUInt8('u');
+        b.writeUInt8('c');
+        b.writeUInt8(3);
         Image3uint8::fromImage3(im)->speedSerialize(b);
     }
 
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
         since Component knows that there is only 8-bit data in the
         floats. */
-    static void speedSerialize(Image4::Ref im, BinaryOutput& b) {
-        Image4uint8::fromImage4(im)->speedSerialize(b);
+    static void speedSerialize(Image4::Ref im,const Color4& minValue,  BinaryOutput& b) {
+        b.writeUInt8('u');
+        b.writeUInt8('c');
+        if (minValue.a < 1.0f) {
+            b.writeUInt8(4);
+            Image4uint8::fromImage4(im)->speedSerialize(b);
+        } else {
+            b.writeUInt8(3);
+            Image3uint8::fromImage4(im)->speedSerialize(b);
+        }
     }
 
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
@@ -154,8 +167,16 @@ private:
         Note that the im is never actually used, since we don't want
         to waste time converting to float!
     */
-    static void speedDeserialize(Image3::Ref& ignore, Texture::Ref& tex, BinaryInput& b) {
-        
+    static void speedDeserialize(Image3::Ref& ignore, Texture::Ref& tex, const Color3& minValue, BinaryInput& b) {
+        (void)minValue;
+
+        uint8 s = b.readUInt8();
+        alwaysAssertM(s == 'u', "Wrong sign value when reading Image3uint8");
+        uint8 type = b.readUInt8();
+        alwaysAssertM(type == 'c', "Wrong type when reading Image3uint8");
+        uint8 channels = b.readUInt8();
+        alwaysAssertM(channels == 3, "Wrong number of channels when reading Image3uint8");
+
         Image3uint8::Ref im = Image3uint8::speedCreate(b);
 
         Texture::Dimension dim;
@@ -178,24 +199,54 @@ private:
         since Component knows that there is only 8-bit data in the
         floats. 
     */
-    static void speedDeserialize(Image4::Ref ignore, Texture::Ref& tex, BinaryInput& b) {
-        Image4uint8::Ref im = Image4uint8::speedCreate(b);
+    static void speedDeserialize(Image4::Ref ignore, Texture::Ref& tex, const Color4& minValue, BinaryInput& b) {
+        uint8 s = b.readUInt8();
+        alwaysAssertM(s == 'u', "Wrong sign value in SpeedLoad");
+        uint8 type = b.readUInt8();
+        alwaysAssertM(type == 'c', "Wrong type in SpeedLoad");
+        uint8 channels = b.readUInt8();
+        uint8 expectedChannels = (minValue.a < 1.0f) ? 4 : 3;
+        alwaysAssertM(channels == expectedChannels, "Wrong number of channels when reading Image3uint8");
 
-        Texture::Dimension dim;
-        if (isPow2(im->width()) && isPow2(im->height())) {
-            dim = Texture::DIM_2D;
-        } else {
-            dim = Texture::DIM_2D_NPOT;
-        }
+        if (channels == 4) {
+            Image4uint8::Ref im = Image4uint8::speedCreate(b);
+
+            Texture::Dimension dim;
+            if (isPow2(im->width()) && isPow2(im->height())) {
+                dim = Texture::DIM_2D;
+            } else {
+                dim = Texture::DIM_2D_NPOT;
+            }
             
-        Texture::Settings settings;
-        settings.wrapMode = im->wrapMode();
+            Texture::Settings settings;
+            settings.wrapMode = im->wrapMode();
 
-        tex = Texture::fromMemory
-            ("SpeedLoaded", im->getCArray(), im->format(),
-             im->width(), im->height(), 1, im->format(),
-             dim, settings);
+            tex = Texture::fromMemory
+                ("SpeedLoaded", im->getCArray(), im->format(),
+                 im->width(), im->height(), 1, im->format(),
+                 dim, settings);
+        } else {
+            alwaysAssertM(channels == 3, "Wrong number of channels");
+
+            Image3uint8::Ref im = Image3uint8::speedCreate(b);
+
+            Texture::Dimension dim;
+            if (isPow2(im->width()) && isPow2(im->height())) {
+                dim = Texture::DIM_2D;
+            } else {
+                dim = Texture::DIM_2D_NPOT;
+            }
+            
+            Texture::Settings settings;
+            settings.wrapMode = im->wrapMode();
+
+            tex = Texture::fromMemory
+                ("SpeedLoaded", im->getCArray(), im->format(),
+                 im->width(), im->height(), 1, im->format(),
+                 dim, settings);
+        }
     }
+
     
     /** For speedCreate */
     MapComponent() {}
@@ -210,7 +261,7 @@ public:
         m->m_max.deserialize(b);
         m->m_mean.deserialize(b);
 
-        speedDeserialize(m->m_cpuImage, m->m_gpuImage, b);
+        speedDeserialize(m->m_cpuImage, m->m_gpuImage, m->m_min, b);
 
         return m;
     }
@@ -227,7 +278,9 @@ public:
         // and then converting back to uint8.  But we don't serialize
         // very often--this is a preprocess--so the perf hit is
         // irrelevant.
-        speedSerialize(image(), b);
+
+        // Don't bother saving the alpha channel if m_min == 1
+        speedSerialize(image(), m_min, b);
     }
 
     /** Returns NULL if both are NULL */

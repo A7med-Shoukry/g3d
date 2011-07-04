@@ -10,6 +10,7 @@
 #include "G3D/Image1uint8.h"
 #include "G3D/Image3uint8.h"
 #include "G3D/Image3.h"
+#include "G3D/Image4.h"
 #include "G3D/GImage.h"
 #include "G3D/Color1.h"
 #include "G3D/Color1uint8.h"
@@ -85,11 +86,14 @@ Image3uint8::Ref Image3uint8::fromGImage(const GImage& im, WrapMode wrap) {
 
 
 Image3uint8::Ref Image3uint8::fromImage3(const ReferenceCountedPointer<Image3>& im) {
-    Ref out = createEmpty(static_cast<WrapMode>(im->wrapMode()));
-    out->copyArray(im->getCArray(), im->width(), im->height());
-
-    return out;
+    return fromArray(im->getCArray(), im->width(), im->height(), static_cast<WrapMode>(im->wrapMode()));
 }
+
+
+Image3uint8::Ref Image3uint8::fromImage4(const ReferenceCountedPointer<Image4>& im) {
+    return fromArray(im->getCArray(), im->width(), im->height(), static_cast<WrapMode>(im->wrapMode()));
+}
+
 
 
 Image3uint8::Ref Image3uint8::createEmpty(int width, int height, WrapMode wrap) {

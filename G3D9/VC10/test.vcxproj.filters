@@ -120,5 +120,8 @@
     <ClCompile Include="..\test\tSystemMemcpy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\test\tSpeedLoad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -2086,11 +2086,13 @@ void computeStats
         return;
     }
 
+    float inv255Width = 1.0f / (width * 255);
     switch (bytesActualFormat) {
     case GL_RGB8:
         {
             Color3uint8 mn(255,255,255);
             Color3uint8 mx(0,0,0);
+            meanval = Color4::zero();
             // Compute mean along rows to avoid overflow
             for (int y = 0; y < height; ++y) {
                 const Color3uint8* ptr = ((const Color3uint8*)rawBytes) + (y * width);
@@ -2101,7 +2103,7 @@ void computeStats
                     mx = mx.max(i);
                     r += i.r; g += i.g; b += i.b;
                 }
-                meanval += Color4(float(r) / width, float(g) / width, float(b) / width, 1.0);
+                meanval += Color4(float(r) * inv255Width, float(g) * inv255Width, float(b) * inv255Width, 1.0);
             }
             minval  = Color4(Color3(mn), 1.0f);
             maxval  = Color4(Color3(mx), 1.0f);
@@ -2126,7 +2128,7 @@ void computeStats
                     mx = mx.min(i);
                     r += i.r; g += i.g; b += i.b; a += i.a;
                 }
-                meanval += Color4(float(r) / width, float(g) / width, float(b) / width, float(a) / width);
+                meanval += Color4(float(r) * inv255Width, float(g) * inv255Width, float(b) * inv255Width, float(a) * inv255Width);
             }
             minval = mn;
             maxval = mx;

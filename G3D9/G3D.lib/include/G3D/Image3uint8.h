@@ -60,7 +60,6 @@ public:
     /** Creates a 0 x 0 image. */
     static Ref createEmpty(WrapMode wrap = WrapMode::ERROR);
 
-
     static Ref fromFile(const std::string& filename, WrapMode wrap = WrapMode::ERROR, GImage::Format fmt = GImage::AUTODETECT);
 
     static Ref fromGImage(const class GImage& im, WrapMode wrap = WrapMode::ERROR);
@@ -73,6 +72,7 @@ public:
     static Ref fromArray(const class Color4* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
 
     static Ref fromImage3(const ReferenceCountedPointer<class Image3>& im);
+    static Ref fromImage4(const ReferenceCountedPointer<class Image4>& im);
     static Ref fromImage1uint8(const ReferenceCountedPointer<class Image1uint8>& im);
 
     /** Loads from any of the file formats supported by G3D::GImage.  If there is an alpha channel on the input,

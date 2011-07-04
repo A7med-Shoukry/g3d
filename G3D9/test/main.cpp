@@ -49,6 +49,8 @@ void testFileSystem();
 void testMatrix3();
 void perfMatrix3();
 
+void testSpeedLoad();
+
 void testMatrix4() {
    float L = -1.0f;
     float R =  4.0f;
@@ -765,6 +767,8 @@ int main(int argc, char* argv[]) {
     printf("\n\nTests:\n\n");
 
     testBinaryIO();
+
+    testSpeedLoad();
 
     testReliableConduit(NetworkDevice::instance());
 

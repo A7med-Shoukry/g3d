@@ -23,6 +23,7 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 
 
 void App::onInit() {
+
     // Turn on the developer HUD
     debugWindow->setVisible(true);
     developerWindow->setVisible(false);
@@ -60,7 +61,6 @@ void App::onInit() {
     }
 
     model->partArray[0].triList[0]->material = material;
-
 
 
     lighting = defaultLighting();
