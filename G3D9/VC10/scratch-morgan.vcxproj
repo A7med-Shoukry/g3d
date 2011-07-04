@@ -78,7 +78,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\scratch\morgan\App.h" />
+    <ClInclude Include="..\scratch\morgan\CubeMap.h" />
     <ClInclude Include="..\scratch\morgan\Entity.h" />
+    <ClInclude Include="..\scratch\morgan\ImageLoader.h" />
     <ClInclude Include="..\scratch\morgan\Scene.h" />
   </ItemGroup>
   <ItemGroup>

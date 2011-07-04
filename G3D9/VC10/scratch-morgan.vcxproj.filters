@@ -20,6 +20,12 @@
     <ClInclude Include="..\scratch\morgan\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\scratch\morgan\CubeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scratch\morgan\ImageLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\morgan\Scene.cpp">
