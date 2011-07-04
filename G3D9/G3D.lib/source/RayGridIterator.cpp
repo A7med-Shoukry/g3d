@@ -14,9 +14,11 @@ RayGridIterator::RayGridIterator
  const Point3int32&     gridOriginIndex) :
     m_numCells(numCells),
     m_enterDistance(0.0f),
+    m_enterAxis(0),
     m_ray(ray), 
     m_cellSize(cellSize),
-    m_insideGrid(true) {
+    m_insideGrid(true),
+    m_containsRayOrigin(true) {
     
     if (gridOrigin.nonZero()) {
         // Change to the grid's reference frame
@@ -92,7 +94,6 @@ RayGridIterator::RayGridIterator
         m_boundaryIndex += gridOriginIndex;
         m_index += gridOriginIndex;
     }
-
 
     if (startsOutside) {
         // Let the increment operator bring us into the first cell

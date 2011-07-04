@@ -52,15 +52,16 @@ protected:
     Vector3       m_tDelta;
 
     /** Distance along the ray of the first intersection with the
-       current cell (i.e., that given by m_index). Initially zero. */
+       current cell (i.e., that given by m_index). Zero for the cell that contains the ray origin. */
     float         m_enterDistance;
 
     /** Distance along the ray to the intersection with the next grid
        cell.  enterDistance and m_exitDistance can be used to bracket ray
-       ray-primitive intersection tests within a cell. */ 
+       ray-primitive intersection tests within a cell. 
+       */ 
     Vector3       m_exitDistance;
 
-    /** The axis along which the ray entered the cell; X = 0, Y = 1, Z = 2 */
+    /** The axis along which the ray entered the cell; X = 0, Y = 1, Z = 2.  This is always set to X for the cell that contains the ray origin. */
     int           m_enterAxis;
 
     /** The original ray */
@@ -76,6 +77,9 @@ protected:
     /** The value that the index will take on along each boundary when
         it just leaves the grid. */
     Vector3int32  m_boundaryIndex;
+
+    /** True if this cell contains the ray origin */
+    bool          m_containsRayOrigin;
 
 public:
 
@@ -147,6 +151,11 @@ public:
         return m_insideGrid;
     }
 
+    /** \copydoc m_containsRayOrigin */
+    bool containsRayOrigin() const {
+        return m_containsRayOrigin;
+    }
+
     /** 
         \brief Initialize the iterator to the first grid cell hit by
         the ray and precompute traversal variables.
@@ -201,6 +210,8 @@ public:
         // permanently exited the grid.
         m_insideGrid = m_insideGrid && 
             (m_index[m_enterAxis] != m_boundaryIndex[m_enterAxis]);
+
+        m_containsRayOrigin = false;
 
         return *this;
     }
