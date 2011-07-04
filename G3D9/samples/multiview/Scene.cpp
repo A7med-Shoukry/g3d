@@ -23,48 +23,6 @@ Scene::Ref Scene::create() {
 
     ArticulatedModel::Ref model = ArticulatedModel::fromFile(System::findDataFile("models/dabrovic_sibenik/sibenik.obj"));
     s->m_entityArray.append(Entity::create(Point3::zero(), model));
-#if 0
-    std::string materialPath = System::findDataFile("material");
-    std::string crateFile = System::findDataFile("crate.ifs");
-
-    // Ground plane
-    {
-        ArticulatedModel::Ref model = ArticulatedModel::fromFile(crateFile, Vector3(6.0f, 1.0f, 6.0f));
-
-        Material::Specification mat;
-        /*
-        std::string base = pathConcat(materialPath, "asphalt/asphalt-");
-        mat.setLambertian(base + "L.png");
-        mat.setSpecular(base + "G.png");
-        mat.setGlossyExponentShininess(20);
-
-        BumpMap::Settings b;
-        b.iterations = 0;
-        mat.setBump(base + "L.png", b, -0.006f);
-        */
-        model->partArray[0].triList[0]->material = Material::create(mat);
-
-        s->m_entityArray.append(Entity::create(Vector3::unitY() * -0.5f * meters(), model));
-    }
- 
-    // Crates
-    if (false) {
-        ArticulatedModel::Ref model = ArticulatedModel::fromFile(crateFile);
-
-        Material::Specification mat;
-        std::string base = pathConcat(materialPath, "metalcrate/metalcrate-");
-        mat.setLambertian(base + "L.png", 0.2f);
-        mat.setSpecular(base + "G.png");
-        mat.setGlossyExponentShininess(20);
-        BumpMap::Settings b;
-        b.iterations = 1;
-        mat.setBump(base + "B.png", b);
-        model->partArray[0].triList[0]->material = Material::create(mat);
-
-        s->m_entityArray.append(Entity::create(Vector3(1.0f, 0.5f, 0.0f) * meters(), model));
-        s->m_entityArray.append(Entity::create(CFrame::fromXYZYPRDegrees(0.6f, 0.5f, -1.8f, 30.0f), model));
-    }
-#endif
 
     return s;
 }

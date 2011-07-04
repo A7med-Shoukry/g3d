@@ -13,6 +13,9 @@
 class App : public GApp {
 public:
     
+    ArticulatedModel::Ref   model;
+    Lighting::Ref           lighting;
+
     App(const GApp::Settings& settings = GApp::Settings());
 
     virtual void onInit();

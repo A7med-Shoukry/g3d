@@ -28,6 +28,22 @@ void App::onInit() {
     developerWindow->setVisible(false);
     developerWindow->cameraControlWindow->setVisible(false);
     showRenderingStats = false;
+
+    std::string materialPath = System::findDataFile("material");
+    std::string crateFile = System::findDataFile("crate.ifs");
+    model = ArticulatedModel::fromFile(crateFile);
+
+    Material::Specification mat;
+    std::string base = pathConcat(materialPath, "metalcrate/metalcrate-");
+    mat.setLambertian(base + "L.png", 0.2f);
+    mat.setSpecular(base + "G.png");
+    mat.setGlossyExponentShininess(20);
+    BumpMap::Settings b;
+    b.iterations = 1;
+    mat.setBump(base + "B.png", b);
+    model->partArray[0].triList[0]->material = Material::create(mat);
+
+    lighting = defaultLighting();
 }
 
 
@@ -48,6 +64,9 @@ bool App::onEvent(const GEvent& e) {
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
+
+    model->pose(surface3D);
+    Surface::sortAndRender(rd, defaultCamera, surface3D, lighting);
 
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
