@@ -29,7 +29,7 @@ void App::onInit() {
     developerWindow->setVisible(false);
     developerWindow->cameraControlWindow->setVisible(false);
     showRenderingStats = false;
-
+#if 0
     std::string materialPath = System::findDataFile("material");
     std::string crateFile = System::findDataFile("crate.ifs");
     model = ArticulatedModel::fromFile(crateFile);
@@ -60,13 +60,18 @@ void App::onInit() {
     }*/
 
     model->partArray[0].triList[0]->material = material;
+#endif
 
+    Stopwatch timer;
+    ArticulatedModel::Ref model = ArticulatedModel::fromFile(System::findDataFile("crytek_sponza/sponza.obj"));
+    timer.after("Load OBJ");
     // Save Model
     { 
         BinaryOutput b("model.am.sl", G3D_LITTLE_ENDIAN);
         model->speedSerialize(b);
         b.commit();
     }
+    timer.after("speedSerialize");
 
     // Load Model
     {
@@ -74,6 +79,7 @@ void App::onInit() {
         SpeedLoadIdentifier sid;
         model = ArticulatedModel::speedCreate(b);
     }
+    timer.after("speedDeserialize");
 
     lighting = defaultLighting();
 }
