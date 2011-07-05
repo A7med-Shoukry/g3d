@@ -34,7 +34,12 @@ public:
 
 
         Settings(const Any& any);
+        
         Any toAny() const;
+
+        void serialize(class BinaryOutput& b) const;
+
+        void deserialize(class BinaryInput& b);
     };
 
 /**

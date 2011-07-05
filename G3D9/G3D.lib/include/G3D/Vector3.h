@@ -811,6 +811,9 @@ inline bool Vector3::isUnit() const {
  that the programmer must track which is really which. */
 typedef Vector3 Point3;
 
+void serialize(const Vector3& v, class BinaryOutput& b);
+void deserialize(Vector3& v, class BinaryInput& b);
+
 } // namespace G3D
 
 

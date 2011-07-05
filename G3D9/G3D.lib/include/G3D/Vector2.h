@@ -1,14 +1,14 @@
 /**
-  @file Vector2.h
+  \file G3D/Vector2.h
  
   2D vector class
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   
-  @created 2001-06-02
-  @edited  2008-11-30
+  \created 2001-06-02
+  \edited  2008-11-30
 
-  Copyright 2000-2009, Morgan McGuire.
+  Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
 */
 
@@ -452,6 +452,8 @@ inline bool Vector2::isUnit() const {
 }
 
 typedef Vector2 Point2;
+void serialize(const Vector2& v, class BinaryOutput& b);
+void deserialize(Vector2& v, class BinaryInput& b);
 
 } // namespace G3D
 

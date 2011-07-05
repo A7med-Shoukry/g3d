@@ -538,4 +538,12 @@ struct HashTrait<G3D::Material::Specification> {
     }
 };
 
+
+template <>
+struct HashTrait<G3D::Material::Ref> {
+    static size_t hashCode(const G3D::Material::Ref& key) {
+        return key.hashCode();
+    }
+};
+
 #endif

@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2008-11-12
-  \edited  2011-06-12
+  \edited  2011-07-04
 */
 #ifndef G3D_SuperSurface_h
 #define G3D_SuperSurface_h
@@ -98,6 +98,7 @@ public:
         bool hasGeometry() const {
             return index.size() > 0;
         }
+
     };
 
     class CPUGeom {

@@ -1,10 +1,10 @@
 /**
- @file Welder.cpp
+ \file Welder.cpp
 
- @author Morgan McGuire, Kyle Whitson, Corey Taylor
+ \author Morgan McGuire, Kyle Whitson, Corey Taylor
 
- @created 2008-07-30
- @edited  2009-11-29
+ \created 2008-07-30
+ \edited  2011-07-04
  */
 
 #include "G3D/platform.h"
@@ -17,6 +17,8 @@
 #include "G3D/AreaMemoryManager.h"
 #include "G3D/Any.h"
 #include "G3D/stringutils.h"
+#include "G3D/BinaryInput.h"
+#include "G3D/BinaryOutput.h"
 
 namespace G3D { namespace _internal{
 
@@ -379,6 +381,23 @@ public:
 
 };
 } // Internal
+
+
+void Welder::Settings::serialize(class BinaryOutput& b) const {
+    b.writeFloat32(normalSmoothingAngle);
+    b.writeFloat32(vertexWeldRadius);
+    b.writeFloat32(textureWeldRadius);
+    b.writeFloat32(normalWeldRadius);
+}
+
+
+void Welder::Settings::deserialize(class BinaryInput& b) {
+    normalSmoothingAngle    = b.readFloat32();
+    vertexWeldRadius        = b.readFloat32();
+    textureWeldRadius       = b.readFloat32();
+    normalWeldRadius        = b.readFloat32();
+}
+
 
 void Welder::weld(
     Array<Vector3>&     vertexArray,

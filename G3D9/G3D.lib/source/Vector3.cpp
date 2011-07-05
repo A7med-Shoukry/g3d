@@ -488,8 +488,12 @@ Vector4 Vector3::yzzz() const  { return Vector4       (y, z, z, z); }
 Vector4 Vector3::zzzz() const  { return Vector4       (z, z, z, z); }
 
 
+void serialize(const Vector3& v, class BinaryOutput& b) {
+    v.serialize(b);
+}
 
-
-
+void deserialize(Vector3& v, class BinaryInput& b) {
+    v.deserialize(b);
+}
 
 } // namespace

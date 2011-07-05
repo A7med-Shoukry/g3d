@@ -518,5 +518,12 @@ Vector4 Vector4::ywww() const  { return Vector4       (y, w, w, w); }
 Vector4 Vector4::zwww() const  { return Vector4       (z, w, w, w); }
 Vector4 Vector4::wwww() const  { return Vector4       (w, w, w, w); }
 
+void serialize(const Vector4& v, class BinaryOutput& b) {
+    v.serialize(b);
+}
+
+void deserialize(Vector4& v, class BinaryInput& b) {
+    v.deserialize(b);
+}
 
 }; // namespace

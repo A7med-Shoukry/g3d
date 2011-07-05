@@ -1,5 +1,10 @@
-/** @file ArticulatedModel.h
-    @author Morgan McGuire, http://graphics.cs.williams.edu
+/** \file GLG3D/ArticulatedModel.h
+    \author Morgan McGuire, http://graphics.cs.williams.edu
+
+    \edited 2011-07-04
+
+    Copyright 2000-2011, Morgan McGuire.
+    All rights reserved.
 */
 #ifndef G3D_ArticulatedModel_h
 #define G3D_ArticulatedModel_h
@@ -15,13 +20,14 @@
 #include "GLG3D/SuperSurface.h"
 #include "GLG3D/Component.h"
 #include "G3D/PhysicsFrameSpline.h"
+#include "G3D/SpeedLoad.h"
 
 namespace G3D {
 
 class Any;
 
 /**
- @brief A model composed of a hierarchy of rigid parts (i.e., a scene graph).
+ \brief A model composed of a hierarchy of rigid parts (i.e., a scene graph).
 
  The hierarchy may have multiple roots.  Renders efficiently using the
  static methods on Surface.  Surface recognizes
@@ -170,9 +176,17 @@ public:
         }
 
         Settings(const Any& any);
-        Any toAny() const;
-    };
 
+        Any toAny() const;
+
+        void serialize(BinaryOutput& b) const {
+            weld.serialize(b);
+        }
+
+        void deserialize(BinaryInput& b) {
+          weld.deserialize(b);
+       }
+    };
 
     /**
       A named sub-set of the model that has a single reference frame.
@@ -192,6 +206,12 @@ public:
             friend class Part;
 
             inline TriList() : GPUGeom(PrimitiveType::TRIANGLES, false) {}
+
+            /** Only called by Part::speedSerialize */
+            void speedSerialize(BinaryOutput& b, const Table<Material::Ref, SpeedLoadIdentifier>& speedLoadIdentifierTable) const;
+
+            /** Only called by Part::speedDeserialize */
+            void speedDeserialize(BinaryInput& b, const Table<SpeedLoadIdentifier, Material::Ref>& materialTable);
 
         public:
             typedef ReferenceCountedPointer<TriList> Ref;
@@ -270,6 +290,10 @@ public:
         Array<int>                  indexArray;
 
         Part() : parent(-1) {}
+
+        void speedSerialize(BinaryOutput& b, const Table<Material::Ref, SpeedLoadIdentifier>& speedLoadIdentifierTable) const;
+
+        void speedDeserialize(BinaryInput& b, const Table<SpeedLoadIdentifier, Material::Ref>& materialTable);
 
         /** Removes CPU geometry but retains GPU geometry (until next update()), cframe, and hierarchy.*/
         void removeGeometry() {
@@ -635,6 +659,9 @@ public:
     /** Identity transformation.*/
     static const Pose& defaultPose();
 
+    
+    /** Name of this model, for debugging purposes. */
+    std::string                 name;
 
     /** All parts. Root parts are identified by (parent == -1).  
         It is assumed that each part has exactly
@@ -687,10 +714,10 @@ private:
      const std::string& path, 
      const Preprocess&  preprocess);
 
-public:
+    /** Called only from speedCreate */
+    void speedDeserialize(BinaryInput& b);
 
-    /** Name of this model, for debugging purposes. */
-    std::string                 name;
+public:
 
     /** Appends one posed model per sub-part with geometry.
 
@@ -708,7 +735,24 @@ public:
      const Pose&              pose,
      const CoordinateFrame&   prevCFrame,
      const Pose&              prevPose);
-  
+
+    /** 
+      \brief Efficiently loads a speedSerialize%d ArticulatedModel.  
+      
+      Material%s are shared between ArticulatedModel%s loaded this way,
+      even when duplicated in the files and across files.
+
+     \sa SpeedLoad, speedCreate */
+    static Ref speedCreate(BinaryInput& b);
+
+    /** 
+      Saves this model to a BinaryOutput for later loading with speedCreate().
+      Guarantees that identical materials will be saved exactly once, even if
+      they do not currently have pointers to the same instance in memory right
+      now.
+
+     \sa SpeedLoad, speedCreate */
+    void speedSerialize(BinaryOutput& b) const;
 
     /** Converts a part name to an index.  Returns -1 if the part name is not found.*/
     int partIndex(const PartID& id) const;

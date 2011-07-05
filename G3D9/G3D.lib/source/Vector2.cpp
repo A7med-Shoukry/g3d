@@ -210,5 +210,12 @@ Vector4 Vector2::xyyy() const  { return Vector4       (x, y, y, y); }
 Vector4 Vector2::yyyy() const  { return Vector4       (y, y, y, y); }
 
 
+void serialize(const Vector2& v, class BinaryOutput& b) {
+    v.serialize(b);
+}
+
+void deserialize(Vector2& v, class BinaryInput& b) {
+    v.deserialize(b);
+}
 
 } // namespace

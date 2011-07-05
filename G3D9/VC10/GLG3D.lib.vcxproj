@@ -104,6 +104,7 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_SpeedLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAPLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BumpMap.cpp" />
