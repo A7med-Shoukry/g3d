@@ -7,7 +7,7 @@
  \edited   2011-06-27
 */
 #include "GLG3D/Material.h"
-#include "GLG3D/SpeedLoad.h"
+#include "G3D/SpeedLoad.h"
 
 namespace G3D {
 
