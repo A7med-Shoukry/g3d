@@ -33,7 +33,6 @@ void App::onInit() {
     std::string materialPath = System::findDataFile("material");
     std::string crateFile = System::findDataFile("crate.ifs");
     model = ArticulatedModel::fromFile(crateFile);
-    /*
     Material::Specification mat;
     std::string base = pathConcat(materialPath, "metalcrate/metalcrate-");
     mat.setLambertian(base + "L.png", 0.2f);
@@ -44,7 +43,6 @@ void App::onInit() {
     mat.setBump(base + "B.png", b);
     Material::Ref material = Material::create(mat);
 
-    */
     /*
     // Save material
     {
@@ -61,7 +59,7 @@ void App::onInit() {
         material = Material::speedCreate(sid, b);
     }*/
 
-//    model->partArray[0].triList[0]->material = material;
+    model->partArray[0].triList[0]->material = material;
 
     // Save Model
     { 
