@@ -33,7 +33,7 @@ void App::onInit() {
     std::string materialPath = System::findDataFile("material");
     std::string crateFile = System::findDataFile("crate.ifs");
     model = ArticulatedModel::fromFile(crateFile);
-
+    /*
     Material::Specification mat;
     std::string base = pathConcat(materialPath, "metalcrate/metalcrate-");
     mat.setLambertian(base + "L.png", 0.2f);
@@ -42,9 +42,10 @@ void App::onInit() {
     BumpMap::Settings b;
     b.iterations = 1;
     mat.setBump(base + "B.png", b);
-
     Material::Ref material = Material::create(mat);
 
+    */
+    /*
     // Save material
     {
         BinaryOutput b("material.mat.sl", G3D_LITTLE_ENDIAN);
@@ -58,10 +59,23 @@ void App::onInit() {
         BinaryInput b("material.mat.sl", G3D_LITTLE_ENDIAN);
         SpeedLoadIdentifier sid;
         material = Material::speedCreate(sid, b);
+    }*/
+
+//    model->partArray[0].triList[0]->material = material;
+
+    // Save Model
+    { 
+        BinaryOutput b("model.am.sl", G3D_LITTLE_ENDIAN);
+        model->speedSerialize(b);
+        b.commit();
     }
 
-    model->partArray[0].triList[0]->material = material;
-
+    // Load Model
+    {
+        BinaryInput b("model.am.sl", G3D_LITTLE_ENDIAN);
+        SpeedLoadIdentifier sid;
+        model = ArticulatedModel::speedCreate(b);
+    }
 
     lighting = defaultLighting();
 }

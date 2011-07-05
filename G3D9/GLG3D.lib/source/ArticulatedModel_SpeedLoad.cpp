@@ -56,7 +56,7 @@ void ArticulatedModel::speedSerialize(BinaryOutput& b) const {
 
             // Serialize each material once. Recognize duplicates by both SpeedLoadIdentifier and by
             // pointer.
-            if (! created) {
+            if (created) {
                 // This exact pointer doesn't exist.  Serialize and see if it is in fact unique
                 const int64 beforePosition = b.position();
                 triList->material->speedSerialize(sli, b);
@@ -67,6 +67,7 @@ void ArticulatedModel::speedSerialize(BinaryOutput& b) const {
                 } else {
                     // This is indeed a new material, so leave the data that we just wrote
                     ++numMaterials;
+                    usedSpeedLoadIdentifierSet.insert(sli);
                 }
             }
         }
