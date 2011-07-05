@@ -1,6 +1,6 @@
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
-#include "GLG3D/SpeedLoad.h"
+#include "G3D/SpeedLoad.h"
 
 namespace G3D {
 namespace SpeedLoad { 
@@ -17,6 +17,7 @@ void readHeader(BinaryInput& b, const std::string& expectedString) {
 
 
 void writeHeader(BinaryOutput& b, const std::string& header) {
+    debugAssertM(header.size() < HEADER_LENGTH, "This header string is too long");
     b.writeString(header, SpeedLoad::HEADER_LENGTH);
 }
 

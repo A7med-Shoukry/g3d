@@ -6,7 +6,7 @@
 */
 #include "GLG3D/BumpMap.h"
 #include "G3D/Any.h"
-#include "GLG3D/SpeedLoad.h"
+#include "G3D/SpeedLoad.h"
 
 namespace G3D {
 

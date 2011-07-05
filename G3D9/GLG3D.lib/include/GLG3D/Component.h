@@ -13,8 +13,8 @@
 #include "G3D/Image1.h"
 #include "G3D/Image3.h"
 #include "G3D/Image4.h"
+#include "G3D/SpeedLoad.h"
 #include "GLG3D/Texture.h"
-#include "GLG3D/SpeedLoad.h"
 
 namespace G3D {
 
