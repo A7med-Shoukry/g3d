@@ -160,7 +160,6 @@ BinaryInput::BinaryInput(
         m_freeBuffer = true;
         return;
     }
-
     // Figure out how big the file is and verify that it exists.
     m_length = FileSystem::size(m_filename);
 

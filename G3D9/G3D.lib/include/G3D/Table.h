@@ -380,7 +380,7 @@ public:
        Returns the average size of non-empty buckets.
     */
     float debugGetAverageBucketSize() const {
-        size_t num = 0;
+        uint64 num = 0;
 
         for (size_t b = 0; b < m_numBuckets; b++) {
             Node* node = m_bucket[b];

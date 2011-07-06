@@ -94,7 +94,7 @@ template<class Value,
 class PointHashGrid {
 private:
 
-#   define expectedCellSize (3)
+#   define expectedCellSize (10)
 
 #   define ThisType PointHashGrid<Value, PosFunc, EqualsFunc>
 
@@ -107,7 +107,7 @@ private:
 
     /** One cell of the grid. */
     typedef SmallArray<Entry, expectedCellSize> Cell;
-    typedef Table<Point3int32, Cell >          CellTable;
+    typedef Table<Point3int32, Cell >           CellTable;
 
     /** The cube of +/-1 along each dimension. Initialized by initOffsetArray.*/
     Vector3int32        m_offsetArray[3*3*3];
@@ -303,6 +303,12 @@ public:
         conservative because it is not updated when elements are removed. */
     const AABox& conservativeBoxBounds() const {
         return m_bounds;
+    }
+
+    void debugPrintStatistics() const {
+        debugPrintf("Deepest bucket size    = %d\n", (int)m_data.debugGetDeepestBucketSize());
+        debugPrintf("Average bucket size    = %g\n", m_data.debugGetAverageBucketSize());
+        debugPrintf("Load factor            = %g\n", m_data.debugGetLoad());
     }
 
     /** Insert @a v at position @a p given by <code>getPosition(v, p)</code>.  

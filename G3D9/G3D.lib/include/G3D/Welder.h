@@ -22,13 +22,17 @@ public:
         /** Surfaces with normals that are within this angle of each
             other are considered to be curved.  Default value is toRadians(70.0f).*/
         float   normalSmoothingAngle;
+
+        /** Default value is 0 */
         float  	vertexWeldRadius;
+
         float  	textureWeldRadius;
+
         float  	normalWeldRadius;
 
         inline Settings(float normalSmoothAngle = toRadians(70.0f)) : 
             normalSmoothingAngle(normalSmoothAngle),
-            vertexWeldRadius(0.0001f), 
+            vertexWeldRadius(0.001f), 
             textureWeldRadius(0.0001f), 
             normalWeldRadius(0.01f) {}
 
@@ -43,7 +47,8 @@ public:
     };
 
 /**
-     Mutates geometry, texCoord, and indexArray so that the output has collocated vertices collapsed (welded).
+     Mutates geometry, texCoord, and indexArray so that the output has
+     collocated vertices collapsed (welded).
 
      @param vertices Input and output
      @param textureCoords Input and output

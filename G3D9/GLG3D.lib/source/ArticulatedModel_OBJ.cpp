@@ -293,7 +293,10 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     const Matrix3 normalXform = preprocess.xform.upper3x3().transpose().inverse();
 
     const std::string& basePath = FilePath::parent(FileSystem::resolve(filename));
-
+    
+    // Because the material can be specified anywhere inside a group
+    // specification, we create one group for each and then
+    // concatenate them during TriList creation
     {
         // Name of the current triList with no material name appended
         std::string currentTriListRawName;
@@ -321,11 +324,11 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
 
             } else if (cmd == "g") {
 
-                // New trilist
+                // New group
                 currentTriListRawName = trimWhitespace(ti.readUntilNewlineAsString());
                 if (! groupTable.containsKey(currentTriListRawName)) {
                     currentTriList = new TriListSpec();
-                    currentTriList->name = currentTriListRawName;            
+                    currentTriList->name = currentTriListRawName;
                     groupTable.set(currentTriListRawName, currentTriList);
                 } else {
                     currentTriList = groupTable[currentTriListRawName];
@@ -339,7 +342,8 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
                     const std::string& materialName = trimWhitespace(ti.readUntilNewlineAsString());
                     if (currentTriList->cpuIndex.size() != 0) {
                         const std::string& triListName = currentTriListRawName + "_" + materialName;
-                        debugAssertM(groupTable.containsKey(currentTriListRawName), "Hit a usemtl block when currentTriList != NULL but the tri list had no name.");
+                        debugAssertM(groupTable.containsKey(currentTriListRawName),
+                                     "Hit a usemtl block when currentTriList != NULL but the tri list had no name.");
 
                         if (groupTable[currentTriListRawName]->materialName == materialName) {
                             // Switch back to the base trilist, which uses this material
@@ -444,7 +448,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
         }
     }
 
-    debugPrintf("Creating TriLists\n");
+    debugPrintf("Creating Geometry\n");
 
     // Copy geometry
     const int N = cookVertex.size();
@@ -469,6 +473,8 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
         }
     }
 
+    debugPrintf("Creating TriLists\n");
+    Table<Material::Ref, Part::TriList::Ref> triListTable;
     // Create trilists
     for (Table<std::string, TriListSpec*>::Iterator it = groupTable.begin(); it.isValid(); ++it) {
         TriListSpec* s = it->value;
@@ -481,14 +487,19 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
             debugPrintf("OBJ WARNING: unrecognized material: '%s'\n", s->materialName.c_str());
         }
 
-        Part::TriList::Ref triList = part.newTriList(material);
-        triList->twoSided = false;
-        triList->indexArray = s->cpuIndex;
+        bool created = false;
+        Part::TriList::Ref& triList = triListTable.getCreate(material, created);
+        if (created) {
+            triList = part.newTriList(material);
+            triList->twoSided = false;
+        }
+
+        triList->indexArray.append(s->cpuIndex);
     }
     groupTable.deleteValues();
     groupTable.clear();
 
-    debugPrintf("Done loading.  %d vertices, %d faces, %d frames\n\n", cookVertex.size(), numTris, N);
+    debugPrintf("Done loading.  %d vertices, %d faces, %d trilists\n\n", cookVertex.size(), numTris, part.triList.size());
     loadTimer.after("Loading");
 }
 

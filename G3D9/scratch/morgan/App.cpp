@@ -62,6 +62,7 @@ void App::onInit() {
     model->partArray[0].triList[0]->material = material;
 #endif
 
+#if 0 // sponza
     Stopwatch timer;
     ArticulatedModel::Ref model = ArticulatedModel::fromFile(System::findDataFile("crytek_sponza/sponza.obj"));
     timer.after("Load OBJ");
@@ -80,6 +81,7 @@ void App::onInit() {
         model = ArticulatedModel::speedCreate(b);
     }
     timer.after("speedDeserialize");
+#endif
 
     lighting = defaultLighting();
 }

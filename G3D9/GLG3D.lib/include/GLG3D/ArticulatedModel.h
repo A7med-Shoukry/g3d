@@ -157,18 +157,22 @@ public:
 
 
     /**
-     Parameters applied when G3D::ArticulatedModel::Part::computeNormalsAndTangentSpace 
-     is caled by G3D::ArticulatedModel::updateAll.
+     Parameters applied when
+     G3D::ArticulatedModel::Part::computeNormalsAndTangentSpace is
+     called by G3D::ArticulatedModel::updateAll.
      */
     class Settings {
     public:
+
         Welder::Settings                     weld;
 
-        inline Settings() {}
+        inline Settings() {
+        }
 
-        /** This forces "flat shading" on the model and causes it to render significantly
-            slower than a smooth shaded object. However, it can be very useful for debugging in certain
-            conditions and for rendering polyhedra.*/
+        /** This forces "flat shading" on the model and causes it to
+            render significantly slower than a smooth shaded
+            object. However, it can be very useful for debugging in
+            certain conditions and for rendering polyhedra.*/
         inline static Settings facet() {
             Settings s;
             s.weld.normalSmoothingAngle = 0;

@@ -287,7 +287,7 @@ bool FileSystem::_inZipfile(const std::string& _path, std::string& z) {
 
 
 bool FileSystem::_isZipfile(const std::string& _filename) {
-    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
+    const std::string& filename = FilePath::canonicalize(FilePath::expandEnvironmentVariables(_filename));
 
     if (FilePath::ext(filename).empty()) {
         return false;
@@ -314,7 +314,7 @@ bool FileSystem::_isZipfile(const std::string& _filename) {
 
 
 FILE* FileSystem::_fopen(const char* _filename, const char* mode) {
-    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
+    const std::string& filename = FilePath::canonicalize(FilePath::expandEnvironmentVariables(_filename));
 
     for (const char* m = mode; *m != '\0'; ++m) {
         if (*m == 'w') {
@@ -571,7 +571,7 @@ bool FileSystem::_isNewer(const std::string& _src, const std::string& _dst) {
 
 
 int64 FileSystem::_size(const std::string& _filename) {
-    const std::string& filename = FilePath::expandEnvironmentVariables(_filename);
+    const std::string& filename = FilePath::canonicalize(FilePath::expandEnvironmentVariables(_filename));
 
     struct stat64 st;
     int result = stat64(filename.c_str(), &st);
