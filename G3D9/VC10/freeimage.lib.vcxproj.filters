@@ -53,12 +53,6 @@
     <ClInclude Include="..\freeimage.lib\source\FreeImage\PSDParser.h">
       <Filter>Source Files\FreeImage</Filter>
     </ClInclude>
-    <ClInclude Include="..\freeimage.lib\source\LibJPEG\cderror.h">
-      <Filter>Source Files\LibJPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="..\freeimage.lib\source\LibJPEG\cdjpeg.h">
-      <Filter>Source Files\LibJPEG</Filter>
-    </ClInclude>
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jconfig.h">
       <Filter>Source Files\LibJPEG</Filter>
     </ClInclude>
@@ -69,9 +63,6 @@
       <Filter>Source Files\LibJPEG</Filter>
     </ClInclude>
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jinclude.h">
-      <Filter>Source Files\LibJPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="..\freeimage.lib\source\LibJPEG\jmemsys.h">
       <Filter>Source Files\LibJPEG</Filter>
     </ClInclude>
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jmorecfg.h">
@@ -886,9 +877,6 @@
     <ClCompile Include="..\freeimage.lib\source\FreeImage\PSDParser.cpp">
       <Filter>Source Files\FreeImage</Filter>
     </ClCompile>
-    <ClCompile Include="..\freeimage.lib\source\LibJPEG\cdjpeg.c">
-      <Filter>Source Files\LibJPEG</Filter>
-    </ClCompile>
     <ClCompile Include="..\freeimage.lib\source\LibJPEG\jaricom.c">
       <Filter>Source Files\LibJPEG</Filter>
     </ClCompile>
@@ -1243,9 +1231,6 @@
     <ClCompile Include="..\freeimage.lib\source\LibTIFF\tif_zip.c">
       <Filter>Source Files\LibTIFF</Filter>
     </ClCompile>
-    <ClCompile Include="..\freeimage.lib\source\LibTIFF\mkspans.c">
-      <Filter>Source Files\LibTIFF</Filter>
-    </ClCompile>
     <ClCompile Include="..\freeimage.lib\source\LibTIFF\tif_aux.c">
       <Filter>Source Files\LibTIFF</Filter>
     </ClCompile>
@@ -1561,16 +1546,7 @@
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmImf\ImfTimeCodeAttribute.cpp">
       <Filter>Source Files\OpenEXR</Filter>
     </ClCompile>
-    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadMutexWin32.cpp">
-      <Filter>Source Files\OpenEXR</Filter>
-    </ClCompile>
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadPool.cpp">
-      <Filter>Source Files\OpenEXR</Filter>
-    </ClCompile>
-    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadSemaphoreWin32.cpp">
-      <Filter>Source Files\OpenEXR</Filter>
-    </ClCompile>
-    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadWin32.cpp">
       <Filter>Source Files\OpenEXR</Filter>
     </ClCompile>
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\Imath\ImathRandom.cpp">
@@ -1650,6 +1626,15 @@
     </ClCompile>
     <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\FreeImagePlus.cpp">
       <Filter>Source Files\FreeImagePlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThread.cpp">
+      <Filter>Source Files\OpenEXR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadMutex.cpp">
+      <Filter>Source Files\OpenEXR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadSemaphore.cpp">
+      <Filter>Source Files\OpenEXR</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

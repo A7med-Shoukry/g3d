@@ -102,7 +102,7 @@ include: %(defaultinclude)s;source;source/Metadata;source/FreeImageToolkit;sourc
 
 library: %(defaultlibrary)s
 
-exclude: %(defaultexclude)s|^mkg3states.c$|^tif_acorn.c$|^tif_atari.c$|^tif_win3.c$|^tif_win32.c$|^tif_wince.c$|^tif_msdos.c$|^tif_aux.c$|^tif_vms.c$|^tif_apple.c$|^jmemmac.c$|^jmemmgr.c$|^jmemsys.c$|^jmemdos.c$|^jmemdosa.asm$|^jmemname.c$|^jmemnobs.c$|^rdjpgcom.c$|^wrjpgcom.c$|^example.c$|^cdjpeg.c$|^djpeg.c$|^ckconfig.c$|^dcraw.c$|^dcb_demosaicing.c$|^IlmThread.cpp$|^IlmThreadWin32.cpp$|^IlmThreadMutex.cpp$|^IlmThreadMutexWin32.cpp$|^IlmThreadSemaphore.cpp$|^IlmThreadSemaphoreWin32.cpp$|^IlmThreadSemaphorePosixCompat.cpp$
+exclude: %(defaultexclude)s|^mkg3states.c$|^mkspans.c$|^tif_acorn.c$|^tif_atari.c$|^tif_win3.c$|^tif_win32.c$|^tif_wince.c$|^tif_msdos.c$|^tif_vms.c$|^tif_apple.c$|^jmemmac.c$|^jmemmgr.c$|^jmemsys.c$|^jmemdos.c$|^jmemdosa.asm$|^jmemname.c$|^jmemnobs.c$|^rdjpgcom.c$|^wrjpgcom.c$|^example.c$|^cdjpeg.c$|^djpeg.c$|^ckconfig.c$|^dcraw.c$|^dcb_demosaicing.c$|^IlmThreadWin32.cpp$|^IlmThreadPosix.cpp$|^IlmThreadMutexWin32.cpp$|^IlmThreadMutexPosix.cpp$|^IlmThreadSemaphoreWin32.cpp$|^IlmThreadSemaphorePosix.cpp$|^IlmThreadSemaphorePosixCompat.cpp$|^IlmThreadSemaphorePosix.cpp$
 
 builddir: ../build
 
@@ -121,14 +121,14 @@ uses:
 ################################################################
 [DEBUG]
 
-compileoptions:
+compileoptions: -DNO_LCMS
 
 linkoptions:
 
 ################################################################
 [RELEASE]
 
-compileoptions:
+compileoptions: -DNO_LCMS
 
 linkoptions:
 

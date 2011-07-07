@@ -97,13 +97,10 @@
     <ClInclude Include="..\freeimage.lib\source\FreeImageToolkit\Filters.h" />
     <ClInclude Include="..\freeimage.lib\source\FreeImageToolkit\Resize.h" />
     <ClInclude Include="..\freeimage.lib\source\FreeImage\PSDParser.h" />
-    <ClInclude Include="..\freeimage.lib\source\LibJPEG\cderror.h" />
-    <ClInclude Include="..\freeimage.lib\source\LibJPEG\cdjpeg.h" />
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jconfig.h" />
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jdct.h" />
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jerror.h" />
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jinclude.h" />
-    <ClInclude Include="..\freeimage.lib\source\LibJPEG\jmemsys.h" />
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jmorecfg.h" />
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jpegint.h" />
     <ClInclude Include="..\freeimage.lib\source\LibJPEG\jpeglib.h" />
@@ -389,7 +386,6 @@
     <ClCompile Include="..\freeimage.lib\source\FreeImage\ToneMapping.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImage\WuQuantizer.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImage\ZLibInterface.cpp" />
-    <ClCompile Include="..\freeimage.lib\source\LibJPEG\cdjpeg.c" />
     <ClCompile Include="..\freeimage.lib\source\LibJPEG\jaricom.c" />
     <ClCompile Include="..\freeimage.lib\source\LibJPEG\jcapimin.c" />
     <ClCompile Include="..\freeimage.lib\source\LibJPEG\jcapistd.c" />
@@ -506,7 +502,6 @@
     <ClCompile Include="..\freeimage.lib\source\LibRawLite\internal\demosaic_packs.cpp" />
     <ClCompile Include="..\freeimage.lib\source\LibRawLite\src\libraw_cxx.cpp" />
     <ClCompile Include="..\freeimage.lib\source\LibRawLite\src\libraw_c_api.cpp" />
-    <ClCompile Include="..\freeimage.lib\source\LibTIFF\mkspans.c" />
     <ClCompile Include="..\freeimage.lib\source\LibTIFF\tif_aux.c" />
     <ClCompile Include="..\freeimage.lib\source\LibTIFF\tif_close.c" />
     <ClCompile Include="..\freeimage.lib\source\LibTIFF\tif_codec.c" />
@@ -614,10 +609,10 @@
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmImf\ImfVersion.cpp" />
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmImf\ImfWav.cpp" />
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmImf\ImfZipCompressor.cpp" />
-    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadMutexWin32.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThread.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadMutex.cpp" />
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadPool.cpp" />
-    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadSemaphoreWin32.cpp" />
-    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadWin32.cpp" />
+    <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThreadSemaphore.cpp" />
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\Imath\ImathBox.cpp" />
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\Imath\ImathColorAlgo.cpp" />
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\Imath\ImathFun.cpp" />
