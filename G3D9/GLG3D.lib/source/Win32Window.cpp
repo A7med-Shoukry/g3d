@@ -1459,17 +1459,32 @@ LRESULT CALLBACK Win32Window::windowProc(HWND     window,
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
 
+            //http://msdn.microsoft.com/en-us/library/ms646280(v=vs.85).aspx
+
             // only tracking keys less than 256
             if (wParam < 256) {
+                
+                // Number of key repeats represented by this message.  This appears to
+                // be 1 even for the first true key down.
+                const int repeatCount = lParam & 0xFF;
+
+                bool wasDown = ((lParam >> 30) & 1) == 1;
+
                 // if repeating (bit 30 set), only add key down event if
                 // we haven't seen it already
-                if (this_window->m_keyboardButtons[wParam] || ((lParam & 0x40000000) == 0)) {
-                    e.key.type = GEventType::KEY_DOWN;
-                    e.key.state = GButtonState::PRESSED;
 
-                    makeKeyEvent(wParam, lParam, e);
-                    this_window->m_keyboardButtons[wParam] = true;
-                    
+                if (! this_window->m_keyboardButtons[wParam] || ! wasDown) {
+                    e.key.type = GEventType::KEY_DOWN;
+                } else {
+                    e.key.type = GEventType::KEY_REPEAT;
+                }
+                e.key.state = GButtonState::PRESSED;
+
+                makeKeyEvent(wParam, lParam, e);
+
+                this_window->m_keyboardButtons[wParam] = true;
+
+                for (int i = 0; i < repeatCount; ++i) {
                     this_window->m_sysEventQueue->pushBack(e);
                 }
             } else {
