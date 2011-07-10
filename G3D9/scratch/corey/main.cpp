@@ -1,6 +1,7 @@
 
 #include <G3D/G3DAll.h>
 #include "irrklang/irrKlang.h"
+#include "GImage2.h"
 
 //#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 #pragma comment(lib, "freeimaged.lib")
@@ -60,7 +61,14 @@ int main(int argc, char** argv) {
         }
 #   endif
 
+#if 0
     return App(settings).run();
+#endif
+
+    FreeImage_Initialise();
+    Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\3ds\\spaceFighter01\\diffuse.jpg");
+    FreeImage_DeInitialise();
+    return 0;
 }
 
 

@@ -310,7 +310,6 @@
     <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipMultiPage.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipTag.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipWinImage.cpp" />
-    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\FreeImagePlus.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImageToolkit\Background.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImageToolkit\BSplineRotate.cpp" />
     <ClCompile Include="..\freeimage.lib\source\FreeImageToolkit\Channels.cpp" />

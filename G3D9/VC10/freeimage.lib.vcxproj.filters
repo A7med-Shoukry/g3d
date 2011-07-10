@@ -1624,9 +1624,6 @@
     <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\fipWinImage.cpp">
       <Filter>Source Files\FreeImagePlus</Filter>
     </ClCompile>
-    <ClCompile Include="..\freeimage.lib\source\FreeImagePlus\FreeImagePlus.cpp">
-      <Filter>Source Files\FreeImagePlus</Filter>
-    </ClCompile>
     <ClCompile Include="..\freeimage.lib\source\OpenEXR\IlmThread\IlmThread.cpp">
       <Filter>Source Files\OpenEXR</Filter>
     </ClCompile>

@@ -80,7 +80,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\scratch\corey\GImage2.cpp" />
     <ClCompile Include="..\scratch\corey\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\scratch\corey\GImage2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
