@@ -66,12 +66,6 @@ void App::makeGUI() {
     developerWindow->videoRecordDialog->setEnabled(true);
 
 
-    // Create a spline editor next to the camera control
-    m_splineEditor = PhysicsFrameSplineEditor::create();
-    addWidget(m_splineEditor);
-    developerWindow->cameraControlWindow->moveTo(Point2(window()->width() - developerWindow->cameraControlWindow->rect().width(), 0));
-    m_splineEditor->moveTo(developerWindow->cameraControlWindow->rect().x0y0() - Vector2(m_splineEditor->rect().width(), 0));
-
     GFont::Ref iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
     
     // Create a scene management GUI
@@ -103,6 +97,13 @@ void App::makeGUI() {
     entityPane->moveRightOf(scenePane);
     entityPane->moveBy(10, 0);
     m_entityList = entityPane->addDropDownList("Name");
+
+    // Dock the spline editor
+    m_splineEditor = PhysicsFrameSplineEditor::create("Spline Editor", entityPane);
+    addWidget(m_splineEditor);
+    developerWindow->cameraControlWindow->moveTo(Point2(window()->width() - developerWindow->cameraControlWindow->rect().width(), 0));
+    m_splineEditor->moveTo(developerWindow->cameraControlWindow->rect().x0y0() - Vector2(m_splineEditor->rect().width(), 0));
+
 
     GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
     infoPane->moveRightOf(entityPane);
