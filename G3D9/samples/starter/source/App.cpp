@@ -233,6 +233,7 @@ void App::selectEntity(const Entity::Ref& e) {
     if (m_selectedEntity.notNull()) {
         m_splineEditor->setSpline(m_selectedEntity->frameSpline());
         m_splineEditor->setEnabled(! m_preventEntityDrag);
+        m_entityList->setSelectedValue(m_selectedEntity->name());
     } else {
         m_splineEditor->setEnabled(false);
     }
