@@ -40,6 +40,7 @@ protected:
     int                          m_selectedControlPointIndex;
     ThirdPersonManipulator::Ref  m_nodeManipulator;
     GuiButton*                   m_removeSelectedButton;
+    bool                         m_isDocked;
 
     class SplineSurface : public Surface {
     public:
@@ -74,11 +75,12 @@ protected:
         }
     };
     
-    PhysicsFrameSplineEditor(const GuiText& caption, GuiTheme::Ref theme);
+    PhysicsFrameSplineEditor(const GuiText& caption, GuiPane* dockPane, GuiTheme::Ref theme);
         
 public:
 
-    static Ref create(const GuiText& caption = "Spline Editor", GuiTheme::Ref theme = NULL);
+    /** \param dockPane If not NULL, the 2D GUI is placed into this pane and no visible window is created */
+    static Ref create(const GuiText& caption = "Spline Editor", GuiPane* dockPane = NULL, GuiTheme::Ref theme = NULL);
 
     virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt);
 
@@ -113,7 +115,7 @@ public:
         GuiWindow::setEnabled(e);
 
         // If enabled, also make visible (so that the window can be seen)
-        if (e) {
+        if (e && ! m_isDocked) {
             setVisible(true);
         }
     }

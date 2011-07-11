@@ -16,23 +16,24 @@ void PhysicsFrameSplineEditor::SplineSurface::render(RenderDevice* rd) const {
 }
 
 
-PhysicsFrameSplineEditor::Ref PhysicsFrameSplineEditor::create(const GuiText& caption, GuiTheme::Ref theme) {
+PhysicsFrameSplineEditor::Ref PhysicsFrameSplineEditor::create(const GuiText& caption, GuiPane* dockPane, GuiTheme::Ref theme) {
     if (theme.isNull()) {
         theme = GuiTheme::lastThemeLoaded.createStrongPtr();
         alwaysAssertM(theme.notNull(), "Need a non-NULL GuiTheme for PhysicsFrameSplineEditor.");
     }
     
-    return new PhysicsFrameSplineEditor(caption, theme);
+    return new PhysicsFrameSplineEditor(caption, dockPane, theme);
 }
 
 
-PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiTheme::Ref theme) : 
+PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPane* dockPane, GuiTheme::Ref theme) : 
     GuiWindow(caption,
               theme,
               Rect2D::xywh(0,0,100,40), 
               GuiTheme::TOOL_WINDOW_STYLE,
               GuiWindow::HIDE_ON_CLOSE),
-    m_selectedControlPointIndex(0) {
+    m_selectedControlPointIndex(0),
+    m_isDocked(dockPane != NULL) {
 
     m_spline.append(CFrame());
 
@@ -40,7 +41,15 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiTh
     m_nodeManipulator = ThirdPersonManipulator::create();
     m_nodeManipulator->setEnabled(false);
 
-    GuiPane* p = pane();
+    GuiPane* p = dockPane;
+
+    if (p == NULL) {
+        // Place into the window
+        p = pane();
+    } else {
+        // No need to show the window
+        setVisible(false);
+    }
     
     GuiPane* cpPane = p->addPane("Control Point", GuiTheme::ORNATE_PANE_STYLE);
     cpPane->moveBy(0, -15);
