@@ -3,7 +3,7 @@
 // #include() inside another Any file.
 
 Material::Specification {
-    lambertian = "stonewall-L.png";
+    lambertian = "stonewall-L.jpg";
     specular   = Color3(0.03);
     shininess  = glossyExponent(2.0);
     bump       = "stonewall-B.png";
