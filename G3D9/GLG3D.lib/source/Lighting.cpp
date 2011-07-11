@@ -66,7 +66,7 @@ Any Lighting::Specification::toAny() const {
     b["constant"]       = environmentMapConstant;
     b["texture"]        = environmentMapTexture;
 
-    Any a(Any::TABLE, "lighting");
+    Any a(Any::TABLE, "Lighting::Specification");
     a["emissiveScale"]  = emissiveScale;
     a["environmentMap"] = b; 
     a["lightArray"]     = lightArray;
