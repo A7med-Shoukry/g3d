@@ -1,9 +1,10 @@
+// -*- html -*-
 /** \file journal/journal.dox
 \page Journal Development Journal
 
 <i>Newest entries are at the top</i>
 
-<hr><h2>Project started</h2>
+<hr/><h2>Project started</h2>
 This file was created today.
 
 You can embed images in this file using the Doxygen commands:

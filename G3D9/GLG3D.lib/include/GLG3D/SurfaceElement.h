@@ -47,7 +47,7 @@ public:
             illumination by.
 
             For backwards recursive ray tracing, this is the
-            coefficient on the recursive path's radiance. Do not
+            weight of the recursive path's radiance. Do not
             multiply this by a cosine factor; that has already been
             factored in if necessary.*/
         Color3    magnitude;
@@ -284,11 +284,14 @@ public:
        \param eta_other Index of refraction on the side of the normal (i.e., material that is being exited to enter the 
          object whose surface this BSDF describes)
 
-       \param power_o Because samples are taken against the BSDF averaged over all wavelengths,
+       \param weight_o Because samples are taken against the BSDF averaged over all wavelengths,
        the individual wavelengths always have distorted probabilities for a non-white surface.
-       For an incident photon with power_i, power_o is the outgoing power adjusted to take
-       this distortion into account. You can apply the function with power_i = Color3::white()
-       when path tracing and power_o will be the weight to scale scattered radiance by.
+       Moreover, for efficiency the scatter function does not perfectly importance sample.
+       As a result, the distribution is distored and weight_o accounts for this.       
+
+       For an incident photon with power_i, power_i * weight_o is the outgoing power adjusted to take
+       this distortion into account. Note that when tracing radiance, you must also
+       scale radiance by (eta_i / eta_o)^2.  That factor is not expressed in the weight.
 
        \param densityHack Returns a
        number that increases with the probability density of the
@@ -301,9 +304,8 @@ public:
        @return false if the photon was absorbed, true if it scatters. */
     bool scatter
     (const Vector3& w_i,
-     const Color3&  power_i,
      Vector3&       w_o,
-     Color3&        power_o,
+     Color3&        weight_o,
      float&         eta_o,
      Color3&        extinction_o,
      Random&        random,

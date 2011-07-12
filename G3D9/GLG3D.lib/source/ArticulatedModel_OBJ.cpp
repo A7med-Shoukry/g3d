@@ -24,6 +24,8 @@ public:
     std::string     diffuseMap;
 
     std::string     bumpMap;
+    float           bumpBias;
+    float           bumpGain;
 
     Color3          specularConstant;
     float           shininess;
@@ -33,6 +35,8 @@ public:
     MatSpec() : 
         opacity(1.0f),
         color(0.8f, 0.8f, 0.8f),
+        bumpBias(0.0f),
+        bumpGain(1.0f),
         // The default specular constant of one doesn't work well for G3D
         specularConstant(Color3::zero()),
         shininess(0.0f),
@@ -68,7 +72,13 @@ public:
         spec.setSpecular(specularConstant.pow(9.0f) * 0.4f);
         spec.setGlossyExponentShininess(shininess * 100.0f);
 
-        // spec.setBump(bumpMap);
+        if (bumpMap != "") {
+            BumpMap::Settings bumpSettings;
+            bumpSettings.bias  = bumpBias;
+            // OBJ default seems too strong
+            bumpSettings.scale *= bumpGain * 0.5f;
+            spec.setBump(bumpMap, bumpSettings);
+        }
 
         Material::Ref m = Material::create(spec);
         debugPrintf("Done\n");
@@ -180,7 +190,18 @@ static void loadMTL
                 debugPrintf("OBJ WARNING: Missing diffuse texture map '%s'\n", matSpec.diffuseMap.c_str());
                 matSpec.diffuseMap = "";
             }
-        } else if (cmd == "map_Bump") {
+        } else if (cmd == "map_bump") {
+            Token t = ti.peek();
+            if (t.type() == Token::SYMBOL && t.string() == "-") {
+                // There are options coming
+                ti.readSymbol("-");
+                const std::string& opt = ti.readSymbol();
+                if (opt == "mm") {
+                    // bias and gain
+                    matSpec.bumpBias = ti.readNumber();
+                    matSpec.bumpGain = ti.readNumber();
+                }
+            }
             matSpec.bumpMap = FilePath::concat(basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
             if (! FileSystem::exists(matSpec.bumpMap)) {
                 debugPrintf("OBJ WARNING: Missing bump map '%s'\n", matSpec.bumpMap.c_str());

@@ -288,10 +288,8 @@ ArticulatedModel::Ref ArticulatedModel::fromFile(const std::string& filename, co
         model->replaceTwoSidedWithGeometry();
     }
 
-    debugPrintf("updateAll()\n"); // TODO: Remove
     model->updateAll();
 
-    debugPrintf("Done loading %s\n", filename.c_str()); // TODO: Remove
     return model;
 }
 
@@ -551,7 +549,6 @@ void ArticulatedModel::Part::computeNormalsAndTangentSpace
     }
 
     if (geometry.vertexArray.size() > 0) {
-        debugPrintf("Weld\n");
         Welder::weld(geometry.vertexArray,
                      texCoordArray,
                      geometry.normalArray,
@@ -566,10 +563,8 @@ void ArticulatedModel::Part::computeNormalsAndTangentSpace
 
     Stopwatch s;
     computeIndexArray();
-    debugPrintf("computeAdjacency\n");
     MeshAlg::computeAdjacency(geometry.vertexArray, indexArray, faceArray, edgeArray, vertexArray);
 
-    debugPrintf("computeTangentSpace\n");
     // Compute a tangent space basis
     if (texCoordArray.size() > 0) {
         // computeTangentSpaceBasis will generate binormals, but

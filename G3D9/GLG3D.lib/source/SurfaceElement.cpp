@@ -411,9 +411,8 @@ float SurfaceElement::glossyScatter
 
 bool SurfaceElement::scatter
 (const Vector3& w_i,
- const Color3&  power_i,
  Vector3&       w_o,
- Color3&        power_o,
+ Color3&        weight_o,
  float&         eta_o,
  Color3&        extinction_o,
  Random&        random,
@@ -425,10 +424,10 @@ bool SurfaceElement::scatter
         // TODO: Remove
         // Testing code to generate Russian roulette scattering
         w_o = Vector3::cosHemiRandom(n, random);
-        power_o = evaluateBSDF(w_i, w_o).rgb() * power_i;
-        if (power_o.average() > random.uniform()) {
-            power_o /= power_o.average();
-            debugAssert(power_o.r >= 0.0f);
+        weight_o = evaluateBSDF(w_i, w_o).rgb();
+        if (weight_o.average() > random.uniform()) {
+            weight_o /= weight_o.average();
+            debugAssert(weight_o.r >= 0.0f);
             return true;
         } else {
             return false;
@@ -454,12 +453,12 @@ bool SurfaceElement::scatter
             
             // (Cannot hit division by zero because the if prevents this
             // case when p_LambertianAvg = 0)
-            power_o         = power_i * material.lambertianReflect / p_LambertianAvg;
+            weight_o        = material.lambertianReflect / p_LambertianAvg;
             w_o             = Vector3::cosHemiRandom(n, random);
             density         = p_LambertianAvg * 0.01f;
             eta_o           = material.etaReflect;
             extinction_o    = material.extinctionReflect;
-            debugAssert(power_o.r >= 0.0f);
+            debugAssert(weight_o.r >= 0.0f);
 
             return true;
         }
@@ -488,17 +487,17 @@ bool SurfaceElement::scatter
                     // Absorb
                     return false;
                 }
-                power_o = p_specular * power_i * intensity;
+                weight_o = p_specular * intensity;
                 density = p_specularAvg * 0.1f;
 
             } else {
                 // Mirror
 
                 w_o = w_i.reflectAbout(n);
-                power_o = p_specular * power_i * (1.0f / p_specularAvg);
+                weight_o = p_specular * (1.0f / p_specularAvg);
                 density = p_specularAvg;
             }
-            debugAssert(power_o.r >= 0.0f);
+            debugAssert(weight_o.r >= 0.0f);
 
             eta_o = material.etaReflect;
             extinction_o = material.extinctionReflect;
@@ -528,14 +527,14 @@ bool SurfaceElement::scatter
         
         r -= p_transmitAvg;
         if (r < 0.0f) {
-            power_o      = p_transmit * power_i * (1.0f / p_transmitAvg);
+            weight_o     = p_transmit * (1.0f / p_transmitAvg);
             w_o          = (-w_i).refractionDirection(n, material.etaTransmit, material.etaReflect);
             density      = p_transmitAvg;
             eta_o        = material.etaTransmit;
             extinction_o = material.extinctionTransmit;
 
             debugAssert(w_o.isZero() || ((w_o.dot(n) < 0) && w_o.isUnit()));
-            debugAssert(power_o.r >= 0.0f);
+            debugAssert(weight_o.r >= 0.0f);
 
             // w_o is zero on total internal refraction
             return ! w_o.isZero();

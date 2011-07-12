@@ -22,6 +22,7 @@
 
 namespace G3D { namespace _internal{
 
+//#define VERBOSE
 
 /** Used by WeldHelper2::smoothNormals. */
 class VN {
@@ -150,7 +151,9 @@ private:
      const Array<Vector3>&       normalArray,
      const Array<Vector2>&       texCoordArray) {
      
-debugPrintf("WeldHelper::updateTriLists\n"); // TODO
+#       ifdef VERBOSE
+            debugPrintf("WeldHelper::updateTriLists\n");
+#       endif
           
         // Compute a hash grid so that we can find neighbors quickly.
         // It begins empty and is extended as the tri lists are iterated
@@ -194,7 +197,9 @@ debugPrintf("WeldHelper::updateTriLists\n"); // TODO
      Array<Vector3>&             unrolledVertexArray, 
      Array<Vector2>&             unrolledTexCoordArray) {
 
-debugPrintf("WeldHelper::unroll\n"); // TODO: Remove
+#       ifdef VERBOSE
+            debugPrintf("WeldHelper::unroll\n");
+#       endif
        
         int numTriLists = indexArrayArray.size();
         for (int t = 0; t < numTriLists; ++t) {
@@ -215,7 +220,10 @@ debugPrintf("WeldHelper::unroll\n"); // TODO: Remove
     void computeFaceNormals
     (const Array<Vector3>&  vertexArray, 
      Array<Vector3>&        faceNormalArray) {
-debugPrintf("WeldHelper::computeFaceNormals\n"); // TODO: Remove
+#       ifdef VERBOSE
+            debugPrintf("WeldHelper::computeFaceNormals\n");
+#       endif
+
         debugAssertM(vertexArray.size() % 3 == 0, "Input is not a triangle soup");
         debugAssertM(faceNormalArray.size() == 0, "Output must start empty.");
 
@@ -245,7 +253,10 @@ debugPrintf("WeldHelper::computeFaceNormals\n"); // TODO: Remove
             smoothNormalArray = normalArray;
             return;
         }
-        debugPrintf("WeldHelper::smoothNormals\n"); // TODO: Remove
+
+#       ifdef VERBOSE
+            debugPrintf("WeldHelper::smoothNormals\n");
+#       endif
 
         // Create an area memory manager for fast deallocation
         MemoryManager::Ref mm = AreaMemoryManager::create(iRound(sizeof(VN) * normalArray.size() * 1.5));
@@ -257,7 +268,9 @@ debugPrintf("WeldHelper::computeFaceNormals\n"); // TODO: Remove
 
         if (vertexWeldRadius == 0) {
             // Look for vertices with the exactly identical normal only
-            debugPrintf("Taking fast path\n");
+#           ifdef VERBOSE
+                debugPrintf("Taking fast path\n");
+#           endif
 
             // Maximum expected faces that meet at a vertex
             static const int k = 8;
@@ -304,8 +317,10 @@ debugPrintf("WeldHelper::computeFaceNormals\n"); // TODO: Remove
 
         } else {
             // Non-zero vertex normal welding
-            //debugPrintf("Taking slower weld path because vertexWeldRadius = %f\n",
-            //vertexWeldRadius);
+#           ifdef VERBOSE
+                debugPrintf("Taking slower weld path because vertexWeldRadius = %f\n",
+                            vertexWeldRadius);
+#           endif
 
             // Compute a hash grid so that we can find neighbors quickly.
             alwaysAssertM(vertexWeldRadius > 0, "Cannot smooth with zero vertex weld radius");
@@ -377,7 +392,10 @@ public:
       float               normAngle,
       float               texRadius,
       float               normRadius) {
-        debugPrintf("WeldHelper::process\n"); // TODO: Remove
+#       ifdef VERBOSE
+            debugPrintf("WeldHelper::process\n");
+#       endif
+
         normalSmoothingAngle = normAngle;
         normalWeldRadius2    = square(normRadius);
         texCoordWeldRadius2  = square(texRadius);

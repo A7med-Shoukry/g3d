@@ -1,8 +1,12 @@
 /**
- @file BumpMap.h
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @created 2009-02-19
- @edited  2009-11-24
+ \file GLG3D/BumpMap.h
+
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2009-02-19
+ \edited  2011-07-24
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
 */
 #ifndef G3D_BumpMap_h
 #define G3D_BumpMap_h
@@ -16,7 +20,7 @@ class Any;
 
 
 /** 
-  @brief Normal + bump map for use with G3D::Material.
+  \brief Normal + bump map for use with G3D::Material.
 
   Supports Blinn normal mapping, Kaneko-Welsh parallax mapping,
   and Tatarchuk style parallax occlusion mapping.
@@ -26,12 +30,17 @@ public:
 
     class Settings {
     public:
-        /** World-space scale to apply to bump height for parallax/displacement mapping.*/
+        /** World-space scale to apply to bump height for
+            parallax/displacement mapping. Default is 0.05f.*/
         float           scale;
 
 
-        /** World-space offset from polygon surface to apply for parallax/displacement mapping.*/
-        // Called "bias" instead of "offset" to avoid confusion with the computed parallax offset
+        /** World-space offset from polygon surface to apply for
+         parallax/displacement mapping.  Default is 0.
+         
+         Called "bias" instead of "offset" to avoid confusion with the
+         computed parallax offset.
+        */
         float           bias; 
 
         /**
@@ -144,6 +153,6 @@ public:
     bool similarTo(const BumpMap::Ref& other) const;
 };
 
-}
+} // namespace G3D
 
-#endif
+#endif // G3D_BumpMap_h
