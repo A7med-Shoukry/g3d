@@ -1,5 +1,5 @@
 
-#include "GImage2.h"
+#include "Image.h"
 
 
 namespace G3D {
