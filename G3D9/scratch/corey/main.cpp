@@ -1,7 +1,7 @@
 
 #include <G3D/G3DAll.h>
 #include "irrklang/irrKlang.h"
-#include "GImage2.h"
+#include "Image.h"
 
 //#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 #pragma comment(lib, "freeimaged.lib")
