@@ -252,6 +252,7 @@ def buildNativeFFmpeg():
             f = open(testname, 'wb')
             f.close()
             os.chmod(testname, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+            os.remove(testname)
         except:
             raise Exception('Compiling FFMPEG requires that environment variable TMPDIR refer to a writable directory.  Current value is $TMPDIR=' + TMPDIR)
 
@@ -286,7 +287,7 @@ def buildNativeFFmpeg():
     if doClean:
         print('\nExtracting tarfile')
         os.chdir(sourceDir)
-        retVal = ice.utils.run('tar', ['--bzip2', '-xvf', pathConcat('../../..', tarname)], False)
+        retVal = ice.utils.run('tar', ['--bzip2', '-xf', pathConcat('../../..', tarname)], False)
         os.chdir('../../..')
         tarObject.close()
         tarObject = None
