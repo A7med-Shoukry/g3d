@@ -16,6 +16,7 @@
 #include "G3D/Vector4.h"
 #include "G3D/CoordinateFrame.h"
 #include "G3D/Vector3.h"
+#include "G3D/Vector2int16.h"
 #include "G3D/Color4.h"
 #include "G3D/Color3.h"
 #include <string>
@@ -427,6 +428,7 @@ public:
         void set(const std::string& var, const Vector4& val, bool optional = false);
         void set(const std::string& var, const Vector3& val, bool optional = false);
         void set(const std::string& var, const Vector2& val, bool optional = false);
+        void set(const std::string& var, const Vector2int16& val, bool optional = false);
         void set(const std::string& var, double         val, bool optional = false);
         void set(const std::string& var, float          val, bool optional = false);
         void set(const std::string& var, int            val, bool optional = false);

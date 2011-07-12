@@ -735,6 +735,9 @@ static GLenum toGLType(const std::string& s) {
     } else if (s == "vec4") {
         return GL_FLOAT_VEC4_ARB;
 
+    } else if (s == "ivec2") {
+        return GL_INT_VEC2_ARB;
+
     } else if (s == "int") {
         return GL_INT;
     } else if (s == "unsigned int") {
@@ -1472,6 +1475,14 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2& v
     Arg arg;
     arg.type = GL_FLOAT_VEC2_ARB;
     arg.vector[0] = Vector4(val, 0, 0);
+    arg.optional = optional;
+    set(var, arg);
+}
+
+void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2int16& val, bool optional) {
+    Arg arg;
+    arg.type = GL_INT_VEC2_ARB;
+    arg.vector[0] = Vector4(Vector2(val), 0, 0);
     arg.optional = optional;
     set(var, arg);
 }
