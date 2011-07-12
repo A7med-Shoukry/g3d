@@ -143,6 +143,17 @@ std::string TextInput::readUntilNewlineAsString() {
     */
     std::string s;
 
+    if (stack.size() > 0) {
+        // Need to back up.  This only works if the stack is actually
+        // in proper order reflecting the real file, and doesn't
+        // contain incorrectly pushed elements.
+        Token t = stack.back();
+        stack.clear();
+        currentCharOffset = t.bytePosition();
+        lineNumber = t.line();
+        charNumber = t.character();
+    }
+
     // Read until newline or eof
     while (currentCharOffset < buffer.size()) {
         const char c = buffer[currentCharOffset];
