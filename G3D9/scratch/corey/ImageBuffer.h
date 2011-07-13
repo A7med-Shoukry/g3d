@@ -9,6 +9,9 @@
 namespace G3D {
 
 class ImageBuffer : public ReferenceCountedObject {
+public:
+    typedef ReferenceCountedPointer<ImageBuffer> Ref;
+
 private:
     void*               m_buffer;
     const ImageFormat*  m_format;

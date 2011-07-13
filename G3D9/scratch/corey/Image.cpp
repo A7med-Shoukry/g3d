@@ -14,7 +14,7 @@ Image::~Image() {
 Image::Ref Image::fromFile(const std::string& filename) {
     Image* img = new Image;
 
-    if (! img->mImage.load(filename.c_str()))
+    if (! img->m_image.load(filename.c_str()))
     {
         delete img;
         img = NULL;
