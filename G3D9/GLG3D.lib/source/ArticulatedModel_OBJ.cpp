@@ -512,7 +512,9 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
         Part::TriList::Ref& triList = triListTable.getCreate(material, created);
         if (created) {
             triList = part.newTriList(material);
-            triList->twoSided = false;
+            // If there is an alpha mask, then the back side of this
+            // object probably needs to be rendered.
+            triList->twoSided = material->bsdf()->lambertian().nonUnitAlpha();
         }
 
         triList->indexArray.append(s->cpuIndex);

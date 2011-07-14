@@ -82,8 +82,8 @@ void ArticulatedViewer::onInit(const std::string& filename) {
         Vector3 extent = bounds.extent();
         Vector3 center = bounds.center();
         
-        // Scale to 5 units
-        float scale = 5.0f / max(extent.x, max(extent.y, extent.z));
+        // Scale to 40 units
+        float scale = 40.0f / max(extent.x, max(extent.y, extent.z));
         
         if (scale <= 0) {
             scale = 1;
@@ -93,7 +93,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
             scale = 1;
         }
 
-        m_scale = scale * 100.0f;
+        m_scale = scale;
         m_offset = -scale * center;
 
         if (! center.isFinite()) {
