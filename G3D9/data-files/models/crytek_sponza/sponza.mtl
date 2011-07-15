@@ -47,7 +47,6 @@ newmtl Material__57
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\vase_plant.tga
 	map_Kd textures\vase_plant.tga
-	map_d textures\vase_plant_mask.tga
 
 newmtl Material__298
 	Ns 10.0000
@@ -353,6 +352,8 @@ newmtl vase
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\vase_dif.tga
 	map_Kd textures\vase_dif.tga
+	map_bump textures\vase_bump.png
+	bump textures\vase_bump.png
 
 newmtl Material__25
 	Ns 10.0000
