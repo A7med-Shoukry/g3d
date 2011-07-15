@@ -47,6 +47,7 @@ newmtl Material__57
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\vase_plant.tga
 	map_Kd textures\vase_plant.tga
+	map_d textures\vase_plant_mask.tga
 
 newmtl Material__298
 	Ns 10.0000
