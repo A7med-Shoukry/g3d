@@ -229,7 +229,7 @@ public:
         
         void setSpecular(const Color3& constant);
 
-        void setSpecular(const Texture::Specification& spec);
+        void setSpecular(const Texture::Specification& spec, const Color3& constant = Color3::one());
 
         /**  */
         void removeSpecular();

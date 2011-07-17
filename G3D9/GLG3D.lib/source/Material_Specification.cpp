@@ -202,8 +202,8 @@ void Material::Specification::setSpecular(const Color3& constant) {
 }
 
 
-void Material::Specification::setSpecular(const Texture::Specification& spec) {
-    m_specularConstant = Color3::one();
+void Material::Specification::setSpecular(const Texture::Specification& spec, const Color3& constant) {
+    m_specularConstant = constant;
     m_specular = spec;        
 }
 

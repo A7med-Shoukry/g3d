@@ -28,6 +28,7 @@ public:
     float           bumpGain;
 
     Color3          specularConstant;
+    std::string     glossyMap;
     float           shininess;
 
     float           eta;
@@ -65,11 +66,22 @@ public:
             }
         }
 
+
         // Assume in air
         spec.setEta(max(1.0f, eta), 1.0f);
 
-        // OBJ models are way too specular and not shiny enough
-        spec.setSpecular(specularConstant.pow(9.0f) * 0.4f);
+        if ((glossyMap != "") && ! preprocess.stripMaterials) {
+            Texture::Specification s;
+            s.dimension = Texture::DIM_2D_NPOT;
+
+            // If we turn this off, the BSDF just does it anyway
+            s.preprocess.computeMinMaxMean = true;
+            s.settings.maxAnisotropy = 2.0f;
+            s.filename = glossyMap;
+            spec.setSpecular(s, specularConstant.pow(9.0f) * 0.4f);
+        } else {
+            spec.setSpecular(specularConstant.pow(9.0f) * 0.4f);
+        }
         spec.setGlossyExponentShininess(shininess * 100.0f);
 
         if (bumpMap != "") {
@@ -189,6 +201,12 @@ static void loadMTL
             if (! FileSystem::exists(matSpec.diffuseMap)) {
                 debugPrintf("OBJ WARNING: Missing diffuse texture map '%s'\n", matSpec.diffuseMap.c_str());
                 matSpec.diffuseMap = "";
+            }
+        } else if (cmd == "map_Ks") {
+            matSpec.glossyMap = FilePath::concat(basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+            if (! FileSystem::exists(matSpec.glossyMap)) {
+                debugPrintf("OBJ WARNING: Missing glossy texture map '%s'\n", matSpec.glossyMap.c_str());
+                matSpec.glossyMap = "";
             }
         } else if (cmd == "map_bump") {
             Token t = ti.peek();
@@ -403,7 +421,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
                     // Read one 3-part index
                     int v = ti.readNumber();
                     if (v < 0) {
-                        v = rawVertex.size() + 1 + v;
+                        v = rawVertex.size() + v + 1;
                     }
 
                     int n = 0;
@@ -415,7 +433,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
                         if (ti.peek().type() == Token::NUMBER) {
                             t = ti.readNumber();
                             if (t < 0) {
-                                t = rawTexCoord.size() + 1 + t;
+                                t = rawTexCoord.size() + t + 1;
                             }
                         }
                         if (ti.peek().type() == Token::SYMBOL) {
@@ -423,7 +441,7 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
                             if (ti.peek().type() == Token::NUMBER) {
                                 n = ti.readNumber();
                                 if (n < 0) {
-                                    n = rawNormal.size() + 1 + n;
+                                    n = rawNormal.size() + n + 1;
                                 }
                             }
                         }

@@ -20,9 +20,7 @@ void convertToOBJFile(const std::string& srcFilename) {
 
         if (part.parent == -1) {
             const CFrame& cframe = part.cframe;
-            
-            const bool hasTexCoords = part.texCoordArray.size() > 0;
-
+        
             // Number of vertices
             const int N = part.geometry.vertexArray.size();
 
@@ -43,26 +41,71 @@ void convertToOBJFile(const std::string& srcFilename) {
 
             // Part name
             fprintf(file, "\ng %s \n", name.c_str());
-
-            // Write geometry
+            // Write geometry.  Compress the data by only writing
+            // unique values and using %g for output.
             fprintf(file, "\n");
+            
+            Table<Point3, int> vertexToVertexIndex;
+            Table<int, int> vertexIndexToVertexIndex;
+            int numVertices = 0;
             for (int v = 0; v < N; ++v) {
-                const Point3& vertex = cframe.pointToWorldSpace(part.geometry.vertexArray[v]);
-                fprintf(file, "v %g %g %g\n", vertex.x, vertex.y, vertex.z);
+                const Point3& vertex = part.geometry.vertexArray[v];
+                bool created = false;
+                int& vertexIndex = vertexToVertexIndex.getCreate(vertex, created);
+                if (created) {
+                    const Point3& transformed = cframe.pointToWorldSpace(vertex);
+                    fprintf(file, "v %g %g %g\n", transformed.x, transformed.y, transformed.z);
+                    vertexIndex = numVertices; 
+                    ++numVertices;
+                }
+                vertexIndexToVertexIndex.set(v, vertexIndex);
             }
             
+            
+            bool hasTexCoords = part.texCoordArray.size() > 0;
+            Table<Point2, int> texCoordToTexCoordIndex;
+            Table<int, int> texCoordIndexToTexCoordIndex;
+            int numTexCoords = 0;
             if (hasTexCoords) {
+                // Make sure there really are useful (nonzero) texture coordinates
+                hasTexCoords = false;
+                for (int v = 0; v < N; ++v) {
+                    if (! part.texCoordArray[v].isZero()) {
+                        hasTexCoords = true;
+                        break;
+                    }
+                }
+
                 fprintf(file, "\n");
                 for (int v = 0; v < N; ++v) {
                     const Point2& texCoord = part.texCoordArray[v];
-                    fprintf(file, "vt %g %g\n", texCoord.x, texCoord.y);
+                    bool created = false;
+                    int& texCoordIndex = texCoordToTexCoordIndex.getCreate(texCoord, created);
+                    if (created) {
+                        // G3D's texture coordinate convention is upside down of OBJ's
+                        fprintf(file, "vt %g %g\n", texCoord.x, 1.0f - texCoord.y);
+                        texCoordIndex = numTexCoords;
+                        ++numTexCoords;
+                    }
+                    texCoordIndexToTexCoordIndex.set(v, texCoordIndex);
                 }
             }
 
             fprintf(file, "\n");
+            Table<Vector3, int> normalToNormalIndex;
+            Table<int, int> normalIndexToNormalIndex;
+            int numNormals = 0;
             for (int v = 0; v < N; ++v) {
-                const Vector3& normal = cframe.vectorToWorldSpace(part.geometry.normalArray[v]);
-                fprintf(file, "vn %g %g %g\n", normal.x, normal.y, normal.z);
+                const Vector3& normal = part.geometry.normalArray[v];
+                bool created = false;
+                int& normalIndex = normalToNormalIndex.getCreate(normal, created);
+                if (created) {
+                    const Vector3& transformed = cframe.vectorToWorldSpace(normal);
+                    fprintf(file, "vn %g %g %g\n", transformed.x, transformed.y, transformed.z);
+                    normalIndex = numNormals;
+                    ++numNormals;
+                }
+                normalIndexToNormalIndex.set(v, normalIndex);
             }
 
             // Triangle list
@@ -73,13 +116,22 @@ void convertToOBJFile(const std::string& srcFilename) {
                 for (int i = 0; i < triList->indexArray.size(); i += 3) {
                     fprintf(file, "f");
                     for (int j = 0; j < 3; ++j) {
-                        // Indices are 1-based; negative values reference relative to the 
-                        // last vertex
-                        const int index = triList->indexArray[i + j] - N;
+                        // Vertex index in the original mesh
+                        const int index = triList->indexArray[i + j];
+
+                        // Indices are 1-based; negative values
+                        // reference relative to the last vertex
+                        // added.
+
                         if (hasTexCoords) {
-                            fprintf(file, " %d/%d/%d", index, index, index);
+                            fprintf(file, " %d/%d/%d", 
+                                    vertexIndexToVertexIndex[index] - numVertices, 
+                                    texCoordIndexToTexCoordIndex[index] - numTexCoords, 
+                                    normalIndexToNormalIndex[index] - numNormals);
                         } else {
-                            fprintf(file, " %d//%d", index, index);
+                            fprintf(file, " %d//%d",
+                                    vertexIndexToVertexIndex[index] - numVertices, 
+                                    normalIndexToNormalIndex[index] - numNormals);
                         }
                     }
                     fprintf(file, "\n");
