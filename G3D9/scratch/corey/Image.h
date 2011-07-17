@@ -6,7 +6,7 @@
 #include "FreeImagePlus.h"
 #include "ImageBuffer.h"
 #include "G3D/ReferenceCount.h"
-#include "G3D/WrapMode.h"
+#include "G3D/Vector2int32.h"
 
 namespace G3D {
 
@@ -17,31 +17,16 @@ public:
 private:
     fipImage    m_image;
 
-    WrapMode    m_wrapMode;
-
     Image();
 
 public:
     virtual ~Image();
 
     static Ref fromFile(const std::string& filename);
-    static Ref fromBuffer(ImageBuffer::Ref ImageBuffer);
 
-    static void save(const std::string& filename, ImageBuffer::Ref imageBuffer);
     void save(const std::string& filename) const;
 
-    WrapMode wrapMode() const           { return m_wrapMode; }
-    void setWrapMode(WrapMode mode)     { m_wrapMode = mode; }
-
-    void get(float x, float y, Color1& color);
-    void get(float x, float y, Color3& color);
-    void get(float x, float y, Color4& color);
-    void get(float x, float y, Color4uint8& color);
-
-    void set(float x, float y, const Color1& color);
-    void set(float x, float y, const Color3& color);
-    void set(float x, float y, const Color4& color);
-    void set(float x, float y, const Color4uint8 color);
+    void get(const Point2int32& pos, Color3& color) const;
 };
 
 } // namespace G3D
