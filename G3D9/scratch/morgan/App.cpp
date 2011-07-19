@@ -160,8 +160,7 @@ int main(int argc, const char* argv[]) {
 App::App(const GApp::Settings& settings) : GApp(settings) {
     renderDevice->setColorClearValue(Color3::white());
 
-    convertToOBJFile("crate.ifs");
-    convertToOBJFile("teapot.ifs");
+    convertToOBJFile("buddha.ifs");
     ::exit(0);
 }
 
