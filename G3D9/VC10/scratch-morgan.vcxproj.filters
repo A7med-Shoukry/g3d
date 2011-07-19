@@ -26,6 +26,9 @@
     <ClInclude Include="..\scratch\morgan\ImageLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\scratch\morgan\ArticulatedModel2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\morgan\Scene.cpp">
