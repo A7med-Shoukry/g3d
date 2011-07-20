@@ -252,6 +252,16 @@ public:
        return data;
    }
 
+   /** Swaps the underlying memory managers and pointers between two Array%s. This is a convenient
+       way to avoid large array copies when handing off data without involving reference counting
+       or manual memory management. */
+   void exchangePointersWith(Array<T, MIN_ELEMENTS, MIN_BYTES>& other) {
+        std::swap(data, other.data);
+        std::swap(num, other.num);
+        std::swap(numAllocated, other.numAllocated);
+        std::swap(m_memoryManager, other.m_memoryManager);
+   }
+
    /**
     The array returned is only valid until the next append() or resize call, or 
 	the Array is deallocated.

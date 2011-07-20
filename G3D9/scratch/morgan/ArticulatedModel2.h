@@ -3,8 +3,25 @@
 
 #include <G3D/G3DAll.h>
 
+
+/**
+
+Sample use cases:
+
+I have an OBJ file with vertex normals, vertices, texcoords, and groups.
+I want to load it and compute tangents, and then collapse
+
+*/
+
 class ArticulatedModel2 : public ReferenceCountedObject {
 public:
+
+    class Specification {
+    public:
+        std::string                 filename;
+        Matrix4                     xform;
+        bool                        stripMaterials;
+    };
 
     class Mesh {
     public:
@@ -21,8 +38,6 @@ public:
         const Array<Part*>& childArray() const;
 
     };
-
-
 
     /** Root parts */
     const Array<Part*>& rootArray() const;
@@ -49,6 +64,8 @@ public:
          PrimitiveType                  type,
          const Array<int>&              index,
          const Material::Specification& materialSpec);
+
+    void loadOBJ(const Specification& specification);
 };
 
 #endif

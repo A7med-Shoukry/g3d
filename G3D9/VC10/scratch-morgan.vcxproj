@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\morgan\App.cpp" />
+    <ClCompile Include="..\scratch\morgan\ArticulatedModel2_OBJ.cpp" />
     <ClCompile Include="..\scratch\morgan\Entity.cpp" />
     <ClCompile Include="..\scratch\morgan\Scene.cpp" />
   </ItemGroup>
