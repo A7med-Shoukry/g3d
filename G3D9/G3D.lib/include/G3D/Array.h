@@ -252,14 +252,16 @@ public:
        return data;
    }
 
-   /** Swaps the underlying memory managers and pointers between two Array%s. This is a convenient
+   /** Exchanges all data between the two arrays, which are required to have a common MemoryManager.
+       This is a convenient
        way to avoid large array copies when handing off data without involving reference counting
-       or manual memory management. */
-   void exchangePointersWith(Array<T, MIN_ELEMENTS, MIN_BYTES>& other) {
-        std::swap(data, other.data);
-        std::swap(num, other.num);
-        std::swap(numAllocated, other.numAllocated);
-        std::swap(m_memoryManager, other.m_memoryManager);
+       or manual memory management. Beware that pointers or references into the arrays will 
+       access memory in the <i>other</i> array after the swap. */
+   static void swap(Array<T, MIN_ELEMENTS, MIN_BYTES>& a, Array<T, MIN_ELEMENTS, MIN_BYTES>& b) {
+       alwaysAssertM(a.memoryManager == b.memoryManager, "The arrays are required to have the same memory manager");
+        std::swap(a.data, b.data);
+        std::swap(a.num, b.num);
+        std::swap(a.numAllocated, b.numAllocated);
    }
 
    /**

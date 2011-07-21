@@ -1,4 +1,10 @@
 #include "ParseMTL.h"
+#include "G3D/TextInput.h"
+#include "G3D/stringutils.h"
+#include "G3D/FileSystem.h"
+#include "G3D/Log.h"
+
+namespace G3D {
 
 void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
     materialTable.clear();
@@ -29,6 +35,10 @@ void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
 
         // Read until the end of the line if this line did not consume it
         while (ti.hasMore() && (ti.read().type() != Token::NEWLINE));
+    }
+
+    if (! materialTable.containsKey("default")) {
+        materialTable.set("default", Material::create());
     }
 
     ti.popSettings();
@@ -104,3 +114,5 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
         m_currentMaterial->map_bump = FilePath::concat(m_basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
     }
 }
+
+} // namespace G3D

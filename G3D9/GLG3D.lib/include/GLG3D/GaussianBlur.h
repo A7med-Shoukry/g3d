@@ -6,7 +6,7 @@
  @created 2007-03-10
  @edited  2007-03-20
 
- Copyright 2002-2007, Morgan McGuire.
+ Copyright 2002-2011, Morgan McGuire.
  All rights reserved.
 */
 #ifndef G3D_GAUSSIANBLUR_H

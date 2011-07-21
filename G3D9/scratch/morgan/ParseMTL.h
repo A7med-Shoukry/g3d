@@ -1,9 +1,32 @@
+/**
+ \file GLG3D/ParseMTL.h
+
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+ \created 2011-07-19
+ \edited  2011-07-19
+
+ Copyright 2002-2011, Morgan McGuire.
+ All rights reserved.
+*/
 #ifndef GLG3D_ParseMTL_h
 #define GLG3D_ParseMTL_h
 
-#include <G3D/G3DAll.h>
+//#include <G3D/G3DAll.h>
+#include "G3D/platform.h"
+#include "G3D/Table.h"
+#include "G3D/ReferenceCount.h"
+#include "G3D/Color3.h"
+#include <string>
+
+namespace G3D {
+
+class TextInput;
 
 /** \brief Parses Wavefront material (.mtl) files.
+
+    Parsing creates references to texture files on disk, but does not actually
+    load those textures.
 
     \sa G3D::ParseOBJ, G3D::ArticulatedModel
 */
@@ -85,4 +108,13 @@ public:
 
 };
 
-#endif
+
+template <> struct HashTrait<ParseMTL::Material::Ref> {
+    static size_t hashCode(const ParseMTL::Material::Ref& k) { return k.hashCode(); }
+};
+
+} // namespace G3D
+
+
+#endif // #define GLG3D_ParseMTL_h
+

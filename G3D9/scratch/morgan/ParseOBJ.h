@@ -1,8 +1,31 @@
+/**
+ \file GLG3D/ParseOBJ.h
+
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+
+ \created 2011-07-19
+ \edited  2011-07-19
+
+ Copyright 2002-2011, Morgan McGuire.
+ All rights reserved.
+*/
+
 #ifndef GLG3D_ParseOBJ_h
 #define GLG3D_ParseOBJ_h
 
-#include <G3D/G3DAll.h>
+#include "G3D/platform.h"
+#include "G3D/ReferenceCount.h"
+#include "G3D/Array.h"
+#include "G3D/SmallArray.h"
+#include "G3D/Table.h"
+#include "G3D/Vector2.h"
+#include "G3D/Vector3.h"
+#include "G3D/Vector4.h"
 #include "ParseMTL.h"
+
+namespace G3D {
+
+class TextInput;
 
 /** \brief Parses OBJ files with polygonal data and their associated MTL files.
 
@@ -18,6 +41,8 @@ class ParseOBJ {
 public:
     static const int UNDEFINED = -1;
 
+    /** Set of indices into the vertex attribute arrays.  Note that OBJ
+        format allows a separate index for each attribute, unlike OpenGL. */
     class Index {
     public:
         /** 0-based index into vertexArray */
@@ -32,6 +57,8 @@ public:
         Index() : vertex(UNDEFINED), normal(UNDEFINED), texCoord(UNDEFINED) {}
     };
 
+    /** A polygon, which is expected to be a triangle or quadrilateral 
+        but is unlimited in OBJ format. */
     typedef SmallArray<Index, 4> Face;
     
     /** Part of a group that uses a single material. */
@@ -39,7 +66,11 @@ public:
     public:
         typedef ReferenceCountedPointer<Mesh> Ref;
 
-        Material::Ref   material;
+        /** Need a material instead of a material name
+            because technically the material library can
+            change during load.
+         */
+        ParseMTL::Material::Ref   material;
         Array<Face>     faceArray;
 
     private:
@@ -53,15 +84,16 @@ public:
         }
     };
 
-    /** An OBJ group, created with the "g" command. */
+    /** An OBJ group, created with the "g" command. 
+    */
     class Group : public ReferenceCountedObject {
     public:
         typedef ReferenceCountedPointer<Group> Ref;
 
         std::string     name;
 
-        /** Maps material names to meshes within this group */
-        Table<std::string, Mesh::Ref> meshTable;
+        /** Maps ParseMTL::Material%s to Mesh%ss within this group */
+        Table<ParseMTL::Material::Ref, Mesh::Ref> meshTable;
 
     private:
 
@@ -76,6 +108,8 @@ public:
 
     Array<Point3>       vertexArray;
     Array<Vector3>      normalArray;
+
+    /** Texture coordinates in OBJ coordinate frame, where (0, 0) is the LOWER-left.*/
     Array<Point2>       texCoordArray;
 
     /** Maps group names to groups. */
@@ -83,8 +117,8 @@ public:
 
 private:
 
-    /** The material table can be replaced during load, although rarely is. */
-    ParseMTL            m_currentMaterialTable;
+    /** The material library can be replaced during load, although rarely is. */
+    ParseMTL            m_currentMaterialLibrary;
 
     /** Paths are interpreted relative to this */
     std::string         m_basePath;
@@ -96,7 +130,15 @@ private:
       Determined by the material name. */
     Mesh::Ref           m_currentMesh;
 
+    /** Material specified by the last useMtl command */
+    ParseMTL::Material::Ref  m_currentMaterial;
+
     void processCommand(TextInput& ti, const std::string& cmd);
+
+    /** Processes the "f" command.  Called from processCommand. */
+    void processFace(TextInput& ti);
+
+    ParseMTL::Material::Ref getMaterial(const std::string& materialName);
 
 public:
 
@@ -104,4 +146,5 @@ public:
 
 };
 
-#endif
+} // namespace G3D
+#endif // GLG3D_ParseOBJ_h

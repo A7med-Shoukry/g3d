@@ -1,5 +1,9 @@
 #include "ParseOBJ.h"
+#include "G3D/TextInput.h"
+#include "G3D/FileSystem.h"
+#include "G3D/stringutils.h"
 
+namespace G3D {
 
 void ParseOBJ::parse(TextInput& ti, const std::string& basePath) {
 
@@ -41,6 +45,31 @@ void ParseOBJ::parse(TextInput& ti, const std::string& basePath) {
 }
 
 
+inline static Vector3 readVector3(TextInput& ti) {
+    Vector3 v;
+    for (int i = 0; i < 3; ++i) { v[i] = ti.readNumber(); }
+    return v;
+}
+
+
+inline static Vector2 readVector2(TextInput& ti) {
+    Vector2 v;
+    for (int i = 0; i < 2; ++i) { v[i] = ti.readNumber(); }
+    return v;
+}
+
+
+ParseMTL::Material::Ref ParseOBJ::getMaterial(const std::string& materialName) {
+    bool created = false;
+    ParseMTL::Material::Ref& m = m_currentMaterialLibrary.materialTable.getCreate(materialName);
+    if (created) {
+        m = ParseMTL::Material::create();
+        debugPrintf("Warning: missing material %s used.\n", materialName.c_str());
+    }
+    return m;
+}
+
+
 void ParseOBJ::processCommand(TextInput& ti, const std::string& cmd) {
 
     if (cmd == "mtllib") {
@@ -49,7 +78,7 @@ void ParseOBJ::processCommand(TextInput& ti, const std::string& cmd) {
         std::string mtlFilename = trimWhitespace(ti.readUntilNewlineAsString());
         mtlFilename = FilePath::concat(m_basePath, mtlFilename);
 
-        m_currentMaterialTable.parse(TextInput(mtlFilename));
+        m_currentMaterialLibrary.parse(TextInput(mtlFilename));
 
     } else if (cmd == "g") {
         // Change group
@@ -67,109 +96,115 @@ void ParseOBJ::processCommand(TextInput& ti, const std::string& cmd) {
 
     } else if (cmd == "usemtl") {
 
-        // If the current tri list is empty, assign a material to it.  Otherwise break
-        // the trilist here and start a new one.
-        if (currentTriList) {
-            const std::string& materialName = trimWhitespace(ti.readUntilNewlineAsString());
-            if (currentTriList->cpuIndex.size() != 0) {
-                const std::string& triListName = currentTriListRawName + "_" + materialName;
-                debugAssertM(groupTable.containsKey(currentTriListRawName),
-                                "Hit a usemtl block when currentTriList != NULL but the tri list had no name.");
+        // Change the mesh within the group
+        const std::string& materialName = trimWhitespace(ti.readUntilNewlineAsString());        
+        m_currentMaterial = getMaterial(materialName);
 
-                if (groupTable[currentTriListRawName]->materialName == materialName) {
-                    // Switch back to the base trilist, which uses this material
-                    currentTriList = groupTable[currentTriListRawName];
-                } else {
-                    // Find or create the trilist that uses this material
+        // Force re-obtaining or creating of the appropriate mesh
+        m_currentMesh = NULL;
 
-                    if (! groupTable.containsKey(triListName)) {
-                        currentTriList = new TriListSpec();
-                        currentTriList->name = triListName;            
-                        groupTable.set(triListName, currentTriList);
-                    } else {
-                        currentTriList = groupTable[triListName];
-                    }
-                }
-            }
-
-            currentTriList->materialName = materialName;
-        }
     } else if (cmd == "v") {
-        rawVertex.append(readVertex(ti, preprocess.xform));
+
+        vertexArray.append(readVector3(ti));
+
     } else if (cmd == "vt") {
-        // Texcoord
-        Vector2& t = rawTexCoord.next();
-        t.x = ti.readNumber();
-        t.y = 1.0f - ti.readNumber();
+
+        texCoordArray.append(readVector2(ti));
+
     } else if (cmd == "vn") {
-        // Normal
-        rawNormal.append(readNormal(ti, normalXform));
-    } else if ((cmd == "f") && currentTriList) {
-        // Face
+        
+        normalArray.append(readVector3(ti));
 
-        // Read each vertex
-        while (ti.hasMore() && (ti.peek().type() != Token::NEWLINE)) {
+    } else if (cmd == "f") {
 
-            // Read one 3-part index
-            int v = ti.readNumber();
-            if (v < 0) {
-                v = rawVertex.size() + v + 1;
-            }
-
-            int n = 0;
-            int t = 0;
-
-            if (ti.peek().type() == Token::SYMBOL) {
-                // Optional texcoord and normal
-                ti.readSymbol("/");
-                if (ti.peek().type() == Token::NUMBER) {
-                    t = ti.readNumber();
-                    if (t < 0) {
-                        t = rawTexCoord.size() + t + 1;
-                    }
-                }
-                if (ti.peek().type() == Token::SYMBOL) {
-                    ti.readSymbol("/");
-                    if (ti.peek().type() == Token::NUMBER) {
-                        n = ti.readNumber();
-                        if (n < 0) {
-                            n = rawNormal.size() + n + 1;
-                        }
-                    }
-                }
-            }
-
-            // Switch to zero-based indexing 
-            --v; --n; --t;
-
-            faceTempIndex.append(v, t, n);
-        }
-
-        alwaysAssertM(faceTempIndex.size() >= 3*3, "Face with fewer than three vertices in model.");
-        numTris += (faceTempIndex.size()/3) - 2;
-        // The faceTempIndex is now a triangle fan.  Convert it to a triangle list and use unique vertices
-        for (int i = 2; i < faceTempIndex.size()/3; ++i) {
-            // Always start with vertex 0
-            cookVertex.append(faceTempIndex[0]);
-            cookTexCoord.append(faceTempIndex[1]);
-            cookNormal.append(faceTempIndex[2]);
-
-            // The vertex just before the one we're adding
-            int j = (i - 1) * 3;
-            cookVertex.append(faceTempIndex[j]);
-            cookTexCoord.append(faceTempIndex[j+1]);
-            cookNormal.append(faceTempIndex[j+2]);
-
-            // The vertex we're adding
-            j = i * 3;
-            cookVertex.append(faceTempIndex[j]);
-            cookTexCoord.append(faceTempIndex[j+1]);
-            cookNormal.append(faceTempIndex[j+2]);
-
-            // Update the index array to contain the three vertices we just added
-            currentTriList->cpuIndex.append(cookVertex.size() - 3, cookVertex.size() - 2, cookVertex.size() - 1);
-        } 
-
-        faceTempIndex.fastClear();
+        processFace(ti);
 
     }
+}
+
+
+void ParseOBJ::processFace(TextInput& ti) {
+        // Ensure that we have a material
+    if (m_currentMaterial.isNull()) {
+        m_currentMaterial = m_currentMaterialLibrary.materialTable["default"];
+    }
+
+    // Mnsure that we have a group
+    if (m_currentGroup.isNull()) {
+        // Create a group named "default", per the OBJ specification
+        m_currentGroup = Group::create();
+        m_currentGroup->name = "default";
+        groupTable.set(m_currentGroup->name, m_currentGroup);
+
+        // We can't have a mesh without a group, but conservatively reset this anyway
+        m_currentMesh = NULL;
+    }
+
+    // Ensure that we have a mesh
+    if (m_currentMesh.isNull()) {
+        bool created = false;
+        Mesh::Ref& m = m_currentGroup->meshTable.getCreate(m_currentMaterial, created);
+
+        if (created) {
+            m = Mesh::create();
+            m->material = m_currentMaterial;
+        }
+        m_currentMesh = m;
+    }
+
+
+    Face& face = m_currentMesh->faceArray.next();
+
+    // Read each vertex
+    while (ti.hasMore() && (ti.peek().type() != Token::NEWLINE)) {
+
+        // Read the index, making absolute and 0-based
+        Index& index = face.next();
+
+        index.vertex = ti.readNumber();
+        if (index.vertex > 0) {
+            // Make 0-based
+            --index.vertex;
+        } else {
+            // Negative; make relative to the current end of the array.
+            // -1 will be the last element, so just add the size of the array.
+            index.vertex += vertexArray.size();
+        }
+
+        if (ti.peek().type() == Token::SYMBOL) {
+            // Optional texcoord and normal
+            ti.readSymbol("/");
+            if (ti.peek().type() == Token::NUMBER) {
+
+                index.texCoord = ti.readNumber();
+                if (index.texCoord > 0) {
+                    // Make 0-based
+                    --index.texCoord;
+                } else {
+                    // Negative; make relative to the current end of the array.
+                    // -1 will be the last element, so just add the size of the array.
+                    index.texCoord += texCoordArray.size();
+                }
+            }
+
+            if (ti.peek().type() == Token::SYMBOL) {
+                ti.readSymbol("/");
+                if (ti.peek().type() == Token::NUMBER) {
+
+                    index.normal = ti.readNumber();
+                    if (index.normal > 0) {
+                        // Make 0-based
+                        --index.normal;
+                    } else {
+                        // Negative; make relative to the current end of the array.
+                        // -1 will be the last element, so just add the size of the array.
+                        index.normal += normalArray.size();
+                    }                
+                }
+            } // if has normals
+        } // if has texcoords
+    } // while more vertices
+
+}
+
+} // namespace G3D

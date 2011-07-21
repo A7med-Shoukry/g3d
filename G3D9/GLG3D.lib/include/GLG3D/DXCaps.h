@@ -1,10 +1,10 @@
 /**
- @file DXCaps.h
+ \file GLG3D/DXCaps.h
 
- @created 2006-04-06
- @edited  2006-05-06
+ \created 2006-04-06
+ \edited  2006-05-06
 
- Copyright 2000-2007, Morgan McGuire.
+ Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
 
