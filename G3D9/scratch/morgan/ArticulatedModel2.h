@@ -6,15 +6,12 @@
 
 /**
 
-Sample use cases:
-
-I have an OBJ file with vertex normals, vertices, texcoords, and groups.
-I want to load it and compute tangents, and then collapse
 
 */
-
 class ArticulatedModel2 : public ReferenceCountedObject {
 public:
+
+    typedef ReferenceCountedPointer<ArticulatedModel2> Ref;
 
     class Specification {
     public:
@@ -42,6 +39,10 @@ public:
 
     class Mesh {
     public:
+        friend class ArticulatedModel2;
+
+        std::string                 name;
+
         Material::Ref               material;
 
         PrimitiveType               primitive;
@@ -52,17 +53,24 @@ public:
 
         /** Relative to the Part containing it. */
         Sphere                      boundingSphere;
+    private:
+        Mesh(const std::string& name) : name(name), primitive(PrimitiveType::TRIANGLES), twoSided(false) {}
 
-        Mesh() : primitive(PrimitiveType::TRIANGLES), twoSided(false) {}
     };
 
     /** 
      A set of meshes with a single reference frame, packed into a common vertex buffer.
     */
     class Part {
+    public:
+        std::string                 name;
+
     private:
+        friend class ArticulatedModel2;
+
         Part*                       m_parent;
         Array<Part*>                m_child;
+        Array<Mesh*>                m_meshArray;
 
     public:
 
@@ -80,19 +88,83 @@ public:
         VertexRange                 gpuTexCoord0Array;
         VertexRange                 gpuTangentArray;
 
+    private:
+        Part(const std::string& name, Part* parent) : name(name), m_parent(parent) {}
+    public:
+
         /** NULL if this is a root of the model. */
-        const Part* parent() const;
-        const Array<Part*>& childArray() const;
+        const Part* parent() const {
+            return m_parent;
+        }
+
+        const Array<Part*>& childArray() const {
+            return m_child;
+        }
+
+        const Array<Mesh*>& meshArray() const {
+            return m_meshArray;
+        }
+
+        bool isRoot() const {
+            return m_parent == NULL;
+        }
+
+        /** 
+         Cleans the geometric data in response to changes, or after load.
+
+        - Wipes out the GPU vertex attribute data.
+        - Computes a vertex normal for every element whose normal.x is fnan() (or if the normal array is empty).
+        - If there are texture coordiantes, computes a tangent for every element whose tangent.x is nanf() (or if the tangent array is empty).
+        - Merges all vertices with identical indices.
+        - Updates all Mesh indices accordingly.
+        - Recomputes the bounding sphere.
+        */
+        void cleanGeometry();
+    };
+
+    /** Base class for defining operations to perform on each part, in hierarchy order.*/
+    class PartCallback {
+    public:
+        virtual void operator()(ArticulatedModel2::Ref m, ArticulatedModel2::Part* p, const CFrame& parentFrame) {}
     };
 
 private:
 
     Array<Part*>                    m_rootArray;
     Array<Part*>                    m_partArray;
+
+private:
+
+    void forEachPart(PartCallback& c, const CFrame& parentFrame, Part* part);
+
+
 public:
 
     /** Root parts.  There may be more than one. */
     const Array<Part*>& rootArray() const;
+
+    Mesh* addMesh(const std::string& name, Part* part) {
+        part->m_meshArray.append(new Mesh(name));
+        return part->m_meshArray.last();
+    }
+
+    Part* addPart(const std::string& name, Part* parent = NULL) {
+        m_partArray.append(new Part(name, parent));
+        if (parent == NULL) {
+            m_rootArray.append(m_partArray.last());
+        }
+        return m_partArray.last();
+    }
+
+    /** Walks the hierarchy and invokes PartCallback on each element. */
+    void forEachPart(PartCallback& c);
+    
+    /** 
+     Invokes Part::cleanGeometry on all parts.
+    */
+    void cleanGeometry();
+
+private:
 
     /** After load, undefined normals have value NaN.  Undefined texcoords become (0,0).
         There are no tangents, the gpu arrays are empty, and the bounding spheres are
