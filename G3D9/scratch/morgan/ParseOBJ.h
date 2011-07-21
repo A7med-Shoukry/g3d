@@ -92,7 +92,8 @@ private:
     /** Group to which we are currently adding elements */
     Group::Ref          m_currentGroup;
 
-    /** Mesh within m_currentGroup to which we are currently adding elements */
+    /** Mesh within m_currentGroup to which we are currently adding elements. 
+      Determined by the material name. */
     Mesh::Ref           m_currentMesh;
 
     void processCommand(TextInput& ti, const std::string& cmd);

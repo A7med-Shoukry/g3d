@@ -18,24 +18,23 @@ void ParseOBJ::parse(TextInput& ti, const std::string& basePath) {
 
     ti.pushSettings(set);
 
-        while (ti.hasMore()) {
-            // Consume comments/newlines
-            while (ti.hasMore() && (ti.peek().type() == Token::NEWLINE)) {
-                // Consume the newline
-                ti.read();
-            }
-
-            if (! ti.hasMore()) {
-                break;
-            }
-
-            // Process one line
-            const std::string& cmd = ti.readSymbol();
-            processCommand(ti, cmd);
-
-            // Read until the end of the line
-            while (ti.hasMore() && (ti.read().type() != Token::NEWLINE));
+    while (ti.hasMore()) {
+        // Consume comments/newlines
+        while (ti.hasMore() && (ti.peek().type() == Token::NEWLINE)) {
+            // Consume the newline
+            ti.read();
         }
+
+        if (! ti.hasMore()) {
+            break;
+        }
+
+        // Process one line
+        const std::string& cmd = ti.readSymbol();
+        processCommand(ti, cmd);
+
+        // Read until the end of the line
+        while (ti.hasMore() && (ti.read().type() != Token::NEWLINE));
     }
 
     ti.popSettings();
@@ -48,21 +47,23 @@ void ParseOBJ::processCommand(TextInput& ti, const std::string& cmd) {
 
         // Specify material library 
         std::string mtlFilename = trimWhitespace(ti.readUntilNewlineAsString());
-        mtlFile = FilePath::concat(m_basePath, mtlFilename);
+        mtlFilename = FilePath::concat(m_basePath, mtlFilename);
 
-        m_currentMaterialTable.parse(TextInput(mtlFile));
+        m_currentMaterialTable.parse(TextInput(mtlFilename));
 
     } else if (cmd == "g") {
+        // Change group
+        std::string groupName = trimWhitespace(ti.readUntilNewlineAsString());
 
-        // New group
-        currentTriListRawName = trimWhitespace(ti.readUntilNewlineAsString());
-        if (! groupTable.containsKey(currentTriListRawName)) {
-            currentTriList = new TriListSpec();
-            currentTriList->name = currentTriListRawName;
-            groupTable.set(currentTriListRawName, currentTriList);
-        } else {
-            currentTriList = groupTable[currentTriListRawName];
+        Group::Ref& g = groupTable.getCreate(groupName);
+
+        if (g.isNull()) {
+            // Newly created
+            g = Group::create();
+            g->name = groupName;
         }
+
+        m_currentGroup = g;
 
     } else if (cmd == "usemtl") {
 
