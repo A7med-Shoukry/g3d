@@ -84,6 +84,8 @@ public:
         }
     };
 
+    typedef Table<ParseMTL::Material::Ref, Mesh::Ref> MeshTable;
+
     /** An OBJ group, created with the "g" command. 
     */
     class Group : public ReferenceCountedObject {
@@ -93,7 +95,7 @@ public:
         std::string     name;
 
         /** Maps ParseMTL::Material%s to Mesh%ss within this group */
-        Table<ParseMTL::Material::Ref, Mesh::Ref> meshTable;
+        MeshTable       meshTable;
 
     private:
 
@@ -106,6 +108,9 @@ public:
         }    
     };
 
+
+    typedef Table<std::string, Group::Ref> GroupTable;
+
     Array<Point3>       vertexArray;
     Array<Vector3>      normalArray;
 
@@ -113,7 +118,7 @@ public:
     Array<Point2>       texCoordArray;
 
     /** Maps group names to groups. */
-    Table<std::string, Group::Ref> groupTable;
+    GroupTable          groupTable;
 
 private:
 
@@ -145,6 +150,14 @@ public:
     void parse(TextInput& ti, const std::string& basePath = "<AUTO>");
 
 };
+
+
+template <> struct HashTrait<ParseOBJ::Index> {
+    static size_t hashCode(const ParseOBJ::Index& k) { 
+        return HashTrait<int>::hashCode(k.vertex + (k.normal << 8) + (k.texCoord << 16) + (k.texCoord >> 16)); 
+    }
+};
+
 
 } // namespace G3D
 #endif // GLG3D_ParseOBJ_h
