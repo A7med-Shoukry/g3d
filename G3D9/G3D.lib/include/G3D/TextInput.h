@@ -1,14 +1,14 @@
 /**
- @file TextInput.h
+ \file G3D/TextInput.h
 
  Simple text lexer/tokenizer.
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @cite Based on a lexer written by Aaron Orenstein. 
+ \cite Based on a lexer written by Aaron Orenstein. 
 
- @created 2002-11-27
- @edited  2010-07-03
+ \created 2002-11-27
+ \edited  2011-07-19
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -148,7 +148,9 @@ public:
 
 
 /**
- A simple style tokenizer for reading text files.  TextInput handles a
+ \brief A simple tokenizer for parsing text files.  
+ 
+ TextInput handles a
  superset of C++,Java, Matlab, and Bash code text including single
  line comments, block comments, quoted strings with escape sequences,
  and operators.  TextInput recognizes several categories of tokens,
@@ -191,7 +193,7 @@ public:
 
   <B>Examples</B>
 
-  <PRE>
+  \code
   TextInput ti(TextInput::FROM_STRING, "name = \"Max\", height = 6");
 
   Token t;
@@ -206,15 +208,15 @@ public:
 
   std::string name = ti.read().sval;
   ti.read();
-  </PRE>
+  \endcode
 
-  <PRE>
+  \code
   TextInput ti(TextInput::FROM_STRING, "name = \"Max\", height = 6");
   ti.readSymbols("name", "=");
   std::string name = ti.readString();
   ti.readSymbols(",", "height", "=");
   double height = ti. readNumber();
-  </PRE>
+  \endcode
 
  Assumes that the file is not modified once opened.
  */
@@ -401,6 +403,9 @@ public:
 	
 private:
 
+    /** \sa pushSettings / popSettings */
+    Array<Settings>         settingsStack;
+
     std::deque<Token>       stack;
 
     /**
@@ -571,6 +576,16 @@ public:
 
     /** Returns true while there are tokens remaining. */
     bool hasMore();
+
+    /** Temporarily switch parsing to use \a settings.  \sa popSettings */
+    void pushSettings(const Settings& settings) {
+        settingsStack.push(options);
+        options = settings;
+    }
+
+    void popSettings() {
+        options = settingsStack.pop();
+    }
 
     /** Read the next token (which will be the END token if ! hasMore()).
     

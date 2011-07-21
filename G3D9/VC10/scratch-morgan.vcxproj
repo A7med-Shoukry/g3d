@@ -82,12 +82,16 @@
     <ClInclude Include="..\scratch\morgan\CubeMap.h" />
     <ClInclude Include="..\scratch\morgan\Entity.h" />
     <ClInclude Include="..\scratch\morgan\ImageLoader.h" />
+    <ClInclude Include="..\scratch\morgan\ParseMTL.h" />
+    <ClInclude Include="..\scratch\morgan\ParseOBJ.h" />
     <ClInclude Include="..\scratch\morgan\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\morgan\App.cpp" />
     <ClCompile Include="..\scratch\morgan\ArticulatedModel2_OBJ.cpp" />
     <ClCompile Include="..\scratch\morgan\Entity.cpp" />
+    <ClCompile Include="..\scratch\morgan\ParseMTL.cpp" />
+    <ClCompile Include="..\scratch\morgan\ParseOBJ.cpp" />
     <ClCompile Include="..\scratch\morgan\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
