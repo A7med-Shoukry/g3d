@@ -1,17 +1,18 @@
 /**
- @file TextInput.cpp
+ \file G3D/source/TextInput.cpp
   
- @author Morgan McGuire, graphics3d.com
+ \author Morgan McGuire, http://graphics.cs.williams.edu
  
- @cite Based on a lexer written by Aaron Orenstein. 
+ \cite Based on a lexer written by Aaron Orenstein. 
  
- @created 2001-11-27
- @edited  2010-07-03
+ \created 2001-11-27
+ \edited  2010-07-22
  */
 
 #include "G3D/fileutils.h"
 #include "G3D/TextInput.h"
 #include "G3D/BinaryInput.h"
+#include "G3D/FileSystem.h"
 #include "G3D/stringutils.h"
 
 #ifdef _MSC_VER
@@ -1094,14 +1095,25 @@ void TextInput::readSymbol(const std::string& symbol) {
 
 TextInput::TextInput(const std::string& filename, const Settings& opt) : options(opt) {
     init();
-    std::string input = readWholeFile(filename);
-
     if (options.sourceFileName.empty()) {
         options.sourceFileName = filename;
     }
-    int n = input.size();
-    buffer.resize(n);
-    System::memcpy(buffer.getCArray(), input.c_str(), n);
+
+    std::string zipfile;
+    if (FileSystem::inZipfile(filename, zipfile)) {
+        // TODO: this could be faster if we directly read the zipfile
+        const std::string& input = readWholeFile(filename);
+        int n = input.size();
+        buffer.resize(n);
+        System::memcpy(buffer.getCArray(), input.c_str(), n);
+    } else {
+        // Read directly into the array
+        const int n = FileSystem::size(filename);
+        buffer.resize(n);
+        FILE* f = FileSystem::fopen(filename.c_str(), "rb");
+        fread(buffer.getCArray(), 1, n, f);
+        FileSystem::fclose(f);
+    }
 }
 
 

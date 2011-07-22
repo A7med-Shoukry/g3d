@@ -95,8 +95,7 @@ bool zipfileExists(const std::string& filename) {
     return zipfileExists(filename, outZipfile, outInternalFile);
 }
 
-std::string readWholeFile(
-    const std::string& filename) {
+std::string readWholeFile(const std::string& filename) {
 
     std::string s;
 

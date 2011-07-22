@@ -40,7 +40,9 @@
        */
 
        crateModel = ArticulatedModel2::Specification {
-           filename = "models/crate/crate.obj";
+           filename = "models/crytek_sponza/sponza.obj";
+           stripMaterials = true;
+//           filename = "models/crate/crate.obj";
 //           filename = "models/teapot/teapot.obj";
        };
     };

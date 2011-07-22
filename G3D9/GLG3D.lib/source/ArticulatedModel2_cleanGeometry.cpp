@@ -21,10 +21,12 @@ void ArticulatedModel2::cleanGeometry(const CleanGeometrySettings& settings) {
 
 
 void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& settings) {
+    Stopwatch timer;
     clearVertexRanges();
 
     bool computeSomeNormals = false, computeSomeTangents = false;
     determineCleaningNeeds(computeSomeNormals, computeSomeTangents);
+    timer.after("  determineCleaningNeeds");
 
     m_triangleCount = 0;
     for (int m = 0; m < m_meshArray.size(); ++m) {
@@ -32,6 +34,7 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
             "Only implemented for PrimitiveType::TRIANGLES");
         m_triangleCount += m_meshArray[m]->cpuIndexArray.size() / 3;
     }
+    timer.after("  m_triangleCount");
     
     if (computeSomeNormals || settings.forceVertexMerging) {
         // Expand into an un-indexed triangle list.  This allows us to consider
@@ -40,26 +43,27 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
         Face::AdjacentFaceTable adjacentFaceTable;
 
         buildFaceArray(faceArray, adjacentFaceTable);
+        timer.after("  buildFaceArray");
 
         if (computeSomeNormals) {
             computeMissingVertexNormals(faceArray, adjacentFaceTable, settings.maxSmoothAngle);
+            timer.after("  computeMissingVertexNormals");
         }
-
     
         // Merge vertices that have nearly equal normals, positions, and texcoords.
         // We no longer need adjacency information because tangents can be computed
         // solely from shared vertex information.
         mergeVertices(faceArray, settings.maxNormalWeldAngle);
+        timer.after("  mergeVertices");
     }
 
     if (computeSomeTangents) {
         // Compute tangent space
         computeMissingTangents();
+        timer.after("  computeMissingTangents");
     }
 
     cpuVertexArray.hasTexCoord0 = m_hasTexCoord0;
-
-    debugPrint();
 }
 
 
@@ -286,7 +290,6 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
     // Clear the CPU vertex array
     cpuVertexArray.vertex.fastClear();
 
-
     // Track the location of vertices in cpuVertexArray by their exact texcoord and position.
     // The vertices in the list may have differing normals.
     typedef int VertexIndex;
@@ -330,6 +333,9 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
             mesh->cpuIndexArray.append(index);
         }
     }
+
+    debugPrintf("average bucket size = %f\n", vertexIndexTable.debugGetAverageBucketSize());
+    debugPrintf("deepest bucket size = %d\n", vertexIndexTable.debugGetDeepestBucketSize());
 }
 
 
