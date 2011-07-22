@@ -151,6 +151,9 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
                         vertex.texCoord0 = Point2::zero();
                         ++numSpecifiedTexCoord0s;
                     }
+
+                    // We have no tangent, so force it to NaN
+                    vertex.tangent = Vector4::nan();
                 }
             }
 
