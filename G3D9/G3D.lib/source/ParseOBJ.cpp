@@ -88,7 +88,8 @@ void ParseOBJ::processCommand(TextInput& ti, const std::string& cmd) {
         std::string mtlFilename = trimWhitespace(ti.readUntilNewlineAsString());
         mtlFilename = FilePath::concat(m_basePath, mtlFilename);
 
-        m_currentMaterialLibrary.parse(TextInput(mtlFilename));
+        TextInput ti2(mtlFilename);
+        m_currentMaterialLibrary.parse(ti2);
 
     } else if (cmd == "g") {
         // Change group
