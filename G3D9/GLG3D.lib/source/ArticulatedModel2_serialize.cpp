@@ -36,7 +36,10 @@ Any ArticulatedModel2::CleanGeometrySettings::toAny() const {
 ArticulatedModel2::Specification::Specification(const Any& a) {
     *this = Specification();
     AnyTableReader r(a);
-    r.getIfPresent("filename",                  filename);
+    Any f;
+    r.getIfPresent("filename",                  f);
+    filename = f.resolveStringAsFilename();
+
     r.getIfPresent("xform",                     xform);
     r.getIfPresent("stripMaterials",            stripMaterials);
     r.getIfPresent("mergeMeshesByMaterial",     mergeMeshesByMaterial);

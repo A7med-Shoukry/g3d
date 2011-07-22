@@ -142,9 +142,11 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
 
             // For each face
             const Array<ParseOBJ::Face>& faceArray = srcMesh->faceArray;
-            int prevNumVertices = part->cpuVertexArray.size();
             for (int f = 0; f < faceArray.size(); ++f) {
                 const ParseOBJ::Face& face = faceArray[f];
+
+                // Index of the first vertex that we'll add for this face
+                const int prevNumVertices = part->cpuVertexArray.size();
 
                 // For each vertex
                 for (int v = 0; v < face.size(); ++v) {
@@ -171,21 +173,47 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
 
                     // We have no tangent, so force it to NaN
                     vertex.tangent = Vector4::nan();
-                }
-            }
+                } // for each vertex
 
-            // Tessellate the polygon into triangles, writing to both the part index array
-            // and the mesh index array.
-            for (int t = 2; t < faceArray.size(); ++t) {
-                int i = prevNumVertices + t - 2;
-                mesh->cpuIndexArray.append(i, i + 1, i + 2);
-            }
+                // Tessellate the polygon into triangles, writing to both the part index array
+                // and the mesh index array.
+                for (int t = 2; t < face.size(); ++t) {
+                    int i = prevNumVertices + t - 2;
+                    mesh->cpuIndexArray.append(i, i + 1, i + 2);
+                } // for each triangle in the face
+            } // for each face
         }
     }
 
     // If there are any texture coordinates, consider them all valid.  Only some of the
     // meshes may have texture coordinates, but those may need tangents and texcoords.
     part->m_hasTexCoord0 = (numSpecifiedTexCoord0s > 0);
+
+
+    // Debugging code
+    if (false) {
+        // Code for dumping the imported vertices
+        debugPrintf("** Vertices:\n");
+        for (int i = 0; i < part->cpuVertexArray.vertex.size(); ++i) {
+            const CPUVertexArray::Vertex& vertex = part->cpuVertexArray.vertex[i];
+            debugPrintf(" %d: %s %s %s %s\n", i, 
+                vertex.position.toString().c_str(), vertex.normal.toString().c_str(),
+                vertex.tangent.toString().c_str(), vertex.texCoord0.toString().c_str());
+        }
+        debugPrintf("\n");
+
+        // Code for dumping the imported indices
+        debugPrintf("** Indices:\n");
+        for (int m = 0; m < part->m_meshArray.size(); ++m) {
+            const Mesh* mesh = part->m_meshArray[m];
+            debugPrintf(" Mesh %s\n", mesh->name.c_str());
+            for (int i = 0; i < mesh->cpuIndexArray.size(); i += 3) {
+                debugPrintf(" %d-%d: %d %d %d\n", i, i + 2, mesh->cpuIndexArray[i], mesh->cpuIndexArray[i + 1], mesh->cpuIndexArray[i + 2]);
+            }
+            debugPrintf("\n");
+        }
+        debugPrintf("\n");
+    }
 }
 
 } // namespace G3D

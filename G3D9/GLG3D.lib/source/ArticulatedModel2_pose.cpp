@@ -93,7 +93,7 @@ void ArticulatedModel2::Part::copyToGPU() {
             uint16 dummy = 0;
             VertexRange temp(mesh->cpuIndexArray.size() * indexBytes, all);
             int N = mesh->cpuIndexArray.size();
-            mesh->gpuIndexArray = VertexRange(dummy, N, temp, 0, 0);
+            mesh->gpuIndexArray = VertexRange(dummy, N, temp, 0, sizeof(uint16));
             const int32* src = mesh->cpuIndexArray.getCArray();
             uint16* dst = (uint16*)mesh->gpuIndexArray.mapBuffer(GL_WRITE_ONLY);
             for (int i = 0; i < N; ++i) {
