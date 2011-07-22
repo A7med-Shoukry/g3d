@@ -26,12 +26,6 @@
     <ClInclude Include="..\scratch\morgan\ImageLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\scratch\morgan\ParseMTL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\scratch\morgan\ParseOBJ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\morgan\Scene.cpp">
@@ -41,12 +35,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\scratch\morgan\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\morgan\ParseMTL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\morgan\ParseOBJ.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
