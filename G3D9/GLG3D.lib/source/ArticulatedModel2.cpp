@@ -10,7 +10,7 @@
 
 
  TODO:
- - Fix texture coordinates
+ - Set bump map parallax steps
  - Transform
  - Intersect
  - Load other formats: IFS, PLY2, PLY, 3DS
