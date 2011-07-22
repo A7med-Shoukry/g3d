@@ -24,7 +24,7 @@ void ArticulatedModel2::pose
 
 
 void ArticulatedModel2::Part::pose
-(const ArticulatedModel::Ref& model,
+(const ArticulatedModel2::Ref& model,
  Array<Surface::Ref>&     surfaceArray,
  const CoordinateFrame&   parentFrame,
  const Pose&              posex,
@@ -55,7 +55,7 @@ void ArticulatedModel2::Part::pose
     for (int m = 0; m < m_meshArray.size(); ++m) {
         const Mesh* mesh = m_meshArray[m];
 
-        const SuperSurface::CPUGeom cpuGeom(&mesh->cpuIndexArray, cpuVertexArray);
+        const SuperSurface::CPUGeom cpuGeom(&mesh->cpuIndexArray, &cpuVertexArray);
         SuperSurface::Ref surface = SuperSurface::create(name + "/" + mesh->name, frame, prevFrame, mesh->gpuGeom, cpuGeom, model);
 
         surfaceArray.append(surface);

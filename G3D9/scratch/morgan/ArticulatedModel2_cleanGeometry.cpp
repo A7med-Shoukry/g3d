@@ -95,7 +95,7 @@ void ArticulatedModel2::computePartBounds() {
         Part* part = m_partArray[p];
         const CPUVertexArray::Vertex* vertexArray = part->cpuVertexArray.vertex.getCArray();
 
-        part->boundingBox = AABox::empty();
+        part->boxBounds = AABox::empty();
 
         for (int m = 0; m < part->m_meshArray.size(); ++m) {
             Mesh* mesh = part->m_meshArray[m];
@@ -107,12 +107,12 @@ void ArticulatedModel2::computePartBounds() {
                 meshBounds.merge(vertexArray[index[i]].position);
             }
 
-            mesh->boundingBox = meshBounds;
-            meshBounds.getBounds(mesh->boundingSphere);
-            part->boundingBox.merge(meshBounds);
+            mesh->boxBounds = meshBounds;
+            meshBounds.getBounds(mesh->sphereBounds);
+            part->boxBounds.merge(meshBounds);
         }
 
-        part->boundingBox.getBounds(part->boundingSphere);
+        part->boxBounds.getBounds(part->sphereBounds);
     }
 }
 

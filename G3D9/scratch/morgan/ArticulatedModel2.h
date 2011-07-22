@@ -14,12 +14,12 @@
  \beta This is a candidate to replace G3D::ArticulatedModel in G3D 9.00
 
  TODO:
- - create SuperSurfaces
- - transform
- - intersect
- - load other formats: IFS, PLY2, PLY, 3DS
- - create heightfield
- - create cornell box
+ - Integrate into Scene
+ - Transform
+ - Intersect
+ - Load other formats: IFS, PLY2, PLY, 3DS
+ - Create heightfield
+ - Create cornell box
  - Pack tangents into short4 format?
 */
 class ArticulatedModel2 : public ReferenceCountedObject {
@@ -314,7 +314,7 @@ public:
 
         /** Pose this part and all of its children */
         void pose
-            (const ArticulatedModel::Ref& model,
+            (const ArticulatedModel2::Ref& model,
              Array<Surface::Ref>&     surfaceArray,
              const CoordinateFrame&   parentFrame,
              const Pose&              pose,
