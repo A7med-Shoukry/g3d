@@ -182,9 +182,9 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
 
                     if (index.texCoord != ParseOBJ::UNDEFINED) {
                         vertex.texCoord0 = OBJToG3DTex(parseData.texCoordArray[index.texCoord]);
+                        ++numSpecifiedTexCoord0s;
                     } else {
                         vertex.texCoord0 = Point2::zero();
-                        ++numSpecifiedTexCoord0s;
                     }
 
                     // We have no tangent, so force it to NaN
@@ -204,7 +204,6 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
     // If there are any texture coordinates, consider them all valid.  Only some of the
     // meshes may have texture coordinates, but those may need tangents and texcoords.
     part->m_hasTexCoord0 = (numSpecifiedTexCoord0s > 0);
-
 
     // Debugging code
     if (false) {

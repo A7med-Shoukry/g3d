@@ -40,8 +40,8 @@
        */
 
        crateModel = ArticulatedModel2::Specification {
-//           filename = "models/crate/crate.obj";
-           filename = "models/teapot/teapot.obj";
+           filename = "models/crate/crate.obj";
+//           filename = "models/teapot/teapot.obj";
        };
     };
     

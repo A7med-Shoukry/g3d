@@ -11,7 +11,6 @@
 
  TODO:
  - Fix texture coordinates
- - Fix tangents
  - Transform
  - Intersect
  - Load other formats: IFS, PLY2, PLY, 3DS

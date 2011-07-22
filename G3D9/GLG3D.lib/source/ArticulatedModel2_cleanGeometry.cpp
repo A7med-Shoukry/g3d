@@ -20,45 +20,6 @@ void ArticulatedModel2::cleanGeometry(const CleanGeometrySettings& settings) {
 }
 
 
-void ArticulatedModel2::Part::clearVertexRanges() {
-    gpuPositionArray      = VertexRange();
-    gpuNormalArray        = VertexRange();
-    gpuTexCoord0Array     = VertexRange();
-    gpuTangentArray       = VertexRange();
-
-    for (int m = 0; m < m_meshArray.size(); ++m) {
-        m_meshArray[m]->gpuIndexArray = VertexRange();
-    }
-}
-
-
-void ArticulatedModel2::Part::determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents) {
-    computeSomeTangents = false;
-    computeSomeNormals = false;;
-
-    // See if normals are needed
-    for (int i = 0; i < cpuVertexArray.size(); ++i) {
-        if (isNaN(cpuVertexArray.vertex[i].normal.x)) {
-            computeSomeNormals = true;
-            computeSomeTangents = true;
-            // Wipe out the corresponding tangent vector
-            cpuVertexArray.vertex[i].tangent.x = fnan();
-        }
-    }
-    
-    // See if tangents are needed
-    if (! computeSomeTangents) {
-        // Maybe there is a NaN tangent in there
-        for (int i = 0; i < cpuVertexArray.size(); ++i) {
-            if (isNaN(cpuVertexArray.vertex[i].tangent.x)) {
-                computeSomeTangents = true;
-                break;
-            }
-        }
-    }    
-}
-
-
 void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& settings) {
     clearVertexRanges();
 
@@ -97,6 +58,47 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
     }
 
     cpuVertexArray.hasTexCoord0 = m_hasTexCoord0;
+
+    debugPrint();
+}
+
+
+void ArticulatedModel2::Part::clearVertexRanges() {
+    gpuPositionArray      = VertexRange();
+    gpuNormalArray        = VertexRange();
+    gpuTexCoord0Array     = VertexRange();
+    gpuTangentArray       = VertexRange();
+
+    for (int m = 0; m < m_meshArray.size(); ++m) {
+        m_meshArray[m]->gpuIndexArray = VertexRange();
+    }
+}
+
+
+void ArticulatedModel2::Part::determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents) {
+    computeSomeTangents = false;
+    computeSomeNormals = false;;
+
+    // See if normals are needed
+    for (int i = 0; i < cpuVertexArray.size(); ++i) {
+        if (isNaN(cpuVertexArray.vertex[i].normal.x)) {
+            computeSomeNormals = true;
+            computeSomeTangents = true;
+            // Wipe out the corresponding tangent vector
+            cpuVertexArray.vertex[i].tangent.x = fnan();
+        }
+    }
+    
+    // See if tangents are needed
+    if (! computeSomeTangents) {
+        // Maybe there is a NaN tangent in there
+        for (int i = 0; i < cpuVertexArray.size(); ++i) {
+            if (isNaN(cpuVertexArray.vertex[i].tangent.x)) {
+                computeSomeTangents = true;
+                break;
+            }
+        }
+    }    
 }
 
 
