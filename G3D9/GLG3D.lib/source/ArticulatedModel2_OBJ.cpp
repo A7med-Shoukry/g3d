@@ -128,7 +128,6 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
 
             // Construct the AModel::Mesh for this group+mesh combination
             Mesh* mesh = addMesh(group->name + "/" + srcMesh->material->name, part);
-            Array<int>& meshIndexArray = mesh->cpuIndexArray;
 
             if (specification.stripMaterials) {
                 // The default material
@@ -176,7 +175,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
             // and the mesh index array.
             for (int t = 2; t < faceArray.size(); ++t) {
                 int i = prevNumVertices + t - 2;
-                mesh->cpuIndexArray.append(t, t + 1, t + 2);
+                mesh->cpuIndexArray.append(i, i + 1, i + 2);
             }
         }
     }
