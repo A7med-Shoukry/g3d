@@ -16,6 +16,12 @@
 
 namespace G3D {
 
+ParseMTL::ParseMTL() {
+    // Always provide a default material
+    materialTable.set("default", Material::create());
+}
+
+
 void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
     materialTable.clear();
 
@@ -31,6 +37,8 @@ void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
     set.generateNewlineTokens = true;
     ti.pushSettings(set);
 
+    // Always provide a default material
+    materialTable.set("default", Material::create());
 
     while (ti.hasMore()) {
         // Consume comments/newlines
@@ -48,9 +56,6 @@ void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
         while (ti.hasMore() && (ti.read().type() != Token::NEWLINE));
     }
 
-    if (! materialTable.containsKey("default")) {
-        materialTable.set("default", Material::create());
-    }
 
     ti.popSettings();
 }

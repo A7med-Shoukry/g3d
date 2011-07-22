@@ -104,6 +104,8 @@ private:
 
 public:
 
+    ParseMTL();
+
     /** \param basePath Directory relative to which texture filenames are resolved. If "<AUTO>", the 
      path to the TextInput%'s file is used. */
     void parse(TextInput& ti, const std::string& basePath = "<AUTO>");
