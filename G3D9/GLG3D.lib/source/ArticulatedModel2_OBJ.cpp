@@ -87,7 +87,10 @@ static std::string resolveRelativeFilename(const std::string& filename, const st
 static Material::Specification toMaterialSpecification(const ParseMTL::Material::Ref& m) {
     Material::Specification s;
 
-    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), m->Kd);
+    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, m->d));
+    s.setSpecular(resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks);
+    s.setGlossyExponentShininess(m->Ns);
+    s.setBump(resolveRelativeFilename(m->map_bump, m->basePath));
 
     // TODO
 

@@ -17,7 +17,15 @@ namespace G3D {
 
 void ParseOBJ::parse(TextInput& ti, const std::string& basePath) {
 
-    // TODO: clear state
+    // Clear state
+    vertexArray.clear();
+    normalArray.clear();
+    texCoordArray.clear();
+    groupTable.clear();
+    m_basePath = "";
+    m_currentGroup = NULL;
+    m_currentMesh = NULL;
+    m_currentMaterial = NULL;
 
     m_basePath = basePath;
     if (m_basePath == "<AUTO>") {
