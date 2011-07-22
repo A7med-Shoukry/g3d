@@ -81,8 +81,6 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
         buildFaceArray(faceArray, adjacentFaceTable);
 
         if (computeSomeNormals) {
-            // Angles smaller than this are considered to be curves and not creases
-            const float maximumSmoothAngle = 45 * units::degrees();
             computeMissingVertexNormals(faceArray, adjacentFaceTable, settings.maxSmoothAngle);
         }
 
@@ -237,6 +235,18 @@ void ArticulatedModel2::Part::computeMissingTangents() {
 }
 
 
+
+/** Tracks if position and texcoord0 match, but ignores normals and tangents */
+struct AM2VertexHash { 
+    static size_t hashCode(const CPUVertexArray::Vertex& vertex) {
+        return vertex.position.hashCode() ^ vertex.texCoord0.hashCode();
+    }
+    static bool equals(const CPUVertexArray::Vertex& a, const CPUVertexArray::Vertex& b) {
+        return (a.position == b.position) && (a.texCoord0 == b.texCoord0);
+    }
+};
+
+
 void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float maxNormalWeldAngle) {
     // Clear all mesh index arrays
     for (int m = 0; m < m_meshArray.size(); ++m) {
@@ -248,21 +258,12 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
     // Clear the CPU vertex array
     cpuVertexArray.vertex.fastClear();
 
-    // Tracks if position and texcoord0 match, but ignores normals and tangents
-    struct VertexHash { 
-        static size_t hashCode(const CPUVertexArray::Vertex& vertex) {
-            return vertex.position.hashCode() ^ vertex.texCoord0.hashCode();
-        }
-        static bool equals(const CPUVertexArray::Vertex& a, const CPUVertexArray::Vertex& b) {
-            return (a.position == b.position) && (a.texCoord0 == b.texCoord0);
-        }
-    };
 
     // Track the location of vertices in cpuVertexArray by their exact texcoord and position.
     // The vertices in the list may have differing normals.
     typedef int VertexIndex;
     typedef SmallArray<VertexIndex, 4> VertexIndexList;
-    Table<CPUVertexArray::Vertex, VertexIndexList, VertexHash, VertexHash> vertexIndexTable;
+    Table<CPUVertexArray::Vertex, VertexIndexList, AM2VertexHash, AM2VertexHash> vertexIndexTable;
 
     const float normalClosenessThreshold = cos(maxNormalWeldAngle);
 
