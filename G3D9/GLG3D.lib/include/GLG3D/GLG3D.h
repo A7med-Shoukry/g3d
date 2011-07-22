@@ -7,7 +7,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2002-08-07
- \edited  2011-06-21
+ \edited  2011-07-22
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -131,6 +131,8 @@
 
 #include "GLG3D/Discovery.h"
 #include "GLG3D/GEntity.h"
+#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/CPUVertexArray.h"
 
 #include "GLG3D/PhysicsFrameSplineEditor.h"
 

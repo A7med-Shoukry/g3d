@@ -1,5 +1,7 @@
-#include "ArticulatedModel2.h"
-#include "ParseOBJ.h"
+#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ParseOBJ.h"
+
+namespace G3D {
 
 static void stripMaterials(ParseOBJ& parseData) {
     ParseMTL::Material::Ref defaultMaterial = ParseMTL::Material::create();
@@ -171,3 +173,4 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
     part->m_hasTexCoord0 = (numSpecifiedTexCoord0s > 0);
 }
 
+} // namespace G3D

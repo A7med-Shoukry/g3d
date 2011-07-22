@@ -162,6 +162,8 @@
     <ClCompile Include="..\G3D.lib\source\NetworkDevice.cpp" />
     <ClCompile Include="..\G3D.lib\source\Noise.cpp" />
     <ClCompile Include="..\G3D.lib\source\ParseError.cpp" />
+    <ClCompile Include="..\G3D.lib\source\ParseMTL.cpp" />
+    <ClCompile Include="..\G3D.lib\source\ParseOBJ.cpp" />
     <ClCompile Include="..\G3D.lib\source\PhysicsFrame.cpp" />
     <ClCompile Include="..\G3D.lib\source\PhysicsFrameSpline.cpp" />
     <ClCompile Include="..\G3D.lib\source\Plane.cpp" />
@@ -273,6 +275,8 @@
     <ClInclude Include="..\G3D.lib\include\G3D\NetworkDevice.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Noise.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ParseError.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\ParseMTL.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\ParseOBJ.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\PhysicsFrame.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\PhysicsFrameSpline.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Plane.h" />

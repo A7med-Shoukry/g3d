@@ -405,6 +405,8 @@ href="classes.html">Classes</a>.
         \link G3D::ParseError ParseError\endlink,
         \link G3D::readWholeFile readWholeFile\endlink,
         \link G3D::serialize serialize\endlink,
+		\link G3D::ParseOBJ ParseOBJ\endlink,
+		\link G3D::ParseMTL ParseMTL\endlink,
         \link G3D::TextInput TextInput\endlink,
         \link G3D::TextOutput TextOutput\endlink,
         \link G3D::Token Token\endlink,

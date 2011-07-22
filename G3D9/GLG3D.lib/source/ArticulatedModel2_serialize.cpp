@@ -1,4 +1,16 @@
-#include "ArticulatedModel2.h"
+/**
+ \file GLG3D/source/ArticulatedModel2_zerialize.cpp
+
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2011-07-18
+ \edited  2011-07-22
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+*/
+#include "GLG3D/ArticulatedModel2.h"
+
+namespace G3D {
 
 ArticulatedModel2::CleanGeometrySettings::CleanGeometrySettings(const Any& a) {
     *this = CleanGeometrySettings();
@@ -63,3 +75,5 @@ void ArticulatedModel2::PoseSpline::get(float t, ArticulatedModel2::Pose& pose) 
         }
     }
 }
+
+} // namespace G3D

@@ -1,8 +1,32 @@
+/**
+ \file GLG3D/ArticulatedModel2.h
+
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2011-07-19
+ \edited  2011-07-22
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+*/
 #ifndef GLG3D_ArticulatedModel2_h
 #define GLG3D_ArticulatedModel2_h
 
-#include <G3D/G3DAll.h>
+#include "G3D/platform.h"
+#include "G3D/ReferenceCount.h"
+#include "G3D/Matrix4.h"
+#include "G3D/AABox.h"
+#include "G3D/Sphere.h"
+#include "G3D/Array.h"
+#include "G3D/Table.h"
+#include "G3D/constants.h"
+#include "G3D/PhysicsFrameSpline.h"
+#include "GLG3D/CPUVertexArray.h"
+#include "GLG3D/Material.h"
+#include "GLG3D/VertexRange.h"
+#include "GLG3D/Surface.h"
+#include "GLG3D/SuperSurface.h"
 
+namespace G3D {
 
 /**
  \brief A 3D object composed of multiple rigid triangle meshes connected by joints.
@@ -426,4 +450,6 @@ public:
         float&          v) const;
 };
 
-#endif
+}  // namespace G3D
+
+#endif // GLG3D_ArticulatedModel2_h

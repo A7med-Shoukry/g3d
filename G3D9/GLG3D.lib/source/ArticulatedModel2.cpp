@@ -1,5 +1,6 @@
-#include "ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel2.h"
 
+namespace G3D {
 
 const ArticulatedModel2::Pose& ArticulatedModel2::defaultPose() {
     static const Pose p;
@@ -90,3 +91,5 @@ bool ArticulatedModel2::intersect
 
     alwaysAssertM(false, "TODO");
 }
+
+} // namespace G3D

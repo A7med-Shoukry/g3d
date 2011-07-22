@@ -26,56 +26,7 @@
 
 namespace G3D {
 
-    
-/** \brief Array of vertices with interlaced position, normal, texCoord, and tangent attributes.
-
-\beta 
-
-\sa SuperSurface::CPUGeom
-*/
-class CPUVertexArray {
-public:
-
-    /** \brief Packed vertex attributes. 
-    
-    \sa Part::cpuVertexArray */
-    class Vertex {
-    public:
-        /** Part-space position */
-        Point3                  position;
-
-        /** Part-space normal */
-        Vector3                 normal;
-
-        /** xyz = tangent, w = sign */
-        Vector4                 tangent;
-
-        /** Texture coordinate 0, setting a convention for expansion in later API versions. */
-        Point2                  texCoord0;
-    };
-
-    Array<Vertex>               vertex;
-
-    /** True if texCoord0 contains valid data. */
-    bool                        hasTexCoord0;
-
-    /** True if tangent contains valid data. */
-    bool                        hasTangent;
-
-    CPUVertexArray() : hasTexCoord0(true), hasTangent(true) {}
-
-    int size() const {
-        return vertex.size();
-    }
-
-    void copyToGPU
-    (VertexRange&               vertex, 
-     VertexRange&               normal, 
-     VertexRange&               packedTangent, 
-     VertexRange&               texCoord0,
-     VertexBuffer::UsageHint    hint = VertexBuffer::WRITE_ONCE) const;
-};
-
+class CPUVertexArray;
 
 /**
    \brief An optimized implementation G3D::Surface for

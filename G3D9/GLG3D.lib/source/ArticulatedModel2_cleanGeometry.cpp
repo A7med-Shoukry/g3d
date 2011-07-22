@@ -1,4 +1,16 @@
-#include "ArticulatedModel2.h"
+/**
+ \file GLG3D/source/ArticulatedModel2_cleanGeometry.cpp
+
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2011-07-18
+ \edited  2011-07-22
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+*/
+#include "GLG3D/ArticulatedModel2.h"
+
+namespace G3D {
 
 void ArticulatedModel2::cleanGeometry(const CleanGeometrySettings& settings) {
     for (int p = 0; p < m_partArray.size(); ++p) {
@@ -370,3 +382,5 @@ void ArticulatedModel2::Part::buildFaceArray(Array<Face>& faceArray, Face::Adjac
         }
     }
 }
+
+} // namespace G3D

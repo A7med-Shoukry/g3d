@@ -26,9 +26,6 @@
     <ClInclude Include="..\scratch\morgan\ImageLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\scratch\morgan\ArticulatedModel2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\scratch\morgan\ParseMTL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -46,25 +43,10 @@
     <ClCompile Include="..\scratch\morgan\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scratch\morgan\ArticulatedModel2_OBJ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\scratch\morgan\ParseMTL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\scratch\morgan\ParseOBJ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\morgan\ArticulatedModel2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\morgan\ArticulatedModel2_cleanGeometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\morgan\ArticulatedModel2_serialize.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\morgan\ArticulatedModel2_pose.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

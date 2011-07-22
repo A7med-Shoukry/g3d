@@ -101,6 +101,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_cleanGeometry.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OBJ.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_pose.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_serialize.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp" />
@@ -110,6 +115,7 @@
     <ClCompile Include="..\GLG3D.lib\source\BumpMap.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\CameraControlWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Component.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\CPUVertexArray.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DDSTexture.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DeveloperWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DirectionHistogram.cpp" />
@@ -195,11 +201,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h" />
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel2.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BumpMap.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\CameraControlWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\CarbonWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Component.h" />
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\CPUVertexArray.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\DeveloperWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\DirectionHistogram.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Discovery.h" />

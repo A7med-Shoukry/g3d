@@ -1,5 +1,16 @@
-#include "ArticulatedModel2.h"
+/**
+ \file GLG3D/source/ArticulatedModel2_pose.cpp
 
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2011-07-16
+ \edited  2011-07-22
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+*/
+#include "GLG3D/ArticulatedModel2.h"
+
+namespace G3D {
 
 void ArticulatedModel2::pose
 (Array<Surface::Ref>&     surfaceArray,
@@ -106,3 +117,6 @@ void ArticulatedModel2::Part::copyToGPU() {
         mesh->gpuGeom->packedTangent = gpuTangentArray;
     }
 }
+
+} // namespace G3D
+
