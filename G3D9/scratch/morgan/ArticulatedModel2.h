@@ -122,10 +122,13 @@ public:
         bool                        twoSided;
 
         /** Relative to the Part containing it. */
-        Sphere                      boundingSphere;
+        Sphere                      sphereBounds;
 
         /** Relative to the Part containing it. */
-        AABox                       boundingBox;
+        AABox                       boxBounds;
+
+        /** Written by Part::copyToGPU */
+        SuperSurface::GPUGeom::Ref  gpuGeom;
 
     private:
 
@@ -226,10 +229,10 @@ public:
         CFrame                      cframe;
 
         /** Bounding sphere of just this Part's geometry, in object space. Does not include child parts.*/
-        Sphere                      boundingSphere;
+        Sphere                      sphereBounds;
 
         /** Bounding box of just this Part's geometry, in object space. Does not include child parts.*/
-        AABox                       boundingBox;
+        AABox                       boxBounds;
 
         CPUVertexArray              cpuVertexArray;
 
@@ -261,6 +264,9 @@ public:
 
         /** Called from cleanGeometry(). Computes all tangents that are currently NaN.*/
         void computeMissingTangents();
+
+        /** Uploads all data for this part and its meshes to the GPU.  Does not affect children. */
+        void copyToGPU();
 
         Part(const std::string& name, Part* parent) : name(name), m_parent(parent) {}
 
@@ -308,7 +314,8 @@ public:
 
         /** Pose this part and all of its children */
         void pose
-            (Array<Surface::Ref>&     surfaceArray,
+            (const ArticulatedModel::Ref& model,
+             Array<Surface::Ref>&     surfaceArray,
              const CoordinateFrame&   parentFrame,
              const Pose&              pose,
              const CoordinateFrame&   prevParentFrame,
