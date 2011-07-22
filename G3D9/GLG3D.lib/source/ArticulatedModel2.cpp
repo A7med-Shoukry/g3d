@@ -1,3 +1,13 @@
+/**
+ \file GLG3D/source/ArticulatedModel2.h
+
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2011-07-19
+ \edited  2011-07-22
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+*/
 #include "GLG3D/ArticulatedModel2.h"
 
 namespace G3D {

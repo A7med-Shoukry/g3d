@@ -1,5 +1,15 @@
+/**
+ \file GLG3D/source/ArticulatedModel2_OBJ.h
+
+ \author Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2011-07-19
+ \edited  2011-07-22
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+*/
 #include "GLG3D/ArticulatedModel2.h"
-#include "GLG3D/ParseOBJ.h"
+#include "G3D/ParseOBJ.h"
 
 namespace G3D {
 
@@ -134,7 +144,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
                 // For each vertex
                 for (int v = 0; v < face.size(); ++v) {
                     const ParseOBJ::Index& index = face[v];
-                    debugAssert(index.vertexArray != ParseOBJ::UNDEFINED);
+                    debugAssert(index.vertex != ParseOBJ::UNDEFINED);
 
                     CPUVertexArray::Vertex& vertex = part->cpuVertexArray.vertex.next();
 
