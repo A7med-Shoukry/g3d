@@ -5,16 +5,58 @@
 
 
 /**
+ \brief A 3D object composed of multiple rigid triangle meshes connected by joints.
 
+ Supports OBJ file format.
 
+ \sa ArticulatedModel
+
+ \beta This is a candidate to replace G3D::ArticulatedModel in G3D 9.00
 */
 class ArticulatedModel2 : public ReferenceCountedObject {
 public:
 
     typedef ReferenceCountedPointer<ArticulatedModel2> Ref;
 
+    /** Parameters for  cleanGeometry() */
+    class CleanGeometrySettings {
+    public:
+        
+        /** Set to true to check for redundant vertices even if 
+           no normals or tangents need to be computed. This may increase
+           rendering performance and decrease cleanGeometry() performance.           
+           Default: true.
+           */
+        bool                        forceVertexMerging;
+
+        /**
+          Maximum angle in radians that a normal can be bent through to merge two vertices. 
+          Default: 5 degrees().
+          */
+        float                       maxNormalWeldAngle;
+
+        /** 
+        Maximum angle in radians between the normals of adjacent faces that will still create
+        the appearance of a smooth surface between them.  Alternatively, the minimum
+        angle between those normals required to create a sharp crease.
+
+        Set to 0 to force faceting of a model.  Set to 2 * pif() to make completely smooth.
+
+        Default: 45 degrees().
+        */
+        float                       maxSmoothAngle;
+
+        CleanGeometrySettings() : 
+            forceVertexMerging(true), 
+            maxNormalWeldAngle(5 * units::degrees()),
+            maxSmoothAngle(45 * units::degrees()) {
+        }
+    };
+
+    /** \brief Parameters for constructing a new ArticulatedModel from a file on disk.*/
     class Specification {
     public:
+        /** Materials will be loaded relative to this file.*/
         std::string                 filename;
 
         /** Transformation to apply to vertices in the global reference frame at load time.
@@ -35,6 +77,8 @@ public:
         that are unlikely to all be visible in the frustum simultaneously. 
         */
         bool                        mergeMeshesByMaterial;
+
+        CleanGeometrySettings       cleanGeometrySettings;
     };
 
     class Mesh {
@@ -195,10 +239,8 @@ public:
         - Updates all Mesh indices accordingly.
         - Recomputes the bounding sphere.
 
-        \param alwaysMergeVertices  Set to true to check for redundant vertices even if 
-          no normals or tangents need to be computed.
         */
-        void cleanGeometry(bool alwaysMergeVertices = false);
+        void cleanGeometry(const CleanGeometrySettings& settings);
     };
 
     /** Base class for defining operations to perform on each part, in hierarchy order.*/
@@ -219,14 +261,22 @@ private:
 
 public:
 
+    /** \sa createEmpty */
+    static Ref create(const Specification& s);
+
+    /** \sa create, addMesh, addPart */
+    static Ref createEmpty(const std::string& name);
+
     /** Root parts.  There may be more than one. */
     const Array<Part*>& rootArray() const;
 
+    /** \sa addPart, createEmpty */
     Mesh* addMesh(const std::string& name, Part* part) {
         part->m_meshArray.append(new Mesh(name));
         return part->m_meshArray.last();
     }
 
+    /** \sa addMesh, createEmpty */
     Part* addPart(const std::string& name, Part* parent = NULL) {
         m_partArray.append(new Part(name, parent));
         if (parent == NULL) {
@@ -235,16 +285,16 @@ public:
         return m_partArray.last();
     }
 
-    /** Walks the hierarchy and invokes PartCallback on each element. */
+    /** Walks the hierarchy and invokes PartCallback \a c on each Part. */
     void forEachPart(PartCallback& c);
     
     /** 
-     Invokes Part::cleanGeometry on all parts.
+      Invokes Part::cleanGeometry on all parts.
 
         \param alwaysMergeVertices  Set to true to check for redundant vertices even if 
           no normals or tangents need to be computed.
      */
-    void cleanGeometry(bool alwaysMergeVertices = false);
+    void cleanGeometry(const CleanGeometrySettings& settings);
 
 private:
 
