@@ -91,12 +91,7 @@ public:
             maxSmoothAngle(45 * units::degrees()) {
         }
 
-        explicit CleanGeometrySettings(const Any& a);
-        
-        CleanGeometrySettings& operator=(const Any& a) {
-            *this = CleanGeometrySettings(a);
-            return *this;
-        }
+        CleanGeometrySettings(const Any& a);
 
         Any toAny() const;
     };
@@ -133,7 +128,7 @@ public:
         CleanGeometrySettings       cleanGeometrySettings;
 
         Specification() : xform(Matrix4::identity()), stripMaterials(false), mergeMeshesByMaterial(false) {}
-        explicit Specification(const Any& a);
+        Specification(const Any& a);
         Any toAny() const;
     };
 
@@ -361,6 +356,8 @@ public:
 
     /** The rest pose.*/
     static const Pose& defaultPose();
+
+    std::string                     name;
 
 private:
 

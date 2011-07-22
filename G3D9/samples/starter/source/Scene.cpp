@@ -95,7 +95,10 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
     for (Any::AnyTable::Iterator it = models.table().begin(); it.isValid(); ++it) {
         ModelRef m;
         Any v = it->value;
-        if (v.nameBeginsWith("ArticulatedModel")) {
+        if (v.nameBeginsWith("ArticulatedModel2")) {
+            m = ArticulatedModel2::create(v);
+            m.downcast<ArticulatedModel2>()->name = it->key;
+        } else if (v.nameBeginsWith("ArticulatedModel")) {
             m = ArticulatedModel::create(v);
             m.downcast<ArticulatedModel>()->name = it->key;
         } else if (v.nameBeginsWith("MD2Model")) {

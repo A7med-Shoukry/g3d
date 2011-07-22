@@ -5,6 +5,7 @@
     name = "Crates",
    
     models = {
+        /*
        shipModel = #include("3ds/spaceFighter01/spaceFighter01.am.any"),
        
        groundModel = ArticulatedModel::Specification {
@@ -24,6 +25,8 @@
             }
        },
         
+        */
+           /*
        crateModel = ArticulatedModel::Specification {            
             filename = "ifs/crate.ifs",
             preprocess = ArticulatedModel::Preprocess {
@@ -34,23 +37,28 @@
                 materialOverride = #include("material/metalcrate/metalcrate.mat.any")              
             }
        },
-    },
+       */
+
+       crateModel = ArticulatedModel2::Specification {
+           filename = "models/crate/crate.obj";
+       };
+    };
     
     lighting = Lighting::Specification {
         lightArray = (GLight::directional(Vector3(1, 2, 1), Color3(10), true),
-                     GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false)),
+                     GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false));
 
         environmentMap = {
-            constant = 1.0,
+            constant = 1.0;
             texture = Texture::Specification {
-                filename      = "cubemap/noonclouds/noonclouds_*.png",
-                desiredFormat = "RGB8",
-                dimension     = "DIM_CUBE_MAP",
-                settings      = Texture::Settings::cubeMap(),
-                preprocess    = Texture::Preprocess::gamma(2.1f)
-            }
-        },
-    },
+                filename      = "cubemap/noonclouds/noonclouds_*.png";
+                desiredFormat = "RGB8";
+                dimension     = "DIM_CUBE_MAP";
+                settings      = Texture::Settings::cubeMap();
+                preprocess    = Texture::Preprocess::gamma(2.1f);
+            };
+        };
+    };
     
     entities = {
         // Each entity has a name and is an instance of a model.  The instantiation syntax accepts
@@ -61,7 +69,7 @@
             model    = "crateModel",
             position = Vector3(1.0, 0.5, 0.0),
         },
-        
+        /*
         c1 = Entity {
             model = "crateModel",
             position = CFrame::fromXYZYPRDegrees(0.6f, 0.5f, -1.8f, 30.0f),
@@ -94,15 +102,16 @@
             model    = "groundModel",
             position = CFrame::fromXYZYPRDegrees(0, -0.01, 0, 45)
         }
-    },
+        */
+    };
         
     camera = GCamera {
-        coordinateFrame = CFrame::fromXYZYPRDegrees( -0.0f,   0.6f,   1.8f,  341.1f,  -0.0f,   0.0f),
+        coordinateFrame = CFrame::fromXYZYPRDegrees( -0.0f,   0.6f,   1.8f,  341.1f,  -0.0f,   0.0f);
         
-        nearPlaneZ = -0.5,
-        farPlaneZ = -50,
-        fovDirection = "VERTICAL",
-        fovDegrees = 60
-    }
+        nearPlaneZ = -0.5;
+        farPlaneZ = -50;
+        fovDirection = "VERTICAL";
+        fovDegrees = 60;
+    };
    
 }

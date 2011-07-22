@@ -18,6 +18,13 @@ const ArticulatedModel2::Pose& ArticulatedModel2::defaultPose() {
 }
 
 
+ArticulatedModel2::Ref ArticulatedModel2::create(const ArticulatedModel2::Specification& specification) {
+    Ref a = new ArticulatedModel2();
+    a->load(specification);
+    return a;
+}
+
+
 void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& parentFrame, Part* part) {
     // Net transformation from part to world space
     const CFrame& net = parentFrame * part->cframe;

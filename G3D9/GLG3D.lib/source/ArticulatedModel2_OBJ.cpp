@@ -10,6 +10,7 @@
 */
 #include "GLG3D/ArticulatedModel2.h"
 #include "G3D/ParseOBJ.h"
+#include "G3D/FileSystem.h"
 
 namespace G3D {
 
@@ -98,7 +99,9 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
         parseData.parse(ti);
     }
 
-    Part* part = addPart(specification.filename);
+    name = FilePath::base(specification.filename);
+
+    Part* part = addPart(name);
 
     if (specification.stripMaterials) {
         stripMaterials(parseData);
