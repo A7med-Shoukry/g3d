@@ -129,8 +129,8 @@ void ArticulatedModel2::Part::pose
     }
 
     // Pose the children
-    for (int c = 0; p < m_child.size(); ++c) {
-        m_child[c]->pose(surfaceArray, frame, pose, prevFrame, prevPose);
+    for (int c = 0; c < m_child.size(); ++c) {
+        m_child[c]->pose(surfaceArray, frame, posex, prevFrame, prevPose);
     }
 }
 

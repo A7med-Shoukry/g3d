@@ -153,7 +153,53 @@ public:
         /** xyz = tangent, w = sign */
         Vector4                 tangent;
     };
-        
+
+
+    /** Specifies the transformation that occurs at each node in the heirarchy. 
+     */
+    class Pose {
+    public:
+        /** Mapping from names to coordinate frames (relative to parent).
+            If a name is not present, its coordinate frame is assumed to
+            be the identity.
+         */
+        Table<std::string, CoordinateFrame>     cframe;
+
+        Pose() {}
+    };
+
+
+    class PoseSpline {
+    public:
+        typedef Table<std::string, PhysicsFrameSpline> SplineTable;
+        SplineTable partSpline;
+
+        PoseSpline();
+
+        /**
+         The Any must be a table mapping part names to PhysicsFrameSplines.
+         Note that a single PhysicsFrame (or any equivalent of it) can serve as
+         to create a PhysicsFrameSpline.  
+
+         <pre>
+            PoseSpline {
+                "part1" = PhysicsFrameSpline {
+                   control = ( Vector3(0,0,0),
+                               CFrame::fromXYZYPRDegrees(0,1,0,35)),
+                   cyclic = true
+                },
+
+                "part2" = Vector3(0,1,0)
+            }
+         </pre>
+        */
+        PoseSpline(const Any& any);
+     
+        /** Get the pose at time t, overriding values in \a pose that are specified by the spline. */
+        void get(float t, ArticulatedModel2::Pose& pose);
+    };
+
+
     /** 
      \brief A set of meshes with a single reference frame, packed into a common vertex buffer.
     */
@@ -290,49 +336,6 @@ public:
              const Pose&              prevPose);
     };
 
-    /** Specifies the transformation that occurs at each node in the heirarchy. 
-     */
-    class Pose {
-    public:
-        /** Mapping from names to coordinate frames (relative to parent).
-            If a name is not present, its coordinate frame is assumed to
-            be the identity.
-         */
-        Table<std::string, CoordinateFrame>     cframe;
-
-        Pose() {}
-    };
-
-
-    class PoseSpline {
-    public:
-        typedef Table<std::string, PhysicsFrameSpline> SplineTable;
-        SplineTable partSpline;
-
-        PoseSpline();
-
-        /**
-         The Any must be a table mapping part names to PhysicsFrameSplines.
-         Note that a single PhysicsFrame (or any equivalent of it) can serve as
-         to create a PhysicsFrameSpline.  
-
-         <pre>
-            PoseSpline {
-                "part1" = PhysicsFrameSpline {
-                   control = ( Vector3(0,0,0),
-                               CFrame::fromXYZYPRDegrees(0,1,0,35)),
-                   cyclic = true
-                },
-
-                "part2" = Vector3(0,1,0)
-            }
-         </pre>
-        */
-        PoseSpline(const Any& any);
-     
-        /** Get the pose at time t, overriding values in \a pose that are specified by the spline. */
-        void get(float t, ArticulatedModel2::Pose& pose);
-    };
 
     /** Base class for defining operations to perform on each part, in hierarchy order.*/
     class PartCallback {
