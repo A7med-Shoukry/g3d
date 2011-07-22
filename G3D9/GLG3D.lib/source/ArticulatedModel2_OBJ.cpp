@@ -93,7 +93,10 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
     // need to be.
 
     ParseOBJ parseData;
-    parseData.parse(TextInput(specification.filename));
+    {
+        TextInput ti(specification.filename);
+        parseData.parse(ti);
+    }
 
     Part* part = addPart(specification.filename);
 
