@@ -4,10 +4,10 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2008-11-12
-  \edited  2011-07-04
+  \edited  2011-07-22
 */
-#ifndef G3D_SuperSurface_h
-#define G3D_SuperSurface_h
+#ifndef GLG3D_SuperSurface_h
+#define GLG3D_SuperSurface_h
 
 #include "G3D/platform.h"
 #include "G3D/System.h"
@@ -26,6 +26,57 @@
 
 namespace G3D {
 
+    
+/** \brief Array of vertices with interlaced position, normal, texCoord, and tangent attributes.
+
+\beta 
+
+\sa SuperSurface::CPUGeom
+*/
+class CPUVertexArray {
+public:
+
+    /** \brief Packed vertex attributes. 
+    
+    \sa Part::cpuVertexArray */
+    class Vertex {
+    public:
+        /** Part-space position */
+        Point3                  position;
+
+        /** Part-space normal */
+        Vector3                 normal;
+
+        /** xyz = tangent, w = sign */
+        Vector4                 tangent;
+
+        /** Texture coordinate 0, setting a convention for expansion in later API versions. */
+        Point2                  texCoord0;
+    };
+
+    Array<Vertex>               vertex;
+
+    /** True if texCoord0 contains valid data. */
+    bool                        hasTexCoord0;
+
+    /** True if tangent contains valid data. */
+    bool                        hasTangent;
+
+    CPUVertexArray() : hasTexCoord0(true), hasTangent(true) {}
+
+    int size() const {
+        return vertex.size();
+    }
+
+    void copyToGPU
+    (VertexRange&               vertex, 
+     VertexRange&               normal, 
+     VertexRange&               packedTangent, 
+     VertexRange&               texCoord0,
+     VertexBuffer::UsageHint    hint = VertexBuffer::WRITE_ONCE) const;
+};
+
+
 /**
    \brief An optimized implementation G3D::Surface for
    G3D::SuperShader / G3D::Material classes.
@@ -34,6 +85,7 @@ namespace G3D {
  */
 class SuperSurface : public Surface {
 public:
+
 
     typedef ReferenceCountedPointer<SuperSurface> Ref;
 
@@ -48,14 +100,14 @@ public:
         System::free(p);
     }
 
-    /** @brief A GPU mesh utility class that works with G3D::SuperSurface.
+    /** \brief A GPU mesh utility class that works with G3D::SuperSurface.
         
         A set of lines, points, quads, or triangles that have a
         single Material and can be rendered as a single OpenGL
         primitive using RenderDevice::sendIndices inside a
         RenderDevice::beginIndexedPrimitives() block.
         
-        @sa G3D::MeshAlg, G3D::ArticulatedModel, G3D::Surface
+        \sa G3D::MeshAlg, G3D::ArticulatedModel, G3D::Surface, G3D::CPUVertexArray
     */
     class GPUGeom : public ReferenceCountedObject {
     public:
@@ -104,6 +156,10 @@ public:
     class CPUGeom {
     public:
         const Array<int>*        index;
+
+        /** If non-NULL, this superceeds geometry, packedTangent, and texCoord0.*/
+        const CPUVertexArray*    vertexArray;
+
         const MeshAlg::Geometry* geometry;
 
         /**  Packs two tangents, T1 and T2 that form a reference frame with the normal such that 
@@ -114,15 +170,27 @@ public:
         const Array<Vector4>*    packedTangent;
         const Array<Vector2>*    texCoord0;
         
-        inline CPUGeom(
-                const Array<int>*           index,
-                const MeshAlg::Geometry*    geometry,
-                const Array<Vector2>*       texCoord0,
-                const Array<Vector4>*       packedTangent = NULL) : 
-            index(index), geometry(geometry), packedTangent(packedTangent), 
+        CPUGeom
+           (const Array<int>*           index,
+            const MeshAlg::Geometry*    geometry,
+            const Array<Vector2>*       texCoord0,
+            const Array<Vector4>*       packedTangent = NULL) : 
+            index(index), 
+            vertexArray(NULL),
+            geometry(geometry), 
+            packedTangent(packedTangent), 
             texCoord0(texCoord0) {}
 
-        CPUGeom() : index(NULL), geometry(NULL), packedTangent(NULL), texCoord0(NULL) {}
+        CPUGeom
+           (const Array<int>*           index,
+            const CPUVertexArray*       vertexArray) : 
+            index(index), 
+            vertexArray(vertexArray),
+            geometry(NULL),
+            packedTangent(NULL), 
+            texCoord0(NULL) {}
+
+        CPUGeom() : index(NULL), vertexArray(NULL), geometry(NULL), packedTangent(NULL), texCoord0(NULL) {}
 
         /** Updates the interleaved vertex arrays.  If they are not
             big enough, allocates a new vertex buffer and reallocates

@@ -1031,34 +1031,81 @@ void SuperSurface::CPUGeom::copyVertexDataToGPU
  VertexRange&               texCoord0VAR, 
  VertexBuffer::UsageHint    hint) {
 
-    int vtxSize = sizeof(Vector3) * geometry->vertexArray.size();
-    int texSize = sizeof(Vector2) * texCoord0->size();
-    int tanSize = sizeof(Vector4) * packedTangent->size();
+    if (vertexArray != NULL) {
+        // G3D 9.00
 
-    if ((vertex.maxSize() >= vtxSize) &&
-        (normal.maxSize() >= vtxSize) &&
-        ((tanSize == 0) || (packedTangentVAR.maxSize() >= tanSize)) &&
-        ((texSize == 0) || (texCoord0VAR.maxSize() >= texSize))) {
-        VertexRange::updateInterleaved
-           (geometry->vertexArray,  vertex,
-            geometry->normalArray,  normal,
-            *packedTangent,         packedTangentVAR,
-            *texCoord0,             texCoord0VAR);
+        vertexArray->copyToGPU(vertex, normal, packedTangentVAR, texCoord0VAR, hint);
 
     } else {
+        // G3D 8.00 support
 
-        // Maximum round-up size of varArea.
-        int roundOff = 16;
+        int vtxSize = sizeof(Vector3) * geometry->vertexArray.size();
+        int texSize = sizeof(Vector2) * texCoord0->size();
+        int tanSize = sizeof(Vector4) * packedTangent->size();
 
-        // Allocate new VARs
-        VertexBuffer::Ref varArea = VertexBuffer::create(vtxSize * 2 + texSize + tanSize + roundOff, hint);
-        VertexRange::createInterleaved
-            (geometry->vertexArray, vertex,
-             geometry->normalArray, normal,
-             *packedTangent,        packedTangentVAR,
-             *texCoord0,            texCoord0VAR,
-             varArea);       
+        if ((vertex.maxSize() >= vtxSize) &&
+            (normal.maxSize() >= vtxSize) &&
+            ((tanSize == 0) || (packedTangentVAR.maxSize() >= tanSize)) &&
+            ((texSize == 0) || (texCoord0VAR.maxSize() >= texSize))) {
+            VertexRange::updateInterleaved
+               (geometry->vertexArray,  vertex,
+                geometry->normalArray,  normal,
+                *packedTangent,         packedTangentVAR,
+                *texCoord0,             texCoord0VAR);
+
+        } else {
+
+            // Maximum round-up size of varArea.
+            int roundOff = 16;
+
+            // Allocate new VARs
+            VertexBuffer::Ref varArea = VertexBuffer::create(vtxSize * 2 + texSize + tanSize + roundOff, hint);
+            VertexRange::createInterleaved
+                (geometry->vertexArray, vertex,
+                 geometry->normalArray, normal,
+                 *packedTangent,        packedTangentVAR,
+                 *texCoord0,            texCoord0VAR,
+                 varArea);       
+        }
     }
 }
 
+
+void CPUVertexArray::copyToGPU
+(VertexRange&               vertexVR, 
+ VertexRange&               normalVR, 
+ VertexRange&               packedTangentVR, 
+ VertexRange&               texCoord0VR,
+ VertexBuffer::UsageHint    hint) const {
+
+#   define OFFSET(field) ((size_t)(&dummy.field) - (size_t)&dummy)
+
+    const int numVertices = size();
+    if (numVertices > 0) {
+        const int byteSize = sizeof(Vertex) * numVertices;
+        const int padding = 16;
+
+        VertexBuffer::Ref buffer = VertexBuffer::create(byteSize + padding, VertexBuffer::WRITE_ONCE);
+        
+        VertexRange all(byteSize, buffer);
+
+        Vertex dummy;
+        vertexVR        = VertexRange(dummy.position,  numVertices, all, OFFSET(position),  sizeof(Vertex));
+        normalVR        = VertexRange(dummy.normal,    numVertices, all, OFFSET(normal),    sizeof(Vertex));
+        packedTangentVR = VertexRange(dummy.tangent,   numVertices, all, OFFSET(tangent),   sizeof(Vertex));
+        texCoord0VR     = VertexRange(dummy.texCoord0, numVertices, all, OFFSET(texCoord0), sizeof(Vertex));
+
+        // Copy all interleaved data at once
+        Vertex* dst = (Vertex*)all.mapBuffer(GL_WRITE_ONLY);
+
+        System::memcpy(dst, vertex.getCArray(), byteSize);
+
+        all.unmapBuffer();
+        dst = NULL;
+    }
+
+#undef OFFSET
 }
+
+} // G3D
+

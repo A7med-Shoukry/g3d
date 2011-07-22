@@ -20,6 +20,7 @@
  - load other formats: IFS, PLY2, PLY, 3DS
  - create heightfield
  - create cornell box
+ - Pack tangents into short4 format?
 */
 class ArticulatedModel2 : public ReferenceCountedObject {
 public:
@@ -133,28 +134,6 @@ public:
     };
 
 
-    /** \brief Packed vertex attributes. 
-    
-    The order of fields is important; this must exactly match one of the OpenGL
-    interlaced vertex formats.
-
-    \sa Part::cpuVertexArray */
-    class Vertex {
-    public:
-        /** Part-space position */
-        Point3                  position;
-
-        /** Part-space normal */
-        Vector3                 normal;
-
-        /** Texture coordinate 0, setting a convention for expansion in later API versions. */
-        Point2                  texCoord0;
-
-        /** xyz = tangent, w = sign */
-        Vector4                 tangent;
-    };
-
-
     /** Specifies the transformation that occurs at each node in the heirarchy. 
      */
     class Pose {
@@ -216,7 +195,7 @@ public:
             typedef SmallArray<Index, 7> IndexArray;
             typedef Table<Point3, IndexArray> AdjacentFaceTable;
 
-            Vertex      vertex[3];
+            CPUVertexArray::Vertex   vertex[3];
 
             /** Mesh from which this face was originally created. Needed for reconstructing
               the index arrays after vertices are merged.*/
@@ -252,7 +231,7 @@ public:
         /** Bounding box of just this Part's geometry, in object space. Does not include child parts.*/
         AABox                       boundingBox;
 
-        Array<Vertex>               cpuVertexArray;
+        CPUVertexArray              cpuVertexArray;
 
         VertexRange                 gpuPositionArray;
         VertexRange                 gpuNormalArray;

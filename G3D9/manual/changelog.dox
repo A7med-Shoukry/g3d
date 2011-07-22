@@ -19,6 +19,7 @@
      <li> G3D::ArticulatedModel::intersect
      <li> G3D::Color3 and G3D::Color4 now initialize to zero
      <li> G3D::Color2uint8
+	 <li> G3D::CPUVertexArray; SuperSurface::CPUGeom now uses CPUVertexArray*
      <li> G3D::TextInput::pushSettings, popSettings
      <li> G3D::Icon, G3D::IconSet can now be used to put arbitrary images on GuiControl%s
 	 <li> G3D::Array::swap

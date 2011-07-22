@@ -134,7 +134,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
                     const ParseOBJ::Index& index = face[v];
                     debugAssert(index.vertexArray != ParseOBJ::UNDEFINED);
 
-                    Part::Vertex& vertex = part->cpuVertexArray.next();
+                    CPUVertexArray::Vertex& vertex = part->cpuVertexArray.vertex.next();
 
                     vertex.position = parseData.vertexArray[index.vertex];
 

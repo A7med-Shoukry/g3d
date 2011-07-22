@@ -4,7 +4,7 @@ void ArticulatedModel2::cleanGeometry(const CleanGeometrySettings& settings) {
     for (int p = 0; p < m_partArray.size(); ++p) {
         m_partArray[p]->cleanGeometry(settings);
     }
-    computeBounds();
+    computePartBounds();
 }
 
 
@@ -26,11 +26,11 @@ void ArticulatedModel2::Part::determineCleaningNeeds(bool& computeSomeNormals, b
 
     // See if normals are needed
     for (int i = 0; i < cpuVertexArray.size(); ++i) {
-        if (isNaN(cpuVertexArray[i].normal.x)) {
+        if (isNaN(cpuVertexArray.vertex[i].normal.x)) {
             computeSomeNormals = true;
             computeSomeTangents = true;
             // Wipe out the corresponding tangent vector
-            cpuVertexArray[i].tangent.x = fnan();
+            cpuVertexArray.vertex[i].tangent.x = fnan();
         }
     }
     
@@ -38,7 +38,7 @@ void ArticulatedModel2::Part::determineCleaningNeeds(bool& computeSomeNormals, b
     if (! computeSomeTangents) {
         // Maybe there is a NaN tangent in there
         for (int i = 0; i < cpuVertexArray.size(); ++i) {
-            if (isNaN(cpuVertexArray[i].tangent.x)) {
+            if (isNaN(cpuVertexArray.vertex[i].tangent.x)) {
                 computeSomeTangents = true;
                 break;
             }
@@ -85,13 +85,15 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
         // Compute tangent space
         computeMissingTangents();
     }
+
+    cpuVertexArray.hasTexCoord0 = m_hasTexCoord0;
 }
 
 
 void ArticulatedModel2::computePartBounds() {
     for (int p = 0; p < m_partArray.size(); ++p) {
         Part* part = m_partArray[p];
-        const Vertex* vertexArray = part->cpuVertexArray.getCArray();
+        const CPUVertexArray::Vertex* vertexArray = part->cpuVertexArray.vertex.getCArray();
 
         part->boundingBox = AABox::empty();
 
@@ -118,13 +120,15 @@ void ArticulatedModel2::computePartBounds() {
 void ArticulatedModel2::Part::computeMissingTangents() {
 
     if (! m_hasTexCoord0) {
+        cpuVertexArray.hasTangent = false;
         // If we have no texture coordinates, we are unable to compute tangents.   
         for (int v = 0; v < cpuVertexArray.size(); ++v) {
-            cpuVertexArray[v].tangent = Vector4::zero();
+            cpuVertexArray.vertex[v].tangent = Vector4::zero();
         }
         return;
     }
 
+    cpuVertexArray.hasTangent = true;
     alwaysAssertM(m_hasTexCoord0, "Cannot compute tangents without some texture coordinates.");
  
     // Compute all tangents, but only extract those that we need at the bottom.
@@ -136,7 +140,7 @@ void ArticulatedModel2::Part::computeMissingTangents() {
     tangent2.resize(cpuVertexArray.size());
     Vector3* tan1 = tangent1.getCArray();
     Vector3* tan2 = tangent2.getCArray();
-    Vertex* vertexArray = cpuVertexArray.getCArray();
+    CPUVertexArray::Vertex* vertexArray = cpuVertexArray.vertex.getCArray();
     debugAssertM(tan1[0].x == 0, "This implementation assumes that new Vector3 values are initialized to zero.");
 
     // For each face
@@ -150,9 +154,9 @@ void ArticulatedModel2::Part::computeMissingTangents() {
             const int i1 = indexArray[i + 1];
             const int i2 = indexArray[i + 2];
         
-            const Vertex& vertex0 = vertexArray[i0];
-            const Vertex& vertex1 = vertexArray[i1];
-            const Vertex& vertex2 = vertexArray[i2];
+            const CPUVertexArray::Vertex& vertex0 = vertexArray[i0];
+            const CPUVertexArray::Vertex& vertex1 = vertexArray[i1];
+            const CPUVertexArray::Vertex& vertex2 = vertexArray[i2];
 
             const Point3& v0 = vertex0.position;
             const Point3& v1 = vertex1.position;
@@ -198,7 +202,7 @@ void ArticulatedModel2::Part::computeMissingTangents() {
 
     
     for (int v = 0; v < cpuVertexArray.size(); ++v) {
-        Vertex& vertex = vertexArray[v];
+        CPUVertexArray::Vertex& vertex = vertexArray[v];
 
         if (isNaN(vertex.tangent.x)) {
             // This tangent needs to be overriden
@@ -230,14 +234,14 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
     }
 
     // Clear the CPU vertex array
-    cpuVertexArray.fastClear();
+    cpuVertexArray.vertex.fastClear();
 
     // Tracks if position and texcoord0 match, but ignores normals and tangents
     struct VertexHash { 
-        static size_t hashCode(const Vertex& vertex) {
+        static size_t hashCode(const CPUVertexArray::Vertex& vertex) {
             return vertex.position.hashCode() ^ vertex.texCoord0.hashCode();
         }
-        static bool equals(const Vertex& a, const Vertex& b) {
+        static bool equals(const CPUVertexArray::Vertex& a, const CPUVertexArray::Vertex& b) {
             return (a.position == b.position) && (a.texCoord0 == b.texCoord0);
         }
     };
@@ -246,7 +250,7 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
     // The vertices in the list may have differing normals.
     typedef int VertexIndex;
     typedef SmallArray<VertexIndex, 4> VertexIndexList;
-    Table<Vertex, VertexIndexList, VertexHash, VertexHash> vertexIndexTable;
+    Table<CPUVertexArray::Vertex, VertexIndexList, VertexHash, VertexHash> vertexIndexTable;
 
     const float normalClosenessThreshold = cos(maxNormalWeldAngle);
 
@@ -255,7 +259,7 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
         const Face& face = faceArray[f];
         Mesh* mesh = face.mesh;
         for (int v = 0; v < 3; ++v) {
-            const Vertex& vertex = face.vertex[v];
+            const CPUVertexArray::Vertex& vertex = face.vertex[v];
 
             // Find the location of this vertex in cpuVertexArray...or add it.
             // The texture coordinates and vertices must exactly match.
@@ -267,7 +271,7 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
             for (int i = 0; i < list.size(); ++i) {
                 int j = list[i];
                 // See if the normals are close (we know that the texcoords and positions match exactly)
-                if (cpuVertexArray[j].normal.dot(vertex.normal) >= normalClosenessThreshold) { 
+                if (cpuVertexArray.vertex[j].normal.dot(vertex.normal) >= normalClosenessThreshold) { 
                     // Reuse this vertex
                     index = j;
                     break;
@@ -277,7 +281,7 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
             if (index == -1) {
                 // This must be a new vertex, so add it
                 index = cpuVertexArray.size();
-                cpuVertexArray.append(vertex);
+                cpuVertexArray.vertex.append(vertex);
                 list.append(index);
             }
 
@@ -300,7 +304,7 @@ void ArticulatedModel2::Part::computeMissingVertexNormals
         Face& face = faceArray[f];
 
         for (int v = 0; v < 3; ++v) {
-            Vertex& vertex = face.vertex[v];
+            CPUVertexArray::Vertex& vertex = face.vertex[v];
 
             // Only process vertices with normals that have been flagged as NaN
             if (isNaN(vertex.normal.x)) {
@@ -351,7 +355,7 @@ void ArticulatedModel2::Part::buildFaceArray(Array<Face>& faceArray, Face::Adjac
             // Copy each vertex, updating the adjacency table
             for (int v = 0; v < 3; ++v) {
                 int index = indexArray[i + v];
-                face.vertex[v] = cpuVertexArray[index];
+                face.vertex[v] = cpuVertexArray.vertex[index];
 
                 // Record that this face is next to this vertex
                 adjacentFaceTable.getCreate(face.vertex[v].position).append(faceIndex);
