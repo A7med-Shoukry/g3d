@@ -100,6 +100,32 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
 }
 
 
+void ArticulatedModel2::Part::debugPrint() const {
+    const Part* part = this;
+    // Code for dumping the vertices
+    debugPrintf("** Vertices:\n");
+    for (int i = 0; i < part->cpuVertexArray.vertex.size(); ++i) {
+        const CPUVertexArray::Vertex& vertex = part->cpuVertexArray.vertex[i];
+        debugPrintf(" %d: %s %s %s %s\n", i, 
+            vertex.position.toString().c_str(), vertex.normal.toString().c_str(),
+            vertex.tangent.toString().c_str(), vertex.texCoord0.toString().c_str());
+    }
+    debugPrintf("\n");
+
+    // Code for dumping the indices
+    debugPrintf("** Indices:\n");
+    for (int m = 0; m < part->m_meshArray.size(); ++m) {
+        const Mesh* mesh = part->m_meshArray[m];
+        debugPrintf(" Mesh %s\n", mesh->name.c_str());
+        for (int i = 0; i < mesh->cpuIndexArray.size(); i += 3) {
+            debugPrintf(" %d-%d: %d %d %d\n", i, i + 2, mesh->cpuIndexArray[i], mesh->cpuIndexArray[i + 1], mesh->cpuIndexArray[i + 2]);
+        }
+        debugPrintf("\n");
+    }
+    debugPrintf("\n");
+}
+
+
 void ArticulatedModel2::computePartBounds() {
     for (int p = 0; p < m_partArray.size(); ++p) {
         Part* part = m_partArray[p];

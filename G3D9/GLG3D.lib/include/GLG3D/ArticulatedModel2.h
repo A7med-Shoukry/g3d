@@ -43,14 +43,6 @@ namespace G3D {
 
  \beta This is a candidate to replace G3D::ArticulatedModel in G3D 9.00
 
- TODO:
- - Integrate into Scene
- - Transform
- - Intersect
- - Load other formats: IFS, PLY2, PLY, 3DS
- - Create heightfield
- - Create cornell box
- - Pack tangents into short4 format?
 */
 class ArticulatedModel2 : public ReferenceCountedObject {
 public:
@@ -345,6 +337,9 @@ public:
              const Pose&              pose,
              const CoordinateFrame&   prevParentFrame,
              const Pose&              prevPose);
+
+        /** debugPrintf all of the geometry for this part. */
+        void debugPrint() const;
     };
 
 

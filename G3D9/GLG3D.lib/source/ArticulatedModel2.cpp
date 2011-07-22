@@ -7,7 +7,18 @@
  
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
-*/
+
+
+ TODO:
+ - Fix texture coordinates
+ - Fix tangents
+ - Transform
+ - Intersect
+ - Load other formats: IFS, PLY2, PLY, 3DS
+ - Create heightfield
+ - Create cornell box
+ - Pack tangents into short4 format?
+ */
 #include "GLG3D/ArticulatedModel2.h"
 
 namespace G3D {
