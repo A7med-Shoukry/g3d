@@ -38,6 +38,9 @@ public:
         typedef ReferenceCountedPointer<Material> Ref;
         std::string     name;
 
+        /** Path relative to which filenames should be resolved */
+        std::string     basePath;
+
         /** Ambient color of the material, on the range 0-1 */
         Color3          Ka;
         std::string     map_Ka;

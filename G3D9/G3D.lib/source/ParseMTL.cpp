@@ -19,6 +19,11 @@ namespace G3D {
 void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
     materialTable.clear();
 
+    m_basePath = basePath;
+    if (m_basePath == "<AUTO>") {
+        m_basePath = FilePath::parent(FileSystem::resolve(ti.filename()));
+    }
+
     TextInput::Settings set;
     set.cppBlockComments = false;
     set.cppLineComments = false;
@@ -26,10 +31,6 @@ void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
     set.generateNewlineTokens = true;
     ti.pushSettings(set);
 
-    m_basePath = basePath;
-    if (m_basePath == "<AUTO>") {
-        m_basePath = FilePath::parent(FileSystem::resolve(ti.filename()));
-    }
 
     while (ti.hasMore()) {
         // Consume comments/newlines
@@ -63,12 +64,15 @@ static std::string removeLeadingSlash(const std::string& s) {
     }
 }
 
+
 void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
 
     if (cmd == "newmtl") {
         // Create a new material
         m_currentMaterial = Material::create();
         m_currentMaterial->name = trimWhitespace(ti.readUntilNewlineAsString());
+
+        m_currentMaterial->basePath = m_basePath;
         materialTable.set(m_currentMaterial->name, m_currentMaterial);
 
     } else if (m_currentMaterial.isNull()) {
@@ -93,7 +97,7 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
         m_currentMaterial->Ka.r = ti.readNumber();
         m_currentMaterial->Ka.g = ti.readNumber();
         m_currentMaterial->Ka.b = ti.readNumber();
-    } else if (cmd == "Ka") {
+    } else if (cmd == "Kd") {
         m_currentMaterial->Kd.r = ti.readNumber();
         m_currentMaterial->Kd.g = ti.readNumber();
         m_currentMaterial->Kd.b = ti.readNumber();
@@ -105,10 +109,12 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
         m_currentMaterial->Ke.r = ti.readNumber();
         m_currentMaterial->Ke.g = ti.readNumber();
         m_currentMaterial->Ke.b = ti.readNumber();
+    } else if (cmd == "map_Ka") {
+        m_currentMaterial->map_Ka = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_Kd") {
-        m_currentMaterial->map_Kd = FilePath::concat(m_basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+        m_currentMaterial->map_Kd = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_Ks") {
-        m_currentMaterial->map_Ks = FilePath::concat(m_basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+        m_currentMaterial->map_Ks = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_bump" || cmd == "bump") {
         Token t = ti.peek();
         if (t.type() == Token::SYMBOL && t.string() == "-") {
@@ -121,7 +127,7 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
                 m_currentMaterial->bumpGain = ti.readNumber();
             }
         }
-        m_currentMaterial->map_bump = FilePath::concat(m_basePath, removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString())));
+        m_currentMaterial->map_bump = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     }
 }
 

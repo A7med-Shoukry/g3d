@@ -73,9 +73,21 @@ static void mergeGroupsAndMeshesByMaterial(ParseOBJ& parseData) {
     }
 }
 
+/** Leaves empty filenames alone and resolves others */
+static std::string resolveRelativeFilename(const std::string& filename, const std::string& basePath) {
+    if (filename.empty()) {
+        return filename;
+    } else {
+        return FileSystem::resolve(filename, basePath);
+    }
+}
 
+/** \param basePath Resolve relative paths to here
+*/
 static Material::Specification toMaterialSpecification(const ParseMTL::Material::Ref& m) {
     Material::Specification s;
+
+    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), m->Kd);
 
     // TODO
 

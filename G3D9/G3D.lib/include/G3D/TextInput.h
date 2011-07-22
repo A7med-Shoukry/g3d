@@ -577,7 +577,8 @@ public:
     /** Returns true while there are tokens remaining. */
     bool hasMore();
 
-    /** Temporarily switch parsing to use \a settings.  \sa popSettings */
+    /** Temporarily switch parsing to use \a settings.  Note that this will override the currently recorded sourceFilename unless you explicitly set it back.
+    \sa popSettings */
     void pushSettings(const Settings& settings) {
         settingsStack.push(options);
         options = settings;
