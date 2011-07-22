@@ -4,6 +4,7 @@ void ArticulatedModel2::cleanGeometry(const CleanGeometrySettings& settings) {
     for (int p = 0; p < m_partArray.size(); ++p) {
         m_partArray[p]->cleanGeometry(settings);
     }
+    computeBounds();
 }
 
 
@@ -83,6 +84,33 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
     if (computeSomeTangents) {
         // Compute tangent space
         computeMissingTangents();
+    }
+}
+
+
+void ArticulatedModel2::computePartBounds() {
+    for (int p = 0; p < m_partArray.size(); ++p) {
+        Part* part = m_partArray[p];
+        const Vertex* vertexArray = part->cpuVertexArray.getCArray();
+
+        part->boundingBox = AABox::empty();
+
+        for (int m = 0; m < part->m_meshArray.size(); ++m) {
+            Mesh* mesh = part->m_meshArray[m];
+            const Array<int>& indexArray = mesh->cpuIndexArray;
+            const int* index = indexArray.getCArray();
+
+            AABox meshBounds;
+            for (int i = 0; i < indexArray.size(); ++i) {
+                meshBounds.merge(vertexArray[index[i]].position);
+            }
+
+            mesh->boundingBox = meshBounds;
+            meshBounds.getBounds(mesh->boundingSphere);
+            part->boundingBox.merge(meshBounds);
+        }
+
+        part->boundingBox.getBounds(part->boundingSphere);
     }
 }
 

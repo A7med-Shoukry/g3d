@@ -12,6 +12,14 @@
  \sa ArticulatedModel
 
  \beta This is a candidate to replace G3D::ArticulatedModel in G3D 9.00
+
+ TODO:
+ - create SuperSurfaces
+ - transform
+ - intersect
+ - load other formats: IFS, PLY2, PLY, 3DS
+ - create heightfield
+ - create cornell box
 */
 class ArticulatedModel2 : public ReferenceCountedObject {
 public:
@@ -97,35 +105,44 @@ public:
 
         /** Relative to the Part containing it. */
         Sphere                      boundingSphere;
+
+        /** Relative to the Part containing it. */
+        AABox                       boundingBox;
+
     private:
+
         Mesh(const std::string& name) : name(name), primitive(PrimitiveType::TRIANGLES), twoSided(false) {}
 
     };
 
+
+    /** \brief Packed vertex attributes. 
+    
+    The order of fields is important; this must exactly match one of the OpenGL
+    interlaced vertex formats.
+
+    \sa Part::cpuVertexArray */
+    class Vertex {
+    public:
+        /** Part-space position */
+        Point3                  position;
+
+        /** Part-space normal */
+        Vector3                 normal;
+
+        /** Texture coordinate 0, setting a convention for expansion in later API versions. */
+        Point2                  texCoord0;
+
+        /** xyz = tangent, w = sign */
+        Vector4                 tangent;
+    };
+        
     /** 
-     A set of meshes with a single reference frame, packed into a common vertex buffer.
+     \brief A set of meshes with a single reference frame, packed into a common vertex buffer.
     */
     class Part {
-    public:
-        friend class ArticulatedModel2;
-
-        /** Packed vertex attributes */
-        class Vertex {
-        public:
-            /** Part-space position */
-            Point3                  position;
-
-            /** Part-space normal */
-            Vector3                 normal;
-
-            /** Texture coordinate 0, setting a convention for expansion in later API versions. */
-            Point2                  texCoord0;
-
-            /** xyz = tangent, w = sign */
-            Vector4                 tangent;
-        };
-
     private:
+        friend class ArticulatedModel2;
        
         /** Used by cleanGeometry */
         class Face {
@@ -165,7 +182,12 @@ public:
 
         /** Transformation from this object to the parent's frame in the rest pose */
         CFrame                      cframe;
+
+        /** Bounding sphere of just this Part's geometry, in object space. Does not include child parts.*/
         Sphere                      boundingSphere;
+
+        /** Bounding box of just this Part's geometry, in object space. Does not include child parts.*/
+        AABox                       boundingBox;
 
         Array<Vertex>               cpuVertexArray;
 
@@ -243,21 +265,75 @@ public:
         void cleanGeometry(const CleanGeometrySettings& settings);
     };
 
+    /** Specifies the transformation that occurs at each node in the heirarchy. 
+     */
+    class Pose {
+    public:
+        /** Mapping from names to coordinate frames (relative to parent).
+            If a name is not present, its coordinate frame is assumed to
+            be the identity.
+         */
+        Table<std::string, CoordinateFrame>     cframe;
+
+        Pose() {}
+    };
+
+
+    class PoseSpline {
+    public:
+        typedef Table<std::string, PhysicsFrameSpline> SplineTable;
+        SplineTable partSpline;
+
+        PoseSpline();
+
+        /**
+         The Any must be a table mapping part names to PhysicsFrameSplines.
+         Note that a single PhysicsFrame (or any equivalent of it) can serve as
+         to create a PhysicsFrameSpline.  
+
+         <pre>
+            PoseSpline {
+                "part1" = PhysicsFrameSpline {
+                   control = ( Vector3(0,0,0),
+                               CFrame::fromXYZYPRDegrees(0,1,0,35)),
+                   cyclic = true
+                },
+
+                "part2" = Vector3(0,1,0)
+            }
+         </pre>
+        */
+        PoseSpline(const Any& any);
+     
+        /** Get the pose at time t, overriding values in \a pose that are specified by the spline. */
+        void get(float t, ArticulatedModel::Pose& pose);
+    };
+
     /** Base class for defining operations to perform on each part, in hierarchy order.*/
     class PartCallback {
     public:
         virtual void operator()(ArticulatedModel2::Ref m, ArticulatedModel2::Part* p, const CFrame& parentFrame) {}
     };
 
+    /** The rest pose.*/
+    static const Pose& defaultPose();
+
 private:
 
     Array<Part*>                    m_rootArray;
     Array<Part*>                    m_partArray;
-
-private:
-
+    
     void forEachPart(PartCallback& c, const CFrame& parentFrame, Part* part);
 
+    /** Called from cleanGeometry */
+    void computePartBounds();
+
+    /** After load, undefined normals have value NaN.  Undefined texcoords become (0,0).
+        There are no tangents, the gpu arrays are empty, and the bounding spheres are
+        undefined.*/
+    void loadOBJ(const Specification& specification);
+
+    void load(const Specification& specification);
 
 public:
 
@@ -289,21 +365,51 @@ public:
     void forEachPart(PartCallback& c);
     
     /** 
-      Invokes Part::cleanGeometry on all parts.
-
-        \param alwaysMergeVertices  Set to true to check for redundant vertices even if 
-          no normals or tangents need to be computed.
+      Invokes Part::cleanGeometry on all parts.       
      */
     void cleanGeometry(const CleanGeometrySettings& settings);
 
-private:
+    /** Appends one posed model per sub-part with geometry.
 
-    /** After load, undefined normals have value NaN.  Undefined texcoords become (0,0).
-        There are no tangents, the gpu arrays are empty, and the bounding spheres are
-        undefined.*/
-    void loadOBJ(const Specification& specification);
+        Poses an object with no motion (see the other overloaded
+        version for expressing motion)
+    */
+    void pose
+    (Array<Surface::Ref>&     surfaceArray,
+     const CoordinateFrame&   cframe = CoordinateFrame(),
+     const Pose&              pose   = defaultPose());
 
-    void load(const Specification& specification);
+    void pose
+    (Array<Surface::Ref>&     surfaceArray,
+     const CoordinateFrame&   cframe,
+     const Pose&              pose,
+     const CoordinateFrame&   prevCFrame,
+     const Pose&              prevPose);
+    
+
+    /**
+       Returns true if ray \a R intersects this model, when it has \a
+       cframe and \a pose, at a distance less than \a maxDistance.  If
+       so, sets maxDistance to the intersection distance and sets the
+       pointers to the Part and Mesh, and the index in Mesh::cpuIndexArray of the 
+       start of that triangle's indices.  \a u and \a v are the
+       barycentric coordinates of vertices triStartIndex and triStartIndex + 1.
+       The barycentric coordinate of vertex <code>triStartIndex + 2</code>
+       is <code>1 - u - v</code>.
+
+       This is primarily intended for mouse selection.  For ray tracing
+       or physics, consider G3D::TriTree instead.
+     */
+    bool intersect
+        (const Ray&     R, 
+        const CFrame&   cframe, 
+        const Pose&     pose, 
+        float&          maxDistance, 
+        Part*&          part, 
+        Mesh*&          mesh, 
+        int&            triStartIndex, 
+        float&          u, 
+        float&          v) const;
 };
 
 #endif

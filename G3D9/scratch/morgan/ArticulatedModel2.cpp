@@ -1,6 +1,12 @@
 #include "ArticulatedModel2.h"
 
 
+const ArticulatedModel2::Pose& ArticulatedModel2::defaultPose() {
+    static const Pose p;
+    return p;
+}
+
+
 void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& parentFrame, Part* part) {
     // Net transformation from part to world space
     const CFrame& net = parentFrame * part->cframe;
@@ -42,7 +48,7 @@ public:
         }
 
         for (int v = 0; v < part->cpuVertexArray.size(); ++v) {
-            ArticulatedModel2::Part::Vertex& vertex = part->cpuVertexArray[v];
+            ArticulatedModel2::Vertex& vertex = part->cpuVertexArray[v];
             vertex.position = vertexTransform.homoMul(vertex.position, 1.0f);
             vertex.normal   = (normalTransform * vertex.normal).directionOrZero();
         }
@@ -67,6 +73,40 @@ void ArticulatedModel2::load(const Specification& specification) {
 
     // Compute missing elements (normals, tangents) of the part geometry, 
     // perform vertex welding, and recompute bounds.
-    cleanGeometry(true);
+    cleanGeometry(specification.cleanGeometrySettings);
 }
 
+
+void ArticulatedModel2::pose
+(Array<Surface::Ref>&     surfaceArray,
+ const CoordinateFrame&   cframe,
+ const Pose&              ppose) {
+
+    pose(surfaceArray, cframe, ppose, cframe, ppose);
+}
+
+
+void ArticulatedModel2::pose
+(Array<Surface::Ref>&     surfaceArray,
+ const CoordinateFrame&   cframe,
+ const Pose&              pose,
+ const CoordinateFrame&   prevCFrame,
+ const Pose&              prevPose) {
+
+    alwaysAssertM(false, "TODO");
+}
+
+
+bool ArticulatedModel2::intersect
+    (const Ray&     R, 
+    const CFrame&   cframe, 
+    const Pose&     pose, 
+    float&          maxDistance, 
+    Part*&          part, 
+    Mesh*&          mesh, 
+    int&            triStartIndex, 
+    float&          u, 
+    float&          v) const {
+
+    alwaysAssertM(false, "TODO");
+}
