@@ -59,6 +59,15 @@ public:
             maxNormalWeldAngle(5 * units::degrees()),
             maxSmoothAngle(45 * units::degrees()) {
         }
+
+        explicit CleanGeometrySettings(const Any& a);
+        
+        CleanGeometrySettings& operator=(const Any& a) {
+            *this = CleanGeometrySettings(a);
+            return *this;
+        }
+
+        Any toAny() const;
     };
 
     /** \brief Parameters for constructing a new ArticulatedModel from a file on disk.*/
@@ -69,6 +78,8 @@ public:
 
         /** Transformation to apply to vertices in the global reference frame at load time.
         The inverse transpose of the upper 3x3 is applied to normals.
+
+        Default: Matrix4::identity()
         */
         Matrix4                     xform;
 
@@ -83,10 +94,16 @@ public:
         into many parts by an artist for modeling purposes.  It may decrease the 
         rendering performance of very large objects that were divided into pieces
         that are unlikely to all be visible in the frustum simultaneously. 
+
+        Default: false
         */
         bool                        mergeMeshesByMaterial;
 
         CleanGeometrySettings       cleanGeometrySettings;
+
+        Specification() : xform(Matrix4::identity()), stripMaterials(false), mergeMeshesByMaterial(false) {}
+        explicit Specification(const Any& a);
+        Any toAny() const;
     };
 
     class Mesh {
@@ -263,6 +280,14 @@ public:
 
         */
         void cleanGeometry(const CleanGeometrySettings& settings);
+
+        /** Pose this part and all of its children */
+        void pose
+            (Array<Surface::Ref>&     surfaceArray,
+             const CoordinateFrame&   parentFrame,
+             const Pose&              pose,
+             const CoordinateFrame&   prevParentFrame,
+             const Pose&              prevPose);
     };
 
     /** Specifies the transformation that occurs at each node in the heirarchy. 
@@ -306,7 +331,7 @@ public:
         PoseSpline(const Any& any);
      
         /** Get the pose at time t, overriding values in \a pose that are specified by the spline. */
-        void get(float t, ArticulatedModel::Pose& pose);
+        void get(float t, ArticulatedModel2::Pose& pose);
     };
 
     /** Base class for defining operations to perform on each part, in hierarchy order.*/

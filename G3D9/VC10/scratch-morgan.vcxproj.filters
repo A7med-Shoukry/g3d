@@ -61,6 +61,9 @@
     <ClCompile Include="..\scratch\morgan\ArticulatedModel2_cleanGeometry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\scratch\morgan\ArticulatedModel2_serialize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\scratch\morgan\crates.scn.any" />
