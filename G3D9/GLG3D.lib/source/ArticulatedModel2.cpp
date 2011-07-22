@@ -10,6 +10,7 @@
 
 
  TODO:
+ - Profile load performance
  - Set bump map parallax steps
  - Transform
  - Intersect
@@ -85,6 +86,7 @@ public:
 
 
 void ArticulatedModel2::load(const Specification& specification) {
+    Stopwatch timer;
 
     if (endsWith(toLower(specification.filename), ".obj")) {
         loadOBJ(specification);
@@ -92,16 +94,19 @@ void ArticulatedModel2::load(const Specification& specification) {
         // Error
         throw std::string("Unrecognized file extension on \"") + specification.filename + "\"";
     }
+    timer.after("parse file");
 
     //transform as demanded by the specification
     if (specification.xform != Matrix4::identity()) {
         AMTransform transform(specification.xform);
         forEachPart(transform);
     }
+    timer.after("transform");
 
     // Compute missing elements (normals, tangents) of the part geometry, 
     // perform vertex welding, and recompute bounds.
     cleanGeometry(specification.cleanGeometrySettings);
+    timer.after("cleanGeometry");
 }
 
 
