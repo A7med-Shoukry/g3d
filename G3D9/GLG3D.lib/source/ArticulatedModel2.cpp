@@ -90,6 +90,7 @@ bool ArticulatedModel2::intersect
     float&          v) const {
 
     alwaysAssertM(false, "TODO");
+    return false;
 }
 
 } // namespace G3D

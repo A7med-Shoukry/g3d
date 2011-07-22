@@ -26,12 +26,16 @@ GEntity::GEntity
                         "Can't instantiate undefined model named " + modelName + ".");
     
     m_artModel = model->downcast<ArticulatedModel>();
+    m_art2Model = model->downcast<ArticulatedModel2>();
     m_md2Model = model->downcast<MD2Model>();
     m_md3Model = model->downcast<MD3Model>();
 
     if (m_artModel.notNull()) {
         m_modelType = ARTICULATED_MODEL;
         propertyTable.getIfPresent("pose", m_artPoseSpline);
+    } else if (m_art2Model.notNull()) {
+        m_modelType = ARTICULATED_MODEL2;
+        propertyTable.getIfPresent("pose", m_art2PoseSpline);
     } else if (m_md2Model.notNull()) {
         m_modelType = MD2_MODEL;
     } else if (m_md3Model.notNull()) {
@@ -45,7 +49,7 @@ GEntity::GEntity
     }
 }
 
-
+#if 0
 GEntity::GEntity
 (const std::string&                  n, 
  const PhysicsFrameSpline&           frameSpline, 
@@ -74,7 +78,6 @@ GEntity::GEntity
     }
 }
 
-
 GEntity::Ref GEntity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline) {
     GEntity::Ref e = new GEntity(n, frameSpline, m, poseSpline, NULL, NULL);
 
@@ -100,13 +103,18 @@ GEntity::Ref GEntity::create(const std::string& n, const PhysicsFrameSpline& fra
     e->onSimulation(0, 0);
     return e;
 }
-
+#endif
 
 void GEntity::simulatePose(GameTime absoluteTime, GameTime deltaTime) {
     switch (m_modelType) {
     case ARTICULATED_MODEL:
         m_artPreviousPose = m_artPose;
         m_artPoseSpline.get(float(absoluteTime), m_artPose);
+        break;
+
+    case ARTICULATED_MODEL2:
+        m_art2PreviousPose = m_art2Pose;
+        m_art2PoseSpline.get(float(absoluteTime), m_art2Pose);
         break;
 
     case MD2_MODEL:
@@ -137,6 +145,10 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
     switch (m_modelType) {
     case ARTICULATED_MODEL:
         m_artModel->pose(surfaceArray, m_frame, m_artPose, m_previousFrame, m_artPreviousPose);
+        break;
+
+    case ARTICULATED_MODEL2:
+        m_art2Model->pose(surfaceArray, m_frame, m_art2Pose, m_previousFrame, m_art2PreviousPose);
         break;
 
     case MD2_MODEL:
@@ -205,6 +217,16 @@ bool GEntity::intersect(const Ray& R, float& maxDistance) const {
             int triIndex     = -1;
             float u = 0, v = 0;
             return m_artModel->intersect(R, m_frame, m_artPose, maxDistance, partIndex, triListIndex, triIndex, u, v);
+        }
+        break;
+
+    case ARTICULATED_MODEL2:
+        {
+            ArticulatedModel2::Part* part = NULL;
+            ArticulatedModel2::Mesh* mesh = NULL; 
+            int triIndex     = -1;
+            float u = 0, v = 0;
+            return m_art2Model->intersect(R, m_frame, m_art2Pose, maxDistance, part, mesh, triIndex, u, v);
         }
         break;
 

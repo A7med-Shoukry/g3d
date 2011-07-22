@@ -10,6 +10,7 @@
 #include "G3D/CoordinateFrame.h"
 #include "G3D/PhysicsFrameSpline.h"
 #include "GLG3D/ArticulatedModel.h"
+#include "GLG3D/ArticulatedModel2.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"
 
@@ -32,6 +33,7 @@ protected:
 
     enum ModelType {
         ARTICULATED_MODEL,
+        ARTICULATED_MODEL2,
         MD2_MODEL,
         MD3_MODEL
     };
@@ -72,6 +74,19 @@ protected:
 
     //////////////////////////////////////////////
 
+    /** Current pose */
+    ArticulatedModel2::Pose          m_art2Pose;
+
+    /** Pose for the previous onSimulation */
+    ArticulatedModel2::Pose          m_art2PreviousPose;
+
+    /** Pose over time. */
+    ArticulatedModel2::PoseSpline    m_art2PoseSpline;
+
+    ArticulatedModel2::Ref           m_art2Model;
+
+    //////////////////////////////////////////////
+
     MD2Model::Ref                   m_md2Model;
     MD2Model::Pose                  m_md2Pose;
 
@@ -89,7 +104,7 @@ protected:
     Sphere                          m_lastSphereBounds;
 
     GEntity();
-
+#if 0
     /** \deprecated */
     GEntity
     (const std::string& n, 
@@ -98,7 +113,7 @@ protected:
      const ArticulatedModel::PoseSpline& artPoseSpline,
      const MD2Model::Ref& md2Model,
      const MD3Model::Ref& md3Model);
-    
+#endif
 
     /**\brief Construct a GEntity.
 
@@ -138,7 +153,7 @@ protected:
     virtual void simulatePose(GameTime absoluteTime, GameTime deltaTime);
 
 public:
-
+#if 0
     /** \deprecated */
     static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline);
 
@@ -147,6 +162,7 @@ public:
 
     /** \deprecated */
     static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m);
+#endif
 
     /** \copydoc GEntity(const std::string&, AnyTableReader&, const ModelTable&)*/
     static GEntity::Ref create 

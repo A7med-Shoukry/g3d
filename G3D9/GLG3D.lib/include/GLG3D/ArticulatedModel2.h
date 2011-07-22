@@ -33,6 +33,12 @@ namespace G3D {
 
  Supports OBJ file format.
 
+ Does not copy geometry to the GPU until it has to render.  This means that CPU rendering
+ code need not consume GPU vertex buffer resources (or transfer time).  The current
+ implementation eagerly loads Material%s onto the GPU.  If a future
+ version also allows deferring that operation, then this class will be able to load models
+ entirely on a non-rendering thread and will not require a GPU context to be active.
+
  \sa ArticulatedModel
 
  \beta This is a candidate to replace G3D::ArticulatedModel in G3D 9.00
