@@ -256,7 +256,7 @@ void ArticulatedModel2::Part::computeMissingTangents() {
             vertex.tangent.z = T.z;
 
             // Calculate handedness
-            vertex.tangent.w = (n.cross(t1).dot(t2) < 0.0f) ? -1.0f : 1.0f;
+            vertex.tangent.w = (n.cross(t1).dot(t2) < 0.0f) ? 1.0f : -1.0f;
         } // if this must be updated
     } // for each vertex
     

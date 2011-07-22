@@ -116,7 +116,7 @@ bool ArticulatedModel2::intersect
     float&          u, 
     float&          v) const {
 
-    alwaysAssertM(false, "TODO");
+    alwaysAssertM(false, "TODO: ArticulatedModel2::intersect");
     return false;
 }
 

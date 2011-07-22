@@ -80,7 +80,7 @@ void ArticulatedModel2::Part::pose
 
 
 void ArticulatedModel2::Part::copyToGPU() {
-    cpuVertexArray.copyToGPU(gpuPositionArray, gpuNormalArray, gpuTexCoord0Array, gpuTangentArray);
+    cpuVertexArray.copyToGPU(gpuPositionArray, gpuNormalArray, gpuTangentArray, gpuTexCoord0Array);
 
     // If fewer than 2^16 vertices, switch to uint16 indices
     const size_t indexBytes = (cpuVertexArray.size() < (1<<16)) ? sizeof(uint16) : sizeof(int);
@@ -113,8 +113,8 @@ void ArticulatedModel2::Part::copyToGPU() {
         mesh->gpuGeom->material  = mesh->material;
         mesh->gpuGeom->vertex    = gpuPositionArray;
         mesh->gpuGeom->normal    = gpuNormalArray;
-        mesh->gpuGeom->texCoord0 = gpuTexCoord0Array;
         mesh->gpuGeom->packedTangent = gpuTangentArray;
+        mesh->gpuGeom->texCoord0 = gpuTexCoord0Array;
     }
 }
 
