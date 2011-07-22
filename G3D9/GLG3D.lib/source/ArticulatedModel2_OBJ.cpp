@@ -87,13 +87,14 @@ static std::string resolveRelativeFilename(const std::string& filename, const st
 static Material::Specification toMaterialSpecification(const ParseMTL::Material::Ref& m) {
     Material::Specification s;
 
+    // Map OBJ model to G3D shading 
     s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, m->d));
-    s.setSpecular(resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks);
-    s.setGlossyExponentShininess(m->Ns);
+    s.setSpecular(resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks.pow(9.0f) * 0.4f);
+    s.setGlossyExponentShininess(m->Ns * 100.0f);
     s.setBump(resolveRelativeFilename(m->map_bump, m->basePath));
 
-    // TODO
-
+    // TODO: other material properties
+    debugPrintf("TODO: ArticulatedModel2_OBJ.cpp needs to implement all of toMaterialSpecification\n");
     return s;
 }
 
