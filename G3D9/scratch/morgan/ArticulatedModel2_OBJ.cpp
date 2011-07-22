@@ -94,6 +94,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
     }
 
     int numSpecifiedNormals = 0;
+    int numSpecifiedTexCoord0s = 0;
 
     // All groups form a single AModel::Part.  Each mesh in each group
     // forms a single AModel::Mesh.
@@ -132,19 +133,23 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
                 for (int v = 0; v < face.size(); ++v) {
                     const ParseOBJ::Index& index = face[v];
                     debugAssert(index.vertexArray != ParseOBJ::UNDEFINED);
-                    part->cpuVertexArray.append(parseData.vertexArray[index.vertex]);
+
+                    Part::Vertex& vertex = part->cpuVertexArray.next();
+
+                    vertex.position = parseData.vertexArray[index.vertex];
 
                     if (index.normal != ParseOBJ::UNDEFINED) {
-                        part->cpuNormalArray.append(parseData.normalArray[index.normal]);
+                        vertex.normal = parseData.normalArray[index.normal];
                         ++numSpecifiedNormals;
                     } else {
-                        part->cpuNormalArray.append(Vector3::nan());
+                        vertex.normal = Vector3::nan();
                     }
 
                     if (index.texCoord != ParseOBJ::UNDEFINED) {
-                        part->cpuTexCoord0Array.append(OBJToG3DTex(parseData.texCoordArray[index.texCoord]));
+                        vertex.texCoord0 = OBJToG3DTex(parseData.texCoordArray[index.texCoord]);
                     } else {
-                        part->cpuTexCoord0Array.append(Point2::zero());
+                        vertex.texCoord0 = Point2::zero();
+                        ++numSpecifiedTexCoord0s;
                     }
                 }
             }
@@ -157,5 +162,9 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
             }
         }
     }
+
+    // If there are any texture coordinates, consider them all valid.  Only some of the
+    // meshes may have texture coordinates, but those may need tangents and texcoords.
+    part->m_hasTexCoord0 = (numSpecifiedTexCoord0s > 0);
 }
 

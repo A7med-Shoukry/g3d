@@ -42,8 +42,9 @@ public:
         }
 
         for (int v = 0; v < part->cpuVertexArray.size(); ++v) {
-            part->cpuVertexArray[v] = vertexTransform.homoMul(part->cpuVertexArray[v], 1.0f);
-            part->cpuNormalArray[v] = (normalTransform * part->cpuVertexArray[v]).directionOrZero();
+            ArticulatedModel2::Part::Vertex& vertex = part->cpuVertexArray[v];
+            vertex.position = vertexTransform.homoMul(vertex.position, 1.0f);
+            vertex.normal   = (normalTransform * vertex.normal).directionOrZero();
         }
     }
 }; 
@@ -77,40 +78,90 @@ void ArticulatedModel2::cleanGeometry() {
 }
 
 
-void ArticulatedModel2::Part::cleanGeometry() {
-    alwaysAssertM(false, "TODO");
+void ArticulatedModel2::Part::clearVertexRanges() {
+    gpuPositionArray      = VertexRange();
+    gpuNormalArray        = VertexRange();
+    gpuTexCoord0Array     = VertexRange();
+    gpuTangentArray       = VertexRange();
 
-    bool computeSomeTangents = cpuTangentArray.size() == 0;
-    bool computeSomeNormals = (cpuNormalArray.size() == 0);
+    for (int m = 0; m < m_meshArray.size(); ++m) {
+        m_meshArray[m]->gpuIndexArray = VertexRange();
+    }
+}
+
+
+void ArticulatedModel2::Part::determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents) {
+    computeSomeTangents = false;
+    computeSomeNormals = false;;
 
     // See if normals are needed
-    if (! computeSomeNormals) {
-        // Maybe there is a NaN normal in there
-        for (int i = 0; i < cpuNormalArray.size(); ++i) {
-            if (isNaN(cpuNormalArray[i].x)) {
-                computeSomeNormals = true;
-
-                if (cpuTangentArray.size() > 0) {
-                    computeSomeTangents = true;
-                    // Wipe out the corresponding tangent vector
-                    cpuTangentArray[i].x = fnan();
-                }
-            }
+    for (int i = 0; i < cpuVertexArray.size(); ++i) {
+        if (isNaN(cpuVertexArray[i].normal.x)) {
+            computeSomeNormals = true;
+            computeSomeTangents = true;
+            // Wipe out the corresponding tangent vector
+            cpuVertexArray[i].tangent.x = fnan();
         }
     }
-
-    const bool hasTexCoords = cpuTexCoord0Array.size() > 0;
-
+    
     // See if tangents are needed
-    if (! computeSomeTangents && hasTexCoords) {
+    if (m_hasTexCoord0 && ! computeSomeTangents) {
         // Maybe there is a NaN tangent in there
-        for (int i = 0; i < cpuTangentArray.size(); ++i) {
-            if (isNaN(cpuTangentArray[i].x)) {
+        for (int i = 0; i < cpuVertexArray.size(); ++i) {
+            if (isNaN(cpuVertexArray[i].tangent.x)) {
                 computeSomeTangents = true;
                 break;
             }
         }
     }
     
-    // TODO...
+    if (m_hasTexCoord0) {
+        // If we have no texture coordinates, we are unable to compute tangents.
+        computeSomeTangents = false;
+    }
+}
+
+
+void ArticulatedModel2::Part::cleanGeometry() {
+    clearVertexRanges();
+
+    bool computeSomeTangents = false, computeSomeNormals = false;
+    determineCleaningNeeds(computeSomeNormals, computeSomeTangents);
+
+    m_triangleCount = 0;
+    for (int m = 0; m < m_meshArray.size(); ++m) {
+        alwaysAssertM(m_meshArray[m]->primitive == PrimitiveType::TRIANGLES, 
+            "Only implemented for PrimitiveType::TRIANGLES");
+        m_triangleCount += m_meshArray[m]->cpuIndexArray.size() / 3;
+    }
+
+    if (computeSomeTangents || computeSomeNormals) {
+        // Expand into an un-indexed triangle list
+        Array<Face> faceArray;
+        faceArray.reserve(m_triangleCount);
+
+        for (int m = 0; m < m_meshArray.size(); ++m) {
+            const Mesh* mesh = m_meshArray[m];
+            const Array<int>& indexArray = mesh->cpuIndexArray;
+
+            // For every indexed triangle
+            for (int i = 0; i < indexArray.size(); i += 3) {
+                Face& face = faceArray.next();
+                for (int v = 0; v < 3; ++v) {
+                    int index = indexArray[i + v];
+                    Vertex& vertex = face.vertex[v] = cpuVertexArray[index];
+                }
+            }
+        }
+
+        // For each vertex that requires a normal:
+        //    Average face normals that are not too far away from this one
+
+        // Merge vertices that have nearly equal normals, positions, and texcoords
+
+//        static void 	computeNormals (const Array< Vector3 > &vertexArray, const Array< Face > &faceArray, const Array< Array< int > > &adjacentFaceArray, Array< Vector3 > &vertexNormalArray, Array< Vector3 > &faceNormalArray)
+//        static void 	computeTangentSpaceBasis (const Array< Vector3 > &vertexArray, const Array< Vector2 > &texCoordArray, const Array< Vector3 > &vertexNormalArray, const Array< Face > &faceArray, Array< Vector3 > &tangent, Array< Vector3 > &binormal)
+//        collapseSharedVertices();
+        alwaysAssertM(false, "TODO");
+    }
 }

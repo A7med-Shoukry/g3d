@@ -63,14 +63,47 @@ public:
     */
     class Part {
     public:
+        friend class ArticulatedModel2;
+
+        /** Packed vertex attributes */
+        class Vertex {
+        public:
+            /** Part-space position */
+            Point3                  position;
+
+            /** Part-space normal */
+            Vector3                 normal;
+
+            /** Texture coordinate 0, setting a convention for expansion in later API versions. */
+            Point2                  texCoord0;
+
+            /** xyz = tangent, w = sign */
+            Vector4                 tangent;
+        };
+
+    private:
+
+        /** Used by cleanGeometry */
+        class Face {
+        public:
+            Vertex      vertex[3];
+            int         index[3];
+            Face() {
+                index[0] = index[1] = index[2] = -1;
+            }
+        };
+
+    public:
+
         std::string                 name;
 
     private:
-        friend class ArticulatedModel2;
 
+        bool                        m_hasTexCoord0;
         Part*                       m_parent;
         Array<Part*>                m_child;
         Array<Mesh*>                m_meshArray;
+        int                         m_triangleCount;
 
     public:
 
@@ -78,23 +111,33 @@ public:
         CFrame                      cframe;
         Sphere                      boundingSphere;
 
-        Array<Point3>               cpuVertexArray;
-        Array<Vector3>              cpuNormalArray;
-        Array<Point2>               cpuTexCoord0Array;
-        Array<Vector4>              cpuTangentArray;
+        Array<Vertex>               cpuVertexArray;
 
-        VertexRange                 gpuVertexArray;
+        VertexRange                 gpuPositionArray;
         VertexRange                 gpuNormalArray;
         VertexRange                 gpuTexCoord0Array;
         VertexRange                 gpuTangentArray;
 
     private:
+
+        /** Discards all gpu vertex range data */
+        void clearVertexRanges();
+
+        /** Called from cleanGeometry to determine what needs to be computed. */
+        void determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents);
+
         Part(const std::string& name, Part* parent) : name(name), m_parent(parent) {}
+
     public:
 
         /** NULL if this is a root of the model. */
         const Part* parent() const {
             return m_parent;
+        }
+
+        /** Computed by cleanGeometry() */
+        int triangleCount() const {
+            return m_triangleCount;
         }
 
         const Array<Part*>& childArray() const {
@@ -103,6 +146,11 @@ public:
 
         const Array<Mesh*>& meshArray() const {
             return m_meshArray;
+        }
+
+        /** True if texCoord0 is not all zero. */
+        bool hasTexCoord0() const {
+            return m_hasTexCoord0;
         }
 
         bool isRoot() const {
