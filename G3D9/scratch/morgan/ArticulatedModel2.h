@@ -82,15 +82,21 @@ public:
         };
 
     private:
-
+       
         /** Used by cleanGeometry */
         class Face {
         public:
+
+            /** Index of a Face in a temporary array*/
+            typedef int Index;
+            typedef SmallArray<Index, 7> IndexArray;
+            typedef Table<Point3, IndexArray> AdjacentFaceTable;
+
             Vertex      vertex[3];
-            int         index[3];
-            Face() {
-                index[0] = index[1] = index[2] = -1;
-            }
+            
+            /** Non-unit face normal, used for weighted vertex normal computation */
+            Vector3     normal;
+            Vector3     unitNormal;
         };
 
     public:
@@ -125,6 +131,18 @@ public:
 
         /** Called from cleanGeometry to determine what needs to be computed. */
         void determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents);
+
+        /** Called from cleanGeometry */
+        void buildFaceArray(Array<Face>& faceArray, Face::AdjacentFaceTable& adjacentFaceTable);
+
+        /** Called from cleanGeometry.  Computes all vertex normals that are currently NaN. */
+        void computeMissingVertexNormals
+         (Array<Face>&                      faceArray, 
+          const Face::AdjacentFaceTable&    adjacentFaceTable, 
+          const float                       maximumSmoothAngle);
+
+        /** Called from cleanGeometry.  Collapses shared vertices back into cpuVertexArray. */
+        void mergeVertices(const Array<Face>& faceArray);
 
         Part(const std::string& name, Part* parent) : name(name), m_parent(parent) {}
 
@@ -166,8 +184,11 @@ public:
         - Merges all vertices with identical indices.
         - Updates all Mesh indices accordingly.
         - Recomputes the bounding sphere.
+
+        \param alwaysMergeVertices  Set to true to check for redundant vertices even if 
+          no normals or tangents need to be computed.
         */
-        void cleanGeometry();
+        void cleanGeometry(bool alwaysMergeVertices = false);
     };
 
     /** Base class for defining operations to perform on each part, in hierarchy order.*/
@@ -209,8 +230,11 @@ public:
     
     /** 
      Invokes Part::cleanGeometry on all parts.
-    */
-    void cleanGeometry();
+
+        \param alwaysMergeVertices  Set to true to check for redundant vertices even if 
+          no normals or tangents need to be computed.
+     */
+    void cleanGeometry(bool alwaysMergeVertices = false);
 
 private:
 
