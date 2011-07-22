@@ -93,10 +93,16 @@ public:
             typedef Table<Point3, IndexArray> AdjacentFaceTable;
 
             Vertex      vertex[3];
+
+            /** Mesh from which this face was originally created. Needed for reconstructing
+              the index arrays after vertices are merged.*/
+            Mesh*       mesh;
             
             /** Non-unit face normal, used for weighted vertex normal computation */
             Vector3     normal;
             Vector3     unitNormal;
+
+            Face() : mesh(NULL) {}
         };
 
     public:
@@ -141,8 +147,12 @@ public:
           const Face::AdjacentFaceTable&    adjacentFaceTable, 
           const float                       maximumSmoothAngle);
 
-        /** Called from cleanGeometry.  Collapses shared vertices back into cpuVertexArray. */
-        void mergeVertices(const Array<Face>& faceArray);
+        /** Called from cleanGeometry.  Collapses shared vertices back into cpuVertexArray.
+        \param maxNormalWeldAngle Maximum amount a normal can be bent to merge two vertices. */
+        void mergeVertices(const Array<Face>& faceArray, float maxNormalWeldAngle);
+
+        /** Called from cleanGeometry(). Computes all tangents that are currently NaN.*/
+        void computeMissingTangents();
 
         Part(const std::string& name, Part* parent) : name(name), m_parent(parent) {}
 

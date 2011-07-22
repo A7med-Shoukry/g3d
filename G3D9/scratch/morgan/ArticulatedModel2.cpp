@@ -149,22 +149,101 @@ void ArticulatedModel2::Part::cleanGeometry(bool alwaysMergeVertices) {
             computeMissingVertexNormals(faceArray, adjacentFaceTable, maximumSmoothAngle);
         }
 
+        // Maximum amount a normal can be bent to merge two vertices
+        const float maxNormalWeldAngle = 5 * units::degrees();
+    
         // Merge vertices that have nearly equal normals, positions, and texcoords.
         // We no longer need adjacency information because tangents can be computed
         // solely from shared vertex information.
-        alwaysAssertM(false, "TODO");
-        mergeVertices(faceArray);
+        mergeVertices(faceArray, maxNormalWeldAngle);
     }
 
     if (computeSomeTangents) {
         // Compute tangent space
-        alwaysAssertM(false, "TODO");
+        computeMissingTangents();
     }
 }
 
 
-void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray) {
+void ArticulatedModel2::Part::computeMissingTangents() {
+    alwaysAssertM(m_hasTexCoord0, "Cannot compute tangents without some texture coordinates.");
+
+    // See http://www.terathon.com/code/tangent.html for a derivation of the following code
+
+    // For each face
+    for (int m = 0; m < m_meshArray.size(); ++m) {
+        Mesh* mesh = m_meshArray[m];
+        
+
+    }
 }
+
+
+void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float maxNormalWeldAngle) {
+    // Clear all mesh index arrays
+    for (int m = 0; m < m_meshArray.size(); ++m) {
+        Mesh* mesh = m_meshArray[m];
+        mesh->cpuIndexArray.fastClear();
+        mesh->gpuIndexArray = VertexRange();
+    }
+
+    // Clear the CPU vertex array
+    cpuVertexArray.fastClear();
+
+    // Tracks if position and texcoord0 match, but ignores normals and tangents
+    struct VertexHash { 
+    static size_t hashCode(const Vertex& vertex) {
+        return vertex.position.hashCode() ^ vertex.texCoord0.hashCode();
+    }
+    static bool equal(const Vertex& a, const Vertex& b) {
+        return (a.position == b.position) && (a.texCoord0 == b.texCoord0);
+    }};
+
+    // Track the location of vertices in cpuVertexArray by their exact texcoord and position.
+    // The vertices in the list may have differing normals.
+    typedef int VertexIndex;
+    typedef SmallArray<VertexIndex, 4> VertexIndexList;
+    Table<Vertex, VertexIndexList, VertexHash, VertexHash> vertexIndexTable;
+
+    const float normalClosenessThreshold = cos(maxNormalWeldAngle);
+
+    // Iterate over all faces
+    for (int f = 0; f < faceArray.size(); ++f) {
+        const Face& face = faceArray[f];
+        Mesh* mesh = face.mesh;
+        for (int v = 0; v < 3; ++v) {
+            const Vertex& vertex = face.vertex[v];
+
+            // Find the location of this vertex in cpuVertexArray...or add it.
+            // The texture coordinates and vertices must exactly match.
+            // The normals may be slightly off, since the order of computation can affect them
+            // even if we wanted no normal welding.
+            VertexIndexList& list = vertexIndexTable.getCreate(vertex);
+
+            int index = -1;
+            for (int i = 0; i < list.size(); ++i) {
+                int j = list[i];
+                // See if the normals are close (we know that the texcoords and positions match exactly)
+                if (cpuVertexArray[j].normal.dot(vertex.normal) >= normalClosenessThreshold) { 
+                    // Reuse this vertex
+                    index = j;
+                    break;
+                }
+            }
+
+            if (index == -1) {
+                // This must be a new vertex, so add it
+                index = cpuVertexArray.size();
+                cpuVertexArray.append(vertex);
+                list.append(index);
+            }
+
+            // Add this vertex index to the mesh
+            mesh->cpuIndexArray.append(index);
+        }
+    }
+}
+
 
 void ArticulatedModel2::Part::computeMissingVertexNormals
  (Array<Face>&                      faceArray, 
@@ -224,13 +303,12 @@ void ArticulatedModel2::Part::buildFaceArray(Array<Face>& faceArray, Face::Adjac
         for (int i = 0; i < indexArray.size(); i += 3) {
             const Face::Index faceIndex = faceArray.size();
             Face& face = faceArray.next();
+            face.mesh = mesh;
 
             // Copy each vertex, updating the adjacency table
             for (int v = 0; v < 3; ++v) {
                 int index = indexArray[i + v];
                 face.vertex[v] = cpuVertexArray[index];
-
-                TODO: we have to store the original index, so that we can perform a remapping of the tri lists later.
 
                 // Record that this face is next to this vertex
                 adjacentFaceTable.getCreate(face.vertex[v].position).append(faceIndex);
