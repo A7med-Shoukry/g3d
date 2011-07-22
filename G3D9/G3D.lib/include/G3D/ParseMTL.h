@@ -1,18 +1,17 @@
 /**
- \file GLG3D/ParseMTL.h
+ \file G3D/ParseMTL.h
 
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2011-07-19
- \edited  2011-07-19
+ \edited  2011-07-22
 
  Copyright 2002-2011, Morgan McGuire.
  All rights reserved.
 */
-#ifndef GLG3D_ParseMTL_h
-#define GLG3D_ParseMTL_h
+#ifndef G3D_ParseMTL_h
+#define G3D_ParseMTL_h
 
-//#include <G3D/G3DAll.h>
 #include "G3D/platform.h"
 #include "G3D/Table.h"
 #include "G3D/ReferenceCount.h"
@@ -109,12 +108,13 @@ public:
 };
 
 
-template <> struct HashTrait<ParseMTL::Material::Ref> {
-    static size_t hashCode(const ParseMTL::Material::Ref& k) { return k.hashCode(); }
-};
-
 } // namespace G3D
 
 
-#endif // #define GLG3D_ParseMTL_h
+template <> struct HashTrait<G3D::ParseMTL::Material::Ref> {
+    static size_t hashCode(const G3D::ParseMTL::Material::Ref& k) { return k.hashCode(); }
+};
+
+
+#endif // G3D_ParseMTL_h
 

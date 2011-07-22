@@ -151,7 +151,8 @@ Library('FFMPEG-format', DYNAMIC,  'avformat','avformat',None,       None,    ['
 Library('FFMPEG-swscale', DYNAMIC, 'swscale', 'swscale', None,       None,    ['swscale.h'], ['sws_scale'], ['FFMPEG-util']),
 Library('FMOD',        DYNAMIC,   'fmodex',  'fmodex',   None,       None,    ['fmod.hpp', 'fmod.h'], [],                                      ['FFMPEG-codec', 'FFPMEG-util']),
 Library('mongoose',    STATIC,    'mongoose', 'mongoose', None,      None,    ['mongoose.h'],   [], []),
-Library('irrKlang',    DYNAMIC,   'irrklang','irrklang', None,       None,    ['irrKlang.h'],   ['createIrrKlangDevice'],                                            [])]:
+Library('irrKlang',    DYNAMIC,   'irrklang','irrklang', None,       None,    ['irrKlang.h'],   ['createIrrKlangDevice'],                                            []),
+Library('ply',         STATIC,   'ply','ply', None,       None,    ['ply.hpp'],   ['ply::ply_parser::parse'],                                            [])]:
 #Library('Box2D',       STATIC, 'box2d','box2d', None,       None,    ['Box2D.h'],   [],  [])]:
     defineLibrary(lib)
 

@@ -1,5 +1,5 @@
 /**
- \file GLG3D/ParseOBJ.h
+ \file G3D/ParseOBJ.h
 
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
@@ -10,8 +10,8 @@
  All rights reserved.
 */
 
-#ifndef GLG3D_ParseOBJ_h
-#define GLG3D_ParseOBJ_h
+#ifndef G3D_ParseOBJ_h
+#define G3D_ParseOBJ_h
 
 #include "G3D/platform.h"
 #include "G3D/ReferenceCount.h"
@@ -152,12 +152,15 @@ public:
 };
 
 
-template <> struct HashTrait<ParseOBJ::Index> {
-    static size_t hashCode(const ParseOBJ::Index& k) { 
+} // namespace G3D
+
+
+
+template <> struct HashTrait<G3D::ParseOBJ::Index> {
+    static size_t hashCode(const G3D::ParseOBJ::Index& k) { 
         return HashTrait<int>::hashCode(k.vertex + (k.normal << 8) + (k.texCoord << 16) + (k.texCoord >> 16)); 
     }
 };
 
 
-} // namespace G3D
-#endif // GLG3D_ParseOBJ_h
+#endif // G3D_ParseOBJ_h

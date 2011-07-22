@@ -22,7 +22,9 @@
 
 namespace G3D { namespace _internal{
 
-//#define VERBOSE
+// Uncomment to print information that can help with performance
+// profiling.
+#define VERBOSE
 
 /** Used by WeldHelper2::smoothNormals. */
 class VN {

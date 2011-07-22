@@ -373,6 +373,7 @@ Texture::DDSTexture::DDSTexture(const std::string& filename) :
             case FOURCC_DXT5:
                 m_bytesFormat = ImageFormat::RGBA_DXT5();
                 break;
+                
             default:
                 debugAssertM(false, "Unsupported DXT DDS format");
                 break;

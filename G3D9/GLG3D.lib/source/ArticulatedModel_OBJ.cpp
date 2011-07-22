@@ -540,7 +540,8 @@ void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& pr
     groupTable.deleteValues();
     groupTable.clear();
 
-    debugPrintf("Done loading.  %d vertices, %d faces, %d trilists\n\n", cookVertex.size(), numTris, part.triList.size());
+    debugPrintf("Done loading OBJ.  %d vertices, %d faces, %d trilists\n\n", 
+                cookVertex.size(), numTris, part.triList.size());
     loadTimer.after("Loading");
 }
 
