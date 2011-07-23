@@ -16,81 +16,38 @@ namespace G3D {
 // There is no "ParsePLY2" because PLY2 parsing is trivial--it has no subparts or materials,
 // and is directly an indexed format.
 void ArticulatedModel2::loadPLY2(const Specification& specification) {
-    Part* part = addPart("root");
+    
+    name = FilePath::base(specification.filename);
+    Part* part = addPart(name);
     Mesh* mesh = addMesh("mesh", part);
     mesh->material = Material::create();
     
-    BinaryInput bi(specification.filename, G3D_LITTLE_ENDIAN);
-
-    if (bi.getLength() == 0) {
-        throw std::string("Failed to open " + specification.filename);
-    }
+    TextInput ti(specification.filename);
         
-    const std::string& header = bi.readString32();
-    if (strcmp(header.c_str(), "IFS") != 0) {
-        throw std::string("File is not an IFS file");
-    }
-
-    const float32 ifsversion  = bi.readFloat32();
-    if (ifsversion != 1.0f && ifsversion != 1.1f) {
-        throw std::string("Bad IFS version, expecting 1.0 or 1.1");
-    }
-        
-    name = bi.readString32();
-
+    const int nV = iFloor(ti.readNumber());
+    const int nF = iFloor(ti.readNumber());
+    
+    part->cpuVertexArray.vertex.resize(nV);
+    mesh->cpuIndexArray.resize(3 * nF);
     part->cpuVertexArray.hasTangent = false;
     part->cpuVertexArray.hasTexCoord0 = false;
     part->m_hasTexCoord0 = false;
-
-    while (bi.hasMore()) {
-        std::string str = bi.readString32();
-            
-        if (str == "VERTICES") {
-            debugAssertM(part->cpuVertexArray.size() == 0, "Multiple vertex fields!");
-            const uint32 num = bi.readUInt32();
-                
-            if ((num <= 0) || (num > 10000000)) {
-                throw std::string("Bad number of vertices");
-            }
-            
-            part->cpuVertexArray.vertex.resize(num);
-               
-            CPUVertexArray::Vertex* vertexPtr = part->cpuVertexArray.vertex.getCArray();
-            for (uint32 i = 0; i < num; ++i) {
-                CPUVertexArray::Vertex& vertex = vertexPtr[i];
-                vertex.position.deserialize(bi);
-                vertex.tangent.x = vertex.normal.x = fnan();
-            }
-                
-        } else if (str == "TRIANGLES") {
-            debugAssertM(mesh->cpuIndexArray.size() == 0,
-                            "Multiple triangle fields!");
-            const uint32 num = bi.readUInt32();
-                
-            if ((num <= 0) || (num > 100000000)) {
-                throw std::string("Bad number of triangles");
-            }
-                
-            mesh->cpuIndexArray.resize(num * 3);
-            for (uint32 i = 0; i < (uint32)mesh->cpuIndexArray.size(); ++i) {
-                mesh->cpuIndexArray[i] = bi.readUInt32();
-            }
-        } else if (str == "TEXTURECOORD") {
-            debugAssertM(ifsversion == 1.1f,
-                            "IFS Version should be 1.1");
-            const uint32 num = bi.readUInt32();
-            debugAssertM((int)num == part->cpuVertexArray.size(),
-                            " Must have same number of texcoords as vertices");
-
-            part->cpuVertexArray.hasTexCoord0 = true;
-            part->m_hasTexCoord0 = true;
-            CPUVertexArray::Vertex* vertexPtr = part->cpuVertexArray.vertex.getCArray();
-            for(uint32 t = 0; t < num; ++t) {
-                vertexPtr[t].texCoord0.deserialize(bi);
-            }
+        
+    for (int i = 0; i < nV; ++i) {
+        part->cpuVertexArray.vertex[i].normal = Vector3::nan();
+        Vector3& v = part->cpuVertexArray.vertex[i].position;
+        for (int a = 0; a < 3; ++a) {
+            v[a] = ti.readNumber();
         }
-    } // while has more data
-
+    }
+                
+    for (int i = 0; i < nF; ++i) {
+        const int three = ti.readInteger();
+        alwaysAssertM(three == 3, "Ill-formed PLY2 file");
+        for (int j = 0; j < 3; ++j) {
+            mesh->cpuIndexArray[3*i + j] = ti.readInteger();
+        }
+    }
 }
 
 } // namespace G3D

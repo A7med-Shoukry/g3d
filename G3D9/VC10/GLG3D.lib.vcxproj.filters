@@ -320,6 +320,12 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_IFS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_PLY2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OFF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\source\directinput8.h">

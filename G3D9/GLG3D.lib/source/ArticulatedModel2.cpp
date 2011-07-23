@@ -10,7 +10,7 @@
 
 
  TODO:
- - Load other formats: PLY2
+ - Load other formats: PLY2, OFF
     - Parse3DS
     - ParsePLY
  - Remove IFSModel
@@ -130,6 +130,10 @@ void ArticulatedModel2::load(const Specification& specification) {
         loadOBJ(specification);
     } else if (ext == "ifs") {
         loadIFS(specification);
+    } else if (ext == "ply2") {
+        loadPLY2(specification);
+    } else if (ext == "off") {
+        loadOFF(specification);
     } else {
         // Error
         throw std::string("Unrecognized file extension on \"") + specification.filename + "\"";
