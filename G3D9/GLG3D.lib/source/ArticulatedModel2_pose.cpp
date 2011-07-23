@@ -111,6 +111,7 @@ void ArticulatedModel2::Part::copyToGPU() {
         mesh->gpuGeom->normal    = gpuNormalArray;
         mesh->gpuGeom->packedTangent = gpuTangentArray;
         mesh->gpuGeom->texCoord0 = gpuTexCoord0Array;
+        mesh->gpuGeom->twoSided  = mesh->twoSided;
     }
 }
 

@@ -10,7 +10,6 @@
 
 
  TODO:
- - Fix two-sided
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box
