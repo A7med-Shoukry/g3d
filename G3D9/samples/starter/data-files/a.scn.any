@@ -40,10 +40,10 @@
        */
 
        crateModel = ArticulatedModel2::Specification {
-           filename = "models/crytek_sponza/sponza.obj";
+//           filename = "models/crytek_sponza/sponza.obj";
 //           stripMaterials = true;
-           preprocess = ( scale(0.02); );
-//           filename = "models/crate/crate.obj";
+//           preprocess = ( scale(0.02); );
+           filename = "models/crate/crate.obj";
 //           filename = "models/teapot/teapot.obj";
        };
     };
