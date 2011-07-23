@@ -37,6 +37,8 @@ void ParseOBJ::parse(TextInput& ti, const std::string& basePath) {
     set.cppLineComments = false;
     set.otherCommentCharacter = '#';
     set.generateNewlineTokens = true;
+    // Don't let ".#" parse as a float special, since '#' starts a comment.
+    set.msvcFloatSpecials = false;
 
     ti.pushSettings(set);
 

@@ -3,7 +3,7 @@
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-19
- \edited  2011-07-22
+ \edited  2011-07-23
  
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -31,7 +31,8 @@ namespace G3D {
 /**
  \brief A 3D object composed of multiple rigid triangle meshes connected by joints.
 
- Supports OBJ file format.
+ Supports <a href="http://www.martinreddy.net/gfx/3d/OBJ.spec">OBJ</a> + <a href="http://www.fileformat.info/format/material/">MTL</a>, 
+ <a href="">IFS</a>, and PLY2 file formats.
 
  Does not copy geometry to the GPU until it has to render.  This means that CPU rendering
  code need not consume GPU vertex buffer resources (or transfer time).  The current
@@ -73,14 +74,14 @@ public:
 
         Set to 0 to force faceting of a model.  Set to 2 * pif() to make completely smooth.
 
-        Default: 55 degrees().
+        Default: 65 degrees().
         */
         float                       maxSmoothAngle;
 
         CleanGeometrySettings() : 
             forceVertexMerging(true), 
             maxNormalWeldAngle(8 * units::degrees()),
-            maxSmoothAngle(55 * units::degrees()) {
+            maxSmoothAngle(65 * units::degrees()) {
         }
 
         CleanGeometrySettings(const Any& a);
@@ -515,6 +516,8 @@ private:
 
     void loadIFS(const Specification& specification);
 
+    void loadPLY2(const Specification& specification);
+
     void load(const Specification& specification);
 
     ArticulatedModel2() : m_nextID(1) {}
@@ -609,6 +612,8 @@ public:
         int&            triStartIndex, 
         float&          u, 
         float&          v);
+
+    void countTrianglesAndVertices(int& tri, int& vert) const;
 };
 
 }  // namespace G3D

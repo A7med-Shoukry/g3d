@@ -35,6 +35,7 @@ void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
     set.cppLineComments = false;
     set.otherCommentCharacter = '#';
     set.generateNewlineTokens = true;
+    set.msvcFloatSpecials = false;
     ti.pushSettings(set);
 
     // Always provide a default material

@@ -10,7 +10,10 @@
 
 
  TODO:
- - Load other formats: PLY2, PLY, 3DS
+ - Load other formats: PLY2
+    - Parse3DS
+    - ParsePLY
+ - Remove IFSModel
  - Create heightfield
  - Create cornell box
  - Set bump map parallax steps in specification
@@ -232,6 +235,17 @@ bool ArticulatedModel2::intersect
     forEachPart(intersectOperation, cframe, pose);
 
     return intersectOperation.hit;
+}
+
+
+void ArticulatedModel2::countTrianglesAndVertices(int& tri, int& vert) const {
+    tri = 0;
+    vert = 0;
+    for (int p = 0; p < m_partArray.size(); ++p) {
+        const Part* part = m_partArray[p];
+        tri += part->triangleCount();
+        vert += part->cpuVertexArray.size();
+    }
 }
 
 } // namespace G3D

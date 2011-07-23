@@ -1,6 +1,5 @@
 /** \file App.cpp */
 #include "App.h"
-#include <zip.h>
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
@@ -15,6 +14,13 @@ void convertToOBJFile(const std::string& srcFilename) {
     FILE* file = FileSystem::fopen(dstFilename.c_str(), "wt");
 
     ArticulatedModel2::Ref m = ArticulatedModel2::fromFile(srcFilename);
+
+    {
+        int tri, vert;
+        m->countTrianglesAndVertices(tri, vert);
+        debugPrintf("%d triangles, %d vertices\nGenerating OBJ...\n", tri, vert);
+    }
+
     fprintf(file, "# %s\n\n", m->name.c_str());
     for (int p = 0; p < m->rootArray().size(); ++p) {
         const ArticulatedModel2::Part* part = m->rootArray()[p];
@@ -159,7 +165,7 @@ int main(int argc, const char* argv[]) {
 
 App::App(const GApp::Settings& settings) : GApp(settings) {
     renderDevice->setColorClearValue(Color3::white());
-    convertToOBJFile("dragon.ifs"); ::exit(0);
+//    convertToOBJFile("dragon.ifs"); ::exit(0);
 }
 
 

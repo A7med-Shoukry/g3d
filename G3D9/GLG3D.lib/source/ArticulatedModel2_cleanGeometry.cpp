@@ -312,6 +312,7 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
     for (int f = 0; f < faceArray.size(); ++f) {
         const Face& face = faceArray[f];
         Mesh* mesh = face.mesh;
+        int vertexIndex[3];
         for (int v = 0; v < 3; ++v) {
             const CPUVertexArray::Vertex& vertex = face.vertex[v];
 
@@ -325,7 +326,9 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
             for (int i = 0; i < list.size(); ++i) {
                 int j = list[i];
                 // See if the normals are close (we know that the texcoords and positions match exactly)
-                if (cpuVertexArray.vertex[j].normal.dot(vertex.normal) >= normalClosenessThreshold) { 
+                const Vector3& otherNormal = cpuVertexArray.vertex[j].normal;
+                if ((otherNormal.dot(vertex.normal) >= normalClosenessThreshold) 
+                    || otherNormal.isZero() || vertex.normal.isZero()) { 
                     // Reuse this vertex
                     index = j;
                     break;
@@ -341,7 +344,12 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
             }
 
             // Add this vertex index to the mesh
-            mesh->cpuIndexArray.append(index);
+            vertexIndex[v] = index;
+        }
+
+        // Add only non-degenerate triangles
+        if ((vertexIndex[0] != vertexIndex[1]) && (vertexIndex[1] != vertexIndex[2]) && (vertexIndex[2] != vertexIndex[0])) {
+            mesh->cpuIndexArray.append(vertexIndex[0], vertexIndex[1], vertexIndex[2]);
         }
     }
 
@@ -372,7 +380,8 @@ void ArticulatedModel2::Part::computeMissingVertexNormals
                 const Face::IndexArray& faceIndexArray = adjacentFaceTable.get(vertex.position);
 
                 if (face.unitNormal.isZero()) {
-                    // This face has no normal (presumably it is degenerate), so just average adjacent ones directly
+                    // This face has no normal (presumably it is degenerate), so just average adjacent ones 
+                    // directly.
                     for (int i = 0; i < faceIndexArray.size(); ++i) {
                         vertex.normal += faceArray[faceIndexArray[i]].normal;
                     }
@@ -391,7 +400,7 @@ void ArticulatedModel2::Part::computeMissingVertexNormals
                 }
 
                 // Make the vertex normal unit length
-                vertex.normal = vertex.normal.direction();
+                vertex.normal = vertex.normal.directionOrZero();
                 debugAssertM(! vertex.normal.isNaN() && ! vertex.normal.isZero(),
                     "Smooth vertex normal produced an illegal value--"
                     "the adjacent face normals were probably corrupt"); 

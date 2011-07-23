@@ -750,7 +750,7 @@ numLabel:
                         if (c != '0') {
                             throw BadMSVCSpecial
                                 (
-                                 "Incorrect floating-point special (inf or"
+                                 "Incorrect floating-point special (inf or "
                                  "nan) format.",
                                  t.line(), charNumber);
                         }
