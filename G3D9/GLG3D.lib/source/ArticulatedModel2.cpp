@@ -10,7 +10,8 @@
 
 
  TODO:
- - Intersect
+ - Fix loading through zip files
+ - Profile mergeVertices
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box

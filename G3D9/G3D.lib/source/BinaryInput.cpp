@@ -144,13 +144,15 @@ BinaryInput::BinaryInput(
             // sets machines up to use MMX, if they want
             m_buffer = reinterpret_cast<uint8*>(System::alignedMalloc(m_length, 16));
             struct zip_file* zf = zip_fopen( z, internalFile.c_str(), ZIP_FL_NOCASE );
-            {
-                int64 test = zip_fread( zf, m_buffer, m_length );
-                debugAssertM(test == m_length,
+            if (zf == NULL) {
+                throw std::string("\"") + internalFile + "\" inside \"" + zipfile + "\" could not be opened.";
+            } else {
+                const int64 bytesRead = zip_fread( zf, m_buffer, m_length );
+                debugAssertM(bytesRead == m_length,
                              internalFile + " was corrupt because it unzipped to the wrong size.");
-                (void)test;
+                (void)bytesRead;
+                zip_fclose( zf );
             }
-            zip_fclose( zf );
         }
         zip_close( z );
 
