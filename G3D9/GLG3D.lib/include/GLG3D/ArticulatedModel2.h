@@ -62,7 +62,7 @@ public:
 
         /**
           Maximum angle in radians that a normal can be bent through to merge two vertices. 
-          Default: 5 degrees().
+          Default: 8 degrees().
           */
         float                       maxNormalWeldAngle;
 
@@ -73,14 +73,14 @@ public:
 
         Set to 0 to force faceting of a model.  Set to 2 * pif() to make completely smooth.
 
-        Default: 45 degrees().
+        Default: 55 degrees().
         */
         float                       maxSmoothAngle;
 
         CleanGeometrySettings() : 
             forceVertexMerging(true), 
-            maxNormalWeldAngle(5 * units::degrees()),
-            maxSmoothAngle(45 * units::degrees()) {
+            maxNormalWeldAngle(8 * units::degrees()),
+            maxSmoothAngle(55 * units::degrees()) {
         }
 
         CleanGeometrySettings(const Any& a);

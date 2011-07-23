@@ -370,23 +370,31 @@ void ArticulatedModel2::Part::computeMissingVertexNormals
                 // This normal needs to be computed
                 vertex.normal = Vector3::zero();
                 const Face::IndexArray& faceIndexArray = adjacentFaceTable.get(vertex.position);
-                for (int i = 0; i < faceIndexArray.size(); ++i) {
-                    const Face& adjacentFace = faceArray[faceIndexArray[i]];
-                    const float cosAngle = face.unitNormal.dot(adjacentFace.unitNormal);
 
-                    // Only process if within the cutoff angle
-                    if (cosAngle >= smoothThreshold) {
-                        // These faces are close enough to be considered part of a
-                        // smooth surface.  Add the non-unit normal
-                        vertex.normal += adjacentFace.normal;
+                if (face.unitNormal.isZero()) {
+                    // This face has no normal (presumably it is degenerate), so just average adjacent ones directly
+                    for (int i = 0; i < faceIndexArray.size(); ++i) {
+                        vertex.normal += faceArray[faceIndexArray[i]].normal;
+                    }
+                } else {
+                    for (int i = 0; i < faceIndexArray.size(); ++i) {
+                        const Face& adjacentFace = faceArray[faceIndexArray[i]];
+                        const float cosAngle = face.unitNormal.dot(adjacentFace.unitNormal);
+
+                        // Only process if within the cutoff angle
+                        if (cosAngle >= smoothThreshold) {
+                            // These faces are close enough to be considered part of a
+                            // smooth surface.  Add the non-unit normal
+                            vertex.normal += adjacentFace.normal;
+                        }
                     }
                 }
 
                 // Make the vertex normal unit length
-                vertex.normal = vertex.normal.directionOrZero();
+                vertex.normal = vertex.normal.direction();
                 debugAssertM(! vertex.normal.isNaN() && ! vertex.normal.isZero(),
                     "Smooth vertex normal produced an illegal value--"
-                    "the adjacent face normals were probably corrupt");
+                    "the adjacent face normals were probably corrupt"); 
             }
         }
     }

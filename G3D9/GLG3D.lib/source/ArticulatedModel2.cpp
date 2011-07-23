@@ -10,7 +10,6 @@
 
 
  TODO:
- - vertex weld instruction; large IFS files seem broken [check for cracks elsewhere]
  - Load other formats: PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box
