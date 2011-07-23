@@ -10,7 +10,7 @@
 
 
  TODO:
- - Load other formats: IFS, PLY2, PLY, 3DS
+ - Load other formats: PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box
  - getTris from a CPUGeom with a CPUVertexArray for ray tracing

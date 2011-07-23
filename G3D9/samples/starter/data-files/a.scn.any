@@ -46,7 +46,9 @@
 //           preprocess = ( scale(0.02); );
 //    filename = "D:/morgan/g3d/G3D9/build/data/models/cube/cube.zip/cube.obj";
 //           filename = "models/crate/crate.obj";
-           filename = "models/teapot/teapot.ifs";
+//           filename = "models/teapot/teapot.ifs";
+//           filename = "ifs/dragon.ifs";
+           filename = "ifs/buddha.ifs";
        };
 
 /*

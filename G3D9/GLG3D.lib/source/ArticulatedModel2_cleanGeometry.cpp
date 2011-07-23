@@ -42,6 +42,7 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
         // each vertex's normal independently if needed.
         Array<Face> faceArray;
         Face::AdjacentFaceTable adjacentFaceTable;
+        adjacentFaceTable.clearAndSetMemoryManager(AreaMemoryManager::create());
 
         buildFaceArray(faceArray, adjacentFaceTable);
         timer.after("  buildFaceArray");
@@ -57,6 +58,7 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
         mergeVertices(faceArray, settings.maxNormalWeldAngle);
         timer.after("  mergeVertices");
     }
+    timer.after("  deallocation of adjacentFaceTable");
 
     if (computeSomeTangents) {
         // Compute tangent space
@@ -264,8 +266,7 @@ void ArticulatedModel2::Part::computeMissingTangents() {
             vertex.tangent.w = (n.cross(t1).dot(t2) < 0.0f) ? 1.0f : -1.0f;
         } // if this must be updated
     } // for each vertex
-    
-}
+ }
 
 
 

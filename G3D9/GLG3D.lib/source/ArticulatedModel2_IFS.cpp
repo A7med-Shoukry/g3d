@@ -40,6 +40,7 @@ void ArticulatedModel2::loadIFS(const Specification& specification) {
 
     part->cpuVertexArray.hasTangent = false;
     part->cpuVertexArray.hasTexCoord0 = false;
+    part->m_hasTexCoord0 = false;
 
     while (bi.hasMore()) {
         std::string str = bi.readString32();
@@ -78,10 +79,11 @@ void ArticulatedModel2::loadIFS(const Specification& specification) {
             debugAssertM(ifsversion == 1.1f,
                             "IFS Version should be 1.1");
             const uint32 num = bi.readUInt32();
-            debugAssertM(num == part->cpuVertexArray.size(),
+            debugAssertM((int)num == part->cpuVertexArray.size(),
                             " Must have same number of texcoords as vertices");
 
             part->cpuVertexArray.hasTexCoord0 = true;
+            part->m_hasTexCoord0 = true;
             CPUVertexArray::Vertex* vertexPtr = part->cpuVertexArray.vertex.getCArray();
             for(uint32 t = 0; t < num; ++t) {
                 vertexPtr[t].texCoord0.deserialize(bi);
