@@ -10,12 +10,13 @@
 
 
  TODO:
- - Implement preprocess instructions
- - Set bump map parallax steps
+ - Fix sponza loading
  - Intersect
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box
+ - Set bump map parallax steps in specification
+ - Implement other preprocess instructions
  - Optimize mergeVertices
  - Optimize parse
  - Pack tangents into short4 format?
