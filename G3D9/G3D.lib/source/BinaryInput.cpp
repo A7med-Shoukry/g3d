@@ -134,7 +134,8 @@ BinaryInput::BinaryInput(
         FileSystem::markFileUsed(m_filename);
         FileSystem::markFileUsed(zipfile);
 
-        std::string internalFile = m_filename.substr(zipfile.length() + 1);
+        // Zipfiles require Unix-style slashes
+        std::string internalFile = FilePath::canonicalize(m_filename.substr(zipfile.length() + 1));
         struct zip* z = zip_open(zipfile.c_str(), ZIP_CHECKCONS, NULL);
         {
             struct zip_stat info;

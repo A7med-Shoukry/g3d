@@ -10,7 +10,7 @@
 
 
  TODO:
- - Fix loading through zip files
+ - Fix two-sided
  - Profile mergeVertices
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield

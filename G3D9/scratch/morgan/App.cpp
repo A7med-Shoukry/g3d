@@ -1,5 +1,6 @@
 /** \file App.cpp */
 #include "App.h"
+#include <zip.h>
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
@@ -145,9 +146,6 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
-
-    GImage im("D:/morgan/g3d/G3D9/build/data/models/crytek_sponza/sponza.zip/textures\\sponza_flagpole_diff.tga");
-
     (void)argc; (void)argv;
     GApp::Settings settings(argc, argv);
     
