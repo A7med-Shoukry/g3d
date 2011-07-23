@@ -198,7 +198,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
                 // and the mesh index array.
                 for (int t = 2; t < face.size(); ++t) {
                     int i = prevNumVertices + t - 2;
-                    mesh->cpuIndexArray.append(i, i + 1, i + 2);
+                    mesh->cpuIndexArray.append(prevNumVertices, i + 1, i + 2);
                 } // for each triangle in the face
             } // for each face
         }

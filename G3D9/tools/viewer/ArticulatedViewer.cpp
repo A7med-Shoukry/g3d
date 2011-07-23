@@ -15,7 +15,7 @@ ArticulatedViewer::ArticulatedViewer() :
     m_numEdges(0),
     m_numFaces(0),
     m_numVertices(0)
-	{}
+{}
 
 
 void ArticulatedViewer::onInit(const std::string& filename) {

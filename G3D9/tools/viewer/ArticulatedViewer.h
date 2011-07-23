@@ -18,10 +18,10 @@
 class ArticulatedViewer : public Viewer {
 private:
 
-	ArticulatedModel::Ref	    m_model;
-	int						    m_numEdges;
-	int						    m_numFaces;
-	int						    m_numVertices;
+    ArticulatedModel::Ref	m_model;
+    int				m_numEdges;
+    int			        m_numFaces;
+    int                         m_numVertices;
 
     int                         m_selectedPartIndex;
     int                         m_selectedTriListIndex;
@@ -36,8 +36,8 @@ private:
     void saveGeometry();
 
 public:
-	ArticulatedViewer();
-	virtual void onInit(const std::string& filename);
+    ArticulatedViewer();
+    virtual void onInit(const std::string& filename);
     virtual bool onEvent(const GEvent& e, App* app);
     virtual void onGraphics(RenderDevice* rd, App* app, const Lighting::Ref& lighting);
 

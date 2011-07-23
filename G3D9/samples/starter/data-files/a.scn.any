@@ -40,10 +40,11 @@
        */
 
        crateModel = ArticulatedModel2::Specification {
-//           filename = "models/crytek_sponza/sponza.obj";
+           //           filename = "models/crytek_sponza/sponza.obj";
+           filename = "/Volumes/Volatile/G3D/g3dsvn/G3D9/data-files/models/crytek_sponza/sponza/sponza.obj";
 //           stripMaterials = true;
-//           preprocess = ( scale(0.02); );
-           filename = "models/crate/crate.obj";
+           preprocess = ( scale(0.02); );
+//           filename = "models/crate/crate.obj";
 //           filename = "models/teapot/teapot.obj";
        };
     };

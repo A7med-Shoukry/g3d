@@ -1109,6 +1109,7 @@ TextInput::TextInput(const std::string& filename, const Settings& opt) : options
     } else {
         // Read directly into the array
         const int n = FileSystem::size(filename);
+        alwaysAssertM(n >= 0, std::string("File does not exist: ") + filename);
         buffer.resize(n);
         FILE* f = FileSystem::fopen(filename.c_str(), "rb");
         fread(buffer.getCArray(), 1, n, f);
