@@ -521,14 +521,22 @@ private:
 
 public:
 
-    /** \sa createEmpty */
+    /** \sa createEmpty, fromFile */
     static Ref create(const Specification& s);
 
-    /** \sa create, addMesh, addPart */
+    static Ref fromFile(const std::string& filename) {
+        Specification s;
+        s.filename = filename;
+        return create(s);
+    }
+
+    /** \sa create, fromFile, addMesh, addPart */
     static Ref createEmpty(const std::string& name);
 
     /** Root parts.  There may be more than one. */
-    const Array<Part*>& rootArray() const;
+    const Array<Part*>& rootArray() const {
+        return m_rootArray;
+    }
 
     /** Get a Mesh by name.  Returns NULL if there is no such mesh. */
     Mesh* mesh(const std::string& partName, const std::string& meshName);
