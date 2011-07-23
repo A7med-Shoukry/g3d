@@ -10,10 +10,10 @@
 
 
  TODO:
+ - vertex weld instruction; large IFS files seem broken [check for cracks elsewhere]
  - Load other formats: PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box
- - getTris from a CPUGeom with a CPUVertexArray for ray tracing
  - Set bump map parallax steps in specification
  - Implement other preprocess instructions
  - Multithread by part
