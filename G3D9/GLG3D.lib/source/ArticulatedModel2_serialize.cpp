@@ -124,16 +124,9 @@ ArticulatedModel2::Instruction::Instruction(const Any& any) {
         any.verifySize(1);
         arg = any[0];
 
-    } else if (instructionName == "movePivotBy") {
+    } else if (instructionName == "setPartCFrame") {
 
-        type = MOVE_PIVOT_BY;
-        any.verifySize(2);
-        part = any[0];
-        arg = any[1];
-
-    } else if (instructionName == "setPivot") {
-
-        type = SET_PIVOT;
+        type = SET_PART_CFRAME;
         any.verifySize(2);
         part = any[0];
         arg = any[1];

@@ -141,7 +141,7 @@ public:
     private:
         friend class ArticulatedModel2;
 
-        enum Type {SCALE, MOVE_PIVOT_BY, SET_PIVOT, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
+        enum Type {SCALE, SET_PART_CFRAME, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
 
         class Identifier {
         public:
@@ -210,12 +210,10 @@ public:
                 // Scale the entire object, including pivots
                 scale(0.1);
 
-                // Transform the reference frame of a part in its parent's frame.
-                // All parts and meshes may be referred to by name string or ID integer.
-                movePivotBy("root", CFrame::fromXYZYPRDegrees(0, 3, 0, 20));
-
                 // Set the reference frame of a part, relative to its parent
-                setPivot("fence", CFrame::fromXYZYPRDegrees(0, 13, 0));
+                // All parts and meshes may be referred to by name string or ID integer
+                // in any instruction.
+                setPartCFrame("fence", CFrame::fromXYZYPRDegrees(0, 13, 0));
 
                 // Apply a transformation to a part within its reference frame
                 transformGeometry("root", Matrix4::scale(0, 1, 2));

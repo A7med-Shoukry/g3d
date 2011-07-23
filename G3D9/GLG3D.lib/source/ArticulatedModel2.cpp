@@ -10,14 +10,17 @@
 
 
  TODO:
- - Load other formats: PLY2, OFF
-    - Parse3DS
-    - ParsePLY
+ - implement setMaterial instruction
+ - implement setPartCFrame instruction
+ - ParsePLY
  - Remove IFSModel
+ - Parse3DS
  - Create heightfield
- - Create cornell box
+ - Create Cornell Box
+ - Import Quake BSP
  - Set bump map parallax steps in specification
  - Implement other preprocess instructions
+ - Remove ArticulatedModel?!
  - Multithread by part
  - Pack tangents into short4 format?
  */
