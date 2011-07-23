@@ -513,6 +513,8 @@ private:
         undefined.*/
     void loadOBJ(const Specification& specification);
 
+    void loadIFS(const Specification& specification);
+
     void load(const Specification& specification);
 
     ArticulatedModel2() : m_nextID(1) {}

@@ -1,9 +1,9 @@
 /**
- \file GLG3D/source/ArticulatedModel2_OBJ.h
+ \file GLG3D/source/ArticulatedModel2_OBJ.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-19
- \edited  2011-07-22
+ \edited  2011-07-23
  
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.

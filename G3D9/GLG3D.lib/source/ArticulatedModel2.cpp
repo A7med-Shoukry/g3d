@@ -21,6 +21,7 @@
  */
 #include "GLG3D/ArticulatedModel2.h"
 #include "G3D/Ray.h"
+#include "G3D/FileSystem.h"
 
 namespace G3D {
 
@@ -120,9 +121,13 @@ ArticulatedModel2::Part* ArticulatedModel2::part(const std::string& partName) {
 
 void ArticulatedModel2::load(const Specification& specification) {
     Stopwatch timer;
+    
+    const std::string& ext = toLower(FilePath::ext(specification.filename));
 
-    if (endsWith(toLower(specification.filename), ".obj")) {
+    if (ext == "obj") {
         loadOBJ(specification);
+    } else if (ext == "ifs") {
+        loadIFS(specification);
     } else {
         // Error
         throw std::string("Unrecognized file extension on \"") + specification.filename + "\"";
