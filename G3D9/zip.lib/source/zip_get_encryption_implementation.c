@@ -1,6 +1,6 @@
 /*
-  zip_error_to_str.c -- get string representation of zip error code
-  Copyright (C) 1999-2009 Dieter Baron and Thomas Klausner
+  zip_get_encryption_implementation.c -- get encryption implementation
+  Copyright (C) 2009 Dieter Baron and Thomas Klausner
 
   This file is part of libzip, a library to manipulate ZIP archives.
   The authors can be contacted at <libzip@nih.at>
@@ -33,38 +33,14 @@
 
 
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "zipint.h"
 
 
 
-ZIP_EXTERN int
-zip_error_to_str(char *buf, zip_uint64_t len, int ze, int se)
+ZIP_EXTERN zip_encryption_implementation
+zip_get_encryption_implementation(zip_uint16_t em)
 {
-    const char *zs, *ss;
-
-    if (ze < 0 || ze >= _zip_nerr_str)
-	return snprintf(buf, len, "Unknown error %d", ze);
-
-    zs = _zip_err_str[ze];
-	
-    switch (_zip_err_type[ze]) {
-    case ZIP_ET_SYS:
-	ss = strerror(se);
-	break;
-	
-    case ZIP_ET_ZLIB:
-	ss = zError(se);
-	break;
-	
-    default:
-	ss = NULL;
-    }
-
-    return snprintf(buf, len, "%s%s%s",
-		    zs, (ss ? ": " : ""), (ss ? ss : ""));
+    if (em == ZIP_EM_TRAD_PKWARE)
+	return zip_source_pkware;
+    return NULL;
 }

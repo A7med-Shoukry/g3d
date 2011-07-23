@@ -1,6 +1,6 @@
 /*
-  zip_error_to_str.c -- get string representation of zip error code
-  Copyright (C) 1999-2009 Dieter Baron and Thomas Klausner
+  zip_source_layered.c -- create layered source
+  Copyright (C) 2009 Dieter Baron and Thomas Klausner
 
   This file is part of libzip, a library to manipulate ZIP archives.
   The authors can be contacted at <libzip@nih.at>
@@ -33,38 +33,27 @@
 
 
 
-#include <errno.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "zipint.h"
 
 
 
-ZIP_EXTERN int
-zip_error_to_str(char *buf, zip_uint64_t len, int ze, int se)
+ZIP_EXTERN struct zip_source *
+zip_source_layered(struct zip *za, struct zip_source *src,
+		   zip_source_layered_callback cb, void *ud)
 {
-    const char *zs, *ss;
+    struct zip_source *zs;
 
-    if (ze < 0 || ze >= _zip_nerr_str)
-	return snprintf(buf, len, "Unknown error %d", ze);
+    if (za == NULL)
+	return NULL;
 
-    zs = _zip_err_str[ze];
-	
-    switch (_zip_err_type[ze]) {
-    case ZIP_ET_SYS:
-	ss = strerror(se);
-	break;
-	
-    case ZIP_ET_ZLIB:
-	ss = zError(se);
-	break;
-	
-    default:
-	ss = NULL;
-    }
+    if ((zs=_zip_source_new(za)) == NULL)
+	return NULL;
 
-    return snprintf(buf, len, "%s%s%s",
-		    zs, (ss ? ": " : ""), (ss ? ss : ""));
+    zs->src = src;
+    zs->cb.l = cb;
+    zs->ud = ud;
+    
+    return zs;
 }

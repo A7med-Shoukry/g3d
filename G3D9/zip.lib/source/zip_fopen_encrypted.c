@@ -1,5 +1,5 @@
 /*
-  zip_stat_index.c -- get information about file by index
+  zip_fopen_encrypted.c -- open file for reading with password
   Copyright (C) 1999-2009 Dieter Baron and Thomas Klausner
 
   This file is part of libzip, a library to manipulate ZIP archives.
@@ -37,58 +37,14 @@
 
 
 
-ZIP_EXTERN int
-zip_stat_index(struct zip *za, zip_uint64_t index, int flags,
-	       struct zip_stat *st)
+ZIP_EXTERN struct zip_file *
+zip_fopen_encrypted(struct zip *za, const char *fname, int flags,
+		    const char *password)
 {
-    const char *name;
-    
-    if (index >= za->nentry) {
-	_zip_error_set(&za->error, ZIP_ER_INVAL, 0);
-	return -1;
-    }
+    int idx;
 
-    if ((name=zip_get_name(za, index, flags)) == NULL)
-	return -1;
-    
+    if ((idx=zip_name_locate(za, fname, flags)) < 0)
+	return NULL;
 
-    if ((flags & ZIP_FL_UNCHANGED) == 0
-	&& ZIP_ENTRY_DATA_CHANGED(za->entry+index)) {
-	if (zip_source_stat(za->entry[index].source, st) < 0) {
-	    _zip_error_set(&za->error, ZIP_ER_CHANGED, 0);
-	    return -1;
-	}
-    }
-    else {
-	if (za->cdir == NULL || index >= za->cdir->nentry) {
-	    _zip_error_set(&za->error, ZIP_ER_INVAL, 0);
-	    return -1;
-	}
-
-	zip_stat_init(st);
-
-	st->crc = za->cdir->entry[index].crc;
-	st->size = za->cdir->entry[index].uncomp_size;
-	st->mtime = za->cdir->entry[index].last_mod;
-	st->comp_size = za->cdir->entry[index].comp_size;
-	st->comp_method = za->cdir->entry[index].comp_method;
-	if (za->cdir->entry[index].bitflags & ZIP_GPBF_ENCRYPTED) {
-	    if (za->cdir->entry[index].bitflags & ZIP_GPBF_STRONG_ENCRYPTION) {
-		/* XXX */
-		st->encryption_method = ZIP_EM_UNKNOWN;
-	    }
-	    else
-		st->encryption_method = ZIP_EM_TRAD_PKWARE;
-	}
-	else
-	    st->encryption_method = ZIP_EM_NONE;
-	st->valid = ZIP_STAT_CRC|ZIP_STAT_SIZE|ZIP_STAT_MTIME
-	    |ZIP_STAT_COMP_SIZE|ZIP_STAT_COMP_METHOD|ZIP_STAT_ENCRYPTION_METHOD;
-    }
-
-    st->index = index;
-    st->name = name;
-    st->valid |= ZIP_STAT_INDEX|ZIP_STAT_NAME;
-    
-    return 0;
+    return zip_fopen_index_encrypted(za, idx, flags, password);
 }
