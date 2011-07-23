@@ -314,6 +314,9 @@
     <ClCompile Include="..\GLG3D.lib\source\CPUVertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_preprocess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\source\directinput8.h">

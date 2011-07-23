@@ -105,6 +105,7 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_cleanGeometry.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OBJ.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_pose.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_preprocess.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_serialize.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp" />

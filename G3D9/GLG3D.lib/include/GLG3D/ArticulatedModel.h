@@ -137,7 +137,7 @@ public:
          Note that a single PhysicsFrame (or any equivalent of it) can serve as
          to create a PhysicsFrameSpline.  
 
-         <pre>
+         \code
             PoseSpline {
                 "part1" = PhysicsFrameSpline {
                    control = ( Vector3(0,0,0),
@@ -147,7 +147,7 @@ public:
 
                 "part2" = Vector3(0,1,0)
             }
-         </pre>
+         \encode
         */
         PoseSpline(const Any& any);
      

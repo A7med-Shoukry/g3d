@@ -208,6 +208,18 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
     // meshes may have texture coordinates, but those may need tangents and texcoords.
     part->m_hasTexCoord0 = (numSpecifiedTexCoord0s > 0);
 
+    // Make any mesh that has partial coverage or transmission two-sided (OBJ-specific logic)
+    for (int m = 0; m < part->m_meshArray.size(); ++m) {
+        Mesh* mesh = part->m_meshArray[m];
+        const Material::Ref material = mesh->material;
+        const SuperBSDF::Ref bsdf = material->bsdf();
+
+        if ((bsdf->lambertian().max().a < 1.0f) ||
+            (bsdf->transmissive().max().max() > 0.0f)) {
+            mesh->twoSided = true;
+        }
+    }
+
     // Debugging code
     if (false) {
         // Code for dumping the imported vertices

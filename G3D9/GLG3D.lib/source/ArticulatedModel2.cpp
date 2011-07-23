@@ -10,8 +10,8 @@
 
 
  TODO:
+ - Preprocess
  - Set bump map parallax steps
- - Transform
  - Intersect
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield
@@ -70,6 +70,7 @@ ArticulatedModel2::Part* ArticulatedModel2::addPart(const std::string& name, Par
     if (parent == NULL) {
         m_rootArray.append(m_partArray.last());
     }
+
     return m_partArray.last();
 }
 
@@ -91,6 +92,31 @@ ArticulatedModel2::Part* ArticulatedModel2::part(const ID& id) {
     } else {
         return *ptr;
     }
+}
+
+
+ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const std::string& partName, const std::string& meshName) {
+    Part* p = part(partName);
+    if (p != NULL) {
+        // Exhaustively cycle through all meshes
+        for (int m = 0; m < p->m_meshArray.size(); ++m) {
+            if (p->m_meshArray[m]->name == meshName) {
+                return p->m_meshArray[m];
+            }
+        }
+    }
+    return NULL;
+}
+
+
+ArticulatedModel2::Part* ArticulatedModel2::part(const std::string& partName) {
+    // Exhaustively cycle through all parts
+    for (int p = 0; p < m_partArray.size(); ++p) {
+        if (m_partArray[p]->name == partName) {
+            return m_partArray[p];
+        }
+    }
+    return NULL;
 }
 
 

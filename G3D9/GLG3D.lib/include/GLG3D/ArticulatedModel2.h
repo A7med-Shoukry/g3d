@@ -126,6 +126,36 @@ public:
         }
     };
 
+
+    /** \brief Preprocessing instruction. 
+        \sa G3D::Specification::Specification
+    */
+    class Instruction {
+    public:        
+        enum Type {SCALE, MOVE_PIVOT_BY, SET_PIVOT, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
+
+        class Identifier {
+        public:
+            std::string             name;
+            ID                      id;
+
+            Identifier() {}
+            Identifier(const Any& a);
+        };
+
+        Type                        type;
+        Identifier                  part;
+        Identifier                  mesh;
+        Any                         arg;
+
+        Instruction() : type(SCALE) {}
+
+        // Used instead of the constructor to avoid throwing parse exceptions from a
+        // constructor and to make it easy to create Array%s of Instruction.
+        Instruction& operator=(const Any& any);
+    };
+
+
     /** \brief Parameters for constructing a new ArticulatedModel from a file on disk.*/
     class Specification {
     public:
@@ -150,6 +180,9 @@ public:
 
         CleanGeometrySettings       cleanGeometrySettings;
 
+        /** A program to execute to preprocess the mesh before cleaning geometry. */
+        Array<Instruction>          preprocess;
+
         Specification() : stripMaterials(false), mergeMeshesByMaterial(false) {}
 
         /**
@@ -159,9 +192,12 @@ public:
             filename = "models/house/house.obj";
             mergeMeshesByMaterial = true;
             stripMaterials = false;
-            operations = (
+            preprocess = (
+                // Scale the entire object, including pivots
+                scale(0.1);
+
                 // Transform the reference frame of a part in its parent's frame.
-                // All parts and meshes may be referred to by name or ID number.
+                // All parts and meshes may be referred to by name string or ID integer.
                 movePivotBy("root", CFrame::fromXYZYPRDegrees(0, 3, 0, 20));
 
                 // Set the reference frame of a part, relative to its parent
@@ -176,9 +212,18 @@ public:
                 // Remove a part.  This does not change the ID's of other parts
                 deletePart("porch");
 
-                //
+                // Replace the material of a Mesh
                 setMaterial("chair", "woodLegs", Material::Specification { lambertian = Color3(0.5); });
-                collapseHierarchy();
+
+                // Change the two-sided flag
+                setTwoSided("window", "glass", true);
+
+                // Move all Meshes into a single root Part
+                mergeAll();
+
+                renamePart("x17", "television");
+
+                renameMesh("foo", "bar", "baz");
             );
         }
         \endcode
@@ -241,12 +286,13 @@ public:
         PoseSpline();
 
         /**
-         The Any must be a table mapping part names to PhysicsFrameSplines.
+         The Any must be a table mapping part names to PhysicsFrameSpline%s.
          Note that a single PhysicsFrame (or any equivalent of it) can serve as
          to create a PhysicsFrameSpline.  
 
-         <pre>
-            PoseSpline {
+         Format example:
+         \code
+         PoseSpline {
                 "part1" = PhysicsFrameSpline {
                    control = ( Vector3(0,0,0),
                                CFrame::fromXYZYPRDegrees(0,1,0,35)),
@@ -255,7 +301,7 @@ public:
 
                 "part2" = Vector3(0,1,0)
             }
-         </pre>
+         \endcode
         */
         PoseSpline(const Any& any);
      
