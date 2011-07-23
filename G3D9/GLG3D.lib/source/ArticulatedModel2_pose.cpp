@@ -11,6 +11,12 @@
 #include "GLG3D/ArticulatedModel2.h"
 
 namespace G3D {
+    
+const ArticulatedModel2::Pose& ArticulatedModel2::defaultPose() {
+    static const Pose p;
+    return p;
+}
+
 
 void ArticulatedModel2::pose
 (Array<Surface::Ref>&     surfaceArray,
@@ -42,18 +48,8 @@ void ArticulatedModel2::Part::pose
  const CoordinateFrame&   prevParentFrame,
  const Pose&              prevPose) {
     
-    CFrame frame = parentFrame * cframe;
-    CFrame prevFrame = prevParentFrame * cframe;
-
-    CFrame* poseFramePtr = posex.cframe.getPointer(name);
-    if (poseFramePtr) {
-        frame = frame * posex.cframe[name];
-    }
-
-    poseFramePtr = prevPose.cframe.getPointer(name);
-    if (poseFramePtr) {
-        prevFrame = prevFrame * prevPose.cframe[name];
-    }
+    CFrame frame = parentFrame * cframe * posex[name];
+    CFrame prevFrame = prevParentFrame * cframe * prevPose[name];
 
     debugAssert(! isNaN(frame.translation.x));
     debugAssert(! isNaN(frame.rotation[0][0]));

@@ -276,6 +276,8 @@ public:
     /** Specifies the transformation that occurs at each node in the heirarchy. 
      */
     class Pose {
+    private:
+        static const CFrame identity;
     public:
         /** Mapping from names to coordinate frames (relative to parent).
             If a name is not present, its coordinate frame is assumed to
@@ -283,7 +285,15 @@ public:
          */
         Table<std::string, CoordinateFrame>     cframe;
 
-        Pose() {}
+        /** Returns the identity coordinate frame if there isn't one bound for partName */
+        inline const CFrame& operator[](const std::string& partName) const {
+            CFrame* ptr = cframe.getPointer(partName);
+            if (ptr != NULL) {
+                return *ptr;
+            } else {
+                return identity;
+            }
+        }
     };
 
 

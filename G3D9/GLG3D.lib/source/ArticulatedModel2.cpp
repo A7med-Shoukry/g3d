@@ -25,11 +25,7 @@
 
 namespace G3D {
 
-const ArticulatedModel2::Pose& ArticulatedModel2::defaultPose() {
-    static const Pose p;
-    return p;
-}
-
+const CFrame ArticulatedModel2::Pose::identity;
 
 ArticulatedModel2::Ref ArticulatedModel2::create(const ArticulatedModel2::Specification& specification) {
     Ref a = new ArticulatedModel2();
@@ -40,7 +36,7 @@ ArticulatedModel2::Ref ArticulatedModel2::create(const ArticulatedModel2::Specif
 
 void ArticulatedModel2::forEachPart(PartCallback& callback, Part* part, const CFrame& parentFrame, const Pose& pose) {
     // Net transformation from part to world space
-    const CFrame& net = parentFrame * part->cframe * pose.cframe[part->name];
+    const CFrame& net = parentFrame * part->cframe * pose[part->name];
 
     // Process all children
     for (int c = 0; c < part->m_child.size(); ++c) {
