@@ -88,7 +88,9 @@ public:
         Any toAny() const;
     };
 
-    /** \brief Unique identifier within a particular model a Part or a Mesh. */
+    /** \brief Unique identifier within a particular model a Part or a Mesh. 
+     You can use the G3D viewer tool on a model to interactively discover its
+     part and mesh ID%s.*/
     class ID {
     private:
         friend class ArticulatedModel;
@@ -132,7 +134,8 @@ public:
     */
     class Instruction {
     private:
- 
+        friend class ArticulatedModel2;
+
         enum Type {SCALE, MOVE_PIVOT_BY, SET_PIVOT, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
 
         class Identifier {
@@ -360,7 +363,7 @@ public:
 
     public:
 
-        /** Transformation from this object to the parent's frame in the rest pose */
+        /** Transformation from this object to the parent's frame in the rest pose. Also known as the "pivot". */
         CFrame                      cframe;
 
         /** Bounding sphere of just this Part's geometry, in object space. Does not include child parts.*/
@@ -483,6 +486,9 @@ private:
     Table<ID, Part*, ID>            m_partTable;
     Table<ID, Mesh*, ID>            m_meshTable;
     
+    /** \brief Execute the program.  Called from load() */
+    void preprocess(const Array<Instruction>& program);
+
     void forEachPart(PartCallback& c, const CFrame& parentFrame, Part* part);
 
     /** Called from cleanGeometry */
