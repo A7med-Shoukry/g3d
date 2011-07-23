@@ -11,14 +11,13 @@
 
  TODO:
  - Fix two-sided
- - Profile mergeVertices
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box
+ - getTris from a CPUGeom with a CPUVertexArray for ray tracing
  - Set bump map parallax steps in specification
  - Implement other preprocess instructions
- - Optimize mergeVertices
- - Optimize parse
+ - Multithread by part
  - Pack tangents into short4 format?
  */
 #include "GLG3D/ArticulatedModel2.h"

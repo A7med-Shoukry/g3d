@@ -249,6 +249,8 @@ ArticulatedModel::Ref ArticulatedModel::fromFile(const std::string& filename, fl
 
 
 ArticulatedModel::Ref ArticulatedModel::fromFile(const std::string& filename, const Preprocess& preprocess, const Settings& settings) {
+    Stopwatch timer;
+
     alwaysAssertM(FileSystem::exists(filename),
         filename + " cannot be loaded by ArticulatedModel because it does not exist.");
 
@@ -290,6 +292,7 @@ ArticulatedModel::Ref ArticulatedModel::fromFile(const std::string& filename, co
 
     model->updateAll();
 
+    timer.after("Load model");
     return model;
 }
 

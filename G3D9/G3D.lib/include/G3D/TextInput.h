@@ -482,7 +482,7 @@ private:
      Read the next token, returning an END token if no more input is
      available.
      */
-    Token nextToken();
+    void nextToken(Token& t);
 
     /**
        Helper for nextToken.  Appends characters to t._string until the end
@@ -605,10 +605,13 @@ public:
     */
     Token read();
 
+    /** Avoids the copy of read() */
+    void read(Token& t);
+
     /** Calls read() until the result is not a newline or comment */
     Token readSignificant();
 
-    /** Read one token (or possibly two) as a number or throws
+    /** Read one token (or possibly two, for minus sign) as a number or throws
         WrongTokenType, and returns the number.
 
         If the first token in the input is a number, it is returned directly.
@@ -623,6 +626,10 @@ public:
         tokens are consumed.
     */
     double readNumber();
+
+    /** Reads a number that must be in C integer format: 
+      <code> [ '+' | '-' ] #+  |  '0x'#+</code>  */
+    int readInteger();
 
     bool readBoolean();
 
@@ -749,6 +756,9 @@ public:
         consumed.
     */
     Token readSymbolToken();
+
+    /** Avoids the copy of readSymbolToken() */
+    void readSymbolToken(Token& t);
 
     /** Like readSymbolToken, but returns the token's string.
 

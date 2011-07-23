@@ -42,12 +42,22 @@
        crateModel = ArticulatedModel2::Specification {
              filename = "D:/morgan/g3d/G3D9/build/data/models/crytek_sponza/sponza.zip/sponza.obj";
 //           filename = "/Volumes/Volatile/G3D/g3dsvn/G3D9/data-files/models/crytek_sponza/sponza/sponza.obj";
-//           stripMaterials = true;
+           stripMaterials = true;
            preprocess = ( scale(0.02); );
 //    filename = "D:/morgan/g3d/G3D9/build/data/models/cube/cube.zip/cube.obj";
 //           filename = "models/crate/crate.obj";
 //           filename = "models/teapot/teapot.obj";
        };
+
+/*
+       crateModelOld = ArticulatedModel::Specification {
+             filename = "D:/morgan/g3d/G3D9/build/data/models/crytek_sponza/sponza.zip/sponza.obj";
+             preprocess = ArticulatedModel::Preprocess {
+               stripMaterials = true;
+               xform = Matrix4::scale(0.02);
+               }
+       };
+       */
     };
     
     lighting = Lighting::Specification {

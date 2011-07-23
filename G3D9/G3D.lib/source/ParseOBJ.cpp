@@ -174,20 +174,24 @@ void ParseOBJ::processFace(TextInput& ti) {
 
     Face& face = m_currentMesh->faceArray.next();
 
+    const int vertexArraySize   = vertexArray.size();
+    const int texCoordArraySize = texCoordArray.size();
+    const int normalArraySize   = normalArray.size();
+
     // Read each vertex
     while (ti.hasMore() && (ti.peek().type() != Token::NEWLINE)) {
 
         // Read the index, making absolute and 0-based
         Index& index = face.next();
 
-        index.vertex = ti.readNumber();
+        index.vertex = ti.readInteger();
         if (index.vertex > 0) {
             // Make 0-based
             --index.vertex;
         } else {
             // Negative; make relative to the current end of the array.
             // -1 will be the last element, so just add the size of the array.
-            index.vertex += vertexArray.size();
+            index.vertex += vertexArraySize;
         }
 
         if (ti.peek().type() == Token::SYMBOL) {
@@ -195,14 +199,14 @@ void ParseOBJ::processFace(TextInput& ti) {
             ti.readSymbol("/");
             if (ti.peek().type() == Token::NUMBER) {
 
-                index.texCoord = ti.readNumber();
+                index.texCoord = ti.readInteger();
                 if (index.texCoord > 0) {
                     // Make 0-based
                     --index.texCoord;
                 } else {
                     // Negative; make relative to the current end of the array.
                     // -1 will be the last element, so just add the size of the array.
-                    index.texCoord += texCoordArray.size();
+                    index.texCoord += texCoordArraySize;
                 }
             }
 
@@ -210,14 +214,14 @@ void ParseOBJ::processFace(TextInput& ti) {
                 ti.readSymbol("/");
                 if (ti.peek().type() == Token::NUMBER) {
 
-                    index.normal = ti.readNumber();
+                    index.normal = ti.readInteger();
                     if (index.normal > 0) {
                         // Make 0-based
                         --index.normal;
                     } else {
                         // Negative; make relative to the current end of the array.
                         // -1 will be the last element, so just add the size of the array.
-                        index.normal += normalArray.size();
+                        index.normal += normalArraySize;
                     }                
                 }
             } // if has normals

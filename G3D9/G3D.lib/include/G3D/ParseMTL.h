@@ -65,7 +65,7 @@ public:
         /** Transparency level, on the range 0-1. Amount of light transmitted.*/
         float           Tr;
 
-        /** Unknown */
+        /** Transmission */
         Color3          Tf;
 
         /** emissive? */

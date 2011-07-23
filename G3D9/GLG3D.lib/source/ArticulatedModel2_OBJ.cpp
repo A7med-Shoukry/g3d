@@ -83,18 +83,64 @@ static std::string resolveRelativeFilename(const std::string& filename, const st
 }
 
 /** \param basePath Resolve relative paths to here
+\cite http://www.fileformat.info/format/material/
+
+MTL illum constants:
+0	 Color on and Ambient off 
+
+1	 Color on and Ambient on 
+
+2	 Highlight on 
+
+3	 Reflection on and Ray trace on 
+
+4	 Transparency: Glass on 
+     Reflection: Ray trace on 
+
+5	 Reflection: Fresnel on and Ray trace on 
+
+6	 Transparency: Refraction on 
+     Reflection: Fresnel off and Ray trace on 
+
+7	 Transparency: Refraction on 
+     Reflection: Fresnel on and Ray trace on 
+
+8	 Reflection on and Ray trace off 
+
+9	 Transparency: Glass on 
+     Reflection: Ray trace off 
+
+10	 Casts shadows onto invisible surfaces 
 */
-static Material::Specification toMaterialSpecification(const ParseMTL::Material::Ref& m) {
+static Material::Specification toMaterialSpecification(const ArticulatedModel2::Specification& modelSpec, const ParseMTL::Material::Ref& m) {
     Material::Specification s;
 
     // Map OBJ model to G3D shading 
-    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, m->d));
+    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, m->d * (1.0 - m->Tr)));
     s.setSpecular(resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks.pow(9.0f) * 0.4f);
-    s.setGlossyExponentShininess(m->Ns * 100.0f);
+
+    if (m->illum == 2 || m->illum == 10) {
+        // [glossy] "hilight" on
+        s.setGlossyExponentShininess(m->Ns * 100.0f);
+    }
+
+    if (m->illum == 4 || m->illum == 5 || m->illum == 6 || m->illum == 7) {
+        // "ray trace" reflection on
+        s.setMirrorShininess();
+    }
+
+    if (m->illum == 4 || m->illum == 6 || m->illum == 7 || m->illum == 9) {
+        // Only apply transmission if the material
+        s.setTransmissive(m->Tf);
+        // Index of refraction (assume air)
+        s.setEta(m->Ni, 1.0f);
+    }
+
+    // TODO: apply modelSpec options to bump map
     s.setBump(resolveRelativeFilename(m->map_bump, m->basePath));
 
-    // TODO: other material properties
-    debugPrintf("TODO: ArticulatedModel2_OBJ.cpp needs to implement all of toMaterialSpecification\n");
+    s.setEmissive(m->Ke);
+
     return s;
 }
 
@@ -156,7 +202,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
                 mesh->material = Material::create();
             } else { 
                 // The specified material.  G3D::Material will cache
-                mesh->material = Material::create(toMaterialSpecification(srcMesh->material));
+                mesh->material = Material::create(toMaterialSpecification(specification, srcMesh->material));
             }
 
             // For each face

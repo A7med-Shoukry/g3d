@@ -3,12 +3,13 @@
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-18
- \edited  2011-07-22
+ \edited  2011-07-23
  
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
 #include "GLG3D/ArticulatedModel2.h"
+#include "G3D/AreaMemoryManager.h"
 
 namespace G3D {
 
@@ -290,15 +291,23 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
     // Clear the CPU vertex array
     cpuVertexArray.vertex.fastClear();
 
+    Stopwatch timer;
+
     // Track the location of vertices in cpuVertexArray by their exact texcoord and position.
     // The vertices in the list may have differing normals.
     typedef int VertexIndex;
     typedef SmallArray<VertexIndex, 4> VertexIndexList;
     Table<CPUVertexArray::Vertex, VertexIndexList, AM2VertexHash, AM2VertexHash> vertexIndexTable;
 
+    // Almost all of the time in this method is spent deallocating the table at
+    // the end, so use an AreaMemoryManager to directly dump the allocated memory
+    // without freeing individual objects.
+    vertexIndexTable.clearAndSetMemoryManager(AreaMemoryManager::create());
+
     const float normalClosenessThreshold = cos(maxNormalWeldAngle);
 
     // Iterate over all faces
+    int longestListLength = 0;
     for (int f = 0; f < faceArray.size(); ++f) {
         const Face& face = faceArray[f];
         Mesh* mesh = face.mesh;
@@ -327,6 +336,7 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
                 index = cpuVertexArray.size();
                 cpuVertexArray.vertex.append(vertex);
                 list.append(index);
+                longestListLength = max(longestListLength, list.size());
             }
 
             // Add this vertex index to the mesh
@@ -334,8 +344,9 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
         }
     }
 
-    debugPrintf("average bucket size = %f\n", vertexIndexTable.debugGetAverageBucketSize());
-    debugPrintf("deepest bucket size = %d\n", vertexIndexTable.debugGetDeepestBucketSize());
+   // debugPrintf("average bucket size = %f\n", vertexIndexTable.debugGetAverageBucketSize());
+   // debugPrintf("deepest bucket size = %d\n", vertexIndexTable.debugGetDeepestBucketSize());
+   // debugPrintf("longestListLength = %d\n", longestListLength);
 }
 
 

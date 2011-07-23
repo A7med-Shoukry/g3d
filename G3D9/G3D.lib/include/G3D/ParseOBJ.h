@@ -58,8 +58,11 @@ public:
     };
 
     /** A polygon, which is expected to be a triangle or quadrilateral 
-        but is unlimited in OBJ format. */
-    typedef SmallArray<Index, 4> Face;
+        but is unlimited in OBJ format.         
+        */
+    // We reserve 5 sides before going to heap allocation because
+    // that was observed to save 1/2 second when loading Crytek Sponza.
+    typedef SmallArray<Index, 5> Face;
     
     /** Part of a group that uses a single material. */
     class Mesh : public ReferenceCountedObject {
