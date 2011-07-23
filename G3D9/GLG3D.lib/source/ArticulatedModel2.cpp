@@ -10,7 +10,8 @@
 
 
  TODO:
- - Preprocess
+ - Parse preprocess array
+ - Implement preprocess instructions
  - Set bump map parallax steps
  - Intersect
  - Load other formats: IFS, PLY2, PLY, 3DS

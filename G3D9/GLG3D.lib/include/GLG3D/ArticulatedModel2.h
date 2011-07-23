@@ -131,7 +131,8 @@ public:
         \sa G3D::Specification::Specification
     */
     class Instruction {
-    public:        
+    private:
+ 
         enum Type {SCALE, MOVE_PIVOT_BY, SET_PIVOT, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
 
         class Identifier {
@@ -141,6 +142,7 @@ public:
 
             Identifier() {}
             Identifier(const Any& a);
+            Any toAny() const;
         };
 
         Type                        type;
@@ -148,11 +150,15 @@ public:
         Identifier                  mesh;
         Any                         arg;
 
+        Any                         source;
+
+    public:
+
         Instruction() : type(SCALE) {}
 
-        // Used instead of the constructor to avoid throwing parse exceptions from a
-        // constructor and to make it easy to create Array%s of Instruction.
-        Instruction& operator=(const Any& any);
+        Instruction(const Any& a);
+
+        Any toAny() const;
     };
 
 
