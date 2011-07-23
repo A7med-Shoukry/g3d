@@ -2,33 +2,6 @@
 
 namespace G3D {
     
-class AMTransform : public ArticulatedModel2::PartCallback {
-    Matrix4 xform, normalXForm;
-
-public:
-    AMTransform(const Matrix4& xform) : xform(xform), normalXForm(xform.upper3x3().inverse().transpose()) {}
-
-    virtual void operator()(ArticulatedModel2::Ref m, ArticulatedModel2::Part* part, const CFrame& parentFrame) override {
-
-        Matrix4 vertexTransform;
-        Matrix3 normalTransform;
-
-        if (part->isRoot()) {
-            alwaysAssertM(false, "Not implemented");
-            // TODO
-        } else {
-            alwaysAssertM(false, "Not implemented");
-            // Don't translate this part
-        }
-
-        for (int v = 0; v < part->cpuVertexArray.size(); ++v) {
-            CPUVertexArray::Vertex& vertex = part->cpuVertexArray.vertex[v];
-            vertex.position = vertexTransform.homoMul(vertex.position, 1.0f);
-            vertex.normal   = (normalTransform * vertex.normal).directionOrZero();
-        }
-    }
-}; 
-
 
 class AMScaleTransform : public ArticulatedModel2::PartCallback {
     float scaleFactor;
@@ -36,7 +9,7 @@ class AMScaleTransform : public ArticulatedModel2::PartCallback {
 public:
     AMScaleTransform(float s) : scaleFactor(s) {}
 
-    virtual void operator()(ArticulatedModel2::Ref m, ArticulatedModel2::Part* part, const CFrame& parentFrame) override {
+    virtual void operator()(ArticulatedModel2::Part* part, const CFrame& parentFrame, ArticulatedModel2::Ref m) override {
         part->cframe.translation *= scaleFactor;
 
         const int N = part->cpuVertexArray.size();

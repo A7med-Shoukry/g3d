@@ -10,7 +10,6 @@
 
 
  TODO:
- - Fix sponza loading
  - Intersect
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield
@@ -22,6 +21,7 @@
  - Pack tangents into short4 format?
  */
 #include "GLG3D/ArticulatedModel2.h"
+#include "G3D/Ray.h"
 
 namespace G3D {
 
@@ -38,22 +38,23 @@ ArticulatedModel2::Ref ArticulatedModel2::create(const ArticulatedModel2::Specif
 }
 
 
-void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& parentFrame, Part* part) {
+void ArticulatedModel2::forEachPart(PartCallback& callback, Part* part, const CFrame& parentFrame, const Pose& pose) {
     // Net transformation from part to world space
-    const CFrame& net = parentFrame * part->cframe;
+    const CFrame& net = parentFrame * part->cframe * pose.cframe[part->name];
 
     // Process all children
     for (int c = 0; c < part->m_child.size(); ++c) {
-        forEachPart(callback, net, part->m_child[c]);
+        forEachPart(callback, part->m_child[c], net, pose);
     }
 
     // Invoke the callback on this part
-    callback(Ref(this), part, parentFrame);
+    callback(part, parentFrame, Ref(this));
 }
 
-void ArticulatedModel2::forEachPart(PartCallback& callback) {
+
+void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& cframe, const Pose& pose) {
     for (int p = 0; p < m_rootArray.size(); ++p) {
-        forEachPart(callback, CFrame(), m_rootArray[p]);
+        forEachPart(callback, m_rootArray[p], cframe, pose);
     }
 }
 
@@ -144,6 +145,79 @@ void ArticulatedModel2::load(const Specification& specification) {
 }
 
 
+/** Used by ArticulatedModel2::intersect */
+class AMIntersector : public ArticulatedModel2::PartCallback {
+public:
+    bool                        hit;
+    const Ray&                  wsR;
+    float&                      maxDistance;
+    ArticulatedModel2::Part*&   partHit;
+    ArticulatedModel2::Mesh*&   meshHit; 
+    int&                        triStartIndex;
+    float&                      u;
+    float&                      v;
+
+    AMIntersector(const Ray& wsR, float& maxDistance, ArticulatedModel2::Part*& partHit, 
+        ArticulatedModel2::Mesh*& meshHit, int& triStartIndex, float& u, float& v) :
+        hit(false),
+        wsR(wsR), maxDistance(maxDistance), partHit(partHit), meshHit(meshHit),
+        triStartIndex(triStartIndex), u(u), v(v) {
+    }
+
+    virtual void operator()(ArticulatedModel2::Part* part, const CFrame& partFrame, ArticulatedModel2::Ref model) override {
+        // Take the ray to object space
+        const Ray& osRay = partFrame.toObjectSpace(wsR);
+
+        // Bounding sphere test
+        const float testTime = osRay.intersectionTime(part->boxBounds);
+        if (testTime >= maxDistance) {
+            // Could not possibly hit this part's geometry since it doesn't
+            // hit the bounds
+            return;
+        }
+
+        // For each mesh
+        const CPUVertexArray::Vertex* vertex = part->cpuVertexArray.vertex.getCArray();
+        for (int m = 0; m < part->meshArray().size(); ++m) {
+            ArticulatedModel2::Mesh* mesh = part->meshArray()[m];
+
+            const float testTime = osRay.intersectionTime(mesh->boxBounds);
+            if (testTime >= maxDistance) {
+                // Could not possibly hit this mesh's geometry since it doesn't
+                // hit the bounds
+                continue;
+            }
+
+            const int numIndices = mesh->cpuIndexArray.size();
+            const int* index = mesh->cpuIndexArray.getCArray();
+
+            alwaysAssertM(mesh->primitive == PrimitiveType::TRIANGLES, "Only implemented for PrimitiveType::TRIANGLES meshes.");
+
+            for (int i = 0; i < numIndices; i += 3) {    
+
+                // Barycentric weights
+                float w0 = 0, w1 = 0, w2 = 0;
+                const float testTime = osRay.intersectionTime
+                    (vertex[index[i]].position, 
+                        vertex[index[i + 1]].position,
+                        vertex[index[i + 2]].position,
+                        w0, w1, w2);
+
+                if (testTime < maxDistance) {
+                    hit         = true;
+                    maxDistance = testTime;
+                    partHit     = part;
+                    meshHit     = mesh;
+                    triStartIndex = i;
+                    u           = w0;
+                    v           = w1;
+                }
+            } // for each triangle
+        } // for each mesh
+    } // operator ()
+}; // AMIntersector
+
+
 bool ArticulatedModel2::intersect
     (const Ray&     R, 
     const CFrame&   cframe, 
@@ -153,10 +227,12 @@ bool ArticulatedModel2::intersect
     Mesh*&          mesh, 
     int&            triStartIndex, 
     float&          u, 
-    float&          v) const {
+    float&          v) {
 
-    alwaysAssertM(false, "TODO: ArticulatedModel2::intersect");
-    return false;
+    AMIntersector intersectOperation(R, maxDistance, part, mesh, triStartIndex, u, v);
+    forEachPart(intersectOperation, cframe, pose);
+
+    return intersectOperation.hit;
 }
 
 } // namespace G3D

@@ -467,7 +467,11 @@ public:
     /** Base class for defining operations to perform on each part, in hierarchy order.*/
     class PartCallback {
     public:
-        virtual void operator()(ArticulatedModel2::Ref m, ArticulatedModel2::Part* p, const CFrame& parentFrame) {}
+        /** \brief Override to implement processing of \a part. 
+
+        \param worldToPartFrame The net transformation in this pose from world space to \a part's object space 
+        */
+        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, ArticulatedModel2::Ref model) {}
     };
 
     /** The rest pose.*/
@@ -489,7 +493,7 @@ private:
     /** \brief Execute the program.  Called from load() */
     void preprocess(const Array<Instruction>& program);
 
-    void forEachPart(PartCallback& c, const CFrame& parentFrame, Part* part);
+    void forEachPart(PartCallback& c, Part* part, const CFrame& parentFrame, const Pose& pose);
 
     /** Called from cleanGeometry */
     void computePartBounds();
@@ -530,8 +534,10 @@ public:
     /** \sa addMesh, createEmpty */
     Part* addPart(const std::string& name, Part* parent = NULL);
 
-    /** Walks the hierarchy and invokes PartCallback \a c on each Part. */
-    void forEachPart(PartCallback& c);
+    /** Walks the hierarchy and invokes PartCallback \a c on each Part,
+        where each model is in \a pose and the entire model is relative to
+        \a cframe.*/
+    void forEachPart(PartCallback& c, const CFrame& cframe = CFrame(), const Pose& pose = defaultPose());
     
     /** 
       Invokes Part::cleanGeometry on all parts.       
@@ -553,24 +559,28 @@ public:
      const CoordinateFrame&   cframe,
      const Pose&              pose,
      const CoordinateFrame&   prevCFrame,
-     const Pose&              prevPose);
-    
+     const Pose&              prevPose);    
 
     /**
+      \brief Per-triangle ray-model intersection.
+
        Returns true if ray \a R intersects this model, when it has \a
        cframe and \a pose, at a distance less than \a maxDistance.  If
        so, sets maxDistance to the intersection distance and sets the
        pointers to the Part and Mesh, and the index in Mesh::cpuIndexArray of the 
        start of that triangle's indices.  \a u and \a v are the
-       barycentric coordinates of vertices triStartIndex and triStartIndex + 1.
+       barycentric coordinates of vertices triStartIndex and triStartIndex + 1,
        The barycentric coordinate of vertex <code>triStartIndex + 2</code>
        is <code>1 - u - v</code>.
 
        This is primarily intended for mouse selection.  For ray tracing
        or physics, consider G3D::TriTree instead.
+
+       Does not overwrite the arguments unless there is a hit closer than maxDistance.
      */
+     // Not const because it returns non-const pointers to members
     bool intersect
-        (const Ray&     R, 
+       (const Ray&     R, 
         const CFrame&   cframe, 
         const Pose&     pose, 
         float&          maxDistance, 
@@ -578,7 +588,7 @@ public:
         Mesh*&          mesh, 
         int&            triStartIndex, 
         float&          u, 
-        float&          v) const;
+        float&          v);
 };
 
 }  // namespace G3D
