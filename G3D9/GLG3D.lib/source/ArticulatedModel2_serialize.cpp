@@ -40,7 +40,6 @@ ArticulatedModel2::Specification::Specification(const Any& a) {
     r.getIfPresent("filename",                  f);
     filename = f.resolveStringAsFilename();
 
-    r.getIfPresent("xform",                     xform);
     r.getIfPresent("stripMaterials",            stripMaterials);
     r.getIfPresent("mergeMeshesByMaterial",     mergeMeshesByMaterial);
     r.getIfPresent("cleanGeometrySettings",     cleanGeometrySettings);
@@ -51,7 +50,6 @@ ArticulatedModel2::Specification::Specification(const Any& a) {
 Any ArticulatedModel2::Specification::toAny() const {
     Any a(Any::TABLE, "ArticulatedModel2::Specification");
     a["filename"]                  = filename;
-    a["xform"]                     = xform;
     a["stripMaterials"]            = stripMaterials;
     a["mergeMeshesByMaterial"]     = mergeMeshesByMaterial;
     a["cleanGeometrySettings"]     = cleanGeometrySettings;

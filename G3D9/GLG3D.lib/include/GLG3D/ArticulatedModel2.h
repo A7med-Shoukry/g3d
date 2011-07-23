@@ -88,18 +88,49 @@ public:
         Any toAny() const;
     };
 
+    /** \brief Unique identifier within a particular model a Part or a Mesh. */
+    class ID {
+    private:
+        friend class ArticulatedModel;
+
+        int     m_value;
+
+    public:
+
+        ID() : m_value(0) {}
+
+        explicit ID(int i) : m_value(i) {}
+
+        bool operator==(const ID& other) const {
+            return m_value == other.m_value;
+        }
+
+        bool operator!=(const ID& other) const {
+            return m_value != other.m_value;
+        }
+
+        operator int() const {
+            return m_value;
+        }
+
+        bool initialized() const {
+            return m_value != 0;
+        }
+
+        size_t hashCode() const {
+            return HashTrait<int>::hashCode(m_value);
+        }
+
+        static size_t hashCode(const ID& id) {
+            return id.hashCode();
+        }
+    };
+
     /** \brief Parameters for constructing a new ArticulatedModel from a file on disk.*/
     class Specification {
     public:
         /** Materials will be loaded relative to this file.*/
         std::string                 filename;
-
-        /** Transformation to apply to vertices in the global reference frame at load time.
-        The inverse transpose of the upper 3x3 is applied to normals.
-
-        Default: Matrix4::identity()
-        */
-        Matrix4                     xform;
 
         /** Ignore materials specified in the file, replacing them with Material::create().
         Setting to true increases loading performance and may allow more aggressive 
@@ -119,7 +150,39 @@ public:
 
         CleanGeometrySettings       cleanGeometrySettings;
 
-        Specification() : xform(Matrix4::identity()), stripMaterials(false), mergeMeshesByMaterial(false) {}
+        Specification() : stripMaterials(false), mergeMeshesByMaterial(false) {}
+
+        /**
+        Example:
+        \code
+        ArticulatedModel2::Specification {
+            filename = "models/house/house.obj";
+            mergeMeshesByMaterial = true;
+            stripMaterials = false;
+            operations = (
+                // Transform the reference frame of a part in its parent's frame.
+                // All parts and meshes may be referred to by name or ID number.
+                movePivotBy("root", CFrame::fromXYZYPRDegrees(0, 3, 0, 20));
+
+                // Set the reference frame of a part, relative to its parent
+                setPivot("fence", CFrame::fromXYZYPRDegrees(0, 13, 0));
+
+                // Apply a transformation to a part within its reference frame
+                transformGeometry("root", Matrix4::scale(0, 1, 2));
+
+                // Remove a mesh.  This does not change the ID's of other meshes
+                deleteMesh("fence", "gate");
+
+                // Remove a part.  This does not change the ID's of other parts
+                deletePart("porch");
+
+                //
+                setMaterial("chair", "woodLegs", Material::Specification { lambertian = Color3(0.5); });
+                collapseHierarchy();
+            );
+        }
+        \endcode
+         */
         Specification(const Any& a);
         Any toAny() const;
     };
@@ -129,6 +192,8 @@ public:
         friend class ArticulatedModel2;
 
         std::string                 name;
+
+        const ID                    id;
 
         Material::Ref               material;
 
@@ -148,8 +213,8 @@ public:
         SuperSurface::GPUGeom::Ref  gpuGeom;
 
     private:
-
-        Mesh(const std::string& name) : name(name), primitive(PrimitiveType::TRIANGLES), twoSided(false) {}
+        
+        Mesh(const std::string& name, ID id) : name(name), id(id), primitive(PrimitiveType::TRIANGLES), twoSided(false) {}
 
     };
 
@@ -231,6 +296,7 @@ public:
     public:
 
         std::string                 name;
+        const ID                    id;
 
     private:
 
@@ -285,7 +351,7 @@ public:
         /** Uploads all data for this part and its meshes to the GPU.  Does not affect children. */
         void copyToGPU();
 
-        Part(const std::string& name, Part* parent) : name(name), m_parent(parent) {}
+        Part(const std::string& name, Part* parent, ID id) : name(name), id(id), m_parent(parent) {}
 
     public:
 
@@ -358,6 +424,12 @@ private:
 
     Array<Part*>                    m_rootArray;
     Array<Part*>                    m_partArray;
+
+    /** Used for allocating IDs */            
+    int                             m_nextID;
+
+    Table<ID, Part*, ID>            m_partTable;
+    Table<ID, Mesh*, ID>            m_meshTable;
     
     void forEachPart(PartCallback& c, const CFrame& parentFrame, Part* part);
 
@@ -371,6 +443,8 @@ private:
 
     void load(const Specification& specification);
 
+    ArticulatedModel2() : m_nextID(1) {}
+
 public:
 
     /** \sa createEmpty */
@@ -382,20 +456,21 @@ public:
     /** Root parts.  There may be more than one. */
     const Array<Part*>& rootArray() const;
 
+    /** Get a Mesh by name.  Returns NULL if there is no such mesh. */
+    Mesh* mesh(const std::string& partName, const std::string& meshName);
+
+    /** Get a Part by name.  Returns NULL if there is no such part. */
+    Part* part(const std::string& partName);
+
+    Mesh* mesh(const ID& id);
+
+    Part* part(const ID& id);
+
     /** \sa addPart, createEmpty */
-    Mesh* addMesh(const std::string& name, Part* part) {
-        part->m_meshArray.append(new Mesh(name));
-        return part->m_meshArray.last();
-    }
+    Mesh* addMesh(const std::string& name, Part* part);
 
     /** \sa addMesh, createEmpty */
-    Part* addPart(const std::string& name, Part* parent = NULL) {
-        m_partArray.append(new Part(name, parent));
-        if (parent == NULL) {
-            m_rootArray.append(m_partArray.last());
-        }
-        return m_partArray.last();
-    }
+    Part* addPart(const std::string& name, Part* parent = NULL);
 
     /** Walks the hierarchy and invokes PartCallback \a c on each Part. */
     void forEachPart(PartCallback& c);

@@ -108,11 +108,14 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
     // During loading, we make no attempt to optimize the mesh.  We leave that until the
     // Parts have been created.  The vertex arrays are therefore much larger than they
     // need to be.
+    Stopwatch timer;
 
     ParseOBJ parseData;
     {
         TextInput ti(specification.filename);
+        timer.after(" open file");
         parseData.parse(ti);
+        timer.after(" parse");
     }
 
     name = FilePath::base(specification.filename);
@@ -229,6 +232,8 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
         }
         debugPrintf("\n");
     }
+
+    timer.after(" convert");
 }
 
 } // namespace G3D

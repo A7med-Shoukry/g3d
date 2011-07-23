@@ -10,13 +10,14 @@
 
 
  TODO:
- - Profile load performance
  - Set bump map parallax steps
  - Transform
  - Intersect
  - Load other formats: IFS, PLY2, PLY, 3DS
  - Create heightfield
  - Create cornell box
+ - Optimize mergeVertices
+ - Optimize parse
  - Pack tangents into short4 format?
  */
 #include "GLG3D/ArticulatedModel2.h"
@@ -49,10 +50,46 @@ void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& parent
     callback(Ref(this), part, parentFrame);
 }
 
-
 void ArticulatedModel2::forEachPart(PartCallback& callback) {
     for (int p = 0; p < m_rootArray.size(); ++p) {
         forEachPart(callback, CFrame(), m_rootArray[p]);
+    }
+}
+
+
+ArticulatedModel2::Mesh* ArticulatedModel2::addMesh(const std::string& name, Part* part) {
+    part->m_meshArray.append(new Mesh(name, ID(m_nextID)));
+    ++m_nextID;
+    return part->m_meshArray.last();
+}
+
+
+ArticulatedModel2::Part* ArticulatedModel2::addPart(const std::string& name, Part* parent) {
+    m_partArray.append(new Part(name, parent, ID(m_nextID)));
+    ++m_nextID;
+    if (parent == NULL) {
+        m_rootArray.append(m_partArray.last());
+    }
+    return m_partArray.last();
+}
+
+
+ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const ID& id) {
+    Mesh** ptr = m_meshTable.getPointer(id);
+    if (ptr == NULL) {
+        return NULL;
+    } else {
+        return *ptr;
+    }
+}
+
+
+ArticulatedModel2::Part* ArticulatedModel2::part(const ID& id) {
+    Part** ptr = m_partTable.getPointer(id);
+    if (ptr == NULL) {
+        return NULL;
+    } else {
+        return *ptr;
     }
 }
 
@@ -96,11 +133,8 @@ void ArticulatedModel2::load(const Specification& specification) {
     }
     timer.after("parse file");
 
-    //transform as demanded by the specification
-    if (specification.xform != Matrix4::identity()) {
-        AMTransform transform(specification.xform);
-        forEachPart(transform);
-    }
+    // Perform operations as demanded by the specification
+    // TODO: operations
     timer.after("transform");
 
     // Compute missing elements (normals, tangents) of the part geometry, 
