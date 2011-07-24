@@ -240,14 +240,61 @@ float ParsePLY::readAsFloat(const Property& prop, BinaryInput& bi) {
 
 
 void ParsePLY::readVertexList(BinaryInput& bi) {
-    alwaysAssertM(false, "TODO");
-
+    const int N = vertexProperty.size();
+    int i = 0;
+    for (int v = 0; v < numVertices; ++v) {
+        for (int p = 0; p < N; ++p) {
+            vertexData[i] = readAsFloat(vertexProperty[p], bi);
+            ++i;
+        }
+    }
 }
 
 
 void ParsePLY::readFaceList(BinaryInput& bi) {
-    alwaysAssertM(false, "TODO");
+    // How many properties are there before and after
+    // the vertex_index list?
+    int numBefore = 0, numAfter = faceProperty.size() - 2;
 
+    bool found = false;
+    for (int p = 0; p < faceProperty.size(); ++p) {
+        if (faceProperty[p].name == "vertex_index") {
+            found = true;
+        } else {
+            ++numBefore;
+            --numAfter;
+        }
+    }
+
+    if (! found) {
+        throw ParseError(bi.getFilename(), bi.getPosition(), "No vertex_index property on faces in this PLY file");
+    }
+
+
+    for (int f = 0; f < numFaces; ++f) {
+        int p = 0;
+        // Ignore properties before.  Each one might contain lists and therefore
+        // have variable length, so we actually have to parse this data even
+        // though we throw it away.
+        for (int i = 0; i < numBefore; ++i) {
+            (void)readAsFloat(faceProperty[p], bi);
+            ++p;
+        }
+
+        // Now read the index list
+        const Property& prop = faceProperty[p];
+        const int len = readAs<int>(prop.listLengthType, bi);
+        Face& face = faceArray[f];
+        for (int i = 0; i < len; ++i) {
+            face.append(readAs<int>(prop.listElementType, bi));
+        }
+
+        // Ignore properties after
+        for (int i = 0; i < numAfter; ++i) {
+            (void)readAsFloat(faceProperty[p], bi);
+            ++p;
+        }
+    }
 }
 
 } // G3D

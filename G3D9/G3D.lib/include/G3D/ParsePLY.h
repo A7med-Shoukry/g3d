@@ -79,6 +79,7 @@ public:
 
         Property() : type(none_type) {}
     };
+
     typedef SmallArray<int, 6> Face;
     
     int             numVertices;
@@ -87,6 +88,7 @@ public:
     Array<Property> vertexProperty;
     Array<Property> faceProperty;
     
+
     Face*           faceArray;
 
     /** 

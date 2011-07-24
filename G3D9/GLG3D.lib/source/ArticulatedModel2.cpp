@@ -12,7 +12,6 @@
  TODO:
  - implement setMaterial instruction
  - implement setPartCFrame instruction
- - ParsePLY
  - Remove IFSModel
  - Parse3DS
  - Create heightfield
@@ -135,6 +134,8 @@ void ArticulatedModel2::load(const Specification& specification) {
         loadIFS(specification);
     } else if (ext == "ply2") {
         loadPLY2(specification);
+    } else if (ext == "ply") {
+        loadPLY(specification);
     } else if (ext == "off") {
         loadOFF(specification);
     } else {

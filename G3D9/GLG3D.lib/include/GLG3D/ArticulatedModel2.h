@@ -523,6 +523,8 @@ private:
 
     void loadOFF(const Specification& specification);
 
+    void loadPLY(const Specification& specification);
+
     void load(const Specification& specification);
 
     ArticulatedModel2() : m_nextID(1) {}
