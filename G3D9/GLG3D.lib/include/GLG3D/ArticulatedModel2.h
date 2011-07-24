@@ -142,15 +142,45 @@ public:
     private:
         friend class ArticulatedModel2;
 
-        enum Type {SCALE, SET_PART_CFRAME, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
+        enum Type {SCALE, SET_CFRAME, TRANSFORM_CFRAME, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
 
+        /**
+          An identifier is one of:
+
+          - all(): all parts in a model, or all meshes in a part, depending on context
+          - root(): all root parts
+          - a string that is the name of a mesh or part at this point in preprocessing
+          - a positive integer that is the ID of a mesh or part before preprocessing occured.  Each part and mesh has a unique ID.  Mesh ID's are global to the model, not scoped within a Part.
+          - 0, indicating that this is a Part ID to ignore because the mesh has an absolute ID
+         */
         class Identifier {
         public:
             std::string             name;
             ID                      id;
 
             Identifier() {}
+            Identifier(ID id) : id(id) {}
+            Identifier(const std::string& name) : name(name) {}
             Identifier(const Any& a);
+
+            bool isAll() const {
+                return int(id) == -3;
+            }
+
+            bool isRoot() const {
+                return int(id) == -2;
+            }
+
+            /** All root Part%s */
+            static Identifier root() {
+                return Identifier(ID(-2));
+            }
+
+            /** All Part%s, or all Mesh%es in a part, depending on context */
+            static Identifier all() {
+                return Identifier(ID(-3));
+            }
+
             Any toAny() const;
         };
 
@@ -214,7 +244,9 @@ public:
                 // Set the reference frame of a part, relative to its parent
                 // All parts and meshes may be referred to by name string or ID integer
                 // in any instruction.   Use partID = 0 when using a mesh ID.
-                setPartCFrame("fence", CFrame::fromXYZYPRDegrees(0, 13, 0));
+                setCFrame("fence", CFrame::fromXYZYPRDegrees(0, 13, 0));
+
+                transformCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,90));
 
                 // Apply a transformation to a part within its reference frame
                 transformGeometry("root", Matrix4::scale(0, 1, 2));

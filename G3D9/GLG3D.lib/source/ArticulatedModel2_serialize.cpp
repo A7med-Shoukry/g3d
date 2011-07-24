@@ -86,16 +86,38 @@ void ArticulatedModel2::PoseSpline::get(float t, ArticulatedModel2::Pose& pose) 
 ///////////////////////////////////////////////////////////////////////
 
 ArticulatedModel2::Instruction::Identifier::Identifier(const Any& a) {
-    a.verifyType(Any::NUMBER, Any::STRING);
-    if (a.type() == Any::NUMBER) {
+    switch (a.type()) {
+    case Any::NUMBER:
         id = ID(iRound(a.number()));
-    } else {
+        a.verify(id >= 0, "Illegal ID");
+        break;
+
+    case Any::STRING:
         name = a.string();
+        break;
+
+    case Any::ARRAY:
+        a.verifySize(0);
+        if (a.name() == "root") {
+            *this = root();
+        } else if (a.name() == "all") {
+            *this = all();
+        } else {
+            a.verify(false, "Illegal function call: " + a.name());
+        }
+        break;
+
+    default:
+        a.verify(false, "Expected a name, integer ID, root(), or all()");
     }
 }
 
 Any ArticulatedModel2::Instruction::Identifier::toAny() const {
-    if (id.initialized()) {
+    if (isAll()) {
+        return Any(Any::ARRAY, "all");
+    } else if (isRoot()) {
+        return Any(Any::ARRAY, "root");
+    } else if (id.initialized()) {
         return Any(int(id));
     } else {
         return Any(name);
@@ -124,9 +146,16 @@ ArticulatedModel2::Instruction::Instruction(const Any& any) {
         any.verifySize(1);
         arg = any[0];
 
-    } else if (instructionName == "setPartCFrame") {
+    } else if (instructionName == "setCFrame") {
 
-        type = SET_PART_CFRAME;
+        type = SET_CFRAME;
+        any.verifySize(2);
+        part = any[0];
+        arg = any[1];
+
+    } else if (instructionName == "transformCFrame") {
+
+        type = TRANSFORM_CFRAME;
         any.verifySize(2);
         part = any[0];
         arg = any[1];

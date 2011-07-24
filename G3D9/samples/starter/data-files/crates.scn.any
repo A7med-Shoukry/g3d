@@ -12,11 +12,12 @@
             preprocess = (
                 scale(12);
                 
-                setPartCFrame("root", CFrame::fromXYZYPRDegrees(0,0,0,0,-90,0));
+                setCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,0,-90,0));
 
+                // Refer to parts and meshes by ID, name, root(), all(), or 0.
                 setTwoSided("root", "mesh", true);
 
-                setMaterial("root", "mesh", Material::Specification {
+                setMaterial(all(), all(), Material::Specification {
                     lambertian   = "material/asphalt/asphalt-L.png";
                     specular     = "material/asphalt/asphalt-G.png";
                     shininess    = glossyExponent(20);
@@ -33,7 +34,7 @@
                 // options here as was done for groundModel.  #include can be
                 // used to replace any Any value, including a whole 
                 // ArticulatedModel2::Specification.
-                setMaterial("root", "mesh", #include("material/metalcrate/metalcrate.mat.any"));  
+                setMaterial(all(), all(), #include("material/metalcrate/metalcrate.mat.any"));  
             );
        };
     };
