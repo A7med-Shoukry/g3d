@@ -15,36 +15,61 @@
 namespace G3D {
 
 void ArticulatedModel2::loadPLY(const Specification& specification) {
-    
+
+    // Read the data in
     name = FilePath::base(specification.filename);
     Part* part = addPart(name);
     Mesh* mesh = addMesh("mesh", part);
     mesh->material = Material::create();
     
-    TextInput ti(specification.filename);
-        
-    const int nV = iFloor(ti.readNumber());
-    const int nF = iFloor(ti.readNumber());
+    ParsePLY parseData;
+    {
+        BinaryInput bi(specification.filename, G3D_LITTLE_ENDIAN);
+        parseData.parse(bi);
+    }
+
+    // Convert the format
     
-    part->cpuVertexArray.vertex.resize(nV);
-    mesh->cpuIndexArray.resize(3 * nF);
+    part->cpuVertexArray.vertex.resize(parseData.numVertices);
     part->cpuVertexArray.hasTangent = false;
     part->cpuVertexArray.hasTexCoord0 = false;
     part->m_hasTexCoord0 = false;
-        
-    for (int i = 0; i < nV; ++i) {
-        part->cpuVertexArray.vertex[i].normal = Vector3::nan();
-        Vector3& v = part->cpuVertexArray.vertex[i].position;
-        for (int a = 0; a < 3; ++a) {
-            v[a] = ti.readNumber();
+     
+    // The PLY format is technically completely flexible, so we have
+    // to search for the location of the X, Y, and Z fields within each
+    // vertex.
+    int axisIndex[3];
+    const std::string axisName[3] = {"x", "y", "z"};
+    const int numVertexProperties = parseData.vertexProperty.size();
+    for (int a = 0; a < 3; ++a) {
+        axisIndex[a] = 0;
+        for (int p = 0; p < numVertexProperties; ++p) {
+            if (parseData.vertexProperty[p].name == axisName[a]) {
+                axisIndex[a] = p;
+                break;
+            }
         }
     }
-                
-    for (int i = 0; i < nF; ++i) {
-        const int three = ti.readInteger();
-        alwaysAssertM(three == 3, "Ill-formed PLY2 file");
-        for (int j = 0; j < 3; ++j) {
-            mesh->cpuIndexArray[3*i + j] = ti.readInteger();
+
+    for (int v = 0; v < parseData.numVertices; ++v) {
+        CPUVertexArray::Vertex& vertex = part->cpuVertexArray.vertex[v];
+
+        // Read the position
+        for (int a = 0; a < 3; ++a) {
+            vertex.position[a] = parseData.vertexData[v * numVertexProperties + axisIndex[a]];
+        }
+
+        // Flag the normal as undefined 
+        vertex.normal.x = fnan();
+    }
+
+
+    for (int f = 0; f < parseData.numFaces; ++f) {
+        const ParsePLY::Face& face = parseData.faceArray[f];
+        
+        // Read and tessellate into triangles, assuming convex polygons
+        for (int i = 2; i < face.size(); ++i) {
+            mesh->cpuIndexArray.append(face[0], face[1], face[i]);
         }
     }
 }
