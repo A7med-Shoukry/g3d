@@ -20,6 +20,9 @@
     <ClCompile Include="..\samples\starter\source\Entity.cpp" />
     <ClCompile Include="..\samples\starter\source\Scene.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\samples\starter\data-files\crates.scn.any" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{935AA8F5-59C4-4336-A21E-4336F2F186B7}</ProjectGuid>
     <RootNamespace>starter</RootNamespace>

@@ -213,7 +213,7 @@ public:
 
                 // Set the reference frame of a part, relative to its parent
                 // All parts and meshes may be referred to by name string or ID integer
-                // in any instruction.
+                // in any instruction.   Use partID = 0 when using a mesh ID.
                 setPartCFrame("fence", CFrame::fromXYZYPRDegrees(0, 13, 0));
 
                 // Apply a transformation to a part within its reference frame
@@ -475,6 +475,7 @@ public:
 
         /** debugPrintf all of the geometry for this part. */
         void debugPrint() const;
+
     };
 
 
@@ -529,6 +530,10 @@ private:
 
     ArticulatedModel2() : m_nextID(1) {}
 
+    Mesh* mesh(const Instruction::Identifier& part, const Instruction::Identifier& mesh);
+
+    Part* part(const Instruction::Identifier& partIdent);
+
 public:
 
     /** \sa createEmpty, fromFile */
@@ -547,7 +552,7 @@ public:
     const Array<Part*>& rootArray() const {
         return m_rootArray;
     }
-
+    
     /** Get a Mesh by name.  Returns NULL if there is no such mesh. */
     Mesh* mesh(const std::string& partName, const std::string& meshName);
 

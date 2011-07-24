@@ -11,7 +11,6 @@
 
  TODO:
  - Convert starter to use ArticulatedModel2
- - implement setMaterial instruction
  - implement setPartCFrame instruction
  - Remove IFSModel
  - Parse3DS
@@ -108,6 +107,34 @@ ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const std::string& partName, co
             }
         }
     }
+    return NULL;
+}
+
+
+ArticulatedModel2::Part* ArticulatedModel2::part(const Instruction::Identifier& partIdent) {
+    if (partIdent.id.initialized()) {
+        return part(partIdent.id);
+    } else {
+        return part(partIdent.name);
+    }
+}
+
+
+ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const Instruction::Identifier& partIdent, const Instruction::Identifier& meshIdent) {
+    if (meshIdent.id.initialized()) {
+        return mesh(meshIdent.id);
+    }
+
+    Part* partPtr = part(partIdent);
+
+    if (partPtr != NULL) {
+        for (int i = 0; i < partPtr->m_meshArray.size(); ++i) {
+            if (partPtr->m_meshArray[i]->name == meshIdent.name) {
+                return partPtr->m_meshArray[i];
+            }
+        }
+    }
+
     return NULL;
 }
 

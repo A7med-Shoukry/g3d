@@ -25,6 +25,9 @@ void ArticulatedModel2::preprocess(const Array<Instruction>& program) {
     for (int i = 0; i < program.size(); ++i) {
         const Instruction& instruction = program[i];
 
+        Part* partPtr = NULL;
+        Mesh* meshPtr = NULL;
+
         switch (instruction.type) {
         case Instruction::SCALE:
             {
@@ -33,6 +36,24 @@ void ArticulatedModel2::preprocess(const Array<Instruction>& program) {
                 AMScaleTransform transform(scaleFactor);
                 forEachPart(transform);
             }
+            break;
+
+        case Instruction::SET_MATERIAL:
+            meshPtr = mesh(instruction.part, instruction.mesh);
+            instruction.arg.verify(meshPtr != NULL, "Mesh not found in Part.");
+            meshPtr->material = Material::create(instruction.arg);
+            break;
+
+        case Instruction::SET_TWO_SIDED:
+            meshPtr = mesh(instruction.part, instruction.mesh);
+            instruction.arg.verify(meshPtr != NULL, "Mesh not found in Part.");
+            meshPtr->twoSided = instruction.arg;
+            break;
+
+        case Instruction::SET_PART_CFRAME:
+            partPtr = part(instruction.part);
+            instruction.arg.verify(partPtr != NULL, "Part not found.");
+            partPtr->cframe = instruction.arg;
             break;
 
         default:
