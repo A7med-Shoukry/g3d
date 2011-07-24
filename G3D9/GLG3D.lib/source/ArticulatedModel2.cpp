@@ -10,6 +10,7 @@
 
 
  TODO:
+ - Convert starter to use ArticulatedModel2
  - implement setMaterial instruction
  - implement setPartCFrame instruction
  - Remove IFSModel
@@ -19,8 +20,8 @@
  - Import Quake BSP
  - Set bump map parallax steps in specification
  - Implement other preprocess instructions
- - Remove ArticulatedModel?!
- - Multithread by part
+ - Remove ArticulatedModel
+ - Multithread processing by Part
  - Pack tangents into short4 format?
  */
 #include "GLG3D/ArticulatedModel2.h"
