@@ -16,7 +16,7 @@
 
 namespace G3D {
     
-ParsePLY::ParsePLY() : faceArray(NULL), vertexData(NULL) {}
+ParsePLY::ParsePLY() : vertexData(NULL), faceArray(NULL), triStripArray(NULL) {}
 
 
 void ParsePLY::clear() {
@@ -24,7 +24,9 @@ void ParsePLY::clear() {
     vertexData = NULL;
     delete[] faceArray;
     faceArray = NULL;
-    numVertices = numFaces = 0;
+    delete[] triStripArray;
+    triStripArray = NULL;
+    numVertices = numFaces = numTriStrips = 0;
 }
 
 
@@ -39,8 +41,9 @@ void ParsePLY::parse(BinaryInput& bi) {
     clear();
     readHeader(bi);
 
-    faceArray = new Face[numFaces];
     vertexData = new float[numVertices * vertexProperty.size()];
+    faceArray = new Face[numFaces];
+    triStripArray = new TriStrip[numTriStrips];
 
     readVertexList(bi);
     readFaceList(bi);
@@ -132,7 +135,7 @@ void ParsePLY::readHeader(BinaryInput& bi) {
             }
 
             // Read the properties
-            sscanf(s.c_str(), "%*s %d", &numVertices);
+            sscanf(s.c_str(), "%*s %*s %d", &numVertices);
 
             s = bi.readStringNewline();
             while (beginsWith(s, "property ")) {
@@ -142,9 +145,9 @@ void ParsePLY::readHeader(BinaryInput& bi) {
 
             readVertex = true;
 
-        } else if (beginsWith(s, "element face ")) {
+        } else if (beginsWith(s, "element face ") || beginsWith(s, "element tristrips ")) {
             if (! readVertex) {
-                throw std::string("This implementation only supports faces following vertices.");
+                throw std::string("This implementation only supports faces and tristrips following vertices.");
             }
 
             if (readFace) {
@@ -152,11 +155,15 @@ void ParsePLY::readHeader(BinaryInput& bi) {
             }
 
             // Read the properties
-            sscanf(s.c_str(), "%*s %d", &numFaces);
+            if (beginsWith(s, "element tristrips ")) {
+                sscanf(s.c_str(), "%*s %*s %d", &numTriStrips);
+            } else {
+                sscanf(s.c_str(), "%*s %*s %d", &numFaces);
+            }
 
             s = bi.readStringNewline();
             while (beginsWith(s, "property ")) {
-                parseProperty(s, vertexProperty.next());
+                parseProperty(s, faceOrTriStripProperty.next());
                 s = bi.readStringNewline();
             }
 
@@ -254,11 +261,12 @@ void ParsePLY::readVertexList(BinaryInput& bi) {
 void ParsePLY::readFaceList(BinaryInput& bi) {
     // How many properties are there before and after
     // the vertex_index list?
-    int numBefore = 0, numAfter = faceProperty.size() - 2;
+    int numBefore = 0, numAfter = faceOrTriStripProperty.size() - 2;
 
     bool found = false;
-    for (int p = 0; p < faceProperty.size(); ++p) {
-        if (faceProperty[p].name == "vertex_index") {
+    for (int p = 0; p < faceOrTriStripProperty.size(); ++p) {
+        if ((faceOrTriStripProperty[p].name == "vertex_index") || 
+            (faceOrTriStripProperty[p].name == "vertex_indices")) {
             found = true;
         } else {
             ++numBefore;
@@ -267,31 +275,47 @@ void ParsePLY::readFaceList(BinaryInput& bi) {
     }
 
     if (! found) {
-        throw ParseError(bi.getFilename(), bi.getPosition(), "No vertex_index property on faces in this PLY file");
+        throw ParseError(bi.getFilename(), bi.getPosition(), "No vertex_index or vertex_indices property on faces in this PLY file");
     }
 
+    // Only one of these is nonzero
+    const int num = max(numFaces, numTriStrips);
 
-    for (int f = 0; f < numFaces; ++f) {
+    for (int f = 0; f < num; ++f) {
         int p = 0;
         // Ignore properties before.  Each one might contain lists and therefore
         // have variable length, so we actually have to parse this data even
         // though we throw it away.
         for (int i = 0; i < numBefore; ++i) {
-            (void)readAsFloat(faceProperty[p], bi);
+            (void)readAsFloat(faceOrTriStripProperty[p], bi);
             ++p;
         }
 
         // Now read the index list
-        const Property& prop = faceProperty[p];
+        const Property& prop = faceOrTriStripProperty[p];
         const int len = readAs<int>(prop.listLengthType, bi);
-        Face& face = faceArray[f];
-        for (int i = 0; i < len; ++i) {
-            face.append(readAs<int>(prop.listElementType, bi));
+
+        if (numFaces > 0) {
+            // Read one face
+            Face& face = faceArray[f];
+            for (int i = 0; i < len; ++i) {
+                const int index = readAs<int>(prop.listElementType, bi);
+                debugAssert(index >= 0 && index < numVertices);
+                face.append(index);
+            }
+        } else {
+            // Read one tristrip
+            TriStrip& triStrip = triStripArray[f];
+            for (int i = 0; i < len; ++i) {
+                const int index = readAs<int>(prop.listElementType, bi);
+                debugAssert(index >= -1 && index < numVertices);  // -1 = "restart tristrip"
+                triStrip.append(index);
+            }
         }
 
         // Ignore properties after
         for (int i = 0; i < numAfter; ++i) {
-            (void)readAsFloat(faceProperty[p], bi);
+            (void)readAsFloat(faceOrTriStripProperty[p], bi);
             ++p;
         }
     }

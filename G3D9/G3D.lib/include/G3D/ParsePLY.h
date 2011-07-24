@@ -28,7 +28,7 @@ class BinaryInput;
 
 /** \brief Parses PLY geometry files to extract face and vertex information.
 
-The input file is required to contain only vertex and face elements, in that order.
+The input file is required to contain only vertex and (face or triStrip) elements, in that order.
 Each may have any number of properties.
 
 \cite http://paulbourke.net/dataformats/ply/
@@ -81,15 +81,18 @@ public:
     };
 
     typedef SmallArray<int, 6> Face;
+
+    /** A -1 inside the triStrip means "restart" */
+    typedef Array<int> TriStrip;
     
     int             numVertices;
     int             numFaces;
+    int             numTriStrips;
 
     Array<Property> vertexProperty;
-    Array<Property> faceProperty;
-    
 
-    Face*           faceArray;
+    /** Face or tristrip properties */
+    Array<Property> faceOrTriStripProperty;    
 
     /** 
         vertexData[v*vertexPropertyArray.size() + p] is a float representing property p
@@ -97,6 +100,12 @@ public:
         the value is zero.
     */
     float*          vertexData;
+
+    /** Only one of faceArray and triStripArray will be non-NULL */
+    Face*           faceArray;
+
+    /** Only one of faceArray and triStripArray will be non-NULL */
+    TriStrip*       triStripArray;
 
 private:
 

@@ -11,6 +11,7 @@
 #include "GLG3D/ArticulatedModel2.h"
 #include "G3D/ParsePLY.h"
 #include "G3D/FileSystem.h"
+#include "G3D/MeshAlg.h"
 
 namespace G3D {
 
@@ -63,13 +64,41 @@ void ArticulatedModel2::loadPLY(const Specification& specification) {
         vertex.normal.x = fnan();
     }
 
-
-    for (int f = 0; f < parseData.numFaces; ++f) {
-        const ParsePLY::Face& face = parseData.faceArray[f];
+    if (parseData.numFaces > 0) {
+        // Read faces
+        for (int f = 0; f < parseData.numFaces; ++f) {
+            const ParsePLY::Face& face = parseData.faceArray[f];
         
-        // Read and tessellate into triangles, assuming convex polygons
-        for (int i = 2; i < face.size(); ++i) {
-            mesh->cpuIndexArray.append(face[0], face[1], face[i]);
+            // Read and tessellate into triangles, assuming convex polygons
+            for (int i = 2; i < face.size(); ++i) {
+                mesh->cpuIndexArray.append(face[0], face[1], face[i]);
+            }
+        }
+
+    } else {
+        // Read tristrips
+        for (int f = 0; f < parseData.numTriStrips; ++f) {
+            const ParsePLY::TriStrip& triStrip = parseData.triStripArray[f];
+
+            // Convert into an indexed triangle list and append to the end of the 
+            // index array.
+            bool clockwise = false;
+            for (int i = 2; i < triStrip.size(); ++i) {
+                if (triStrip[i] == -1) {
+                    // Restart
+                    clockwise = false;
+                    // Skip not only this element, but the next two
+                    i += 2;
+                } else if (clockwise) {  // clockwise face
+                    debugAssert(triStrip[i - 1] >= 0 && triStrip[i - 2] >= 0  && triStrip[i] >= 0);
+                    mesh->cpuIndexArray.append(triStrip[i - 1], triStrip[i - 2], triStrip[i]);
+                    clockwise = ! clockwise;
+                } else { // counter-clockwise face
+                    debugAssert(triStrip[i - 1] >= 0 && triStrip[i - 2] >= 0  && triStrip[i] >= 0);
+                    mesh->cpuIndexArray.append(triStrip[i - 2], triStrip[i - 1], triStrip[i]);
+                    clockwise = ! clockwise;
+                }
+            }
         }
     }
 }
