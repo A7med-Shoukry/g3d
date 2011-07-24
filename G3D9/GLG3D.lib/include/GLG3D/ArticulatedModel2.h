@@ -34,9 +34,10 @@ namespace G3D {
  Supports the following file formats:
 
  - <a href="http://www.martinreddy.net/gfx/3d/OBJ.spec">OBJ</a> + <a href="http://www.fileformat.info/format/material/">MTL</a>
+ - <a href="http://paulbourke.net/dataformats/ply/">PLY</a>
  - <a href="http://g3d.svn.sourceforge.net/viewvc/g3d/data/ifs/fileformat.txt?revision=27&view=markup">IFS</a> 
- - <a href="http://www.riken.jp/brict/Yoshizawa/Research/PLYformat/PLYformat.html">PLY2</a>
  - <a href="http://www.geomview.org/docs/html/OFF.html">OFF</a>
+ - <a href="http://www.riken.jp/brict/Yoshizawa/Research/PLYformat/PLYformat.html">PLY2</a>
 
  Does not copy geometry to the GPU until it has to render.  This means that CPU rendering
  code need not consume GPU vertex buffer resources (or transfer time).  The current

@@ -35,7 +35,7 @@ for object-level culling.
 
 \cite http://www.martinreddy.net/gfx/3d/OBJ.spec
 
-\sa G3D::ParseMTL, G3D::ArticulatedModel
+\sa G3D::ParseMTL, G3D::ParsePLY, G3D::ArticulatedModel2
 */
 class ParseOBJ {
 public:
