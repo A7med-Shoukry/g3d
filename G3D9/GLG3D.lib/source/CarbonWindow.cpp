@@ -507,7 +507,6 @@ CarbonWindow::CarbonWindow
     
     // If the user wanted the window centered, then it is likely that our
     // settings.x and .y are not right. We should set those now:
-    GDHandle displayHandle;
     CGRect rScreen = CGDisplayBounds(kCGDirectMainDisplay);
     
     if (m_settings.fullScreen) {
@@ -517,7 +516,6 @@ CarbonWindow::CarbonWindow
         m_settings.height = rScreen.size.height;
         
         CGDisplayCapture(kCGDirectMainDisplay);
-        osErr = DMGetGDeviceByDisplayID((DisplayIDType)kCGDirectMainDisplay, &displayHandle, false);
     }
     
     // See http://docs.google.com/viewer?a=v&q=cache:pfv4_KKOg-IJ:developer.apple.com/legacy/mac/library/documentation/Carbon/Conceptual/HandlingWindowsControls/windowscontrols.pdf+carbon+window+attributes&hl=en&gl=us&pid=bl&srcid=ADGEESiyZ95G6KQuq2lbCOQIHd1rpZxsU_QIfyzSH-CdfY98SQxsHTnjjln6-oo6-Vl9ZRYoWzTk07-_imZPYdpmy1sGRNKnJItJZ5RetFqNLXbI_GDrEGNFD2YhikPag9t2zORnYjDe&sig=AHIEtbSvzUzANlSySSg2ENLauHh-0wsLhw
@@ -583,15 +581,7 @@ CarbonWindow::CarbonWindow
     osErr = InstallWindowEventHandler(_window, NewEventHandlerUPP(_internal::OnDeviceScroll), GetEventTypeCount(_deviceScrollSpec), _deviceScrollSpec, this, NULL);
     osErr = InstallReceiveHandler(NewDragReceiveHandlerUPP(_internal::OnDragReceived),_window,this);
     
-    //_glDrawable = (AGLDrawable) GetWindowPort(_window);
-
-    if (! m_settings.fullScreen) {
-        // Recommended by Apple, but crashes in full-screen mode
-        //format = aglCreatePixelFormat(attribs);
-        format = aglChoosePixelFormat(NULL, 0, attribs);
-    } else {
-        format = aglChoosePixelFormat(&displayHandle, 1, attribs);
-    }
+    format = aglCreatePixelFormat(attribs);
     
     osErr = aglReportError();
     

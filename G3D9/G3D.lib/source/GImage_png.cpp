@@ -21,11 +21,11 @@ static void png_read_data(
     png_size_t length) {
 
 
-    debugAssert( png_ptr->io_ptr != NULL );
+    debugAssert( png_get_io_ptr(png_ptr) != NULL );
     debugAssert( length >= 0 );
     debugAssert( data != NULL );
 
-    ((BinaryInput*)png_ptr->io_ptr)->readBytes(data, length);
+    ((BinaryInput*)png_get_io_ptr(png_ptr))->readBytes(data, length);
 }
 
 //libpng required function signature
@@ -33,10 +33,10 @@ static void png_write_data(png_structp png_ptr,
     png_bytep data,
     png_size_t length) {
 
-    debugAssert( png_ptr->io_ptr != NULL );
+    debugAssert( png_get_io_ptr(png_ptr) != NULL );
     debugAssert( data != NULL );
 
-    ((BinaryOutput*)png_ptr->io_ptr)->writeBytes(data, length);
+    ((BinaryOutput*)png_get_io_ptr(png_ptr))->writeBytes(data, length);
 }
 
 //libpng required function signature
@@ -330,8 +330,11 @@ void GImage::decodePNG16
         png_set_packing(png_ptr);
     }
 
+    int numTransparentEntries = 0;
+    png_get_tRNS(png_ptr, info_ptr, NULL, &numTransparentEntries, NULL);
+
     if ((color_type == PNG_COLOR_TYPE_RGBA) ||
-        ((color_type == PNG_COLOR_TYPE_PALETTE) && (png_ptr->num_trans > 0)) ) {
+        ((color_type == PNG_COLOR_TYPE_PALETTE) && (numTransparentEntries > 0)) ) {
 
         channels = 4;
         byte = (uint16*)memMan->alloc(width * height * 4 * sizeof(uint16));
@@ -444,8 +447,11 @@ void GImage::decodePNG
         png_set_packing(png_ptr);
     }
 
+    int numTransparentEntries = 0;
+    png_get_tRNS(png_ptr, info_ptr, NULL, &numTransparentEntries, NULL);
+
     if ((color_type == PNG_COLOR_TYPE_RGBA) ||
-        ((color_type == PNG_COLOR_TYPE_PALETTE) && (png_ptr->num_trans > 0)) ) {
+        ((color_type == PNG_COLOR_TYPE_PALETTE) && (numTransparentEntries > 0)) ) {
 
         resize(width, height, ImageFormat::RGBA8());
 

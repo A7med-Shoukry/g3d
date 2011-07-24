@@ -864,23 +864,25 @@ def configureGpp(state):
         arch = []        
         # on an intel machine we can compile for both ppc and intel
         # but on a ppc machine we use the defaults and compile only for ppc
-        if (machine() == 'i386'):
+        #if (machine() == 'i386'):
             # OS X reports itself as a 32-bit OS under python, even though it is 64-bit.
             # The -arch i686 option is undocumented for OS X under gcc but works.
             # Build a binary with both 32- and 64-bit versions in it
-            if not gcc44:
-                arch += ['-arch', 'i686', '-msse3','-mfpmath=sse']
-                state.detectedArchitecture = 'x86';
-                state.detectedTuning = 'i686';
+            #if not gcc44:
+                #arch += ['-arch', 'i686', '-msse3','-mfpmath=sse']
+                #state.detectedArchitecture = 'x86'
+                #state.detectedTuning = 'i686'
                 
                 # To get 64-bit as well (commented out because G3D OS X doesn't support this)
                 #arch += ['-arch', 'x86_64', '-msse2', '-msse3']
-        else:
-            state.detectedArchitecture = 'x86_64';
-                
-        if (state.universalBinary) or (machine() != 'i386'):
-            arch += ['-arch', 'ppc']
-
+        #else:
+            #state.detectedArchitecture = 'x86_64';
+       
+        # While G3D only supports 32-bit on os x, force the compiler configurations to use 32-bit settings
+        arch += ['-m32', '-mfpmath=sse'] 
+        state.detectedArchitecture = 'x86'
+        state.detectedTuning = 'noncona'          
+      
         state.compilerOptions += arch
         state.linkerOptions   += arch
 

@@ -359,8 +359,6 @@ def getConfigurationState(args):
 
     state.args = args
 
-    state.universalBinary = (machine() == 'i386')
-
     state.template = ''
     if '--template' in args:
         for i in range(0, len(args)):
