@@ -10,12 +10,11 @@
 
 
  TODO:
- - Convert starter to use ArticulatedModel2
- - implement setPartCFrame instruction
- - Remove IFSModel
  - Parse3DS
+ - Convert starter to use ArticulatedModel2
  - Create heightfield
  - Create Cornell Box
+ - Remove IFSModel
  - Import Quake BSP
  - Set bump map parallax steps in specification
  - Implement other preprocess instructions

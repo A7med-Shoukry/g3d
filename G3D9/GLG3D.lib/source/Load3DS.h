@@ -10,7 +10,6 @@
 #include "G3D/Log.h"
 #include "G3D/fileutils.h"
 #include "G3D/Matrix4.h"
-#include "GLG3D/Texture.h"
 
 using namespace G3D;
 
