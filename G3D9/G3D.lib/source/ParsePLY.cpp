@@ -16,7 +16,7 @@
 
 namespace G3D {
     
-ParsePLY::ParsePLY() : vertexData(NULL), faceArray(NULL) {}
+ParsePLY::ParsePLY() : faceArray(NULL), vertexData(NULL) {}
 
 
 void ParsePLY::clear() {
@@ -77,11 +77,11 @@ void ParsePLY::parseProperty(const std::string& s, Property& prop) {
     if (prop.type == list_type) {
         char temp2[100];
         // Read the index and element types
-        sscanf(s.c_str(), "%*s %*s %100s %100s %100name", temp, temp2, name);
+        sscanf(s.c_str(), "%*s %*s %100s %100s %100s", temp, temp2, name);
         prop.listLengthType = parseDataType(temp);
         prop.listElementType = parseDataType(temp2);
     } else {
-        sscanf(s.c_str(), "%*s %*s  %100name", name);
+        sscanf(s.c_str(), "%*s %*s %100s", name);
     }
 
     prop.name = name;
