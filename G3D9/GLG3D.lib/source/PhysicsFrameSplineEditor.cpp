@@ -155,7 +155,6 @@ void PhysicsFrameSplineEditor::setManager(WidgetManager* m) {
     
     if (m != NULL) {
         m->add(m_nodeManipulator);
-        m_nodeManipulator->setEnabled(false);
     }
 }
 

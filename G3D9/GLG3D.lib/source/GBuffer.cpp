@@ -198,9 +198,16 @@ void GBuffer::resize(int w, int h) {
 
             if (fmt != NULL) {
                 if (GLCaps::supportsTexture(fmt)) {
-                    m_framebuffer->set(ap, 
-                        Texture::createEmpty(n, w, h, fmt, Texture::DIM_2D_NPOT,
-                            Texture::Settings::buffer()));
+                    Texture::Ref texture = Texture::createEmpty(n, w, h, fmt, Texture::DIM_2D_NPOT,
+                                                                Texture::Settings::buffer());
+                    m_framebuffer->set(ap, texture);
+
+                    if (f == Field::SS_POSITION_CHANGE) {
+                        texture->visualization.min = -10.0f;
+                        texture->visualization.max = 10.0f;
+                    } else if (f == Field::DEPTH_AND_STENCIL) {
+                        texture->visualization = Texture::Visualization::depthBuffer();
+                    }
                 } else {
                     // We have to use a renderbuffer for this attachment
                     m_framebuffer->set(ap, Renderbuffer::createEmpty(n, w, h, fmt));

@@ -1362,6 +1362,10 @@ Texture::Ref Texture::createEmpty
              settings);
     }
 
+    if (desiredFormat->depthBits > 0) {
+        t->visualization = Visualization::depthBuffer();
+    }
+
     debugAssertGLOk();
     return t;
 }

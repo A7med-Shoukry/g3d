@@ -495,9 +495,7 @@ bool ThirdPersonManipulator::enabled() const {
 
 
 void ThirdPersonManipulator::setEnabled(bool e) {
-    if (! e && m_dragging) {
-            m_dragging = false;
-    }
+    m_dragging = false;
     m_enabled = e;
 }
 
@@ -702,7 +700,7 @@ bool ThirdPersonManipulator::onEvent(const GEvent& event) {
         return false;
     } 
 
-    if ((event.type == GEventType::MOUSE_BUTTON_UP) && (event.button.button == 0)) {
+    if ((event.type == GEventType::MOUSE_BUTTON_UP) && (event.button.button == 0) && m_dragging) {
         // Stop dragging
         m_dragging = false;
         const Vector2 mouseXY(event.button.x, event.button.y);

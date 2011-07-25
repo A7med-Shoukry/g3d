@@ -95,6 +95,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
 
         m_scale = scale;
         m_offset = -scale * center;
+        scale *= 100;
 
         if (! center.isFinite()) {
             center = Vector3();
