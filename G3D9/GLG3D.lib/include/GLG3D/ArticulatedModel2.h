@@ -277,6 +277,7 @@ public:
         Any toAny() const;
     };
 
+
     class Mesh {
     public:
         friend class ArticulatedModel2;
@@ -304,7 +305,8 @@ public:
 
     private:
         
-        Mesh(const std::string& name, ID id) : name(name), id(id), primitive(PrimitiveType::TRIANGLES), twoSided(false) {}
+        Mesh(const std::string& name, ID id) : 
+            name(name), id(id), primitive(PrimitiveType::TRIANGLES), twoSided(false) {}
 
     };
 
@@ -409,13 +411,16 @@ public:
 
     public:
 
-        /** Transformation from this object to the parent's frame in the rest pose. Also known as the "pivot". */
+        /** Transformation from this object to the parent's frame in
+            the rest pose. Also known as the "pivot". */
         CFrame                      cframe;
 
-        /** Bounding sphere of just this Part's geometry, in object space. Does not include child parts.*/
+        /** Bounding sphere of just this Part's geometry, in object
+            space. Does not include child parts.*/
         Sphere                      sphereBounds;
 
-        /** Bounding box of just this Part's geometry, in object space. Does not include child parts.*/
+        /** Bounding box of just this Part's geometry, in object
+            space. Does not include child parts.*/
         AABox                       boxBounds;
 
         CPUVertexArray              cpuVertexArray;
@@ -515,11 +520,32 @@ public:
     class PartCallback {
     public:
         /** \brief Override to implement processing of \a part. 
+            
+            \param worldToPartFrame The net transformation in this pose from world space to \a part's object space 
 
-        \param worldToPartFrame The net transformation in this pose from world space to \a part's object space 
+            \param treeDepth depth in the hierarchy.  0 = a root
         */
-        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, ArticulatedModel2::Ref model) {}
+        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, ArticulatedModel2::Ref model, const int treeDepth) {}
     };
+
+    /** Rescales each part (and the position of its cframe) by a constant factor. */
+    class ScaleTransformCallback : public ArticulatedModel2::PartCallback {
+        float scaleFactor;
+        
+    public:
+        ScaleTransformCallback(float s) : scaleFactor(s) {}
+        
+        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& parentFrame, ArticulatedModel2::Ref m, const int treeDepth) override {
+            part->cframe.translation *= scaleFactor;
+            
+            const int N = part->cpuVertexArray.size();
+            CPUVertexArray::Vertex* ptr = part->cpuVertexArray.vertex.getCArray();
+            for (int v = 0; v < N; ++v) {
+                ptr[v].position *= scaleFactor;
+            }
+        }
+    };
+
 
     /** The rest pose.*/
     static const Pose& defaultPose();
@@ -540,7 +566,7 @@ private:
     /** \brief Execute the program.  Called from load() */
     void preprocess(const Array<Instruction>& program);
 
-    void forEachPart(PartCallback& c, Part* part, const CFrame& parentFrame, const Pose& pose);
+    void forEachPart(PartCallback& c, Part* part, const CFrame& parentFrame, const Pose& pose, const int treeDepth);
 
     /** Called from cleanGeometry */
     void computePartBounds();
@@ -603,13 +629,19 @@ public:
 
     /** Walks the hierarchy and invokes PartCallback \a c on each Part,
         where each model is in \a pose and the entire model is relative to
-        \a cframe.*/
+        \a cframe.
+
+        Remember to call cleanGeometry() if you change the geometry to force 
+        it to re-upload to the GPU.
+
+        Remember to set any normals and tangents you want recomputed to NaN.
+    */
     void forEachPart(PartCallback& c, const CFrame& cframe = CFrame(), const Pose& pose = defaultPose());
     
     /** 
       Invokes Part::cleanGeometry on all parts.       
      */
-    void cleanGeometry(const CleanGeometrySettings& settings);
+    void cleanGeometry(const CleanGeometrySettings& settings = CleanGeometrySettings());
 
     /** Appends one posed model per sub-part with geometry.
 

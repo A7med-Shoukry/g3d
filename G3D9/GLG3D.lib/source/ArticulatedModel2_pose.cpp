@@ -63,7 +63,8 @@ void ArticulatedModel2::Part::pose
         const Mesh* mesh = m_meshArray[m];
 
         const SuperSurface::CPUGeom cpuGeom(&mesh->cpuIndexArray, &cpuVertexArray);
-        SuperSurface::Ref surface = SuperSurface::create(name + "/" + mesh->name, frame, prevFrame, mesh->gpuGeom, cpuGeom, model);
+        SuperSurface::Ref surface = SuperSurface::create(name + "/" + mesh->name, frame, 
+                                                         prevFrame, mesh->gpuGeom, cpuGeom, model);
 
         surfaceArray.append(surface);
     }
@@ -79,16 +80,19 @@ void ArticulatedModel2::Part::copyToGPU() {
     cpuVertexArray.copyToGPU(gpuPositionArray, gpuNormalArray, gpuTangentArray, gpuTexCoord0Array);
 
     // If fewer than 2^16 vertices, switch to uint16 indices
-    const size_t indexBytes = (cpuVertexArray.size() < (1<<16)) ? sizeof(uint16) : sizeof(int);
-    VertexBuffer::Ref all = VertexBuffer::create(m_triangleCount * 3 * indexBytes + 16, VertexBuffer::WRITE_ONCE, VertexBuffer::INDEX);
+    const size_t indexBytes = (cpuVertexArray.size() > (1<<16)) ? sizeof(uint16) : sizeof(int);
+    VertexBuffer::Ref all = VertexBuffer::create(m_triangleCount * 3 * indexBytes + 16, 
+                                                 VertexBuffer::WRITE_ONCE, VertexBuffer::INDEX);
 
     for (int m = 0; m < m_meshArray.size(); ++m) {
         Mesh* mesh = m_meshArray[m];
         if (indexBytes == 2) {
             // Explicitly map and convert to 16-bit indices
-            uint16 dummy = 0;
             VertexRange temp(mesh->cpuIndexArray.size() * indexBytes, all);
             int N = mesh->cpuIndexArray.size();
+
+            // This dummy tells the template what type to use
+            uint16 dummy = 0;
             mesh->gpuIndexArray = VertexRange(dummy, N, temp, 0, sizeof(uint16));
             const int32* src = mesh->cpuIndexArray.getCArray();
             uint16* dst = (uint16*)mesh->gpuIndexArray.mapBuffer(GL_WRITE_ONLY);

@@ -37,23 +37,23 @@ ArticulatedModel2::Ref ArticulatedModel2::create(const ArticulatedModel2::Specif
 }
 
 
-void ArticulatedModel2::forEachPart(PartCallback& callback, Part* part, const CFrame& parentFrame, const Pose& pose) {
+void ArticulatedModel2::forEachPart(PartCallback& callback, Part* part, const CFrame& parentFrame, const Pose& pose, const int treeDepth) {
     // Net transformation from part to world space
     const CFrame& net = parentFrame * part->cframe * pose[part->name];
 
     // Process all children
     for (int c = 0; c < part->m_child.size(); ++c) {
-        forEachPart(callback, part->m_child[c], net, pose);
+        forEachPart(callback, part->m_child[c], net, pose, treeDepth + 1);
     }
 
     // Invoke the callback on this part
-    callback(part, parentFrame, Ref(this));
+    callback(part, parentFrame, Ref(this), treeDepth);
 }
 
 
 void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& cframe, const Pose& pose) {
     for (int p = 0; p < m_rootArray.size(); ++p) {
-        forEachPart(callback, m_rootArray[p], cframe, pose);
+        forEachPart(callback, m_rootArray[p], cframe, pose, 0);
     }
 }
 
@@ -201,7 +201,9 @@ public:
         triStartIndex(triStartIndex), u(u), v(v) {
     }
 
-    virtual void operator()(ArticulatedModel2::Part* part, const CFrame& partFrame, ArticulatedModel2::Ref model) override {
+    virtual void operator()(ArticulatedModel2::Part* part, const CFrame& partFrame,
+                            ArticulatedModel2::Ref model, const int treeDepth) override {
+
         // Take the ray to object space
         const Ray& osRay = partFrame.toObjectSpace(wsR);
 
@@ -228,7 +230,8 @@ public:
             const int numIndices = mesh->cpuIndexArray.size();
             const int* index = mesh->cpuIndexArray.getCArray();
 
-            alwaysAssertM(mesh->primitive == PrimitiveType::TRIANGLES, "Only implemented for PrimitiveType::TRIANGLES meshes.");
+            alwaysAssertM(mesh->primitive == PrimitiveType::TRIANGLES, 
+                          "Only implemented for PrimitiveType::TRIANGLES meshes.");
 
             for (int i = 0; i < numIndices; i += 3) {    
 
@@ -248,6 +251,26 @@ public:
                     triStartIndex = i;
                     u           = w0;
                     v           = w1;
+                }
+
+                if (mesh->twoSided) {
+                    // Check the backface
+                    float w0 = 0, w1 = 0, w2 = 0;
+                    const float testTime = osRay.intersectionTime
+                        (vertex[index[i]].position, 
+                         vertex[index[i + 2]].position,
+                         vertex[index[i + 1]].position,
+                         w0, w1, w2);
+                    
+                    if (testTime < maxDistance) {
+                        hit         = true;
+                        maxDistance = testTime;
+                        partHit     = part;
+                        meshHit     = mesh;
+                        triStartIndex = i;
+                        u           = w0;
+                        v           = w2;
+                    }
                 }
             } // for each triangle
         } // for each mesh

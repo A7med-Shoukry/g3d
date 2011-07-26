@@ -121,6 +121,18 @@ private:
 
 public:
 
+    bool operator==(const VertexRange& other) const {
+        return 
+            (m_area == other.m_area) &&
+            (m_pointer == other.m_pointer) &&
+            (m_elementSize == other.m_elementSize) &&
+            (m_numElements == other.m_numElements) &&
+            (m_stride == other.m_stride) &&
+            (m_generation == other.m_generation) &&
+            (m_underlyingRepresentation == other.m_underlyingRepresentation) &&
+            (m_maxSize == other.m_maxSize);
+    }
+
     /** \sa buffer() \deprecated */
     inline VertexBuffer::Ref area() {
         return m_area;
