@@ -495,6 +495,11 @@ bool ThirdPersonManipulator::enabled() const {
 
 
 void ThirdPersonManipulator::setEnabled(bool e) {
+    if (m_enabled == e) {
+        // Don't stop drag if we were previously enabled
+        return;
+    }
+
     m_dragging = false;
     m_enabled = e;
 }
@@ -705,6 +710,8 @@ bool ThirdPersonManipulator::onEvent(const GEvent& event) {
         m_dragging = false;
         const Vector2 mouseXY(event.button.x, event.button.y);
         onDragEnd(mouseXY);
+
+        // Consume the mouse up
         return true;
 
     } else if ((event.type == GEventType::MOUSE_BUTTON_DOWN) && (event.button.button == 0)) {

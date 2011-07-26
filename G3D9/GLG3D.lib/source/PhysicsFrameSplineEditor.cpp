@@ -62,6 +62,8 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
 
     p->addCheckBox("Cyclic", Pointer<bool>(this, &PhysicsFrameSplineEditor::cyclic, &PhysicsFrameSplineEditor::setCyclic));
     pack();
+
+    setEnabled(false);
 }
 
 
