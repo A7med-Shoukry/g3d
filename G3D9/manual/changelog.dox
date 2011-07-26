@@ -21,10 +21,12 @@
      <li> G3D::Color2uint8
      <li> G3D::ParseOBJ, ParseMTL, ParsePLY
      <li> G3D::TextInput::readInteger
-	 <li> G3D::CPUVertexArray; SuperSurface::CPUGeom now uses CPUVertexArray*
+     <li> G3D::CPUVertexArray; SuperSurface::CPUGeom now uses CPUVertexArray*
      <li> G3D::TextInput::pushSettings, popSettings
      <li> G3D::Icon, G3D::IconSet can now be used to put arbitrary images on GuiControl%s
-	 <li> G3D::Array::swap
+     <li> G3D::Array::swap
+     <li> G3D::ImageFormat::R16F
+     <li> G3D::GApp::setLowerFrameRateInBackground
      <li> Updated to libzip 0.10
      <li> GApp::m_useFilm may now be changed after construction to disable Film per-frame
      <li> G3D::Matrix3::fromUnitAxisAngle
