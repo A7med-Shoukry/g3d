@@ -231,7 +231,10 @@ void main() {
 #   endif
 
 #   ifdef CS_Z
-        CS_Z.r = dot(g3d_WorldToCameraMatrix[3], vec4(wsPosition, 1.0));
+        CS_Z.r = wsPosition.x * g3d_WorldToCameraMatrix[0][2] +
+                 wsPosition.y * g3d_WorldToCameraMatrix[1][2] +
+                 wsPosition.z * g3d_WorldToCameraMatrix[2][2] +
+                     g3d_WorldToCameraMatrix[3][2];
 #   endif
 
 #   ifdef CS_POSITION_CHANGE
