@@ -141,6 +141,7 @@ const ImageFormat* ImageFormat::stencil(int bits) {
         "RG8I",
         "RG8UI",
 
+        "R16F",
         "RG16F",
 
         "RGBA8",
@@ -307,6 +308,9 @@ const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
 
     case ImageFormat::CODE_RG8UI:
         return ImageFormat::RG8UI();
+
+    case ImageFormat::CODE_R16F:
+        return ImageFormat::R16F();
 
     case ImageFormat::CODE_RG16F:
         return ImageFormat::RG16F();
@@ -529,6 +533,8 @@ DEFINE_TEXTUREFORMAT_METHOD(RG8,        2, UNCOMP_FORMAT,   GL_RG8,             
 DEFINE_TEXTUREFORMAT_METHOD(RG8I,       2, UNCOMP_FORMAT,   GL_RG8I,            GL_RG_INTEGER,     0,  0,  8,  8,  0,  0,  0, 16, 16,      GL_UNSIGNED_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RG8I, ImageFormat::COLOR_SPACE_RGB);
 
 DEFINE_TEXTUREFORMAT_METHOD(RG8UI,      2, UNCOMP_FORMAT,   GL_RG8UI,           GL_RG_INTEGER,     0,  0,  8,  8,  0,  0,  0, 16, 16,      GL_UNSIGNED_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RG8UI, ImageFormat::COLOR_SPACE_RGB);
+
+DEFINE_TEXTUREFORMAT_METHOD(R16F,       1, UNCOMP_FORMAT,   GL_R16F,            GL_R,      0,  0,  16, 0,  0,  0,  0, 16, 16,       GL_FLOAT, OPAQUE_FORMAT, FLOAT_FORMAT, ImageFormat::CODE_R16F, ImageFormat::COLOR_SPACE_RGB);
 
 DEFINE_TEXTUREFORMAT_METHOD(RG16F,      2, UNCOMP_FORMAT,   GL_RG16F,           GL_RG,     0,  0,  16, 16,  0,  0,  0, 32, 32,      GL_FLOAT, OPAQUE_FORMAT, FLOAT_FORMAT, ImageFormat::CODE_RG16F, ImageFormat::COLOR_SPACE_RGB);
 
