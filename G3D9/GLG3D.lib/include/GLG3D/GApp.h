@@ -554,10 +554,15 @@ private:
     /** FPS for ideal time */
     float                  m_desiredFrameRate;
 
+    /** \copydoc setLowerFramerateInBackground */
+    bool                   m_lowerFrameRateInBackground;
+
     /** SPF for sim time */
     float                  m_simTimeStep;
     RealTime               m_realTime;
     SimTime                m_simTime;
+
+
 
 protected:
     Array<SurfaceRef>   m_posed3D;
@@ -628,6 +633,17 @@ public:
     /** Change to invoke frame limiting via doWait.
         Defaults to finf() */
     virtual void setDesiredFrameRate(float fps);
+
+    /** If true, the desired frame rate is ignored when the OSWindow does not have focus 
+     and the program switches to running 4fps.
+    */
+    virtual void setLowerFramerateInBackground(bool s) {
+        m_lowerFrameRateInBackground = s;
+    }
+
+    bool lowerFrameRateInBackground() const {
+        return m_lowerFrameRateInBackground;
+    }
 
     float desiredFrameRate() const {
         return m_desiredFrameRate;

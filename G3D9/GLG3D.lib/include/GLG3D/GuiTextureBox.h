@@ -74,6 +74,8 @@ protected:
 
     bool                     m_embeddedMode;
 
+    bool                     m_showFormat;
+
     static WeakReferenceCountedPointer<Shader> g_cachedShader;
 
     /** Returns the bounds of the canvas (display) region for this GuiTextBox */
@@ -83,8 +85,6 @@ protected:
     Rect2D canvasRect(const Rect2D& rect) const;
 
     void drawTexture(RenderDevice* rd, const Rect2D& r) const;
-
-    bool                    m_showFormat;
 
 public:
 

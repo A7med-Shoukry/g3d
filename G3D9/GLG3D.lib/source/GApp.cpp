@@ -4,7 +4,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
  \created 2003-11-03
- \edited  2010-09-12
+ \edited  2011-07-26
  */
 
 #include "G3D/platform.h"
@@ -31,6 +31,9 @@
 namespace G3D {
 
 static GApp* lastGApp = NULL;
+
+/** Framerate when the app does not have focus */
+static const float BACKGROUND_FRAME_RATE = 4.0; // fps
 
 void screenPrintf(const char* fmt ...) {
     va_list argList;
@@ -106,6 +109,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
     userInput(NULL),
     m_lastWaitTime(System::time()),
     m_desiredFrameRate(5000),
+    m_lowerFrameRateInBackground(true),
     m_simTimeStep(1.0f / 60.0f),
     m_realTime(0), 
     m_simTime(0) {
@@ -785,7 +789,12 @@ void GApp::oneFrame() {
         RealTime cumulativeTime = nowAfterLoop - m_lastWaitTime;
 
         // Perform wait for actual time needed
-        RealTime desiredWaitTime = max(0.0, desiredFrameDuration() - cumulativeTime);
+        RealTime duration = desiredFrameDuration();
+        if (! window()->hasFocus() && m_lowerFrameRateInBackground) {
+            // Lower frame rate
+            duration = 1.0 / BACKGROUND_FRAME_RATE;
+        }
+        RealTime desiredWaitTime = max(0.0, duration - cumulativeTime);
         onWait(max(0.0, desiredWaitTime - m_lastFrameOverWait) * 0.97);
 
         // Update wait timers

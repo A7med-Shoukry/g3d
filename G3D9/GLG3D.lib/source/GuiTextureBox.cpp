@@ -34,7 +34,8 @@ GuiTextureBox::GuiTextureBox
     m_drawerOpen(embeddedMode),
     m_dragging(false), 
     m_readbackXY(-1, -1),
-    m_embeddedMode(embeddedMode) {
+    m_embeddedMode(embeddedMode),
+    m_showFormat(true) {
 
     // Height of caption and button bar
     const float cs = TOP_CAPTION_HEIGHT;

@@ -116,7 +116,7 @@ static Material::Specification toMaterialSpecification(const ArticulatedModel2::
     Material::Specification s;
 
     // Map OBJ model to G3D shading 
-    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, m->d * (1.0 - m->Tr)));
+    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, min(m->d, 1.0f - m->Tr)));
     s.setSpecular(resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks.pow(9.0f) * 0.4f);
 
     if (m->illum == 2 || m->illum == 10) {
