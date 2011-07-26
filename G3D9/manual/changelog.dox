@@ -28,6 +28,7 @@
      <li> G3D::ImageFormat::R16F
      <li> G3D::GApp::setLowerFrameRateInBackground
      <li> Updated to libzip 0.10
+     <li> G3D::VertexRange::operator==
      <li> GApp::m_useFilm may now be changed after construction to disable Film per-frame
      <li> G3D::Matrix3::fromUnitAxisAngle
      <li> G3D::HashTrait<std::type_info* const> specialization
