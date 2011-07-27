@@ -43,7 +43,7 @@ void App::onInit() {
 
     lighting = Lighting::create();
     lighting->lightArray.clear();
-    lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(10)));
+    lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(5)));
     lighting->lightArray.append( GLight::directional(Vector3(-1,0,-1), Radiance3(0.8f, 0.9f, 1), false));
     lighting->environmentMapConstant = 0.3f;
     // TODO: load better lighting map
@@ -54,7 +54,7 @@ void App::onInit() {
     glDisable(GL_DEPTH_CLAMP);
 
 	
-    colorClear = Color3::white();
+    colorClear = Color3::white() * 0.9f;
     //modelController = ThirdPersonManipulator::create();
 
     setViewer(filename);
@@ -143,8 +143,12 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& posed3D, Array<Surfa
 
 void App::setViewer(const std::string& newFilename) {
     filename = newFilename;
-    defaultCamera.setCoordinateFrame(CoordinateFrame(Vector3(0,0,5)));
-    defaultController->setFrame(CoordinateFrame(Vector3(0,0,5)));
+
+    CFrame cframe(Vector3(0,8,15));
+    cframe.lookAt(Point3::zero());
+    defaultCamera.setCoordinateFrame(cframe);
+    defaultController->setFrame(defaultCamera.coordinateFrame());
+
     //modelController->setFrame(CoordinateFrame(Matrix3::fromAxisAngle(Vector3(0,1,0), toRadians(180))));
     delete viewer;
     viewer = NULL;
