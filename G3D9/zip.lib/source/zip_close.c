@@ -49,6 +49,10 @@
 #include <fcntl.h>
 #endif
 
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
+
 static int add_data(struct zip *, struct zip_source *, struct zip_dirent *,
 		    FILE *);
 static int copy_data(FILE *, off_t, FILE *, struct zip_error *);
@@ -58,14 +62,11 @@ static int _zip_cdir_set_comment(struct zip_cdir *, struct zip *);
 static char *_zip_create_temp_output(struct zip *, FILE **);
 static int _zip_torrentzip_cmp(const void *, const void *);
 
-
 
 struct filelist {
     int idx;
     const char *name;
 };
-
-
 
 ZIP_EXTERN int
 zip_close(struct zip *za)

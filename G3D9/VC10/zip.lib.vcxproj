@@ -60,6 +60,7 @@
   <ItemGroup>
     <ClInclude Include="..\zip.lib\include\zip.h" />
     <ClInclude Include="..\zip.lib\include\zipconf.h" />
+    <ClInclude Include="..\zip.lib\source\config.h" />
     <ClInclude Include="..\zip.lib\source\zipint.h" />
   </ItemGroup>
   <ItemGroup>

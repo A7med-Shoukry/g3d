@@ -20,6 +20,9 @@
     <ClInclude Include="..\zip.lib\include\zipconf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\zip.lib\source\config.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\zip.lib\source\zip_set_default_password.c">

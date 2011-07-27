@@ -7,5 +7,5 @@
     #define HAVE_UNISTD_H
 #endif
 #define PACKAGE "libzip"
-#define VERSION "0.7.1"
+#define VERSION "0.10"
 #endif /* HAD_CONFIG_H */
