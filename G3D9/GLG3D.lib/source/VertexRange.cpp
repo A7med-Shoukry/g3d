@@ -84,19 +84,19 @@ void VertexRange::init(const void* srcPtr,
     m_pointer = (uint8*)dstPtr.m_pointer + dstOffset;
 
     // Upload the data
-    if (numElements > 0) {
+    if ((numElements > 0) && (srcPtr != NULL)) {
         uploadToCardStride(srcPtr, numElements, eltSize, srcStride, 0, dstStride);
     }
     debugAssertGLOk();
 }
 
 
-void VertexRange::init(
-    const void*         sourcePtr,
-    int                 numElements,
-    VertexBufferRef     area,
-    GLenum              glformat,
-    int                 eltSize) {
+void VertexRange::init
+  (const void*          sourcePtr,
+   int                  numElements,
+   VertexBufferRef      area,
+   GLenum               glformat,
+   int                  eltSize) {
 
     alwaysAssertM(area.notNull(), "Bad VertexBuffer");
 

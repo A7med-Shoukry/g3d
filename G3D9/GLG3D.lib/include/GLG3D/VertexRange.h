@@ -75,20 +75,22 @@ private:
     void init(VertexRange& dstPtr, int dstOffset, GLenum glformat, 
         int eltSize, int numElements, int stride);
 
-    void init(const void* sourcePtr, 
-              int    numElements, 
-              VertexBufferRef area,
-              GLenum glformat, 
-              int    eltSize);
+    void init
+    (const void*        sourcePtr, 
+     int                numElements, 
+     VertexBufferRef    area,
+     GLenum             glformat, 
+     int                eltSize);
 
-    void init(const void* srcPtr,
-              int     numElements, 
-              int     srcStride,      
-              GLenum  glformat, 
-              int     eltSize,
-              VertexRange     dstPtr,
-              int     dstOffset, 
-              int     dstStride);
+    void init
+    (const void*        srcPtr,
+     int                numElements, 
+     int                srcStride,      
+     GLenum             glformat, 
+     int                eltSize,
+     VertexRange        dstPtr,
+     int                dstOffset, 
+     int                dstStride);
     
     void update(const void* sourcePtr, int _numElements, GLenum glformat, int eltSize);
 
@@ -241,6 +243,9 @@ public:
        }
        renderDevice->endIndexedPrimitives();
        \endcode
+
+       \param sourcePtr The type of the data is determined from this.  If NULL, no data is actually uploaded...but you
+       must provide a properly typed pointer, e.g., (uint16*)(NULL).
     */
     template<class T>
     VertexRange(const T* sourcePtr, int _numElements, VertexBufferRef _area) {
@@ -463,7 +468,8 @@ public:
         init(srcPtr, _numElements, srcStride, glFormatOf(T), sizeof(T), dstPtr, dstOffset, dstStride);
     }
 
-    /** @brief Create an interleaved array within an existing VertexRange, but do
+
+    /** \brief Create an interleaved array within an existing VertexRange, but do
         not upload data to it.
 
         Data can later be uploaded by update() or mapBuffer().
@@ -498,20 +504,39 @@ public:
        2</code>.  May not be negative.
        */
     template<class T>
-    VertexRange(const T& ignored,
-        int      _numElements,
-        VertexRange      dstPtr,
-        int   dstOffset, 
-        int   dstStride) {
+    VertexRange
+    (const T&           ignored,
+     int                _numElements,
+     VertexRange        dstPtr,
+     int                dstOffset, 
+     int                dstStride) {
+        (void)ignored;
+        init(dstPtr, dstOffset, glFormatOf(T), sizeof(T), _numElements, dstStride);
+    }
+
+    /** Allocate a vertex range within a vertex buffer, but do not upload data to it.
+        \param dstStride If non-zero, this is the spacing between
+       sequential elements of T in dstPtr.  e.g., to upload every
+       other Vector3, use <code>dstStride = sizeof(Vector3) *
+       2</code>.  May not be negative.
+     \sa mapBuffer*/
+    template<class T>
+    VertexRange
+    (const T&           ignored,
+     int                _numElements,
+     VertexBuffer::Ref  dstPtr,
+     int                dstOffset, 
+     int                dstStride) {
         (void)ignored;
         init(dstPtr, dstOffset, glFormatOf(T), sizeof(T), _numElements, dstStride);
     }
 
     template<class T>
-    VertexRange(const Array<T>& source,
-        VertexRange      dstPtr,
-        int   dstOffset, 
-        int   dstStride) {
+    VertexRange
+    (const Array<T>& source,
+     VertexRange     dstPtr,
+     int             dstOffset, 
+     int             dstStride) {
         init(source.getCArray(), source.size(), 0, glFormatOf(T), sizeof(T), dstPtr, dstOffset, dstStride);
     }
 
