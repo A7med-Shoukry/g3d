@@ -5,4 +5,4 @@ ArticulatedModel2::Specification {
     preprocess = (
         scale(0.02);
     };
-};
+}

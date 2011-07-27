@@ -6,4 +6,4 @@ ArticulatedModel::Specification {
     preprocess = ArticulatedModel::Preprocess {
         xform = Matrix4::scale(0.02);
     };
-};
+}
