@@ -62,14 +62,14 @@ int main(int argc, char** argv) {
         }
 #   endif
 
-#if 0
-    return App(settings).run();
-#endif
-
     FreeImage_Initialise();
     Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\3ds\\spaceFighter01\\diffuse.jpg");
+    Color4 c;
+    img->get(Point2int32(0, 0), c);
     FreeImage_DeInitialise();
-    return 0;
+
+    return App(settings).run();
+
 }
 
 
