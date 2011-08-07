@@ -216,6 +216,33 @@ const ImageFormat* ImageFormat::fromString(const std::string& s) {
     return NULL;
 }
 
+bool ImageFormat::canInterpretAs(const ImageFormat* otherFormat) const {
+    if (this == otherFormat) {
+        return true;
+    }
+
+    if (colorSpace != otherFormat->colorSpace) {
+        return false;
+    }
+
+    if (compressed || otherFormat->compressed) {
+        return false;
+    }
+
+    if (numComponents != otherFormat->numComponents) {
+        return false;
+    }
+
+    if (cpuBitsPerPixel != otherFormat->cpuBitsPerPixel) {
+        return false;
+    }
+
+    if (openGLDataFormat != otherFormat->openGLDataFormat) {
+        return false;
+    }
+
+    return true;
+}
 
 const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
     switch (code) {

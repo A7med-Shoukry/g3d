@@ -210,6 +210,9 @@ public:
     /** Takes the same values that name() returns */
     static const ImageFormat* fromString(const std::string& s);
 
+    /** True if data in otherFormat is binary compatible */
+    bool canInterpretAs(const ImageFormat* otherFormat) const;
+
 private:
 
     ImageFormat
@@ -378,7 +381,6 @@ public:
     /** Returns the matching ImageFormat* identified by the Code.  May return NULL
       if this format's code is reserved but not yet implemented by G3D. */
     static const ImageFormat* fromCode(ImageFormat::Code code);
-
 
 
     /** For use with ImageFormat::convert. */
