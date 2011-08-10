@@ -21,11 +21,8 @@ namespace G3D {
 /** Represents numbers on [0, 1] in 8 bits as an unsigned normalized
  0.8 fixed-point value using the same encoding scheme as OpenGL.  
 
- Does not include arithmetic operations because those would have poor
- precision, range constraints, and it would be inefficient to enforce
- the range constraints.  For arithmetric operations, convert to
- another format (like float) or extract and manipulate the underlying
- bits.
+ Note that arithmetic operations may over and under-flow, just like
+ uint8 arithmetic.
 */
 G3D_BEGIN_PACKED_CLASS(1)
 unorm8 {
@@ -83,6 +80,60 @@ public:
 
     bool operator!=(const unorm8 other) const {
         return m_bits != other.m_bits;
+    }
+
+    unorm8 operator+(const unorm8 other) const {
+        return unorm8(uint8(m_bits + other.m_bits));
+    }
+
+    unorm8& operator+=(const unorm8 other) {
+        m_bits += other.m_bits;
+        return *this;
+    }
+
+    unorm8 operator-(const unorm8 other) const {
+        return unorm8(uint8(m_bits - other.m_bits));
+    }
+
+    unorm8& operator-=(const unorm8 other) {
+        m_bits -= other.m_bits;
+        return *this;
+    }
+
+    unorm8 operator*(const int i) const {
+        return unorm8(uint8(m_bits * i));
+    }
+
+    unorm8& operator*=(const int i) {
+        m_bits *= i;
+        return *this;
+    }
+
+    unorm8 operator/(const int i) const {
+        return unorm8(uint8(m_bits / i));
+    }
+
+    unorm8& operator/=(const int i) {
+        m_bits /= i;
+        return *this;
+    }
+
+    unorm8 operator<<(const int i) const {
+        return unorm8((uint8)(m_bits << i));
+    }
+
+    unorm8& operator<<=(const int i) {
+        m_bits <<= i;
+        return *this;
+    }
+
+    unorm8 operator>>(const int i) const {
+        return unorm8(uint8(m_bits >> i));
+    }
+
+    unorm8& operator>>=(const int i) {
+        m_bits >>= i;
+        return *this;
     }
 }
 G3D_END_PACKED_CLASS(1)
