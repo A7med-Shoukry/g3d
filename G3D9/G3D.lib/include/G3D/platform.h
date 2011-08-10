@@ -1,12 +1,15 @@
 /**
- @file platform.h
+ \file platform.h
 
  \#defines for platform specific issues.
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2003-06-09
- @edited  2011-03-26
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+
+ \created 2003-06-09
+ \edited  2011-08-11
  */
 
 #ifndef G3D_platform_h

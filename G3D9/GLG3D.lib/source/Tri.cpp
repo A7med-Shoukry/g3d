@@ -283,8 +283,8 @@ void Tri::getTris(const Surface::Ref& pmodel, Array<Tri>& triArray, const CFrame
         // All data are in object space
         const Array<CPUVertexArray::Vertex>& vertex = cpuGeom.vertexArray->vertex;
 
-        bool hasTexCoords = cpuGeom.vertexArray->hasTexCoord0;
-        bool hasTangents  = cpuGeom.vertexArray->hasTangent;
+        //bool hasTexCoords = cpuGeom.vertexArray->hasTexCoord0;
+        //bool hasTangents  = cpuGeom.vertexArray->hasTangent;
 
         for (int i = 0; i < index.size(); i += 3) {
             const CPUVertexArray::Vertex& v0 = vertex[index[i + 0]];

@@ -7,7 +7,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2001-08-25
- \edited  2011-06-23
+ \edited  2011-08-11
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -73,6 +73,7 @@
 #include "G3D/g3dfnmatch.h"
 #include "G3D/G3DGameUnits.h"
 #include "G3D/g3dmath.h"
+#include "G3D/unorm8.h"
 #include "G3D/uint128.h"
 #include "G3D/fileutils.h"
 #include "G3D/ReferenceCount.h"

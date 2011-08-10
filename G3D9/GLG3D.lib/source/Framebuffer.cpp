@@ -177,7 +177,7 @@ Framebuffer::Attachment::Ref Framebuffer::get(AttachmentPoint ap) const {
 }
 
 
-    bool Framebuffer::bind(bool alreadyBound, Mode m) {
+bool Framebuffer::bind(bool alreadyBound, Mode m) {
     if (! alreadyBound) {
         glBindFramebuffer(GLenum(m), openGLID());
     }
