@@ -18,11 +18,11 @@
 #include "G3D/WrapMode.h"
 #include "G3D/ImageFormat.h"
 #include "G3D/Image1.h"
-#include "G3D/Image1uint8.h"
+#include "G3D/Image1unorm8.h"
 #include "G3D/Image3.h"
-#include "G3D/Image3uint8.h"
+#include "G3D/Image3unorm8.h"
 #include "G3D/Image4.h"
-#include "G3D/Image4uint8.h"
+#include "G3D/Image4unorm8.h"
 #include "G3D/BumpMapPreprocess.h"
 #include "GLG3D/glheaders.h"
 
@@ -384,10 +384,10 @@ public:
     static Texture::Ref opaqueGray();
 
     /** Creates a new 1x1 texture in this color. Colors are not cached.*/
-    static Texture::Ref createColor(const Color3uint8& c);
+    static Texture::Ref createColor(const Color3unorm8& c);
 
     /** Creates a new 1x1 texture in this color. Colors are not cached.*/
-    static Texture::Ref createColor(const Color4uint8& c);
+    static Texture::Ref createColor(const Color4unorm8& c);
 
     /** @copydoc white(). */
     static Texture::Ref one() {
@@ -1001,19 +1001,19 @@ public:
     Image4::Ref toImage4() const;
     
     /** Extracts the data as ImageFormat::RGBA8.*/
-    Image4uint8::Ref toImage4uint8() const;
+    Image4unorm8::Ref toImage4unorm8() const;
     
     /** Extracts the data as ImageFormat::RGB32F. */
     Image3::Ref toImage3() const;
     
     /** Extracts the data as ImageFormat::RGB8. */
-    Image3uint8::Ref toImage3uint8() const;
+    Image3unorm8::Ref toImage3unorm8() const;
     
     /** Extracts the data as ImageFormat::L32F.   */
     Image1::Ref toImage1() const;
     
     /** Extracts the data as ImageFormat::L8. */
-    Image1uint8::Ref toImage1uint8() const;
+    Image1unorm8::Ref toImage1unorm8() const;
     
     /** Extracts the data as ImageFormat::DEPTH32F. */
     Image1::Ref toDepthImage1() const;
@@ -1034,18 +1034,18 @@ public:
     }
 
     /** Reassigns the im pointer; does not write to the data currently in it.  Useful when working with a templated image. */
-    inline void getImage(Image4uint8::Ref& im) const {
-        im = toImage4uint8();
+    inline void getImage(Image4unorm8::Ref& im) const {
+        im = toImage4unorm8();
     }
 
     /** Reassigns the im pointer; does not write to the data currently in it.  Useful when working with a templated image. */
-    inline void getImage(Image3uint8::Ref& im) const {
-        im = toImage3uint8();
+    inline void getImage(Image3unorm8::Ref& im) const {
+        im = toImage3unorm8();
     }
 
     /** Reassigns the im pointer; does not write to the data currently in it.  Useful when working with a templated image. */
-    inline void getImage(Image1uint8::Ref& im) const {
-        im = toImage1uint8();
+    inline void getImage(Image1unorm8::Ref& im) const {
+        im = toImage1unorm8();
     }
 
     /** If this texture was loaded from an uncompressed format in memory or disk (and not rendered to), 
@@ -1070,8 +1070,8 @@ public:
     Map2D<float>::Ref toDepthMap() const;
     
     /** Extracts the data as ImageFormat::DEPTH32F and converts to 8-bit. Note that you may want to call 
-        Image1uint8::flipVertical if Texture::invertY is true.*/
-    Image1uint8Ref toDepthImage1uint8() const;
+        Image1unorm8::flipVertical if Texture::invertY is true.*/
+    Image1unorm8Ref toDepthImage1unorm8() const;
     
     inline unsigned int openGLID() const {
         return m_textureID;
@@ -1147,8 +1147,8 @@ public:
        new Texture from memory: you must handle scaling and ensure
        compatible formats yourself.
 
-       \param src Must be Image1::Ref, Image1uint8::Ref, Image3::Ref
-       Image3::uint8Ref, Image4::Ref, or Image4uint8::Ref
+       \param src Must be Image1::Ref, Image1unorm8::Ref, Image3::Ref
+       Image3::uint8Ref, Image4::Ref, or Image4unorm8::Ref
     */
     template<class ImageRef>
     void update(const ImageRef& src, int mipLevel = 0) {

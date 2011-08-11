@@ -28,10 +28,10 @@ void GImage::encodePPMASCII(
         {
             ppm.printf("P2\n%d %d\n255\n", m_width, m_height);
             
-            const Color1uint8* c = this->pixel1();
+            const Color1unorm8* c = this->pixel1();
             // Insert newlines every 70 characters max
             for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
-                ppm.printf("%d%c", c[i].value, (i % (70/4) == 0) ? '\n' : ' '); 
+                ppm.printf("%d%c", c[i].value.bits(), (i % (70/4) == 0) ? '\n' : ' '); 
             }
         }
         break;
@@ -40,12 +40,12 @@ void GImage::encodePPMASCII(
         {
             ppm.printf("P3\n%d %d\n255\n", m_width, m_height);
             
-            const Color3uint8* c = this->pixel3();
+            const Color3unorm8* c = this->pixel3();
             // Insert newlines every 70 characters max
             for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
-                ppm.printf("%d %d %d%c", c[i].r, c[i].g, c[i].b, 
+                ppm.printf("%d %d %d%c", c[i].r.bits(), c[i].g.bits(), c[i].b.bits(), 
                     (i % (70/12) == 0) ?
-                    '\n' : ' '); 
+                           '\n' : ' '); 
             }
         }
         break;
@@ -133,19 +133,19 @@ void GImage::decodePPMASCII(
     for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
         // read in color and scale to max pixel defined in header
         // A max color less than 255 might need to be left alone and not scaled.
-        Color3uint8& curPixel = *(pixel3() + i);
+        Color3unorm8& curPixel = *(pixel3() + i);
 
         if (ppmType == "P3") {
-            curPixel.r = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
-            curPixel.g = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
-            curPixel.b = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
+            curPixel.r = unorm8::fromBits(ppmInput.readNumber() * (255.0 / maxColor));
+            curPixel.g = unorm8::fromBits(ppmInput.readNumber() * (255.0 / maxColor));
+            curPixel.b = unorm8::fromBits(ppmInput.readNumber() * (255.0 / maxColor));
         } else if (ppmType == "P2") {
-            uint8 pixel = (uint8)(ppmInput.readNumber() * (255.0 / maxColor));
+            unorm8 pixel = unorm8::fromBits((uint8)(ppmInput.readNumber() * (255.0 / maxColor)));
             curPixel.r = pixel;
             curPixel.g = pixel;
             curPixel.b = pixel;
         } else if (ppmType == "P1") {
-            int pixel = (uint8)(ppmInput.readNumber() * maxColor);
+            unorm8 pixel = unorm8::fromBits((uint8)(ppmInput.readNumber() * maxColor));
             curPixel.r = pixel;
             curPixel.g = pixel;
             curPixel.b = pixel;

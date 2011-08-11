@@ -142,7 +142,7 @@ private:
         b.writeUInt8('u');
         b.writeUInt8('c');
         b.writeUInt8(3);
-        Image3uint8::fromImage3(im)->speedSerialize(b);
+        Image3unorm8::fromImage3(im)->speedSerialize(b);
     }
 
     /** Overloads to allow conversion of Image3 and Image4 to uint8,
@@ -153,11 +153,11 @@ private:
         b.writeUInt8('c');
         if (minValue.a < 1.0f) {
             b.writeUInt8(4);
-            Image4uint8::fromImage4(im)->speedSerialize(b);
+            Image4unorm8::fromImage4(im)->speedSerialize(b);
         } else {
             // The alpha channel is unused, so compress this to RGB8.
             b.writeUInt8(3);
-            Image3uint8::Ref im3 = Image3uint8::fromImage4(im);
+            Image3unorm8::Ref im3 = Image3unorm8::fromImage4(im);
             im3->speedSerialize(b);
         }
     }
@@ -173,13 +173,13 @@ private:
         (void)minValue;
 
         uint8 s = b.readUInt8();
-        alwaysAssertM(s == 'u', "Wrong sign value when reading Image3uint8");
+        alwaysAssertM(s == 'u', "Wrong sign value when reading Image3unorm8");
         uint8 type = b.readUInt8();
-        alwaysAssertM(type == 'c', "Wrong type when reading Image3uint8");
+        alwaysAssertM(type == 'c', "Wrong type when reading Image3unorm8");
         uint8 channels = b.readUInt8();
-        alwaysAssertM(channels == 3, "Wrong number of channels when reading Image3uint8");
+        alwaysAssertM(channels == 3, "Wrong number of channels when reading Image3unorm8");
 
-        Image3uint8::Ref im = Image3uint8::speedCreate(b);
+        Image3unorm8::Ref im = Image3unorm8::speedCreate(b);
 
         Texture::Dimension dim;
         if (isPow2(im->width()) && isPow2(im->height())) {
@@ -208,10 +208,10 @@ private:
         alwaysAssertM(type == 'c', "Wrong type in SpeedLoad");
         uint8 channels = b.readUInt8();
         uint8 expectedChannels = (minValue.a < 1.0f) ? 4 : 3;
-        alwaysAssertM(channels == expectedChannels, "Wrong number of channels when reading Image3uint8");
+        alwaysAssertM(channels == expectedChannels, "Wrong number of channels when reading Image3unorm8");
 
         if (channels == 4) {
-            Image4uint8::Ref im = Image4uint8::speedCreate(b);
+            Image4unorm8::Ref im = Image4unorm8::speedCreate(b);
 
             Texture::Dimension dim;
             if (isPow2(im->width()) && isPow2(im->height())) {
@@ -230,7 +230,7 @@ private:
         } else {
             alwaysAssertM(channels == 3, "Wrong number of channels");
 
-            Image3uint8::Ref im = Image3uint8::speedCreate(b);
+            Image3unorm8::Ref im = Image3unorm8::speedCreate(b);
 
             Texture::Dimension dim;
             if (isPow2(im->width()) && isPow2(im->height())) {

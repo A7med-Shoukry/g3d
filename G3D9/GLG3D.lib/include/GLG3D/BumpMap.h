@@ -101,7 +101,7 @@ protected:
        - rgb = tangent-space normal
        - a   = bump height
 
-       (Note that this is compressed to Image4uint8 on the GPU)
+       (Note that this is compressed to Image4unorm8 on the GPU)
      */
     MapComponent<Image4>::Ref   m_normalBump;
 

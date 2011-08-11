@@ -1,30 +1,29 @@
 /**
- @file Color1.h
+ \file G3D/Color1.h
  
  Monochrome Color class
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- @created 2007-01-31
- @edited  2009-03-20
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2007-01-31
+ \edited  2011-08-20
 
- Copyright 2000-2009, Morgan McGuire.
+ Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
  */
 
-#ifndef G3D_COLOR1_H
-#define G3D_COLOR1_H
+#ifndef G3D_Color1_h
+#define G3D_Color1_h
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
+#include "G3D/unorm8.h"
 #include "G3D/HashTrait.h"
 #include <string>
 
 namespace G3D {
 
 /**
- Monochrome color.  This is just a float, but it has nice semantics
- because a scaling by 255 automatically occurs when switching between
- fixed point (Color1uint8) and floating point (Color1) formats.
+ Monochrome color. 
  */
 class Color1 {
 private:
@@ -46,6 +45,9 @@ public:
 
     inline explicit Color1(float v) : value(v) {
     }
+    
+    inline explicit Color1(unorm8 v) : value(v) {
+    }
 
     inline bool isZero() const {
         return value == 0.0f;
@@ -62,7 +64,7 @@ public:
     /** Returns the value three times */
     class Color3 rgb() const;
 
-    Color1 (const class Color1uint8& other);
+    explicit Color1(const class Color1unorm8& other);
 
     void serialize(class BinaryOutput& bo) const;
     void deserialize(class BinaryInput& bi);

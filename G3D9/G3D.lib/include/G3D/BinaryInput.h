@@ -1,10 +1,10 @@
 /**
- @file BinaryInput.h
+ \file G3D/BinaryInput.h
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2001-08-09
- @edited  2010-03-19
+ \created 2001-08-09
+ \edited  2011-08-19
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include "G3D/platform.h"
+#include "G3D/unorm8.h"
 #include "G3D/Array.h"
 #include "G3D/Color4.h"
 #include "G3D/Color3.h"
@@ -255,18 +256,22 @@ public:
 
     void readBytes(void* bytes, int64 n);
 
-   int8 readInt8() {
+    int8 readInt8() {
         prepareToRead(1);
         return m_buffer[m_pos++];
     }
-
-   bool readBool8() {
+    
+    bool readBool8() {
         return (readInt8() != 0);
     }
-
-   uint8 readUInt8() {
+    
+    uint8 readUInt8() {
         prepareToRead(1);
         return ((uint8*)m_buffer)[m_pos++];
+    }
+    
+    unorm8 readUNorm8() {
+        return unorm8::fromBits(readUInt8());
     }
 
     uint16 readUInt16() {

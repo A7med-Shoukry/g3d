@@ -390,7 +390,7 @@ Component4 Material::Specification::loadSpecular() const {
         GImage pack(s.width(), s.height(), 4);
         int n = s.width() * s.height();
         for (int i = 0; i < n; ++i) {
-            pack.pixel4()[i] = Color4uint8(255, 255, 255, s.pixel1()[i].value);
+            pack.pixel4()[i] = Color4unorm8(unorm8::one(), unorm8::one(), unorm8::one(), s.pixel1()[i].value);
         }
 
         texture = Texture::fromGImage

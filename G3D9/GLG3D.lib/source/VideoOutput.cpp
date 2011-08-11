@@ -323,20 +323,20 @@ void VideoOutput::append(const GImage& frame) {
 }
 
 
-void VideoOutput::append(const Image1uint8::Ref& frame) {
+void VideoOutput::append(const Image1unorm8::Ref& frame) {
     debugAssert(frame->width() == m_settings.width);
     debugAssert(frame->height() == m_settings.height);
     encodeFrame(reinterpret_cast<uint8*>(frame->getCArray()), ImageFormat::L8());
 }
 
 
-void VideoOutput::append(const Image3uint8::Ref& frame) {
+void VideoOutput::append(const Image3unorm8::Ref& frame) {
     debugAssert(frame->width() == m_settings.width);
     debugAssert(frame->height() == m_settings.height);
     encodeFrame(reinterpret_cast<uint8*>(frame->getCArray()), ImageFormat::RGB8());
 }
 
-void VideoOutput::append(const Image4uint8::Ref& frame) {
+void VideoOutput::append(const Image4unorm8::Ref& frame) {
     debugAssert(frame->width() == m_settings.width);
     debugAssert(frame->height() == m_settings.height);
     encodeFrame(reinterpret_cast<uint8*>(frame->getCArray()), ImageFormat::RGBA8());

@@ -1,12 +1,12 @@
 /**
- @file Color3.cpp
+ \file Color3.cpp
 
  Color class.
 
- @author Morgan McGuire, http://graphics.cs.williams.edu
+ \author Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2001-06-02
- @edited  2010-11-28
+ \created 2001-06-02
+ \edited  2010-11-28
  */
 
 #include "G3D/platform.h"
@@ -16,7 +16,7 @@
 #include "G3D/format.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
-#include "G3D/Color3uint8.h"
+#include "G3D/Color3unorm8.h"
 #include "G3D/Any.h"
 #include "G3D/stringutils.h"
 
@@ -242,15 +242,12 @@ Color3::Color3(const Vector3& v) {
 }
 
 
-Color3::Color3(const class Color3uint8& other) {
-    r = other.r / 255.0f;
-    g = other.g / 255.0f;
-    b = other.b / 255.0f;
+Color3::Color3(const class Color3unorm8& other) : r(other.r), g(other.g), b(other.b) {
 }
 
 
 Color3 Color3::fromARGB(uint32 x) {
-    return Color3((float)((x >> 16) & 0xFF), (float)((x >> 8) & 0xFF), (float)(x & 0xFF)) / 255.0f;
+    return Color3(Color3unorm8::fromARGB(x));
 }
 
 //----------------------------------------------------------------------------
@@ -265,7 +262,7 @@ Color3 Color3::random() {
 //----------------------------------------------------------------------------
 Color3& Color3::operator/= (float fScalar) {
     if (fScalar != 0.0f) {
-		float fInvScalar = 1.0f / fScalar;
+        float fInvScalar = 1.0f / fScalar;
         r *= fInvScalar;
         g *= fInvScalar;
         b *= fInvScalar;
@@ -280,7 +277,7 @@ Color3& Color3::operator/= (float fScalar) {
 
 //----------------------------------------------------------------------------
 float Color3::unitize (float fTolerance) {
-	float fLength = length();
+    float fLength = length();
 
     if ( fLength > fTolerance ) {
 		float fInvLength = 1.0f / fLength;

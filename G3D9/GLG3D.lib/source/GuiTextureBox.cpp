@@ -513,8 +513,8 @@ public:
         m_uvLabel->setCaption(format("(%6.4f, %6.4f)", m_textureBox->m_readbackXY.x / w, m_textureBox->m_readbackXY.y / h));
         m_rgbaLabel->setCaption(format("(%6.4f, %6.4f, %6.4f, %6.4f)", m_textureBox->m_texel.r, 
             m_textureBox->m_texel.g, m_textureBox->m_texel.b, m_textureBox->m_texel.a));
-        Color4uint8 c(m_textureBox->m_texel);
-        m_ARGBLabel->setCaption(format("0x%02x%02x%02x%02x", c.a, c.r, c.g, c.b));
+        Color4unorm8 c(m_textureBox->m_texel);
+        m_ARGBLabel->setCaption(format("0x%02x%02x%02x%02x", c.a.bits(), c.r.bits(), c.g.bits(), c.b.bits()));
     }
 
 
@@ -826,7 +826,7 @@ void GuiTextureBox::render(RenderDevice* rd, const GuiTheme::Ref& theme) const {
                                 pos.y += font->draw2D(rd, s, pos, style.size, front, back).y * lineSpacing;
                                 
 
-                                Color4uint8 ci(m_texel);
+                                Color4unorm8 ci(m_texel);
                                 pos.y += 
                                     font->draw2D(rd, 
                                                  format("rgba:(%.3f, %.3f, %.3f, %.3f)", 

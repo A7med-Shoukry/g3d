@@ -160,13 +160,13 @@ void IconSet::makeIconSet(const std::string& baseDir, const std::string& outFile
             src.resize(tmp.width(), tmp.height(), maxChannels);
             if (maxChannels == 4) {
                 if (tmp.channels() == 1) {
-                    GImage::LtoRGBA(tmp.byte(), src.byte(), tmp.width() * tmp.height());
+                    GImage::LtoRGBA((unorm8*)tmp.byte(), (unorm8*)src.byte(), tmp.width() * tmp.height());
                 } else if (tmp.channels() == 3) {
-                    GImage::RGBtoRGBA(tmp.byte(), src.byte(), tmp.width() * tmp.height());
+                    GImage::RGBtoRGBA((unorm8*)tmp.byte(), (unorm8*)src.byte(), tmp.width() * tmp.height());
                 }
             } else {
                 debugAssert(maxChannels == 3 && tmp.channels() == 1);
-                GImage::LtoRGB(tmp.byte(), src.byte(), tmp.width() * tmp.height());
+                GImage::LtoRGB((unorm8*)tmp.byte(), (unorm8*)src.byte(), tmp.width() * tmp.height());
             }
         }
         

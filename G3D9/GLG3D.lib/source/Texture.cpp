@@ -347,17 +347,17 @@ static void glStatePop() {
 }  
 
 
-Texture::Ref Texture::createColor(const Color3uint8& c) {
+Texture::Ref Texture::createColor(const Color3unorm8& c) {
     Texture::Specification s;
     s.filename = "<white>";
-    s.preprocess.modulate = Color4uint8(c, 255);
+    s.preprocess.modulate = Color4unorm8(c, unorm8::one());
     s.settings.interpolateMode = NEAREST_NO_MIPMAP;
     s.desiredFormat = ImageFormat::RGB8();
     return Texture::create(s);
 }
 
 
-Texture::Ref Texture::createColor(const Color4uint8& c) {
+Texture::Ref Texture::createColor(const Color4unorm8& c) {
     Texture::Specification s;
     s.filename = "<white>";
     s.preprocess.modulate = c;   
@@ -452,7 +452,7 @@ TextureRef Texture::opaqueBlack() {
         // Cache is empty                                                                                      
         GImage im(8, 8, 4);
         for (int i = 0; i < im.width() * im.height(); ++i) {
-            im.pixel4()[i] = Color4uint8(0, 0, 0, 0xff);
+            im.pixel4()[i] = Color4unorm8(unorm8::zero(), unorm8::zero(), unorm8::zero(), unorm8::one());
         }
         t = Texture::fromGImage("Opaque Black", im);
         
@@ -470,8 +470,9 @@ TextureRef Texture::opaqueGray() {
     if (t.isNull()) {
         // Cache is empty                                                                                      
         GImage im(8, 8, 4);
+        const Color4unorm8 c(Color4(0.5f, 0.5f, 0.5f, 1.0f));
         for (int i = 0; i < im.width() * im.height(); ++i) {
-            im.pixel4()[i] = Color4uint8(0x7f, 0x7f, 0x7f, 0xff);
+            im.pixel4()[i] = c;
         }
         t = Texture::fromGImage("Gray", im);
         
@@ -768,7 +769,7 @@ Texture::Ref Texture::fromFile(
     if ((numFaces == 1) && (dimension == DIM_2D) || (dimension == DIM_2D_NPOT) || (dimension == DIM_3D_NPOT) || (dimension == DIM_3D)) {
         if (toLower(realFilename[0]) == "<white>") {
             image[0].resize(1, 1, 4, false);
-            image[0].pixel4(0, 0) = Color4uint8(255, 255, 255, 255);
+            image[0].pixel4(0, 0) = Color4unorm8::one();
         } else {
             image[0].load(realFilename[0]);
         }
@@ -779,7 +780,7 @@ Texture::Ref Texture::fromFile(
         for (int f = 0; f < numFaces; ++f) {
             if ((toLower(realFilename[f]) == "<white>") || realFilename[f].empty()) {
                 image[f].resize(1, 1, 4, false);
-                image[f].pixel4(0, 0) = Color4uint8(255, 255, 255, 255);
+                image[f].pixel4(0, 0) = Color4unorm8::one();
             } else {
                 threadSet.insert(new ImageLoaderThread(realFilename[f], image[f]));
             }
@@ -1059,7 +1060,7 @@ Texture::Ref Texture::fromMemory(
         debugAssertM(bytesPtr->size() == 1, "Cannot specify mipmaps when computing normal maps automatically");
 
         GImage::computeNormalMap(width, height, bytesFormat->numComponents, 
-                                 reinterpret_cast<const uint8*>((*bytesPtr)[0][0]),
+                                 reinterpret_cast<const unorm8*>((*bytesPtr)[0][0]),
                                  normal, preprocess.bumpMapPreprocess);
         
         // Replace the previous array with the data from our normal map
@@ -1520,8 +1521,8 @@ Image4Ref Texture::toImage4() const {
 	return im;
 }
 
-Image4uint8Ref Texture::toImage4uint8() const {
-    Image4uint8::Ref im = Image4uint8::createEmpty(m_width, m_height, m_settings.wrapMode); 
+Image4unorm8Ref Texture::toImage4unorm8() const {
+    Image4unorm8::Ref im = Image4unorm8::createEmpty(m_width, m_height, m_settings.wrapMode); 
     getTexImage(im->getCArray(), ImageFormat::RGBA8());
     return im;
 }
@@ -1532,8 +1533,8 @@ Image3Ref Texture::toImage3() const {
     return im;
 }
 
-Image3uint8Ref Texture::toImage3uint8() const {	
-    Image3uint8::Ref im = Image3uint8::createEmpty(m_width, m_height, m_settings.wrapMode); 
+Image3unorm8Ref Texture::toImage3unorm8() const {	
+    Image3unorm8::Ref im = Image3unorm8::createEmpty(m_width, m_height, m_settings.wrapMode); 
     getTexImage(im->getCArray(), ImageFormat::RGB8());
     return im;
 }
@@ -1550,16 +1551,16 @@ Image1Ref Texture::toDepthImage1() const {
 	return im;
 }
 
-Image1uint8Ref Texture::toDepthImage1uint8() const {
+Image1unorm8Ref Texture::toDepthImage1unorm8() const {
     Image1Ref src = toDepthImage1();
-    Image1uint8Ref dst = Image1uint8::createEmpty(m_width, m_height, m_settings.wrapMode);
+    Image1unorm8Ref dst = Image1unorm8::createEmpty(m_width, m_height, m_settings.wrapMode);
     
     const Color1* s = src->getCArray();
-    Color1uint8* d = dst->getCArray();
+    Color1unorm8* d = dst->getCArray();
     
     // Float to int conversion
     for (int i = m_width * m_height - 1; i >= 0; --i) {
-        d[i] = Color1uint8(s[i]);
+        d[i] = Color1unorm8(s[i]);
     }
     
     return dst;
@@ -1573,8 +1574,8 @@ Image1Ref Texture::toImage1() const {
 }
 
 
-Image1uint8Ref Texture::toImage1uint8() const {
-    Image1uint8Ref im = Image1uint8::createEmpty(m_width, m_height, m_settings.wrapMode); 
+Image1unorm8Ref Texture::toImage1unorm8() const {
+    Image1unorm8Ref im = Image1unorm8::createEmpty(m_width, m_height, m_settings.wrapMode); 
     getTexImage(im->getCArray(), ImageFormat::L8());
     return im;
 }
@@ -2094,18 +2095,18 @@ void computeStats
     switch (bytesActualFormat) {
     case GL_RGB8:
         {
-            Color3uint8 mn(255,255,255);
-            Color3uint8 mx(0,0,0);
+            Color3unorm8 mn = Color3unorm8::one();
+            Color3unorm8 mx = Color3unorm8::zero();
             meanval = Color4::zero();
             // Compute mean along rows to avoid overflow
             for (int y = 0; y < height; ++y) {
-                const Color3uint8* ptr = ((const Color3uint8*)rawBytes) + (y * width);
+                const Color3unorm8* ptr = ((const Color3unorm8*)rawBytes) + (y * width);
                 uint32 r = 0, g = 0, b = 0;
                 for (int x = 0; x < width; ++x) {
-                    const Color3uint8 i = ptr[x];
+                    const Color3unorm8 i = ptr[x];
                     mn = mn.min(i);
                     mx = mx.max(i);
-                    r += i.r; g += i.g; b += i.b;
+                    r += i.r.bits(); g += i.g.bits(); b += i.b.bits();
                 }
                 meanval += Color4(float(r) * inv255Width, float(g) * inv255Width, float(b) * inv255Width, 1.0);
             }
@@ -2120,17 +2121,17 @@ void computeStats
             // TODO: rewrite using SIMD PMAXUB and PMINUB to try and increase performance
 
             meanval = Color4::zero();
-            Color4uint8 mn(255,255,255,255);
-            Color4uint8 mx(0,0,0,0);
+            Color4unorm8 mn = Color4unorm8::one();
+            Color4unorm8 mx = Color4unorm8::zero();
             // Compute mean along rows to avoid overflow
             for (int y = 0; y < height; ++y) {
-                const Color4uint8* ptr = ((const Color4uint8*)rawBytes) + (y * width);
+                const Color4unorm8* ptr = ((const Color4unorm8*)rawBytes) + (y * width);
                 uint32 r = 0, g = 0, b = 0, a = 0;
                 for (int x = 0; x < width; ++x) {
-                    const Color4uint8 i = ptr[x];
+                    const Color4unorm8 i = ptr[x];
                     mn = mn.min(i);
                     mx = mx.min(i);
-                    r += i.r; g += i.g; b += i.b; a += i.a;
+                    r += i.r.bits(); g += i.g.bits(); b += i.b.bits(); a += i.a.bits();
                 }
                 meanval += Color4(float(r) * inv255Width, float(g) * inv255Width, float(b) * inv255Width, float(a) * inv255Width);
             }

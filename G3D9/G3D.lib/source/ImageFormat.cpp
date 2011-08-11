@@ -474,7 +474,7 @@ const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
 }
 
 
-bool ImageFormat::representableAsColor1uint8() const {
+bool ImageFormat::representableAsColor1unorm8() const {
     return (numComponents == 1) &&
         (cpuBitsPerPixel == 8) &&
         ((luminanceBits == 8) ||
@@ -483,7 +483,7 @@ bool ImageFormat::representableAsColor1uint8() const {
 }
 
 
-bool ImageFormat::representableAsColor2uint8() const {
+bool ImageFormat::representableAsColor2unorm8() const {
     return (numComponents == 2) &&
         (cpuBitsPerPixel == 16) &&
         ((redBits == 8 && greenBits == 8) ||
@@ -493,13 +493,13 @@ bool ImageFormat::representableAsColor2uint8() const {
 }
 
 
-bool ImageFormat::representableAsColor3uint8() const {
+bool ImageFormat::representableAsColor3unorm8() const {
     return (numComponents == 3) &&
         (cpuBitsPerPixel == 24) &&
         (redBits == 8 && greenBits == 8 && blueBits == 8);
 }
 
-bool ImageFormat::representableAsColor4uint8() const {
+bool ImageFormat::representableAsColor4unorm8() const {
     return (numComponents == 4) &&
         (cpuBitsPerPixel == 32) &&
         (redBits == 8 && greenBits == 8 && blueBits == 8 && alphaBits == 8);

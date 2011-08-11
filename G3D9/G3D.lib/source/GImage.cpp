@@ -32,29 +32,29 @@
 namespace G3D {
 
 void GImage::LtoRGBA(
-    const uint8*    in,
-    uint8*          out,
+    const unorm8*   in,
+    unorm8*          out,
     int             numPixels) {
 
     for (int i = 0; i < numPixels; ++i) {
-        int v = in[i];
+        unorm8 v = in[i];
         int i4 = i * 4;
 
         out[i4 + 0] = v;
         out[i4 + 1] = v;
         out[i4 + 2] = v;
-        out[i4 + 3] = 255; 
+        out[i4 + 3] = unorm8::fromBits(255);
     }
 }
 
 
 void GImage::LtoRGB(
-    const uint8*    in,
-    uint8*          out,
+    const unorm8*    in,
+    unorm8*          out,
     int             numPixels) {
 
     for (int i = 0; i < numPixels; ++i) {
-        int v = in[i];
+        const unorm8 v = in[i];
         int i3 = i * 3;
 
         out[i3 + 0] = v;
@@ -65,8 +65,8 @@ void GImage::LtoRGB(
 
    
 void GImage::RGBtoRGBA(
-    const uint8*    in,
-    uint8*          out,
+    const unorm8*    in,
+    unorm8*          out,
     int             numPixels) {
 
     for (int i = 0; i < numPixels; ++i) {
@@ -76,15 +76,15 @@ void GImage::RGBtoRGBA(
         out[i4 + 0] = in[i3 + 0]; 
         out[i4 + 1] = in[i3 + 1]; 
         out[i4 + 2] = in[i3 + 2]; 
-        out[i4 + 3] = 255; 
+        out[i4 + 3] = unorm8::one();
     }
 }
 
 
 void GImage::RGBAtoRGB(
-    const uint8*    in,
-    uint8*          out,
-    int             numPixels) {
+    const unorm8*    in,
+    unorm8*          out,
+    int              numPixels) {
 
     for (int i = 0; i < numPixels; ++i) {
         int i3 = i * 3;
@@ -98,8 +98,8 @@ void GImage::RGBAtoRGB(
 
 
 void GImage::RGBtoBGRA(
-    const uint8*    in,
-    uint8*          out,
+    const unorm8*    in,
+    unorm8*          out,
     int                     numPixels) {
 
     for (int i = 0; i < numPixels; ++i) {
@@ -109,15 +109,15 @@ void GImage::RGBtoBGRA(
         out[i4 + 2] = in[i3 + 0]; 
         out[i4 + 1] = in[i3 + 1]; 
         out[i4 + 0] = in[i3 + 2]; 
-        out[i4 + 3] = 255; 
+        out[i4 + 3] = unorm8::one(); 
     }
 }
 
 
-void GImage::RGBAtoBGRA(
-    const uint8*    in,
-    uint8*          out,
-    int                     numPixels) {
+void GImage::RGBAtoBGRA
+(const unorm8*    in,
+ unorm8*          out,
+ int              numPixels) {
 
     for (int i = 0; i < numPixels; ++i) {
         int i4 = i * 4;
@@ -128,20 +128,20 @@ void GImage::RGBAtoBGRA(
         out[i4 + 3] = in[i4 + 3]; 
     }
 }
+    
 
 
-
-void GImage::RGBtoBGR(
-    const uint8*    in,
-    uint8*          out,
-    int             numPixels) {
-
+void GImage::RGBtoBGR
+(const unorm8*    in,
+ unorm8*          out,
+ int              numPixels) {
+    
     for (int i = 0; i < numPixels; ++i) {
-        int i3 = i * 3;
+        const int i3 = i * 3;
 
-        int r = in[i3 + 0];
-        int g = in[i3 + 1];
-        int b = in[i3 + 2];
+        const unorm8 r = in[i3 + 0];
+        const unorm8 g = in[i3 + 1];
+        const unorm8 b = in[i3 + 2];
 
         out[i3 + 2] = r; 
         out[i3 + 1] = g; 
@@ -150,15 +150,15 @@ void GImage::RGBtoBGR(
 }
 
 
-void GImage::RGBxRGBtoRGBA(
-    const uint8*            colorRGB,
-    const uint8*            alphaRGB,
-    uint8*                  out,
-    int                     numPixels) {
+void GImage::RGBxRGBtoRGBA
+(const unorm8*            colorRGB,
+ const unorm8*            alphaRGB,
+ unorm8*                  out,
+ int                      numPixels) {
 
     for (int i = numPixels - 1; i >= 0; --i) {
-        int i3 = i * 3;
-        int i4 = i3 + i;
+        const int i3 = i * 3;
+        const int i4 = i3 + i;
 
         out[i4 + 0] = colorRGB[i3 + 0];
         out[i4 + 1] = colorRGB[i3 + 1];
@@ -168,16 +168,16 @@ void GImage::RGBxRGBtoRGBA(
 }
 
 
-void GImage::RGBtoARGB(
-    const uint8*            in,
-    uint8*                  out,
-    int                     numPixels) {
+void GImage::RGBtoARGB
+(const unorm8*            in,
+ unorm8*                  out,
+ int                      numPixels) {
 
     for (int i = 0; i < numPixels; ++i) {
-        int i3 = i * 3;
-        int i4 = i3 + i;
+        const int i3 = i * 3;
+        const int i4 = i3 + i;
 
-        out[i4 + 0] = 255; 
+        out[i4 + 0] = unorm8::fromBits(255);
         out[i4 + 1] = in[i3 + 0]; 
         out[i4 + 2] = in[i3 + 1]; 
         out[i4 + 3] = in[i3 + 2];
@@ -185,16 +185,16 @@ void GImage::RGBtoARGB(
 }
 
 
-void GImage::flipRGBVertical(
-    const uint8*            in,
-    uint8*                  out,
-    int                     width,
-    int                     height) {
+void GImage::flipRGBVertical
+(const unorm8*           in,
+ unorm8*                 out,
+ int                     width,
+ int                     height) {
 
     
     // Allocate a temp row so the operation
     // is still safe if in == out
-    uint8* temp = (uint8*)System::malloc(width * 3);
+    unorm8* temp = (unorm8*)System::malloc(width * 3);
     alwaysAssertM(temp != NULL, "Out of memory"); 
 
     int oneRow = width * 3;
@@ -214,15 +214,15 @@ void GImage::flipRGBVertical(
 
 
 void GImage::flipRGBAVertical(
-    const uint8*            in,
-    uint8*                  out,
+    const unorm8*            in,
+    unorm8*                  out,
     int                     width,
     int                     height) {
 
     
     // Allocate a temp row so the operation
     // is still safe if in == out
-    uint8* temp = (uint8*)System::malloc(width * 4);
+    unorm8* temp = (unorm8*)System::malloc(width * 4);
     alwaysAssertM(temp != NULL, "Out of memory");
 
     int oneRow = width * 4;
@@ -326,10 +326,10 @@ GImage::GImage(ShareData s, uint8* data, int w, int h, const ImageFormat* fmt, c
 void GImage::decodePCX(
     BinaryInput&                input) {
 
-    uint8  manufacturer = input.readUInt8();
-    uint8  version      = input.readUInt8();
-    uint8  encoding     = input.readUInt8();
-    uint8  bitsPerPixel = input.readUInt8();
+    unorm8  manufacturer = input.readUNorm8();
+    unorm8  version      = input.readUNorm8();
+    unorm8  encoding     = input.readUNorm8();
+    unorm8  bitsPerPixel = input.readUNorm8();
 
     uint16 xmin         = input.readUInt16();
     uint16 ymin         = input.readUInt16();
@@ -339,12 +339,12 @@ void GImage::decodePCX(
     uint16 horizDPI     = input.readUInt16();
     uint16 vertDPI      = input.readUInt16();
 
-    Color3uint8 colorMap[16];
+    Color3unorm8 colorMap[16];
     input.readBytes(colorMap, 48);
 
     input.skip(1);
 
-    uint8  planes       = input.readUInt8();
+    unorm8  planes       = input.readUNorm8();
     uint16 bytesPerLine = input.readUInt16();
     uint16 paletteType  = input.readUInt16();
     input.skip(4 + 54);
@@ -368,12 +368,12 @@ void GImage::decodePCX(
         throw GImage::Error("Only 8-bit paletted and 24-bit PCX files supported.", input.getFilename());
     }
 
-	// Prepare the pointer object for the pixel data
+    // Prepare the pointer object for the pixel data
     m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
 
     if ((paletteType == 1) && (planes == 3)) {
 
-        Color3uint8* pixel = pixel3();
+        Color3unorm8* pixel = pixel3();
 
         // Iterate over each scan line
         for (int row = 0; row < m_height; ++row) {
@@ -395,7 +395,7 @@ void GImage::decodePCX(
                     // Set the whole run
                     for (int i = length - 1; i >= 0; --i, ++p) {
                         debugAssert(p < m_width * m_height);
-                        pixel[p][plane] = value;
+                        pixel[p][plane] = unorm8::fromBits(value);
                     }
                 }
             }
@@ -403,7 +403,7 @@ void GImage::decodePCX(
 
     } else if (planes == 1) {
 
-        Color3uint8 palette[256];
+        Color3unorm8 palette[256];
 
         int imageBeginning   = input.getPosition();
         int paletteBeginning = input.getLength() - 769;
@@ -420,7 +420,7 @@ void GImage::decodePCX(
         input.readBytes(palette, sizeof(palette));
         input.setPosition(imageBeginning);
         
-        Color3uint8* pixel = pixel3();
+        Color3unorm8* pixel = pixel3();
         
         // The palette indices are run length encoded.
         int p = 0;
@@ -435,7 +435,7 @@ void GImage::decodePCX(
                 index  = input.readUInt8();
             }
 
-            Color3uint8 color = palette[index];
+            Color3unorm8 color = palette[index];
 
             // Set the whole run
             for (int i = length - 1; i >= 0; --i, ++p) {
@@ -463,12 +463,12 @@ GImage::Format GImage::resolveFormat(const std::string&  filename) {
 }
 
 
-GImage::Format GImage::resolveFormat(
-    const std::string&  filename,
-    const uint8*        data,
-    int                 dataLen,
-    Format              maybeFormat) {
-
+GImage::Format GImage::resolveFormat
+(const std::string&  filename,
+ const uint8*        data,
+ int                 dataLen,
+ Format              maybeFormat) {
+    
     // Return the provided format if it is specified.
     if (maybeFormat != AUTODETECT) {
         return maybeFormat;
@@ -578,9 +578,9 @@ void GImage::load
 
 
 GImage::GImage
-   (const uint8*        data,
-    int                 length,
-    Format              format,
+(const uint8*        data,
+ int                 length,
+ Format              format,
     const MemoryManager::Ref& m) : 
     m_memMan(m),
     m_byte(NULL),
@@ -699,7 +699,7 @@ void GImage::_copy
     m_height = other.m_height;
     m_channels = other.m_channels;
     m_imageFormat = other.m_imageFormat;
-    int s  = m_width * m_height * m_channels * sizeof(uint8);
+    int s  = m_width * m_height * m_channels * sizeof(unorm8);
     m_byte  = (uint8*)m_memMan->alloc(s);
     debugAssert(isValidHeapPointer(m_byte));
     memcpy(m_byte, other.m_byte, s);
@@ -707,7 +707,7 @@ void GImage::_copy
 
 
 void GImage::flipHorizontal() {
-    uint8 temp[4];
+    unorm8 temp[4];
     int rowBytes = m_width * m_channels;
     for (int y = 0; y < m_height; ++y) {
         uint8* row = m_byte + y * rowBytes; 
@@ -745,7 +745,7 @@ void GImage::rotate90CW(int numTimes) {
     uint8* old = NULL;
     numTimes = iWrap(numTimes, 4);
     if (numTimes > 0) {
-        (uint8*)m_memMan->alloc(m_width * m_height * m_channels);
+        old = (uint8*)m_memMan->alloc(m_width * m_height * m_channels);
     }
     for (int j = 0; j < numTimes; ++j) {
         {
@@ -908,14 +908,14 @@ void GImage::save(
 
 void GImage::encode(
     Format              format,
-    uint8*&             outData,
+    unorm8*&             outData,
     int&                outLength) const {
 
     BinaryOutput out;
 
     encode(format, out);
 
-    outData = (uint8*)System::malloc(out.size());
+    outData = (unorm8*)System::malloc(out.size());
     debugAssert(outData);
     outLength = out.size();
 
@@ -1002,21 +1002,22 @@ void GImage::computeNormalMap(
     GImage&             normal,
     const BumpMapPreprocess& preprocess) {
     computeNormalMap(bump.m_width, bump.m_height, bump.m_channels, 
-        bump.byte(), normal, preprocess);    
+                     bump.rawData<unorm8>(), normal, preprocess);    
 }
 
-void GImage::computeNormalMap(
-    int                 width,
-    int                 height,
-    int                 channels,
-    const uint8*        src,
-    GImage&             normal,
-    const BumpMapPreprocess& preprocess) {
 
+void GImage::computeNormalMap
+(int                 width,
+ int                 height,
+ int                 channels,
+ const unorm8*       src,
+ GImage&             normal,
+ const BumpMapPreprocess& preprocess) {
+    
     float whiteHeightInPixels = preprocess.zExtentPixels;
     bool lowPassBump          = preprocess.lowPassFilter;
     bool scaleHeightByNz      = preprocess.scaleZByNz;
-
+    
     if (whiteHeightInPixels < 0.0f) {
         // Default setting scales so that a gradient ramp
         // over the whole image becomes a 45-degree angle
@@ -1033,8 +1034,8 @@ void GImage::computeNormalMap(
 
     normal.resize(w, h, ImageFormat::RGBA8());
 
-    const uint8* const B = src;
-    Color4uint8* const N = normal.pixel4();
+    const unorm8* const B = src;
+    Color4unorm8* const N = normal.pixel4();
 
     // 1/s for the scale factor that each ELEVATION should be multiplied by.
     // We avoid actually multiplying by this and instead just divide it out of z.
@@ -1052,8 +1053,8 @@ void GImage::computeNormalMap(
 
             // Get a value from B (with wrapping lookup) relative to (x, y)
             // and divide by 255
-            #define ELEVATION(DX, DY)  ((int)B[(((DX + x + w) % w) + \
-                                                ((DY + y + h) % h) * w) * stride])
+#define ELEVATION(DX, DY)  ((int)(B[(((DX + x + w) % w) +               \
+                                     ((DY + y + h) % h) * w) * stride].bits()))
 
 
             // Sobel filter to compute the normal.  
@@ -1081,7 +1082,7 @@ void GImage::computeNormalMap(
             delta = delta.direction();
 
             // Copy over the bump value into the alpha channel.
-            float H = B[j] / 255.0f;
+            float H = B[j];
 
             if (lowPassBump) {
                 H = (ELEVATION(-1, -1) + ELEVATION( 0, -1) + ELEVATION(1, -1) +
@@ -1096,13 +1097,13 @@ void GImage::computeNormalMap(
                 H *= delta.z;
             }
 
-            N[i].a = iRound(H * 255.0f);
+            N[i].a = unorm8(H);
 
             // Pack into byte range
-            delta = delta * 127.5f + Vector3(127.5f, 127.5f, 127.5f);
-            N[i].r = iClamp(iRound(delta.x), 0, 255);
-            N[i].g = iClamp(iRound(delta.y), 0, 255);
-            N[i].b = iClamp(iRound(delta.z), 0, 255);
+            delta = delta * 0.5f + Vector3(0.5f, 0.5f, 0.5f);
+            N[i].r = unorm8(delta.x);
+            N[i].g = unorm8(delta.y);
+            N[i].b = unorm8(delta.z);
         }
     }
 }
@@ -1118,13 +1119,13 @@ void GImage::convertToL8() {
     case 3:
         {            
             // Average
-            Color3uint8* src = (Color3uint8*)m_byte;
+            Color3unorm8* src = (Color3unorm8*)m_byte;
             m_byte = NULL;
             resize(m_width, m_height, 1);
             for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const Color3uint8   s = src[i];
-                uint8&              d = m_byte[i]; 
-                d = ((int)s.r + (int)s.g + (int)s.b) / 3;
+                const Color3unorm8   s = src[i];
+                uint8&               d = m_byte[i]; 
+                d = ((int)s.r.bits() + (int)s.g.bits() + (int)s.b.bits()) / 3;
             }
             if (m_ownsData) {
                 m_memMan->free(src);
@@ -1138,13 +1139,13 @@ void GImage::convertToL8() {
     case 4:
         {            
             // Average
-            Color4uint8* src = (Color4uint8*)m_byte;
+            Color4unorm8* src = (Color4unorm8*)m_byte;
             m_byte = NULL;
             resize(m_width, m_height, 1);
             for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const Color4uint8   s = src[i];
-                uint8&              d = m_byte[i]; 
-                d = ((int)s.r + (int)s.g + (int)s.b) / 3;
+                const Color4unorm8   s = src[i];
+                uint8&               d = m_byte[i]; 
+                d = ((int)s.r.bits() + (int)s.g.bits() + (int)s.b.bits()) / 3;
             }
             if (m_ownsData) {
                 m_memMan->free(src);
@@ -1170,10 +1171,10 @@ void GImage::convertToRGBA() {
             m_byte = NULL;
             resize(m_width, m_height, 4);
             for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const uint8  s = old[i];
-                Color4uint8& d = ((Color4uint8*)m_byte)[i]; 
+                const unorm8  s = unorm8::fromBits(old[i]);
+                Color4unorm8& d = ((Color4unorm8*)m_byte)[i]; 
                 d.r = d.g = d.b = s;
-                d.a = 255;
+                d.a = unorm8::one();
             }
             if (m_ownsData) {
                 m_memMan->free(old);
@@ -1187,16 +1188,16 @@ void GImage::convertToRGBA() {
     case 3:
         {            
             // Add alpha
-            Color3uint8* old = (Color3uint8*)m_byte;
+            Color3unorm8* old = (Color3unorm8*)m_byte;
             m_byte = NULL;
             resize(m_width, m_height, 4);
             for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const Color3uint8   s = old[i];
-                Color4uint8&        d = ((Color4uint8*)m_byte)[i]; 
+                const Color3unorm8   s = old[i];
+                Color4unorm8&        d = ((Color4unorm8*)m_byte)[i]; 
                 d.r = s.r;
                 d.g = s.g;
                 d.b = s.b;
-                d.a = 255;
+                d.a = unorm8::one();
             }
             if (m_ownsData) {
                 m_memMan->free(old);
@@ -1222,12 +1223,12 @@ void GImage::convertToRGB() {
     case 1:
         {            
             // Spread
-            uint8* old = m_byte;
+            unorm8* old = reinterpret_cast<unorm8*>(m_byte);
             m_byte = NULL;
             resize(m_width, m_height, 3);
             for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const uint8  s = old[i];
-                Color3uint8& d = ((Color3uint8*)m_byte)[i]; 
+                const unorm8  s = old[i];
+                Color3unorm8& d = ((Color3unorm8*)m_byte)[i]; 
                 d.r = d.g = d.b = s;
             }
             if (m_ownsData) {
@@ -1245,12 +1246,12 @@ void GImage::convertToRGB() {
     case 4:
 		// Strip alpha
         {            
-            Color4uint8* old = (Color4uint8*)m_byte;
+            Color4unorm8* old = (Color4unorm8*)m_byte;
             m_byte = NULL;
             resize(m_width, m_height, 3);
             for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const Color4uint8   s = old[i];
-                Color3uint8&        d = ((Color3uint8*)m_byte)[i]; 
+                const Color4unorm8   s = old[i];
+                Color3unorm8&        d = ((Color3unorm8*)m_byte)[i]; 
                 d.r = s.r;
                 d.g = s.g;
                 d.b = s.b;
@@ -1270,15 +1271,16 @@ void GImage::convertToRGB() {
 }
 
 
-void GImage::R8G8B8_to_Y8U8V8(int width, int height, const uint8* _in, uint8* _out) {
-    const Color3uint8* in = reinterpret_cast<const Color3uint8*>(_in);
-    Color3uint8* out = reinterpret_cast<Color3uint8*>(_out);
+void GImage::R8G8B8_to_Y8U8V8(int width, int height, const unorm8* _in, unorm8* _out) {
+    const Color3unorm8* in = reinterpret_cast<const Color3unorm8*>(_in);
+    Color3unorm8* out = reinterpret_cast<Color3unorm8*>(_out);
 
-    Color3uint8 p;
+    Color3unorm8 p;
     for (int i = width * height - 1; i >= 0; --i) {
-        p.r = iClamp(iRound(in->r *  0.229 + in->g *  0.587 + in->b *  0.114), 0, 255);
-        p.g = iClamp(iRound(in->r * -0.147 + in->g * -0.289 + in->b *  0.436) + 127, 0, 255);
-        p.b = iClamp(iRound(in->r *  0.615 + in->g * -0.515 + in->b * -0.100) + 127, 0, 255);
+        const Color3 src(*in);
+        p.r = unorm8(src.r *  0.229f + src.g *  0.587f + src.b *  0.114f);
+        p.g = unorm8(src.r * -0.147f + src.g * -0.289f + src.b *  0.436f);
+        p.b = unorm8(src.r *  0.615f + src.g * -0.515f + src.b * -0.100f);
         *out = p;
         ++in;
         ++out;
@@ -1286,16 +1288,16 @@ void GImage::R8G8B8_to_Y8U8V8(int width, int height, const uint8* _in, uint8* _o
 }
 
 
+void GImage::Y8U8V8_to_R8G8B8(int width, int height, const unorm8* _in, unorm8* _out) {
+    const Color3unorm8* in = reinterpret_cast<const Color3unorm8*>(_in);
+    Color3unorm8* out = reinterpret_cast<Color3unorm8*>(_out);
 
-void GImage::Y8U8V8_to_R8G8B8(int width, int height, const uint8* _in, uint8* _out) {
-    const Color3uint8* in = reinterpret_cast<const Color3uint8*>(_in);
-    Color3uint8* out = reinterpret_cast<Color3uint8*>(_out);
-
-    Color3uint8 p;
+    Color3unorm8 p;
     for (int i = width * height - 1; i >= 0; --i) {
-        p.r = iClamp(iRound(in->r *  1.0753 +                   (in->b - 127) *  1.2256), 0, 255);
-        p.g = iClamp(iRound(in->r *  1.0753 + (in->g - 127) * -0.3946 + (in->b - 127) * -0.4947), 0, 255);
-        p.b = iClamp(iRound(in->r *  1.0753 + (in->g - 127) *  2.0320 + (in->b - 127) *  0.0853), 0, 255);
+        const Color3 src(*in);
+        p.r = unorm8(src.r *  1.0753f + (src.b - 0.5f) * 1.2256f);
+        p.g = unorm8(src.r *  1.0753f + (src.g - 0.5f) * -0.3946f + (src.b - 0.5f) * -0.4947f);
+        p.b = unorm8(src.r *  1.0753f + (src.g - 0.5f) *  2.0320f + (src.b - 0.5f) *  0.0853f);
         *out = p;
         ++in;
         ++out;
@@ -1303,11 +1305,11 @@ void GImage::Y8U8V8_to_R8G8B8(int width, int height, const uint8* _in, uint8* _o
 }
 
 
-void GImage::makeCheckerboard(GImage& im, int checkerSize, const Color4uint8& A, const Color4uint8& B) {
+void GImage::makeCheckerboard(GImage& im, int checkerSize, const Color4unorm8& A, const Color4unorm8& B) {
     for (int y = 0; y < im.m_height; ++y) {
         for (int x = 0; x < im.m_width; ++x) {
             bool checker = isOdd((x / checkerSize) + (y / checkerSize));
-            const Color4uint8& color = checker ? A : B;
+            const Color4unorm8& color = checker ? A : B;
             for (int c = 0; c < im.m_channels; ++c) {
                 uint8* v = im.byte() + (x + y * im.m_width) * im.m_channels + c;
                 *v = color[c];

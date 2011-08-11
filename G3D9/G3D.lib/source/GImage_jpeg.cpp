@@ -249,13 +249,13 @@ static void jpeg_memory_src (
 void GImage::encodeJPEG(
     BinaryOutput&           out) const {
 
-	if (m_channels != 3) {
-		// Convert to three channel
-		GImage tmp = *this;
-		tmp.convertToRGB();
-		tmp.encodeJPEG(out);
-		return;
-	}
+    if (m_channels != 3) {
+        // Convert to three channel
+        GImage tmp = *this;
+        tmp.convertToRGB();
+        tmp.encodeJPEG(out);
+        return;
+    }
 
     debugAssert(m_channels == 3);
     out.setEndian(G3D_LITTLE_ENDIAN);
@@ -264,20 +264,20 @@ void GImage::encodeJPEG(
     jpeg_compress_struct    cinfo;
     jpeg_error_mgr          jerr;
 
-	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_compress(&cinfo);
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_compress(&cinfo);
 
     // Specify the destination for the compressed data.
     // (Overestimate the size)
     int buffer_size = m_width * m_height * 3 + 200;
     JOCTET* compressed_data = (JOCTET*)System::malloc(buffer_size);
-	jpeg_memory_dest(&cinfo, compressed_data, buffer_size);
+    jpeg_memory_dest(&cinfo, compressed_data, buffer_size);
 
 
     cinfo.image_width       = m_width;
     cinfo.image_height      = m_height;
 
-	// # of color components per pixel
+    // # of color components per pixel
     cinfo.input_components  = 3;
 
     // colorspace of input image
@@ -289,7 +289,7 @@ void GImage::encodeJPEG(
     jpeg_set_quality(&cinfo, jpegQuality, false);
     cinfo.smoothing_factor = 0;
     cinfo.optimize_coding = TRUE;
-//    cinfo.dct_method = JDCT_FLOAT;
+    //    cinfo.dct_method = JDCT_FLOAT;
     cinfo.dct_method = JDCT_ISLOW;
     cinfo.jpeg_color_space = JCS_YCbCr;
 
@@ -297,14 +297,14 @@ void GImage::encodeJPEG(
     jpeg_start_compress(&cinfo, TRUE);
 
     // Iterate over all scanlines from top to bottom
-	// pointer to a single row
+    // pointer to a single row
     JSAMPROW row_pointer[1];
     
     // JSAMPLEs per row in image_buffer
     int row_stride = cinfo.image_width * 3;
     while (cinfo.next_scanline < cinfo.image_height) {
-	    row_pointer[0] = &(m_byte[cinfo.next_scanline * row_stride]);
-	    jpeg_write_scanlines(&cinfo, row_pointer, 1);
+        row_pointer[0] = reinterpret_cast<JSAMPLE*>(&(m_byte[cinfo.next_scanline * row_stride]));
+        jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
     // Shut down the compressor
@@ -328,119 +328,120 @@ void GImage::encodeJPEG(
 void GImage::decodeJPEG(
     BinaryInput&                input) {
 
-	struct jpeg_decompress_struct   cinfo;
-	struct jpeg_error_mgr           jerr;
+    struct jpeg_decompress_struct   cinfo;
+    struct jpeg_error_mgr           jerr;
     int                             loc = 0;
 
     m_channels = 3;
     m_imageFormat = ImageFormat::RGB8();
     // We have to set up the error handler, in case initialization fails.
-	cinfo.err = jpeg_std_error(&jerr);
+    cinfo.err = jpeg_std_error(&jerr);
 
     // Initialize the JPEG decompression object.
-	jpeg_create_decompress(&cinfo);
+    jpeg_create_decompress(&cinfo);
 
-	// Specify data source (eg, a file, for us, memory)
-	jpeg_memory_src(&cinfo, const_cast<uint8*>(input.getCArray()), input.size());
+    // Specify data source (eg, a file, for us, memory)
+    jpeg_memory_src(&cinfo, const_cast<uint8*>(input.getCArray()), input.size());
 
-	// Read the parameters with jpeg_read_header()
-	jpeg_read_header(&cinfo, TRUE);
+    // Read the parameters with jpeg_read_header()
+    jpeg_read_header(&cinfo, TRUE);
 
-	// Set parameters for decompression
-	// (We do nothing here since the defaults are fine)
+    // Set parameters for decompression
+    // (We do nothing here since the defaults are fine)
 
-	// Start decompressor
-	jpeg_start_decompress(&cinfo);
+    // Start decompressor
+    jpeg_start_decompress(&cinfo);
 
-	// Get and set the values of interest to this object
-	m_width     = cinfo.output_width;
-	m_height    = cinfo.output_height;
+    // Get and set the values of interest to this object
+    m_width     = cinfo.output_width;
+    m_height    = cinfo.output_height;
 
-	// Prepare the pointer object for the pixel data
+    // Prepare the pointer object for the pixel data
     m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
 
- 	// JSAMPLEs per row in output buffer
+    // JSAMPLEs per row in output buffer
     int bpp         = cinfo.output_components;
     int row_stride  = cinfo.output_width * bpp;
-
-	// Make a one-row-high sample array that will go away when done with image
+        
+    // Make a one-row-high sample array that will go away when done with image
     JSAMPARRAY temp = (*cinfo.mem->alloc_sarray)
-		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
-
+        ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+        
     // Read data on a scanline by scanline basis
-	while (cinfo.output_scanline < cinfo.output_height) {
+    while (cinfo.output_scanline < cinfo.output_height) {
 
         // We may need to adjust the output based on the
         // number of channels it has.
         switch (bpp) {
-	    case 1:
+        case 1:
             // Grayscale; decompress to temp.
-    		jpeg_read_scanlines(&cinfo, temp, 1);
-
+            jpeg_read_scanlines(&cinfo, temp, 1);
+                
             // Expand to three channels
             {
-                uint8* scan     = &(m_byte[loc * 3]);
+                uint8* scan     = reinterpret_cast<uint8*>(&(m_byte[loc * 3]));
                 uint8* endScan  = scan + (m_width * 3);
                 uint8* t        = *temp;
-
+                    
                 while (scan < endScan) {
                     uint8 value = t[0];
-
+                        
                     // Spread the value 3x.
                     scan[0] = value;
                     scan[1] = value;
                     scan[2] = value;
-
+                        
                     scan    += 3;
                     t       += 1;
                 }
             }
-		    break;
-
-	    case 3:
+            break;
+                
+        case 3:
             // Read directly into the array
             {
                 // Need one extra level of indirection.
-                uint8*     scan = m_byte + loc;
+                uint8*     scan = reinterpret_cast<uint8*>(m_byte + loc);
                 JSAMPARRAY ptr  = &scan;
-    		    jpeg_read_scanlines(&cinfo, ptr, 1);
+                jpeg_read_scanlines(&cinfo, ptr, 1);
             }
-		    break;
-
-	    case 4:
+            break;
+                
+        case 4:
             // RGBA; decompress to temp.
-    		jpeg_read_scanlines(&cinfo, temp, 1);
-
+            jpeg_read_scanlines(&cinfo, temp, 1);
+                
             // Drop the 3rd channel
             {
-                uint8* scan     = &(m_byte[loc * 3]);
+                uint8* scan     = reinterpret_cast<uint8*>(&(m_byte[loc * 3]));
                 uint8* endScan  = scan + m_width * 3;
                 uint8* t        = *temp;
-
+                    
                 while (scan < endScan) {
                     scan[0] = t[0];
                     scan[1] = t[1];
                     scan[2] = t[2];
-                    
+                        
                     scan    += 3;
                     t       += 4;
                 }
             }
-		    break;
-
-	    default:
-		    throw Error("Unexpected number of channels.", input.getFilename());
-	    }
-
-		loc += row_stride;
-	}
-
-	// Finish decompression
-	jpeg_finish_decompress(&cinfo);
-
+            break;
+                
+        default:
+            throw Error("Unexpected number of channels.", input.getFilename());
+        }
+            
+        loc += row_stride;
+    }
+        
+    // Finish decompression
+    jpeg_finish_decompress(&cinfo);
+        
     alwaysAssertM(this, "Corrupt GImage");
-	// Release JPEG decompression object
-	jpeg_destroy_decompress(&cinfo);
+
+    // Release JPEG decompression object
+    jpeg_destroy_decompress(&cinfo);
 }
 
 

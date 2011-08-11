@@ -187,14 +187,14 @@ void GImage::decodeBMP(
     uint8 blue;
     uint8 blank;
 
-	// Only uncompressed bitmaps are supported by this code
+    // Only uncompressed bitmaps are supported by this code
     if ((int32)compressionType != BI_RGB) {
         throw Error("BMP images must be uncompressed", input.getFilename());
     }
 
     uint8* palette = NULL;
 
-	// Create the palette if needed
+    // Create the palette if needed
     if (bitCount <= 8) {
 
         // Skip to the palette color count in the header
@@ -221,7 +221,7 @@ void GImage::decodeBMP(
             palette[c + 1] = green;
             palette[c + 2] = blue;
         }
-	}
+    }
 
     int hStart = 0;
     int hEnd   = 0;
@@ -378,7 +378,7 @@ void GImage::decodeBMP(
         palette = NULL;
     	throw Error("16-bit bitmaps not supported", input.getFilename());
 
-	} else if (bitCount == 24) {
+    } else if (bitCount == 24) {
         input.skip(20);
 
         flags = PICTURE_BITMAP | PICTURE_UNCOMPRESSED | PICTURE_24BIT;
@@ -514,13 +514,13 @@ void GImage::decodeICO(
     // Skip over bitmap header; it is redundant
     input.skip(40);
     
-    Array<Color4uint8> palette;
+    Array<Color4unorm8> palette;
     palette.resize(numColors, true);
     for (int c = 0; c < numColors; ++c) {
-        palette[c].b = input.readUInt8();
-        palette[c].g = input.readUInt8();
-        palette[c].r = input.readUInt8();
-        palette[c].a = input.readUInt8();
+        palette[c].b = input.readUNorm8();
+        palette[c].g = input.readUNorm8();
+        palette[c].r = input.readUNorm8();
+        palette[c].a = input.readUNorm8();
     }
 
 	// The actual image and mask follow
@@ -608,9 +608,9 @@ void GImage::decodeICO(
                     if (currPixel < m_width) {
                         int src  = ((BMGroup & pow2[i]) >> i);
                     
-                        m_byte[dest]     = palette[src].r;
-                        m_byte[dest + 1] = palette[src].g;
-                        m_byte[dest + 2] = palette[src].b;
+                        m_byte[dest]     = palette[src].r.bits();
+                        m_byte[dest + 1] = palette[src].g.bits();
+                        m_byte[dest + 2] = palette[src].b.bits();
                     
                         ++currPixel;
                         dest += 4;
@@ -702,16 +702,16 @@ void GImage::decodeICO(
     }
     
     for (int y = m_height - 1; y >= 0; --y) {
-		int x = 0;
-		// Read the row
-		for (int i = 0; i < bytesPerRow; ++i) {
-			uint8 byte = input.readUInt8();
-			for (int j = 0; (j < 8) && (x < m_width); ++x, ++j) {
-				int bit = (byte >> (7 - j)) & 0x01;
-				pixel4(x, y).a = (1 - bit) * 0xFF;
-			}
-		}
-	}
+        int x = 0;
+        // Read the row
+        for (int i = 0; i < bytesPerRow; ++i) {
+            uint8 byte = input.readUInt8();
+            for (int j = 0; (j < 8) && (x < m_width); ++x, ++j) {
+                int bit = (byte >> (7 - j)) & 0x01;
+                pixel4(x, y).a = unorm8::fromBits((1 - bit) * 0xFF);
+            }
+        }
+    }
 
 }
 

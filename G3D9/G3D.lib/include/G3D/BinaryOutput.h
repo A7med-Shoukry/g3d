@@ -1,17 +1,17 @@
 /**
- @file BinaryOutput.h
+ \file G3D/BinaryOutput.h
  
- @maintainer Morgan McGuire, graphics3d.com
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2001-08-09
- @edited  2008-01-24
+ \created 2001-08-09
+ \edited  2011-08-24
 
- Copyright 2000-2006, Morgan McGuire.
+ Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
  */
 
-#ifndef G3D_BINARYOUTPUT_H
-#define G3D_BINARYOUTPUT_H
+#ifndef G3D_BinaryOutput_h
+#define G3D_BinaryOutput_h
 
 #include "G3D/platform.h"
 #include <assert.h>
@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include "G3D/unorm8.h"
 #include "G3D/Color4.h"
 #include "G3D/Color3.h"
 #include "G3D/Vector4.h"
@@ -283,6 +284,10 @@ public:
         reserveBytes(1);
         m_buffer[m_pos] = i;
         m_pos++;
+    }
+
+    inline void writeUNorm8(unorm8 i) {
+        writeUInt8(i.bits());
     }
 
     void writeUInt16(uint16 u);

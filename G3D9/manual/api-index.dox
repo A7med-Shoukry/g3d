@@ -233,15 +233,15 @@ href="classes.html">Classes</a>.
 
   <li><b>Radiometry</b>  &nbsp;&nbsp;
     \link G3D::Color1 Color1\endlink,
-    \link G3D::Color1uint8 Color1uint8\endlink,
-    \link G3D::Color1uint8 Color2uint8\endlink,
+    \link G3D::Color1unorm8 Color1unorm8\endlink,
+    \link G3D::Color1unorm8 Color2unorm8\endlink,
     \link G3D::Color3 Color3\endlink,
+    \link G3D::Color3unorm8 Color3unorm8\endlink,
+    \link G3D::Color4 Color4\endlink,
+    \link G3D::Color4unorm8 Color4unorm8\endlink,
     \link G3D::Power3 Power3\endlink, 
     \link G3D::Radiance3 Radiance3\endlink, 
-    \link G3D::Irradiance3 Irradiance3\endlink,
-    \link G3D::Color3uint8 Color3uint8\endlink,
-    \link G3D::Color4 Color4\endlink,
-    \link G3D::Color4uint8 Color4uint8\endlink
+    \link G3D::Irradiance3 Irradiance3\endlink
       
   <LI><B>Integer math</B> &nbsp; &nbsp;
     \link BIN8() BIN8\endlink, 
@@ -368,11 +368,11 @@ href="classes.html">Classes</a>.
         \link G3D::GImage GImage\endlink,
         \link G3D::GImage::Error GImage::Error\endlink,
         \link G3D::Image1\endlink,
-        \link G3D::Image1uint8 Image1uint8\endlink,
+        \link G3D::Image1unorm8 Image1unorm8\endlink,
         \link G3D::Image3 Image3\endlink,
-        \link G3D::Image3uint8 Image3uint8\endlink,
+        \link G3D::Image3unorm8 Image3unorm8\endlink,
         \link G3D::Image4 Image4\endlink,
-        \link G3D::Image4uint8 Image4uint8\endlink,
+        \link G3D::Image4unorm8 Image4unorm8\endlink,
         \link G3D::ImageFormat ImageFormat\endlink,
         \link G3D::Map2D Map2D\endlink,
         \link G3D::gaussian1D gaussian1D\endlink,

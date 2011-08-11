@@ -1,8 +1,8 @@
 /**
-  @file GImage_png.cpp
-  @author Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2002-05-27
-  @edited  2009-04-20
+  \file GImage_png.cpp
+  \author Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2002-05-27
+  \edited  2011-04-20
  */
 #include "G3D/platform.h"
 #include "G3D/GImage.h"
@@ -481,7 +481,7 @@ void GImage::decodePNG
 
     for (uint32 pass = 0; pass < number_passes; ++pass) {
         for (uint32 y = 0; y < (uint32)m_height; ++y) {
-            png_bytep rowPointer = &m_byte[m_width * m_channels * y]; 
+            png_bytep rowPointer = &m_byte[m_width * m_channels * y];
             png_read_rows(png_ptr, &rowPointer, NULL, 1);
         }
     }

@@ -205,7 +205,7 @@ void GImage::decodeTGA(
                 if (repetitionCount & 128) {
                     // When the high bit is 1, this is a run-length packet
                     if (m_channels == 3) {
-                        Color3uint8 value;
+                        Color3unorm8 value;
                         readBGR((uint8*)(&value), input);
                         for (int i = 0; i < numValues; ++i, ++x) {
                             for (int b = 0; b < 3; ++b, ++byteOffset) {
@@ -213,7 +213,7 @@ void GImage::decodeTGA(
                             }
                         }
                     } else {
-                        Color4uint8 value;
+                        Color4unorm8 value;
                         readBGRA((uint8*)(&value), input);
                         for (int i = 0; i < numValues; ++i, ++x) {
                             for (int b = 0; b < 3; ++b, ++byteOffset) {

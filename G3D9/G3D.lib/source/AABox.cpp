@@ -1,10 +1,13 @@
 /**
-  @file AABox.cpp
+  \file G3D.lib/source/AABox.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2004-01-10
-  @edited  2011-02-11
+  \created 2004-01-10
+  \edited  2011-02-11
+
+  Copyright 2000-2011, Morgan McGuire.
+  All rights reserved.
 */
 
 #include "G3D/platform.h"

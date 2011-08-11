@@ -53,6 +53,14 @@ public:
         return float(m_bits) * (1.0f / 255.0f);
     }
 
+    static unorm8 one() {
+        return fromBits(255);
+    }
+
+    static unorm8 zero() {
+        return fromBits(0);
+    }
+
     /** Returns the underlying bits in this representation. */
     uint8 bits() const {
         return m_bits;

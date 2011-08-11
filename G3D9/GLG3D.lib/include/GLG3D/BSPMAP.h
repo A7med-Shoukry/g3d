@@ -19,7 +19,7 @@
 #include "G3D/platform.h"
 #include "G3D/Array.h"
 #include "G3D/Vector3.h"
-#include "G3D/Color4uint8.h"
+#include "G3D/Color4unorm8.h"
 #include "G3D/AABox.h"
 #include "G3D/GCamera.h"
 #include "GLG3D/Texture.h"
@@ -102,7 +102,7 @@ public:
     Vector2             textureCoord;
     Vector2             lightmapCoord;
     Vector3             normal;
-    Color4uint8         color;
+    Color4unorm8         color;
 
     /**
      Used for bezier patch tesselation
@@ -252,10 +252,10 @@ G3D_BEGIN_PACKED_CLASS(1)
 LightVolume {
 public:
     /** Ambient color component. RGB.  */
-    Color3uint8              ambient;
+    Color3unorm8              ambient;
 
     /** Directional color component. RGB. */
-    Color3uint8              directional;
+    Color3unorm8              directional;
 
     /** Direction to light. 0=phi, 1=theta. in the Q3 coordinate
         system.*/

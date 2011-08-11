@@ -89,7 +89,7 @@ public:
      */
     Color3 (const Color3& other);
 
-    Color3 (const class Color3uint8& other);
+    Color3 (const class Color3unorm8& other);
 
     inline bool isZero() const {
         return (r == 0.0f) && (g == 0.0f) && (b == 0.0f);

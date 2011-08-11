@@ -333,12 +333,12 @@ public:
     void append(ReferenceCountedPointer<class VideoInput> in);
 
     /** Reserved for future use */
-    void append(const Image1uint8::Ref& frame); 
+    void append(const Image1unorm8::Ref& frame); 
 
-    void append(const Image3uint8::Ref& frame); 
+    void append(const Image3unorm8::Ref& frame); 
 
     /** Reserved for future use */
-    void append(const Image4uint8::Ref& frame); 
+    void append(const Image4unorm8::Ref& frame); 
 
     /** Reserved for future use */
     void append(const Image1::Ref& frame);

@@ -20,9 +20,9 @@
 #include "G3D/Array.h"
 #include "G3D/g3dmath.h"
 #include "G3D/stringutils.h"
-#include "G3D/Color1uint8.h"
-#include "G3D/Color3uint8.h"
-#include "G3D/Color4uint8.h"
+#include "G3D/Color1unorm8.h"
+#include "G3D/Color3unorm8.h"
+#include "G3D/Color4unorm8.h"
 #include "G3D/MemoryManager.h"
 #include "G3D/BumpMapPreprocess.h"
 #include "G3D/ImageFormat.h"
@@ -58,7 +58,7 @@ class BinaryOutput;
     // Saving to memory:
     G3D::GImage im3(width, height);
     // (Set the pixels of im3...) 
-    uint8* data2;
+    unorm8* data2;
     int    len2;
     im3.encode(G3D::GImage::JPEG, data2, len2);
 
@@ -74,7 +74,7 @@ class BinaryOutput;
 
   \cite http://tfcduke.developpez.com/tutoriel/format/tga/fichiers/tga_specs.pdf
 
-  \sa Image3, Image3uint8, Image4, Image4uint8, Image1, Image1uint8, Texture, Map2D, Component, SuperBSDF
+  \sa Image3, Image3unorm8, Image4, Image4unorm8, Image1, Image1unorm8, Texture, Map2D, Component, SuperBSDF
 
   \cite JPEG compress/decompressor is the <A HREF="http://www.ijg.org/files/">IJG library</A>, used in accordance with their license.
   \cite JPG code by John Chisholm, using the IJG Library
@@ -190,13 +190,13 @@ private:
      returns the most likely format of this file.
      */
     static Format resolveFormat
-       (const std::string&  filename,
-        const uint8*        data,
-        int                 dataLen,
-        Format              maybeFormat);
+    (const std::string&  filename,
+     const uint8*        data,
+     int                 dataLen,
+     Format              maybeFormat);
 
     void _copy
-       (const GImage&       other);
+    (const GImage&       other);
 
 public:
     
@@ -236,7 +236,11 @@ public:
 
     /** Returns a pointer to the underlying data, which is stored
         in row-major order without row padding.
-        e.g., <code>uint8* ptr = image.rawData<uint8>();
+        e.g., 
+
+        \code
+        float* ptr = image.rawData<float>();
+        \endcode
     */
     template<typename Type>
     inline const Type* rawData() const {
@@ -249,90 +253,90 @@ public:
         return (Type*)m_byte;
     }
 
-    inline const Color1uint8* pixel1() const {
-        debugAssertM(m_imageFormat->representableAsColor1uint8(), 
-            format("Tried to call GImage::pixel1 on an image in %s format.", m_imageFormat->name().c_str()));
+    inline const Color1unorm8* pixel1() const {
+        debugAssertM(m_imageFormat->representableAsColor1unorm8(), 
+                     format("Tried to call GImage::pixel1 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssertM(m_channels == 1, format("Tried to call GImage::pixel1 on an image with %d channels", m_channels));            
-        return (Color1uint8*)m_byte;
+        return rawData<Color1unorm8>();
     }
 
-    inline Color1uint8* pixel1() {
-        debugAssertM(m_imageFormat->representableAsColor1uint8(), 
+    inline Color1unorm8* pixel1() {
+        debugAssertM(m_imageFormat->representableAsColor1unorm8(), 
             format("Tried to call GImage::pixel1 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssertM(m_channels == 1, format("Tried to call GImage::pixel1 on an image with %d channels", m_channels));            
-        return (Color1uint8*)m_byte;
+        return rawData<Color1unorm8>();
     }
 
     /** Returns a pointer to the upper left pixel
-        as Color4uint8.
+        as Color4unorm8.
 
         The imageFormat() must be representable by four 8-bit channels.
      */
-    inline const Color4uint8* pixel4() const {
-        debugAssertM(m_imageFormat->representableAsColor4uint8(), 
+    inline const Color4unorm8* pixel4() const {
+        debugAssertM(m_imageFormat->representableAsColor4unorm8(), 
             format("Tried to call GImage::pixel4 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssertM(m_channels == 4, format("Tried to call GImage::pixel4 on an image with %d channels", m_channels));            
-        return (Color4uint8*)m_byte;
+        return rawData<Color4unorm8>();
     }
 
-    inline Color4uint8* pixel4() {
-        debugAssertM(m_imageFormat->representableAsColor4uint8(), 
+    inline Color4unorm8* pixel4() {
+        debugAssertM(m_imageFormat->representableAsColor4unorm8(), 
             format("Tried to call GImage::pixel4 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssert(m_channels == 4);
-        return (Color4uint8*)m_byte;
+        return rawData<Color4unorm8>();
     }
 
     /** Returns a pointer to the upper left pixel
-        as Color3uint8.
+        as Color3unorm8.
      */
-    inline const Color3uint8* pixel3() const {
-        debugAssertM(m_imageFormat->representableAsColor3uint8(), 
+    inline const Color3unorm8* pixel3() const {
+        debugAssertM(m_imageFormat->representableAsColor3unorm8(), 
             format("Tried to call GImage::pixel3 on an image in %s format.", m_imageFormat->name().c_str()));
          debugAssertM(m_channels == 3, format("Tried to call GImage::pixel3 on an image with %d channels", m_channels));            
-         return (Color3uint8*)m_byte;
+        return rawData<Color3unorm8>();
     }
 
-    inline Color3uint8* pixel3() {
-        debugAssertM(m_imageFormat->representableAsColor3uint8(), 
+    inline Color3unorm8* pixel3() {
+        debugAssertM(m_imageFormat->representableAsColor3unorm8(), 
             format("Tried to call GImage::pixel3 on an image in %s format.", m_imageFormat->name().c_str()));
         debugAssert(m_channels == 3);
-        return (Color3uint8*)m_byte;
+        return rawData<Color3unorm8>();
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
-    inline const Color1uint8& pixel1(int x, int y) const {
+    inline const Color1unorm8& pixel1(int x, int y) const {
         debugAssert(y >= 0 && y < m_height);
         return pixel1()[x + y * m_width];
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
-    inline Color1uint8& pixel1(int x, int y) {
+    inline Color1unorm8& pixel1(int x, int y) {
         debugAssert(x >= 0 && x < m_width);
         debugAssert(y >= 0 && y < m_height);
         return pixel1()[x + y * m_width];
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
-    inline const Color3uint8& pixel3(int x, int y) const {
+    inline const Color3unorm8& pixel3(int x, int y) const {
         debugAssert(x >= 0 && x < m_width);
         debugAssert(y >= 0 && y < m_height);
         return pixel3()[x + y * m_width];
     }
 
-    inline Color3uint8& pixel3(int x, int y) {
+    inline Color3unorm8& pixel3(int x, int y) {
         debugAssert(x >= 0 && x < m_width);
         debugAssert(y >= 0 && y < m_height);
         return pixel3()[x + y * m_width];
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
-    inline const Color4uint8& pixel4(int x, int y) const {
+    inline const Color4unorm8& pixel4(int x, int y) const {
         debugAssert(x >= 0 && x < m_width);
         debugAssert(y >= 0 && y < m_height);
         return pixel4()[x + y * m_width];
     }
 
-    inline Color4uint8& pixel4(int x, int y) {
+    inline Color4unorm8& pixel4(int x, int y) {
         debugAssert(x >= 0 && x < m_width);
         debugAssert(y >= 0 && y < m_height);
         return pixel4()[x + y * m_width];
@@ -356,10 +360,10 @@ public:
      \deprecated Use the version that takes an ImageFormat
      */
     G3D_DEPRECATED GImage
-       (int                 width,
-        int                 height,
-        int                 channels,
-        const MemoryManager::Ref& m = MemoryManager::create());
+    (int                 width,
+     int                 height,
+     int                 channels,
+     const MemoryManager::Ref& m = MemoryManager::create());
 
 
     /**
@@ -367,33 +371,33 @@ public:
      \sa load()
      */
     GImage
-       (int                 width = 0,
-        int                 height = 0,
-        const ImageFormat*  imageFormat = ImageFormat::RGB8(),
-        const MemoryManager::Ref& m = MemoryManager::create());
-
+    (int                 width = 0,
+     int                 height = 0,
+     const ImageFormat*  imageFormat = ImageFormat::RGB8(),
+     const MemoryManager::Ref& m = MemoryManager::create());
+    
     /**
      Load an encoded image from disk and decode it.
      Throws GImage::Error if something goes wrong.
      */
     GImage
-       (const std::string&  filename,
-        Format              format = AUTODETECT,
-        const MemoryManager::Ref& m = MemoryManager::create());
+    (const std::string&  filename,
+     Format              format = AUTODETECT,
+     const MemoryManager::Ref& m = MemoryManager::create());
 
     /**
      Decodes an image file format stored in a buffer.
     */
     GImage
-       (const unsigned char*data,
-        int                 length,
-        Format              format = AUTODETECT,
-        const MemoryManager::Ref& m = MemoryManager::create());
-
+    (const unsigned char* data,
+     int                  length,
+     Format               format = AUTODETECT,
+     const MemoryManager::Ref& m = MemoryManager::create());
+    
     GImage
-       (const GImage&       other,
-        const MemoryManager::Ref& m = MemoryManager::create());
-
+    (const GImage&       other,
+     const MemoryManager::Ref& m = MemoryManager::create());
+    
     GImage& operator=(const GImage& other);
 
     /**
@@ -510,7 +514,7 @@ public:
      */
     void encode(
         Format              format,
-        uint8*&             outData,
+        unorm8*&             outData,
         int&                outLength) const;
 
     /** Encodes images as a 16-bit per channel PNG.  Channels must be 1, 3, or 4. \beta */
@@ -546,10 +550,10 @@ public:
     int sizeInMemory() const;
 
     /** Ok for in == out */
-    static void R8G8B8_to_Y8U8V8(int width, int height, const uint8* in, uint8* out);
+    static void R8G8B8_to_Y8U8V8(int width, int height, const unorm8* in, unorm8* out);
 
     /** Ok for in == out */
-    static void Y8U8V8_to_R8G8B8(int width, int height, const uint8* in, uint8* out);
+    static void Y8U8V8_to_R8G8B8(int width, int height, const unorm8* in, unorm8* out);
 
     /**
     @param in        RGB buffer of numPixels * 3 bytes
@@ -557,58 +561,58 @@ public:
     @param numPixels Number of RGB pixels to convert
     */
     static void RGBtoRGBA(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     numPixels);
 
     static void RGBtoARGB(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     numPixels);
 
     static void LtoRGB
-    (const uint8*               in,
-     uint8*                     out,
+    (const unorm8*               in,
+     unorm8*                     out,
      int                        numPixels);
 
     static void LtoRGBA
-    (const uint8*               in,
-     uint8*                     out,
+    (const unorm8*               in,
+     unorm8*                     out,
      int                        numPixels);
     
     /** Safe for in == out */
     static void RGBtoBGR(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     numPixels);
 
     /**
     Win32 32-bit HDC format.
     */
     static void RGBtoBGRA(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     numPixels);
 
     /**
     Win32 32-bit HDC format.
     */
     static void RGBAtoBGRA(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     numPixels);
 
     static void RGBAtoRGB(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     numPixels);
     /**
     Uses the red channel of the second image as an alpha channel.
     */
     static void RGBxRGBtoRGBA(
-        const uint8*            colorRGB,
-        const uint8*            alphaRGB,
-        uint8*                  out,
+        const unorm8*            colorRGB,
+        const unorm8*            alphaRGB,
+        unorm8*                  out,
         int                     numPixels);
         
     /**
@@ -616,14 +620,14 @@ public:
     Safe for in == out.
     */
     static void flipRGBVertical(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     width,
         int                     height);
 
     static void flipRGBAVertical(
-        const uint8*            in,
-        uint8*                  out,
+        const unorm8*            in,
+        unorm8*                  out,
         int                     width,
         int                     height);
 
@@ -651,7 +655,7 @@ public:
        (int                 width,
         int                 height,
         int                 channels,
-        const uint8*        src,
+        const unorm8*        src,
         GImage&             normal,
         const BumpMapPreprocess& preprocess = BumpMapPreprocess());
 
@@ -665,18 +669,18 @@ public:
 
     Assumes in != out.
     */
-    static void BAYER_G8B8_R8G8_to_R8G8B8_MHC(int w, int h, const uint8* in, uint8* _out);
-    static void BAYER_G8R8_B8G8_to_R8G8B8_MHC(int w, int h, const uint8* in, uint8* _out);
-    static void BAYER_R8G8_G8B8_to_R8G8B8_MHC(int w, int h, const uint8* in, uint8* _out);
-    static void BAYER_B8G8_G8R8_to_R8G8B8_MHC(int w, int h, const uint8* in, uint8* _out);
+    static void BAYER_G8B8_R8G8_to_R8G8B8_MHC(int w, int h, const unorm8* in, unorm8* _out);
+    static void BAYER_G8R8_B8G8_to_R8G8B8_MHC(int w, int h, const unorm8* in, unorm8* _out);
+    static void BAYER_R8G8_G8B8_to_R8G8B8_MHC(int w, int h, const unorm8* in, unorm8* _out);
+    static void BAYER_B8G8_G8R8_to_R8G8B8_MHC(int w, int h, const unorm8* in, unorm8* _out);
 
     /** Fast conversion; the output has 1/2 the size of the input in each direction. Assumes in != out.
     See G3D::BAYER_G8B8_R8G8_to_R8G8B8_MHC for a much better result. */
     static void BAYER_G8B8_R8G8_to_Quarter_R8G8B8
        (int inWidth,
         int inHeight, 
-        const uint8* in, 
-        uint8* out);
+        const unorm8* in, 
+        unorm8* out);
 
     /** Attempt to undo fast conversion of G3D::BAYER_G8B8_R8G8_to_Quarter_R8G8B8; 
         the green channel will lose data. Assumes in != out 
@@ -686,8 +690,8 @@ public:
     static void Quarter_R8G8B8_to_BAYER_G8B8_R8G8
        (int inWidth, 
         int inHeight, 
-        const uint8* in, 
-        uint8* out);
+        const unorm8* in, 
+        unorm8* out);
 
     /** Overwrites every pixel with one of the two colors in a checkerboard pattern.
         The fields used from the two colors depend on the current number of channels in @a im. 
@@ -695,8 +699,8 @@ public:
     static void makeCheckerboard
        (GImage& im, 
         int checkerSize = 1, 
-        const Color4uint8& color1 = Color4uint8(255,255,255,255), 
-        const Color4uint8& color2 = Color4uint8(0,0,0,255));
+        const Color4unorm8& color1 = Color4unorm8(unorm8::one(), unorm8::one(), unorm8::one(), unorm8::one()),
+        const Color4unorm8& color2 = Color4unorm8(unorm8::zero(), unorm8::zero(), unorm8::zero(), unorm8::one()));
 };
 
 }

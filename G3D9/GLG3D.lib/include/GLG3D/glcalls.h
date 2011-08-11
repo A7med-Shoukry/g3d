@@ -21,9 +21,9 @@
 #include "G3D/Vector3int16.h"
 #include "G3D/Vector4.h"
 #include "G3D/Color3.h"
-#include "G3D/Color3uint8.h"
+#include "G3D/Color3unorm8.h"
 #include "G3D/Color4.h"
-#include "G3D/Color4uint8.h"
+#include "G3D/Color4unorm8.h"
 #include "G3D/debugAssert.h"
 #include "./glheaders.h"
 #ifdef _DEBUG

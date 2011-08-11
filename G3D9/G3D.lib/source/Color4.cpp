@@ -1,20 +1,17 @@
 /**
- @file Color4.cpp
+ \file Color4.cpp
 
  Color class.
 
- @author Morgan McGuire, http://graphics.cs.williams.edu
- @cite Portions by Laura Wollstadt, graphics3d.com
- @cite Portions based on Dave Eberly's Magic Software Library at http://www.magic-software.com
+ \author Morgan McGuire, http://graphics.cs.williams.edu
 
-
- @created 2002-06-25
- @edited  2009-11-10
+ \created 2002-06-25
+ \edited  2011-09-10
  */
 
 #include <stdlib.h>
 #include "G3D/Color4.h"
-#include "G3D/Color4uint8.h"
+#include "G3D/Color4unorm8.h"
 #include "G3D/Vector4.h"
 #include "G3D/format.h"
 #include "G3D/BinaryInput.h"
@@ -91,8 +88,7 @@ Color4::Color4(const Vector4& v) {
 }
 
 
-Color4::Color4(const Color4uint8& c) : r(c.r), g(c.g), b(c.b), a(c.a) {
-    *this /= 255.0f;
+Color4::Color4(const Color4unorm8& c) : r(c.r), g(c.g), b(c.b), a(c.a) {
 }
 
 size_t Color4::hashCode() const {

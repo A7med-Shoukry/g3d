@@ -1001,7 +1001,7 @@ void GuiTheme::makeThemeFromSourceFiles(
                 base = base / a;
             }
 
-            out.pixel4(x, y) = Color4uint8(Color4(base, a));
+            out.pixel4(x, y) = Color4unorm8(Color4(base, a));
         }
     }
 

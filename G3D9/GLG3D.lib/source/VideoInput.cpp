@@ -251,7 +251,7 @@ bool VideoInput::readNext(RealTime timeStep, GImage& frame) {
     return frameUpdated;
 }
 
-bool VideoInput::readNext(RealTime timeStep, Image3uint8::Ref& frame) {
+bool VideoInput::readNext(RealTime timeStep, Image3unorm8::Ref& frame) {
     GMutexLock m(&m_bufferMutex);
 
     m_currentTime += timeStep;
@@ -279,7 +279,7 @@ bool VideoInput::readNext(RealTime timeStep, Image3uint8::Ref& frame) {
         frame = NULL;
         
         // create new image
-        frame = Image3uint8::fromArray(reinterpret_cast<Color3uint8*>(buffer->m_frame->data[0]), width(), height());
+        frame = Image3unorm8::fromArray(reinterpret_cast<Color3unorm8*>(buffer->m_frame->data[0]), width(), height());
 
         m_emptyBuffers.enqueue(buffer);
         frameUpdated = true;
@@ -321,7 +321,7 @@ bool VideoInput::readNext(RealTime timeStep, Image3::Ref& frame) {
         frame = NULL;
         
         // create new image
-        frame = Image3::fromArray(reinterpret_cast<Color3uint8*>(buffer->m_frame->data[0]), width(), height());
+        frame = Image3::fromArray(reinterpret_cast<Color3unorm8*>(buffer->m_frame->data[0]), width(), height());
 
         m_emptyBuffers.enqueue(buffer);
         frameUpdated = true;
@@ -345,7 +345,7 @@ bool VideoInput::readFromPos(RealTime pos, GImage& frame) {
     return readFromIndex(iFloor(pos * fps()), frame);
 }
 
-bool VideoInput::readFromPos(RealTime pos, Image3uint8::Ref& frame) {
+bool VideoInput::readFromPos(RealTime pos, Image3unorm8::Ref& frame) {
     // find the closest index to seek to
     return readFromIndex(iFloor(pos * fps()), frame);
 }
@@ -426,7 +426,7 @@ bool VideoInput::readFromIndex(int index, GImage& frame) {
     return foundFrame;
 }
 
-bool VideoInput::readFromIndex(int index, Image3uint8::Ref& frame) {
+bool VideoInput::readFromIndex(int index, Image3unorm8::Ref& frame) {
     setIndex(index);
 
     // wait for seek to complete

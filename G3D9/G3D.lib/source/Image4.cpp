@@ -4,17 +4,17 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2007-01-31
-  @edited  2008-07-27
+  @edited  2011-08-27
 */
 
 
 #include "G3D/Image4.h"
-#include "G3D/Image4uint8.h"
+#include "G3D/Image4unorm8.h"
 #include "G3D/GImage.h"
 #include "G3D/Color3.h"
-#include "G3D/Color3uint8.h"
+#include "G3D/Color3unorm8.h"
 #include "G3D/Color1.h"
-#include "G3D/Color1uint8.h"
+#include "G3D/Color1unorm8.h"
 #include "G3D/ImageFormat.h"
 
 namespace G3D {
@@ -42,12 +42,12 @@ Image4::Ref Image4::fromGImage(const GImage& im, WrapMode wrap) {
 }
 
 
-Image4::Ref Image4::fromImage4uint8(const ReferenceCountedPointer<Image4uint8>& im) {
+Image4::Ref Image4::fromImage4unorm8(const ReferenceCountedPointer<Image4unorm8>& im) {
     Ref out = createEmpty(static_cast<WrapMode>(im->wrapMode()));
     out->resize(im->width(), im->height());
 
     int N = im->width() * im->height();
-    const Color4uint8* src = reinterpret_cast<Color4uint8*>(im->getCArray());
+    const Color4unorm8* src = reinterpret_cast<Color4unorm8*>(im->getCArray());
     for (int i = 0; i < N; ++i) {
         out->data[i] = Color4(src[i]);
     }
@@ -79,7 +79,7 @@ void Image4::load(const std::string& filename, GImage::Format fmt) {
 }
 
 
-Image4::Ref Image4::fromArray(const class Color3uint8* ptr, int w, int h, WrapMode wrap) {
+Image4::Ref Image4::fromArray(const class Color3unorm8* ptr, int w, int h, WrapMode wrap) {
     Ref out = createEmpty(wrap);
     out->copyArray(ptr, w, h);
     return out;
@@ -93,7 +93,7 @@ Image4::Ref Image4::fromArray(const class Color1* ptr, int w, int h, WrapMode wr
 }
 
 
-Image4::Ref Image4::fromArray(const class Color1uint8* ptr, int w, int h, WrapMode wrap) {
+Image4::Ref Image4::fromArray(const class Color1unorm8* ptr, int w, int h, WrapMode wrap) {
     Ref out = createEmpty(wrap);
     out->copyArray(ptr, w, h);
     return out;
@@ -107,7 +107,7 @@ Image4::Ref Image4::fromArray(const class Color3* ptr, int w, int h, WrapMode wr
 }
 
 
-Image4::Ref Image4::fromArray(const class Color4uint8* ptr, int w, int h, WrapMode wrap) {
+Image4::Ref Image4::fromArray(const class Color4unorm8* ptr, int w, int h, WrapMode wrap) {
     Ref out = createEmpty(wrap);
     out->copyArray(ptr, w, h);
     return out;
@@ -138,7 +138,7 @@ void Image4::copyGImage(const GImage& im) {
 }
 
 
-void Image4::copyArray(const Color4uint8* src, int w, int h) {
+void Image4::copyArray(const Color4unorm8* src, int w, int h) {
     resize(w, h);
 
     int N = w * h;
@@ -150,7 +150,7 @@ void Image4::copyArray(const Color4uint8* src, int w, int h) {
 }
 
 
-void Image4::copyArray(const Color3uint8* src, int w, int h) {
+void Image4::copyArray(const Color3unorm8* src, int w, int h) {
     resize(w, h);
 
     int N = w * h;
@@ -182,7 +182,7 @@ void Image4::copyArray(const Color3* src, int w, int h) {
 }
 
 
-void Image4::copyArray(const Color1uint8* src, int w, int h) {
+void Image4::copyArray(const Color1unorm8* src, int w, int h) {
     resize(w, h);
     int N = w * h;
 
@@ -211,9 +211,9 @@ void Image4::save(const std::string& filename, GImage::Format fmt) {
     GImage im(width(), height(), 4);
 
     int N = im.width() * im.height();
-    Color4uint8* dst = im.pixel4();
+    Color4unorm8* dst = im.pixel4();
     for (int i = 0; i < N; ++i) {
-        dst[i] = Color4uint8(data[i]);
+        dst[i] = Color4unorm8(data[i]);
     }
     
     im.save(filename, fmt);
