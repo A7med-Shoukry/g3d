@@ -73,15 +73,6 @@ static void mergeGroupsAndMeshesByMaterial(ParseOBJ& parseData) {
     }
 }
 
-/** Leaves empty filenames alone and resolves others */
-static std::string resolveRelativeFilename(const std::string& filename, const std::string& basePath) {
-    if (filename.empty()) {
-        return filename;
-    } else {
-        return FileSystem::resolve(filename, basePath);
-    }
-}
-
 /** \param basePath Resolve relative paths to here
 \cite http://www.fileformat.info/format/material/
 
@@ -112,12 +103,15 @@ MTL illum constants:
 
 10	 Casts shadows onto invisible surfaces 
 */
-static Material::Specification toMaterialSpecification(const ArticulatedModel2::Specification& modelSpec, const ParseMTL::Material::Ref& m) {
+static Material::Specification toMaterialSpecification
+(const ArticulatedModel2::Specification& modelSpec, 
+ const ParseMTL::Material::Ref&         m) {
+
     Material::Specification s;
 
     // Map OBJ model to G3D shading 
-    s.setLambertian(resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, min(m->d, 1.0f - m->Tr)));
-    s.setSpecular(resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks.pow(9.0f) * 0.4f);
+    s.setLambertian(ArticulatedModel2::resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, min(m->d, 1.0f - m->Tr)));
+    s.setSpecular(ArticulatedModel2::resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks.pow(9.0f) * 0.4f);
 
     if (m->illum == 2 || m->illum == 10) {
         // [glossy] "hilight" on
@@ -137,7 +131,7 @@ static Material::Specification toMaterialSpecification(const ArticulatedModel2::
     }
 
     // TODO: apply modelSpec options to bump map
-    s.setBump(resolveRelativeFilename(m->map_bump, m->basePath));
+    s.setBump(ArticulatedModel2::resolveRelativeFilename(m->map_bump, m->basePath));
 
     s.setEmissive(m->Ke);
 

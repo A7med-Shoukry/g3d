@@ -148,6 +148,8 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #include "G3D/SpeedLoad.h"
 #include "G3D/ParseMTL.h"
 #include "G3D/ParseOBJ.h"
+#include "G3D/ParsePLY.h"
+#include "G3D/Parse3DS.h"
 
 #ifdef _MSC_VER
 #   pragma comment(lib, "zlib")

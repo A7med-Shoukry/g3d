@@ -275,8 +275,6 @@ static Vector3 readNormal(TextInput& ti, const Matrix3& normalXform) {
 }
 
 
-
-
 void ArticulatedModel::initOBJ(const std::string& filename, const Preprocess& preprocess) {
     Stopwatch loadTimer;
 

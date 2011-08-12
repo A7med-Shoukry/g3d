@@ -1,5 +1,5 @@
 /**
- \file G3D/source/ParseMTL.cpp
+ \file G3D/source/ParseOBJ.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-16

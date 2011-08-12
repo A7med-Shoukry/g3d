@@ -3,7 +3,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2003-09-14
- \edited  2011-06-18
+ \edited  2011-08-18
  */
 
 #include "GLG3D/ArticulatedModel.h"

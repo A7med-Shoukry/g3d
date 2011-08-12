@@ -3,7 +3,7 @@
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-19
- \edited  2011-07-23
+ \edited  2011-08-23
  
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -552,7 +552,7 @@ public:
 
     std::string                     name;
 
-private:
+protected:
 
     Array<Part*>                    m_rootArray;
     Array<Part*>                    m_partArray;
@@ -584,6 +584,8 @@ private:
 
     void loadPLY(const Specification& specification);
 
+    void load3DS(const Specification& specification);
+
     void load(const Specification& specification);
 
     ArticulatedModel2() : m_nextID(1) {}
@@ -593,6 +595,9 @@ private:
     Part* part(const Instruction::Identifier& partIdent);
 
 public:
+
+    /** Leaves empty filenames alone and resolves others */
+    static std::string resolveRelativeFilename(const std::string& filename, const std::string& basePath);
 
     /** \sa createEmpty, fromFile */
     static Ref create(const Specification& s);
