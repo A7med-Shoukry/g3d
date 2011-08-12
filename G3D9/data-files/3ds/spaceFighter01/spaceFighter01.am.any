@@ -1,13 +1,16 @@
 // -*- c++ -*-
-ArticulatedModel::Specification {
-    filename = "spaceFighter01.3ds",
-    preprocess = ArticulatedModel::Preprocess {
-        xform = Matrix4::scale(-0.016, 0.016, -0.016),
-        materialOverride = Material::Specification {
-            lambertian = "diffuse.jpg",
-            emissive   = "emit.jpg",
-            specular   = "specular.jpg",
-            shininess  = glossyExponent(200)
-        }
-    }
+ArticulatedModel2::Specification {
+    filename = "spaceFighter01.3ds";
+    preprocess = 
+        (
+         scale(0.016);
+         setCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,180));
+         
+         setMaterial(all(), all(), Material::Specification { 
+                 lambertian = "diffuse.jpg",
+                     emissive   = "emit.jpg",
+                     specular   = "specular.jpg",
+                     shininess  = glossyExponent(200)
+                     });
+         );
 }

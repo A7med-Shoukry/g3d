@@ -165,7 +165,7 @@ void ArticulatedModel2::load(const Specification& specification) {
         loadPLY(specification);
     } else if (ext == "off") {
         loadOFF(specification);
-    } else if (ext == "off") {
+    } else if (ext == "3ds") {
         load3DS(specification);
     } else {
         // Error

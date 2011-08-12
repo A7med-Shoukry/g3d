@@ -14,7 +14,7 @@ void ArticulatedModel2::preprocess(const Array<Instruction>& program) {
         case Instruction::SCALE:
             {
                 // Scale every pivot translation and every vertex position by the scale factor
-                const float scaleFactor = instruction.arg.number();
+                float scaleFactor = instruction.arg;
                 ScaleTransformCallback transform(scaleFactor);
                 forEachPart(transform);
             }
