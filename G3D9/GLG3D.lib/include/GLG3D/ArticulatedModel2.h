@@ -325,8 +325,7 @@ public:
     public:
         /** Mapping from names to coordinate frames (relative to parent).
             If a name is not present, its coordinate frame is assumed to
-            be the identity.
-         */
+            be the identity. */
         Table<std::string, CoordinateFrame>     cframe;
 
         /** Returns the identity coordinate frame if there isn't one bound for partName */
@@ -368,13 +367,15 @@ public:
         */
         PoseSpline(const Any& any);
      
-        /** Get the pose at time t, overriding values in \a pose that are specified by the spline. */
+        /** Get the pose at time t, overriding values in \a pose that
+            are specified by the spline. */
         void get(float t, ArticulatedModel2::Pose& pose);
     };
 
 
     /** 
-     \brief A set of meshes with a single reference frame, packed into a common vertex buffer.
+     \brief A set of meshes with a single reference frame, packed into
+     a common vertex buffer.
     */
     class Part {
     private:
@@ -447,20 +448,26 @@ public:
         /** Called from cleanGeometry */
         void buildFaceArray(Array<Face>& faceArray, Face::AdjacentFaceTable& adjacentFaceTable);
 
-        /** Called from cleanGeometry.  Computes all vertex normals that are currently NaN. */
+        /** Called from cleanGeometry.  Computes all vertex normals
+            that are currently NaN. */
         void computeMissingVertexNormals
          (Array<Face>&                      faceArray, 
           const Face::AdjacentFaceTable&    adjacentFaceTable, 
           const float                       maximumSmoothAngle);
 
-        /** Called from cleanGeometry.  Collapses shared vertices back into cpuVertexArray.
-        \param maxNormalWeldAngle Maximum amount a normal can be bent to merge two vertices. */
+        /** Called from cleanGeometry.  Collapses shared vertices back
+        into cpuVertexArray.  
+
+        \param maxNormalWeldAngle Maximum amount a normal can be bent
+        to merge two vertices. */
         void mergeVertices(const Array<Face>& faceArray, float maxNormalWeldAngle);
 
-        /** Called from cleanGeometry(). Computes all tangents that are currently NaN.*/
+        /** Called from cleanGeometry(). Computes all tangents that
+            are currently NaN.*/
         void computeMissingTangents();
 
-        /** Uploads all data for this part and its meshes to the GPU.  Does not affect children. */
+        /** Uploads all data for this part and its meshes to the GPU.
+            Does not affect children. */
         void copyToGPU();
 
         Part(const std::string& name, Part* parent, ID id) : name(name), id(id), m_parent(parent) {}
@@ -591,6 +598,8 @@ protected:
     void loadPLY(const Specification& specification);
 
     void load3DS(const Specification& specification);
+
+    void loadBSP(const Specification& specification);
 
     void load(const Specification& specification);
 

@@ -165,6 +165,8 @@ void ArticulatedModel2::load(const Specification& specification) {
         loadOFF(specification);
     } else if (ext == "3ds") {
         load3DS(specification);
+    } else if (ext == "bsp") {
+        loadBSP(specification);
     } else {
         // Error
         throw std::string("Unrecognized file extension on \"") + specification.filename + "\"";
