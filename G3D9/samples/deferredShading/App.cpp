@@ -60,16 +60,14 @@ void App::makeScene() {
 
     m_film->setAntialiasingEnabled(true);
 
-    Any crateSpec;
-    crateSpec.parse(
-        STR(
-         ArticulatedModel::Specification {            
+    model = 
+        ArticulatedModel2::create(PARSE_ANY(
+         ArticulatedModel2::Specification {            
             filename = "ifs/crate.ifs";
-            preprocess = ArticulatedModel::Preprocess {
-                materialOverride = #include("material/metalcrate/metalcrate.mat.any")
-            }
-        }));
-    model = ArticulatedModel::create(crateSpec);
+            preprocess = (
+                          setMaterial(all(), all(), #include("material/metalcrate/metalcrate.mat.any"));
+                          );
+         }));
 }
 
 
@@ -107,7 +105,7 @@ void App::onPose(Array<Surface::Ref>& surface, Array<Surface2D::Ref>& surface2D)
     yaw += 4.0f * units::degrees();
     const CFrame& currentFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
 
-    model->pose(surface, currentFrame, ArticulatedModel::defaultPose(), previousFrame, ArticulatedModel::defaultPose());
+    model->pose(surface, currentFrame, ArticulatedModel2::defaultPose(), previousFrame, ArticulatedModel2::defaultPose());
 }
 
 
