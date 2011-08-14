@@ -10,8 +10,6 @@
 
 
  TODO:
- - Parse3DS
- - Convert starter to use ArticulatedModel2
  - Create heightfield
  - Create Cornell Box
  - Remove IFSModel
@@ -174,6 +172,10 @@ void ArticulatedModel2::load(const Specification& specification) {
     timer.after("parse file");
 
     // Perform operations as demanded by the specification
+    if (specification.scale != 1.0f) {
+        ScaleTransformCallback transform(specification.scale);
+        forEachPart(transform);
+    }
     preprocess(specification.preprocess);
     timer.after("preprocess");
 

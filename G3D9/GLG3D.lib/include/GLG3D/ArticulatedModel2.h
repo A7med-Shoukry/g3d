@@ -223,12 +223,17 @@ public:
         */
         bool                        mergeMeshesByMaterial;
 
+        /** Multiply all vertex positions and part translations by this factor after loading and before
+            preprocessing. 
+        */
+        float                       scale;
+
         CleanGeometrySettings       cleanGeometrySettings;
 
         /** A program to execute to preprocess the mesh before cleaning geometry. */
         Array<Instruction>          preprocess;
 
-        Specification() : stripMaterials(false), mergeMeshesByMaterial(false) {}
+        Specification() : stripMaterials(false), mergeMeshesByMaterial(false), scale(1.0f) {}
 
         /**
         Example:
@@ -237,14 +242,15 @@ public:
             filename = "models/house/house.obj";
             mergeMeshesByMaterial = true;
             stripMaterials = false;
+            scale = 0.5;
             preprocess = (
-                // Scale the entire object, including pivots
-                scale(0.1);
-
                 // Set the reference frame of a part, relative to its parent
                 // All parts and meshes may be referred to by name string or ID integer
                 // in any instruction.   Use partID = 0 when using a mesh ID.
                 setCFrame("fence", CFrame::fromXYZYPRDegrees(0, 13, 0));
+
+                // Scale the entire object, including pivots, by *another* factor of 0.1
+                scale(0.1);
 
                 transformCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,90));
 

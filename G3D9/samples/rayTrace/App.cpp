@@ -21,6 +21,7 @@ App::App(const GApp::Settings& settings) :
     m_maxBounces(3), 
     m_raysPerPixel(1), 
     m_world(NULL) {
+    catchCommonExceptions = false;
 }
 
 

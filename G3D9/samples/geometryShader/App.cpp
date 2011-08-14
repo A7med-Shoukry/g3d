@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 #   ifdef G3D_WIN32
         // On Unix operating systems, icompile automatically copies data files.  
         // On Windows, we just run from the data directory.
-		if (FileSystem::exists("data-files")) {
+        if (FileSystem::exists("data-files")) {
             chdir("data-files");
         } else if (FileSystem::exists("../samples/geometryShader/data-files")) {
             chdir("../samples/geometryShader/data-files");
@@ -30,11 +30,13 @@ App::App(const GApp::Settings& settings) : GApp(settings) {}
 
 
 void App::onInit() {
-    ArticulatedModel::Preprocess preprocess;
-    preprocess.stripMaterials = true;
-    preprocess.xform = Matrix4::scale(3.0f);
-    ArticulatedModel::Ref model = ArticulatedModel::fromFile(System::findDataFile("teapot.ifs"), preprocess);
-    model->pose(m_sceneGeometry);
+    ArticulatedModel2::Specification spec;
+    spec.filename       = System::findDataFile("teapot/teapot.obj");
+    spec.stripMaterials = true;
+    spec.scale          = 0.035f;
+
+    ArticulatedModel2::Ref model = ArticulatedModel2::create(spec);
+    model->pose(m_sceneGeometry, Point3(0, -1.7f, 0));
 
     m_extrudeShader = Shader::fromFiles("extrude.vrt", "extrude.geo", "extrude.pix", 12);
     m_extrudeShader->setPreserveState(false);

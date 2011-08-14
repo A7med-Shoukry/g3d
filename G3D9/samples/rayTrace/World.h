@@ -31,6 +31,7 @@ public:
 
     void begin();
     void insert(const ArticulatedModel::Ref& model, const CFrame& frame = CFrame());
+    void insert(const ArticulatedModel2::Ref& model, const CFrame& frame = CFrame());
     void insert(const Surface::Ref& m);
     void end();
 

@@ -43,6 +43,7 @@ ArticulatedModel2::Specification::Specification(const Any& a) {
     r.getIfPresent("stripMaterials",            stripMaterials);
     r.getIfPresent("mergeMeshesByMaterial",     mergeMeshesByMaterial);
     r.getIfPresent("cleanGeometrySettings",     cleanGeometrySettings);
+    r.getIfPresent("scale",                     scale);
     r.getIfPresent("preprocess",                preprocess);
 
     r.verifyDone();
@@ -55,6 +56,7 @@ Any ArticulatedModel2::Specification::toAny() const {
     a["stripMaterials"]            = stripMaterials;
     a["mergeMeshesByMaterial"]     = mergeMeshesByMaterial;
     a["cleanGeometrySettings"]     = cleanGeometrySettings;
+    a["scale"]                     = scale;
 
     if (preprocess.size() > 0) {
         a["preprocess"] = Any(preprocess, "preprocess");

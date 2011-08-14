@@ -8,45 +8,65 @@ World::World() : m_mode(TRACE) {
 
     ambient = Radiance3::fromARGB(0x304855) * 0.8f;
 
-    {
-        ArticulatedModel::Ref teapot = ArticulatedModel::fromFile(System::findDataFile("teapot.ifs"), 0.7f);
-        Material::Specification mirror;
+    Any teapot = PARSE_ANY
+        ( ArticulatedModel2::Specification {
+            filename = "teapot/teapot.obj";
+            scale = 0.01;
+            stripMaterials = true;
+            preprocess = 
+                ( setMaterial(all(), all(),
+                             Material::Specification {
+                                 specular = Color3(0.2f);
+                                 shininess = mirror();
+                                 lambertian = Color3(0.7f, 0.5f, 0.1f);
+                             });
+                 );
+         } );
 
-        mirror.setSpecular(Color3::white() * 0.2f);
-        mirror.setMirrorShininess();
-        mirror.setLambertian(Color3::fromARGB(0xdd4034) * 0.6f);
+    insert(ArticulatedModel2::create(teapot), CFrame::fromXYZYPRDegrees(19.4f, -0.2f, 0.94f, 70));
 
-        teapot->partArray[0].triList[0]->material = Material::create(mirror);
-        insert(teapot, CFrame::fromXYZYPRDegrees(19.4f, 0.22f, 0.94f, 70));
-    }
+    Any sphereOutside = PARSE_ANY 
+        ( ArticulatedModel2::Specification {
+            filename = "sphere.ifs";
+            scale = 0.3;
+            preprocess =
+                ( setMaterial(all(), all(),
+                              Material::Specification {
+                                  specular = Color3(0.1f);
+                                  shininess = mirror();
+                                  lambertian = Color3(0.0f);
+                                  etaTransmit = 1.3f;
+                                  etaReflect = 1.0f;
+                                  transmissive = Color3(0.2f, 0.5f, 0.7f);
+                              });
+                  );
+          });
 
-    {
-        ArticulatedModel::Ref sphere = ArticulatedModel::fromFile(System::findDataFile("sphere.ifs"), 0.3f);
-        // Use the outside of the object as the interface into glass from air
-        Material::Specification glassAir;
-        glassAir.setSpecular(Color3::white() * 0.2f);
-        glassAir.setMirrorShininess();
-        glassAir.setLambertian(Color3::black());
-        glassAir.setEta(1.3f, 1.0f);
-        glassAir.setTransmissive(Color3::fromARGB(0xb1ee9c) * 0.8f);
-        sphere->partArray[0].triList[0]->material = Material::create(glassAir);
+    Any sphereInside = PARSE_ANY 
+        ( ArticulatedModel2::Specification {
+            filename = "sphere.ifs";
+            scale = -0.3;
+            preprocess =
+                ( setMaterial(all(), all(),
+                              Material::Specification {
+                                  specular = Color3(0.1f);
+                                  shininess = mirror();
+                                  lambertian = Color3(0.0f);
+                                  etaReflect = 1.3f;
+                                  etaTransmit = 1.0f;
+                                  transmissive = Color3(1.0f);
+                              });
+                  );
+          });
 
-        // Create the interface into air from glass
-        Material::Specification airGlass;
-        airGlass.removeSpecular();
-        airGlass.setLambertian(Color3::black());
-        airGlass.setEta(1.0f, 1.3f);
-        airGlass.setTransmissive(Color3::white());
+    insert(ArticulatedModel2::create(sphereOutside), CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
+    insert(ArticulatedModel2::create(sphereInside),  CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
 
-        ArticulatedModel::Part::TriList::Ref inside = sphere->partArray[0].newTriList(Material::create(airGlass));
-        inside->indexArray = sphere->partArray[0].triList[0]->indexArray;
-        inside->indexArray.reverse();
-        sphere->updateAll();
-
-        insert(sphere, CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
-    }
-    std::string filename = pathConcat(System::findDataFile("models"), "dabrovic_sponza/sponza.3DS");
-    insert(ArticulatedModel::fromFile(filename), Vector3(8.2f, -6, 0));
+    Any sponza = PARSE_ANY
+        ( ArticulatedModel2::Specification {
+            filename = "dabrovic_sponza/sponza.zip/sponza.obj";
+          } );
+    insert(ArticulatedModel2::create(sponza), Vector3(8.2f, -6, 0));
     
     end();
 }
@@ -57,6 +77,15 @@ void World::begin() {
     m_surfaceArray.clear();
     m_triArray.clear();
     m_mode = INSERT;
+}
+
+
+void World::insert(const ArticulatedModel2::Ref& model, const CFrame& frame) {
+    Array<Surface::Ref> posed;
+    model->pose(posed, frame);
+    for (int i = 0; i < posed.size(); ++i) {
+        insert(posed[i]);
+    }
 }
 
 

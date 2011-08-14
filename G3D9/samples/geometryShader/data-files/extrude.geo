@@ -1,4 +1,4 @@
-#version 120 
+#version 120 // -*- c++ -*-
 #extension GL_EXT_geometry_shader4 : require
 /**
 
@@ -71,7 +71,7 @@ void main() {
     //
 
     // Extrusion distance
-    const float d = 0.3;
+    const float d = 0.2;
 
     // Shrink fraction
     const float shrink = 0.6;

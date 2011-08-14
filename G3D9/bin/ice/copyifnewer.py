@@ -37,8 +37,6 @@ _excludeFromCopyingPatterns =\
     '^\.DS_store$', \
     '\.o$', \
     '\.pyc$', \
-    '\.obj$', \
-    '\.pyc$', \
     '\.plg$', \
     '^#.*#$', \
     '^ice-stats\.csv$'\

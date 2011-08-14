@@ -11,7 +11,7 @@
 class App : public GApp {
 private:
     Lighting::Ref       lighting;
-    IFSModel::Ref       model;
+    ArticulatedModel2::Ref       model;
 
     Shader::Ref         phongShader;
     
@@ -49,7 +49,12 @@ void App::onInit() {
     window()->setCaption("Pixel Shader Demo");
         
     phongShader = Shader::fromFiles("phong.vrt", "phong.pix");
-    model = IFSModel::fromFile(System::findDataFile("teapot.ifs"));
+    ArticulatedModel2::Specification spec;
+    spec.filename = System::findDataFile("teapot/teapot.obj");
+    spec.scale = 0.015f;
+    spec.stripMaterials = true;
+    spec.preprocess.append(ArticulatedModel2::Instruction(Any::parse("setCFrame(root(), Point3(0, -0.5, 0));")));
+    model = ArticulatedModel2::create(spec);
 
     makeLighting();
     makeColorList();
@@ -82,8 +87,9 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::skyBox(rd, lighting->environmentMapTexture, lighting->environmentMapConstant);
 
     rd->pushState(); {
+        Array<Surface::Ref> mySurfaces;
         // Pose our model based on the manipulator axes
-        Surface::Ref posedModel = model->pose(manipulator->frame());
+        model->pose(mySurfaces, manipulator->frame());
         
         // Enable the shader
         configureShaderArgs(lighting);
@@ -91,9 +97,14 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
         // Send model geometry to the graphics card
         CFrame cframe;
-        posedModel->getCoordinateFrame(cframe);
-        rd->setObjectToWorldMatrix(cframe);
-        posedModel->sendGeometry(rd);
+        for (int i = 0; i < mySurfaces.size(); ++i) {
+            SuperSurface::Ref surface = mySurfaces[i].downcast<SuperSurface>();
+            if (surface.notNull()) {
+                surface->getCoordinateFrame(cframe);
+                rd->setObjectToWorldMatrix(cframe);
+                surface->sendGeometry(rd);
+            }
+        }
     } rd->popState();
 
     // Render other objects, e.g., the 3D widgets
@@ -150,17 +161,17 @@ void App::makeGui() {
     GuiPane* pane = gui->pane();
 
     pane->beginRow();
-    pane->addSlider("Diffuse", &diffuseScalar, 0.0f, 1.0f);
+    pane->addSlider("Lambertian", &diffuseScalar, 0.0f, 1.0f);
     pane->addDropDownList("", colorList, &diffuseColorIndex)->setWidth(80);
     pane->endRow();
 
     pane->beginRow();
-    pane->addSlider("Specular", &specularScalar, 0.0f, 1.0f);
+    pane->addSlider("Glossy",    &specularScalar, 0.0f, 1.0f);
     pane->addDropDownList("", colorList, &specularColorIndex)->setWidth(80);
     pane->endRow();
     
-    pane->addSlider("Reflectivity", &reflect, 0.0f, 1.0f);
-    pane->addSlider("Shininess", &shine, 1.0f, 100.0f);
+    pane->addSlider("Mirror",     &reflect, 0.0f, 1.0f);
+    pane->addSlider("Smoothness", &shine, 1.0f, 100.0f);
     
     gui->pack();
     addWidget(gui);

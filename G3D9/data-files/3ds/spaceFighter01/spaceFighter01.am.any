@@ -1,10 +1,9 @@
 // -*- c++ -*-
 ArticulatedModel2::Specification {
     filename = "spaceFighter01.3ds";
+    scale = 0.016;
     preprocess = 
-        (
-         scale(0.016);
-         setCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,180));
+        (setCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,180));
          
          setMaterial(all(), all(), Material::Specification { 
                  lambertian = "diffuse.jpg",

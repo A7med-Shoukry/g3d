@@ -33,7 +33,7 @@ void Any::serialize(BinaryOutput& b) const {
 void Any::deserialize(BinaryInput& b) {
     const int version = b.readInt32();
     alwaysAssertM(version == 1, "Wrong Any serialization version");
-    parse(b.readString32());
+    _parse(b.readString32());
 }
 
 
@@ -774,7 +774,14 @@ std::string Any::unparse() const {
 }
 
 
-void Any::parse(const std::string& src) {
+Any Any::parse(const std::string& src) {
+    Any a;
+    a._parse(src);
+    return a;    
+}
+
+
+void Any::_parse(const std::string& src) {
     beforeRead();
     TextInput::Settings settings;
     getDeserializeSettings(settings);

@@ -296,7 +296,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 
 
 /** 
-  @def STR(expression)
+  \def STR(expression)
 
   Creates a string from the expression.  Frequently used with G3D::Shader
   to express shading programs inline.  

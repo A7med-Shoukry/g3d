@@ -324,7 +324,10 @@ private:
     Any  _get(const std::string& key, const Any& defaultVal) const;
     void _set(const std::string& key, const Any& val);
 
+    void _parse(const std::string& src);
+
 public:
+
     /** Thrown by operator[] when a key is not present in a const table. */
     class KeyNotFound : public ParseError {
     public:
@@ -372,11 +375,6 @@ public:
     /** NUMBER constructor */
     explicit Any(int64 x);
 #endif    // G3D_32BIT
-
-#if 0
-    /** NUMBER constructor */
-    Any(int32 x);
-#endif    // 0
 
     /** NUMBER constructor */
     explicit Any(long x);
@@ -439,9 +437,9 @@ public:
     /** Same as deserialize or load, but operates on a string instead
         of a stream or file.
 
-      \sa deserialize, load
+      \sa deserialize, load, unparse
       */
-    void parse(const std::string& src);
+    static Any parse(const std::string& src);
 
     std::string unparse() const;
     
@@ -956,5 +954,19 @@ public:
 };
 
 }    // namespace G3D
+
+
+/**
+  \def PARSE_ANY(expression)
+  
+  \brief Create an G3D::Any from an unquoted string.
+
+  e.g.,
+  \code
+     Any x = PARSE_ANY( { a = 3.0; b = false; } );
+  \endcode
+ */
+#define PARSE_ANY(x) Any::parse(#x)
+
 
 #endif
