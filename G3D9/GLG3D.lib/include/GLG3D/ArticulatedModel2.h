@@ -38,6 +38,7 @@ namespace G3D {
  - <a href="http://g3d.svn.sourceforge.net/viewvc/g3d/data/ifs/fileformat.txt?revision=27&view=markup">IFS</a> 
  - <a href="http://www.geomview.org/docs/html/OFF.html">OFF</a>
  - <a href="http://www.riken.jp/brict/Yoshizawa/Research/PLYformat/PLYformat.html">PLY2</a>
+ - Quake 3 <a href="http://www.mralligator.com/q3/">BSP</a>
 
  Does not copy geometry to the GPU until it has to render.  This means that CPU rendering
  code need not consume GPU vertex buffer resources (or transfer time).  The current
