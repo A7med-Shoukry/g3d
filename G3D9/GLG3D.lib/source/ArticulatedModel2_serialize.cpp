@@ -218,6 +218,20 @@ ArticulatedModel2::Instruction::Instruction(const Any& any) {
         mesh = any[1];
         arg = any[2];
 
+    } else if (instructionName == "add") {
+
+        type = ADD;
+        mesh = Identifier::none();
+        if (any.size() == 2) {
+            any.verifySize(2);
+            part = any[0];
+            arg = any[1];
+        } else {
+            any.verifySize(1);
+            part = Identifier::none();
+            arg = any[0];
+        }
+
     } else {
 
         any.verify(false, std::string("Unknown instruction: \"") + instructionName + "\"");

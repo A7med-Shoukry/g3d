@@ -1,11 +1,11 @@
 /**
-  @file Matrix4.cpp
+  \file G3D/source/Matrix4.cpp
  
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2003-10-02
-  @edited  2010-01-29
+  \created 2003-10-02
+  \edited  2011-08-29
  */
 
 #include "G3D/platform.h"

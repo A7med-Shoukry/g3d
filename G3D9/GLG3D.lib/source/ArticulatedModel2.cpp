@@ -13,12 +13,11 @@
  - Create heightfield
  - Create Cornell Box
  - Remove IFSModel
- - Import Quake BSP
  - Set bump map parallax steps in specification
  - Implement other preprocess instructions
  - Remove ArticulatedModel
  - Multithread processing by Part
- - Pack tangents into short4 format?
+ - Pack tangents and normals into short4 format?
  */
 #include "GLG3D/ArticulatedModel2.h"
 #include "G3D/Ray.h"
@@ -57,15 +56,13 @@ void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& cframe
 
 
 ArticulatedModel2::Mesh* ArticulatedModel2::addMesh(const std::string& name, Part* part) {
-    part->m_meshArray.append(new Mesh(name, ID(m_nextID)));
-    ++m_nextID;
+    part->m_meshArray.append(new Mesh(name, createID()));
     return part->m_meshArray.last();
 }
 
 
 ArticulatedModel2::Part* ArticulatedModel2::addPart(const std::string& name, Part* parent) {
-    m_partArray.append(new Part(name, parent, ID(m_nextID)));
-    ++m_nextID;
+    m_partArray.append(new Part(name, parent, createID()));
     if (parent == NULL) {
         m_rootArray.append(m_partArray.last());
     }

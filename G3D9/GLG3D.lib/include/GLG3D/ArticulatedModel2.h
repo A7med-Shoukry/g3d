@@ -110,6 +110,11 @@ public:
 
         explicit ID(int i) : m_value(i) {}
 
+        ID& operator=(const ID& i) {
+            m_value = i;
+            return *this;
+        }
+
         bool operator==(const ID& other) const {
             return m_value == other.m_value;
         }
@@ -143,7 +148,8 @@ public:
     private:
         friend class ArticulatedModel2;
 
-        enum Type {SCALE, SET_CFRAME, TRANSFORM_CFRAME, TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH};
+        enum Type {SCALE, SET_CFRAME, TRANSFORM_CFRAME, TRANSFORM_GEOMETRY, DELETE_MESH, 
+                   DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH, ADD};
 
         /**
           An identifier is one of:
@@ -170,6 +176,15 @@ public:
 
             bool isRoot() const {
                 return int(id) == -2;
+            }
+
+            bool isNone() const {
+                return int(id) == -4;
+            }
+
+            /** No part */
+            static Identifier none() {
+                return Identifier(ID(-4));
             }
 
             /** All root Part%s */
@@ -240,7 +255,7 @@ public:
         Example:
         \code
         ArticulatedModel2::Specification {
-            filename = "models/house/house.obj";
+            filename = "house.obj";
             mergeMeshesByMaterial = true;
             stripMaterials = false;
             scale = 0.5;
@@ -252,6 +267,17 @@ public:
 
                 // Scale the entire object, including pivots, by *another* factor of 0.1
                 scale(0.1);
+
+                // Add this model as a new root part
+                add(ArticulatedModel2::Specification {
+                   filename = "dog.obj";
+                   preprocess = ( renamePart(root(), "dog"); );
+                });
+
+                // Add this model as a new part, as a child of root()
+                add(root(), ArticulatedModel2::Specification {
+                   filename = "cat.obj";
+                });
 
                 transformCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,90));
 
@@ -471,6 +497,9 @@ public:
             Does not affect children. */
         void copyToGPU();
 
+        /** Erases all data except texcoords and vertices. */
+        void transformGeometry(const Matrix4& xform);
+
         Part(const std::string& name, Part* parent, ID id) : name(name), id(id), m_parent(parent) {}
 
     public:
@@ -573,6 +602,13 @@ protected:
 
     /** Used for allocating IDs */            
     int                             m_nextID;
+
+    /** Allocate a new ID */
+    ID createID() {
+        const ID i = ID(m_nextID);
+        ++m_nextID;
+        return i;
+    }
 
     Table<ID, Part*, ID>            m_partTable;
     Table<ID, Mesh*, ID>            m_meshTable;
