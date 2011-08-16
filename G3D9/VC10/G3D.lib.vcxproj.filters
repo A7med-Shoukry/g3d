@@ -47,19 +47,10 @@
     <ClCompile Include="..\G3D.lib\source\Color1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\Color1uint8.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\G3D.lib\source\Color3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\Color3uint8.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\G3D.lib\source\Color4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\Color4uint8.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\G3D.lib\source\Cone.cpp">
@@ -140,19 +131,10 @@
     <ClCompile Include="..\G3D.lib\source\Image1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\Image1uint8.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\G3D.lib\source\Image3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\Image3uint8.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\G3D.lib\source\Image4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\Image4uint8.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\G3D.lib\source\ImageFormat.cpp">
@@ -326,6 +308,24 @@
     <ClCompile Include="..\G3D.lib\source\ParsePLY.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\G3D.lib\source\Color1unorm8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\G3D.lib\source\Color3unorm8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\G3D.lib\source\Color4unorm8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\G3D.lib\source\Image1unorm8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\G3D.lib\source\Image3unorm8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\G3D.lib\source\Image4unorm8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\G3D.lib\include\G3D\AABox.h">
@@ -373,19 +373,10 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Color1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\Color1uint8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\Color3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\Color3uint8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\Color4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\Color4uint8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\Cone.h">
@@ -472,19 +463,10 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Image1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\Image1uint8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\Image3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\Image3uint8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\Image4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\Image4uint8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\ImageFormat.h">
@@ -697,9 +679,6 @@
     <ClInclude Include="..\G3D.lib\include\G3D\typeutils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\Color2uint8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\SpeedLoad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -710,6 +689,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\ParsePLY.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Color1unorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Color2unorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Color3unorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Color4unorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Image1unorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Image3unorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Image4unorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\unorm8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
