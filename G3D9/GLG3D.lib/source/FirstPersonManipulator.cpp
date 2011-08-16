@@ -1,10 +1,10 @@
 /**
-  @file FirstPersonManipulator.cpp
+  \file GLG3D.lib/source/FirstPersonManipulator.cpp
 
-  @maintainer Morgan McGuire, morgan@cs.brown.edu
+  \maintainer Morgan McGuire, morgan@cs.brown.edu
 
-  @created 2002-07-28
-  @edited  2008-07-15
+  \created 2002-07-28
+  \edited  2011-08-15
 */
 
 #include "G3D/platform.h"

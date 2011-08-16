@@ -148,6 +148,16 @@ ArticulatedModel2::Instruction::Instruction(const Any& any) {
         any.verifySize(1);
         arg = any[0];
 
+    } else if (instructionName == "moveCenterToOrigin") {
+
+        type = MOVE_CENTER_TO_ORIGIN;
+        any.verifySize(0);
+
+    } else if (instructionName == "moveBaseToOrigin") {
+
+        type = MOVE_BASE_TO_ORIGIN;
+        any.verifySize(0);
+
     } else if (instructionName == "setCFrame") {
 
         type = SET_CFRAME;

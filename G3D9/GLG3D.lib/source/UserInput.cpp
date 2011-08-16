@@ -1,10 +1,10 @@
 /**
-  @file UserInput.cpp
+  \file GLG3D.lib/source/UserInput.cpp
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2002-09-29
-  @edited  2004-09-05
+  \created 2002-09-29
+  \edited  2004-09-05
  */
 
 #include "GLG3D/UserInput.h"
@@ -13,15 +13,15 @@
 namespace G3D {
 
 
-UserInput::UserInput(
-    OSWindow*                          window) {
+UserInput::UserInput
+(OSWindow*                          window) {
     init(window, NULL);
 }
 
 
-void UserInput::init(
-    OSWindow*                    window,
-    Table<GKey, UIFunction>* keyMapping) {
+void UserInput::init
+(OSWindow*                    window,
+ Table<GKey, UIFunction>* keyMapping) {
 
     _pureDeltaMouse = false;
     deltaMouse = Vector2(0, 0);
@@ -77,8 +77,8 @@ OSWindow* UserInput::window() const {
 }
 
 
-void UserInput::setKeyMapping(
-    Table<GKey, UIFunction>* keyMapping) {
+void UserInput::setKeyMapping
+(Table<GKey, UIFunction>* keyMapping) {
 
     for (GKey i = (GKey)(keyState.size() - 1); (int)i >= 0; i = (GKey)(i - 1)) {
         keyState[(int)i]    = false;

@@ -997,7 +997,7 @@ void GApp::processGEventQueue() {
     GEvent event;
     while (window()->pollEvent(event)) {
         // userInput always gets to process events, so that it
-        // maintains the current state correctly
+        // maintains the current state correctly.
         userInput->processEvent(event);
         
         // For event debugging

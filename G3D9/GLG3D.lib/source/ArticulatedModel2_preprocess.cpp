@@ -20,6 +20,14 @@ void ArticulatedModel2::preprocess(const Array<Instruction>& program) {
             }
             break;
 
+        case Instruction::MOVE_CENTER_TO_ORIGIN:
+            moveToOrigin(true);
+            break;
+
+        case Instruction::MOVE_BASE_TO_ORIGIN:
+            moveToOrigin(false);
+            break;
+
         case Instruction::SET_MATERIAL:
             {
                 Material::Ref material = Material::create(instruction.arg);
@@ -210,7 +218,56 @@ void ArticulatedModel2::Part::transformGeometry(const Matrix4& xform) {
         vertex->normal   = Vector3::nan();
         ++vertex;
     }
+
+    for (int c = 0; c < m_child.size(); ++c) {
+        m_child[c]->cframe.translation = 
+            xform.homoMul(m_child[c]->cframe.translation, 1.0f);
+    }
 }
 
+
+void ArticulatedModel2::moveToOrigin(bool centerY) {
+    BoundsCallback boundsCallback;
+    computePartBounds();
+    forEachPart(boundsCallback);
+
+    Vector3 translate = -boundsCallback.bounds.center();
+    if (! centerY) {
+        translate.y += boundsCallback.bounds.extent().y * 0.5f;
+    }
+
+    const Matrix4& xform = Matrix4::translation(translate);
+
+    // Center
+    for (int p = 0; p < m_rootArray.size(); ++p) {
+        Part* part = m_rootArray[p];
+        part->transformGeometry(xform);
+        //part->cframe.translation += translate;
+    }
+}
+
+
+void ArticulatedModel2::BoundsCallback::operator()
+    (ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, 
+     ArticulatedModel2::Ref m, const int treeDepth) {
+    
+    const Box& b = worldToPartFrame.toWorldSpace(part->boxBounds);
+    AABox partBounds;
+    b.getBounds(partBounds);
+    bounds.merge(partBounds);
+}
+
+
+void ArticulatedModel2::ScaleTransformCallback::operator()
+    (ArticulatedModel2::Part* part, const CFrame& worldToPartFrame,
+     ArticulatedModel2::Ref m, const int treeDepth) {
+    part->cframe.translation *= scaleFactor;
+    
+    const int N = part->cpuVertexArray.size();
+    CPUVertexArray::Vertex* ptr = part->cpuVertexArray.vertex.getCArray();
+    for (int v = 0; v < N; ++v) {
+        ptr[v].position *= scaleFactor;
+    }
+}
 
 } // namespace

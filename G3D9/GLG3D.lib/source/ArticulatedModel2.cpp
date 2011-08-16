@@ -16,7 +16,6 @@
  - Set bump map parallax steps in specification
  - Implement other preprocess instructions
  - Remove ArticulatedModel
- - Multithread processing by Part
  - Pack tangents and normals into short4 format?
  */
 #include "GLG3D/ArticulatedModel2.h"

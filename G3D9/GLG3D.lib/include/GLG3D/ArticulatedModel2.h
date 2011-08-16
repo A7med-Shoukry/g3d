@@ -15,6 +15,7 @@
 #include "G3D/ReferenceCount.h"
 #include "G3D/Matrix4.h"
 #include "G3D/AABox.h"
+#include "G3D/Box.h"
 #include "G3D/Sphere.h"
 #include "G3D/Array.h"
 #include "G3D/Table.h"
@@ -148,8 +149,9 @@ public:
     private:
         friend class ArticulatedModel2;
 
-        enum Type {SCALE, SET_CFRAME, TRANSFORM_CFRAME, TRANSFORM_GEOMETRY, DELETE_MESH, 
-                   DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, MERGE_ALL, RENAME_PART, RENAME_MESH, ADD};
+        enum Type {SCALE, MOVE_CENTER_TO_ORIGIN, MOVE_BASE_TO_ORIGIN, SET_CFRAME, TRANSFORM_CFRAME, 
+                   TRANSFORM_GEOMETRY, DELETE_MESH, DELETE_PART, SET_MATERIAL, SET_TWO_SIDED, 
+                   MERGE_ALL, RENAME_PART, RENAME_MESH, ADD};
 
         /**
           An identifier is one of:
@@ -223,30 +225,33 @@ public:
         /** Materials will be loaded relative to this file.*/
         std::string                 filename;
 
-        /** Ignore materials specified in the file, replacing them with Material::create().
-        Setting to true increases loading performance and may allow more aggressive 
-        optimization if mergeMeshesByMaterial is also true.
+        /** Ignore materials specified in the file, replacing them
+        with Material::create().  Setting to true increases loading
+        performance and may allow more aggressive optimization if
+        mergeMeshesByMaterial is also true.
         */
         bool                        stripMaterials;
 
-        /** Merge all Mesh%es within a Part that share a material into a single Mesh. 
-        This will increase the rendering performance of objects that were divided 
-        into many parts by an artist for modeling purposes.  It may decrease the 
-        rendering performance of very large objects that were divided into pieces
-        that are unlikely to all be visible in the frustum simultaneously. 
+        /** Merge all Mesh%es within a Part that share a material into
+        a single Mesh.  This will increase the rendering performance
+        of objects that were divided into many parts by an artist for
+        modeling purposes.  It may decrease the rendering performance
+        of very large objects that were divided into pieces that are
+        unlikely to all be visible in the frustum simultaneously.
 
         Default: false
         */
         bool                        mergeMeshesByMaterial;
 
-        /** Multiply all vertex positions and part translations by this factor after loading and before
-            preprocessing. 
-        */
+        /** Multiply all vertex positions and part translations by
+            this factor after loading and before preprocessing.
+            Default = 1.0. */
         float                       scale;
 
         CleanGeometrySettings       cleanGeometrySettings;
 
-        /** A program to execute to preprocess the mesh before cleaning geometry. */
+        /** A program to execute to preprocess the mesh before
+            cleaning geometry. */
         Array<Instruction>          preprocess;
 
         Specification() : stripMaterials(false), mergeMeshesByMaterial(false), scale(1.0f) {}
@@ -281,7 +286,15 @@ public:
 
                 transformCFrame(root(), CFrame::fromXYZYPRDegrees(0,0,0,90));
 
-                // Apply a transformation to a part within its reference frame
+                // Transform the root part translations and geometry
+                // so that the center of the bounding box in the
+                // default pose is at the origin.
+                moveCenterToOrigin();
+
+                moveBaseToOrigin();
+
+                // Apply a transformation to the vertices and child
+                // translations of a part, within its reference frame
                 transformGeometry("root", Matrix4::scale(0, 1, 2));
 
                 // Remove a mesh.  This does not change the ID's of other meshes
@@ -497,7 +510,8 @@ public:
             Does not affect children. */
         void copyToGPU();
 
-        /** Erases all data except texcoords and vertices. */
+        /** Transforms all vertex positions and child part translations.
+            Erases all data except texcoords and vertices. */
         void transformGeometry(const Matrix4& xform);
 
         Part(const std::string& name, Part* parent, ID id) : name(name), id(id), m_parent(parent) {}
@@ -564,12 +578,26 @@ public:
     public:
         /** \brief Override to implement processing of \a part. 
             
-            \param worldToPartFrame The net transformation in this pose from world space to \a part's object space 
+            \param worldToPartFrame The net transformation in this
+            pose from world space to \a part's object space
 
             \param treeDepth depth in the hierarchy.  0 = a root
         */
-        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, ArticulatedModel2::Ref model, const int treeDepth) {}
+        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, 
+                                ArticulatedModel2::Ref model, const int treeDepth) {}
     };
+
+
+    /** Computes the world-space bounds of this model. */
+    class BoundsCallback : public ArticulatedModel2::PartCallback {
+    public:
+        
+        AABox bounds;
+        
+        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, 
+                                ArticulatedModel2::Ref m, const int treeDepth) override;
+    };
+
 
     /** Rescales each part (and the position of its cframe) by a constant factor. */
     class ScaleTransformCallback : public ArticulatedModel2::PartCallback {
@@ -578,15 +606,8 @@ public:
     public:
         ScaleTransformCallback(float s) : scaleFactor(s) {}
         
-        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& parentFrame, ArticulatedModel2::Ref m, const int treeDepth) override {
-            part->cframe.translation *= scaleFactor;
-            
-            const int N = part->cpuVertexArray.size();
-            CPUVertexArray::Vertex* ptr = part->cpuVertexArray.vertex.getCArray();
-            for (int v = 0; v < N; ++v) {
-                ptr[v].position *= scaleFactor;
-            }
-        }
+        virtual void operator()(ArticulatedModel2::Part* part, const CFrame& partFrame,
+                                ArticulatedModel2::Ref m, const int treeDepth) override;
     };
 
 
@@ -645,6 +666,12 @@ protected:
     Mesh* mesh(const Instruction::Identifier& part, const Instruction::Identifier& mesh);
 
     Part* part(const Instruction::Identifier& partIdent);
+
+    /** Called from preprocess.  
+
+        \param centerY If false, move the base to the origin instead
+        of the center in the vertical direction. */
+    void moveToOrigin(bool centerY);
 
 public:
 
