@@ -33,8 +33,11 @@ private:
     }
 
 
-    /** Consume whitespace and comments, if there are any.  Leaves the pointer on the first non-whitespace character. */
-    void maybeReadWhitespace() {
+    /** Consume whitespace and comments, if there are any.  Leaves the pointer on the first non-whitespace character. 
+    Returns true if an end-of-line was passed or the end of file was reached. */
+    bool maybeReadWhitespace() {
+        bool changedLines = false;
+
         while (remainingCharacters > 0) {
             switch (*nextCharacter) {
             case '\n':
@@ -43,6 +46,7 @@ private:
                     char c = *nextCharacter;
                     consumeCharacter();
                     ++line;
+                    changedLines = true;
                     if ((remainingCharacters > 0) && (c != *nextCharacter) && (*nextCharacter != '\r') && (*nextCharacter != '\n')) {
                         // This is part of a double-newline, e.g., Mac or Windows.  Consume the next character as well.
                         consumeCharacter();
@@ -63,9 +67,11 @@ private:
                 break;
 
             default:
-                return;
+                return changedLines;
             }
         }
+
+        return true;
     }
 
     enum Command {MTLLIB, GROUP, USEMTL, VERTEX, TEXCOORD, NORMAL, FACE, UNKNOWN};
@@ -163,23 +169,133 @@ private:
         }
     }
 
+    template <class T>
+    T readNumber(const char* fmt) {
+        // Scan for the end of the token
+        char old = '\0';
+        int i = 0;
+        while  (i < remainingCharacters) {
+            switch (nextCharacter[i]) {
+            case ' ':
+            case '\n':
+            case '\r':
+            case '\t':
+            case '/':
+            case '#':
+                old = nextCharacter[i];
+                // Overwrite with string terminator to stop sscanf
+                const_cast<char&>(nextCharacter[i]) = '\0';
+                break;
+
+            default:;
+                ++i;
+                // Continue on
+            }
+        }
+
+        T n = 0;
+        const int numRead = sscanf(nextCharacter, fmt, &n);
+
+        if (numRead == 0) {
+            // Something went wrong
+            throw ParseError("obj file", line, 0, "Expected float on this line");
+        }
+
+        if (old != '\0') {
+            // Restore the old character
+            const_cast<char&>(nextCharacter[i]) = old;
+        }
+
+        // Jump to character i
+        nextCharacter += i;
+        remainingCharacters -= i;
+
+        return n;    
+    }
+
+    inline float readFloat() {
+        return readNumber<float>("%f");
+    }
+
+    inline int readInt() {
+        return readNumber<int>("%d");
+    }
+
+    Vector3 readVector3() {
+        Vector3 v;
+        v.x = readFloat();
+        v.y = readFloat();
+        v.z = readFloat();
+        return v;
+    }
+
+    Vector2 readVector2() {
+        Vector2 v;
+        v.x = readFloat();
+        v.y = readFloat();
+        return v;
+    }
 
     void processCommand(const Command command) {
         switch (command) {
         case VERTEX:
-            // TODO
+            {
+                Point3 v = readVector3();
+                // TODO
+            }
             break;
 
         case TEXCOORD:
-            // TODO
+            {
+                Point2 v = readVector2();
+                // TODO
+            }
             break;
 
         case NORMAL:
-            // TODO
+            {
+                Vector3 n = readVector3();
+                // TODO
+            }
             break;
 
         case FACE:
-            // TODO
+            {
+                // TODO: Ensure that there is a valid group
+                bool done = false;
+                while (! done) {
+                    int v = readInt();
+                    int t = 0;
+                    int n = 0;
+
+                    if ((remainingCharacters > 0) && (*nextCharacter == '/')) {
+                        consumeCharacter();
+                        if (remainingCharacters > 0) {
+                            if (*nextCharacter == '/') {
+                                // No texcoord index
+                                consumeCharacter();
+                            } else {
+                                // texcoord index
+                                t = readInt();
+                            }
+                            if ((remainingCharacters > 0) && (*nextCharacter == '/')) {
+                                if (*nextCharacter == '/') {
+                                    // No normal index
+                                    consumeCharacter();
+                                } else {
+                                    // normal index
+                                    n = readInt();
+                                }
+                            }
+                        }
+                    }
+
+                    // TODO: Record the face
+
+                    // Read remaining whitespace
+                    done = maybeReadWhitespace();
+                }
+            }
             break;
 
         case GROUP:
@@ -375,11 +491,11 @@ int main(int argc, const char* argv[]) {
     settings.window.width       = 1280; 
     settings.window.height      = 720;
 
-    TextInput ti(System::findDataFile("models/dragon/dragon.obj"));
-    BinaryInput bi(System::findDataFile("models/dragon/dragon.obj"), G3D_LITTLE_ENDIAN);
+    TextInput ti(System::findDataFile("models/dragon/dragon.obj.zip/dragon.obj"));
+    BinaryInput bi(System::findDataFile("models/dragon/dragon.obj.zip/dragon.obj"), G3D_LITTLE_ENDIAN);
 
     Stopwatch s;
-    {
+    if (false) {
         ParseOBJ oldParser;
         oldParser.parse(ti);
     }
