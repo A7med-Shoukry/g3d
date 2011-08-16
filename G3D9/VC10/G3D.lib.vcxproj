@@ -161,6 +161,7 @@
     <ClCompile Include="..\G3D.lib\source\NetAddress.cpp" />
     <ClCompile Include="..\G3D.lib\source\NetworkDevice.cpp" />
     <ClCompile Include="..\G3D.lib\source\Noise.cpp" />
+    <ClCompile Include="..\G3D.lib\source\Parse3DS.cpp" />
     <ClCompile Include="..\G3D.lib\source\ParseError.cpp" />
     <ClCompile Include="..\G3D.lib\source\ParseMTL.cpp" />
     <ClCompile Include="..\G3D.lib\source\ParseOBJ.cpp" />
@@ -275,6 +276,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\NetAddress.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\NetworkDevice.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Noise.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\Parse3DS.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ParseError.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ParseMTL.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ParseOBJ.h" />

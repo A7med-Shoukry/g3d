@@ -102,6 +102,8 @@
   <ItemGroup>
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_3DS.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_BSP.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_cleanGeometry.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_IFS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OBJ.cpp" />

@@ -919,7 +919,7 @@ void GImage::encode(
     debugAssert(outData);
     outLength = out.size();
 
-    out.commit(outData);
+    out.commit((uint8*)outData);
 }
 
 

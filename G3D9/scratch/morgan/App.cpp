@@ -5,6 +5,216 @@
 G3D_START_AT_MAIN();
 
 
+/** High-performance OBJ parser */
+class ParseOBJ2 {
+private:
+
+    /** Pointer to the next character in buffer */
+    char*   nextCharacter;
+
+    /** Number of characters left */
+    int     remainingCharacters;
+
+    /** Line in the file, starting from 1.  For debugging and error reporting */
+    int     line;
+
+    /** Consume one character */
+    inline void consumeCharacter() {
+        ++nextCharacter;
+        --remainingCharacters;
+    }
+
+
+    /** Reads until the end of file or newline, but does not consume the newline */
+    void readUntilNewline() {
+        while ((remainingCharacters > 0) && (*nextCharacter != '\r') && (*nextCharacter != '\n')) {
+            consumeCharacter();
+        }
+    }
+
+
+    /** Consume whitespace and comments, if there are any.  Leaves the pointer on the first non-whitespace character. */
+    void maybeReadWhitespace() {
+        while (remainingCharacters > 0) {
+            switch (*nextCharacter) {
+            case '\n':
+            case '\r':
+                {
+                    char c = *nextCharacter;
+                    consumeCharacter();
+                    ++line;
+                    if ((remainingCharacters > 0) && (c != *nextCharacter) && (*nextCharacter != '\r') && (*nextCharacter != '\n')) {
+                        // This is part of a double-newline, e.g., Mac or Windows.  Consume the next character as well.
+                        consumeCharacter();
+                    }
+                }
+                break;
+
+            case ' ':
+            case '\t':
+                // Consume whitespace
+                consumeCharacter();
+                break;
+
+            case '#':
+                // Consume comment
+                readUntilNewline();
+                // Don't consume the newline; we'll catch it on the next iteration
+                break;
+
+            default:
+                return;
+            }
+        }
+    }
+
+    enum Command {MTLLIB, GROUP, USEMTL, VERTEX, TEXCOORD, NORMAL, FACE, UNKNOWN};
+
+    static bool isSpace(const char c) const {
+        return c == ' ' || c == '\t';
+    }
+
+    /** Reads the next command.  Assumes that it is at the start of a command. */
+    Command readCommand() {
+        if (remainingCharacters == 0) {
+            return UNKNOWN;
+        }
+
+        switch (*nextCharacter) {
+        case 'f':
+            consumeCharacter();
+            if (isSpace(*nextCharacter)) {
+                return FACE;
+            } else {
+                return UNKNOWN;
+            }
+            break;
+
+        case 'v':
+            consumeCharacter();
+            switch (*nextCharacter) {
+            case ' ':
+            case '\t':
+                return VERTEX;
+
+            case 'n':
+                consumeCharacter();
+                if (isSpace(*nextCharacter)) {
+                    return NORMAL;
+                } else {
+                    return UNKNOWN;
+                }
+                break;
+
+            case 't':
+                consumeCharacter();
+                if (isSpace(*nextCharacter)) {
+                    return TEXCOORD;
+                } else {
+                    return UNKNOWN;
+                }
+                break;
+
+            default:
+                return UNKNOWN;
+            }
+            break;
+
+        case 'm':
+            if ((remainingCharacters > 6) && memcmp(nextCharacter, "mtllib", 6)) {
+                nextCharacter += 6; remainingCharacters -= 6;
+                if (isSpace(*nextCharacter)) {
+                    return MTLLIB;
+                } else {
+                    return UNKNOWN;
+                }
+            }
+            break;
+
+        case 'u':
+            if ((remainingCharacters > 6) && memcmp(nextCharacter, "usemtl", 6)) {
+                nextCharacter += 6; remainingCharacters -= 6;
+                if (isSpace(*nextCharacter)) {
+                    return USEMTL;
+                } else {
+                    return UNKNOWN;
+                }
+            }
+            break;
+
+        case 'g':
+            consumeCharacter();
+            if (isSpace(*nextCharacter)) {
+                return GROUP;
+            } else {
+                return UNKNOWN;
+            }
+            break;
+
+
+        default:
+            return UNKNOWN;
+        }
+    }
+
+
+    void processCommand(const Command command) {
+        switch (command) {
+        case VERTEX:
+            // TODO
+            break;
+
+        case TEXCOORD:
+            // TODO
+            break;
+
+        case NORMAL:
+            // TODO
+            break;
+
+        case FACE:
+            // TODO
+            break;
+
+        case GROUP:
+            // TODO
+            break;
+
+        case USEMTL:
+            // TODO
+            break;
+
+        case MTLLIB:
+            // TODO
+            break;
+
+        case UNKNOWN:
+            // Nothing to do
+            break;
+        }
+    }
+
+public:
+
+    void parse(char* ptr, int len, const std::string& basePath) {
+        nextCharacter = ptr;
+        remainingCharacters = len;
+        line = 1;
+
+        while (remainingCharacters > 0) {
+            // Process leading whitespace
+            maybeReadWhitespace();
+
+            const Command command = readCommand();
+            processCommand(command);
+
+            // Consume anything else on this line
+            readUntilNewline();
+        }
+        
+    }
+};
+
 
 /** Dumps the geometry and texture coordinates (no materials) to a
     file.  Does not deal with nested parts */

@@ -148,7 +148,7 @@ GLOBAL(void)
 jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 			 long total_bytes_needed)
 {
-  const char* fname = NULL;
+  char* fname = NULL;
 #ifdef _MSC_VER
   fname = _tempnam("c:/temp/", "ljp");
 #else

@@ -3,7 +3,7 @@
 static void printBoard(const Color3uint8* b, int S) {
     printf("\n");
     for (int i = 0; i < S * S; ++i) {
-	if (b[i] == Color3uint8(0, 0, 0))
+	if (b[i] == Color3unorm8(0.0f, 0.0f, 0.0f))
 	    printf("o ");
 	else
 	    printf("x ");
@@ -13,10 +13,10 @@ static void printBoard(const Color3uint8* b, int S) {
     printf("\n");
 }
 
-static void printBoard(const Color4uint8* b, int S) {
+static void printBoard(const Color4unorm8* b, int S) {
     printf("\n");
     for (int i = 0; i < S * S; ++i) {
-	if (Color3uint8(b[i].r,b[i].g,b[i].b) == Color3uint8(0, 0, 0))
+	if (Color3unorm8(b[i].r,b[i].g,b[i].b) == Color3unorm8(0, 0, 0))
 	    printf("o ");
 	else
 	    printf("x ");
