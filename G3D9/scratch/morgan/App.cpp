@@ -10,13 +10,13 @@ class ParseOBJ2 {
 private:
 
     /** Pointer to the next character in buffer */
-    char*   nextCharacter;
+    const char*     nextCharacter;
 
     /** Number of characters left */
-    int     remainingCharacters;
+    int             remainingCharacters;
 
     /** Line in the file, starting from 1.  For debugging and error reporting */
-    int     line;
+    int             line;
 
     /** Consume one character */
     inline void consumeCharacter() {
@@ -70,16 +70,19 @@ private:
 
     enum Command {MTLLIB, GROUP, USEMTL, VERTEX, TEXCOORD, NORMAL, FACE, UNKNOWN};
 
-    static bool isSpace(const char c) const {
-        return c == ' ' || c == '\t';
+    /** Returns true for space and tab, but not newline */
+    static inline bool isSpace(const char c) {
+        return (c == ' ') || (c == '\t');
     }
 
-    /** Reads the next command.  Assumes that it is at the start of a command. */
+    /** Reads the next command.  Assumes that it is at the start of a command. 
+      Leaves the pointer at the first character after the end of the command name.*/
     Command readCommand() {
         if (remainingCharacters == 0) {
             return UNKNOWN;
         }
 
+        // Explicit finite automata parser
         switch (*nextCharacter) {
         case 'f':
             consumeCharacter();
@@ -128,6 +131,8 @@ private:
                 } else {
                     return UNKNOWN;
                 }
+            } else {
+                return UNKNOWN;
             }
             break;
 
@@ -139,6 +144,8 @@ private:
                 } else {
                     return UNKNOWN;
                 }
+            } else {
+                return UNKNOWN;
             }
             break;
 
@@ -150,7 +157,6 @@ private:
                 return UNKNOWN;
             }
             break;
-
 
         default:
             return UNKNOWN;
@@ -196,7 +202,7 @@ private:
 
 public:
 
-    void parse(char* ptr, int len, const std::string& basePath) {
+    void parse(const char* ptr, int len, const std::string& basePath) {
         nextCharacter = ptr;
         remainingCharacters = len;
         line = 1;
@@ -368,6 +374,22 @@ int main(int argc, const char* argv[]) {
     // settings class.  For example:
     settings.window.width       = 1280; 
     settings.window.height      = 720;
+
+    TextInput ti(System::findDataFile("models/dragon/dragon.obj"));
+    BinaryInput bi(System::findDataFile("models/dragon/dragon.obj"), G3D_LITTLE_ENDIAN);
+
+    Stopwatch s;
+    {
+        ParseOBJ oldParser;
+        oldParser.parse(ti);
+    }
+    s.after("old");
+    {
+        ParseOBJ2 newParser;
+        newParser.parse((const char*)bi.getCArray(), bi.getLength(), "");
+    }
+    s.after("new");
+    ::exit(0);
 
     return App(settings).run();
 }
