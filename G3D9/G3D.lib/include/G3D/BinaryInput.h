@@ -70,8 +70,8 @@ class BinaryInput {
 private:
 
     // The initial buffer will be no larger than this, but 
-    // may grow if a large memory read occurs.  50 MB
-    enum {INITIAL_BUFFER_LENGTH = 50000000};
+    // may grow if a large memory read occurs.  500 MB
+    enum {INITIAL_BUFFER_LENGTH = 500000000};
 
     /**
      is the file big or little endian
@@ -195,17 +195,6 @@ public:
     }
 
     /**
-     Returns a pointer to the internal memory buffer.
-     May throw an exception for huge files.
-     */
-    const uint8* getCArray() const {
-        if (m_alreadyRead > 0) {
-            throw "Cannot getCArray for a huge file";
-        }
-        return m_buffer;
-    }
-
-    /**
      Performs bounds checks in debug mode.  [] are relative to
      the start of the file, not the current position.
      Seeks to the new position before reading (and leaves 
@@ -231,8 +220,19 @@ public:
      Returns the current byte position in the file,
      where 0 is the beginning and getLength() - 1 is the end.
      */
-   int64 getPosition() const {
+    int64 getPosition() const {
         return m_pos + m_alreadyRead;
+    }
+
+    /**
+     Returns a pointer to the internal memory buffer.
+     May throw an exception for huge files.
+     */
+    const uint8* getCArray() {
+        if (m_alreadyRead > 0 || m_bufferLength < m_length) {
+            throw "Cannot getCArray for a huge file";
+        }
+        return m_buffer;
     }
 
     /**

@@ -98,10 +98,10 @@ BinaryInput::BinaryInput(
     	m_length = dataLen;
         m_bufferLength = m_length;
         if (! copyMemory) {
- 	        debugAssert(!m_freeBuffer);
+            debugAssert(!m_freeBuffer);
             m_buffer = const_cast<uint8*>(data);
         } else {
-	        debugAssert(m_freeBuffer);
+            debugAssert(m_freeBuffer);
             m_buffer = (uint8*)System::alignedMalloc(m_length, 16);
             System::memcpy(m_buffer, data, dataLen);
         }
@@ -109,10 +109,10 @@ BinaryInput::BinaryInput(
 }
 
 
-BinaryInput::BinaryInput(
-    const std::string&  filename,
-    G3DEndian           fileEndian,
-    bool                compressed) :
+BinaryInput::BinaryInput
+(const std::string&  filename,
+ G3DEndian           fileEndian,
+ bool                compressed) :
     m_filename(filename),
     m_bitPos(0),
     m_bitString(0),
@@ -160,9 +160,11 @@ BinaryInput::BinaryInput(
         if (compressed) {
             decompress();
         }
+
         m_freeBuffer = true;
         return;
     }
+
     // Figure out how big the file is and verify that it exists.
     m_length = FileSystem::size(m_filename);
 

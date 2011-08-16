@@ -152,9 +152,9 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
 
     ParseOBJ parseData;
     {
-        TextInput ti(specification.filename);
+        BinaryInput bi(specification.filename, G3D_LITTLE_ENDIAN);
         timer.after(" open file");
-        parseData.parse(ti);
+        parseData.parse(bi);
         timer.after(" parse");
     }
 
