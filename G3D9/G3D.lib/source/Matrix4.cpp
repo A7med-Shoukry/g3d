@@ -44,6 +44,15 @@ Matrix4::Matrix4(const Any& any) {
         } else {
             any.verify(false, "Matrix4::scale() takes either 1 or 3 arguments");
         }
+    } else if (name == "Matrix4::rollDegrees") {
+        any.verifySize(1);
+        *this = rollDegrees(any[0].number());
+    } else if (name == "Matrix4::yawDegrees") {
+        any.verifySize(1);
+        *this = yawDegrees(any[0].number());
+    } else if (name == "Matrix4::pitchDegrees") {
+        any.verifySize(1);
+        *this = pitchDegrees(any[0].number());
     } else if (name == "Matrix4::translation") {
         if (any.size() == 3) {
             *this = translation(any[0], any[1], any[2]);
