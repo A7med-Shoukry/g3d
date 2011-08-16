@@ -568,9 +568,9 @@ void Win32Window::setIcon(const GImage& src) {
     Array<uint8> binaryMaskData;
     binaryMaskData.resize(iCeil(src.width() * src.height() / 8.0f));
     if (src.channels() == 3) {
-        GImage::RGBtoBGRA(src.byte(), colorData.getCArray(), src.width() * src.height());
+        GImage::RGBtoBGRA((unorm8*)src.byte(), (unorm8*)colorData.getCArray(), src.width() * src.height());
     } else {
-        GImage::RGBAtoBGRA(src.byte(), colorData.getCArray(), src.width() * src.height());
+        GImage::RGBAtoBGRA((unorm8*)src.byte(), (unorm8*)colorData.getCArray(), src.width() * src.height());
     }
 
     // Create the binary mask by shifting in the appropriate bits
