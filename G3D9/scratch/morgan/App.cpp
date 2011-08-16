@@ -155,6 +155,7 @@ private:
         }
     }
 
+    /** Feads the vertex index list for one face. */
     void readFace();
 
     /** Consume whitespace and comments, if there are any.  Leaves the pointer on the first non-whitespace character. 
@@ -223,12 +224,24 @@ private:
     inline int readInt() {
         return readNumber<int>("%d");
     }
-
+    
     /** Reads until newline and removes leading and trailing space (ignores comments) */
     std::string readName() {
-        // TODO
-        alwaysAssertM(false, "TODO");
-        return "";
+        // Read leading whitespace
+        bool passedNewline = maybeReadWhitespace();
+        if (passedNewline) {
+            throw ParseError(m_filename, m_line, 0, "Expected a group or file name on this line");
+        }
+
+        // Read until EOF or EOLN.  OBJ does not allow comments unless they are at the beginning
+        // of a line.
+        std::string s;
+        while ((remainingCharacters > 0) && (*nextCharacter != '\r') && (*nextCharacter != '\n')) {
+            s += *nextCharacter;
+            consumeCharacter();
+        }
+
+        return trimWhitespace(s);
     }
 
     Vector3 readVector3() {
