@@ -18,6 +18,12 @@ private:
     /** Line in the file, starting from 1.  For debugging and error reporting */
     int             line;
 
+    // Temporary for testing
+    Array<Point3>   vertex;
+    Array<Point2>   texCoord;
+    Array<Vector3>  normal;
+    Array<int>      face;
+
     /** Consume one character */
     inline void consumeCharacter() {
         ++nextCharacter;
@@ -239,24 +245,15 @@ private:
     void processCommand(const Command command) {
         switch (command) {
         case VERTEX:
-            {
-                Point3 v = readVector3();
-                // TODO
-            }
+            vertex.append(readVector3());
             break;
 
         case TEXCOORD:
-            {
-                Point2 v = readVector2();
-                // TODO
-            }
+            texCoord.append(readVector2());
             break;
 
         case NORMAL:
-            {
-                Vector3 n = readVector3();
-                // TODO
-            }
+            normal.append(readVector3());
             break;
 
         case FACE:
@@ -267,6 +264,8 @@ private:
                     int v = readInt();
                     int t = 0;
                     int n = 0;
+
+                    face.append(v);
 
                     if ((remainingCharacters > 0) && (*nextCharacter == '/')) {
                         consumeCharacter();
