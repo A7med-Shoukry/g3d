@@ -1,6 +1,6 @@
 #include "G3D/G3DAll.h"
 
-static void printBoard(const Color3uint8* b, int S) {
+static void printBoard(const Color3unorm8* b, int S) {
     printf("\n");
     for (int i = 0; i < S * S; ++i) {
 	if (b[i] == Color3unorm8::zero())
@@ -80,11 +80,11 @@ void testImageConvert() {
     }
 
 
-    Color3uint8   rgb8[S * S];
-    Color3uint8  _rgb8[S * S];
+    Color3unorm8   rgb8[S * S];
+    Color3unorm8  _rgb8[S * S];
 
-    Color3uint8   bgr8[S * S];
-    Color3uint8  _bgr8[S * S];
+    Color3unorm8   bgr8[S * S];
+    Color3unorm8  _bgr8[S * S];
 
     Color4        rgba32f[S * S];;
     Color4       _rgba32f[S * S];
