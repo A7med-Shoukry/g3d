@@ -35,7 +35,13 @@ private:
 
 public:
 
+    /** Equivalent to: \code unorm8 u = reinterpret_cast<const unorm8&>(255);\endcode */;
     static unorm8 fromBits(uint8 b) {
+        return unorm8(b);
+    }
+
+    /** \copydoc fromBits */
+    static unorm8 reinterpretFrom(uint8 b) {
         return unorm8(b);
     }
 
@@ -61,8 +67,15 @@ public:
         return fromBits(0);
     }
 
-    /** Returns the underlying bits in this representation. */
+    /**\brief Returns the underlying bits in this representation. 
+     Equivalent to:
+    \code uint8 i = reinterpret_cast<const uint8&>(u); \endcode */
     uint8 bits() const {
+        return m_bits;
+    }
+
+    /** \copydoc bits */
+    uint8 reinterpretAsUInt8() const {
         return m_bits;
     }
 

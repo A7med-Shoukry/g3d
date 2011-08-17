@@ -131,6 +131,8 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
                 // bias and gain
                 m_currentMaterial->bumpBias = ti.readNumber();
                 m_currentMaterial->bumpGain = ti.readNumber();
+            } else if (opt == "bm") {
+                m_currentMaterial->bumpGain = ti.readNumber();
             }
         }
         m_currentMaterial->map_bump = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));

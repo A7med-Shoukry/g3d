@@ -115,7 +115,7 @@ static Material::Specification toMaterialSpecification
 
     if (m->illum == 2 || m->illum == 10) {
         // [glossy] "hilight" on
-        s.setGlossyExponentShininess(m->Ns * 100.0f);
+        s.setGlossyExponentShininess(max(1.0f, m->Ns) * 100.0f);
     }
 
     if (m->illum == 4 || m->illum == 5 || m->illum == 6 || m->illum == 7) {

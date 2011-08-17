@@ -150,6 +150,15 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
+    Array<std::string> files;
+    FileSystem::getFiles("C:/Users/morgan/Desktop/san-miguel-export/Maps/*", files, true);
+
+    for (int i = 0; i < files.size(); ++i) {
+        debugPrintf("%s\n", files[i].c_str());
+        GImage im(files[i]);
+    }
+    ::exit(0);
+
     (void)argc; (void)argv;
     GApp::Settings settings(argc, argv);
     
