@@ -803,12 +803,18 @@ public:
             ++bucketLength;
         } while (n != NULL);
 
+        // Allow the load factor to rise as the table gets huge
+        const int bucketsPerElement = 
+            (m_size > 50000) ? 3 :
+                ((m_size > 10000) ? 5 :
+                 ((m_size > 5000) ? 10 : 15));
+
         const size_t maxBucketLength = 3;
         // (Don't bother changing the size of the table if all entries
         // have the same hashcode--they'll still collide)
         if ((bucketLength > maxBucketLength) && 
             ! allSameCode && 
-            (m_numBuckets < m_size * 15)) {
+            (m_numBuckets < m_size * bucketsPerElement)) {
 
             // This m_bucket was really large; rehash if all elements
             // don't have the same hashcode the number of buckets is

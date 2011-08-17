@@ -156,6 +156,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
         timer.after(" open file");
         parseData.parse(bi);
         timer.after(" parse");
+        // Let the BinaryInput go out of scope, reclaiming its memory
     }
 
     name = FilePath::base(specification.filename);
@@ -262,7 +263,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
 
     // Debugging code
     if (false) {
-        // Code for dumping the imported vertices
+        // Code for printing the imported vertices
         debugPrintf("** Vertices:\n");
         for (int i = 0; i < part->cpuVertexArray.vertex.size(); ++i) {
             const CPUVertexArray::Vertex& vertex = part->cpuVertexArray.vertex[i];
