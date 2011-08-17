@@ -216,9 +216,9 @@ private:
 
         // Allocate a new m_bucket array with the new size
         m_bucket = (Node**)alloc(sizeof(Node*) * newSize);
+        alwaysAssertM(m_bucket != NULL, "MemoryManager::alloc returned NULL. Out of memory.");
         // Set all pointers to NULL
         System::memset(m_bucket, 0, newSize * sizeof(Node*));
-        debugAssertM(m_bucket != NULL, "MemoryManager::alloc returned NULL. Out of memory.");
         // Move each node to its new hash location
         for (size_t b = 0; b < m_numBuckets; ++b) {
             Node* node = oldBucket[b];

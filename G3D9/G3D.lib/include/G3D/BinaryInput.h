@@ -70,8 +70,8 @@ class BinaryInput {
 private:
 
     // The initial buffer will be no larger than this, but 
-    // may grow if a large memory read occurs.  500 MB
-    enum {INITIAL_BUFFER_LENGTH = 500000000};
+    // may grow if a large memory read occurs.  750 MB
+    enum {INITIAL_BUFFER_LENGTH = 750000000};
 
     /**
      is the file big or little endian

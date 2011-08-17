@@ -674,6 +674,7 @@ void memfill(void *dst, int n32, unsigned long i) {
 
 
 void System::memset(void* dst, uint8 value, size_t numBytes) {
+    alwaysAssertM(dst != NULL, "Cannot memset NULL address.");
 #if defined(G3D_WIN32)
     if ((((size_t)dst % 16) == 0) && (numBytes >= 512*1024)) {
         uint32 v = value;

@@ -39,6 +39,10 @@ void ParseOBJ::parse(const char* ptr, int len, const std::string& basePath) {
 
         const Command command = readCommand();
         processCommand(command);
+
+        if (m_line % 100000 == 0) {
+            debugPrintf("  ParseOBJ at line %d\n", m_line);
+        }
     }        
 }
 
@@ -49,9 +53,7 @@ void ParseOBJ::parse(BinaryInput& bi, const std::string& basePath) {
     std::string bp = basePath;
     if (bp == "<AUTO>") {
         bp = FilePath::parent(FileSystem::resolve(m_filename));
-    }
-    
-    
+    }    
 
     parse((const char*)bi.getCArray() + bi.getPosition(),
           bi.getLength() - bi.getPosition(), bp);
@@ -257,10 +259,7 @@ void ParseOBJ::readFace() {
             consumeCharacter();
 
             if (remainingCharacters > 0) {
-                if (*nextCharacter == '/') {
-                    // No texcoord index
-                    consumeCharacter();
-                } else {
+                if (*nextCharacter != '/') {
                     // texcoord index
                     index.texCoord = readInt();
                     if (index.texCoord > 0) {
