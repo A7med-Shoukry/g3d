@@ -454,27 +454,27 @@ void measureNormalizationPerformance() {
 }
 
 
-void testColor3uint8Array() {
-    printf("Array<Color3uint8>\n");
-    Array<Color3uint8> x;
+void testColor3unorm8Array() {
+    printf("Array<Color3unorm8>\n");
+    Array<Color3unorm8> x;
     x.resize(2);
 
-    debugAssert(sizeof(Color3uint8) == 3);
-    x[0].r = 60;
-    x[0].g = 61;
-    x[0].b = 62;
-    x[1].r = 63;
-    x[1].g = 64;
-    x[1].b = 65;
+    debugAssert(sizeof(Color3unorm8) == 3);
+    x[0].r = unorm8::fromBits(60);
+    x[0].g = unorm8::fromBits(61);
+    x[0].b = unorm8::fromBits(62);
+    x[1].r = unorm8::fromBits(63);
+    x[1].g = unorm8::fromBits(64);
+    x[1].b = unorm8::fromBits(65);
 
     uint8* y = (uint8*)x.getCArray();
     (void)y;
-    debugAssert(y[0] == 60);
-    debugAssert(y[1] == 61);
-    debugAssert(y[2] == 62);
-    debugAssert(y[3] == 63);
-    debugAssert(y[4] == 64);
-    debugAssert(y[5] == 65);
+    debugAssert(y[0] == unorm8::fromBits(60));
+    debugAssert(y[1] == unorm8::fromBits(61));
+    debugAssert(y[2] == unorm8::fromBits(62));
+    debugAssert(y[3] == unorm8::fromBits(63));
+    debugAssert(y[4] == unorm8::fromBits(64));
+    debugAssert(y[5] == unorm8::fromBits(65));
 }
 
 
