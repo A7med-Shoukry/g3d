@@ -117,12 +117,46 @@ static uint8 buttonsToUint8(const bool* buttons) {
     return mouseButtons;
 }
 
+/** For windows drag-drop */
+class DropTarget : public IDropTarget {
+public:
 
+    virtual HRESULT STDMETHODCALLTYPE DragEnter( 
+            /* [unique][in] */ __RPC__in_opt IDataObject *pDataObj,
+            /* [in] */ DWORD grfKeyState,
+            /* [in] */ POINTL pt,
+            /* [out][in] */ __RPC__inout DWORD *pdwEffect) override {
+        *pdwEffect = DROPEFFECT_COPY;
+        return S_OK;
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE DragOver( 
+        DWORD grfKeyState,
+        POINTL pt,
+        DWORD *pdwEffect) override {
+        *pdwEffect = DROPEFFECT_COPY;
+        return S_OK;
+    }
+        
+    virtual HRESULT STDMETHODCALLTYPE DragLeave( void) override  {
+        return S_OK;
+    }
+        
+    virtual HRESULT STDMETHODCALLTYPE Drop( 
+        IDataObject *pDataObj,
+        DWORD grfKeyState,
+        POINTL pt,
+        DWORD *pdwEffect) override {
+        *pdwEffect = DROPEFFECT_COPY;
+        return S_OK;
+    }
+};
 
 Win32Window::Win32Window(const OSWindow::Settings& s, bool creatingShareWindow)
     : createdWindow(true),
     m_diDevices(NULL),
-    m_sysEventQueue(NULL)
+    m_sysEventQueue(NULL),
+    m_dropTarget(NULL)
 {
 
     initWGL();
@@ -214,6 +248,10 @@ Win32Window::Win32Window(const OSWindow::Settings& s, bool creatingShareWindow)
 
     if (! creatingShareWindow) {
         DragAcceptFiles(window, true);
+
+        // Add support for dropping non-file data (e.g., zipfile streams)
+        //m_dropTarget = new DropTarget();
+        //HRESULT r = ::RegisterDragDrop(window, m_dropTarget);
     }
 
     alwaysAssertM(window != NULL, "");
@@ -658,7 +696,7 @@ Win32Window::~Win32Window() {
     }
 
     // Do not need to release private HDC's
-
+    delete m_dropTarget;
     delete m_diDevices;
 }
 

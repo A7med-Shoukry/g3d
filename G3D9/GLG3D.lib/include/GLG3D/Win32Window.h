@@ -68,6 +68,8 @@ private:
     // Pointer to current queue passed to getOSEvents() for window proc to use
     Queue<GEvent>*      m_sysEventQueue;
 
+    class DropTarget*   m_dropTarget;
+
 	static std::auto_ptr<Win32Window>& shareWindow();
 
 	/** OpenGL technically does not allow sharing of resources between
