@@ -250,15 +250,83 @@ private:
 
         return n;    
     }
-
+#if 0
     inline float readFloat() {
         return readNumber<float>("%f");
     }
+#endif
 
+    /*
     inline int readInt() {
         return readNumber<int>("%d");
     }
-    
+    */
+
+    inline int readUnsignedInt() {
+        int i = 0;
+        while ((remainingCharacters > 0) && isDigit(*nextCharacter)) {
+            i = i * 10 + (*nextCharacter) - '0';
+            --remainingCharacters;
+            ++nextCharacter;
+        }
+        return i;
+    }
+
+
+    /** Substantially (2x) faster than sscanf */
+    int readInt() {
+        // Consume leading sign
+        const bool isNegative = (*nextCharacter == '-');
+        if (isNegative || (*nextCharacter == '+')) {
+            consumeCharacter();
+        }
+
+        int i = readUnsignedInt();
+
+        return isNegative ? -i : i;
+    }
+
+    /** Substantially (2x) faster than sscanf */
+    float readFloat() {
+        // Consume leading sign
+        const bool isNegative = (*nextCharacter == '-');
+        if (isNegative || (*nextCharacter == '+')) {
+            consumeCharacter();
+        }
+
+        // Read the integer part
+        float f = float(readUnsignedInt());
+
+        // Read optional fractional part
+        if (*nextCharacter == '.') {
+            // Consume the decimal
+            consumeCharacter();
+
+            // Read the fractional part
+            int i = 0;
+            int magnitude = 1;
+            while ((remainingCharacters > 0) && isDigit(*nextCharacter)) {
+                magnitude *= 10;
+                i = i * 10 + (*nextCharacter) - '0';
+                --remainingCharacters;
+                ++nextCharacter;
+            }
+
+            const float fracPart = float(i) / float(magnitude);
+        
+            f += fracPart;
+        }
+
+        // Read optional exponent
+        if (*nextCharacter == 'e') {
+            consumeCharacter();
+            const int e = readInt();
+            f *= powf(10.0f, float(e));
+        }
+
+        return isNegative ? -f : f;
+    }
+
     /** Reads until newline and removes leading and trailing space (ignores comments) */
     std::string readName() {
         // Read leading whitespace
