@@ -158,22 +158,6 @@ int main(int argc, const char* argv[]) {
     settings.window.width       = 1280; 
     settings.window.height      = 720;
 
-    TextInput ti(System::findDataFile("models/dragon/dragon.obj.zip/dragon.obj"));
-    BinaryInput bi(System::findDataFile("models/dragon/dragon.obj.zip/dragon.obj"), G3D_LITTLE_ENDIAN);
-
-    Stopwatch s;
-    if (false) {
-        ParseOBJ oldParser;
-        oldParser.parse(ti);
-    }
-    s.after("old");
-    {
-        ParseOBJ2 newParser;
-        newParser.parse((const char*)bi.getCArray(), bi.getLength(), "");
-    }
-    s.after("new");
-    ::exit(0);
-
     return App(settings).run();
 }
 
