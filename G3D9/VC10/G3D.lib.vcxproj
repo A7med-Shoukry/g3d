@@ -143,6 +143,7 @@
     <ClCompile Include="..\G3D.lib\source\Image3unorm8.cpp" />
     <ClCompile Include="..\G3D.lib\source\Image4.cpp" />
     <ClCompile Include="..\G3D.lib\source\Image4unorm8.cpp" />
+    <ClCompile Include="..\G3D.lib\source\ImageBuffer.cpp" />
     <ClCompile Include="..\G3D.lib\source\ImageFormat.cpp" />
     <ClCompile Include="..\G3D.lib\source\ImageFormat_convert.cpp" />
     <ClCompile Include="..\G3D.lib\source\Intersect.cpp" />
@@ -259,6 +260,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Image3unorm8.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Image4.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Image4unorm8.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\ImageBuffer.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\ImageFormat.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Intersect.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\KDTree.h" />

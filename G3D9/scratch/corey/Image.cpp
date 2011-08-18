@@ -77,10 +77,116 @@ void Image::get(const Point2int32& pos, Color4& color) const {
     }
 }
 
-void Image::set(const Point2int32& pos, const Color4& color) {
-
+void Image::get(const Point2int32& pos, Color3& color) const {
+    Color4 c;
+    get(pos, c);
+    color = Color3(c.r, c.g, c.b);
 }
 
+void Image::get(const Point2int32& pos, Color4unorm8& color) const {
+    Point2int32 fipPos(pos.x, m_image.getHeight() - pos.y - 1);
+
+    BYTE* scanline = m_image.getScanLine(fipPos.y);
+    switch (m_image.getImageType())
+    {
+        case FIT_BITMAP:
+        {
+            if (m_image.isGrayscale()) {
+                color.r = unorm8::fromBits(scanline[fipPos.x]);
+                color.g = color.r;
+                color.b = color.r;
+                color.a = unorm8::fromBits(255);
+            } else if (m_image.getBitsPerPixel() == 24) {
+                scanline += 3 * fipPos.x;
+
+                color.r = unorm8::fromBits(scanline[FI_RGBA_RED]);
+                color.g = unorm8::fromBits(scanline[FI_RGBA_GREEN]);
+                color.b = unorm8::fromBits(scanline[FI_RGBA_BLUE]);
+                color.a = unorm8::fromBits(255);
+            } else if (m_image.getBitsPerPixel() == 32) {
+                scanline += 4 * fipPos.x;
+
+                color.r = unorm8::fromBits(scanline[FI_RGBA_RED]);
+                color.g = unorm8::fromBits(scanline[FI_RGBA_GREEN]);
+                color.b = unorm8::fromBits(scanline[FI_RGBA_BLUE]);
+                color.a = unorm8::fromBits(scanline[FI_RGBA_ALPHA]);
+            }
+            break;
+        }
+    }
+}
+
+void Image::get(const Point2int32& pos, Color3unorm8& color) const {
+    Color4unorm8 c;
+    get(pos, c);
+    color = c.rgb();
+}
+
+void Image::set(const Point2int32& pos, const Color4& color) {
+    Point2int32 fipPos(pos.x, m_image.getHeight() - pos.y - 1);
+
+    BYTE* scanline = m_image.getScanLine(fipPos.y);
+    switch (m_image.getImageType())
+    {
+        case FIT_BITMAP:
+        {
+            if (m_image.isGrayscale()) {
+                scanline[fipPos.x] = static_cast<BYTE>(iClamp(color.r * 255.0f, 0, 255));
+            } else if (m_image.getBitsPerPixel() == 24) {
+                scanline += 3 * fipPos.x;
+
+                scanline[FI_RGBA_RED] = static_cast<BYTE>(iClamp(color.r * 255.0f, 0, 255));
+                scanline[FI_RGBA_GREEN] = static_cast<BYTE>(iClamp(color.g * 255.0f, 0, 255));
+                scanline[FI_RGBA_BLUE] = static_cast<BYTE>(iClamp(color.b * 255.0f, 0, 255));
+            } else if (m_image.getBitsPerPixel() == 32) {
+                scanline += 4 * fipPos.x;
+
+                scanline[FI_RGBA_RED] = static_cast<BYTE>(iClamp(color.r * 255.0f, 0, 255));
+                scanline[FI_RGBA_GREEN] = static_cast<BYTE>(iClamp(color.g * 255.0f, 0, 255));
+                scanline[FI_RGBA_BLUE] = static_cast<BYTE>(iClamp(color.b * 255.0f, 0, 255));
+                scanline[FI_RGBA_ALPHA] = static_cast<BYTE>(iClamp(color.a * 255.0f, 0, 255));
+            }
+            break;
+        }
+    }
+}
+
+void Image::set(const Point2int32& pos, const Color3& color) {
+    set(pos, Color4(color));
+}
+
+void Image::set(const Point2int32& pos, const Color4unorm8& color) {
+    Point2int32 fipPos(pos.x, m_image.getHeight() - pos.y - 1);
+
+    BYTE* scanline = m_image.getScanLine(fipPos.y);
+    switch (m_image.getImageType())
+    {
+        case FIT_BITMAP:
+        {
+            if (m_image.isGrayscale()) {
+                scanline[fipPos.x] = color.r.bits();
+            } else if (m_image.getBitsPerPixel() == 24) {
+                scanline += 3 * fipPos.x;
+
+                scanline[FI_RGBA_RED] = color.r.bits();
+                scanline[FI_RGBA_GREEN] = color.g.bits();
+                scanline[FI_RGBA_BLUE] = color.b.bits();
+            } else if (m_image.getBitsPerPixel() == 32) {
+                scanline += 4 * fipPos.x;
+
+                scanline[FI_RGBA_RED] = color.r.bits();
+                scanline[FI_RGBA_GREEN] = color.g.bits();
+                scanline[FI_RGBA_BLUE] = color.b.bits();
+                scanline[FI_RGBA_ALPHA] = color.a.bits();
+            }
+            break;
+        }
+    }
+}
+
+void Image::set(const Point2int32& pos, const Color3unorm8& color) {
+    set(pos, Color4unorm8(color, unorm8::fromBits(255)));
+}
 
 const ImageFormat* Image::determineImageFormat() const {
     debugAssert(m_image.isValid() && m_image.getImageType() != FIT_UNKNOWN);

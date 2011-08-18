@@ -1,4 +1,14 @@
+/**
+  \file G3D/ImageBuffer.h
+ 
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ 
+  \created 2011-08-18
+  \edited  2011-08-18
 
+  Copyright 2000-2011, Morgan McGuire.
+  All rights reserved.
+ */
 #ifndef G3D_IMAGEBUFFER_H
 #define G3D_IMAGEBUFFER_H
 
@@ -9,21 +19,21 @@
 namespace G3D {
 
 class ImageBuffer : public ReferenceCountedObject {
-public:
-    typedef ReferenceCountedPointer<ImageBuffer> Ref;
-
 private:
     void*               m_buffer;
     const ImageFormat*  m_format;
 
     int                 m_width;
     int                 m_height;
+    int                 m_stride;
 
-    bool                m_ownsBuffer;
+    MemoryManager*      m_memoryManager;
 
 public:
-    ImageBuffer(const ImageFormat* format, int width, int height);
-    ImageBuffer(const ImageFormat* format, int width, int height, void* buffer);
+    typedef ReferenceCountedPointer<ImageBuffer> Ref;
+
+    ImageBuffer(const ImageFormat* format, int width, int height, int stride, MemoryManager* memoryManager);
+    ImageBuffer(const ImageFormat* format, int width, int height, int stride, void* buffer);
 
     ~ImageBuffer();
 
@@ -31,11 +41,12 @@ public:
 
     int width() const                   { return m_width; }
     int height() const                  { return m_height; }
+    int stride() const                  { return m_stride; }
 
     void* buffer()                      { return m_buffer; }
     const void* buffer() const          { return m_buffer; }
 
-    bool ownsBuffer() const             { return m_ownsBuffer; }
+    bool ownsAllocation() const         { return m_memoryManager != NULL; }
 };
 
 } // namespace G3D

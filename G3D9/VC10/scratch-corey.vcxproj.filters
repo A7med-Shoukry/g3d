@@ -17,15 +17,9 @@
     <ClCompile Include="..\scratch\corey\Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scratch\corey\ImageBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\scratch\corey\Image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\scratch\corey\ImageBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

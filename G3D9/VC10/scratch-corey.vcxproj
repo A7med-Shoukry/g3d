@@ -81,12 +81,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\scratch\corey\Image.cpp" />
-    <ClCompile Include="..\scratch\corey\ImageBuffer.cpp" />
     <ClCompile Include="..\scratch\corey\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\scratch\corey\Image.h" />
-    <ClInclude Include="..\scratch\corey\ImageBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
