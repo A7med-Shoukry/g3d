@@ -169,6 +169,10 @@ void ArticulatedModel2::load(const Specification& specification) {
     }
     timer.after("parse file");
 
+    // If this model is very large, compact the vertex arrays to save RAM
+    // during the post-processing step
+    maybeCompactArrays();
+
     // Perform operations as demanded by the specification
     if (specification.scale != 1.0f) {
         ScaleTransformCallback transform(specification.scale);
@@ -180,7 +184,37 @@ void ArticulatedModel2::load(const Specification& specification) {
     // Compute missing elements (normals, tangents) of the part geometry, 
     // perform vertex welding, and recompute bounds.
     cleanGeometry(specification.cleanGeometrySettings);
+    maybeCompactArrays();
     timer.after("cleanGeometry");
+}
+
+
+void ArticulatedModel2::maybeCompactArrays() {
+    int numVertices = 0;
+    int numIndices = 0;
+
+    for (int p = 0; p < m_partArray.size(); ++p) {
+        Part* part = m_partArray[p];
+        numVertices += part->cpuVertexArray.size();
+        for (int m = 0; m < part->m_meshArray.size(); ++m) {
+            numIndices += part->m_meshArray[m]->cpuIndexArray.size();
+        }
+    }
+    
+    size_t vertexBytes = sizeof(CPUVertexArray::Vertex) * numVertices;
+    size_t indexBytes = sizeof(int) * numIndices;
+
+    if (vertexBytes + indexBytes > 5000000) {
+        // There's a lot of data in this model: compact it
+
+        for (int p = 0; p < m_partArray.size(); ++p) {
+            Part* part = m_partArray[p];
+            part->cpuVertexArray.vertex.trimToSize();
+            for (int m = 0; m < part->m_meshArray.size(); ++m) {
+                part->m_meshArray[m]->cpuIndexArray.trimToSize();
+            }
+        }
+    }
 }
 
 

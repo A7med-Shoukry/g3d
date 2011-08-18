@@ -418,9 +418,23 @@ public:
        data[n] = value;
    }
 
+
+   /** Resize this array to consume exactly the capacity required by its size.
+     \sa clear, resize, capacity, size
+     */
+   void trimToSize() {
+       if (size() != capacity()) {
+           int oldNum = numAllocated;
+           numAllocated = size();
+           realloc(oldNum);
+       }
+   }
+
     /** @param shrinkIfNecessary if false, memory will never be
       reallocated when the array shrinks.  This makes resizing much
-      faster but can waste memory. 
+      faster but can waste memory. Default = true.
+
+      \sa clear, trimToSize
     */
     void resize(int n, bool shrinkIfNecessary = true) {
         debugAssert(n >= 0);
@@ -469,15 +483,18 @@ public:
                   //
                   // These numbers are tweaked according to performance tests.
 
-                  float growFactor = 3.0;
+                  float growFactor = 3.0f;
 
                   int oldSizeBytes = numAllocated * sizeof(T);
-                  if (oldSizeBytes > 400000) {
-                      // Avoid bloat
-                      growFactor = 1.5;
+                  if (oldSizeBytes > 10000000) {
+                      // Conserve memory more tightly above 10 MB
+                      growFactor = 1.2f;
+                  } else if (oldSizeBytes > 400000) {
+                      // Avoid bloat above 400k
+                      growFactor = 1.5f;
                   } else if (oldSizeBytes > 64000) {
                       // This is what std:: uses at all times
-                      growFactor = 2.0;
+                      growFactor = 2.0f;
                   }
 
                   numAllocated = (num - numAllocated) + (int)(numAllocated * growFactor);

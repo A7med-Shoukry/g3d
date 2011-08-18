@@ -32,7 +32,7 @@ class VertexRange;
 class CPUVertexArray {
 public:
 
-    /** \brief Packed vertex attributes. 
+    /** \brief Packed vertex attributes. 48 bytes per vertex.
     
     \sa Part::cpuVertexArray */
     class Vertex {

@@ -1285,6 +1285,11 @@ public:
         RealPtr ptr = ::malloc(USERSIZE_TO_REALSIZE(bytes));
 
         if (ptr == NULL) {
+#           ifdef G3D_WIN32
+                // Check for memory corruption
+                alwaysAssertM(_CrtCheckMemory() == TRUE, "Heap corruption detected.");
+#           endif
+
             // Flush memory pools to try and recover space
             flushPool(smallPool, smallPoolSize);
             flushPool(medPool, medPoolSize);

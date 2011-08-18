@@ -667,6 +667,9 @@ protected:
 
     Part* part(const Instruction::Identifier& partIdent);
 
+    /** If this model's memory footprint is large, trim all of the internal arrays to size. */
+    void maybeCompactArrays();
+
     /** Called from preprocess.  
 
         \param centerY If false, move the base to the origin instead

@@ -180,14 +180,14 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
         git.isValid();
         ++git) {
 
-        const ParseOBJ::Group::Ref& group = git->value;
+        ParseOBJ::Group::Ref& group = git->value;
 
         // For each mesh
         for (ParseOBJ::MeshTable::Iterator mit = group->meshTable.begin();
             mit.isValid();
             ++mit) {
 
-            const ParseOBJ::Mesh::Ref& srcMesh = mit->value;
+            ParseOBJ::Mesh::Ref& srcMesh = mit->value;
 
             // Construct the AModel::Mesh for this group+mesh combination
             Mesh* mesh = addMesh(group->name + "/" + srcMesh->material->name, part);
@@ -201,7 +201,7 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
             }
 
             // For each face
-            const Array<ParseOBJ::Face>& faceArray = srcMesh->faceArray;
+            Array<ParseOBJ::Face>& faceArray = srcMesh->faceArray;
             for (int f = 0; f < faceArray.size(); ++f) {
                 const ParseOBJ::Face& face = faceArray[f];
 
@@ -242,6 +242,9 @@ void ArticulatedModel2::loadOBJ(const Specification& specification) {
                     mesh->cpuIndexArray.append(prevNumVertices, i + 1, i + 2);
                 } // for each triangle in the face
             } // for each face
+
+            // Remove old face data from memory to free space
+            faceArray.clear(true);
         }
     }
 
