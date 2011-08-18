@@ -87,12 +87,14 @@ public:
         return Ray(point, direction);
     }
     
-    /** Advances the origin along the direction by @a distance */
-    Ray bump(float distance) const {
+    /** Returns a new ray which has the same direction but an origin
+        advanced along direction by @a distance */
+    Ray bumpedRay(float distance) const {
         return Ray(m_origin + m_direction * distance, m_direction);
     }
 
-    /** Advances the origin along the @a bumpDirection by @a distance and returns the new ray*/
+    /** Returns a new ray which has the same direction but an origin
+        advanced by \a distance * \a bumpDirection */
     Ray bump(float distance, const Vector3& bumpDirection) const {
         return Ray(m_origin + bumpDirection * distance, m_direction);
     }
