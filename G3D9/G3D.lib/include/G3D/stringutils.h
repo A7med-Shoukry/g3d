@@ -34,7 +34,7 @@ void parseCommaSeparated(const std::string s, Array<std::string>& array, bool st
 inline size_t findSlash(const std::string& f, size_t start = 0) {
     size_t i = f.find('/', start);
     size_t j = f.find('\\', start);
-    if (((i != -1) && (i < j)) || (j == -1)) {
+    if ((i != std::string::npos) && (i < j)) {
         return i;
     } else {
         return j;

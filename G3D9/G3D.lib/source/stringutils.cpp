@@ -270,7 +270,7 @@ std::string trimWhitespace(const std::string& s) {
 
     size_t right = s.length() - 1;
     // Trim from right
-    while ((right > (int)left) && iswspace(s[right])) {
+    while ((right > left) && iswspace(s[right])) {
         --right;
     }
     

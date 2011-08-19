@@ -184,7 +184,7 @@ public:
    Array& operator=(const Array& other) {
        debugAssert(num >= 0);
        resize(other.num);       
-       for (size_t i = 0; i < num; ++i) {
+       for (int i = 0; i < (int)num; ++i) {
            data[i] = other[i];
        }
        debugAssert(num >= 0);
@@ -815,19 +815,21 @@ public:
     Performs bounds checks in debug mode
     */
    inline T& operator[](int n) {
-        debugAssertM((n >= 0) && (n < (int)num), format("Array index out of bounds. n = %d, size() = %d", n, num));
+        debugAssertM((n >= 0) && (n < (int)num),
+                     format("Array index out of bounds. n = %d, size() = %d", n, (int)num));
         debugAssert(data!=NULL);
         return data[n];
    }
 
    inline T& operator[](uint32 n) {
-        debugAssertM(n < (uint32)num, format("Array index out of bounds. n = %d, size() = %d", n, num));
-        return data[n];
+       debugAssertM(n < (uint32)num, format("Array index out of bounds. n = %d, size() = %d",
+                                            n, (int)num));
+       return data[n];
    }
    
    inline T& operator[](uint64 n) {
-        debugAssertM(n < (uint64)num, format("Array index out of bounds. n = %d, size() = %d", n, num));
-        return data[n];
+       debugAssertM(n < (uint64)num, format("Array index out of bounds. n = %d, size() = %d", n, (int)num));
+       return data[n];
    }
 
    /**

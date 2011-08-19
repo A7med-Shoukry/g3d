@@ -102,7 +102,7 @@ void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::s
             // additional subdirectories.
 
             size_t start = pathInsideZipfile.size();
-            if ((int(name.length()) > start) && isSlash(name[start])) {
+            if ((name.length() > start) && isSlash(name[start])) {
                 ++start;
             }
 
@@ -994,7 +994,7 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
     }
 
     // Paste on the remainder of the source path
-    if (start < int(path.size())) {
+    if (start < path.size()) {
         result += path.substr(start);
     }
 

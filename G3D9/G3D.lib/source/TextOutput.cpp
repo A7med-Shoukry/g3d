@@ -277,12 +277,12 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
 
             // Search backwards (from current character), looking for a space.
             while ((k < maxLookBackward) &&
-                (lastSpace > 0) &&
-                (! ((data[lastSpace] == ' ') && unquotedSpace))) {
+                   (lastSpace > 0) &&
+                   (! ((data[(int)lastSpace] == ' ') && unquotedSpace))) {
                 --lastSpace;
                 ++k;
 
-                if ((data[lastSpace] == '\"') && !option.allowWordWrapInsideDoubleQuotes) {
+                if ((data[(int)lastSpace] == '\"') && !option.allowWordWrapInsideDoubleQuotes) {
                     unquotedSpace = ! unquotedSpace;
                 }
             }
@@ -312,7 +312,7 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
                 size_t firstSpace = lastSpace;
                 while ((k < maxLookBackward) &&
                     (firstSpace > 0) &&
-                    (data[firstSpace] == ' ')) {
+                       (data[(int)firstSpace] == ' ')) {
                     --firstSpace;
                     ++k;
                 }
@@ -337,7 +337,7 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
                     // Copy over the characters that should be saved
                     Array<char> temp;
                     for (size_t j = lastSpace + 1; j < (uint32)data.size(); ++j) {
-                        char c = data[j];
+                        char c = data[(int)j];
 
                         if (c == '\"') {
                             // Undo changes to quoting (they will be re-done
@@ -353,7 +353,7 @@ void TextOutput::wordWrapIndentAppend(const std::string& str) {
 
                     // Write them back
                     for (size_t j = 0; j < (uint32)temp.size(); ++j) {
-                        indentAppend(temp[j]);
+                        indentAppend(temp[(int)j]);
                     }
 
                     // We are now free to continue adding from the

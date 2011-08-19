@@ -1480,7 +1480,7 @@ void System::free(void* p) {
 
 void* System::alignedMalloc(size_t bytes, size_t alignment) {
 
-    alwaysAssertM(isPow2(alignment), "alignment must be a power of 2");
+    alwaysAssertM(isPow2((uint32)alignment), "alignment must be a power of 2");
 
     // We must align to at least a word boundary.
     alignment = max(alignment, sizeof(void *));
