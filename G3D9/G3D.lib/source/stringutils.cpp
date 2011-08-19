@@ -12,6 +12,14 @@
 #include "G3D/BinaryInput.h"
 #include <algorithm>
 
+#ifdef G3D_WIN32
+extern "C" {    
+    // Define functions for ffmpeg since we don't link in gcc's c library
+    extern int strncasecmp(const char *string1, const char *string2, size_t count) { return _strnicmp(string1, string2, count); }
+    extern int strcasecmp(const char *string1, const char *string2) { return _stricmp(string1, string2); }
+}
+#endif
+
 namespace G3D {
 
 #ifdef _MSC_VER
