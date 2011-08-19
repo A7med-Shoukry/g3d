@@ -1,18 +1,19 @@
 G3D 9.xx Build System Instructions
 
 To properly run the G3D build scripts you will need the following
-software.  It is all available for free and comes pre-installed on
-most OS X, Linux, and FreeBSD systems:
+software.  It is all available for free on Windows, and comes pre-installed on
+most OS X, Linux, and FreeBSD systems.
 
 * Python 3.0 or later (http://www.python.org) 
 * On OS X, Linux, or FreeBSD you will need g++ and gcc 4.0 or later.
   - On OS X, get this by installing Xcode from http://developer.apple.com
 * On Windows you will need Visual Studio 2010,
-   either the full or Express version (http://www.microsoft.com/express/downloads/#2010-Visual-CPP)
+   either the Professional or Express version (http://www.microsoft.com/express/downloads/#2010-Visual-CPP) and
+   the Windows SDK (http://msdn.microsoft.com/en-us/windows/bb980924)
 
 To build the documentation target, the following are also required:
 
-* Doxygen 1.7.2 or later (http://www.doxygen.org)
+* Doxygen 1.7.3 or later (http://www.doxygen.org)
   - on OS X, add /Applications/Doxygen.app/Contents/Resources/ to your PATH variable
 * Latex (on Windows: http://miktex.org/)
 * Ghostscript (http://pages.cs.wisc.edu/~ghost/)

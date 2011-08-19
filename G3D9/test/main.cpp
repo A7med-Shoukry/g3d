@@ -866,7 +866,7 @@ int main(int argc, char* argv[]) {
     testBox2D();
     printf("  passed\n");
 
-    testColor3uint8Array();
+    testColor3unorm8Array();
     printf("  passed\n");
     testglFormatOf();
     printf("  passed\n");

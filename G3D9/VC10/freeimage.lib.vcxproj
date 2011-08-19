@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -20,7 +28,18 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -32,7 +51,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -40,13 +65,25 @@
     <IncludePath>$(SolutionDir)..\freeimage.lib\source\libRawLite\src;$(SolutionDir)..\freeimage.lib\source\LibRawLite\internal;$(SolutionDir)..\freeimage.lib\source\LibRawLite\dcraw;$(SolutionDir)..\freeimage.lib\source\LibRawLite;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Imath;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmThread;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmImf;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Iex;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Half;$(SolutionDir)..\freeimage.lib\source\OpenEXR;$(SolutionDir)..\freeimage.lib\source\LibOpenJPEG;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\source\LibTIFF;$(SolutionDir)..\freeimage.lib\source\LibPNG;$(SolutionDir)..\freeimage.lib\source\LibMNG;$(SolutionDir)..\freeimage.lib\source\LibJPEG;$(SolutionDir)..\freeimage.lib\source\FreeImageToolkit;$(SolutionDir)..\freeimage.lib\source\Metadata;$(SolutionDir)..\freeimage.lib\source;$(SolutionDir)..\freeimage.lib\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <TargetName>freeimaged</TargetName>
-    <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)$(PlatformArchitecture)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)..\freeimage.lib\source\libRawLite\src;$(SolutionDir)..\freeimage.lib\source\LibRawLite\internal;$(SolutionDir)..\freeimage.lib\source\LibRawLite\dcraw;$(SolutionDir)..\freeimage.lib\source\LibRawLite;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Imath;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmThread;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmImf;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Iex;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Half;$(SolutionDir)..\freeimage.lib\source\OpenEXR;$(SolutionDir)..\freeimage.lib\source\LibOpenJPEG;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\source\LibTIFF;$(SolutionDir)..\freeimage.lib\source\LibPNG;$(SolutionDir)..\freeimage.lib\source\LibMNG;$(SolutionDir)..\freeimage.lib\source\LibJPEG;$(SolutionDir)..\freeimage.lib\source\FreeImageToolkit;$(SolutionDir)..\freeimage.lib\source\Metadata;$(SolutionDir)..\freeimage.lib\source;$(SolutionDir)..\freeimage.lib\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
+    <TargetName>freeimage-64d</TargetName>
+    <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)$(PlatformArchitecture)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)..\freeimage.lib\source\libRawLite\src;$(SolutionDir)..\freeimage.lib\source\LibRawLite\internal;$(SolutionDir)..\freeimage.lib\source\LibRawLite\dcraw;$(SolutionDir)..\freeimage.lib\source\LibRawLite;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Imath;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmThread;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmImf;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Iex;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Half;$(SolutionDir)..\freeimage.lib\source\OpenEXR;$(SolutionDir)..\freeimage.lib\source\LibOpenJPEG;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\source\LibTIFF;$(SolutionDir)..\freeimage.lib\source\LibPNG;$(SolutionDir)..\freeimage.lib\source\LibMNG;$(SolutionDir)..\freeimage.lib\source\LibJPEG;$(SolutionDir)..\freeimage.lib\source\FreeImageToolkit;$(SolutionDir)..\freeimage.lib\source\Metadata;$(SolutionDir)..\freeimage.lib\source;$(SolutionDir)..\freeimage.lib\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <TargetName>freeimage</TargetName>
-    <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)$(PlatformArchitecture)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)..\freeimage.lib\source\libRawLite\src;$(SolutionDir)..\freeimage.lib\source\LibRawLite\internal;$(SolutionDir)..\freeimage.lib\source\LibRawLite\dcraw;$(SolutionDir)..\freeimage.lib\source\LibRawLite;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Imath;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmThread;$(SolutionDir)..\freeimage.lib\source\OpenEXR\IlmImf;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Iex;$(SolutionDir)..\freeimage.lib\source\OpenEXR\Half;$(SolutionDir)..\freeimage.lib\source\OpenEXR;$(SolutionDir)..\freeimage.lib\source\LibOpenJPEG;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\source\LibTIFF;$(SolutionDir)..\freeimage.lib\source\LibPNG;$(SolutionDir)..\freeimage.lib\source\LibMNG;$(SolutionDir)..\freeimage.lib\source\LibJPEG;$(SolutionDir)..\freeimage.lib\source\FreeImageToolkit;$(SolutionDir)..\freeimage.lib\source\Metadata;$(SolutionDir)..\freeimage.lib\source;$(SolutionDir)..\freeimage.lib\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
+    <TargetName>freeimage-64</TargetName>
+    <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)$(PlatformArchitecture)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -65,7 +102,47 @@
       <Message>Copying Headers</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PreprocessorDefinitions>OPJ_STATIC;LIBRAW_NODLL;_CRT_SECURE_NO_WARNINGS;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\include $(OutDir)\..\include</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Copying Headers</Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>OPJ_STATIC;LIBRAW_NODLL;_CRT_SECURE_NO_WARNINGS;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\include $(OutDir)\..\include</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Copying Headers</Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>MaxSpeed</Optimization>

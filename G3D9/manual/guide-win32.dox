@@ -25,10 +25,10 @@ href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.
 Visual Studio 10 (officially known as Visual C++ 2010 Express Edition)
 is available as a free download from Microsoft at <a
 href="http://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a>.
+For 64-bit application development, you will also need to install the free Windows SDK from
+<a href="http://msdn.microsoft.com/en-us/windows/bb980924">http://msdn.microsoft.com/en-us/windows/bb980924</a>.
 Note that there is also a profession
-edition of Visual Studio 2010 that can be purchased.  G3D is compatible with VC2008 and many previous editions, but not supported and you'll
-have to build your own copy of the library.  We recommend that you
-instead use the latest (free!) version of Visual Studio.
+edition of Visual Studio 2010 that can be purchased and includes 64-bit support directly.
 \endhtmlonly
 </p>
 
