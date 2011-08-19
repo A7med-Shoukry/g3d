@@ -119,7 +119,7 @@ ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const Instruction::Identifier& 
     }
 
     Part* partPtr = part(partIdent);
-
+    
     if (partPtr != NULL) {
         for (int i = 0; i < partPtr->m_meshArray.size(); ++i) {
             if (partPtr->m_meshArray[i]->name == meshIdent.name) {

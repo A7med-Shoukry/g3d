@@ -312,10 +312,11 @@ public:
                 size[a] = 0;
             }
 
-            debugAssertM(count[a] == var[a]->m_numElements, 
+            debugAssertM(count[a] == (int)var[a]->m_numElements, 
                 "Updated arrays must have the same size they were created with.");
             if (a > 1) {
-                debugAssertM((var[a]->m_pointer == (uint8*)var[a - 1]->m_pointer + size[a - 1]) || ((count[a] == 0) && (var[a]->m_pointer == 0)),
+                debugAssertM((var[a]->m_pointer == (uint8*)var[a - 1]->m_pointer + size[a - 1]) || 
+                             ((count[a] == 0) && (var[a]->m_pointer == 0)),
                              "Updated interleaved arrays must be the same set and"
                              " order as original interleaved arrays.");
             }
@@ -323,7 +324,7 @@ public:
 
         uint8* dstPtr = (uint8*)var1.mapBuffer(GL_WRITE_ONLY);
 
-        for (int i = 0; i < N; ++i) {
+        for (size_t i = 0; i < N; ++i) {
             for (int a = 0; a < 5; ++a) {
                 if (count[a] > 0) {
                     System::memcpy(dstPtr, src[a] + size[a] * i, size[a]);
@@ -382,7 +383,7 @@ public:
                        VertexRange&             var5,
                        VertexBufferRef          area) {
 
-        size_t N = max(src5.size(),
+        int N = max(src5.size(),
                     max(max(src1.size(), src2.size()),
                          max(src3.size(), src4.size())));
 

@@ -261,7 +261,7 @@ void VertexRange::uploadToCardStride
     uint8* dstPointer = (uint8*)mapBuffer(GL_WRITE_ONLY) + (int)dstPtrOffsetBytes;
 
     // Copy elements
-    for (int i = 0; i < srcElements; ++i) {
+    for (int i = 0; i < (int)srcElements; ++i) {
         System::memcpy(dstPointer, srcPointer, srcSize);
         srcPointer = (uint8*)srcPointer + srcStride;
         dstPointer = (uint8*)dstPointer + dstStrideBytes;

@@ -424,7 +424,7 @@ public:
      */
    void trimToSize() {
        if (size() != capacity()) {
-           int oldNum = numAllocated;
+           size_t oldNum = numAllocated;
            numAllocated = size();
            realloc(oldNum);
        }
@@ -740,8 +740,8 @@ public:
        sequence, a value at least as large as size()" 
        For compatibility with std::vector.
    */
-   size_t capacity() const {
-       return numAllocated;
+    int capacity() const {
+        return (int)numAllocated;
    }
 
    /** 
