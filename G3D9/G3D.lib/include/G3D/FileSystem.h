@@ -517,7 +517,7 @@ public:
     static bool matches(const std::string& path, const std::string& pattern, bool caseSensitive = true);
 
     /** Replaces characters that are illegal in a filename with legal equivalents.*/
-    static std::string makeLegalFilename(const std::string& f, int maxLength = 100000);
+    static std::string makeLegalFilename(const std::string& f, size_t maxLength = 100000);
 };
 
 } // namespace G3D

@@ -88,20 +88,20 @@ const int SORT_DECREASING = -1;
 
  \sa G3D::SmallArray
  */
-template <class T, int MIN_ELEMENTS = 10, size_t MIN_BYTES = 32>
+template <class T, size_t MIN_ELEMENTS = 10, size_t MIN_BYTES = 32>
 class Array {
 private:
     /** 0...num-1 are initialized elements, num...numAllocated-1 are not */
     T*                  data;
 
-    int                 num;
-    int                 numAllocated;
+    size_t              num;
+    size_t              numAllocated;
 
     MemoryManager::Ref  m_memoryManager;
 
     /** \param n Number of elements
     */
-    void init(int n, const MemoryManager::Ref& m) {
+    void init(size_t n, const MemoryManager::Ref& m) {
         m_memoryManager = m;
         debugAssert(n >= 0);
         this->num = 0;
@@ -116,7 +116,7 @@ private:
 
     void _copy(const Array &other) {
         init(other.num, MemoryManager::create());
-        for (int i = 0; i < num; i++) {
+        for (size_t i = 0; i < num; i++) {
             data[i] = other.data[i];
         }
     }
@@ -141,7 +141,7 @@ private:
      and then copies at most oldNum elements from the old array to it.  Destructors are
      called for oldNum elements of the old array.
      */
-    void realloc(int oldNum) {
+    void realloc(size_t oldNum) {
          T* oldData = data;
          
          // The allocation is separate from the constructor invocation because we don't want 
@@ -153,7 +153,7 @@ private:
          alwaysAssertM(data, "Memory manager returned NULL: out of memory?");
 
          // Call the copy constructors
-         {const int N = G3D::min(oldNum, numAllocated);
+         {const size_t N = G3D::min(oldNum, numAllocated);
           const T* end = data + N;
           T* oldPtr = oldData;
           for (T* ptr = data; ptr < end; ++ptr, ++oldPtr) {
@@ -184,7 +184,7 @@ public:
    Array& operator=(const Array& other) {
        debugAssert(num >= 0);
        resize(other.num);       
-       for (int i = 0; i < num; ++i) {
+       for (size_t i = 0; i < num; ++i) {
            data[i] = other[i];
        }
        debugAssert(num >= 0);
@@ -192,8 +192,8 @@ public:
    }
 
    Array& operator=(const std::vector<T>& other) {
-       resize((int)other.size());
-       for (int i = 0; i < num; ++i) {
+       resize(other.size());
+       for (size_t i = 0; i < num; ++i) {
            data[i] = other[i];
        }
        return *this;
@@ -342,7 +342,7 @@ public:
     */
    ~Array() {
        // Invoke the destructors on the elements
-       for (int i = 0; i < num; i++) {
+       for (size_t i = 0; i < num; i++) {
            (data + i)->~T();
        }
        
@@ -382,7 +382,7 @@ public:
     Number of elements in the array.
     */
    inline int size() const {
-      return num;
+      return (int)num;
    }
 
    /**
@@ -399,7 +399,7 @@ public:
     */
    void fastRemove(int index, bool shrinkIfNecessary = false) {
        debugAssert(index >= 0);
-       debugAssert(index < num);
+       debugAssert(index < (int)num);
        data[index] = data[num - 1];
        resize(size() - 1, shrinkIfNecessary);
    }
@@ -412,7 +412,7 @@ public:
        // Add space for the extra element
        resize(num + 1, false);
 
-       for (int i = num - 1; i > n; --i) {
+       for (size_t i = (size_t)(num - 1); i > (size_t)n; --i) {
            data[i] = data[i - 1];
        }
        data[n] = value;
@@ -436,22 +436,22 @@ public:
 
       \sa clear, trimToSize
     */
-    void resize(int n, bool shrinkIfNecessary = true) {
-        debugAssert(n >= 0);
+    void resize(size_t n, bool shrinkIfNecessary = true) {
+        debugAssertM(n < 0xFFFFFFFF, "This implementation does not support arrays with more than 2^32 elements, although the size in memory may be larger.");
         if (num == n) {
             return;
         }
 
-        int oldNum = num;
+        size_t oldNum = num;
         num = n;
 
         // Call the destructors on newly hidden elements if there are any
-        for (int i = num; i < oldNum; ++i) {
+        for (size_t i = num; i < oldNum; ++i) {
             (data + i)->~T();
         }
         
         // Once allocated, always maintain MIN_ELEMENTS elements or 32 bytes, whichever is higher.
-        const int minSize = std::max(MIN_ELEMENTS, (int)(MIN_BYTES / sizeof(T)));
+        const size_t minSize = G3D::max(MIN_ELEMENTS, (size_t)(MIN_BYTES / sizeof(T)));
 
         if ((MIN_ELEMENTS == 0) && (MIN_BYTES == 0) && (n == 0) && shrinkIfNecessary) {
             // Deallocate the array completely
@@ -483,9 +483,9 @@ public:
                   //
                   // These numbers are tweaked according to performance tests.
 
-                  float growFactor = 3.0f;
+                  double growFactor = 3.0f;
 
-                  int oldSizeBytes = numAllocated * sizeof(T);
+                  size_t oldSizeBytes = numAllocated * sizeof(T);
                   if (oldSizeBytes > 10000000) {
                       // Conserve memory more tightly above 10 MB
                       growFactor = 1.2f;
@@ -497,7 +497,7 @@ public:
                       growFactor = 2.0f;
                   }
 
-                  numAllocated = (num - numAllocated) + (int)(numAllocated * growFactor);
+                  numAllocated = (num - numAllocated) + (size_t)(numAllocated * growFactor);
 
                   if (numAllocated < minSize) {
                       numAllocated = minSize;
@@ -512,14 +512,14 @@ public:
 
           // Only copy over old elements that still remain after resizing
           // (destructors were called for others if we're shrinking)
-          realloc(iMin(num, oldNum));
+          realloc(min(num, oldNum));
 
       }
 
       // Call the constructors on newly revealed elements.
       // Do not use parens because we don't want the intializer
       // invoked for POD types.
-      for (int i = oldNum; i < num; ++i) {
+      for (size_t i = oldNum; i < num; ++i) {
           new (data + i) T;
       }
    }
@@ -694,12 +694,12 @@ public:
     */
    void append(const Array<T>& array) {
        debugAssert(this != &array);
-       int oldNum = num;
-       int arrayLength = array.length();
+       size_t oldNum = num;
+       size_t arrayLength = array.length();
 
        resize(num + arrayLength, false);
 
-       for (int i = 0; i < arrayLength; i++) {
+       for (size_t i = 0; i < arrayLength; i++) {
            data[oldNum + i] = array.data[i];
        }
    }
@@ -815,13 +815,18 @@ public:
     Performs bounds checks in debug mode
     */
    inline T& operator[](int n) {
-        debugAssertM((n >= 0) && (n < num), format("Array index out of bounds. n = %d, size() = %d", n, num));
+        debugAssertM((n >= 0) && (n < (int)num), format("Array index out of bounds. n = %d, size() = %d", n, num));
         debugAssert(data!=NULL);
         return data[n];
    }
 
-   inline T& operator[](unsigned int n) {
-        debugAssertM(n < (unsigned int)num, format("Array index out of bounds. n = %d, size() = %d", n, num));
+   inline T& operator[](uint32 n) {
+        debugAssertM(n < (uint32)num, format("Array index out of bounds. n = %d, size() = %d", n, num));
+        return data[n];
+   }
+   
+   inline T& operator[](uint64 n) {
+        debugAssertM(n < (uint64)num, format("Array index out of bounds. n = %d, size() = %d", n, num));
         return data[n];
    }
 
@@ -829,13 +834,19 @@ public:
     Performs bounds checks in debug mode
     */
     inline const T& operator[](int n) const {
-        debugAssert((n >= 0) && (n < num));
+        debugAssert((n >= 0) && (n < (int)num));
         debugAssert(data!=NULL);
         return data[n];
     }
 
-    inline const T& operator[](unsigned int n) const {
-        debugAssert((n < (unsigned int)num));
+    inline const T& operator[](uint32 n) const {
+        debugAssert((n < (uint32)num));
+        debugAssert(data!=NULL);
+        return data[n];
+    }
+
+    inline const T& operator[](uint64 n) const {
+        debugAssert((n < (uint64)num));
         debugAssert(data!=NULL);
         return data[n];
     }
@@ -914,7 +925,7 @@ public:
     and sets the size to zero.
     */
     void invokeDeleteOnAllElements() {
-        for (int i = 0; i < num; i++) {
+        for (size_t i = 0; i < num; i++) {
             delete data[i];
         }
         resize(0);
@@ -943,7 +954,7 @@ public:
      not found.
      */
     int findIndex(const T& value) const {
-        for (int i = 0; i < num; ++i) {
+        for (size_t i = 0; i < num; ++i) {
             if (data[i] == value) {
                 return i;
             }
@@ -991,8 +1002,8 @@ public:
     }
 
     void remove(int index, int count = 1) {
-        debugAssert((index >= 0) && (index < num));
-        debugAssert((count > 0) && (index + count <= num));
+        debugAssert((index >= 0) && (index < (int)num));
+        debugAssert((count > 0) && (index + count <= (int)num));
         
         remove(begin() + index, count);
     }
@@ -1003,8 +1014,8 @@ public:
     void reverse() {
         T temp;
         
-        int n2 = num / 2;
-        for (int i = 0; i < n2; ++i) {
+        size_t n2 = num / 2;
+        for (size_t i = 0; i < n2; ++i) {
             temp = data[num - 1 - i];
             data[num - 1 - i] = data[i];
             data[i] = temp;
@@ -1150,7 +1161,7 @@ return( lhs < rhs? true : false );
         // Form a table of buckets for lt, eq, and gt
         Array<T>* bucket[3] = {&ltArray, &eqArray, &gtArray};
 
-        for (int i = 0; i < num; ++i) {
+        for (size_t i = 0; i < num; ++i) {
             int c = comparator(partitionElement, data[i]);
             debugAssertM(c >= -1 && c <= 1, "Comparator returned an illegal value.");
 

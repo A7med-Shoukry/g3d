@@ -1,10 +1,10 @@
 /**
- @file stringutils.cpp
+ \file stringutils.cpp
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2000-09-09
- @edited  2008-01-10
+ \created 2000-09-09
+ \edited  2011-08-20
 */
 
 #include "G3D/platform.h"
@@ -64,7 +64,7 @@ void parseCommaSeparated(const std::string s, Array<std::string>& array, bool st
     if (stripQuotes) {
         for (int i = 0; i < array.length(); ++i) {
             std::string& t = array[i];
-            int L = t.length();
+            size_t L = t.length();
             if ((L > 1) && (t[0] == quote) && (t[L - 1] == quote)) {
                 if ((L > 6)  && (t[1] == quote) && (t[2] == quote) && (t[L - 3] == quote) && (t[L - 2] == quote)) {
                     // Triple-quote
@@ -100,9 +100,9 @@ bool endsWith(
     const std::string& pattern) {
 
     if (test.size() >= pattern.size()) {
-        int te = test.size() - 1;
-        int pe = pattern.size() - 1;
-        for (int i = pattern.size() - 1; i >= 0; --i) {
+        size_t te = test.size() - 1;
+        size_t pe = pattern.size() - 1;
+        for (int i = (int)pattern.size() - 1; i >= 0; --i) {
             if (pattern[pe - i] != test[te - i]) {
                 return false;
             }
@@ -256,9 +256,11 @@ std::string stringJoin(
 }
 
 
-std::string trimWhitespace(
-    const std::string&              s) {
+std::string trimWhitespace(const std::string& s) {
 
+    if (s.length() == 0) {
+        return s;
+    }
     size_t left = 0;
     
     // Trim from left
@@ -266,7 +268,7 @@ std::string trimWhitespace(
         ++left;
     }
 
-    int right = s.length() - 1;
+    size_t right = s.length() - 1;
     // Trim from right
     while ((right > (int)left) && iswspace(s[right])) {
         --right;

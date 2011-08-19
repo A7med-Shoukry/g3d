@@ -171,7 +171,7 @@ public:
 
     /** Returns a (relatively) unique integer for this object */
     uint32 hashCode() const {
-        return (v0.hashCode() << 20) + (e1.hashCode() << 10) + e2.hashCode();
+        return (uint32)((v0.hashCode() << 20) + (e1.hashCode() << 10) + e2.hashCode());
     }
 
     bool operator==(const Tri& t) const {

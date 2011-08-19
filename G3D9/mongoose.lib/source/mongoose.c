@@ -1493,7 +1493,7 @@ push(FILE *fp, SOCKET sock, SSL *ssl, const char *buf, uint64_t len)
 		if (ssl != NULL) {
 			n = SSL_write(ssl, buf + sent, k);
 		} else if (fp != NULL) {
-			n = fwrite(buf + sent, 1, k, fp);
+			n = (int)fwrite(buf + sent, 1, k, fp);
 			if (ferror(fp))
 				n = -1;
 		} else {
@@ -1521,7 +1521,7 @@ pull(FILE *fp, SOCKET sock, SSL *ssl, char *buf, int len)
 	if (ssl != NULL) {
 		nread = SSL_read(ssl, buf, len);
 	} else if (fp != NULL) {
-		nread = fread(buf, 1, (size_t) len, fp);
+		nread = (int)fread(buf, 1, (size_t) len, fp);
 		if (ferror(fp))
 			nread = -1;
 	} else {
@@ -2710,7 +2710,7 @@ send_opened_file_stream(struct mg_connection *conn, FILE *fp, uint64_t len)
 			to_read = (int) len;
 
 		/* Read from file, exit the loop on error */
-		if ((num_read = fread(buf, 1, to_read, fp)) == 0)
+		if ((num_read = (int)fread(buf, 1, to_read, fp)) == 0)
 			break;
 
 		/* Send read bytes to the client, exit the loop on error */

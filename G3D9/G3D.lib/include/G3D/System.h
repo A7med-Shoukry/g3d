@@ -447,20 +447,31 @@ public:
 
 
 #ifdef _MSC_VER
-    inline uint64 System::getCycleCount() {
-        uint32 timehi, timelo;
+#   ifdef _M_IX86
+        // 32-bit
+        inline uint64 System::getCycleCount() {
+            uint32 timehi, timelo;
 
-        // Use the assembly instruction rdtsc, which gets the current
-        // cycle count (since the process started) and puts it in edx:eax.
-        __asm
-            {
-                rdtsc;
-                mov timehi, edx;
-                mov timelo, eax;
-            }
+            // Use the assembly instruction rdtsc, which gets the current
+            // cycle count (since the process started) and puts it in edx:eax.
+            __asm
+                {
+                    rdtsc;
+                    mov timehi, edx;
+                    mov timelo, eax;
+                }
 
-        return ((uint64)timehi << 32) + (uint64)timelo;
-    }
+            return ((uint64)timehi << 32) + (uint64)timelo;
+        }
+#   else
+        // 64-bit
+        inline uint64 System::getCycleCount() {
+            LARGE_INTEGER now;
+            QueryPerformanceCounter(&now);
+            return now.QuadPart;
+        }
+
+#   endif
 
 #elif defined(G3D_LINUX)
 

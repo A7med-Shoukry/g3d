@@ -110,7 +110,7 @@ std::string readWholeFile(const std::string& filename) {
         debugAssert(buffer);
         FILE* f = FileSystem::fopen(filename.c_str(), "rb");
         debugAssert(f);
-        int ret = fread(buffer, 1, length, f);
+        int64 ret = fread(buffer, 1, length, f);
 	    debugAssert(ret == length);(void)ret;
         FileSystem::fclose(f);
 
@@ -503,7 +503,7 @@ void parseFilename(
 
         if (i != std::string::npos) {
             // Make sure it is after the last slash!
-            size_t j = iMax(f.rfind('/'), f.rfind('\\'));
+            size_t j = max(f.rfind('/'), f.rfind('\\'));
             if ((j == std::string::npos) || (i > j)) {
                 ext = f.substr(i + 1, f.size() - i - 1);
                 f = f.substr(0, i);
@@ -514,7 +514,7 @@ void parseFilename(
     // Pull the basename off
     {
         // Find the last slash
-        size_t i = iMax(f.rfind('/'), f.rfind('\\'));
+        size_t i = max(f.rfind('/'), f.rfind('\\'));
         
         if (i == std::string::npos) {
             
@@ -547,7 +547,7 @@ void parseFilename(
             j = f.size();
         }
 
-        cur = iMin(i, j);
+        cur = min(i, j);
 
         if (cur == std::string::npos) {
             cur = f.size();
@@ -807,21 +807,21 @@ void getDirs(
 
 
 std::string filenameBaseExt(const std::string& filename) {
-    int i = filename.rfind("/");
-    int j = filename.rfind("\\");
+    size_t i = filename.rfind("/");
+    size_t j = filename.rfind("\\");
 
-    if ((j > i) && (j >= 0)) {
+    if ((j > i) && (j != std::string::npos)) {
         i = j;
     }
 
 #   ifdef G3D_WIN32
         j = filename.rfind(":");
-        if ((i == -1) && (j >= 0)) {
+        if ((i == std::string::npos) && (j != std::string::npos)) {
             i = j;
         }
 #   endif
 
-    if (i == -1) {
+    if (i == std::string::npos) {
         return filename;
     } else {
         return filename.substr(i + 1, filename.length() - i);
@@ -841,8 +841,8 @@ std::string filenameBase(const std::string& s) {
 
 
 std::string filenameExt(const std::string& filename) {
-    int i = filename.rfind(".");
-    if (i >= 0) {
+    size_t i = filename.rfind(".");
+    if (i != std::string::npos) {
         return filename.substr(i + 1, filename.length() - i);
     } else {
         return "";
@@ -851,21 +851,21 @@ std::string filenameExt(const std::string& filename) {
 
 
 std::string filenamePath(const std::string& filename) {
-    int i = filename.rfind("/");
-    int j = filename.rfind("\\");
+    size_t i = filename.rfind("/");
+    size_t j = filename.rfind("\\");
 
-    if ((j > i) && (j >= 0)) {
+    if ((j > i) && (j != std::string::npos)) {
         i = j;
     }
 
 #   ifdef G3D_WIN32
         j = filename.rfind(":");
-        if ((i == -1) && (j >= 0)) {
+        if ((i == std::string::npos) && (j != std::string::npos)) {
             i = j;
         }
 #   endif
 
-    if (i == -1) {
+    if (i == std::string::npos) {
         return "";
     } else {
         return filename.substr(0, i+1);

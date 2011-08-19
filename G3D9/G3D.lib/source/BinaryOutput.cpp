@@ -151,7 +151,7 @@ void BinaryOutput::reserveBytesWhenOutOfMemory(size_t bytes) {
 
         // Dump the contents to disk.  In order to enable seeking backwards, 
         // we keep the last 10 MB in memory.
-        int writeBytes = m_bufferLen - 10 * 1024 * 1024;
+        size_t writeBytes = m_bufferLen - 10 * 1024 * 1024;
 
         if (writeBytes < m_bufferLen / 3) {
             // We're going to write less than 1/3 of the file;

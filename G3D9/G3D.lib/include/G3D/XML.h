@@ -127,7 +127,7 @@ public:
     }
 
     /** Attribute table size; zero for a TAG */
-    int numAttributes() const {
+    size_t numAttributes() const {
         return m_attribute.size();
     }
 

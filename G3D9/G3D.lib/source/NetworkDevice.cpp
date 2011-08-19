@@ -938,11 +938,11 @@ void ReliableConduit::receiveIntoBuffer() {
 
     // Read the data itself
     int ret = 0;
-    uint32 left = messageSize - receiveBufferUsedSize;
+    uint32 left = messageSize - (uint32)receiveBufferUsedSize;
     int count = 0;
     while ((ret != SOCKET_ERROR) && (left > 0) && (count < 100)) {
 
-        ret = recv(sock, ((char*)receiveBuffer) + receiveBufferUsedSize, left, 0);
+        ret = recv(sock, ((char*)receiveBuffer) + (uint32)receiveBufferUsedSize, left, 0);
 
         if (ret > 0) {
             left -= ret;

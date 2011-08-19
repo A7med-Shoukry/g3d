@@ -566,8 +566,8 @@ void System::getStandardProcessorExtensions() {
 #endif
 }
 
-#if defined(G3D_WIN32)
-    #pragma message("Port System::memcpy SIMD to all platforms")
+#if defined(G3D_WIN32) && defined(_M_IX86)
+// 32-bit
 /** Michael Herf's fast memcpy.  Assumes 16-byte alignment */
 void memcpyMMX(void* dst, const void* src, int nbytes) {
     int remainingBytes = nbytes;
@@ -620,7 +620,7 @@ void memcpyMMX(void* dst, const void* src, int nbytes) {
 #endif
 
 void System::memcpy(void* dst, const void* src, size_t numBytes) {
-#if defined(G3D_WIN32)
+#if defined(G3D_WIN32) && defined(_M_IX86)
     // The overhead of our memcpy seems to only be worthwhile on large arrays
     if (((size_t)dst % 16 == 0) && ((size_t)src % 16 == 0) && (numBytes > 3400000)) {
         memcpyMMX(dst, src, numBytes);
@@ -635,9 +635,7 @@ void System::memcpy(void* dst, const void* src, size_t numBytes) {
 
 /** Michael Herf's fastest memset. n32 must be filled with the same
     character repeated. */
-#if defined(G3D_WIN32)
-    #pragma message("Port System::memfill SIMD to all platforms")
-
+#if defined(G3D_WIN32) && defined(_M_IX86)
 // On x86 processors, use MMX
 void memfill(void *dst, int n32, unsigned long i) {
 
@@ -675,7 +673,7 @@ void memfill(void *dst, int n32, unsigned long i) {
 
 void System::memset(void* dst, uint8 value, size_t numBytes) {
     alwaysAssertM(dst != NULL, "Cannot memset NULL address.");
-#if defined(G3D_WIN32)
+#if defined(G3D_WIN32) && defined(_M_IX86)
     if ((((size_t)dst % 16) == 0) && (numBytes >= 512*1024)) {
         uint32 v = value;
         v = v + (v << 8) + (v << 16) + (v << 24); 
@@ -936,11 +934,11 @@ RealTime System::time() {
 
 ////////////////////////////////////////////////////////////////
 
-#define REALPTR_TO_USERPTR(x)   ((uint8*)(x) + sizeof(uint32))
-#define USERPTR_TO_REALPTR(x)   ((uint8*)(x) - sizeof(uint32))
-#define USERSIZE_TO_REALSIZE(x)       ((x) + sizeof(uint32))
-#define REALSIZE_FROM_USERPTR(u) (*(uint32*)USERPTR_TO_REALPTR(ptr) + sizeof(uint32))
-#define USERSIZE_FROM_USERPTR(u) (*(uint32*)USERPTR_TO_REALPTR(ptr))
+#define REALPTR_TO_USERPTR(x)   ((uint8*)(x) + sizeof(size_t))
+#define USERPTR_TO_REALPTR(x)   ((uint8*)(x) - sizeof(size_t))
+#define USERSIZE_TO_REALSIZE(x)       ((x) + sizeof(size_t))
+#define REALSIZE_FROM_USERPTR(u) (*(size_t*)USERPTR_TO_REALPTR(ptr) + sizeof(size_t))
+#define USERSIZE_FROM_USERPTR(u) (*(size_t*)USERPTR_TO_REALPTR(ptr))
 
 class BufferPool {
 public:
@@ -1144,7 +1142,7 @@ public:
         of a buffer.
         Primarily useful for detecting leaks.*/
     // TODO: make me an atomic int!
-    volatile int bytesAllocated;
+    volatile size_t bytesAllocated;
 
     BufferPool() {
         totalMallocs         = 0;
@@ -1153,7 +1151,7 @@ public:
         mallocsFromSmallPool = 0;
         mallocsFromMedPool   = 0;
 
-        bytesAllocated       = true;
+        bytesAllocated       = 0;
 
         tinyPoolSize         = 0;
         tinyHeap             = NULL;
@@ -1319,7 +1317,7 @@ public:
             return NULL;
         }
 
-        *(uint32*)ptr = bytes;
+        ((size_t*)ptr)[0] = bytes;
 
         return REALPTR_TO_USERPTR(ptr);
     }
@@ -1340,7 +1338,7 @@ public:
             return;
         }
 
-        uint32 bytes = USERSIZE_FROM_USERPTR(ptr);
+        size_t bytes = USERSIZE_FROM_USERPTR(ptr);
 
         lock();
         if (bytes <= smallBufferSize) {
@@ -1485,14 +1483,14 @@ void* System::alignedMalloc(size_t bytes, size_t alignment) {
     alwaysAssertM(isPow2(alignment), "alignment must be a power of 2");
 
     // We must align to at least a word boundary.
-    alignment = iMax(alignment, sizeof(void *));
+    alignment = max(alignment, sizeof(void *));
 
     // Pad the allocation size with the alignment size and the size of
     // the redirect pointer.  This is the worst-case size we'll need.
     // Since the alignment size is at least teh word size, we don't
     // need to allocate space for the redirect pointer.  We repeat the max here
     // for clarity.
-    size_t totalBytes = bytes + iMax(alignment, sizeof(void*));
+    size_t totalBytes = bytes + max(alignment, sizeof(void*));
 
     size_t truePtr = (size_t)System::malloc(totalBytes);
 

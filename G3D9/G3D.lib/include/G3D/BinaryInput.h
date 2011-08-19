@@ -95,6 +95,7 @@ private:
 
     /** When operating on huge files, we cannot load the whole file into memory.
         This is the file position to which buffer[0] corresponds.
+        Even 32-bit code can load 64-bit files in chunks, so this is not size_t
         */
     int64           m_alreadyRead;
 

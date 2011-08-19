@@ -32,9 +32,9 @@
 namespace G3D {
 /** \brief A hash function that is faster than CRC32 
     \cite From http://www.azillionmonkeys.com/qed/hash.html by Paul Hsieh*/
-inline uint32_t superFastHash (const void* _data, int numBytes) {
+inline uint32_t superFastHash (const void* _data, size_t numBytes) {
     const char* data = (const char*)_data;
-    uint32_t hash = numBytes;
+    uint32_t hash = (uint32_t)numBytes;
     uint32_t tmp;
     int rem;
 

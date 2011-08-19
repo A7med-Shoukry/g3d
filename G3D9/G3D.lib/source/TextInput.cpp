@@ -1182,12 +1182,12 @@ TextInput::TextInput(const std::string& filename, const Settings& opt) : options
     if (FileSystem::inZipfile(filename, zipfile)) {
         // TODO: this could be faster if we directly read the zipfile
         const std::string& input = readWholeFile(filename);
-        int n = input.size();
+        size_t n = input.size();
         buffer.resize(n);
         System::memcpy(buffer.getCArray(), input.c_str(), n);
     } else {
         // Read directly into the array
-        const int n = FileSystem::size(filename);
+        const uint64 n = FileSystem::size(filename);
         alwaysAssertM(n >= 0, std::string("File does not exist: ") + filename);
         buffer.resize(n);
         FILE* f = FileSystem::fopen(filename.c_str(), "rb");

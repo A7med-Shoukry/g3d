@@ -150,6 +150,9 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
+
+    /*
+
     Array<std::string> files;
     FileSystem::getFiles("C:/Users/morgan/Desktop/san-miguel-export/Maps/*", files, true);
 
@@ -158,6 +161,11 @@ int main(int argc, const char* argv[]) {
         GImage im(files[i]);
     }
     ::exit(0);
+
+    */
+
+    std::string d = "D:\\morgan\\foo";
+    FilePath::parent(d);
 
     (void)argc; (void)argv;
     GApp::Settings settings(argc, argv);

@@ -65,40 +65,55 @@ inline double __fastcall drand48() {
     return ::rand() / double(RAND_MAX);
 }
 
-/**
-   Win32 implementation of the C99 fast rounding routines.
+#   ifdef _M_IX86
+    // 32-bit
+        /**
+           Win32 implementation of the C99 fast rounding routines.
    
-   @cite routines are
-   Copyright (C) 2001 Erik de Castro Lopo <erikd AT mega-nerd DOT com>
+           @cite routines are
+           Copyright (C) 2001 Erik de Castro Lopo <erikd AT mega-nerd DOT com>
    
-   Permission to use, copy, modify, distribute, and sell this file for any 
-   purpose is hereby granted without fee, provided that the above copyright 
-   and this permission notice appear in all copies.  No representations are
-   made about the suitability of this software for any purpose.  It is 
-   provided "as is" without express or implied warranty.
-*/
+           Permission to use, copy, modify, distribute, and sell this file for any 
+           purpose is hereby granted without fee, provided that the above copyright 
+           and this permission notice appear in all copies.  No representations are
+           made about the suitability of this software for any purpose.  It is 
+           provided "as is" without express or implied warranty.
+        */
 
-__inline long int lrint (double flt) {
-    int intgr;
 
-    _asm {
-        fld flt
-        fistp intgr
-    };
+         __inline long int lrint (double flt) {
+            int intgr;
 
-    return intgr;
-}
+            _asm {
+                fld flt
+                fistp intgr
+            };
 
-__inline long int lrintf(float flt) {
-    int intgr;
+            return intgr;
+        }
 
-    _asm {
-        fld flt
-        fistp intgr
-    };
+        __inline long int lrintf(float flt) {
+            int intgr;
 
-    return intgr;
-}
+            _asm {
+                fld flt
+                fistp intgr
+            };
+
+            return intgr;
+        }
+#   else
+    // 64-bit
+
+    __inline long int lrintf(float flt) {        
+        return (long int)(flt + 0.5f);
+    }
+
+    __inline long int lrint (double flt) {
+        return (long int)(flt + 0.5);
+    }
+
+#   endif
 #endif
 
 
@@ -381,6 +396,7 @@ inline double log2(int x) {
  * True if num is a power of two.
  */
 bool isPow2(int num);
+bool isPow2(uint64 num);
 
 bool isOdd(int num);
 bool isEven(int num);
@@ -745,6 +761,16 @@ inline int ceilPow2(unsigned int in) {
 
 inline bool isPow2(int num) {
     return ((num & -num) == num);
+}
+
+inline bool isPow2(uint64 x) {
+    // See http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/, method #9
+    return ((x != 0) && !(x & (x - 1)));
+}
+
+inline bool isPow2(uint32 x) {
+    // See http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/, method #9
+    return ((x != 0) && !(x & (x - 1)));
 }
 
 inline bool isOdd(int num) {

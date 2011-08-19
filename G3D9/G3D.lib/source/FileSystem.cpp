@@ -101,12 +101,13 @@ void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::s
             // For building the cached directory listing, extract only elements that do not contain 
             // additional subdirectories.
 
-            int start = pathInsideZipfile.size();
+            size_t start = pathInsideZipfile.size();
             if ((int(name.length()) > start) && isSlash(name[start])) {
                 ++start;
             }
-            int end = findSlash(name, start);
-            if (end == -1) {
+
+            size_t end = findSlash(name, start);
+            if (end == std::string::npos) {
                 // There are no more slashes; add this name
                 name = name.substr(start);
                 if (alreadyAdded.insert(name)) {
@@ -258,17 +259,17 @@ bool FileSystem::_inZipfile(const std::string& _path, std::string& z) {
 
     // Look at all sub-paths containing periods.
     // For each, ask if it is a zipfile.
-    int current = 0;
+    size_t current = 0;
     current = path.find('.', current);
 
-    while (current != -1) {
+    while (current != std::string::npos) {
         // xxxxx/foo.zip/yyyyy
         current = path.find('.', current);
 
         // Look forward for the next slash
-        int s = findSlash(path, current);
+        size_t s = findSlash(path, current);
 
-        if (s == -1) {
+        if (s == std::string::npos) {
             // No more slashes
             return false;
         }
@@ -671,7 +672,7 @@ const Array<std::string>& FileSystem::_drives() {
         GetLogicalDriveStringsA(bufSize, bufData);
 
         // Drive list is a series of NULL-terminated strings, itself terminated with a NULL.
-        for (int i = 0; bufData[i] != '\0'; ++i) {
+        for (size_t i = 0; bufData[i] != '\0'; ++i) {
             const char* thisString = bufData + i;
             m_winDrive.append(toLower(thisString));
             i += strlen(thisString) + 1;
@@ -702,15 +703,15 @@ bool FilePath::isRoot(const std::string& f) {
 
         // Windows shares are considered roots, but only if this does not include a path inside the share
         if (isSlash(f[0]) && isSlash(f[1])) {
-            int i = f.find("/", 3);
-            int j = f.find("\\", 3);
+            size_t i = f.find("/", 3);
+            size_t j = f.find("\\", 3);
 
-            if (i == -1) {
+            if (i == std::string::npos) {
                 i = j;
             }
 
             // e.g., "\\foo\", "\\foo"
-            return ((i == -1) || (i == f.length() - 1));
+            return ((i == std::string::npos) || (i == f.length() - 1));
         }
 #   else
         if (f == "/") {
@@ -742,8 +743,8 @@ std::string FilePath::concat(const std::string& dirname, const std::string& file
 
 
 std::string FilePath::ext(const std::string& filename) {
-    int i = filename.rfind(".");
-    if (i >= 0) {
+    size_t i = filename.rfind(".");
+    if (i != std::string::npos) {
         return filename.substr(i + 1, filename.length() - i);
     } else {
         return "";
@@ -752,16 +753,16 @@ std::string FilePath::ext(const std::string& filename) {
 
 
 std::string FilePath::baseExt(const std::string& filename) {
-    int i = findLastSlash(filename);
+    size_t i = findLastSlash(filename);
 
 #   ifdef G3D_WIN32
-        int j = filename.rfind(":");
-        if ((i == -1) && (j >= 0)) {
+        size_t j = filename.rfind(":");
+        if ((i == std::string::npos) && (j != std::string::npos)) {
             i = j;
         }
 #   endif
 
-    if (i == -1) {
+    if (i == std::string::npos) {
         return filename;
     } else {
         return filename.substr(i + 1, filename.length() - i);
@@ -771,8 +772,8 @@ std::string FilePath::baseExt(const std::string& filename) {
 
 std::string FilePath::base(const std::string& path) {
     std::string filename = baseExt(path);
-    int i = filename.rfind(".");
-    if (i == -1) {
+    size_t i = filename.rfind(".");
+    if (i == std::string::npos) {
         // No extension
         return filename;
     } else {
@@ -782,16 +783,16 @@ std::string FilePath::base(const std::string& path) {
 
 
 std::string FilePath::parent(const std::string& path) {    
-    int i = findLastSlash(removeTrailingSlash(path));
+    size_t i = findLastSlash(removeTrailingSlash(path));
 
-#   ifdef G3D_WIN32
-        int j = path.rfind(":");
-        if ((i == -1) && (j >= 0)) {
+#   ifdef G3D_WINDOWS
+        size_t j = path.rfind(":");
+        if ((i == std::string::npos) && (j != std::string::npos)) {
             i = j;
         }
 #   endif
 
-    if (i == -1) {
+    if (i == std::string::npos) {
         return "";
     } else {
         return path.substr(0, i + 1);
@@ -880,7 +881,7 @@ void FilePath::parse
 
         if (i != std::string::npos) {
             // Make sure it is after the last slash!
-            size_t j = iMax(f.rfind('/'), f.rfind('\\'));
+            size_t j = max(f.rfind('/'), f.rfind('\\'));
             if ((j == std::string::npos) || (i > j)) {
                 ext = f.substr(i + 1, f.size() - i - 1);
                 f = f.substr(0, i);
@@ -891,7 +892,7 @@ void FilePath::parse
     // Pull the basename off
     {
         // Find the last slash
-        size_t i = iMax(f.rfind('/'), f.rfind('\\'));
+        size_t i = max(f.rfind('/'), f.rfind('\\'));
         
         if (i == std::string::npos) {
             
@@ -924,7 +925,7 @@ void FilePath::parse
             j = f.size();
         }
 
-        cur = iMin(i, j);
+        cur = min(i, j);
 
         if (cur == std::string::npos) {
             cur = f.size();
@@ -944,7 +945,7 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
         return path;
     }
 
-    int start = 0;
+    size_t start = 0;
     std::string result;
     while (end != std::string::npos) {
         const std::string& before = path.substr(start, end - start);
@@ -961,7 +962,7 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
         } else {
             // Search for slash or end of string
             end = path.find_first_of('/', start);
-            int i = path.find_first_of('\\', start);
+            size_t i = path.find_first_of('\\', start);
             if ((size_t(i) != std::string::npos) && ((end == std::string::npos) || (size_t(i) < end))) {
                 end = i;
             }
@@ -1002,10 +1003,10 @@ std::string FilePath::expandEnvironmentVariables(const std::string& path) {
 
 
 /** Generate a unique filename based on the provided hint */
-std::string FilePath::makeLegalFilename(const std::string& f, int maxLength) {
+std::string FilePath::makeLegalFilename(const std::string& f, size_t maxLength) {
     std::string tentative;
     
-    for (int i = 0; i < iMin(maxLength, f.size()); ++i) {
+    for (size_t i = 0; i < G3D::min(maxLength, f.size()); ++i) {
         const char c = f[i];
         if (isLetter(c) || isDigit(c) || (c == '-') || (c == '+') || (c == '=') || (c == '(') || (c == ')')) {
             tentative += c;

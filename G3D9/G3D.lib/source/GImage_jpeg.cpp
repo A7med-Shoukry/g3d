@@ -77,7 +77,7 @@ static void term_destination (
     j_compress_ptr              cinfo) {
 
 	mem_dest_ptr dest = (mem_dest_ptr) cinfo->dest;
-	dest->count = dest->size - dest->pub.free_in_buffer;
+	dest->count = dest->size - (int)dest->pub.free_in_buffer;
 }
 
 /**
@@ -157,7 +157,7 @@ static boolean fill_input_buffer(
 	memcpy (src->buffer, src->source_data, bytes_read);
 
 	src->source_data += bytes_read;
-	src->source_size -= bytes_read;
+	src->source_size -= (int)bytes_read;
 
 	src->pub.next_input_byte = src->buffer;
 	src->pub.bytes_in_buffer = bytes_read;

@@ -74,19 +74,19 @@ private:
     uint8*          m_buffer;
     
     /** Size of the elements used */
-    int             m_bufferLen;
+    size_t          m_bufferLen;
 
     /** Underlying size of memory allocaded */
-    int             m_maxBufferLen;
+    size_t          m_maxBufferLen;
 
     /** Next byte in file */
-    int             m_pos;
+    int64           m_pos;
 
     /** is this initialized? */
     bool            m_init;
 
-    /** Number of bytes already written to the file.*/
-    size_t          m_alreadyWritten;             
+    /** Number of bytes already written to the file.  Even on 32-bit OS, this can be 64-bits*/
+    int64           m_alreadyWritten;             
 
     bool            m_ok;
 
@@ -98,11 +98,11 @@ private:
      Make sure at least bytes can be written, resizing if
      necessary.
      */
-    inline void reserveBytes(int bytes) {
+    inline void reserveBytes(size_t bytes) {
         debugAssert(bytes > 0);
-        size_t oldBufferLen = (size_t)m_bufferLen;
+        size_t oldBufferLen = m_bufferLen;
 
-        m_bufferLen = iMax(m_bufferLen, (m_pos + bytes));
+        m_bufferLen = max(m_bufferLen, (size_t)(m_pos + bytes));
         if (m_bufferLen > m_maxBufferLen) {
             reallocBuffer(bytes, oldBufferLen);
         }
@@ -193,11 +193,11 @@ public:
     void reset();
 
 
-    inline int length() const {
-        return (int)m_bufferLen + (int)m_alreadyWritten;
+    inline int64 length() const {
+        return m_bufferLen + m_alreadyWritten;
     }
 
-    inline int size() const {
+    inline int64 size() const {
         return length();
     }
 
@@ -210,18 +210,18 @@ public:
      Throws char* when resetting a huge file to be shorter
      than its current length.
      */
-    inline void setLength(int n) {
-        n = n - (int)m_alreadyWritten;
+    inline void setLength(int64 n) {
+        n = n - m_alreadyWritten;
 
         if (n < 0) {
             throw "Cannot resize huge files to be shorter.";
         }
 
-        if (n < m_bufferLen) {
+        if (n < (int64)m_bufferLen) {
             m_pos = n;
         }
-        if (n > m_bufferLen) {
-            reserveBytes(n - m_bufferLen);
+        if (n > (int64)m_bufferLen) {
+            reserveBytes((size_t)(n - m_bufferLen));
         }
     }
 
@@ -230,7 +230,7 @@ public:
      where 0 is the beginning and getLength() - 1 is the end.
      */
     inline int64 position() const {
-        return (int64)m_pos + (int64)m_alreadyWritten;
+        return m_pos + m_alreadyWritten;
     }
 
 
@@ -242,9 +242,9 @@ public:
      May throw a char* exception when seeking backwards on a huge file.
      */
     inline void setPosition(int64 p) {
-        p = p - (int64)m_alreadyWritten;
+        p = p - m_alreadyWritten;
 
-        if (p > m_bufferLen) {
+        if (p > (int64)m_bufferLen) {
             setLength((int)(p + (int64)m_alreadyWritten));
         }
 
@@ -256,9 +256,9 @@ public:
     }
 
 
-    void writeBytes(
-        const void*         b,
-        int                 count) {
+    void writeBytes
+       (const void*         b,
+        size_t              count) {
 
         reserveBytes(count);
         debugAssert(m_pos >= 0);
@@ -337,10 +337,10 @@ public:
 
     /** Write a string that always consumes len bytes, truncating or padding as necessary*/
     inline void writeString(const std::string& s, int len) {
-        const int pad = len - (s.length() + 1);
+        const size_t pad = len - (s.length() + 1);
         if (pad >= 0) {
             writeString(s.c_str());
-            for (int i = 0; i < pad; ++i) {
+            for (size_t i = 0; i < pad; ++i) {
                 writeUInt8(0);
             }
         } else {
@@ -385,8 +385,8 @@ public:
      Skips ahead n bytes.
      */
     inline void skip(int n) {
-        if (m_pos + n > m_bufferLen) {
-            setLength((int)m_pos + (int)m_alreadyWritten + n);
+        if (m_pos + n > (int64)m_bufferLen) {
+            setLength(m_pos + m_alreadyWritten + n);
         }
         m_pos += n;
     }

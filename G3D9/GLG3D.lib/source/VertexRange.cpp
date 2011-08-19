@@ -106,7 +106,7 @@ void VertexRange::init
     m_elementSize              = eltSize;
     m_stride                   = eltSize;
 
-    int size                   = m_elementSize * m_numElements;
+    size_t size                = m_elementSize * m_numElements;
     m_maxSize                  = size;
 
     debugAssertM(
