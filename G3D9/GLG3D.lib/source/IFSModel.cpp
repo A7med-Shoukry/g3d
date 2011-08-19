@@ -575,10 +575,10 @@ void IFSModel::PosedIFSModel::sendGeometry(RenderDevice* renderDevice) const {
 							  sizeof(Vector2) * model->texArray.size();
 
         if (! IFSModel::varArea.isNull() && 
-		    (varArea->totalSize() >= modelSize)) {
+		    (varArea->totalSize() >= (size_t)modelSize)) {
             // Can use VertexRange
 
-            if (varArea->freeSize() < modelSize + 128) {
+            if (varArea->freeSize() < size_t(modelSize + 128)) {
                 // Not enough free space left in the common area;
                 // reset it to allocate new arrays (this might
                 // stall the pipeline).  Otherwise, just allocate

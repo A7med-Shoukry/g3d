@@ -72,27 +72,27 @@ private:
     size_t              m_maxSize;
 
     /** For uploading interleaved arrays */
-    void init(VertexRange& dstPtr, int dstOffset, GLenum glformat, 
-        int eltSize, int numElements, int stride);
+    void init(VertexRange& dstPtr, size_t dstOffset, GLenum glformat, 
+        size_t eltSize, int numElements, size_t stride);
 
     void init
     (const void*        sourcePtr, 
      int                numElements, 
      VertexBufferRef    area,
      GLenum             glformat, 
-     int                eltSize);
+     size_t             eltSize);
 
     void init
     (const void*        srcPtr,
      int                numElements, 
-     int                srcStride,      
+     size_t             srcStride,      
      GLenum             glformat, 
-     int                eltSize,
+     size_t             eltSize,
      VertexRange        dstPtr,
-     int                dstOffset, 
-     int                dstStride);
+     size_t             dstOffset, 
+     size_t             dstStride);
     
-    void update(const void* sourcePtr, int _numElements, GLenum glformat, int eltSize);
+    void update(const void* sourcePtr, int _numElements, GLenum glformat, size_t eltSize);
 
     /** Performs the actual memory transfer (like memcpy).  The
         dstPtrOffset is the number of <B>bytes</B> to add to m_pointer
@@ -103,7 +103,7 @@ private:
     void uploadToCardStride(const void* sourcePtr, size_t srcElements, size_t srcSizeBytes,
                             size_t srcStrideBytes, size_t dstPtrOffsetBytes, size_t dstStrideBytes);
 
-    void set(int index, const void* value, GLenum glformat, int eltSize);
+    void set(int index, const void* value, GLenum glformat, size_t eltSize);
 
     // The following are called by RenderDevice
     /** May be an OpenGL video memory offset or a real memory pointer.  For use by RenderDevice only.*/
@@ -197,19 +197,10 @@ public:
 
     /** @brief Creates a VertexRange that acts as a pointer to a block of memory.
 
-        This block of memory can then be used with VertexRange::VertexRange(const T* srcPtr, 
-        int      _numElements,
-        int      srcStride,
-        VertexRange      dstPtr,
-        int   dstOffset, 
-        int   dstStride) or        
-        VertexRange::VertexRange(int      _numElements,
-        VertexRange      dstPtr,
-        int   dstOffset, 
-        int   dstStride)
+        This block of memory can then be used with VertexRange::VertexRange()
         to upload interleaved data.        
      */
-    VertexRange(int numBytes, VertexBufferRef _area);
+    VertexRange(size_t numBytes, VertexBufferRef _area);
     
     /**
        Uploads memory from the CPU to the GPU.  The element type is
@@ -301,16 +292,16 @@ public:
          VertexRange&             var5) {
 
 
-        int N = iMax(src5.size(),
-                    iMax(iMax(src1.size(), src2.size()),
-                         iMax(src3.size(), src4.size())));
+        size_t N = max(src5.size(),
+                    max(max(src1.size(), src2.size()),
+                         max(src3.size(), src4.size())));
 
         // Pack arguments into arrays to avoid repeated code below.
         uint8* src[5]   = {(uint8*)src1.getCArray(), (uint8*)src2.getCArray(),
                            (uint8*)src3.getCArray(), (uint8*)src4.getCArray(),
                            (uint8*)src5.getCArray()};
-        int            count[5] = {src1.size(), src2.size(), src3.size(), src4.size(), src5.size()};
-        int            size[5]  = {sizeof(T1), sizeof(T2), sizeof(T3), sizeof(T4), sizeof(T5)};
+        size_t            count[5] = {src1.size(), src2.size(), src3.size(), src4.size(), src5.size()};
+        size_t            size[5]  = {sizeof(T1), sizeof(T2), sizeof(T3), sizeof(T4), sizeof(T5)};
         VertexRange*   var[5]   = {&var1, &var2, &var3, &var4, &var5};
         (void)var;
 
@@ -391,9 +382,9 @@ public:
                        VertexRange&             var5,
                        VertexBufferRef          area) {
 
-        int N = iMax(src5.size(),
-                    iMax(iMax(src1.size(), src2.size()),
-                         iMax(src3.size(), src4.size())));
+        size_t N = max(src5.size(),
+                    max(max(src1.size(), src2.size()),
+                         max(src3.size(), src4.size())));
 
         debugAssert(area->type() == VertexBuffer::DATA);
         debugAssert(src1.size() == N || src1.size() == 0);
@@ -403,14 +394,14 @@ public:
         debugAssert(src5.size() == N || src5.size() == 0);
 
         // Treat sizes as zero if the corresponding array is not used
-        int size1 = (src1.size() == N) ? sizeof(T1) : 0;
-        int size2 = (src2.size() == N) ? sizeof(T2) : 0;
-        int size3 = (src3.size() == N) ? sizeof(T3) : 0;
-        int size4 = (src4.size() == N) ? sizeof(T4) : 0;
-        int size5 = (src5.size() == N) ? sizeof(T5) : 0;
+        size_t size1 = (src1.size() == N) ? sizeof(T1) : 0;
+        size_t size2 = (src2.size() == N) ? sizeof(T2) : 0;
+        size_t size3 = (src3.size() == N) ? sizeof(T3) : 0;
+        size_t size4 = (src4.size() == N) ? sizeof(T4) : 0;
+        size_t size5 = (src5.size() == N) ? sizeof(T5) : 0;
 
-        int stride = size1 + size2 + size3 + size4 + size5;
-        int totalMemory = stride * N;
+        size_t stride = size1 + size2 + size3 + size4 + size5;
+        size_t totalMemory = stride * N;
         
         VertexRange masterVAR(totalMemory, area);
         var1.init(masterVAR, 0, glFormatOf(T1), size1, src1.size(), stride);
@@ -460,11 +451,11 @@ public:
     template<class T>
     VertexRange
         (const T*       srcPtr, 
-        int             _numElements,
-        int             srcStride,
+        size_t             _numElements,
+        size_t             srcStride,
         VertexRange     dstPtr,
-        int             dstOffset, 
-        int             dstStride) {
+        size_t             dstOffset, 
+        size_t             dstStride) {
         init(srcPtr, _numElements, srcStride, glFormatOf(T), sizeof(T), dstPtr, dstOffset, dstStride);
     }
 
@@ -508,8 +499,8 @@ public:
     (const T&           ignored,
      int                _numElements,
      VertexRange        dstPtr,
-     int                dstOffset, 
-     int                dstStride) {
+     size_t                dstOffset, 
+     size_t                dstStride) {
         (void)ignored;
         init(dstPtr, dstOffset, glFormatOf(T), sizeof(T), _numElements, dstStride);
     }
@@ -525,8 +516,8 @@ public:
     (const T&           ignored,
      int                _numElements,
      VertexBuffer::Ref  dstPtr,
-     int                dstOffset, 
-     int                dstStride) {
+     size_t                dstOffset, 
+     size_t                dstStride) {
         (void)ignored;
         init(dstPtr, dstOffset, glFormatOf(T), sizeof(T), _numElements, dstStride);
     }
@@ -535,8 +526,8 @@ public:
     VertexRange
     (const Array<T>& source,
      VertexRange     dstPtr,
-     int             dstOffset, 
-     int             dstStride) {
+     size_t             dstOffset, 
+     size_t             dstStride) {
         init(source.getCArray(), source.size(), 0, glFormatOf(T), sizeof(T), dstPtr, dstOffset, dstStride);
     }
 

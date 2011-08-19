@@ -22,10 +22,10 @@ void CPUVertexArray::copyToGPU
         VertexRange all(byteSize, buffer);
 
         Vertex dummy;
-        vertexVR        = VertexRange(dummy.position,  numVertices, all, OFFSET(position),  sizeof(Vertex));
-        normalVR        = VertexRange(dummy.normal,    numVertices, all, OFFSET(normal),    sizeof(Vertex));
-        packedTangentVR = VertexRange(dummy.tangent,   numVertices, all, OFFSET(tangent),   sizeof(Vertex));
-        texCoord0VR     = VertexRange(dummy.texCoord0, numVertices, all, OFFSET(texCoord0), sizeof(Vertex));
+        vertexVR        = VertexRange(dummy.position,  numVertices, all, OFFSET(position),  (int)sizeof(Vertex));
+        normalVR        = VertexRange(dummy.normal,    numVertices, all, OFFSET(normal),    (int)sizeof(Vertex));
+        packedTangentVR = VertexRange(dummy.tangent,   numVertices, all, OFFSET(tangent),   (int)sizeof(Vertex));
+        texCoord0VR     = VertexRange(dummy.texCoord0, numVertices, all, OFFSET(texCoord0), (int)sizeof(Vertex));
 
         // Copy all interleaved data at once
         Vertex* dst = (Vertex*)all.mapBuffer(GL_WRITE_ONLY);

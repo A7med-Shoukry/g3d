@@ -89,7 +89,11 @@ where <code>%USERNAME%</code> is your Windows login name.
       <li> Save and close <code>Microsoft.Cpp.Win32.user.props</code>.
  </ol>
 </ul>
-
+<li> <p> Repeat the previous step for <code>Microsoft.Cpp.x64.user.props</code>, also adding the following include and library paths:
+  <ul>
+	<li> <code>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include</code>
+    <li> <code>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib</code>
+  </ul>
 
 <li> <p>Click on the <b>Tools</b> menu and then select <b>Options</b>, as demonstrated in this image:
 

@@ -740,7 +740,7 @@ public:
        sequence, a value at least as large as size()" 
        For compatibility with std::vector.
    */
-   int capacity() const {
+   size_t capacity() const {
        return numAllocated;
    }
 

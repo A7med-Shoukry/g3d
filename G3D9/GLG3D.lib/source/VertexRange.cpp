@@ -21,11 +21,11 @@ VertexRange::VertexRange() : m_area(NULL), m_pointer(NULL), m_elementSize(0),
 }
 
 
-VertexRange::VertexRange(int numBytes, VertexBufferRef area) : m_area(NULL), m_pointer(NULL), m_elementSize(0), 
+VertexRange::VertexRange(size_t numBytes, VertexBufferRef area) : m_area(NULL), m_pointer(NULL), m_elementSize(0), 
              m_numElements(0), m_stride(0), m_generation(0), 
              m_underlyingRepresentation(GL_NONE), m_maxSize(0) {
 
-    init(NULL, numBytes, area, GL_NONE, 1);
+    init(NULL, (int)numBytes, area, GL_NONE, 1);
 }
 
 
@@ -39,8 +39,14 @@ bool VertexRange::valid() const {
 }
 
 
-void VertexRange::init(VertexRange& dstPtr, int dstOffset, GLenum glformat, int eltSize, 
-                int numElements, int dstStride) {
+void VertexRange::init
+  (VertexRange& dstPtr,
+    size_t dstOffset,
+    GLenum glformat,
+    size_t eltSize, 
+    int numElements,
+    size_t dstStride) {
+
     m_area = dstPtr.m_area;
     alwaysAssertM(m_area.notNull(), "Bad VertexBuffer");
     m_numElements              = numElements;
@@ -57,12 +63,12 @@ void VertexRange::init(VertexRange& dstPtr, int dstOffset, GLenum glformat, int 
 
 void VertexRange::init(const void* srcPtr,
                int          numElements, 
-               int          srcStride,      
+               size_t          srcStride,      
                GLenum       glformat, 
-               int          eltSize,
+               size_t          eltSize,
                VertexRange  dstPtr,
-               int          dstOffset, 
-               int          dstStride) {
+               size_t          dstOffset, 
+               size_t          dstStride) {
     debugAssertGLOk();
 
     m_area = dstPtr.m_area;
@@ -96,7 +102,7 @@ void VertexRange::init
    int                  numElements,
    VertexBufferRef      area,
    GLenum               glformat,
-   int                  eltSize) {
+   size_t               eltSize) {
 
     alwaysAssertM(area.notNull(), "Bad VertexBuffer");
 
@@ -120,11 +126,11 @@ void VertexRange::init
     m_pointer = (uint8*)m_area->openGLBasePointer() + m_area->allocatedSize();
 
     // Align to the nearest multiple of this many bytes.
-    const int alignment = 4;
+    const size_t alignment = 4;
 
     // Ensure that the next memory address is aligned.  This has 
     // a significant (up to 25%!) performance impact on some GPUs
-    int pointerOffset = (int)((alignment - (intptr_t)m_pointer % alignment) % alignment);
+    size_t pointerOffset = (size_t)((alignment - (intptr_t)m_pointer % alignment) % alignment);
 
     if (numElements == 0) {
         pointerOffset = 0;
@@ -155,9 +161,9 @@ void VertexRange::update(
     const void*         sourcePtr,
     int                 numElements,
     GLenum              glformat,
-    int                 eltSize) {
+    size_t              eltSize) {
 
-    int size = eltSize * numElements;
+    size_t size = eltSize * numElements;
 
     debugAssert(m_stride == 0 || m_stride == m_elementSize);
     alwaysAssertM(size <= m_maxSize,
@@ -184,7 +190,7 @@ void VertexRange::update(
 }
 
 
-void VertexRange::set(int index, const void* value, GLenum glformat, int eltSize) {
+void VertexRange::set(int index, const void* value, GLenum glformat, size_t eltSize) {
     debugAssert(m_stride == 0 || m_stride == m_elementSize);
     (void)glformat;
     debugAssertM(index < m_numElements && index >= 0, 

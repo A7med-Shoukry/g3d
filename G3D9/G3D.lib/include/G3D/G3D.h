@@ -154,14 +154,26 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 
 #ifdef _MSC_VER
 #   pragma comment(lib, "zlib")
-#   pragma comment(lib, "ws2_32")
 #   pragma comment(lib, "winmm")
 #   pragma comment(lib, "imagehlp")
-#   pragma comment(lib, "gdi32")
-#   pragma comment(lib, "user32")
-#   pragma comment(lib, "kernel32")
+#   if defined(G3D_64BIT)
+/*
+#       pragma comment(lib, "ws2_64")
+#       pragma comment(lib, "gdi64")
+#       pragma comment(lib, "user64")
+#       pragma comment(lib, "kernel64")
+#       pragma comment(lib, "advapi64")
+#       pragma comment(lib, "shell64")
+*/
+#   else
+#       pragma comment(lib, "ws2_32")
+#       pragma comment(lib, "gdi32")
+#       pragma comment(lib, "user32")
+#       pragma comment(lib, "kernel32")
+#       pragma comment(lib, "advapi32")
+#       pragma comment(lib, "shell32")
+#   endif
 #   pragma comment(lib, "version")
-#   pragma comment(lib, "advapi32")
 #   pragma comment(lib, "png")
 #   pragma comment(lib, "jpeg")
 #   pragma comment(lib, "zip")
