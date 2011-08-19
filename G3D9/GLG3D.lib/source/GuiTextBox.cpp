@@ -55,7 +55,7 @@ void GuiTextBox::render(RenderDevice* rd, const GuiThemeRef& skin) const {
                 // were editing; override our copy with the
                 // programmatic value.
                 me->m_userValue = *m_value;
-                me->m_cursorPos = iMin(m_cursorPos, m_userValue.size());
+                me->m_cursorPos = min(m_cursorPos, (int)m_userValue.size());
             }
         } else if (focused()) {
             // Just gained focus
@@ -141,7 +141,7 @@ void GuiTextBox::processRepeatKeysym() {
         break;
 
     case GKey::END:
-        m_cursorPos = m_userValue.size();
+        m_cursorPos = (int)m_userValue.size();
         break;
 
     case GKey::DELETE:

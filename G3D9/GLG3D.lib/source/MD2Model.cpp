@@ -793,7 +793,7 @@ void MD2Model::Part::getGeometry(const Pose& pose, MeshAlg::Geometry& out, bool 
 
     bool useSSE = false;
 
-    #ifdef G3D_WIN32
+    #if defined(G3D_WIN32) && ! defined(G3D_64BIT)
         #pragma message("Port MD2Model::Part::GetGeometry SIMD to all platforms")
         useSSE = true;
     #endif
@@ -824,7 +824,7 @@ void MD2Model::Part::getGeometry(const Pose& pose, MeshAlg::Geometry& out, bool 
 
     // Put this code inside an ifdef because it won't compile
     // on non-SSE compilers otherwise.
-    #if defined(G3D_WIN32)
+    #if defined(G3D_WINDOWS) && ! defined(G3D_64BIT)
         // The high performance path interpolates between two arrays of floats.
         // We first convert the vertices and normals into this format.
 

@@ -264,17 +264,17 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
     bool replaced = false;
     do {
         replaced = false;
-        int i;
+        size_t i;
         if (beginsWith(code, "#include")) {
             i = 0;
         } else {
             i = code.find("\n#include");
         }
         
-        if (i != -1) {
+        if (i != std::string::npos) {
             // Remove this line
-            int end = code.find("\n", i + 1);
-            if (end == -1) {
+            size_t end = code.find("\n", i + 1);
+            if (end == std::string::npos) {
                 end = code.size();
             }
             std::string includeLine = code.substr(i+1, end - i);
@@ -378,7 +378,7 @@ void VertexAndPixelShader::GPUShader::init
             // Strip off the version line, including the \n. We must keep
             // it in front of everything else. 
             shifted = -1;
-            int pos = _code.find("\n") + 1;
+            size_t pos = _code.find("\n") + 1;
             versionLine = _code.substr(0, pos);
             _code = _code.substr(versionLine.length());
         }
@@ -455,7 +455,7 @@ void VertexAndPixelShader::GPUShader::compile() {
     _glShaderObject = glCreateShaderObjectARB(glShaderType());
 
     // Compile the shader
-    GLint length = _code.length();
+    GLint length = (GLint)_code.length();
     const GLcharARB* codePtr = static_cast<const GLcharARB*>(_code.c_str());
     
     // Show the preprocessed code:
@@ -489,8 +489,8 @@ void VertexAndPixelShader::GPUShader::compile() {
             if (beginsWith(line, "0:")) {
                 // Now skip over the line number and wrap it in parentheses.
                 line = line.substr(2);
-                int i = line.find(':');
-                if (i > -1) {
+                size_t i = line.find(':');
+                if (i != std::string::npos) {
                     // Wrap the line number in parentheses
                     line = "(" + line.substr(0, i) + ")" + line.substr(i);
                 } else {

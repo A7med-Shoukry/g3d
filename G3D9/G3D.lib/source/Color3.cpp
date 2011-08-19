@@ -53,8 +53,8 @@ Color3::Color3(const Any& any) {
         {   
             const std::string& name = any.name();
             std::string factoryName;
-            int i = name.find("::");
-            if (i != -1 && i > 1) {
+            size_t i = name.find("::");
+            if (i != std::string::npos && i > 1) {
                 factoryName = name.substr(i + 2);
             }
 

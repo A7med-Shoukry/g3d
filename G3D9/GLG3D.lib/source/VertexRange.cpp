@@ -133,7 +133,7 @@ void VertexRange::init
     // Adjust pointer to new alignment
     m_pointer = (uint8*)m_pointer + pointerOffset;
     
-    int newAlignedSize = size + pointerOffset;
+    size_t newAlignedSize = size + pointerOffset;
 
     alwaysAssertM(newAlignedSize <= m_area->freeSize(),
                   "VertexBuffer too small to hold new VertexRange (possibly due to rounding"
@@ -240,8 +240,9 @@ void VertexRange::unmapBuffer() {
 }
 
 
-void VertexRange::uploadToCardStride(const void* srcPointer, int srcElements, int srcSize, int srcStride, 
-                        int dstPtrOffsetBytes, int dstStrideBytes) {
+void VertexRange::uploadToCardStride
+    (const void* srcPointer, size_t srcElements, size_t srcSize, size_t srcStride, 
+    size_t dstPtrOffsetBytes, size_t dstStrideBytes) {
     
     if (srcStride == 0) {
         srcStride = srcSize;
@@ -267,7 +268,7 @@ void VertexRange::uploadToCardStride(const void* srcPointer, int srcElements, in
 }
 
 
-void VertexRange::uploadToCard(const void* sourcePtr, int dstPtrOffset, int size) {
+void VertexRange::uploadToCard(const void* sourcePtr, size_t dstPtrOffset, size_t size) {
     debugAssertGLOk();
     debugAssert(m_stride == 0 || m_stride == m_elementSize);
 
@@ -309,8 +310,9 @@ void VertexRange::vertexPointer() const {
     debugAssertM(m_underlyingRepresentation != GL_UNSIGNED_BYTE, 
                  "OpenGL does not support GL_UNSIGNED_BYTE as a vertex format.");
     alwaysAssertM(sizeOfGLFormat(m_underlyingRepresentation) > 0, "Unsupported vertex format");
-    glVertexPointer(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation), 
-                    m_underlyingRepresentation, m_stride, m_pointer);
+    alwaysAssertM(m_stride < 0xFFFFFFFF, "Stride is too large for OpenGL");
+    glVertexPointer((GLint)(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation)), 
+                    m_underlyingRepresentation, (GLsizei)m_stride, m_pointer);
 }
 
 
@@ -325,7 +327,8 @@ void VertexRange::normalPointer() const {
     debugAssertM(m_underlyingRepresentation != GL_UNSIGNED_BYTE,
               "OpenGL does not support GL_UNSIGNED_BYTE as a normal format.");
     glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(m_underlyingRepresentation, m_stride, m_pointer); 
+    alwaysAssertM(m_stride < 0xFFFFFFFF, "Stride is too large for OpenGL");
+    glNormalPointer(m_underlyingRepresentation, (GLsizei)m_stride, m_pointer); 
 }
 
 
@@ -333,8 +336,9 @@ void VertexRange::colorPointer() const {
     debugAssert(valid());
     glEnableClientState(GL_COLOR_ARRAY);
     alwaysAssertM(sizeOfGLFormat(m_underlyingRepresentation) > 0, "Unsupported vertex format");
-    glColorPointer(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation),
-                   m_underlyingRepresentation, m_stride, m_pointer); 
+    alwaysAssertM(m_stride < 0xFFFFFFFF, "Stride is too large for OpenGL");
+    glColorPointer(GLint(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation)),
+                   m_underlyingRepresentation, (GLsizei)m_stride, m_pointer); 
 }
 
 
@@ -348,8 +352,9 @@ void VertexRange::texCoordPointer(uint32 unit) const {
     }
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     alwaysAssertM(sizeOfGLFormat(m_underlyingRepresentation) > 0, "Unsupported vertex format");
-    glTexCoordPointer(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation),
-                      m_underlyingRepresentation, m_stride, m_pointer);
+    alwaysAssertM(m_stride < 0xFFFFFFFF, "Stride is too large for OpenGL");
+    glTexCoordPointer(GLint(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation)),
+                      m_underlyingRepresentation, (GLsizei)m_stride, m_pointer);
 
     if (GLCaps::supports_GL_ARB_multitexture()) {
         glClientActiveTextureARB(GL_TEXTURE0_ARB);
@@ -361,8 +366,9 @@ void VertexRange::vertexAttribPointer(uint32 attribNum, bool normalize) const {
     debugAssert(valid());
     if (GLCaps::supports_GL_ARB_vertex_program()) {
         glEnableVertexAttribArrayARB(attribNum);
-        glVertexAttribPointerARB(attribNum, m_elementSize / sizeOfGLFormat(m_underlyingRepresentation),
-                                 m_underlyingRepresentation, normalize, m_stride, m_pointer);
+        alwaysAssertM(m_stride < 0xFFFFFFFF, "Stride is too large for OpenGL");
+        glVertexAttribPointerARB(attribNum, GLint(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation)),
+                                 m_underlyingRepresentation, normalize, (GLsizei)m_stride, m_pointer);
     }
 }
 

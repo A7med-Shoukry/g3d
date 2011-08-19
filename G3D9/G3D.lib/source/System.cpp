@@ -1533,8 +1533,10 @@ void* System::alignedMalloc(size_t bytes, size_t alignment) {
 
     debugAssert(isValidHeapPointer((void*)truePtr));
 
-    #ifdef G3D_WIN32
-        debugAssert( _CrtIsValidPointer((void*)alignedPtr, bytes, TRUE) );
+    #if defined(G3D_WINDOWS) && defined(G3D_DEBUG)
+        if (bytes < 0xFFFFFFFF) { 
+            debugAssert( _CrtIsValidPointer((void*)alignedPtr, (int)bytes, TRUE) );
+        }
     #endif
     return (void *)alignedPtr;
 }
@@ -1720,9 +1722,19 @@ std::string System::currentDateString() {
     return format("%d-%02d-%02d", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday); 
 }
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && defined(G3D_64BIT)
 
-// VC on Intel
+// Windows 64-bit
+void System::cpuid(CPUIDFunction func, uint32& eax, uint32& ebx, uint32& ecx, uint32& edx) {
+    eax = 0;
+    ebx = 0;
+    ecx = 0;
+    edx = 0;
+}
+
+#elif defined(_MSC_VER) && ! defined(G3D_64BIT)
+
+// VC on Intel32
 void System::cpuid(CPUIDFunction func, uint32& areg, uint32& breg, uint32& creg, uint32& dreg) {
     // Can't copy from assembler direct to a function argument (which is on the stack) in VC.
     uint32 a,b,c,d;

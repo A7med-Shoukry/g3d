@@ -3283,7 +3283,7 @@ void RenderDevice::sendIndices
 
     glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, indexVAR.area()->openGLVertexBufferObject());
 
-    internalSendIndices(primitive, indexVAR.m_elementSize, indexVAR.m_numElements, 
+    internalSendIndices(primitive, (int)indexVAR.m_elementSize, indexVAR.m_numElements, 
                         indexVAR.pointer(), numInstances, useInstances);
 
     // Set the milestone on the current area

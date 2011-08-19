@@ -496,7 +496,7 @@ int Any::size() const {
     verifyType(ARRAY, TABLE);
     switch (m_type) {
     case TABLE:
-        return m_data->value.t->size();
+        return (int)m_data->value.t->size();
 
     case ARRAY:
         return m_data->value.a->size();

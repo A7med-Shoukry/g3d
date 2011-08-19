@@ -23,9 +23,9 @@ Array<VertexBufferRef>    VertexBuffer::m_allVARAreas;
 
 VertexBuffer::Mode VertexBuffer::m_mode = VertexBuffer::UNINITIALIZED;
 
-int VertexBuffer::m_sizeOfAllVARAreasInMemory = 0;
+size_t VertexBuffer::m_sizeOfAllVARAreasInMemory = 0;
 
-VertexBufferRef VertexBuffer::create(int s, UsageHint h, Type t) {
+VertexBufferRef VertexBuffer::create(size_t s, UsageHint h, Type t) {
     cleanCache();
     VertexBufferRef x = new VertexBuffer(s, h, t);
     m_allVARAreas.push(x);
@@ -33,7 +33,7 @@ VertexBufferRef VertexBuffer::create(int s, UsageHint h, Type t) {
 }
 
 
-VertexBuffer::VertexBuffer(int _size, UsageHint hint, Type t) :  m_type(t), m_size(_size) {
+VertexBuffer::VertexBuffer(size_t _size, UsageHint hint, Type t) :  m_type(t), m_size(_size) {
     m_renderDevice = NULL;
     debugAssertGLOk();
 

@@ -259,7 +259,7 @@ Win32Window::Win32Window(const OSWindow::Settings& s, bool creatingShareWindow)
     // Set early so windows messages have value
     m_window = window;
 
-    SetWindowLong(window, GWL_USERDATA, (LONG)this);
+    SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)this);
 
     init(window, creatingShareWindow);
 
@@ -691,7 +691,7 @@ Win32Window::~Win32Window() {
     }
 
     if (createdWindow) {
-        SetWindowLong(m_window, GWL_USERDATA, (LONG)NULL);
+        SetWindowLongPtr(m_window, GWLP_USERDATA, (LONG_PTR)NULL);
         close();
     }
 
@@ -1488,7 +1488,7 @@ LRESULT CALLBACK Win32Window::windowProc(HWND     window,
                                          WPARAM   wParam,
                                          LPARAM   lParam) {
 
-    Win32Window* this_window = (Win32Window*)GetWindowLong(window, GWL_USERDATA);
+    Win32Window* this_window = (Win32Window*)GetWindowLongPtr(window, GWLP_USERDATA);
 
     if (this_window != NULL && this_window->m_sysEventQueue != NULL) {
         GEvent e;

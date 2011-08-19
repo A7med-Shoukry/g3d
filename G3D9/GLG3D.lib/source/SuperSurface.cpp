@@ -1040,9 +1040,9 @@ void SuperSurface::CPUGeom::copyVertexDataToGPU
     } else {
         // G3D 8.00 support
 
-        int vtxSize = sizeof(Vector3) * geometry->vertexArray.size();
-        int texSize = sizeof(Vector2) * texCoord0->size();
-        int tanSize = sizeof(Vector4) * packedTangent->size();
+        size_t vtxSize = sizeof(Vector3) * geometry->vertexArray.size();
+        size_t texSize = sizeof(Vector2) * texCoord0->size();
+        size_t tanSize = sizeof(Vector4) * packedTangent->size();
 
         if ((vertex.maxSize() >= vtxSize) &&
             (normal.maxSize() >= vtxSize) &&

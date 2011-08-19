@@ -64,7 +64,8 @@ int Crypto::numSmallPrimes() {
 }
 
 uint32 Crypto::crc32(const void* byte, size_t numBytes) {
-    return ::crc32(::crc32(0, Z_NULL, 0), static_cast<const Bytef *>(byte), numBytes);
+    alwaysAssertM(numBytes < 0xFFFFFFFF, "Not implemented for arrays larger than 2^32 bytes");
+    return ::crc32(::crc32(0, Z_NULL, 0), static_cast<const Bytef *>(byte), (int)numBytes);
 }
 
 } // G3D

@@ -119,7 +119,7 @@ static std::string glslConcat(const std::string& A, std::string B) {
 	if (beginsWith(B, "#version ")) {
 		// Strip off the version line, including the \n. We must keep
 		// it in front of everything else. 
-		int pos = B.find("\n") + 1;
+		size_t pos = B.find("\n") + 1;
 		versionLine = B.substr(0, pos);
 		B = B.substr(versionLine.length());
 	}

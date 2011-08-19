@@ -69,7 +69,7 @@ private:
     GLenum              m_underlyingRepresentation;
     
     /** The initial size this VertexRange was allocated with, in bytes. */
-    int                 m_maxSize;
+    size_t              m_maxSize;
 
     /** For uploading interleaved arrays */
     void init(VertexRange& dstPtr, int dstOffset, GLenum glformat, 
@@ -97,11 +97,11 @@ private:
     /** Performs the actual memory transfer (like memcpy).  The
         dstPtrOffset is the number of <B>bytes</B> to add to m_pointer
         when performing the transfer. */
-    void uploadToCard(const void* sourcePtr, int dstPtrOffsetElements, int size);
+    void uploadToCard(const void* sourcePtr, size_t dstPtrOffsetElements, size_t size);
 
     /** Used for creating interleaved arrays. */
-    void uploadToCardStride(const void* sourcePtr, int srcElements, int srcSizeBytes,
-                            int srcStrideBytes, int dstPtrOffsetBytes, int dstStrideBytes);
+    void uploadToCardStride(const void* sourcePtr, size_t srcElements, size_t srcSizeBytes,
+                            size_t srcStrideBytes, size_t dstPtrOffsetBytes, size_t dstStrideBytes);
 
     void set(int index, const void* value, GLenum glformat, int eltSize);
 
@@ -581,7 +581,7 @@ public:
     bool valid() const;
 
     /** @brief Maximum size that can be loaded via update into this VertexRange. */
-    inline int maxSize() const {
+    inline size_t maxSize() const {
         if (valid()) {
             return m_maxSize;
         } else {

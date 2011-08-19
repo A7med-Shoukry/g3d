@@ -956,7 +956,7 @@ public:
     int findIndex(const T& value) const {
         for (size_t i = 0; i < num; ++i) {
             if (data[i] == value) {
-                return i;
+                return (int)i;
             }
         }
         return -1;

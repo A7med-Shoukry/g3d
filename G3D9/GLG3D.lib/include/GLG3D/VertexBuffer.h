@@ -116,7 +116,7 @@ private:
     MilestoneRef                        milestone;
 
     /** Number of bytes currently m_allocated out of m_size total. */
-    int				                    m_allocated;
+    size_t   		                    m_allocated;
     
     Type                                m_type;
 
@@ -128,13 +128,13 @@ private:
     uint64				                m_generation;
     
     /** The maximum m_size of this area that was ever used. */
-    int				                    m_peakAllocated;
+    size_t			                    m_peakAllocated;
     
     /** Set by RenderDevice */
     RenderDevice*                       m_renderDevice;
     
     /** Total  number of bytes in this area.  May be zero if resources have been freed.*/
-    int				                    m_size;
+    size_t			                    m_size;
     
     /**
        The OpenGL buffer object associated with this area
@@ -150,14 +150,14 @@ private:
     static Mode                         m_mode;
     
     /** Updates allocation and peakAllocation based off of new allocation. */
-    inline void updateAllocation(int newAllocation) {
+    inline void updateAllocation(size_t newAllocation) {
         m_allocated += newAllocation;
-        m_peakAllocated = iMax(m_peakAllocated, m_allocated);
+        m_peakAllocated = max(m_peakAllocated, m_allocated);
     }
 
-    static int                          m_sizeOfAllVARAreasInMemory;
+    static size_t                       m_sizeOfAllVARAreasInMemory;
 
-    VertexBuffer(int _size, UsageHint h, Type t);
+    VertexBuffer(size_t _size, UsageHint h, Type t);
 
     static Array<VertexBufferRef>       m_allVARAreas;
     
@@ -172,7 +172,7 @@ public:
        than needed for each individual VertexRange because VertexBuffer tries to 
        align VertexRange starts in memory with dword boundaries.
      */
-    static VertexBufferRef create(int s, UsageHint h = WRITE_EVERY_FRAME, Type = DATA);
+    static VertexBufferRef create(size_t s, UsageHint h = WRITE_EVERY_FRAME, Type = DATA);
 
     ~VertexBuffer();
 
@@ -180,19 +180,19 @@ public:
         return m_type;
     }
 
-    inline int totalSize() const {
+    inline size_t totalSize() const {
         return m_size;
     }
 
-    inline int freeSize() const {
+    inline size_t freeSize() const {
         return m_size - m_allocated;
     }
 
-    inline int allocatedSize() const {
+    inline size_t allocatedSize() const {
         return m_allocated;
     }
 
-    inline int peakAllocatedSize() const {
+    inline size_t peakAllocatedSize() const {
         return m_peakAllocated;
     }
 
@@ -237,7 +237,7 @@ public:
         will be in video memory, and some will be backed by main memory 
         even if nominally stored in video memory, so the total m_size may
         exceed the video memory m_size.*/
-    static int sizeOfAllVARAreasInMemory() {
+    static size_t sizeOfAllVARAreasInMemory() {
         return m_sizeOfAllVARAreasInMemory;
     }
 
@@ -256,7 +256,7 @@ public:
 };
 
 
-/** @deprecated Use VertexBuffer */
+/** \deprecated Use VertexBuffer */
 typedef VertexBuffer VARArea;
 
 } // namespace G3D
