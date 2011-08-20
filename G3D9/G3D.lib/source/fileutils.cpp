@@ -503,7 +503,7 @@ void parseFilename(
 
         if (i != std::string::npos) {
             // Make sure it is after the last slash!
-            size_t j = max(f.rfind('/'), f.rfind('\\'));
+            size_t j = maxNotNPOS(f.rfind('/'), f.rfind('\\'));
             if ((j == std::string::npos) || (i > j)) {
                 ext = f.substr(i + 1, f.size() - i - 1);
                 f = f.substr(0, i);
@@ -514,7 +514,7 @@ void parseFilename(
     // Pull the basename off
     {
         // Find the last slash
-        size_t i = max(f.rfind('/'), f.rfind('\\'));
+        size_t i = maxNotNPOS(f.rfind('/'), f.rfind('\\'));
         
         if (i == std::string::npos) {
             
