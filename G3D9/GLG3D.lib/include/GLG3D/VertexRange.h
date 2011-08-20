@@ -312,7 +312,7 @@ public:
                 size[a] = 0;
             }
 
-            debugAssertM(count[a] == (int)var[a]->m_numElements, 
+            debugAssertM(count[a] == (size_t)var[a]->m_numElements, 
                 "Updated arrays must have the same size they were created with.");
             if (a > 1) {
                 debugAssertM((var[a]->m_pointer == (uint8*)var[a - 1]->m_pointer + size[a - 1]) || 

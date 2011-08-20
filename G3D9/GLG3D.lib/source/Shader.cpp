@@ -357,13 +357,12 @@ void VertexAndPixelShader::GPUShader::init
 
         // Standard uniforms.  We'll add custom ones to this below
         std::string uniformString = 
-            STR(
-                uniform mat4 g3d_WorldToObjectMatrix;
-                uniform mat4 g3d_ObjectToWorldMatrix;
-                uniform mat3 g3d_WorldToObjectNormalMatrix;
-                uniform mat3 g3d_ObjectToWorldNormalMatrix;
-                uniform mat4 g3d_WorldToCameraMatrix;
-                uniform mat4 g3d_CameraToWorldMatrix;
+            STR(uniform mat4x3 g3d_WorldToObjectMatrix;
+                uniform mat4x3 g3d_ObjectToWorldMatrix;
+                uniform mat3   g3d_WorldToObjectNormalMatrix;
+                uniform mat3   g3d_ObjectToWorldNormalMatrix;
+                uniform mat4x3 g3d_WorldToCameraMatrix;
+                uniform mat4x3 g3d_CameraToWorldMatrix;
                 uniform int  g3d_NumLights;
                 uniform int  g3d_NumTextures;
                 uniform vec4 g3d_ObjectLight0;
@@ -381,6 +380,9 @@ void VertexAndPixelShader::GPUShader::init
             size_t pos = _code.find("\n") + 1;
             versionLine = _code.substr(0, pos);
             _code = _code.substr(versionLine.length());
+        } else {
+            // Insert #version 120
+            versionLine = "#version 120\n";
         }
 
         // #defines we'll prepend onto the shader
@@ -401,12 +403,20 @@ void VertexAndPixelShader::GPUShader::init
 
 #       ifdef G3D_OSX 
             defineString += "#define G3D_OSX\n";
-#       elif defined(G3D_WIN32)
-            defineString += "#define G3D_WIN32\n";
+#       elif defined(G3D_WINDOWS)
+            defineString += "#define G3D_WINDOWS\n";
 #       elif defined(G3D_LINUX)
             defineString += "#define G3D_LINUX\n";
 #       elif defined(G3D_FREEBSD)
             defineString += "#define G3D_FREEBSD\n";
+#       endif
+
+#       if defined(G3D_WIN32)
+            defineString += "#define G3D_WIN32\n";
+#       endif
+
+#       if defined(G3D_64BIT)
+            defineString += "#define G3D_64BIT\n";
 #       endif
                 
         // Replace g3d_size and g3d_invSize with corresponding magic names
@@ -747,11 +757,13 @@ static GLenum toGLType(const std::string& s) {
         return GL_BOOL_ARB;
 
     } else if (s == "mat2") {
-        return GL_FLOAT_MAT2_ARB;
+        return GL_FLOAT_MAT2;
     } else if (s == "mat3") {
-        return GL_FLOAT_MAT3_ARB;
+        return GL_FLOAT_MAT3;
     } else if (s == "mat4") {
-        return GL_FLOAT_MAT4_ARB;
+        return GL_FLOAT_MAT4;
+    } else if (s == "mat4x3") {
+        return GL_FLOAT_MAT4x3;
 
     } else if (s == "sampler1D") {
         return GL_SAMPLER_1D_ARB;
@@ -1275,36 +1287,36 @@ void VertexAndPixelShader::bindArgList(RenderDevice* rd, const ArgList& args) co
                 }
                 break;
 
-            case GL_FLOAT_VEC2_ARB:
+            case GL_FLOAT_VEC2:
                 glUniform2fvARB(location, 1,  reinterpret_cast<const float*>(&value.vector[0]));
                 break;
 
-            case GL_FLOAT_VEC3_ARB:
+            case GL_FLOAT_VEC3:
                 glUniform3fvARB(location, 1,  reinterpret_cast<const float*>(&value.vector[0]));
                 break;
 
-            case GL_FLOAT_VEC4_ARB:
+            case GL_FLOAT_VEC4:
                 glUniform4fvARB(location, 1,  reinterpret_cast<const float*>(&value.vector[0]));
                 break;
 
-            case GL_INT_VEC2_ARB:
-            case GL_BOOL_VEC2_ARB:
+            case GL_INT_VEC2:
+            case GL_BOOL_VEC2:
                 glUniform2iARB(location, (int)value.vector[0].x, (int)value.vector[0].y);
                 break;
 
-            case GL_INT_VEC3_ARB:
-            case GL_BOOL_VEC3_ARB:
+            case GL_INT_VEC3:
+            case GL_BOOL_VEC3:
                 glUniform3iARB(location, (int)value.vector[0].x, (int)value.vector[0].y,
                     (int)value.vector[0].z);
                 break;
 
-            case GL_INT_VEC4_ARB:
-            case GL_BOOL_VEC4_ARB:
+            case GL_INT_VEC4:
+            case GL_BOOL_VEC4:
                 glUniform4iARB(location, (int)value.vector[0].x, (int)value.vector[1].y,
                     (int)value.vector[2].z, (int)value.vector[3].w);
                 break;
 
-            case GL_FLOAT_MAT2_ARB:
+            case GL_FLOAT_MAT2:
                 {
                     float m[4];
                     for (int i = 0, c = 0; c < 2; ++c) {
@@ -1312,7 +1324,7 @@ void VertexAndPixelShader::bindArgList(RenderDevice* rd, const ArgList& args) co
                             m[i] = value.vector[r][c];
                         }
                     }
-                    glUniformMatrix2fvARB(location, 1, GL_FALSE, m);
+                    glUniformMatrix2fv(location, 1, GL_FALSE, m);
                 }            
                 break;
 
@@ -1324,11 +1336,11 @@ void VertexAndPixelShader::bindArgList(RenderDevice* rd, const ArgList& args) co
                             m[i] = value.vector[r][c];
                         }
                     }
-                    glUniformMatrix3fvARB(location, 1, GL_FALSE, m);
+                    glUniformMatrix3fv(location, 1, GL_FALSE, m);
                 }            
                 break;
 
-            case GL_FLOAT_MAT4_ARB:
+            case GL_FLOAT_MAT4:
                 {
                     float m[16];
                     for (int i = 0, c = 0; c < 4; ++c) {
@@ -1336,7 +1348,19 @@ void VertexAndPixelShader::bindArgList(RenderDevice* rd, const ArgList& args) co
                             m[i] = value.vector[r][c];
                         }
                     }
-                    glUniformMatrix4fvARB(location, 1, GL_FALSE, m);
+                    glUniformMatrix4fv(location, 1, GL_FALSE, m);
+                }
+                break;
+
+            case GL_FLOAT_MAT4x3:
+                {
+                    float m[12];
+                    for (int i = 0, c = 0; c < 4; ++c) {
+                        for (int r = 0; r < 3; ++r, ++i) {
+                            m[i] = value.vector[r][c];
+                        }
+                    }
+                    glUniformMatrix4x3fv(location, 1, GL_FALSE, m);
                 }
                 break;
 
@@ -1409,13 +1433,22 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Texture::R
 
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const CoordinateFrame& val, bool optional) {
-    set(var, Matrix4(val), optional);
+    Arg arg;
+    arg.type = GL_FLOAT_MAT4x3;
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            arg.vector[r][c] = val.rotation[r][c];
+        }
+        arg.vector[r][3] = val.translation[r];
+    }
+    arg.optional = optional;
+    set(var, arg);
 }
 
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix4& val, bool optional) {
     Arg arg;
-    arg.type = GL_FLOAT_MAT4_ARB;
+    arg.type = GL_FLOAT_MAT4;
     for (int r = 0; r < 4; ++r) {
         arg.vector[r] = val.row(r);
     }
@@ -1426,7 +1459,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix4& v
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix3& val, bool optional) {
     Arg arg;
-    arg.type = GL_FLOAT_MAT3_ARB;
+    arg.type = GL_FLOAT_MAT3;
     for (int r = 0; r < 3; ++r) {
         arg.vector[r] = Vector4(val.row(r), 0);
     }
@@ -1438,7 +1471,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix3& v
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector4& val, bool optional) {
     Arg arg;
-    arg.type = GL_FLOAT_VEC4_ARB;
+    arg.type = GL_FLOAT_VEC4;
     arg.vector[0] = val;
     arg.optional = optional;
     set(var, arg);
@@ -1447,7 +1480,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector4& v
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector3& val, bool optional) {
     Arg arg;
-    arg.type = GL_FLOAT_VEC3_ARB;
+    arg.type = GL_FLOAT_VEC3;
     arg.vector[0] = Vector4(val, 0);
     arg.optional = optional;
     set(var, arg);
@@ -1456,7 +1489,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector3& v
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Color4& val, bool optional) {
     Arg arg;
-    arg.type = GL_FLOAT_VEC4_ARB;
+    arg.type = GL_FLOAT_VEC4;
     arg.vector[0] = Vector4(val.r, val.g, val.b, val.a);
     arg.optional = optional;
     set(var, arg);
@@ -1465,7 +1498,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Color4& va
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Color3& val, bool optional) {
     Arg arg;
-    arg.type = GL_FLOAT_VEC3_ARB;
+    arg.type = GL_FLOAT_VEC3;
     arg.vector[0] = Vector4(val.r, val.g, val.b, 0);
     arg.optional = optional;
     set(var, arg);
@@ -1473,7 +1506,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Color3& va
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2& val, bool optional) {
     Arg arg;
-    arg.type = GL_FLOAT_VEC2_ARB;
+    arg.type = GL_FLOAT_VEC2;
     arg.vector[0] = Vector4(val, 0, 0);
     arg.optional = optional;
     set(var, arg);
@@ -1481,7 +1514,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2& v
 
 void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2int16& val, bool optional) {
     Arg arg;
-    arg.type = GL_INT_VEC2_ARB;
+    arg.type = GL_INT_VEC2;
     arg.vector[0] = Vector4(Vector2(val), 0, 0);
     arg.optional = optional;
     set(var, arg);

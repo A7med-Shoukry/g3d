@@ -95,12 +95,12 @@ public:
 
     /** Returns a new ray which has the same direction but an origin
         advanced by \a distance * \a bumpDirection */
-    Ray bump(float distance, const Vector3& bumpDirection) const {
+    Ray bumpedRay(float distance, const Vector3& bumpDirection) const {
         return Ray(m_origin + bumpDirection * distance, m_direction);
     }
 
     /**
-       Returns the closest point on the Ray to point.
+       \brief Returns the closest point on the Ray to point.
     */
     Point3 closestPoint(const Point3& point) const {
         float t = m_direction.dot(point - m_origin);

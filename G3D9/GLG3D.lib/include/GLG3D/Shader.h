@@ -395,7 +395,9 @@ public:
 
             GLenum                     type;
 
-            /** If an argument is marked as optional, it is only applied to the shader if it is defined within the shader.*/
+            /** If an argument is marked as optional, it is only
+                applied to the shader if it is defined within the
+                shader.*/
             bool                       optional;
 
             Arg() : optional(false) {}
@@ -523,7 +525,7 @@ class Shader;
 typedef ReferenceCountedPointer<Shader> ShaderRef;
 
 /**
-  @brief A set of functions written in GLSL that are invoked by the
+  \brief A set of functions written in GLSL that are invoked by the
   GPU per vertex, per geometric primitive, and per pixel.
 
   Abstraction of the programmable hardware pipeline.  
@@ -540,18 +542,21 @@ typedef ReferenceCountedPointer<Shader> ShaderRef;
   <P>
   
   Unless G3D_PREPROCESSOR_DISABLED is specified to the static
-  constructor, the following additional features will be available
+  constructor, GLSL version 1.20 wil be assumed for and version 1.20
+  will be assumed for shaders that do not contain a "#version"
+  statement, and the following additional features will be available
   inside the shaders:
 
   \code
-    uniform mat4 g3d_WorldToObjectMatrix;
-    uniform mat4 g3d_ObjectToWorldMatrix;
-    uniform mat4 g3d_WorldToCameraMatrix;
-    uniform mat4 g3d_CameraToWorldMatrix;
+    uniform mat4x3 g3d_WorldToObjectMatrix;
+    uniform mat4x3 g3d_ObjectToWorldMatrix;
+    uniform mat4x3 g3d_WorldToCameraMatrix;
+    uniform mat4x3 g3d_CameraToWorldMatrix;
     uniform mat3 g3d_ObjectToWorldNormalMatrix; // Upper 3x3 matrix (assumes that the transformation is RT so that the inverse transpose of the upper 3x3 is just R)
     uniform mat3 g3d_WorldToObjectNormalMatrix; // Upper 3x3 matrix (assumes that the transformation is RT so that the inverse transpose of the upper 3x3 is just R)
     uniform bool g3d_InvertY; // Current RenderDevice::invertY value
   \endcode
+
 
   Because RenderDevice inverts the coordinate system and winding
   direction so that rendering to texture and rendering to the
