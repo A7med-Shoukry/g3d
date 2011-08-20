@@ -126,7 +126,7 @@ void Surface::cull
  const Array<Surface::Ref>& allModels,
  Array<Surface::Ref>&       outModels,
  bool                       previous) {
-
+    debugAssert(&allModels != &outModels);
     outModels.fastClear();
 
     Array<Plane> clipPlanes;
@@ -134,8 +134,9 @@ void Surface::cull
     for (int i = 0; i < allModels.size(); ++i) {
         Sphere sphere;
         CFrame c;
-        allModels[i]->getCoordinateFrame(c, previous);
-        allModels[i]->getObjectSpaceBoundingSphere(sphere, previous);
+        Surface::Ref m = allModels[i];
+        m->getCoordinateFrame(c, previous);
+        m->getObjectSpaceBoundingSphere(sphere, previous);
         sphere = c.toWorldSpace(sphere);
 
         if (! sphere.culledBy(clipPlanes)) {
@@ -144,6 +145,29 @@ void Surface::cull
     }
 }
 
+
+void Surface::cull
+(const GCamera&             camera, 
+ const Rect2D&              viewport, 
+ Array<Surface::Ref>&       allModels,
+ bool                       previous) {
+     
+    Array<Plane> clipPlanes;
+    camera.getClipPlanes(viewport, clipPlanes);
+    for (int i = 0; i < allModels.size(); ++i) {
+        Sphere sphere;
+        CFrame c;
+        Surface::Ref m = allModels[i];
+        m->getCoordinateFrame(c, previous);
+        m->getObjectSpaceBoundingSphere(sphere, previous);
+        sphere = c.toWorldSpace(sphere);
+
+        if (sphere.culledBy(clipPlanes)) {
+            allModels.fastRemove(i);
+            --i;
+        }
+    }
+}
 
 void Surface::renderDepthOnly
 (RenderDevice*              rd, 

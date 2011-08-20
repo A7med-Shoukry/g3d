@@ -409,6 +409,12 @@ public:
      Array<Surface::Ref>&       outModels, 
      bool                       previous = false);
 
+    /** Culls models in place */
+    static void cull
+    (const class GCamera&       camera, 
+     const class Rect2D&        viewport, 
+     Array<Surface::Ref>&       allModels, 
+     bool                       previous = false);
     /**
      Removes elements from \a all and puts them in \a translucent.
      \a translucent is cleared first.
