@@ -119,6 +119,13 @@ void Framebuffer::set(AttachmentPoint ap, const void* n) {
 }
 
 
+void Framebuffer::set(AttachmentPoint ap, const Attachment::Ref& attachment) {
+    Attachment::Ref dst = new Attachment(*attachment);
+    dst->m_point = ap;
+    set(dst);
+}
+
+
 void Framebuffer::set(AttachmentPoint ap, const Texture::Ref& texture) {
     set(ap, texture, CubeFace::NEG_X, 0);
 }

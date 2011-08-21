@@ -8,6 +8,8 @@
 
  \created 2006-01-07
  \edited  2011-06-10
+
+  Copyright 2000-2011, Morgan McGuire
 */
 
 #ifndef GLG3D_Framebuffer_h
@@ -386,6 +388,11 @@ public:
     void set(AttachmentPoint ap, const void* n);
     
     void set(AttachmentPoint ap, const Texture::Ref& texture);
+
+    /** Used for copying Attachment%s from another Framebuffer,
+        regardless of whether they are Texture%s or Renderbuffer%s.
+        Ignores the \a attachment.point. */
+    void set(AttachmentPoint ap, const Attachment::Ref& attachment);
     
     /**
        Set one of the attachment points to reference a Texture.  Set

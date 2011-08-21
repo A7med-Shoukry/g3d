@@ -1,5 +1,5 @@
 /**
-  \file RenderDevice.h
+  \file GLG3D/RenderDevice.h
 
   Graphics hardware abstraction layer (wrapper for OpenGL).
 
@@ -721,6 +721,7 @@ public:
      */
     void setDepthTest(DepthTest test);
     void setStencilTest(StencilTest test);
+    StencilTest stencilTest() const;
 
     /** \param format If NULL, defaults to texture->format() */
     void copyTextureFromScreen(const Texture::Ref& texture, const Rect2D& rect, const ImageFormat* format = NULL, int mipLevel = 0, CubeFace face = CubeFace::POS_X);

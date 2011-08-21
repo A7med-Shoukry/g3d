@@ -1190,6 +1190,11 @@ void RenderDevice::setRenderMode(RenderMode m) {
 }
 
 
+RenderDevice::StencilTest RenderDevice::stencilTest() const {
+    return m_state.stencil.stencilTest;
+}
+
+
 RenderDevice::RenderMode RenderDevice::renderMode() const {
     return m_state.renderMode;
 }
