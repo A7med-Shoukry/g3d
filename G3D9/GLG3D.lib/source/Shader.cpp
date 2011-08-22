@@ -94,7 +94,9 @@ void Shader::beforePrimitive(class RenderDevice* renderDevice) {
         }
 
         if (uniformNames.contains("g3d_WorldToCameraMatrix")) {
-            args.set("g3d_WorldToCameraMatrix", c2w.inverse());
+            const CFrame& c = c2w.inverse();
+            args.set("g3d_WorldToCameraMatrix", c);
+            //debugPrintf("Binding WorldToCameraMatrix: %s\n", c.toXYZYPRDegreesString().c_str());
         }
 
         if (uniformNames.contains("g3d_InvertY")) {

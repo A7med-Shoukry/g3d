@@ -106,6 +106,7 @@ public:
             const std::string& pixelSource = prefixMacros + commonPixelSource;
 
             // Compile
+            //debugPrintf("%s\n", prefixMacros.c_str());
             shader = Shader::fromStrings(vertexSource, pixelSource);
             shader->setPreserveState(false);
         }
@@ -128,7 +129,9 @@ void SuperSurface::renderIntoGBufferHomogeneous
 
         for (int s = 0; s < surfaceArray.size(); ++s) {
             const SuperSurface::Ref& surface = surfaceArray[s].downcast<SuperSurface>();
-            debugAssertM(surface != NULL, "Non SuperSurface element of surfaceArray in SuperSurface::renderIntoGBufferHomogeneous");
+            debugAssertM(surface != NULL, 
+                         "Non SuperSurface element of surfaceArray "
+                         "in SuperSurface::renderIntoGBufferHomogeneous");
 
             const GPUGeom::Ref& gpuGeom = surface->gpuGeom();
             const Material::Ref& material = gpuGeom->material;
@@ -147,7 +150,8 @@ void SuperSurface::renderIntoGBufferHomogeneous
                 // Previous object-to-camera projection for velocity buffer
                 CFrame previousFrame;
                 surface->getCoordinateFrame(previousFrame, true);
-                shader->args.set("PreviousObjectToCameraMatrix", previousCameraFrame.inverse() * previousFrame);
+                const CFrame& PreviousObjectToCameraMatrix = previousCameraFrame.inverse() * previousFrame;
+                shader->args.set("PreviousObjectToCameraMatrix", PreviousObjectToCameraMatrix);
             }
 
             if (gbuffer->specification().format[GBuffer::Field::SS_POSITION_CHANGE] != NULL) {

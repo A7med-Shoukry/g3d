@@ -205,6 +205,7 @@ void GBuffer::resize(int w, int h) {
                     if (f == Field::SS_POSITION_CHANGE) {
                         texture->visualization.min = -10.0f;
                         texture->visualization.max = 10.0f;
+                        //debugPrintf("SS_POSITION_CHANGE at %d\n", (int)ap - (int)Framebuffer::COLOR0);
                     } else if (f == Field::DEPTH_AND_STENCIL) {
                         texture->visualization = Texture::Visualization::depthBuffer();
                     }

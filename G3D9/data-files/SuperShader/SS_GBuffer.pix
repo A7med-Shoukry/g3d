@@ -109,7 +109,6 @@ void main() {
     //////////////////////// MATERIAL //////////////////////////////
 
     float alpha;
-    vec3 lambertianColor;
 
     // We have to always read alpha because there may be alpha testing
 #   if defined(LAMBERTIANCONSTANT) || defined(LAMBERTIANMAP)
@@ -124,11 +123,15 @@ void main() {
             texture2D(lambertianMap, offsetTexCoord)
 #       endif
         ;
-        lambertianColor = temp.rgb;
+#       ifdef LAMBERTIAN
+            LAMBERTIAN = temp.rgb;
+#       endif
         alpha = temp.a;
     }
 #   else
-        lambertianColor = vec3(0.0);
+#       ifdef LAMBERTIAN
+            LAMBERTIAN.rgb = vec3(0.0);
+#       endif
         alpha = 1.0;
 #   endif
 
@@ -136,7 +139,7 @@ void main() {
     // because the FBO specification doesn't say how it works.
 
 #   ifdef LAMBERTIAN
-        LAMBERTIAN.rgb = lambertianColor;
+
 #   endif
 
 #   ifdef GLOSSY
@@ -199,7 +202,7 @@ void main() {
 #   endif
 
 #   ifdef CS_NORMAL
-        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)).xyz * 0.5 + vec3(0.5);
+        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)) * 0.5 + vec3(0.5);
 #   endif
 
 #   if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
@@ -212,7 +215,7 @@ void main() {
 #   endif
 
 #   ifdef CS_FACE_NORMAL
-        CS_FACE_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsFaceNormal, 0.0)).xyz * 0.5 + vec3(0.5);
+        CS_FACE_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsFaceNormal, 0.0)) * 0.5 + vec3(0.5);
 #   endif
 
     //////////////////////// POSITIONS /////////////////////////////
@@ -222,8 +225,8 @@ void main() {
         WS_POSITION.xyz = wsPosition;
 #   endif
 
-#   if defined(CS_POSITION) || defined(CS_POSITION_CHANGE) || defined(SS_POSITION_CHANGE)
-        vec3 csPosition = (g3d_WorldToCameraMatrix * vec4(wsPosition, 1.0)).xyz;
+#   if defined(CS_POSITION) || defined(CS_POSITION_CHANGE) || defined(SS_POSITION_CHANGE) || defined(CS_Z)
+        vec3 csPosition = g3d_WorldToCameraMatrix * vec4(wsPosition, 1.0);
 #   endif
 
 #   ifdef CS_POSITION
@@ -231,10 +234,7 @@ void main() {
 #   endif
 
 #   ifdef CS_Z
-        CS_Z.r = wsPosition.x * g3d_WorldToCameraMatrix[0][2] +
-                 wsPosition.y * g3d_WorldToCameraMatrix[1][2] +
-                 wsPosition.z * g3d_WorldToCameraMatrix[2][2] +
-                     g3d_WorldToCameraMatrix[3][2];
+        CS_Z.r = csPosition.z;
 #   endif
 
 #   ifdef CS_POSITION_CHANGE
@@ -245,7 +245,7 @@ void main() {
         {
             vec4 temp = ProjectToScreenMatrix * vec4(csPrevPosition, 1.0);
             vec2 ssPrevPosition = temp.xy / temp.w;
-            SS_POSITION_CHANGE.xy = gl_FragCoord.xy  - ssPrevPosition;
+            SS_POSITION_CHANGE.xy = gl_FragCoord.xy - ssPrevPosition;
         }
 #   endif
 }
