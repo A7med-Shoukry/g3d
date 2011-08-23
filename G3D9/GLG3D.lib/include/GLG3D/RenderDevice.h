@@ -8,7 +8,7 @@
 
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   \created 2001-05-29
-  \edited  2010-11-29
+  \edited  2011-08-29
 
   Copyright 2000-2011, Morgan McGuire
 */
@@ -722,6 +722,9 @@ public:
     void setDepthTest(DepthTest test);
     void setStencilTest(StencilTest test);
     StencilTest stencilTest() const;
+
+   // /** See glStencilMaskSeparate */
+   // void setStencilMask(uint32 frontFaceMask, uint32 backFaceMask);
 
     /** \param format If NULL, defaults to texture->format() */
     void copyTextureFromScreen(const Texture::Ref& texture, const Rect2D& rect, const ImageFormat* format = NULL, int mipLevel = 0, CubeFace face = CubeFace::POS_X);
@@ -1633,8 +1636,7 @@ private:
     Array<RenderState>              m_stateStack;
 
     /** Only called from pushState */
-    void setState(
-        const RenderState&          newState);
+    void setState(const RenderState& newState);
 
     bool                            m_initialized;
     bool                            m_cleanedup;

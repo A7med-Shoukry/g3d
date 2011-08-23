@@ -1,14 +1,17 @@
 /**
-  @file UserInput.h
+  \file G3D/UserInput.h
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2002-09-28
-  @edited  2006-10-20
+  \created 2002-09-28
+  \edited  2011-08-22
+
+  Copyright 2001-2011, Morgan McGuire, http://graphics.cs.williams.edu
+ All rights reserved.
  */
 
-#ifndef G3D_USERINPUT_H
-#define G3D_USERINPUT_H
+#ifndef G3D_UserInput_h
+#define G3D_UserInput_h
 
 #include "G3D/platform.h"
 #include "G3D/Array.h"
@@ -18,10 +21,9 @@
 
 namespace G3D {
 
-
-
+    
 /**
- User input class that consolidates joystick, keyboard, and mouse input.
+ \brief User input class that consolidates joystick, keyboard, and mouse state.
 
  Four axes are supported directly: joystick/keyboard x and y and 
  mouse x and y.  Mouse buttons, joystick buttons, and keyboard keys
@@ -30,6 +32,8 @@ namespace G3D {
  Call beginEvents() immediately before your SDL event handling routine and hand
  events to processEvent() as they become available.  Call endEvents() immediately
  after the loop.
+
+ \sa G3D::GEvent, G3D::GApp::onEvent, G3D::OSWindow
 */
 class UserInput {
 public:
@@ -51,8 +55,9 @@ private:
      */
     // Since relatively few keys are pressed every frame, keeping an array of
     // key codes pressed is much more compact than clearing a large array of bools.
-    Array<GKey>          justPressed;
-    Array<GKey>          justReleased;
+    Array<GKey>             justPressed;
+    Array<GKey>             justReleased;
+
 
     /**
      Function of key[x]
@@ -232,6 +237,6 @@ public:
     bool pureDeltaMouse() const;
 };
 
-}
+} // G3D
 
-#endif
+#endif //G3D_UserInput_h

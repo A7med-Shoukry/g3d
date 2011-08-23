@@ -996,66 +996,72 @@ void GApp::processGEventQueue() {
     // Event handling
     GEvent event;
     while (window()->pollEvent(event)) {
-        // userInput always gets to process events, so that it
-        // maintains the current state correctly.
-        userInput->processEvent(event);
-        
+        bool eventConsumed = false;
+
         // For event debugging
         //if (event.type != GEventType::MOUSE_MOTION) {
         //    printf("%s\n", event.toString().c_str());
         //}
 
-        if (WidgetManager::onEvent(event, m_widgetManager)) {
-            continue;
-        }
+        eventConsumed = WidgetManager::onEvent(event, m_widgetManager);
 
-        if (onEvent(event)) {
-            // Event was consumed
-            continue;
-        }
+        if (! eventConsumed) {
 
-        switch(event.type) {
-        case GEventType::QUIT:
-            setExitCode(0);
-            break;
+            eventConsumed = onEvent(event);
 
-        case GEventType::KEY_DOWN:
+            if (! eventConsumed) {
+                switch(event.type) {
+                case GEventType::QUIT:
+                    setExitCode(0);
+                    break;
 
-            if (console.isNull() || ! console->active()) {
-                switch (event.key.keysym.sym) {
-                case GKey::ESCAPE:
-                    switch (escapeKeyAction) {
-                    case ACTION_QUIT:
-                        setExitCode(0);
-                        break;
+                case GEventType::KEY_DOWN:
+
+                    if (console.isNull() || ! console->active()) {
+                        switch (event.key.keysym.sym) {
+                        case GKey::ESCAPE:
+                            switch (escapeKeyAction) {
+                            case ACTION_QUIT:
+                                setExitCode(0);
+                                break;
                     
-                    case ACTION_SHOW_CONSOLE:
-                        console->setActive(true);
-                        continue;
-                        break;
+                            case ACTION_SHOW_CONSOLE:
+                                console->setActive(true);
+                                eventConsumed = true;
+                                break;
 
-                    case ACTION_NONE:
-                        break;
+                            case ACTION_NONE:
+                                break;
+                            }
+                            break;
+
+                        case GKey::F2:
+                            if (fastSwitchCamera && developerWindow.isNull() && defaultController.notNull()) {
+                                defaultController->setActive(! defaultController->active());
+                                // Consume event
+                                eventConsumed = true;
+                            }
+                            break;
+
+                        // Add other key handlers here
+                        default:;
+                        }
                     }
                     break;
 
-                case GKey::F2:
-                    if (fastSwitchCamera && developerWindow.isNull() && defaultController.notNull()) {
-                        defaultController->setActive(! defaultController->active());
-                        // Consume event
-                        continue;
-                    }
-                    break;
+                // Add other event handlers here
 
-                // Add other key handlers here
                 default:;
                 }
-            }
-        break;
+            } // consumed
+        } // consumed
 
-        // Add other event handlers here
 
-        default:;
+        // userInput sees events if they are not consumed, or if they are release events
+        if (! eventConsumed || (event.type == GEventType::MOUSE_BUTTON_UP) || (event.type == GEventType::KEY_UP)) {
+            // userInput always gets to process events, so that it
+            // maintains the current state correctly.
+            userInput->processEvent(event);
         }
     }
 

@@ -192,6 +192,7 @@ void App::onInit() {
     developerWindow->setVisible(false);
     developerWindow->cameraControlWindow->setVisible(false);
     showRenderingStats = false;
+    debugPane->addLabel("asdasd as das das dsa dsa dasd   asdasdsad as dasd asdsa ")->setWidth(100);
 #if 0
     std::string materialPath = System::findDataFile("material");
     std::string crateFile = System::findDataFile("crate.ifs");
@@ -268,7 +269,7 @@ bool App::onEvent(const GEvent& e) {
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
 
-    model->pose(surface3D);
+//    model->pose(surface3D);
     Surface::sortAndRender(rd, defaultCamera, surface3D, lighting);
 
     // Call to make the GApp show the output of debugDraw
