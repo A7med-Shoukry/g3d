@@ -438,7 +438,7 @@ void GConsole::completeCommand(int direction) {
 
     const string& str = m_completionArray[m_completionArrayIndex];
     m_currentLine = m_completionBeginStr + str + m_completionEndStr;
-    m_cursorPos = m_completionBeginStr.size() + str.size();
+    m_cursorPos = (int)(m_completionBeginStr.size() + str.size());
 
     m_resetHistoryIndexOnEnter = true;
 }
@@ -471,7 +471,7 @@ void GConsole::processRepeatKeysym() {
         break;
 
     case GKey::END:
-        m_cursorPos = m_currentLine.size();
+        m_cursorPos = (int)m_currentLine.size();
         break;
 
     case GKey::DELETE:
@@ -558,7 +558,7 @@ void GConsole::processRepeatKeysym() {
 void GConsole::historySelect(int direction) {
     m_historyIndex += direction;
     m_currentLine = m_history[m_historyIndex];
-    m_cursorPos = m_currentLine.size();
+    m_cursorPos = (int)m_currentLine.size();
     m_resetHistoryIndexOnEnter = false;
 }
 
