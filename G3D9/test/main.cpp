@@ -505,7 +505,7 @@ void testglFormatOf() {
     printf("glFormatOf\n");
 
     debugAssert(glFormatOf(Color3) == GL_FLOAT);
-    debugAssert(glFormatOf(Color3uint8) == GL_UNSIGNED_BYTE);
+    debugAssert(glFormatOf(Color3unorm8) == GL_UNSIGNED_BYTE);
     debugAssert(glFormatOf(Vector3int16) == GL_SHORT);
     debugAssert(glFormatOf(float) == GL_FLOAT);
     debugAssert(glFormatOf(int16) == GL_SHORT);
