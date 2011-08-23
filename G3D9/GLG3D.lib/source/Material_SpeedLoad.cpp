@@ -60,7 +60,7 @@ void Material::speedSerialize(SpeedLoadIdentifier& sli, BinaryOutput& b) const {
     sli = SpeedLoadIdentifier(Crypto::md5(b.getCArray() + dataStart, end - dataStart));
 
     sli.serialize(b);
-    b.writeUInt32(end - start);
+    b.writeUInt32((uint32)(end - start));
     b.setPosition(end);
 }
 

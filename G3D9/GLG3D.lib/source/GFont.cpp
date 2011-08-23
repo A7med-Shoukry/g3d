@@ -190,7 +190,7 @@ Vector2 GFont::drawString(
 
     debugAssert(renderDevice != NULL);
     const float propW = w / charWidth;
-    const int n = s.length();
+    const int n = (int)s.length();
 
     // Shrink the vertical texture coordinates by 1 texel to avoid
     // bilinear interpolation interactions with mipmapping.
@@ -249,7 +249,7 @@ Vector2 GFont::computePackedArray(
     Array<Vector2>&     array) const {
 
     const float propW = w / charWidth;
-    const int n = s.length();
+    const int n = (int)s.length();
 
     // Shrink the vertical texture coordinates by 1 texel to avoid
     // bilinear interpolation interactions with mipmapping.
@@ -675,7 +675,7 @@ int GFont::wordWrapCut
     Spacing             spacing) const {
 
     debugAssert(maxWidth > 0);
-    int n = s.length();
+    int n = (int)s.length();
 
     const float h = size * 1.5;
     const float w = h * charWidth / charHeight;
@@ -734,7 +734,7 @@ Vector2 GFont::bounds(
     float               size,
     Spacing             spacing) const {
 
-    int n = s.length();
+    int n = (int)s.length();
 
     float h = size * 1.5;
     float w = h * charWidth / charHeight;

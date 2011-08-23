@@ -447,7 +447,7 @@ std::string BinaryInput::readStringNewline() {
 
 std::string BinaryInput::readStringEven() {
     std::string x = readString();
-    if (hasMore() && (G3D::isOdd(x.length() + 1))) {
+    if (hasMore() && (G3D::isOdd((int)x.length() + 1))) {
         skip(1);
     }
     return x;

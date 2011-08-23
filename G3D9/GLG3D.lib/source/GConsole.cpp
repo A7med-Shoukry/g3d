@@ -163,7 +163,7 @@ void GConsole::paste(const string& s) {
         return;
     }
 
-    int i = 0;
+    size_t i = 0;
 
     // Separate the string by newlines and paste each individually
     do {
@@ -193,7 +193,7 @@ void GConsole::paste(const string& s) {
                 string end    = m_currentLine.substr(m_cursorPos, m_currentLine.size() - m_cursorPos + 1);
 
                 m_currentLine = begin + insert + end;
-                m_cursorPos += insert.size();
+                m_cursorPos += (int)insert.size();
             }
         }
 
@@ -202,7 +202,7 @@ void GConsole::paste(const string& s) {
         }
 
         i = j + 1;
-    } while (i < (int)s.size());
+    } while (i < s.size());
 }
 
 
@@ -226,8 +226,8 @@ void GConsole::print(const string& s) {
 
 void GConsole::print(const string& s, const Color4& c) {
     // Break by newlines
-    int firstNewline = s.find('\n');
-    if (((int)firstNewline != -1) && ((int)firstNewline != (int)s.size() - 1)) {
+    size_t firstNewline = (int)s.find('\n');
+    if ((firstNewline != std::string::npos) && (firstNewline != s.size() - 1)) {
         // There are newlines in the middle of this string
         Array<std::string> lines = stringSplit(s, '\n');
         for (int i = 0; i < lines.size() - 1; ++i) {

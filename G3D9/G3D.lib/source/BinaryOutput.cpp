@@ -181,7 +181,7 @@ void BinaryOutput::reserveBytesWhenOutOfMemory(size_t bytes) {
         debugAssert(m_bufferLen < m_maxBufferLen);
         debugAssert(m_bufferLen >= 0);
         debugAssert(m_pos >= 0);
-        debugAssert(m_pos <= m_bufferLen);
+        debugAssert(m_pos <= (int64)m_bufferLen);
 
         // Shift the unwritten data back appropriately in the buffer.
         debugAssert(isValidHeapPointer(m_buffer));
@@ -278,13 +278,14 @@ void BinaryOutput::compress(int level) {
         throw "Cannot compress huge files (part of this file has already been written to disk).";
     }
     debugAssertM(! m_committed, "Cannot compress after committing.");
+    alwaysAssertM(m_bufferLen < 0xFFFFFFFF, "Compress only works for 32-bit files.");
 
     // This is the worst-case size, as mandated by zlib
     unsigned long compressedSize = iCeil(m_bufferLen * 1.001) + 12;
 
     // Save the old buffer and reallocate to the worst-case size
     const uint8* src     = m_buffer;
-    const uint32 srcSize = m_bufferLen;
+    const uint32 srcSize = (uint32)m_bufferLen;
 
     // add space for the 4-byte header
     m_maxBufferLen = compressedSize + 4;
@@ -353,7 +354,7 @@ void BinaryOutput::commit(bool flush) {
         if (m_buffer != NULL) {
             m_alreadyWritten += m_bufferLen;
 
-            int success = fwrite(m_buffer, m_bufferLen, 1, file);
+            size_t success = fwrite(m_buffer, m_bufferLen, 1, file);
             (void)success;
             debugAssertM(success == 1, std::string("Could not write to '") + m_filename + "'");
         }
@@ -435,7 +436,7 @@ void BinaryOutput::writeUInt64(uint64 u) {
 
 void BinaryOutput::writeString(const char* s) {
     // +1 is because strlen doesn't count the null
-    int len = strlen(s) + 1;
+    size_t len = strlen(s) + 1;
 
     debugAssert(m_beginEndBits == 0);
     reserveBytes(len);
@@ -446,7 +447,7 @@ void BinaryOutput::writeString(const char* s) {
 
 void BinaryOutput::writeStringEven(const char* s) {
     // +1 is because strlen doesn't count the null
-    int len = strlen(s) + 1;
+    size_t len = strlen(s) + 1;
 
     reserveBytes(len);
     System::memcpy(m_buffer + m_pos, s, len);
@@ -461,8 +462,8 @@ void BinaryOutput::writeStringEven(const char* s) {
 
 void BinaryOutput::writeString32(const char* s) {
     // Write the NULL and count it
-    int len = strlen(s) + 1;
-    writeUInt32(len);
+    size_t len = strlen(s) + 1;
+    writeUInt32((uint32)len);
 
     debugAssert(m_beginEndBits == 0);
     reserveBytes(len);

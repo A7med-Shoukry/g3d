@@ -856,7 +856,7 @@ public:
     inline T& randomElement() {
         debugAssert(num > 0);
         debugAssert(data!=NULL);
-        return data[iRandom(0, num - 1)];
+        return data[iRandom(0, (int)num - 1)];
     }
 
     inline const T& randomElement() const {
