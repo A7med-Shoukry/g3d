@@ -121,8 +121,8 @@ std::string GLCaps::getDriverVersion() {
         // e.g., "1.5 Mesa 6.4.2"
         
         static std::string _glVersion = (char*)glGetString(GL_VERSION);
-        int i = _glVersion.rfind(' ');
-        if (i == (int)std::string::npos) {
+        size_t i = _glVersion.rfind(' ');
+        if (i == std::string::npos) {
             return "Unknown (bad MESA driver string)";
         } else {
             return _glVersion.substr(i + 1, _glVersion.length() - i);

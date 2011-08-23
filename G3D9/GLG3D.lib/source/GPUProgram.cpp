@@ -232,11 +232,11 @@ void GPUProgram::bindProgram(int unit, unsigned int glProgram) const {
 void GPUProgram::loadProgram(const std::string& code) const {
     switch (extension) {
     case NVIDIA:
-        glLoadProgramNV(unit, glProgram, code.size(), (const unsigned char*)code.c_str());
+        glLoadProgramNV(unit, glProgram, (int)code.size(), (const unsigned char*)code.c_str());
         break;
 
     case ARB:
-        glProgramStringARB(unit, GL_PROGRAM_FORMAT_ASCII_ARB, code.size(), code.c_str());
+        glProgramStringARB(unit, GL_PROGRAM_FORMAT_ASCII_ARB, (int)code.size(), code.c_str());
         break;
     }
 }
