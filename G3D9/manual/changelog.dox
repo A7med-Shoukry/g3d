@@ -121,6 +121,7 @@
      <li> Sample programs, viewer, and test now statically link FFMPEG on Win32 to avoid DLL/PATH problems when distributing the binaries.
      <li> In the G3D source tree, renamed doc-files/ to manual/ and doc-files/data-files to doc-files/ to match icompile conventions
      <li> Upgraded to icompile 0.5.16
+     <li> Fix: CFrame::toXYZYPRDegreesString and fromXYZYPRDegreesString are now inverses and have higher precision than in 8.xx
      <li> Fix: GApp no longer passes consumed events to UserInput unless they are button up or key up
      <li> Fix: BinaryInput and FilePath now convert Windows slashes to Unix ones on Unix
      <li> Fix: GLCaps::glslVersion now returns the correct value

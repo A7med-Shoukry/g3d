@@ -33,11 +33,11 @@ namespace G3D {
 
 
 std::string CoordinateFrame::toXYZYPRDegreesString() const {
-    UprightFrame uframe(*this);
+    float x,y,z,yaw,pitch,roll;
+    getXYZYPRDegrees(x,y,z,yaw,pitch,roll);
     
     return format("CFrame::fromXYZYPRDegrees(% 5.1ff, % 5.1ff, % 5.1ff, % 5.1ff, % 5.1ff, % 5.1ff)", 
-                  uframe.translation.x, uframe.translation.y, uframe.translation.z, 
-                  toDegrees(uframe.yaw), toDegrees(uframe.pitch), 0.0f);
+                  x,y,z,yaw,pitch,roll);
 }
 
 
@@ -64,6 +64,8 @@ CoordinateFrame::CoordinateFrame(const Any& any) {
         }
     } else if (beginsWith(n, "PHYSICSFRAME") || beginsWith(n, "PFRAME")) {
         *this = PhysicsFrame(any);
+//    } else if (beginsWith(n, "UPRIGHTFRAME") || beginsWith(n, "UFRAME")) {
+//        *this = UprightFrame(any);
     } else {
         any.verifyName("CFrame::fromXYZYPRDegrees", "CoordinateFrame::fromXYZYPRDegrees");
         any.verifyType(Any::ARRAY);
@@ -108,11 +110,7 @@ CoordinateFrame::CoordinateFrame() :
 
 CoordinateFrame CoordinateFrame::fromXYZYPRRadians(float x, float y, float z, float yaw, 
                                                    float pitch, float roll) {
-    Matrix3 rotation = Matrix3::fromAxisAngle(Vector3::unitY(), yaw);
-    
-    rotation = Matrix3::fromAxisAngle(rotation.column(0), pitch) * rotation;
-    rotation = Matrix3::fromAxisAngle(rotation.column(2), roll) * rotation;
-
+    const Matrix3& rotation = Matrix3::fromEulerAnglesYXZ(yaw, pitch, roll);
     const Vector3 translation(x, y, z);
     
     return CoordinateFrame(rotation, translation);
@@ -125,28 +123,7 @@ void CoordinateFrame::getXYZYPRRadians(float& x, float& y, float& z,
     y = translation.y;
     z = translation.z;
     
-    const Vector3& look = lookVector();
-
-    if (abs(look.y) > 0.99f) {
-        // Looking nearly straight up or down
-
-        yaw   = G3D::pi() + atan2(look.x, look.z);
-        pitch = asin(look.y);
-        roll  = 0.0f;
-        
-    } else {
-
-        // Yaw cannot be affected by others, so pull it first
-        yaw = G3D::pi() + atan2(look.x, look.z);
-        
-        // Pitch is the elevation of the yaw vector
-        pitch = asin(look.y);
-        
-        Vector3 actualRight = rightVector();
-        Vector3 expectedRight = look.cross(Vector3::unitY());
-
-        roll = 0;//acos(actualRight.dot(expectedRight));  TODO
-    }
+    rotation.toEulerAnglesYXZ(yaw, pitch, roll);
 }
 
 

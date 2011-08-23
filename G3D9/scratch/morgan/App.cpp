@@ -186,6 +186,28 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 
 
 void App::onInit() {
+#if 0
+    for (int y = 0; y < 350; y += 10) {
+        for (int p = 0; p < 350; p += 10) {
+            for (int r = 0; r < 350; r += 10) {
+                CFrame A = CFrame::fromXYZYPRDegrees(0,0,0,y,p,r);
+                std::string As = A.toXYZYPRDegreesString();
+                Any Aa = Any::parse(As);
+
+                float y2 = Aa[3];
+                float p2 = Aa[4];
+                float r2 = Aa[5];
+                /*
+                debugAssert(fuzzyEq(float(y), y2));
+                debugAssert(fuzzyEq(float(p), p2));
+                debugAssert(fuzzyEq(float(r), r2));
+                */
+                CFrame B = CFrame(Aa);
+                debugAssert(A.fuzzyEq(B));
+            }
+        }
+    }
+#endif
 
     // Turn on the developer HUD
     debugWindow->setVisible(true);
