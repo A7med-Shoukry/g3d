@@ -170,7 +170,7 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
         // Don't link against G3D when building G3D itself.
 #      ifndef G3D_BUILDING_LIBRARY_DLL
 #         ifdef G3D_64BIT
-#             pragma comment(lib, "G3Dd-64.lib")
+#             pragma comment(lib, "G3D-64d.lib")
 #         else
 #             pragma comment(lib, "G3Dd.lib")
 #         endif
