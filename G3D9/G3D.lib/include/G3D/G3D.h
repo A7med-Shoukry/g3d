@@ -156,23 +156,12 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #   pragma comment(lib, "zlib")
 #   pragma comment(lib, "winmm")
 #   pragma comment(lib, "imagehlp")
-#   if defined(G3D_64BIT)
-/*
-#       pragma comment(lib, "ws2_64")
-#       pragma comment(lib, "gdi64")
-#       pragma comment(lib, "user64")
-#       pragma comment(lib, "kernel64")
-#       pragma comment(lib, "advapi64")
-#       pragma comment(lib, "shell64")
-*/
-#   else
-#       pragma comment(lib, "ws2_32")
-#       pragma comment(lib, "gdi32")
-#       pragma comment(lib, "user32")
-#       pragma comment(lib, "kernel32")
-#       pragma comment(lib, "advapi32")
-#       pragma comment(lib, "shell32")
-#   endif
+#   pragma comment(lib, "ws2_32")
+#   pragma comment(lib, "gdi32")
+#   pragma comment(lib, "user32")
+#   pragma comment(lib, "kernel32")
+#   pragma comment(lib, "advapi32")
+#   pragma comment(lib, "shell32")
 #   pragma comment(lib, "version")
 #   pragma comment(lib, "png")
 #   pragma comment(lib, "jpeg")
@@ -180,12 +169,20 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #   ifdef _DEBUG
         // Don't link against G3D when building G3D itself.
 #      ifndef G3D_BUILDING_LIBRARY_DLL
-#         pragma comment(lib, "G3Dd.lib")
+#         ifdef G3D_64BIT
+#             pragma comment(lib, "G3Dd-64.lib")
+#         else
+#             pragma comment(lib, "G3Dd.lib")
+#         endif
 #      endif
 #   else
         // Don't link against G3D when building G3D itself.
 #      ifndef G3D_BUILDING_LIBRARY_DLL
-#         pragma comment(lib, "G3D.lib")
+#         ifdef G3D_64BIT
+#             pragma comment(lib, "G3D-64.lib")
+#         else
+#             pragma comment(lib, "G3D.lib")
+#         endif
 #      endif
 #   endif
 #endif
