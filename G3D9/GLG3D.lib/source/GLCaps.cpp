@@ -153,7 +153,7 @@ std::string GLCaps::getDriverVersion() {
         RegistryUtil::readString(videoDeviceKey, format("%s%d", videoDeviceValue.c_str(), videoDeviceNum - 1), installedDriversKey);
 
         // find and remove the "\Registry\Machine\" part of the key
-        int subKeyIndex = installedDriversKey.find('\\', 1);
+        size_t subKeyIndex = installedDriversKey.find('\\', 1);
         subKeyIndex = installedDriversKey.find('\\', subKeyIndex + 1);
 
         installedDriversKey.erase(0, subKeyIndex);
