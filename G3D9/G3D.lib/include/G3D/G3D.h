@@ -153,7 +153,6 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #include "G3D/Parse3DS.h"
 
 #ifdef _MSC_VER
-#   pragma comment(lib, "zlib")
 #   pragma comment(lib, "winmm")
 #   pragma comment(lib, "imagehlp")
 #   pragma comment(lib, "ws2_32")
@@ -163,9 +162,17 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #   pragma comment(lib, "advapi32")
 #   pragma comment(lib, "shell32")
 #   pragma comment(lib, "version")
-#   pragma comment(lib, "png")
-#   pragma comment(lib, "jpeg")
-#   pragma comment(lib, "zip")
+#   ifdef G3D_64BIT
+#       pragma comment(lib, "zlib-64")
+#       pragma comment(lib, "png-64")
+#       pragma comment(lib, "jpeg-64")
+#       pragma comment(lib, "zip-64")
+#   else
+#       pragma comment(lib, "zlib")
+#       pragma comment(lib, "png")
+#       pragma comment(lib, "jpeg")
+#       pragma comment(lib, "zip")
+#   endif
 #   ifdef _DEBUG
         // Don't link against G3D when building G3D itself.
 #      ifndef G3D_BUILDING_LIBRARY_DLL

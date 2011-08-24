@@ -34,16 +34,31 @@
 //#   define G3D_STATIC_LINK_FFMPEG
 
 #   ifndef G3D_STATIC_LINK_FFMPEG
-#       pragma comment(lib, "avutil-50")
-#       pragma comment(lib, "avcodec-52")
-#       pragma comment(lib, "avformat-52")
-#       pragma comment(lib, "swscale-0")
+#       ifdef G3D_64BIT
+#           pragma comment(lib, "avutil-50-64")
+#           pragma comment(lib, "avcodec-52-64")
+#           pragma comment(lib, "avformat-52-64")
+#           pragma comment(lib, "swscale-0-64")
+#       else
+#           pragma comment(lib, "avutil-50")
+#           pragma comment(lib, "avcodec-52")
+#           pragma comment(lib, "avformat-52")
+#           pragma comment(lib, "swscale-0")
+#       endif
 #   else
-#       pragma comment(lib, "mingwrt")
-#       pragma comment(lib, "avutil")
-#       pragma comment(lib, "avcodec")
-#       pragma comment(lib, "avformat")
-#       pragma comment(lib, "swscale")
+#       ifdef G3D_64BIT
+#           pragma comment(lib, "mingwrt-64")
+#           pragma comment(lib, "avutil-64")
+#           pragma comment(lib, "avcodec-64")
+#           pragma comment(lib, "avformat-64")
+#           pragma comment(lib, "swscale-64")
+#        else
+#           pragma comment(lib, "mingwrt")
+#           pragma comment(lib, "avutil")
+#           pragma comment(lib, "avcodec")
+#           pragma comment(lib, "avformat")
+#           pragma comment(lib, "swscale")
+#        endif
 #   endif
 
 #   ifdef _DEBUG
