@@ -17,68 +17,6 @@
 #define G3D_GLG3D_h
 
 #include "G3D/G3D.h"
-
-// Set up the linker on Windows
-#ifdef _MSC_VER
-
-#   pragma comment(lib, "ole32")
-#   pragma comment(lib, "opengl32")
-#   pragma comment(lib, "glu32")
-#   pragma comment(lib, "shell32") // for drag drop
-
-/** \def G3D_STATIC_LINK_FFMPEG If you #define this before including GLG3D.h or G3DAll.h,
- then G3D will statically link to FFMPEG on Windows and you do not need to distribute its DLLs.  By
- default G3D dynamically links to FFMPEG for licensing reasons, which means you need to 
- distribute the bin/ *.dll files with your program.
-*/
-//#   define G3D_STATIC_LINK_FFMPEG
-
-#   ifndef G3D_STATIC_LINK_FFMPEG
-//      DLL version
-#       ifdef G3D_64BIT
-#           pragma comment(lib, "avutil-50-64")
-#           pragma comment(lib, "avcodec-52-64")
-#           pragma comment(lib, "avformat-52-64")
-#           pragma comment(lib, "swscale-0-64")
-#       else
-#           pragma comment(lib, "avutil-50")
-#           pragma comment(lib, "avcodec-52")
-#           pragma comment(lib, "avformat-52")
-#           pragma comment(lib, "swscale-0")
-#       endif
-#   else
-//      LIB-only version
-#       ifdef G3D_64BIT
-#           pragma comment(lib, "mingwrt-64")
-#           pragma comment(lib, "avutil-64")
-#           pragma comment(lib, "avcodec-64")
-#           pragma comment(lib, "avformat-64")
-#           pragma comment(lib, "swscale-64")
-#        else
-#           pragma comment(lib, "mingwrt")
-#           pragma comment(lib, "avutil")
-#           pragma comment(lib, "avcodec")
-#           pragma comment(lib, "avformat")
-#           pragma comment(lib, "swscale")
-#        endif
-#   endif
-
-#   ifdef _DEBUG
-#       ifdef G3D_64BIT
-#	        pragma comment(lib, "GLG3D-64d")
-#       else
-#	        pragma comment(lib, "GLG3Dd")
-#       endif
-#   else
-#       ifdef G3D_64BIT
-#           pragma comment(lib, "GLG3D-64")
-#       else
-#           pragma comment(lib, "GLG3D")
-#       endif
-#   endif
-
-#endif
-
 #include "GLG3D/glheaders.h"
 #include "GLG3D/glcalls.h"
 #include "GLG3D/getOpenGLState.h"
@@ -178,4 +116,68 @@
 #include "GLG3D/SDLWindow.h"
 #endif
 
+
+// Set up the linker on Windows
+#ifdef _MSC_VER
+
+#   pragma comment(lib, "ole32")
+#   pragma comment(lib, "opengl32")
+#   pragma comment(lib, "glu32")
+#   pragma comment(lib, "shell32") // for drag drop
+
+/** \def G3D_STATIC_LINK_FFMPEG If you #define this before including GLG3D.h or G3DAll.h,
+ then G3D will statically link to FFMPEG on Windows and you do not need to distribute its DLLs.  By
+ default G3D dynamically links to FFMPEG for licensing reasons, which means you need to 
+ distribute the bin/ *.dll files with your program.
+*/
+//#   define G3D_STATIC_LINK_FFMPEG
+
+
+#ifndef NO_FFMPEG
+#   ifndef G3D_STATIC_LINK_FFMPEG
+//      DLL version
+#       ifdef G3D_64BIT
+#           pragma comment(lib, "avutil-50-64")
+#           pragma comment(lib, "avcodec-52-64")
+#           pragma comment(lib, "avformat-52-64")
+#           pragma comment(lib, "swscale-0-64")
+#       else
+#           pragma comment(lib, "avutil-50")
+#           pragma comment(lib, "avcodec-52")
+#           pragma comment(lib, "avformat-52")
+#           pragma comment(lib, "swscale-0")
+#       endif
+#   else
+//      LIB-only version
+#       ifdef G3D_64BIT
+#           pragma comment(lib, "mingwrt-64")
+#           pragma comment(lib, "avutil-64")
+#           pragma comment(lib, "avcodec-64")
+#           pragma comment(lib, "avformat-64")
+#           pragma comment(lib, "swscale-64")
+#        else
+#           pragma comment(lib, "mingwrt")
+#           pragma comment(lib, "avutil")
+#           pragma comment(lib, "avcodec")
+#           pragma comment(lib, "avformat")
+#           pragma comment(lib, "swscale")
+#        endif
+#   endif
+#endif // NO_FFMPEG
+
+#   ifdef _DEBUG
+#       ifdef G3D_64BIT
+#	        pragma comment(lib, "GLG3D-64d")
+#       else
+#	        pragma comment(lib, "GLG3Dd")
+#       endif
+#   else
+#       ifdef G3D_64BIT
+#           pragma comment(lib, "GLG3D-64")
+#       else
+#           pragma comment(lib, "GLG3D")
+#       endif
+#   endif
+
+#endif
 #endif

@@ -1,10 +1,10 @@
 /** 
-  @file VideoInput.h
+  \file GLG3D/VideoInput.h
 
-  @maintainer Corey Taylor
+  \maintainer Corey Taylor
 
-  @created 2008-08-01
-  @edited  2010-12-06
+  \created 2008-08-01
+  \edited  2011-08-24
  */
 
 #ifndef G3D_VideoInput_h
@@ -23,6 +23,13 @@ struct AVCodecContext;
 struct AVCodec;
 struct AVPacket;
 struct SwsContext;
+
+
+// Define to disable FFMPEG.  This is a temporary feature while we debug the Windows 64-bit build 
+#if defined(G3D_WINDOWS) && defined(G3D_64BIT)
+#define NO_FFMPEG
+#pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
+#endif
 
 namespace G3D {
 

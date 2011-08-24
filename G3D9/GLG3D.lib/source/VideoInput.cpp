@@ -57,6 +57,7 @@ VideoInput::~VideoInput() {
         m_decodingThread->waitForCompletion();
     }
 
+#ifndef NO_FFMPEG
     // shutdown ffmpeg
     avcodec_close(m_avCodecContext);
     av_close_input_file(m_avFormatContext);
@@ -79,6 +80,7 @@ VideoInput::~VideoInput() {
     if (m_avResizeContext) {
         av_free(m_avResizeContext);
     }
+#endif
 }
 
 static const char* ffmpegError(int code);
@@ -86,7 +88,7 @@ static const char* ffmpegError(int code);
 void VideoInput::initialize(const std::string& filename, const Settings& settings) {
     // helper for exiting VideoInput construction (exceptions caught by static ref creator)
     #define throwException(exp, msg) if (!(exp)) { throw std::string(msg); }
-
+#ifndef NO_FFMPEG
     // initialize list of available muxers/demuxers and codecs in ffmpeg
     avcodec_register_all();
     av_register_all();
@@ -145,6 +147,7 @@ void VideoInput::initialize(const std::string& filename, const Settings& setting
     // everything is setup and ready to be decoded
     m_decodingThread = GThread::create("VideoInput::m_bufferThread", VideoInput::decodingThreadProc, this);
     m_decodingThread->start();
+#endif
 }
 
 bool VideoInput::readNext(RealTime timeStep, Texture::Ref& frame) {
@@ -244,6 +247,7 @@ bool VideoInput::readNext(RealTime timeStep, GImage& frame) {
 
     return frameUpdated;
 }
+
 
 bool VideoInput::readNext(RealTime timeStep, Image3unorm8::Ref& frame) {
     GMutexLock m(&m_bufferMutex);
@@ -455,18 +459,19 @@ bool VideoInput::readFromIndex(int index, Image3unorm8::Ref& frame) {
     return foundFrame;
 }
 
+
 bool VideoInput::readFromIndex(int index, Image3::Ref& frame) {
     setIndex(index);
 
     // wait for seek to complete
-    while (!m_decodingThread->completed() && m_clearBuffersAndSeek) {
+    while (! m_decodingThread->completed() && m_clearBuffersAndSeek) {
         System::sleep(0.005);
     }
 
     bool foundFrame = false;
 
     // wait for a new frame after seek and read it
-    while(!m_decodingThread->completed() && !foundFrame) {
+    while (! m_decodingThread->completed() && !foundFrame) {
 
         // check for frame
         m_bufferMutex.lock();
@@ -483,17 +488,19 @@ bool VideoInput::readFromIndex(int index, Image3::Ref& frame) {
     }
 
     // invalidate video if seek failed
-    if (!foundFrame) {
+    if (! foundFrame) {
         m_finished = true;
     }
 
     return foundFrame;
 }
 
+
 void VideoInput::setTimePosition(RealTime pos) {
     // find the closest index to seek to
     setIndex(iFloor(pos * fps()));
 }
+
 
 void VideoInput::setIndex(int index) {
     m_currentIndex = index;
@@ -507,30 +514,50 @@ void VideoInput::setIndex(int index) {
     m_clearBuffersAndSeek = true;
 }
 
+
 void VideoInput::skipTime(RealTime length) {
     setTimePosition(m_currentTime + length);
 }
+
 
 void VideoInput::skipFrames(int length) {
     setIndex(m_currentIndex + length);
 }
 
+
 int VideoInput::width() const {
+#ifdef NO_FFMPEG
+    return 0;
+#else
     return m_avCodecContext->width;
+#endif
 }
 
+
 int VideoInput::height() const {
+#ifdef NO_FFMPEG
+    return 0;
+#else
     return m_avCodecContext->height;
+#endif
 }
 
 RealTime VideoInput::fps() const {
+#ifdef NO_FFMPEG
+    return 0;
+#else
     // return FFmpeg's calculated base frame rate
     return av_q2d(m_avFormatContext->streams[m_avVideoStreamIdx]->r_frame_rate);
+#endif
 }
 
 RealTime VideoInput::length() const {
+#ifdef NO_FFMPEG
+    return 0;
+#else
     // return duration in seconds calculated from stream duration in FFmpeg's stream time base
     return m_avFormatContext->streams[m_avVideoStreamIdx]->duration * av_q2d(m_avFormatContext->streams[m_avVideoStreamIdx]->time_base);
+#endif
 }
 
 RealTime VideoInput::pos() const {
@@ -546,7 +573,7 @@ int VideoInput::index() const {
 }
 
 void VideoInput::decodingThreadProc(void* param) {
-
+#ifndef NO_FFMPEG
     VideoInput* vi = reinterpret_cast<VideoInput*>(param);
 
     // allocate avframe to hold decoded frame
@@ -636,6 +663,7 @@ void VideoInput::decodingThreadProc(void* param) {
 
     // free codec decoding frame
     av_free(decodingFrame);
+#endif
 }
 
 
@@ -643,6 +671,7 @@ void VideoInput::decodingThreadProc(void* param) {
 
 // decoding thread helpers
 void VideoInput::seekToTimestamp(VideoInput* vi, AVFrame* decodingFrame, AVPacket* packet, bool& validPacket) {
+#ifndef NO_FFMPEG
     // maximum number of frames to decode before seeking (1 second)
     const int64 MAX_DECODE_FRAMES = iRound(vi->fps());
 
@@ -699,6 +728,7 @@ void VideoInput::seekToTimestamp(VideoInput* vi, AVFrame* decodingFrame, AVPacke
 
         } while (!validPacket);    
     }
+#endif // NO_FFMPEG
 }
 
 

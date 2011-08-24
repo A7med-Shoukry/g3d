@@ -1,9 +1,15 @@
 /** 
-    @file VideoOutput.h
- */
+  \file GLG3D/VideoOutput.h
+  \created 2010-01-01
+  \edited  2011-08-24
+  \maintainer Corey Taylor
 
-#ifndef G3D_VIDEOOUTPUT_H
-#define G3D_VIDEOOUTPUT_H
+  Copyright 2000-2011, Morgan McGuire.
+  All rights reserved.
+*/
+
+#ifndef G3D_VideoOutput_h
+#define G3D_VideoOutput_h
 
 #include <string>
 #include "G3D/g3dmath.h"
@@ -17,12 +23,18 @@ struct AVFormatContext;
 struct AVStream;
 struct AVFrame;
 
+// Define to disable FFMPEG.  This is a temporary feature while we debug the Windows 64-bit build 
+#if defined(G3D_WINDOWS) && defined(G3D_64BIT)
+#define NO_FFMPEG
+#pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
+#endif
+
 namespace G3D {
 
 /** 
- @brief Saves video to disk in a variety of popular formats, including AVI and MPEG. 
+ \brief Saves video to disk in a variety of popular formats, including AVI and MPEG. 
 
- @beta
+ \beta
  */
 class VideoOutput : public ReferenceCountedObject {
 public:

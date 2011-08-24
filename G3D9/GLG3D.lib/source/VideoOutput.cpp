@@ -1,6 +1,6 @@
 /** 
- @file VideoOutput.cpp
- @author Corey Taylor
+ \file GLG3D/source/VideoOutput.cpp
+ \author Corey Taylor
  */
 
 #include "G3D/platform.h"
@@ -131,6 +131,7 @@ VideoOutput::VideoOutput() :
 }
 
 VideoOutput::~VideoOutput() {
+#ifndef NO_FFMPEG
     if (!m_isFinished && m_isInitialized) {
         abort();
     }
@@ -163,6 +164,7 @@ VideoOutput::~VideoOutput() {
         av_free(m_avFormatContext);
         m_avFormatContext = NULL;
     }
+#endif
 }
 
 void VideoOutput::initialize(const std::string& filename, const Settings& settings) {
@@ -172,7 +174,7 @@ void VideoOutput::initialize(const std::string& filename, const Settings& settin
     debugAssert(settings.width > 0);
     debugAssert(settings.height > 0);
     debugAssert(settings.fps > 0);
-
+#ifndef NO_FFMPEG
     // initialize list of available muxers/demuxers and codecs in ffmpeg
     av_register_all();
 
@@ -275,7 +277,7 @@ void VideoOutput::initialize(const std::string& filename, const Settings& settin
         abort();
         throwException(false, ("Error initializing and writing FFmpeg video file."));
     }
-
+#endif
     m_isInitialized = true;
 }
 
@@ -367,7 +369,7 @@ void VideoOutput::encodeFrame(uint8* frame, const ImageFormat* format, bool inve
     alwaysAssertM(! m_isFinished, "Cannot call VideoOutput::append() after commit() or abort().");
 
     convertFrame(frame, format, invertY);
-
+#ifndef NO_FFMPEG
     // encode frame
     int encodeSize = avcodec_encode_video(m_avStream->codec, 
                                           m_avEncodingBuffer, 
@@ -390,6 +392,7 @@ void VideoOutput::encodeFrame(uint8* frame, const ImageFormat* format, bool inve
 
         av_write_frame(m_avFormatContext, &packet);
     }
+#endif
 }
 
 // this routine does not support any planar input formats
@@ -450,7 +453,7 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
         matchingPixelFormat = PIX_FMT_RGB24;
 
     }
-    
+#ifndef NO_FFMPEG
     if (matchingPixelFormat != m_avStream->codec->pix_fmt) {
         // finally convert to the format the encoder expects
         AVFrame* convFrame = avcodec_alloc_frame();
@@ -480,22 +483,24 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
                        m_settings.width, 
                        m_settings.height);
     }
+#endif
 }
 
 void VideoOutput::commit() {
     m_isFinished = true;
-
+#ifndef NO_FFMPEG
     if (m_isInitialized) {
         // write the trailer to create a valid file
         av_write_trailer(m_avFormatContext);
 
         url_fclose(m_avFormatContext->pb);
     }
+#endif
 }
 
 void VideoOutput::abort() {
     m_isFinished = true;
-
+#ifndef NO_FFMPEG
     if (m_avFormatContext && m_avFormatContext->pb) {
         url_fclose(m_avFormatContext->pb);
         m_avFormatContext->pb = NULL;
@@ -506,6 +511,7 @@ void VideoOutput::abort() {
             unlink(m_filename.c_str());
 #       endif //_MSVC_VER
     }
+#endif
 }
 
 void VideoOutput::getSupportedCodecs(Array<std::string>& list) {
@@ -529,9 +535,12 @@ void VideoOutput::getSupportedCodecs(Array<CodecID>& list) {
 
 
 bool VideoOutput::supports(CodecID c) {
+    AVCodec* codec = NULL;
+#ifndef NO_FFMPEG
     av_register_all();
 
-    AVCodec* codec = avcodec_find_encoder(static_cast< ::CodecID>(c));
+    codec = avcodec_find_encoder(static_cast< ::CodecID>(c));
+#endif
     return codec != NULL;
 }
 
