@@ -34,6 +34,7 @@
 //#   define G3D_STATIC_LINK_FFMPEG
 
 #   ifndef G3D_STATIC_LINK_FFMPEG
+//      DLL version
 #       ifdef G3D_64BIT
 #           pragma comment(lib, "avutil-50-64")
 #           pragma comment(lib, "avcodec-52-64")
@@ -46,6 +47,7 @@
 #           pragma comment(lib, "swscale-0")
 #       endif
 #   else
+//      LIB-only version
 #       ifdef G3D_64BIT
 #           pragma comment(lib, "mingwrt-64")
 #           pragma comment(lib, "avutil-64")
