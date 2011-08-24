@@ -371,10 +371,10 @@ public:
 
     explicit Any(float x);
 
-#ifdef G3D_32BIT
+//#ifdef G3D_32BIT
     /** NUMBER constructor */
     explicit Any(int64 x);
-#endif    // G3D_32BIT
+//#endif    // G3D_32BIT
 
     /** NUMBER constructor */
     explicit Any(long x);

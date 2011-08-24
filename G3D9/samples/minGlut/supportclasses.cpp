@@ -61,7 +61,7 @@ void Image::display(float deviceGamma) const {
     for (unsigned int i = 0; i < gammaTable.size(); ++i) {
         gammaTable[i] = (Color3::white() * i / (gammaTable.size() - 1.0f)).pow(1.0f / deviceGamma);
     }
-    glColorTable(GL_POST_COLOR_MATRIX_COLOR_TABLE, GL_RGB, gammaTable.size(), GL_RGB, GL_FLOAT, &gammaTable[0]);
+    glColorTable(GL_POST_COLOR_MATRIX_COLOR_TABLE, GL_RGB, (GLsizei)gammaTable.size(), GL_RGB, GL_FLOAT, &gammaTable[0]);
     glEnable(GL_POST_COLOR_MATRIX_COLOR_TABLE);
     
     // Create a texture, upload our image, and bind it (assume a

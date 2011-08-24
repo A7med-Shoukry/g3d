@@ -320,10 +320,10 @@ Any::Any(char x) : m_type(NUMBER), m_simpleValue(double(x)), m_data(NULL) {
 }
 
 
-#ifdef G3D_32BIT
+//#ifdef G3D_32BIT
 Any::Any(int64 x) : m_type(NUMBER), m_simpleValue((double)x), m_data(NULL) {
 }
-#endif    // G3D_32BIT
+//#endif    // G3D_32BIT
 
 
 Any::Any(long x) : m_type(NUMBER), m_simpleValue((double)x), m_data(NULL) {

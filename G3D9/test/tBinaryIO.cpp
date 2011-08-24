@@ -326,7 +326,7 @@ static void testStringSerialization() {
 
         BinaryOutput bo("<memory>", G3D_LITTLE_ENDIAN);
         std::string src = "Hello";
-        bo.writeUInt32(src.length() + 1);
+        bo.writeUInt32((uint32)src.length() + 1);
         bo.writeString(src);
         bo.commit(data);
 
