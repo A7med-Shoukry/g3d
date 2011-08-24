@@ -22,13 +22,24 @@ href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.
 
 <p>
 \htmlonly
-Visual Studio 10 (officially known as Visual C++ 2010 Express Edition)
-is available as a free download from Microsoft at <a
-href="http://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a>.
+Visual Studio 2010 (officially known as Visual C++ 2010 Express Edition)
+is available as a free download from Microsoft.
 For 64-bit application development, you will also need to install the free Windows SDK from
-<a href="http://msdn.microsoft.com/en-us/windows/bb980924">http://msdn.microsoft.com/en-us/windows/bb980924</a>.
 Note that there is also a profession
 edition of Visual Studio 2010 that can be purchased and includes 64-bit support directly.
+
+<ul>
+<li> Visual Studio 2010: <a href="http://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a></li>
+<li> Windows SDK 7.1: <a href="http://msdn.microsoft.com/en-us/windows/bb980924">http://msdn.microsoft.com/en-us/windows/bb980924</a></li>
+</ul>
+
+After installing the Windows SDK 7.1, any previous projects will still continue to use the old SDK.  You can fix this by changing the project's
+Configuration Properties\General\Platform Toolset as shown below:
+
+<center><img src="vc-change-toolset.png" border=0 align=top></center></p>
+
+All of the project files that come with G3D already have this done.  
+
 \endhtmlonly
 </p>
 
