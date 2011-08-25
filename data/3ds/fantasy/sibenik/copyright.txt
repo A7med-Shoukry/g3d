@@ -1,4 +1,0 @@
-Sibenik cathedral:
-
-The Sibenik cathedral is a project by Marko Dabrovic.  It has become a standard rendering benchmark in graphics research and art competitions.
-It was downloaded from http://hdri.cgtechniques.com/~sibenik2/download/

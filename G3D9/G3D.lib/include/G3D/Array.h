@@ -437,7 +437,7 @@ public:
       \sa clear, trimToSize
     */
     void resize(size_t n, bool shrinkIfNecessary = true) {
-        debugAssertM(n < 0xFFFFFFFF, "This implementation does not support arrays with more than 2^32 elements, although the size in memory may be larger.");
+        alwaysAssertM(n < 0xFFFFFFFF, "This implementation does not support arrays with more than 2^32 elements, although the size in memory may be larger.");
         if (num == n) {
             return;
         }

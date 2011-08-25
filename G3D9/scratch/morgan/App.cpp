@@ -269,6 +269,17 @@ void App::onInit() {
     timer.after("speedDeserialize");
 #endif
 
+    GImage src(System::findDataFile("testimage.png"));
+    texture = Texture::createEmpty("", src.width(), src.height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, -src.width());
+    glBindTexture(texture->openGLTextureTarget(), texture->openGLID());
+    glTexSubImage2D(texture->openGLTextureTarget(), 0, 0, 0, src.width(), src.height(), texture->format()->openGLBaseFormat, texture->format()->openGLDataFormat, src.byte());
+    debugAssertGLOk();
+    glBindTexture(texture->openGLTextureTarget(), GL_ZERO);
+
+    debugPane->addTextureBox(texture);
+
     lighting = defaultLighting();
 }
 
@@ -300,6 +311,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
+
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
     Surface2D::sortAndRender(rd, posed2D);
 }

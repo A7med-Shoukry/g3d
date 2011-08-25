@@ -13,6 +13,7 @@
 class App : public GApp {
 public:
     
+    Texture::Ref            texture;
     ArticulatedModel::Ref   model;
     Lighting::Ref           lighting;
 
