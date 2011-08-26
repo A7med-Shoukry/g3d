@@ -171,9 +171,16 @@ void SuperSurface::renderIntoGBufferHomogeneous
             // Bind material arguments
             material->configure(shader->args);
 
-            // TODO: pass alpha threshold
+            // Enable alpha testing
+            if (surface->hasPartialCoverage()) {
+                rd->setAlphaTest(RenderDevice::ALPHA_GREATER, 0);
+            }
 
             surface->sendGeometry(rd);
+
+            if (surface->hasPartialCoverage()) {
+                rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0);
+            }
 
             if (gpuGeom->twoSided) {
                 rd->setCullFace(oldCullFace);
