@@ -160,6 +160,7 @@ void Film::exposeAndRender
 
 
 void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int downsample) {
+    static Texture::Ref zero = Texture::zero();
     debugAssertM(downsample == 1, "Downsampling not implemented in this release");
     if (m_framebuffer.isNull()) {
         init();
@@ -242,7 +243,7 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
         {
             // Combine, fix saturation, gamma correct and draw
             m_shader->args.set("sourceTexture",  input);
-            m_shader->args.set("bloomTexture",   (bloomStrength > 0) ? m_blurry : Texture::zero());
+            m_shader->args.set("bloomTexture",   (bloomStrength > 0) ? m_blurry : zero);
             m_shader->args.set("bloomStrengthScaled",  bloomStrength * 10.0);
             m_shader->args.set("sensitivity",    m_sensitivity);
             m_shader->args.set("invGamma",       1.0f / m_gamma);
