@@ -215,6 +215,15 @@ void App::onInit() {
     developerWindow->cameraControlWindow->setVisible(false);
     showRenderingStats = false;
     debugPane->addLabel("asdasd as das das dsa dsa dasd   asdasdsad as dasd asdsa ")->setWidth(100);
+
+    GuiPane* p = debugPane->addPane("Choices", GuiTheme::ORNATE_PANE_STYLE);
+    static int x = 0;
+    p->addRadioButton("Minimum", 0, &x);
+    p->addRadioButton("Average", 1, &x);
+    p->addRadioButton("Weighted Average", 2, &x);
+    p->addRadioButton("Maximum", 3, &x);
+
+
 #if 0
     std::string materialPath = System::findDataFile("material");
     std::string crateFile = System::findDataFile("crate.ifs");
@@ -268,17 +277,6 @@ void App::onInit() {
     }
     timer.after("speedDeserialize");
 #endif
-
-    GImage src(System::findDataFile("testimage.png"));
-    texture = Texture::createEmpty("", src.width(), src.height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, -src.width());
-    glBindTexture(texture->openGLTextureTarget(), texture->openGLID());
-    glTexSubImage2D(texture->openGLTextureTarget(), 0, 0, 0, src.width(), src.height(), texture->format()->openGLBaseFormat, texture->format()->openGLDataFormat, src.byte());
-    debugAssertGLOk();
-    glBindTexture(texture->openGLTextureTarget(), GL_ZERO);
-
-    debugPane->addTextureBox(texture);
 
     lighting = defaultLighting();
 }

@@ -164,12 +164,13 @@ GuiRadioButton* GuiPane::addRadioButton(const GuiText& text, int myID, void* sel
     if (style == GuiTheme::TOOL_RADIO_BUTTON_STYLE) {
         Vector2 bounds = theme()->minButtonSize(text, GuiTheme::TOOL_BUTTON_STYLE);
         size.x = max(float(TOOL_BUTTON_WIDTH), bounds.x);
-    } else if (style == 1) { // Doesn't compile on gcc for some reason: GuiTheme::BUTTON_RADIO_BUTTON_STYLE) {
+    } else if (style == 1) { // Doesn't compile on gcc unless we put the integer in. GuiTheme::BUTTON_RADIO_BUTTON_STYLE) {
         size.x = BUTTON_WIDTH;
         Vector2 bounds = theme()->minButtonSize(text, GuiTheme::NORMAL_BUTTON_STYLE);
         size = size.max(bounds);
-    } else {
-        size.x = 30.0f;
+    } else { // NORMAL_RADIO_BUTTON_STYLE
+        Vector2 bounds = theme()->minButtonSize(text, GuiTheme::NORMAL_BUTTON_STYLE);
+        size.x = bounds.x;
     }
 
     c->setSize(size);
@@ -182,7 +183,7 @@ GuiCheckBox* GuiPane::addCheckBox
 (const GuiText& text,
  const Pointer<bool>& pointer,
  GuiTheme::CheckBoxStyle style) {
-    GuiCheckBox* c = addControl(new GuiCheckBox(this, text, pointer, style));
+    GuiCheckBox* c = new GuiCheckBox(this, text, pointer, style);
     
     Vector2 size(0, CONTROL_HEIGHT);
 
@@ -197,7 +198,7 @@ GuiCheckBox* GuiPane::addCheckBox
 
     c->setSize(size);
 
-    return c;
+    return addControl(c);
 }
 
 
