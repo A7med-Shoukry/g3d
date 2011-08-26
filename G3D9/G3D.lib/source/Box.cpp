@@ -379,6 +379,8 @@ Box Box::inf() {
 
 
 void Box::getBounds(AABox& aabb) const {
+    debugAssert(!_corner[0].isNaN());
+    debugAssert(_corner[0].x == _corner[0].x); // NaN test
     Point3 lo = _corner[0];
     Point3 hi = lo;
 

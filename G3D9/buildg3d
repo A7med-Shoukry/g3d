@@ -363,7 +363,19 @@ def libTarget():
     x = 0
 
     if windows:
-        x = VC10('VC10/G3D.sln', ['jpeg.lib', 'png.lib', 'zlib.lib', 'zip.lib', 'G3D.lib', 'GLG3D.lib']);
+        # TODO: change to execute:
+		#
+        # "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
+        # msbuild VC10\G3D.sln /p:Platform=x64
+        # msbuild VC10\G3D.sln /p:Platform=Win32
+        #
+	    # Problems:
+        # - I don't know how to execute a batch file (vcvarsall.bat) and then subsequent commands in the same environment from Python
+        # - It builds targets that we want to exclude, like minglut2 and scratch.  The "/target:" flag didn't seem to specify individual projects like I expected
+        # - The above paths are for my machine; we need to discover them
+        # - It seems to ignore incremental builds from inside the IDE (maybe it is putting the object files someplace else?)  It will do incremental builds on its own, however.
+
+        x = VC10('VC10/G3D.sln', ['jpeg.lib', 'png.lib', 'zlib.lib', 'zip.lib', 'mongoose.lib', 'G3D.lib', 'GLG3D.lib']);
         copyIfNewer('ffmpeg/win32/bin/*', 'build/bin/')
 
     else:

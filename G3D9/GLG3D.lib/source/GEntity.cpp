@@ -170,10 +170,13 @@ void GEntity::onPose(Array<Surface::Ref>& surfaceArray) {
 
         CFrame cframe;
         surf->getCoordinateFrame(cframe, false);
+        debugAssertM(cframe.translation.x == cframe.translation.x,"NaN translation");
 
         surf->getObjectSpaceBoundingBox(b);
         surf->getObjectSpaceBoundingSphere(s);
-        cframe.toWorldSpace(b).getBounds(b);
+
+        const Box& temp = cframe.toWorldSpace(b);
+        temp.getBounds(b);
         s = cframe.toObjectSpace(s);
         m_lastBoxBounds.merge(b);
         m_lastSphereBounds.radius = max(m_lastSphereBounds.radius,

@@ -449,6 +449,7 @@ def VCExpress(filename, configs):
 
             args.append('/build')
             args.append(target)
+            args.append('/p:Platform=Win32')
             args.append('/project "' + config + '"')
 
             args.append('/out')
@@ -472,7 +473,7 @@ def VCExpress(filename, configs):
 """
 def VC10(filename, configs):
      # find out the flavor of MSVC
-     
+      
      if _findWindowsBinary('devenv'):
          # found Visual C++ Standard/Pro
          return devenv(filename, configs)
@@ -482,7 +483,7 @@ def VC10(filename, configs):
          return VCExpress(filename, configs)
          
      else:
-         print("Failed to find Visual Studio 2005 or 2008. Could not continue.")
+         print("Failed to find Visual Studio 2010. Could not continue.")
          return -1
 
 ###########################################################################
