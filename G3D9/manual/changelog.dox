@@ -58,7 +58,8 @@
      <li> PhysicsFrame::operator==, Quat::operator==, PhysicsFrameSpline::operator==
      <li> G3D::GEntity::toAny, G3D::PhysicsFrameSpline::toAny, G3D::PhysicsFrame::toAny, G3D::Quat::toAny
      <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
-     <li> G3D::GCamera::exposureTime 
+     <li> G3D::GCamera::exposureTime
+	 <li> G3D::Surface::getBoxBounds and getSphereBounds now ignore infinite child bounding boxes (makes for tighter shadow frustum bounds in scenes with unbounded 3D widgets)
      <li> G3D::ArrowShape
      <li> All-new streamlined interface for G3D::GBuffer, now no longer in "beta"
      <li> G3D::GBuffer now supports face normals

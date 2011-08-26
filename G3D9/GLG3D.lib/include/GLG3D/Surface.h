@@ -62,6 +62,8 @@ public:
 typedef ReferenceCountedPointer<class Surface> SurfaceRef;
 
 
+extern bool ignoreBool;
+
 /**
    \brief The surface of a model, posed and ready for rendering.
    
@@ -386,19 +388,28 @@ public:
 
 
     /** Computes the world-space bounding box of an array of Surface%s
-        of any type.*/
+        of any type.  Ignores infinite bounding boxes.
+
+      \param anyInfinite Set to true if any bounding box in surfaceArray was infinite.
+        Not modified otherwise.
+     */
     static void getBoxBounds
     (const Array<Surface::Ref>& surfaceArray,
      AABox&                     bounds, 
-     bool                       previous = false);
+     bool                       previous = false,
+     bool&                      anyInfinite = ignoreBool);
 
 
     /** Computes the world-space bounding sphere of an array of
-        Surface%s of any type.*/
+        Surface%s of any type. Ignores infinite bounding boxes.
+
+      \param anyInfinite Set to true if any bounding box in surfaceArray was infinite.
+        Not modified otherwise.*/
     static void getSphereBounds
-    (const Array<Surface::Ref>& surfaceArray, 
+    (const Array<Surface::Ref>& surfaceArray,
      Sphere&                    bounds,
-     bool                       previous = false);
+     bool                       previous = false,
+     bool&                      anyInfinite = ignoreBool);
 
 
     /** Computes the array of models that can be seen by \a camera*/

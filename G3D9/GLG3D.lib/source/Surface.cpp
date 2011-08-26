@@ -23,6 +23,8 @@
 
 namespace G3D {
 
+bool ignoreBool;
+
 void Surface::renderIntoGBuffer
    (RenderDevice*               rd,
     Array<Surface::Ref>&        surfaceArray,
@@ -61,7 +63,7 @@ void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3
 }
 
 
-void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, bool previous) {
+void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, bool previous, bool& anyInfinite) {
     bounds = AABox::empty();
 
     for (int i = 0; i < models.size(); ++i) {
@@ -69,8 +71,14 @@ void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, boo
         CFrame cframe;
         models[i]->getCoordinateFrame(cframe, previous);
         models[i]->getObjectSpaceBoundingBox(temp, previous);
-        cframe.toWorldSpace(temp, temp);
-        bounds.merge(temp);
+
+        // Ignore infinite bounding boxes
+        if (temp.isFinite()) {
+            cframe.toWorldSpace(temp, temp);
+            bounds.merge(temp);
+        } else {
+            anyInfinite = true;
+        }
     }
 }
 
@@ -113,9 +121,9 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
 }
 
 
-void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, bool previous) {
+void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, bool previous, bool& anyInfnite) {
     AABox temp;
-    getBoxBounds(models, temp, previous);
+    getBoxBounds(models, temp, previous, anyInfnite);
     temp.getBounds(bounds);
 }
 
