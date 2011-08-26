@@ -168,19 +168,11 @@ void SuperSurface::renderIntoGBufferHomogeneous
                 rd->setCullFace(RenderDevice::CULL_NONE);
             }
 
-            // Bind material arguments
+            // Bind material arguments            
             material->configure(shader->args);
 
-            // Enable alpha testing
-            if (surface->hasPartialCoverage()) {
-                rd->setAlphaTest(RenderDevice::ALPHA_GREATER, 0);
-            }
-
+            // Alpha testing is handled explicitly inside the shader.
             surface->sendGeometry(rd);
-
-            if (surface->hasPartialCoverage()) {
-                rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0);
-            }
 
             if (gpuGeom->twoSided) {
                 rd->setCullFace(oldCullFace);

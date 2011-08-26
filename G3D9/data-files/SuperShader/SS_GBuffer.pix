@@ -127,19 +127,18 @@ void main() {
             LAMBERTIAN = temp.rgb;
 #       endif
         alpha = temp.a;
+
+        if (alpha == 0.0) {
+            // Explict alpha test to discard; we can't rely on the hardware for it
+            // because the FBO specification doesn't say how it works.
+            discard;
+        }
     }
 #   else
 #       ifdef LAMBERTIAN
             LAMBERTIAN.rgb = vec3(0.0);
 #       endif
         alpha = 1.0;
-#   endif
-
-    // TODO: explict alpha test to discard; we can't rely on the hardware for it
-    // because the FBO specification doesn't say how it works.
-
-#   ifdef LAMBERTIAN
-
 #   endif
 
 #   ifdef GLOSSY
