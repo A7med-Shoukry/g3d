@@ -4,7 +4,10 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2008-11-12
-  \edited  2011-07-22
+  \edited  2011-08-26
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
 */
 #ifndef GLG3D_SuperSurface_h
 #define GLG3D_SuperSurface_h
@@ -174,6 +177,8 @@ protected:
      geometry that is deallocated with the surface.*/
     MeshAlg::Geometry       m_internalGeometry;
 
+    bool                    m_castsShadows;
+
     ReferenceCountedPointer<ReferenceCountedObject> m_source;
 
     inline SuperSurface
@@ -182,13 +187,15 @@ protected:
      const CFrame&            previousFrame,
      const GPUGeom::Ref&      gpuGeom,
      const CPUGeom&           cpuGeom,
-     const ReferenceCountedPointer<ReferenceCountedObject>& source = NULL) :
+     const ReferenceCountedPointer<ReferenceCountedObject>& source,
+     bool                     castsShadows) :
         m_name(name),
         m_frame(frame),
         m_previousFrame(previousFrame),
         m_gpuGeom(gpuGeom),
         m_cpuGeom(cpuGeom),
-        m_source(source) {}
+        m_source(source),
+        m_castsShadows(castsShadows) {}
 
     /** Set object to world and then draw geometry.  Called from
         render to draw geometry after the material properties are
@@ -235,6 +242,10 @@ protected:
      RenderDevice::CullFace          originalCullFace) const;
     
 public:
+
+    bool virtual castsShadows() const override {
+        return m_castsShadows;
+    }
 
     /** For use by classes that pose objects on the CPU and need a
         place to store the geometry.  See MD2Model::pose
@@ -334,7 +345,8 @@ public:
      const CFrame&            previousFrame,
      const GPUGeom::Ref&      gpuGeom,
      const CPUGeom&           cpuGeom = CPUGeom(),
-     const ReferenceCountedPointer<ReferenceCountedObject>& source = NULL);
+     const ReferenceCountedPointer<ReferenceCountedObject>& source = NULL,
+     bool                     castsShadows = true);
 
     virtual void sendGeometry(RenderDevice* rd) const;
 
@@ -384,4 +396,4 @@ const char* toString(SuperSurface::GraphicsProfile p);
 
 } // G3D
 
-#endif
+#endif // G3D_SuperSurface_h

@@ -1,10 +1,13 @@
 /**
- \file MD3Model.h
+ \file GLG3D/MD3Model.h
 
  Quake III MD3 model loading and posing
 
   \created 2009-01-01
-  \edited  2010-04-26
+  \edited  2011-08-26
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
  */
 #ifndef G3D_MD3Model_h
 #define G3D_MD3Model_h
@@ -195,6 +198,8 @@ public:
 
         /** If NULL, use the model's default skin */
         Skin::Ref   skin;
+
+        bool        castsShadows;
 
         Pose();
     };

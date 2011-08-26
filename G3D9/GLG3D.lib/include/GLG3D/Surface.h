@@ -135,6 +135,10 @@ public:
 
     virtual void getObjectSpaceBoundingSphere(Sphere& sphere, bool previous = false) const = 0;
 
+    /** True if this surface casts shadows.  The default implementation returns true. */
+    virtual bool castsShadows() const {
+        return true;
+    }
 
     /** \brief Clears the arrays and appends indexed triangle list
         information.
@@ -392,24 +396,31 @@ public:
 
       \param anyInfinite Set to true if any bounding box in surfaceArray was infinite.
         Not modified otherwise.
+
+      \param onlyShadowCasters If true, only get the bounds of shadow casting surfaces.
      */
     static void getBoxBounds
     (const Array<Surface::Ref>& surfaceArray,
      AABox&                     bounds, 
      bool                       previous = false,
-     bool&                      anyInfinite = ignoreBool);
+     bool&                      anyInfinite = ignoreBool,
+     bool                       onlyShadowCasters = false);
 
 
     /** Computes the world-space bounding sphere of an array of
         Surface%s of any type. Ignores infinite bounding boxes.
 
       \param anyInfinite Set to true if any bounding box in surfaceArray was infinite.
-        Not modified otherwise.*/
+        Not modified otherwise.
+        
+      \param onlyShadowCasters If true, only get the bounds of shadow casting surfaces.
+     */
     static void getSphereBounds
     (const Array<Surface::Ref>& surfaceArray,
      Sphere&                    bounds,
      bool                       previous = false,
-     bool&                      anyInfinite = ignoreBool);
+     bool&                      anyInfinite = ignoreBool,
+     bool                       onlyShadowCasters = false);
 
 
     /** Computes the array of models that can be seen by \a camera*/

@@ -47,63 +47,21 @@ GEntity::GEntity
         m_frameSpline.append(CFrame());
         m_frameSplineChanged = true;
     }
-}
 
-#if 0
-GEntity::GEntity
-(const std::string&                  n, 
- const PhysicsFrameSpline&           frameSpline, 
- const ArticulatedModel::Ref&        artModel, 
- const ArticulatedModel::PoseSpline& artPoseSpline,
- const MD2Model::Ref&                md2Model,
- const MD3Model::Ref&                md3Model) : 
-    m_name(n), 
-    m_modelType(ARTICULATED_MODEL),
-    m_frameSpline(frameSpline),
-    m_frameSplineChanged(false),
-    m_artPoseSpline(artPoseSpline), 
-    m_artModel(artModel),
-    m_md2Model(md2Model), 
-    m_md3Model(md3Model) {
-
-    m_name  = n;
-    m_frameSpline = frameSpline;
-
-    if (artModel.notNull()) {
-        m_modelType = ARTICULATED_MODEL;
-    } else if (md2Model.notNull()) {
-        m_modelType = MD2_MODEL;
-    } else if (md3Model.notNull()) {
-        m_modelType = MD3_MODEL;
+    bool s = true;
+    if (propertyTable.getIfPresent("castsShadows", s)) {
+        if (m_art2Model.notNull()) {
+            m_art2Pose.castsShadows = s;
+            m_art2PreviousPose.castsShadows = s;
+            m_art2PoseSpline.castsShadows = s;
+        } else if (m_md2Model.notNull()) {
+            m_md2Pose.castsShadows = s;
+        } else if (m_md3Model.notNull()) {
+            m_md3Pose.castsShadows = s;
+        }
     }
 }
 
-GEntity::Ref GEntity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline) {
-    GEntity::Ref e = new GEntity(n, frameSpline, m, poseSpline, NULL, NULL);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-GEntity::Ref GEntity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD2Model::Ref& m) {
-    GEntity::Ref e = new GEntity(n, frameSpline, NULL, ArticulatedModel::PoseSpline(), m, NULL);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-
-
-GEntity::Ref GEntity::create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m) {
-    GEntity::Ref e = new GEntity(n, frameSpline, NULL, ArticulatedModel::PoseSpline(), NULL, m);
-
-    // Set the initial position
-    e->onSimulation(0, 0);
-    return e;
-}
-#endif
 
 void GEntity::simulatePose(GameTime absoluteTime, GameTime deltaTime) {
     switch (m_modelType) {

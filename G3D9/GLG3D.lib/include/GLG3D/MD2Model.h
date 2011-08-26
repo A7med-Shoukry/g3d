@@ -9,6 +9,9 @@
  
    \created 2003-02-21
    \edited  2011-06-12
+ 
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
  */
 
 #ifndef G3D_MD2Model_h
@@ -201,9 +204,11 @@ public:
          */
         GameTime            time;
 
-        Pose() : preFrameNumber(0), animation(STAND), time(0) {}
+        bool                castsShadows;
 
-        Pose(Animation a, GameTime t = 0) : preFrameNumber(0), animation(a), time(t) {
+        Pose() : preFrameNumber(0), animation(STAND), time(0), castsShadows(true) {}
+
+        Pose(Animation a, GameTime t = 0) : preFrameNumber(0), animation(a), time(t), castsShadows(true) {
             static const GameTime t0 = 100000.0;
             while (time > t0) {
                 // We've been handed a number too big to operate on

@@ -271,7 +271,7 @@ MD2Model::Part::Ref MD2Model::Part::fromFile(const std::string& filename, const 
 
 
 bool MD2Model::Pose::operator==(const MD2Model::Pose& other) const {
-    return (animation == other.animation) && fuzzyEq(time, other.time);
+    return (animation == other.animation) && fuzzyEq(time, other.time) && (castsShadows == other.castsShadows);
 }
 
 
@@ -653,7 +653,7 @@ void MD2Model::Part::pose(Array<Surface::Ref>& surfaceArray, const CoordinateFra
 
     // Keep a back pointer so that the index array can't be deleted
     SuperSurface::Ref surface = SuperSurface::create(name(), cframe, prevFrame, SuperSurface::GPUGeom::create(), 
-                                                     SuperSurface::CPUGeom(), this);
+                                                     SuperSurface::CPUGeom(), this, pose.castsShadows);
 
     // Use the internal storage of the surface
     SuperSurface::CPUGeom& cpuGeom = surface->cpuGeom();

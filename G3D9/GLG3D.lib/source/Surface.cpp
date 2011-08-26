@@ -63,21 +63,25 @@ void Surface::sendGeometry(RenderDevice* rd, const Array<Surface::Ref>& surface3
 }
 
 
-void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, bool previous, bool& anyInfinite) {
+void Surface::getBoxBounds(const Array<Surface::Ref>& models, AABox& bounds, bool previous, bool& anyInfinite, bool onlyShadowCasters) {
     bounds = AABox::empty();
 
     for (int i = 0; i < models.size(); ++i) {
-        AABox temp;
-        CFrame cframe;
-        models[i]->getCoordinateFrame(cframe, previous);
-        models[i]->getObjectSpaceBoundingBox(temp, previous);
+        const Surface::Ref& surface = models[i];
 
-        // Ignore infinite bounding boxes
-        if (temp.isFinite()) {
-            cframe.toWorldSpace(temp, temp);
-            bounds.merge(temp);
-        } else {
-            anyInfinite = true;
+        if (! onlyShadowCasters || surface->castsShadows()) {
+            AABox temp;
+            CFrame cframe;
+            surface->getCoordinateFrame(cframe, previous);
+            surface->getObjectSpaceBoundingBox(temp, previous);
+
+            // Ignore infinite bounding boxes
+            if (temp.isFinite()) {
+                cframe.toWorldSpace(temp, temp);
+                bounds.merge(temp);
+            } else {
+                anyInfinite = true;
+            }
         }
     }
 }
@@ -121,9 +125,9 @@ void Surface::renderWireframe(RenderDevice* rd, const Array<Surface::Ref>& surfa
 }
 
 
-void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, bool previous, bool& anyInfnite) {
+void Surface::getSphereBounds(const Array<Surface::Ref>& models, Sphere& bounds, bool previous, bool& anyInfnite, bool onlyShadowCasters) {
     AABox temp;
-    getBoxBounds(models, temp, previous, anyInfnite);
+    getBoxBounds(models, temp, previous, anyInfnite, onlyShadowCasters);
     temp.getBounds(bounds);
 }
 
@@ -237,8 +241,8 @@ void Surface::sortAndRender
         } 
  
         // Find the scene bounds
-        AABox sceneBounds;
-        Surface::getBoxBounds(allModels, sceneBounds);
+        AABox shadowCasterBounds;
+        Surface::getBoxBounds(allModels, shadowCasterBounds, false, ignoreBool, true);
 
         Array<Surface::Ref> lightVisible;
 
@@ -251,9 +255,19 @@ void Surface::sortAndRender
                 GCamera lightFrame;
                 Matrix4 lightProjectionMatrix;
                 
-                ShadowMap::computeMatrices(light, sceneBounds, lightFrame, lightProjectionMatrix);
+                ShadowMap::computeMatrices(light, shadowCasterBounds, lightFrame, lightProjectionMatrix);
                 
+                // Cull objects not visible to the light
                 Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible, previous);
+
+                // Cull objects that don't cast shadows
+                for (int i = 0; i < lightVisible.size(); ++i) {
+                    if (! lightVisible[i]->castsShadows()) {
+                        lightVisible.fastRemove(i);
+                        --i;
+                    }
+                }
+
                 Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
                 shadowMaps[s]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
 

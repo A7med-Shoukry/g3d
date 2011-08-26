@@ -3,7 +3,7 @@
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-19
- \edited  2011-08-23
+ \edited  2011-08-26
  
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -368,6 +368,11 @@ public:
             be the identity. */
         Table<std::string, CoordinateFrame>     cframe;
 
+        /** True if this model casts shadows in this pose. Default is true. */
+        bool                                    castsShadows;
+
+        Pose() : castsShadows(true) {}
+
         /** Returns the identity coordinate frame if there isn't one bound for partName */
         inline const CFrame& operator[](const std::string& partName) const {
             CFrame* ptr = cframe.getPointer(partName);
@@ -384,6 +389,7 @@ public:
     public:
         typedef Table<std::string, PhysicsFrameSpline> SplineTable;
         SplineTable partSpline;
+        bool     castsShadows;
 
         PoseSpline();
 
@@ -399,9 +405,11 @@ public:
                    control = ( Vector3(0,0,0),
                                CFrame::fromXYZYPRDegrees(0,1,0,35)),
                    cyclic = true
-                },
+                };
 
-                "part2" = Vector3(0,1,0)
+                "part2" = Vector3(0,1,0);
+
+                castsShadows = true;
             }
          \endcode
         */

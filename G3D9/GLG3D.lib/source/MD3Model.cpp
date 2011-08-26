@@ -803,7 +803,7 @@ void MD3Model::posePart(PartType partType, const Pose& pose, Array<Surface::Ref>
                 previousPartFrame,
                 SuperSurface::GPUGeom::create(), 
                 SuperSurface::CPUGeom(), 
-                this);
+                this, pose.castsShadows);
 
         // Use the internal storage of the surface
         SuperSurface::CPUGeom& cpuGeom = surface->cpuGeom();

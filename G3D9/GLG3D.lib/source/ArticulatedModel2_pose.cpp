@@ -63,8 +63,9 @@ void ArticulatedModel2::Part::pose
         const Mesh* mesh = m_meshArray[m];
 
         const SuperSurface::CPUGeom cpuGeom(&mesh->cpuIndexArray, &cpuVertexArray);
-        SuperSurface::Ref surface = SuperSurface::create(name + "/" + mesh->name, frame, 
-                                                         prevFrame, mesh->gpuGeom, cpuGeom, model);
+        SuperSurface::Ref surface = 
+            SuperSurface::create(name + "/" + mesh->name, frame, 
+                                 prevFrame, mesh->gpuGeom, cpuGeom, model, posex.castsShadows);
 
         surfaceArray.append(surface);
     }

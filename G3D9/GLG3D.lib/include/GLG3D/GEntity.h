@@ -58,7 +58,7 @@ protected:
     /** True if the spline was mutated since load.  Used by toAny() to
         decide if m_sourceAny is out of date. */
     bool                            m_frameSplineChanged;
-
+    
     //////////////////////////////////////////////
 
     /** Current pose */
@@ -104,16 +104,6 @@ protected:
     Sphere                          m_lastSphereBounds;
 
     GEntity();
-#if 0
-    /** \deprecated */
-    GEntity
-    (const std::string& n, 
-     const PhysicsFrameSpline& frameSpline, 
-     const ArticulatedModel::Ref& artModel,
-     const ArticulatedModel::PoseSpline& artPoseSpline,
-     const MD2Model::Ref& md2Model,
-     const MD3Model::Ref& md3Model);
-#endif
 
     /**\brief Construct a GEntity.
 
@@ -124,14 +114,17 @@ protected:
 
        \code
        <some base class name> {
-           model    = <modelname>,
-           position = <CFrame, Vector3, or PhysicsFrameSpline>,
-           pose     = <ArticulatedModel::PoseSpline>
+           model    = <modelname>;
+           position = <CFrame, Vector3, or PhysicsFrameSpline>;
+           pose     = <ArticulatedModel2::PoseSpline>;
+           castsShadows = <bool>;
        }
        \endcode
 
-       The pose and position fields are optional.  The GEntity base class
+       The pose, position, and castsShadows fields are optional.  The GEntity base class
        reads these fields.  Other subclasses read their own fields.
+
+       If specified, the castsShadows field overwrites the pose's castsShadows field.  This is a load-time convenience. 
 
        \param modelTable Maps model names that are referenced in \a propertyTable
        to ArticulatedModel::Ref, MD2Model::Ref or MD3::ModelRef.

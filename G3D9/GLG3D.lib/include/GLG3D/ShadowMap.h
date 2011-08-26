@@ -105,7 +105,7 @@ public:
     Set to 0 to cast shadows as far as the entire scene.
     */
     static void computeMatrices
-    (const GLight& light, AABox sceneBounds, GCamera& lightCamera, Matrix4& lightProjectionMatrix,
+    (const GLight& light, AABox shadowCasterBounds, GCamera& lightCamera, Matrix4& lightProjectionMatrix,
      float lightProjX = 20, float lightProjY = 20, float lightProjNearMin = 0.3f, float lightProjFarMax = 500.0f,
      float intensityCutoff = 1/255.0f);
 
@@ -170,6 +170,9 @@ public:
     enum {USE_DEFAULT_BIAS = -1};
 
     /** 
+    Assumes that the caller has ensured that shadowCaster contains only
+    shadow-casting surfaces.
+
     \param biasDepth amount to bias z values by in the biasedMVP when
     later rendering Usually around 0.0001-0.005.  If USE_DEFAULT_BIAS,
     the current bias() value is used.  This field is deprecated.

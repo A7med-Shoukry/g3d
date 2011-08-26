@@ -228,12 +228,13 @@ SuperSurface::Ref SuperSurface::create
  const CFrame&            previousFrame,
  const GPUGeom::Ref&      gpuGeom,
  const CPUGeom&           cpuGeom,
- const ReferenceCountedPointer<ReferenceCountedObject>& source) {
+ const ReferenceCountedPointer<ReferenceCountedObject>& source,
+ bool                     castsShadows) {
     debugAssert(gpuGeom.notNull());
 
 
     // Cannot check if the gpuGeom is valid because it might not be filled out yet
-    return new SuperSurface(name, frame, previousFrame, gpuGeom, cpuGeom, source);
+    return new SuperSurface(name, frame, previousFrame, gpuGeom, cpuGeom, source, castsShadows);
 }
 
 

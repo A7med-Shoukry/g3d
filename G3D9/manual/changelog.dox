@@ -25,6 +25,7 @@
      <li> G3D::Color2uint8
      <li> Added 64-bit targets and patched many warnings and errors for sizeof(size_t) == 64 (however, G3D is not fully 64-bit compatible yet)
      <li> G3D::unorm8
+	 <li> G3D::Surface::castsShadows
      <li> G3D::maxNotNPOS
      <li> G3D::Array::trimToSize
      <li> G3D::Shader now assumes GLSL 1.20 for files without a version specification

@@ -66,13 +66,17 @@ Any ArticulatedModel2::Specification::toAny() const {
 
 //////////////////////////////////////////////////////////////////////
 
-ArticulatedModel2::PoseSpline::PoseSpline() {}
+ArticulatedModel2::PoseSpline::PoseSpline() : castsShadows(true) {}
 
 
-ArticulatedModel2::PoseSpline::PoseSpline(const Any& any) {
+ArticulatedModel2::PoseSpline::PoseSpline(const Any& any) : castsShadows(true) {
     any.verifyName("ArticulatedModel2::PoseSpline");
     for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
-        partSpline.getCreate(it->key) = it->value;
+        if (it->key == "castsShadows") {
+            castsShadows = it->value;
+        } else {
+            partSpline.getCreate(it->key) = it->value;
+        }
     }
 }
 
@@ -83,6 +87,8 @@ void ArticulatedModel2::PoseSpline::get(float t, ArticulatedModel2::Pose& pose) 
             pose.cframe.set(it->key, it->value.evaluate(t));
         }
     }
+
+    pose.castsShadows = castsShadows;
 }
 
 ///////////////////////////////////////////////////////////////////////
