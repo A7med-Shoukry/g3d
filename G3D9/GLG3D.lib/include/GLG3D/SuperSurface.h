@@ -194,8 +194,8 @@ protected:
         m_previousFrame(previousFrame),
         m_gpuGeom(gpuGeom),
         m_cpuGeom(cpuGeom),
-        m_source(source),
-        m_castsShadows(castsShadows) {}
+        m_castsShadows(castsShadows),
+        m_source(source) {}
 
     /** Set object to world and then draw geometry.  Called from
         render to draw geometry after the material properties are
