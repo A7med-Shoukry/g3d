@@ -449,7 +449,6 @@ def VCExpress(filename, configs):
 
             args.append('/build')
             args.append(target)
-            args.append('/p:Platform=Win32')
             args.append('/project "' + config + '"')
 
             args.append('/out')

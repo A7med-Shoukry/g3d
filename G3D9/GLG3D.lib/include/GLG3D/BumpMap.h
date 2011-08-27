@@ -50,7 +50,7 @@ public:
          */
         int            iterations;
 
-        inline Settings() : scale(0.05f), bias(0.0f), iterations(0) {}
+        inline Settings() : scale(0.05f), bias(0.0f), iterations(1) {}
 
         Settings(const Any& any);
 
