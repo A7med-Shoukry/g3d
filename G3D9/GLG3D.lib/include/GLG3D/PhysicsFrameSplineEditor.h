@@ -42,6 +42,10 @@ protected:
     GuiButton*                   m_removeSelectedButton;
     bool                         m_isDocked;
 
+    /** Used to avoid constantly unparsing the current physics frame in selectedNodePFrameAsString() */
+    mutable PhysicsFrame         m_cachedPhysicsFrameValue;
+    mutable std::string          m_cachedPhysicsFrameString;
+
     class SplineSurface : public Surface {
     public:
         PhysicsFrameSplineEditor* m_manipulator;
@@ -97,6 +101,18 @@ public:
         return m_selectedControlPointIndex;
     }
 
+    /** Used by the GUI. */
+    std::string selectedNodePFrameAsString() const;
+
+    /** Used by the GUI. */
+    void setSelectedNodePFrameFromString(const std::string& s);
+
+    /** Used by the GUI. */
+    float selectedNodeTime() const;
+
+    /** Used by the GUI. */
+    void setSelectedNodeTime(float t);
+    
     virtual void setSelectedControlPointIndex(int i);
     
     /** Returns true if the underlying spline is cyclic */

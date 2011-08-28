@@ -35,6 +35,7 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
     m_selectedControlPointIndex(0),
     m_isDocked(dockPane != NULL) {
 
+    m_cachedPhysicsFrameString = CFrame(m_cachedPhysicsFrameValue).toAny().unparse();
     m_spline.append(CFrame());
 
     m_surface = new SplineSurface(this);
@@ -53,6 +54,11 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
     
     GuiPane* cpPane = p->addPane("Control Point", GuiTheme::ORNATE_PANE_STYLE);
     cpPane->moveBy(0, -15);
+
+    cpPane->addLabel("Control point: 0");
+    cpPane->addNumberBox("Time", Pointer<float>(this, &PhysicsFrameSplineEditor::selectedNodeTime, &PhysicsFrameSplineEditor::setSelectedNodeTime), "s");
+    cpPane->addTextBox("", Pointer<std::string>(this, &PhysicsFrameSplineEditor::selectedNodePFrameAsString, &PhysicsFrameSplineEditor::setSelectedNodePFrameFromString));
+
     cpPane->beginRow(); {
         GuiButton* b = cpPane->addButton("Add new", this, &PhysicsFrameSplineEditor::addControlPoint);
         b->moveBy(-2, -7);
@@ -60,10 +66,73 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
     } cpPane->endRow();
     cpPane->pack();
 
-    p->addCheckBox("Cyclic", Pointer<bool>(this, &PhysicsFrameSplineEditor::cyclic, &PhysicsFrameSplineEditor::setCyclic));
+    GuiControl* prev = p->addCheckBox("Cycle with ", Pointer<bool>(this, &PhysicsFrameSplineEditor::cyclic, &PhysicsFrameSplineEditor::setCyclic));
+
+    GuiPane* finalIntervalPane = p->addPane("", GuiTheme::NO_PANE_STYLE);
+    finalIntervalPane->moveRightOf(prev);
+    finalIntervalPane->moveBy(0, -2);
+    static int m_explicitFinalInterval = 0;
+    finalIntervalPane->addRadioButton("automatic final interval", 0, &m_explicitFinalInterval);
+    finalIntervalPane->beginRow(); {
+        finalIntervalPane->addRadioButton("", 1, &m_explicitFinalInterval);
+        finalIntervalPane->addNumberBox("", &m_spline.finalInterval, "s interval");
+    } finalIntervalPane->endRow();
+
     pack();
 
     setEnabled(false);
+}
+
+
+float PhysicsFrameSplineEditor::selectedNodeTime() const {
+    if (m_selectedControlPointIndex >= 0 && m_selectedControlPointIndex < m_spline.control.size()) {
+        return m_spline.time[m_selectedControlPointIndex];
+    } else {
+        return 0.0f;
+    }
+}
+
+
+void PhysicsFrameSplineEditor::setSelectedNodeTime(float t) {
+    if (m_selectedControlPointIndex >= 0 && m_selectedControlPointIndex < m_spline.control.size()) {
+        m_spline.time[m_selectedControlPointIndex] = t;
+    }
+}
+
+
+std::string PhysicsFrameSplineEditor::selectedNodePFrameAsString() const {
+    if (m_selectedControlPointIndex >= 0 && m_selectedControlPointIndex < m_spline.control.size()) {
+
+        const PhysicsFrame& pframe = m_spline.control[m_selectedControlPointIndex];
+
+        // Cache the string so that we don't have to reparse it for every rendering
+        if (m_cachedPhysicsFrameValue != pframe) {
+            m_cachedPhysicsFrameValue = pframe;
+            m_cachedPhysicsFrameString = CFrame(m_cachedPhysicsFrameValue).toAny().unparse();
+        }
+
+        return m_cachedPhysicsFrameString;
+
+    } else {
+
+        return "Point3(0, 0, 0)";
+
+    }
+}
+
+
+void PhysicsFrameSplineEditor::setSelectedNodePFrameFromString(const std::string& s) {
+    if (m_selectedControlPointIndex >= 0 && m_selectedControlPointIndex < m_spline.control.size()) {
+        try {
+            const PFrame& pframe = Any::parse(s);
+            m_spline.control[m_selectedControlPointIndex] = pframe;
+
+            // Update the manipulator, so that it doesn't just override the value that we changed
+            m_nodeManipulator->setFrame(pframe);
+        } catch (...) {
+            // Ignore parse errors
+        }
+    }
 }
 
 

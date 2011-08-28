@@ -72,10 +72,16 @@ Vector3& Vector3::operator=(const Any& a) {
 
 
 Any Vector3::toAny() const {
-    Any any(Any::ARRAY, "Vector3");
+    return toAny("Vector3");
+}
+
+
+Any Vector3::toAny(const std::string& name) const {
+    Any any(Any::ARRAY, name);
     any.append(x, y, z);
     return any;
 }
+
 
 Vector3::Vector3(const class Color3& v) : x(v.r), y(v.g), z(v.b) {}
 

@@ -81,6 +81,9 @@ public:
      */
     explicit Vector3(const Any& any);
     
+    /** Converts the Vector3 to an Any, using the specified \a name instead of "Vector3" */
+    Any toAny(const std::string& name) const;
+
     /** Converts the Vector3 to an Any. */
     Any toAny() const;
 

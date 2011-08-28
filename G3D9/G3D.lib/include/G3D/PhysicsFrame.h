@@ -33,9 +33,9 @@ public:
     Quat    rotation;
 
     /**
-     Takes object space points to world space.
+     Origin of this reference frame in its parent's frame.
      */
-    Vector3 translation;
+    Point3 translation;
 
     /**
      Initializes to the identity frame.
@@ -50,6 +50,13 @@ public:
     PhysicsFrame(const Matrix3& rot, const Vector3& translation) : rotation(rot), translation(translation) {}
     PhysicsFrame(const Matrix3& rot) : rotation(rot), translation(Vector3::zero()) {}
     PhysicsFrame(const CoordinateFrame& coordinateFrame);
+
+    PhysicsFrame& operator=(const PhysicsFrame& p) {
+        rotation = p.rotation;
+        translation = p.translation;
+
+        return *this;
+    }
 
     /**
       - PhysicsFrame( [quat], [vec3] )

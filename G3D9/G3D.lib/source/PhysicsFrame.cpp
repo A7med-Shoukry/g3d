@@ -31,7 +31,7 @@ PhysicsFrame::PhysicsFrame(
 
 Any PhysicsFrame::toAny() const {
     Any a(Any::ARRAY, "PFrame");
-    a.append(rotation, translation);
+    a.append(rotation, translation.toAny("Point3"));
     return a;
 }
 
@@ -45,7 +45,7 @@ PhysicsFrame::PhysicsFrame(const Any& a) {
     } else if (beginsWith(n, "matrix3")) {        
         *this = PhysicsFrame(Matrix3(a));
     } else if (beginsWith(n, "cframe") || beginsWith(n, "coordinateframe")) {        
-        *this = PhysicsFrame(CoordinateFrame(a));
+        *this = CoordinateFrame(a);
     } else if (beginsWith(n, "pframe") || beginsWith(n, "physicsframe")) {
         if (a.type() == Any::ARRAY) {
             a.verifySize(2);
