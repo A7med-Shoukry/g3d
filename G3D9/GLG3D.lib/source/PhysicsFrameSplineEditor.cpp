@@ -55,6 +55,35 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
     GuiPane* cpPane = p->addPane("Control Point", GuiTheme::ORNATE_PANE_STYLE);
     cpPane->moveBy(0, -15);
 
+    if (false) {
+        static float x,y,z;
+        static const float translationControlWidth = 80;
+        static const float rotationControlWidth    = 40;
+        static const float captionWidth = 10;
+        static const float rotationPrecision = 0.1;
+        static const float translationPrecision = 0.001;
+        static const std::string degrees = "\xba";
+        cpPane->beginRow(); {
+            GuiNumberBox<float>* c = NULL;
+            static std::string s = "100.0, 100.0, 100.0";
+
+            GuiControl* t = cpPane->addTextBox("xyz (", &s);
+            t->setWidth(155);
+            t->setCaptionWidth(26);
+            cpPane->addLabel(") m");
+
+            c = cpPane->addNumberBox("", &x, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+            c->moveBy(20, 0);
+            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
+
+            c = cpPane->addNumberBox("", &y, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
+
+            c = cpPane->addNumberBox("", &z, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
+        } cpPane->endRow();
+    }
+
     cpPane->addLabel("Control point: 0");
     cpPane->addNumberBox("Time", Pointer<float>(this, &PhysicsFrameSplineEditor::selectedNodeTime, &PhysicsFrameSplineEditor::setSelectedNodeTime), "s");
     cpPane->addTextBox("", Pointer<std::string>(this, &PhysicsFrameSplineEditor::selectedNodePFrameAsString, &PhysicsFrameSplineEditor::setSelectedNodePFrameFromString));
@@ -66,16 +95,16 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
     } cpPane->endRow();
     cpPane->pack();
 
-    GuiControl* prev = p->addCheckBox("Cycle with ", Pointer<bool>(this, &PhysicsFrameSplineEditor::cyclic, &PhysicsFrameSplineEditor::setCyclic));
+    GuiControl* prev = p->addCheckBox("Loop with final interval", Pointer<bool>(this, &PhysicsFrameSplineEditor::cyclic, &PhysicsFrameSplineEditor::setCyclic));
 
     GuiPane* finalIntervalPane = p->addPane("", GuiTheme::NO_PANE_STYLE);
     finalIntervalPane->moveRightOf(prev);
-    finalIntervalPane->moveBy(0, -2);
+    finalIntervalPane->moveBy(-1, -5);
     static int m_explicitFinalInterval = 0;
-    finalIntervalPane->addRadioButton("automatic final interval", 0, &m_explicitFinalInterval);
+    finalIntervalPane->addRadioButton("automatic", 0, &m_explicitFinalInterval);
     finalIntervalPane->beginRow(); {
         finalIntervalPane->addRadioButton("", 1, &m_explicitFinalInterval);
-        finalIntervalPane->addNumberBox("", &m_spline.finalInterval, "s interval");
+        finalIntervalPane->addNumberBox("", &m_spline.finalInterval, "s");
     } finalIntervalPane->endRow();
 
     pack();
