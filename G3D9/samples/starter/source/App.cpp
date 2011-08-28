@@ -90,7 +90,8 @@ void App::makeGUI() {
     scenePane->beginRow(); {
         scenePane->addCheckBox("Wireframe", &m_showWireframe)->setWidth(w);
     } scenePane->endRow();
-    scenePane->addCheckBox(GuiText("\xcf", iconFont, 20), &m_preventEntityDrag, GuiTheme::TOOL_CHECK_BOX_STYLE);
+    static const char* lockIcon = "\xcf";
+    scenePane->addCheckBox(GuiText(lockIcon, iconFont, 20), &m_preventEntityDrag, GuiTheme::TOOL_CHECK_BOX_STYLE);
     scenePane->pack();
 
     GuiPane* entityPane = debugPane->addPane("Entity", GuiTheme::ORNATE_PANE_STYLE);

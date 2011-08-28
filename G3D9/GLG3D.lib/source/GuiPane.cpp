@@ -40,6 +40,39 @@ GuiPane::GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, 
 }
 
 
+GuiControl* GuiPane::_addControl(GuiControl* control, float height) {
+    Vector2 p = nextControlPos(control->toolStyle());
+
+    float w = CONTROL_WIDTH;
+    float h = height;
+    if (m_layoutControlSize.x != DEFAULT_SIZE) {
+        w = m_layoutControlSize.x;            
+    }
+    if (m_layoutControlSize.y != DEFAULT_SIZE) {
+        h = m_layoutControlSize.y;            
+    }
+    control->setRect(Rect2D::xywh(p, Vector2(w, h)));
+    if ((m_layoutCaptionSize.x != DEFAULT_SIZE) && (control->captionWidth() != 0)) {
+        control->setCaptionWidth(m_layoutCaptionSize.x);
+    }
+    if ((m_layoutCaptionSize.y != DEFAULT_SIZE) && (control->captionHeight() != 0)) {
+        control->setCaptionHeight(m_layoutCaptionSize.y);
+    }
+
+    increaseBounds(control->rect().x1y1());
+
+    GuiContainer* container = dynamic_cast<GuiContainer*>(control);
+    if (container == NULL) {
+        controlArray.append(control);
+    } else {
+        containerArray.append(container);
+    }
+    m_layoutPreviousControl = control;
+
+    return control;
+}
+
+
 void GuiPane::setNewChildSize
 (float controlWidth, float controlHeight,
  float captionWidth, float captionHeight) {
@@ -183,7 +216,7 @@ GuiCheckBox* GuiPane::addCheckBox
 (const GuiText& text,
  const Pointer<bool>& pointer,
  GuiTheme::CheckBoxStyle style) {
-    GuiCheckBox* c = new GuiCheckBox(this, text, pointer, style);
+    GuiCheckBox* c = addControl(new GuiCheckBox(this, text, pointer, style));
     
     Vector2 size(0, CONTROL_HEIGHT);
 
@@ -198,7 +231,7 @@ GuiCheckBox* GuiPane::addCheckBox
 
     c->setSize(size);
 
-    return addControl(c);
+    return c;
 }
 
 

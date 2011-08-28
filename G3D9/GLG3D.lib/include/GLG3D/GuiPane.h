@@ -109,38 +109,13 @@ private:
     /** Finds the next vertical position for a control relative to the client rect. */
     Vector2 nextControlPos(bool isTool = false) const;
 
+    /** Called from addControl() */
+    GuiControl* _addControl(GuiControl*, float height);
+
     // This is templated so that the return type can be the same as the argument type.
     template<class T>
     T* addControl(T* control, float height = CONTROL_HEIGHT) {
-        Vector2 p = nextControlPos(control->toolStyle());
-
-        float w = CONTROL_WIDTH;
-        float h = height;
-        if (m_layoutControlSize.x != DEFAULT_SIZE) {
-            w = m_layoutControlSize.x;            
-        }
-        if (m_layoutControlSize.y != DEFAULT_SIZE) {
-            h = m_layoutControlSize.y;            
-        }
-        control->setRect(Rect2D::xywh(p, Vector2(w, h)));
-        if ((m_layoutCaptionSize.x != DEFAULT_SIZE) && (control->captionWidth() != 0)) {
-            control->setCaptionWidth(m_layoutCaptionSize.x);
-        }
-        if ((m_layoutCaptionSize.y != DEFAULT_SIZE) && (control->captionHeight() != 0)) {
-            control->setCaptionHeight(m_layoutCaptionSize.y);
-        }
-
-        increaseBounds(control->rect().x1y1());
-
-        GuiContainer* container = dynamic_cast<GuiContainer*>(control);
-        if (container == NULL) {
-            controlArray.append(control);
-        } else {
-            containerArray.append(container);
-        }
-        m_layoutPreviousControl = control;
-
-        return control;
+        return dynamic_cast<T*>(_addControl(control, height));
     }
 
     Vector2 contentsExtent() const;
