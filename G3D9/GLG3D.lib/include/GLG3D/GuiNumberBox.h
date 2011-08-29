@@ -315,7 +315,9 @@ public:
 
         mouse -= m_clientRect.x0y0();
         m_textBox->findControlUnderMouse(mouse, control);
-        m_slider->findControlUnderMouse(mouse, control);
+        if (m_slider != NULL) {
+            m_slider->findControlUnderMouse(mouse, control);
+        }
     }
 
     virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const override {
