@@ -128,10 +128,9 @@ public:
     /** For use by GuiContainers.  \sa GuiPane::addPane, GuiWindow::pane */
     GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 
-    
     virtual void render(RenderDevice* rd, const GuiThemeRef& theme) const;
 
-    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) const;
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override;
 
     /** If the original caption was non-empty (even if it was " "), 
         the new caption will be shown.*/

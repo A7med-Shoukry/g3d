@@ -72,10 +72,6 @@ protected:
     /** Time at which the key will repeat (if down). */
     RealTime             m_keyRepeatTime;
 
-    /** Called by GuiPane */
-    GuiTextBox(GuiContainer* parent, const GuiText& caption, 
-               const Pointer<std::string>& value, Update update);
-
     virtual bool onEvent(const GEvent& event);
 
     /** Called from onEvent when a key is pressed. */
@@ -91,6 +87,9 @@ protected:
     virtual void commit();
 
 public:
+
+    /** For use when building larger controls out of GuiNumberBox.  For making a regular GUI, use GuiPane::addTextBox. */
+    GuiTextBox(GuiContainer* parent, const GuiText& caption, const Pointer<std::string>& value, Update update);
 
     virtual void setRect(const Rect2D&);    
 

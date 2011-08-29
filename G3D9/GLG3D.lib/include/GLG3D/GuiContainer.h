@@ -45,12 +45,14 @@ protected:
 
 public:
 
+#if 0 // TODO: remove this entry point
     /**
      Finds the visible, enabled control underneath the mouse
      @param control (Output) pointer to the control that the mouse is over
      @param mouse Relative to the parent of this pane.
     */
-    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) const = 0;
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control);
+#endif 
 
     /** Client rect bounds, relative to the parent (or window if
         there is no parent). */

@@ -37,7 +37,7 @@ void GuiTabPane::setRect(const Rect2D& rect) {
 }
 
 
-void GuiTabPane::findControlUnderMouse(Vector2 mouse, GuiControl*& control) const {
+void GuiTabPane::findControlUnderMouse(Vector2 mouse, GuiControl*& control) {
     if (! m_rect.contains(mouse) || ! m_visible) {
         return;
     }

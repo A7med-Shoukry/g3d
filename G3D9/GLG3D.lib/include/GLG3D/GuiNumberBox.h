@@ -202,8 +202,11 @@ protected:
 
     /////////////////////////////////////////////////////////////////
 
-    GuiNumberBox(
-        GuiContainer*           parent, 
+public:
+
+    /** For use when building larger controls out of GuiNumberBox.  For making a regular GUI, use GuiPane::addNumberBox. */
+    GuiNumberBox
+       (GuiContainer*           parent, 
         const GuiText&          caption, 
         const Pointer<Value>&   value, 
         const GuiText&          units,
@@ -239,9 +242,7 @@ protected:
         *m_value = m_oldValue;
         updateText();
     }
-
-public:
-
+        
     ~GuiNumberBox() {
         delete m_textBox;
         delete m_slider;
@@ -272,14 +273,18 @@ public:
         m_maxValue = max(lo, hi);
     }
 
-    virtual void setRect(const Rect2D& rect) {
+    virtual void setRect(const Rect2D& rect) override {
         GuiContainer::setRect(rect);
 
+        // Total size of the GUI, after the caption
         float controlSpace = m_rect.width() - m_captionWidth;
 
-        m_textBox->setRect(Rect2D::xywh(m_captionWidth, 0, textBoxWidth, CONTROL_HEIGHT));
+        if (m_slider == NULL) {
+            // No slider: the text box will fill the rest of the size
+            m_textBox->setRect(Rect2D::xywh(m_captionWidth, 0, controlSpace - m_unitsSize, CONTROL_HEIGHT));
+        } else {
+            m_textBox->setRect(Rect2D::xywh(m_captionWidth, 0, textBoxWidth, CONTROL_HEIGHT));
 
-        if (m_slider != NULL) {
             float x = m_textBox->rect().x1() + m_unitsSize;
             m_slider->setRect(Rect2D::xywh(x, 0.0f, 
                 max(controlSpace - (x - m_captionWidth) - 2, 5.0f), (float)CONTROL_HEIGHT));
@@ -296,27 +301,24 @@ public:
         return m_unitsSize;
     }
 
-    virtual void setEnabled(bool e) {
+    virtual void setEnabled(bool e) override {
         m_textBox->setEnabled(e);
         if (m_slider != NULL) {
             m_slider->setEnabled(e);
         }
     }
 
-    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) const {
-        if (! m_clientRect.contains(mouse) || ! m_visible) {
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override {
+        if (! m_clientRect.contains(mouse) || ! m_visible || ! m_enabled) {
             return;
         }
 
         mouse -= m_clientRect.x0y0();
-        if (m_textBox->clickRect().contains(mouse) && m_textBox->visible() && m_textBox->enabled()) {
-            control = m_textBox;
-        } else if ((m_slider != NULL) && m_slider->clickRect().contains(mouse) && m_slider->visible() && m_slider->enabled()) {
-            control = m_slider;
-        }
+        m_textBox->findControlUnderMouse(mouse, control);
+        m_slider->findControlUnderMouse(mouse, control);
     }
 
-    virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const {
+    virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const override {
         if (! m_visible) {
             return;
         }

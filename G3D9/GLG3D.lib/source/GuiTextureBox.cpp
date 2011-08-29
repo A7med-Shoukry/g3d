@@ -887,12 +887,12 @@ void GuiTextureBox::zoomTo1() {
 }
     
 
-void GuiTextureBox::findControlUnderMouse(Vector2 mouse, GuiControl*& control) const {
+void GuiTextureBox::findControlUnderMouse(Vector2 mouse, GuiControl*& control) {
     if (! m_enabled || ! m_rect.contains(mouse) || ! m_visible) {
         return;
     }
 
-    control = const_cast<GuiTextureBox*>(this);
+    control = this;
 
     mouse -= m_clientRect.x0y0();
     if (m_drawerButton->clickRect().contains(mouse) && m_drawerButton->visible() && m_drawerButton->enabled()) {

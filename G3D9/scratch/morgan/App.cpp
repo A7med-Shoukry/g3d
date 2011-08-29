@@ -185,6 +185,139 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 }
 
 
+class GuiCFrameBox : public GuiContainer {
+private:
+
+    GuiTextBox*             m_centerBox;
+    GuiNumberBox<float>*    m_yawBox;
+    GuiNumberBox<float>*    m_pitchBox;
+    GuiNumberBox<float>*    m_rollBox;
+
+    static const int NUM_CHILDREN = 4;
+    GuiControl*             m_child[NUM_CHILDREN];
+
+public:
+
+    GuiCFrameBox
+       (GuiContainer*           parent, 
+        const GuiText&          caption) : GuiContainer(parent, caption) {
+            
+        static float x,y,z;
+        static const float rotationControlWidth    = 48;
+        static const float captionWidth = 10;
+        static const float rotationPrecision = 0.1f;
+        static const float translationPrecision = 0.001f;
+        static const std::string degrees = "\xba";
+        static const float unitsSize = 8.0;
+        GuiNumberBox<float>* c = NULL;
+        static std::string s = "-100.00, -100.00, -100.00";
+
+        m_centerBox = new GuiTextBox(this, "", &s, GuiTextBox::DELAYED_UPDATE);
+        m_centerBox->setWidth(166);
+        m_centerBox->setCaptionWidth(6);
+
+        m_yawBox = new GuiNumberBox<float>(this, "", &x, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+        c = m_yawBox; c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(unitsSize);
+        c->moveBy(8, 0);
+
+        m_pitchBox = new GuiNumberBox<float>(this, "", &y, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+        c = m_pitchBox;  c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(unitsSize);
+
+        m_rollBox = new GuiNumberBox<float>(this, "", &z, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+        c = m_rollBox; c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(unitsSize);
+
+        /*
+        static const float smallFontSize = 8;
+        static const float smallFontHeight = 7;
+        float labelY = t->rect().y1() - 1;
+        GuiLabel* L = cpPane->addLabel(GuiText("Center", NULL, smallFontSize), GFont::XALIGN_CENTER);
+        L->setRect(Rect2D::xywh(t->rect().center().x - L->rect().width() / 2, labelY, L->rect().width(), smallFontHeight));
+
+        L = cpPane->addLabel(GuiText("Yaw", NULL, smallFontSize), GFont::XALIGN_CENTER);
+        L->setRect(Rect2D::xywh(yawBox->rect().center().x - L->rect().width() / 2 - unitsSize / 2, labelY, L->rect().width(), smallFontHeight));
+
+        L = cpPane->addLabel(GuiText("Pitch", NULL, smallFontSize), GFont::XALIGN_CENTER);
+        L->setRect(Rect2D::xywh(pitchBox->rect().center().x - L->rect().width() / 2 - unitsSize / 2, labelY, L->rect().width(), smallFontHeight));
+
+        L = cpPane->addLabel(GuiText("Roll", NULL, smallFontSize), GFont::XALIGN_CENTER);
+        L->setRect(Rect2D::xywh(rollBox->rect().center().x - L->rect().width() / 2 - unitsSize / 2, labelY, L->rect().width(), smallFontHeight));
+
+        cpPane->pack();
+        */
+        m_child[0] = m_centerBox;
+        m_child[1] = m_yawBox;
+        m_child[2] = m_pitchBox;
+        m_child[3] = m_rollBox;
+    }
+    
+    ~GuiCFrameBox() {
+        for (int c = 0; c < NUM_CHILDREN; ++c) {
+            delete m_child[c];
+        }
+    }
+
+    virtual void setCaption(const std::string& c) {
+        GuiContainer::setCaption(c);
+
+        // Resize other parts in response to caption size changing
+        setRect(m_rect);
+    }
+    
+    virtual void setEnabled(bool e) {
+        for (int c = 0; c < NUM_CHILDREN; ++c) {
+            m_child[c]->setEnabled(e);
+        }
+    }
+
+    virtual void setRect(const Rect2D& rect) {
+        GuiContainer::setRect(rect);
+
+        // Total size of the GUI, after the caption
+        float controlSpace = m_rect.width() - m_captionWidth;
+
+        // TODO: position the children
+    }
+
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override {
+        if (! m_clientRect.contains(mouse) || ! m_visible || ! m_enabled) {
+            return;
+        }
+
+        mouse -= m_clientRect.x0y0();
+        for (int c = 0; c < NUM_CHILDREN; ++c) {
+            m_child[c]->findControlUnderMouse(mouse, control);
+        }
+    }
+
+
+    virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const override {
+        if (! m_visible) {
+            return;
+        }
+        /*
+        if (m_oldValue != *m_value) {
+            const_cast<GuiNumberBox<Value>*>(this)->updateText();
+        }
+
+        skin->pushClientRect(m_clientRect);
+            m_textBox->render(rd, skin);
+
+            // Don't render the slider if there isn't enough space for it 
+            if ((m_slider != NULL) && (m_slider->rect().width() > 10)) {
+                m_slider->render(rd, skin);
+            }
+
+            // Render caption and units
+            skin->renderLabel(m_rect - m_clientRect.x0y0(), m_caption, GFont::XALIGN_LEFT, GFont::YALIGN_CENTER, m_enabled);
+
+            const Rect2D& textBounds = m_textBox->rect();
+            skin->renderLabel(Rect2D::xywh(textBounds.x1y0(), Vector2(m_unitsSize, textBounds.height())), 
+                m_units, GFont::XALIGN_LEFT, GFont::YALIGN_CENTER, m_enabled);
+        skin->popClientRect();
+        */
+    }
+};
+
 void App::onInit() {
     // Turn on the developer HUD
     debugWindow->setVisible(true);
@@ -203,38 +336,8 @@ void App::onInit() {
 
     debugPane->addButton("Hi");
 
+    debugPane->addCustom(new GuiCFrameBox(debugPane, "CFrame"));
 
-
-    {
-        GuiPane* cpPane = debugPane->addPane("test");
-
-        static float x,y,z;
-        static const float translationControlWidth = 80;
-        static const float rotationControlWidth    = 40;
-        static const float captionWidth = 10;
-        static const float rotationPrecision = 0.1f;
-        static const float translationPrecision = 0.001f;
-        static const std::string degrees = "\xba";
-        cpPane->beginRow(); {
-            GuiNumberBox<float>* c = NULL;
-            static std::string s = "100.0, 100.0, 100.0";
-
-            GuiControl* t = cpPane->addTextBox("xyz (", &s);
-            t->setWidth(155);
-            t->setCaptionWidth(26);
-            cpPane->addLabel(") m");
-
-            c = cpPane->addNumberBox("", &x, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
-            c->moveBy(20, 0);
-            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
-
-            c = cpPane->addNumberBox("", &y, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
-            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
-
-            c = cpPane->addNumberBox("", &z, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
-            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
-        } cpPane->endRow();
-    }
 
 #if 0
     std::string materialPath = System::findDataFile("material");

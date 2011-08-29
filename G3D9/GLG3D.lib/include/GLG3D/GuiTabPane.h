@@ -45,7 +45,7 @@ public:
         for cases where you want the index to correspond to an enum.*/
     GuiPane* addTab(const GuiText& label, int id = -1);
 
-    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) const;
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override;
     virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const;
     virtual void setRect(const Rect2D& rect);
     virtual void pack();

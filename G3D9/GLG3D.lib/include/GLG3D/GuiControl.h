@@ -1,8 +1,8 @@
 /**
- @file GLG3D/GuiControl.h
+ \file GLG3D/GuiControl.h
 
- @created 2006-05-01
- @edited  2009-09-08
+ \created 2006-05-01
+ \edited  2011-08-28
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2011, Morgan McGuire morgan@cs.williams.edu
@@ -255,6 +255,18 @@ public:
     void moveRightOf(const GuiControl* control);
     void moveBy(const Vector2& delta);
     void moveBy(float dx, float dy);    
+
+    /** \brief Return the enabled, visible control containing the mouse.
+    
+    The default implementation returns itself if the mouse is within its bounds.  GuiContainer%s should override this to iterate through children. 
+    Since only one (non-overlapping) child will write to \a control, it is sufficient to call this on all children without testing 
+    to see if one already wrote to \a control. */
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) {
+        if (m_rect.contains(mouse) && m_visible && m_enabled) {
+            control = this;
+        }
+    }
+
 
     GuiThemeRef theme() const;
 

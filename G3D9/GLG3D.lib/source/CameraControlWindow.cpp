@@ -287,7 +287,7 @@ CameraControlWindow::CameraControlWindow(
     m_recordHelpCaption = GuiText("Spacebar to place a control point.", NULL, 10);
 
     m_helpLabel = manualPane->addLabel(m_manualHelpCaption);
-    m_helpLabel->moveBy(0, 2);
+    m_helpLabel->moveBy(0, -4);
 
     manualPane->pack();
     filmPane->setWidth(manualPane->rect().width());

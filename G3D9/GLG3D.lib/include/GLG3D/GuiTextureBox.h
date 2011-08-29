@@ -165,7 +165,7 @@ public:
 
     virtual void render(RenderDevice* rd, const GuiTheme::Ref& theme) const;
     virtual void setRect(const Rect2D& rect);
-    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) const;
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override;
 
     virtual bool onEvent(const GEvent& event);
 
