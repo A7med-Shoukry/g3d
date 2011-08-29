@@ -233,9 +233,10 @@ public:
     GuiTextBox* addTextBox
     (const GuiText& caption,
      const Pointer<std::string>& stringPointer,
-     GuiTextBox::Update update = GuiTextBox::DELAYED_UPDATE
+     GuiTextBox::Update update = GuiTextBox::DELAYED_UPDATE,
+     GuiTheme::TextBoxStyle style = GuiTheme::NORMAL_TEXT_BOX_STYLE
      ) {        
-        return addControl(new GuiTextBox(this, caption, stringPointer, update));
+        return addControl(new GuiTextBox(this, caption, stringPointer, update, style));
     }
 
     /**
@@ -300,10 +301,11 @@ public:
         GuiTheme::SliderScale sliderScale = GuiTheme::NO_SLIDER, 
         Value               min = (Value)minVal(Value()), 
         Value               max = (Value)maxVal(Value()), 
-        Value               roundIncrement = 0) {
+        Value               roundIncrement = 0,
+        GuiTheme::TextBoxStyle textBoxStyle = GuiTheme::NORMAL_TEXT_BOX_STYLE) {
 
         return addControl(new GuiNumberBox<Value>(this, text, value, suffix, sliderScale, 
-                                                  min, max, roundIncrement));
+                                                  min, max, roundIncrement, textBoxStyle));
     }
 
     template<typename Value>
@@ -314,10 +316,11 @@ public:
         GuiTheme::SliderScale sliderScale = GuiTheme::NO_SLIDER, 
         Value               min = (Value)minVal(Value()), 
         Value               max = (Value)maxVal(Value()), 
-        Value               roundIncrement = 0) {
+        Value               roundIncrement = 0,
+        GuiTheme::TextBoxStyle textBoxStyle = GuiTheme::NORMAL_TEXT_BOX_STYLE) {
 
         return addControl(new GuiNumberBox<Value>(this, text, Pointer<Value>(value), 
-                                                  suffix, sliderScale, min, max, roundIncrement));
+                                                  suffix, sliderScale, min, max, roundIncrement, textBoxStyle));
     }
 
     template<typename Value>

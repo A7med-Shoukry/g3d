@@ -23,16 +23,18 @@ static const float               keyRepeatDelay = 0.25f;
 namespace G3D {
 
 GuiTextBox::GuiTextBox
-(GuiContainer*              parent,
+(GuiContainer*               parent,
  const GuiText&              caption, 
  const Pointer<std::string>& value, 
- Update                      update) : 
+ Update                      update,
+ GuiTheme::TextBoxStyle      style) : 
     GuiControl(parent, caption), 
     m_value(value), 
     m_cursorPos(0), 
     m_editing(false), 
     m_update(update),
-    m_cursor("|") {
+    m_cursor("|"),
+    m_style(style) {
 
     unsetRepeatKeysym();
     m_keyDownTime = System::time();
@@ -105,7 +107,8 @@ void GuiTextBox::render(RenderDevice* rd, const GuiThemeRef& skin) const {
             m_captionWidth,
             m_editing ? m_userValue : *m_value, 
             solidCursor ? m_cursor : GuiText(std::string()),
-            m_cursorPos);
+            m_cursorPos,
+            m_style);
     }
 }
 

@@ -120,12 +120,11 @@ public:
         WINDOW_STYLE_COUNT
     };
     
-    /**
-    NO_PANE_STYLE has no visible borders or back
-    */
     enum PaneStyle {
         SIMPLE_PANE_STYLE,
         ORNATE_PANE_STYLE,
+
+        /** NO_PANE_STYLE has no visible borders or back */
         NO_PANE_STYLE,
 
         PANE_STYLE_COUNT
@@ -146,13 +145,14 @@ public:
         BUTTON_STYLE_COUNT
     };
 
-    /** NORMAL_CHECK_BOX_STYLE is the normal checkbox appearance.  
-        BUTTON_CHECK_BOX_STYLE makes checkbox that looks like a button,
-        TOOL_CHECK_BOX_STYLE appears as a tool-bar button.
-    */
     enum CheckBoxStyle {
+        /** the normal checkbox appearance */
         NORMAL_CHECK_BOX_STYLE, 
+
+        /** makes checkbox that looks like a button */
         BUTTON_CHECK_BOX_STYLE,
+
+        /** appears as a tool-bar button.*/
         TOOL_CHECK_BOX_STYLE,
 
         CHECK_BOX_STYLE_COUNT
@@ -164,6 +164,12 @@ public:
         TOOL_RADIO_BUTTON_STYLE,
 
         RADIO_BUTTON_STYLE_COUNT
+    };
+
+    enum TextBoxStyle {
+        NORMAL_TEXT_BOX_STYLE,
+        /** Do not render the background of the text box unless it has focus */
+        NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE
     };
 
 public:
@@ -702,26 +708,27 @@ public:
     /** Render a single-line text box. Only call between beginRendering and endRendering.
         Automatically shifts text so that a cursor at character index given by 
         cursorPosition is visible on screen. */
-    void renderTextBox(
-        const Rect2D&           bounds, 
+    void renderTextBox
+       (const Rect2D&           bounds, 
         bool                    enabled,
         bool                    focused, 
-        const GuiText&       caption,
+        const GuiText&          caption,
         float                   captionWidth,
-        const GuiText&       text,
-        const GuiText&       cursor,
-        int                     cursorPosition) const;
+        const GuiText&          text,
+        const GuiText&          cursor,
+        int                     cursorPosition,
+        TextBoxStyle            style) const;
 
     /**
        Render a drawing area with borders that look like a text box.
        The caption for a canvas is rendered above it and the canvas
        has the full width of its bounds.
      */
-    void renderCanvas(
-        const Rect2D&           bounds, 
+    void renderCanvas
+       (const Rect2D&           bounds, 
         bool                    enabled,
         bool                    focused, 
-        const GuiText&       caption,
+        const GuiText&          caption,
         float                   captionHeight) const;
 
     /** Render the selection region for a menu or list. */

@@ -193,8 +193,14 @@ private:
     GuiNumberBox<float>*    m_pitchBox;
     GuiNumberBox<float>*    m_rollBox;
 
-    static const int NUM_CHILDREN = 4;
+    GuiButton*              m_bookmarkButton;
+    GuiButton*              m_showBookmarksButton;
+    GuiButton*              m_copyButton;
+
+    static const int        NUM_CHILDREN = 7;
     GuiControl*             m_child[NUM_CHILDREN];
+
+    static const int        smallFontHeight = 7;
 
 public:
 
@@ -203,7 +209,7 @@ public:
         const GuiText&          caption) : GuiContainer(parent, caption) {
             
         static float x,y,z;
-        static const float rotationControlWidth    = 48;
+        static const float rotationControlWidth = 52;
         static const float captionWidth = 10;
         static const float rotationPrecision = 0.1f;
         static const float translationPrecision = 0.001f;
@@ -212,42 +218,55 @@ public:
         GuiNumberBox<float>* c = NULL;
         static std::string s = "-100.00, -100.00, -100.00";
 
-        m_centerBox = new GuiTextBox(this, "", &s, GuiTextBox::DELAYED_UPDATE);
-        m_centerBox->setWidth(166);
-        m_centerBox->setCaptionWidth(6);
+        m_centerBox = new GuiTextBox(this, "", &s, GuiTextBox::DELAYED_UPDATE, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE);
+        m_centerBox->setSize(Vector2(160, CONTROL_HEIGHT));
 
-        m_yawBox = new GuiNumberBox<float>(this, "", &x, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
-        c = m_yawBox; c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(unitsSize);
-        c->moveBy(8, 0);
+        m_yawBox = new GuiNumberBox<float>(this, "", &x, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+        m_yawBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
+        c = m_yawBox; c->setCaptionWidth(0);  c->setUnitsSize(unitsSize);
 
-        m_pitchBox = new GuiNumberBox<float>(this, "", &y, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
-        c = m_pitchBox;  c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(unitsSize);
+        m_pitchBox = new GuiNumberBox<float>(this, "", &y, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+        m_pitchBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
+        c = m_pitchBox;  c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
 
-        m_rollBox = new GuiNumberBox<float>(this, "", &z, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
-        c = m_rollBox; c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(unitsSize);
+        m_rollBox = new GuiNumberBox<float>(this, "", &z, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+        m_rollBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
+        c = m_rollBox; c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
 
-        /*
-        static const float smallFontSize = 8;
-        static const float smallFontHeight = 7;
-        float labelY = t->rect().y1() - 1;
-        GuiLabel* L = cpPane->addLabel(GuiText("Center", NULL, smallFontSize), GFont::XALIGN_CENTER);
-        L->setRect(Rect2D::xywh(t->rect().center().x - L->rect().width() / 2, labelY, L->rect().width(), smallFontHeight));
+        // Change to black "r" (x) for remove
+        const char* DOWN = "6";
+        const char* CHECK = "\x98";
+        const char* CLIPBOARD = "\xA4";
+        GFontRef iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
+        GFontRef greekFont = GFont::fromFile(System::findDataFile("greek.fnt"));
 
-        L = cpPane->addLabel(GuiText("Yaw", NULL, smallFontSize), GFont::XALIGN_CENTER);
-        L->setRect(Rect2D::xywh(yawBox->rect().center().x - L->rect().width() / 2 - unitsSize / 2, labelY, L->rect().width(), smallFontHeight));
+        m_bookmarkButton = new GuiButton(this, GuiButton::Callback(),GuiText(CHECK, iconFont, 16, Color3::blue() * 0.8f), 
+//                GuiControl::Callback(this, &CameraControlWindow::onBookmarkButton),
+                GuiTheme::TOOL_BUTTON_STYLE);
 
-        L = cpPane->addLabel(GuiText("Pitch", NULL, smallFontSize), GFont::XALIGN_CENTER);
-        L->setRect(Rect2D::xywh(pitchBox->rect().center().x - L->rect().width() / 2 - unitsSize / 2, labelY, L->rect().width(), smallFontHeight));
+        m_showBookmarksButton = new GuiButton(this, GuiButton::Callback(), GuiText(DOWN, iconFont, 18), GuiTheme::TOOL_BUTTON_STYLE);
 
-        L = cpPane->addLabel(GuiText("Roll", NULL, smallFontSize), GFont::XALIGN_CENTER);
-        L->setRect(Rect2D::xywh(rollBox->rect().center().x - L->rect().width() / 2 - unitsSize / 2, labelY, L->rect().width(), smallFontHeight));
+        m_copyButton = new GuiButton(this, GuiButton::Callback(), GuiText(CLIPBOARD, iconFont, 16), GuiTheme::TOOL_BUTTON_STYLE);//, GuiControl::Callback(this, &CameraControlWindow::copyToClipboard), GuiTheme::TOOL_BUTTON_STYLE);
+#       ifdef G3D_OSX
+            m_copyButton->setEnabled(false);
+#       endif
 
-        cpPane->pack();
-        */
+        float w = 18;
+        float h = 21;
+        m_showBookmarksButton->setSize(w, h);
+        m_bookmarkButton->setSize(w, h);
+        m_copyButton->setSize(w, h);
+
         m_child[0] = m_centerBox;
         m_child[1] = m_yawBox;
         m_child[2] = m_pitchBox;
         m_child[3] = m_rollBox;
+        m_child[4] = m_bookmarkButton;
+        m_child[5] = m_showBookmarksButton;
+        m_child[6] = m_copyButton;
+
+        // Slightly taller than most controls because of the labels
+        setRect(Rect2D::xywh(0, 0, 500, CONTROL_HEIGHT + smallFontHeight));
     }
     
     ~GuiCFrameBox() {
@@ -275,7 +294,18 @@ public:
         // Total size of the GUI, after the caption
         float controlSpace = m_rect.width() - m_captionWidth;
 
-        // TODO: position the children
+        // Position the children
+        m_centerBox->setPosition(m_captionWidth, 0);
+        m_yawBox->moveRightOf(m_centerBox);
+        m_yawBox->moveBy(10, 0);
+        m_pitchBox->moveRightOf(m_yawBox);
+        m_rollBox->moveRightOf(m_pitchBox);
+
+        m_showBookmarksButton->moveRightOf(m_rollBox);
+        m_showBookmarksButton->moveBy(0, 2);
+        m_bookmarkButton->moveRightOf(m_showBookmarksButton);
+        m_copyButton->moveRightOf(m_bookmarkButton);
+
     }
 
     virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override {
@@ -291,30 +321,34 @@ public:
 
 
     virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const override {
+        static const float smallFontSize = 8;
+
         if (! m_visible) {
             return;
         }
-        /*
-        if (m_oldValue != *m_value) {
-            const_cast<GuiNumberBox<Value>*>(this)->updateText();
-        }
+        skin->pushClientRect(m_clientRect); {
+            // Render caption
+            skin->renderLabel(m_rect - m_clientRect.x0y0() - Vector2(0, 4), m_caption, GFont::XALIGN_LEFT, GFont::YALIGN_CENTER, m_enabled);
 
-        skin->pushClientRect(m_clientRect);
-            m_textBox->render(rd, skin);
+            // Render the canvas surrounding the individual text boxes            
+            skin->renderCanvas(Rect2D::xyxy(m_centerBox->rect().x0y0(), m_rollBox->rect().x1y1() + Vector2(2, 0)), m_enabled, false, "", 0);
 
-            // Don't render the slider if there isn't enough space for it 
-            if ((m_slider != NULL) && (m_slider->rect().width() > 10)) {
-                m_slider->render(rd, skin);
+            // Render child controls
+            for (int c = 0; c < NUM_CHILDREN; ++c) {
+                m_child[c]->render(rd, skin);
             }
 
-            // Render caption and units
-            skin->renderLabel(m_rect - m_clientRect.x0y0(), m_caption, GFont::XALIGN_LEFT, GFont::YALIGN_CENTER, m_enabled);
+            static const GuiText label[NUM_CHILDREN] = 
+            {GuiText("center", NULL, smallFontSize),
+             GuiText("yaw", NULL, smallFontSize),
+             GuiText("pitch", NULL, smallFontSize),
+             GuiText("roll", NULL, smallFontSize)};
 
-            const Rect2D& textBounds = m_textBox->rect();
-            skin->renderLabel(Rect2D::xywh(textBounds.x1y0(), Vector2(m_unitsSize, textBounds.height())), 
-                m_units, GFont::XALIGN_LEFT, GFont::YALIGN_CENTER, m_enabled);
-        skin->popClientRect();
-        */
+            // Render labels
+            for (int c = 0; c < 4; ++c) {
+                skin->renderLabel(m_child[c]->rect() + Vector2((c > 0) ? -4 : 0, smallFontHeight), label[c], GFont::XALIGN_CENTER, GFont::YALIGN_BOTTOM, m_enabled);
+            }        
+        } skin->popClientRect();
     }
 };
 

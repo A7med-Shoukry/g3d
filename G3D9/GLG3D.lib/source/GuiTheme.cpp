@@ -373,11 +373,15 @@ void GuiTheme::renderTextBox
      float              captionWidth,
      const GuiText&     text, 
      const GuiText&     cursor, 
-     int                cursorPosition) const {
+     int                cursorPosition,
+     TextBoxStyle       style) const {
 
     const Rect2D& bounds = textBoxToClickBounds(fullBounds, captionWidth);
 
-    m_textBox.render(m_rd, bounds, enabled, focused);
+    // Render the background
+    if (focused || (style != NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE)) {
+        m_textBox.render(m_rd, bounds, enabled, focused);
+    }
 
     alwaysAssertM(text.numElements() < 2, "Text box cannot contain GuiText with more than 1 element");
 

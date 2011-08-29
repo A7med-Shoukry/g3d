@@ -1,11 +1,11 @@
 /**
- @file GLG3D/GuiTextBox.h
+ \file GLG3D/GuiTextBox.h
 
- @created 2007-06-11
- @edited  2007-06-13
+ \created 2007-06-11
+ \edited  2011-08-24
 
  G3D Library http://g3d.sf.net
- Copyright 2001-2007, Morgan McGuire morgan@users.sf.net
+ Copyright 2001-2011, Morgan McGuire
  All rights reserved.
 */
 #ifndef G3D_GUITEXTBOX_H
@@ -72,6 +72,8 @@ protected:
     /** Time at which the key will repeat (if down). */
     RealTime             m_keyRepeatTime;
 
+    GuiTheme::TextBoxStyle m_style;
+
     virtual bool onEvent(const GEvent& event);
 
     /** Called from onEvent when a key is pressed. */
@@ -89,7 +91,7 @@ protected:
 public:
 
     /** For use when building larger controls out of GuiNumberBox.  For making a regular GUI, use GuiPane::addTextBox. */
-    GuiTextBox(GuiContainer* parent, const GuiText& caption, const Pointer<std::string>& value, Update update);
+    GuiTextBox(GuiContainer* parent, const GuiText& caption, const Pointer<std::string>& value, Update update, GuiTheme::TextBoxStyle style);
 
     virtual void setRect(const Rect2D&);    
 

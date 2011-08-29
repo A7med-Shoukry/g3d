@@ -146,8 +146,8 @@ protected:
     public:
 
         MyTextBox(GuiNumberBox<Value>* parent, const GuiText& caption, 
-               const Pointer<std::string>& value, Update update) :
-               GuiTextBox(parent, caption, value, update),
+               const Pointer<std::string>& value, Update update, GuiTheme::TextBoxStyle style) :
+               GuiTextBox(parent, caption, value, update, style),
                m_numberBox(parent) {
            // Make events appear to come from parent
            m_eventSource = parent;
@@ -213,7 +213,8 @@ public:
         GuiTheme::SliderScale   scale,
         Value                   minValue, 
         Value                   maxValue,
-        Value                   roundIncrement) :
+        Value                   roundIncrement,
+        GuiTheme::TextBoxStyle textBoxStyle) :
         GuiContainer(parent, caption),
         m_value(value),
         m_roundIncrement(roundIncrement),
@@ -233,7 +234,7 @@ public:
             m_slider = new GuiSlider<Value>(this, "", value, m_minValue, m_maxValue, true, scale, this);
         }
 
-        m_textBox = new MyTextBox(this, "", &m_textValue, GuiTextBox::DELAYED_UPDATE);
+        m_textBox = new MyTextBox(this, "", &m_textValue, GuiTextBox::DELAYED_UPDATE, textBoxStyle);
 
         m_formatString = formatString(*value, roundIncrement);
 
