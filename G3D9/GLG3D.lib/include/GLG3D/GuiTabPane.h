@@ -1,8 +1,8 @@
 /**
- @file GLG3D/GuiTabPane.h
+ \file GLG3D/GuiTabPane.h
 
- @created 2010-03-01
- @edited  2010-03-01
+ \created 2010-03-01
+ \edited  2011-08-29
 
  Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
  All rights reserved.
@@ -36,6 +36,7 @@ protected:
         control has the key focus (which is transferred during a mouse
         down) */
     virtual bool onEvent(const GEvent& event) { (void)event; return false; }
+
 public:
 
     /** For use by GuiPane.  Call GuiPane::addTabPane to create */
@@ -49,6 +50,14 @@ public:
     virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const;
     virtual void setRect(const Rect2D& rect);
     virtual void pack();
+
+    void setSelectedIndex(int p) {
+        *m_indexPtr = p;
+    }
+
+    int selectedIndex() const {
+        return *m_indexPtr;
+    }
 
 };
 
