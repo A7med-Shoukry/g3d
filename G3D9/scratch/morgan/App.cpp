@@ -204,6 +204,38 @@ void App::onInit() {
     debugPane->addButton("Hi");
 
 
+
+    {
+        GuiPane* cpPane = debugPane->addPane("test");
+
+        static float x,y,z;
+        static const float translationControlWidth = 80;
+        static const float rotationControlWidth    = 40;
+        static const float captionWidth = 10;
+        static const float rotationPrecision = 0.1f;
+        static const float translationPrecision = 0.001f;
+        static const std::string degrees = "\xba";
+        cpPane->beginRow(); {
+            GuiNumberBox<float>* c = NULL;
+            static std::string s = "100.0, 100.0, 100.0";
+
+            GuiControl* t = cpPane->addTextBox("xyz (", &s);
+            t->setWidth(155);
+            t->setCaptionWidth(26);
+            cpPane->addLabel(") m");
+
+            c = cpPane->addNumberBox("", &x, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+            c->moveBy(20, 0);
+            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
+
+            c = cpPane->addNumberBox("", &y, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
+
+            c = cpPane->addNumberBox("", &z, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision); 
+            c->setCaptionWidth(0); c->setWidth(rotationControlWidth); c->setUnitsSize(8);
+        } cpPane->endRow();
+    }
+
 #if 0
     std::string materialPath = System::findDataFile("material");
     std::string crateFile = System::findDataFile("crate.ifs");
