@@ -1,3 +1,13 @@
+/**
+ \file GLG3D/PhysicsFrameSplineEditor.h
+
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2011-06-05
+ \edited  2011-08-29
+
+ Copyright 2000-2011, Morgan McGuire.
+ All rights reserved.
+ */
 #ifndef G3D_PhysicsFrameSplineEditor_h
 #define G3D_PhysicsFrameSplineEditor_h
 
@@ -6,6 +16,7 @@
 #include "GLG3D/GuiButton.h"
 #include "GLG3D/Surface.h"
 #include "G3D/PhysicsFrameSpline.h"
+#include "GLG3D/GuiNumberBox.h"
 
 namespace G3D {
 
@@ -41,6 +52,9 @@ protected:
     ThirdPersonManipulator::Ref  m_nodeManipulator;
     GuiButton*                   m_removeSelectedButton;
     bool                         m_isDocked;
+
+    GuiRadioButton*              m_finalIntervalChoice[2];
+    GuiNumberBox<float>*         m_finalIntervalBox;
 
     /** Used to avoid constantly unparsing the current physics frame in selectedNodePFrameAsString() */
     mutable PhysicsFrame         m_cachedPhysicsFrameValue;

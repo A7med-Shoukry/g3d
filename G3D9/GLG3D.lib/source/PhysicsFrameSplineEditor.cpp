@@ -101,10 +101,12 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
     finalIntervalPane->moveRightOf(prev);
     finalIntervalPane->moveBy(-1, -5);
     static int m_explicitFinalInterval = 0;
-    finalIntervalPane->addRadioButton("automatic", 0, &m_explicitFinalInterval);
+    m_finalIntervalChoice[0] = finalIntervalPane->addRadioButton("automatic", 0, &m_explicitFinalInterval);
     finalIntervalPane->beginRow(); {
-        finalIntervalPane->addRadioButton("", 1, &m_explicitFinalInterval);
-        finalIntervalPane->addNumberBox("", &m_spline.finalInterval, "s");
+        m_finalIntervalChoice[1] = finalIntervalPane->addRadioButton("", 1, &m_explicitFinalInterval);
+        m_finalIntervalBox = finalIntervalPane->addNumberBox("", &m_spline.finalInterval, "s", GuiTheme::NO_SLIDER, -1.0f, 10000.0f, 0.001f);
+        m_finalIntervalBox->setWidth(76);
+        m_finalIntervalBox->moveBy(-2, 0);
     } finalIntervalPane->endRow();
 
     pack();
@@ -267,6 +269,10 @@ void PhysicsFrameSplineEditor::onSimulation(RealTime rdt, SimTime sdt, SimTime i
     if (enabled()) {
         m_spline.control[m_selectedControlPointIndex] = m_nodeManipulator->frame();
         m_removeSelectedButton->setEnabled(m_spline.control.size() > 1);
+
+        m_finalIntervalChoice[0]->setEnabled(m_spline.cyclic);
+        m_finalIntervalChoice[1]->setEnabled(m_spline.cyclic);
+        m_finalIntervalBox->setEnabled(m_spline.cyclic); //  && (m_spline.finalInterval != -1.0f)
     }
 }
 
