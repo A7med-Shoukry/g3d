@@ -28,6 +28,8 @@
 	 <li> Changed default BumpMap::Specification::Settings::iterations to 1 (parallax mapping) from normal mapping
 	 <li> G3D::Surface::castsShadows
      <li> G3D::maxNotNPOS
+	 <li> GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE
+	 <li> G3D::GuiControl::findControlUnderMouse
      <li> G3D::Array::trimToSize
      <li> G3D::Shader now assumes GLSL 1.20 for files without a version specification
      <li> G3D::CFrame when passed to GLSL and the built-in G3D uniforms in shaders now use mat4x3 instead of mat4
