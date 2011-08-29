@@ -40,7 +40,7 @@ class Any;
   one for entering the material and one for exiting it (i.e., the "backfaces").  The eta of the exiting surface
   should be that of the medium that is being exited into--typically, air.  So a glass sphere is 
   a set of front faces with eta ~= 1.3 and a set of backfaces with eta = 1.0.
-    
+     
   \sa G3D::SuperShader, G3D::BSDF, G3D::Component, G3D::Texture, G3D::BumpMap, G3D::ArticulatedModel, G3D::GBuffer
   */
 class Material : public ReferenceCountedObject {
@@ -194,7 +194,12 @@ public:
             alpha channel is a mask that will be applied to all maps
             for coverage.  That is, alpha = 0 indicates holes in the
             surface.  Alpha is for partial coverage. Do not use alpha
-            for transparency; set transmissiveFilename instead.*/
+            for transparency; set transmissiveFilename instead.
+            
+            The image file is assumed to be in the sRGB color space.
+            The constant is multiplied in "linear" space, after sRGB->RGB
+            conversion.
+            */
         void setLambertian(const std::string& filename,
                            const Color4& constant = Color4::one());
 
@@ -213,6 +218,11 @@ public:
         /** Makes the surface opaque black. */
         void removeLambertian();
 
+        /**
+            The image file is assumed to be in the sRGB color space.
+            The constant is multiplied in "linear" space, after sRGB->RGB
+            conversion.
+            */
         void setEmissive(const std::string& filename, const Color3& constant = Color3::one());
         
         void setEmissive(const Color3& constant);
@@ -224,7 +234,12 @@ public:
         /** Mirror reflection or glossy reflection.
             This actually specifies 
             the \f$F_0\f$ term, which is the minimum reflectivity of the surface.  At 
-            glancing angles it will increase towards white.*/
+            glancing angles it will increase towards white.
+            
+            The image file is assumed to be in the sRGB color space.
+            The constant is multiplied in "linear" space, after sRGB->RGB
+            conversion.
+            */
         void setSpecular(const std::string& filename, const Color3& constant = Color3::one());
         
         void setSpecular(const Color3& constant);
@@ -236,6 +251,7 @@ public:
 
         /**
          The constant multiplies packed values stored in the file. 
+         The image is assumed to be in linear (RGB) space.
          */
         void setShininess(const std::string& filename, float constant = 1.0f);
 
@@ -266,7 +282,11 @@ public:
         /** This is an approximation of attenuation due to extinction
            while traveling through a translucent material.  Note that
            no real material is transmissive without also being at
-           least slightly glossy */
+           least slightly glossy.
+           
+           The image file is assumed to be in the sRGB color space.
+            The constant is multiplied in "linear" space, after sRGB->RGB
+            conversion.*/
         void setTransmissive(const std::string& filename, const Color3& constant = Color3::one());
         
         void setTransmissive(const Color3& constant);
@@ -279,6 +299,8 @@ public:
         void setEta(float etaTransmit, float etaReflect);
 
         /**
+           The image is assumed to be in linear (R) space.
+
            @param normalMapWhiteHeightInPixels When loading normal
               maps, argument used for G3D::GImage::computeNormalMap()
               whiteHeightInPixels.  Default is -0.02f

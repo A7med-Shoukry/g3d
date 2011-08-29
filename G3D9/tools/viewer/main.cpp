@@ -1,20 +1,20 @@
 /**
- @file main.cpp
+ \file viewer/main.cpp
  
  App that allows viewing of 3D assets, either as a command line argument or after dragging and dropping
  onto the window
  
- @author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
+ \author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
  
- @created 2007-05-31
- @edited  2010-02-25
+ \created 2007-05-31
+ \edited  2011-02-25
  */
 #include <G3D/G3DAll.h>
 #include <GLG3D/GLG3D.h>
 #include "App.h"
 
-#if defined(G3D_VER) && (G3D_VER < 80000)
-#   error Requires G3D 8.00
+#if defined(G3D_VER) && (G3D_VER < 90000)
+#   error Requires G3D 9.00
 #endif
 
 
@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
     GApp::Settings settings;
 
     settings.window.resizable = true;
+    settings.film.enabled = true;
 
     settings.window.width = 1024;
     settings.window.height = 768;

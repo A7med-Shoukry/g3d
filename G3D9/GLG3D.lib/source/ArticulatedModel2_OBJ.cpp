@@ -108,10 +108,22 @@ static Material::Specification toMaterialSpecification
  const ParseMTL::Material::Ref&         m) {
 
     Material::Specification s;
+    std::string filename;
 
     // Map OBJ model to G3D shading 
-    s.setLambertian(ArticulatedModel2::resolveRelativeFilename(m->map_Kd, m->basePath), Color4(m->Kd, min(m->d, 1.0f - m->Tr)));
-    s.setSpecular(ArticulatedModel2::resolveRelativeFilename(m->map_Ks, m->basePath), m->Ks.pow(9.0f) * 0.4f);
+    filename = ArticulatedModel2::resolveRelativeFilename(m->map_Kd, m->basePath);
+    if (filename != "" && FileSystem::exists(filename)) {
+        s.setLambertian(filename);
+    } else {
+        s.setLambertian(filename);
+    }
+
+    filename = ArticulatedModel2::resolveRelativeFilename(m->map_Ks, m->basePath);
+    if (filename != "" && FileSystem::exists(filename)) {
+        s.setSpecular(filename);
+    } else {
+        s.setSpecular(m->Ks.pow(9.0f) * 0.4f);
+    }
 
     if (m->illum == 2 || m->illum == 10) {
         // [glossy] "hilight" on

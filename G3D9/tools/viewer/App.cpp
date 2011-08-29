@@ -43,9 +43,9 @@ void App::onInit() {
 
     lighting = Lighting::create();
     lighting->lightArray.clear();
-    lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(5)));
+    lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(8.5f)));
     lighting->lightArray.append( GLight::directional(Vector3(-1,0,-1), Radiance3(0.8f, 0.9f, 1), false));
-    lighting->environmentMapConstant = 0.3f;
+    lighting->environmentMapConstant = 0.65f;
     // TODO: load better lighting map
     defaultCamera.setFarPlaneZ(-1000);
     defaultCamera.setNearPlaneZ(-0.05f);
@@ -111,7 +111,7 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 }
 
 
-void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
+void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
 
     Lighting::Ref localLighting = lighting;
     rd->setProjectionAndCameraMatrix(defaultCamera);
@@ -136,8 +136,6 @@ void App::onGraphics(RenderDevice* rd, Array<Surface::Ref>& posed3D, Array<Surfa
             posed3D[i]->render(rd);
         }
 	rd->disableLighting();
-
-    Surface2D::sortAndRender(rd, posed2D);
 }
 
 

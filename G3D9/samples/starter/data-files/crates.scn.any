@@ -26,7 +26,7 @@
        };
 
         
-       crateModel = ArticulatedModel2::Specification {            
+       crateModel = ArticulatedModel2::Specification {
             filename = "ifs/crate.ifs";
             preprocess = (
                 // You can #include a material file, or simply put all of the
@@ -44,13 +44,7 @@
 
         environmentMap = {
             constant = 1.0;
-            texture = Texture::Specification {
-                filename      = "cubemap/noonclouds/noonclouds_*.png";
-                desiredFormat = "RGB8";
-                dimension     = "DIM_CUBE_MAP",
-                settings      = Texture::Settings::cubeMap();
-                preprocess    = Texture::Preprocess::gamma(2.1f);
-            };
+            texture = "cubemap/noonclouds/noonclouds_*.png";
         };
     };
     

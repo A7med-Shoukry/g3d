@@ -44,6 +44,7 @@ Lighting::Specification::Specification(const Any& any) {
                 // Cube map defaults
                 environmentMapTexture.dimension = Texture::DIM_CUBE_MAP;
                 environmentMapTexture.settings = Texture::Settings::cubeMap();
+                environmentMapTexture.desiredFormat = ImageFormat::SRGB8();
             }
         }
     }

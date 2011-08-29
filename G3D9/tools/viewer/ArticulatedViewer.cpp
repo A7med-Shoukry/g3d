@@ -168,7 +168,6 @@ static void printHierarchy
 
 
 void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
-    
     // Separate and sort the models
     static Array<G3D::Surface::Ref> posed3D;
     

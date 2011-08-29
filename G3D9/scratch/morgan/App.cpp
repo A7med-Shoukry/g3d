@@ -352,6 +352,7 @@ public:
     }
 };
 
+
 void App::onInit() {
     // Turn on the developer HUD
     debugWindow->setVisible(true);
@@ -372,6 +373,12 @@ void App::onInit() {
 
     debugPane->addCustom(new GuiCFrameBox(debugPane, "CFrame"));
 
+    GImage src(System::findDataFile("testimage.jpg"));
+    Texture::Ref stexture = Texture::fromMemory("", src.byte(), ImageFormat::RGB8(), src.width(), src.height(), 1, ImageFormat::SRGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+    debugPane->addTextureBox("sRGB", stexture);
+
+    Texture::Ref texture = Texture::fromMemory("", src.byte(), ImageFormat::RGB8(), src.width(), src.height(), 1, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+    debugPane->addTextureBox("RGB", texture);
 
 #if 0
     std::string materialPath = System::findDataFile("material");

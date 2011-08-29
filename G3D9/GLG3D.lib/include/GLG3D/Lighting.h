@@ -25,6 +25,8 @@ typedef ReferenceCountedPointer<class Lighting> LightingRef;
 /**
    A rich environment lighting model that contains both global and local sources.
 
+   When loaded from an Any, environment maps specified as only a filename are assumed to be in sRGB space.
+
    Note: This class will change substantially in G3D 9.00.
  */
 class Lighting : public ReferenceCountedObject {

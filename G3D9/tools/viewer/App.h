@@ -33,7 +33,7 @@ public:
     
     virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt);
     virtual void onInit();
-    virtual void onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surface2DRef>& posed2D);
+    virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surfaceArray);
     virtual void onCleanup();
     virtual bool onEvent(const GEvent& event);
     

@@ -23,6 +23,7 @@
      <li> G3D::ArticulatedModel::intersect
      <li> G3D::Color3 and G3D::Color4 now initialize to zero
      <li> G3D::Color2uint8
+	 <li> G3D::Material defaults to assuming input should be in sRGB space for lambertian, emissive, transmissive, and glossy maps (shininess and bump are assumed linear)
      <li> Added 64-bit targets and patched many warnings and errors for sizeof(size_t) == 64 (however, G3D is not fully 64-bit compatible yet)
      <li> G3D::unorm8
 	 <li> Changed default BumpMap::Specification::Settings::iterations to 1 (parallax mapping) from normal mapping

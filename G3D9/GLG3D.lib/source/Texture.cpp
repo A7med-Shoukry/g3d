@@ -2350,7 +2350,7 @@ static void createMipMapTexture(
                     (void*)bytes);
             }
 
-
+            alwaysAssertM(false, "CPU MIP-maps were removed in G3D 9.0");
             // Build mip-maps on the CPU (if we had hardware support, createTexture would have been called instead)
             // http://www.opengl.org/sdk/docs/man/xhtml/gluBuild2DMipmaps.xml
             int r = gluBuild2DMipmaps(target, desiredFormat, m_width, m_height, bytesBaseFormat, bytesType, bytes);

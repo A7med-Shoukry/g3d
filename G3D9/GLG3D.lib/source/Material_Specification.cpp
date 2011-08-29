@@ -146,6 +146,7 @@ Any Material::Specification::toAny() const {
 
 void Material::Specification::setLambertian(const std::string& filename, const Color4& constant) {
     m_lambertian = Texture::Specification();
+    m_lambertian.desiredFormat = ImageFormat::SRGBA8();
     m_lambertian.filename = filename;
     m_lambertianConstant = constant;
 }
@@ -169,6 +170,7 @@ void Material::Specification::removeLambertian() {
 
 void Material::Specification::setEmissive(const std::string& filename, const Color3& constant) {
     m_emissive = Texture::Specification();
+    m_emissive.desiredFormat = ImageFormat::SRGB8();
     m_emissive.filename = filename;
     m_emissiveConstant = constant;
 }
@@ -192,6 +194,7 @@ void Material::Specification::setEmissive(const Texture::Specification& spec) {
 
 void Material::Specification::setSpecular(const std::string& filename, const Color3& constant) {
     m_specular = Texture::Specification();
+    m_specular.desiredFormat = ImageFormat::SRGB8();
     m_specular.filename = filename;
     m_specularConstant = constant;
 }
@@ -236,6 +239,7 @@ void Material::Specification::setShininess(const Texture::Specification& spec) {
 
 void Material::Specification::setTransmissive(const std::string& filename, const Color3& constant) {
     m_transmissive = Texture::Specification();
+    m_transmissive.desiredFormat = ImageFormat::SRGB8();
     m_transmissive.filename = filename;
     m_transmissiveConstant = constant;
 }
