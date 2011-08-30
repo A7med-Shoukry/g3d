@@ -1,4 +1,5 @@
 #version 120 // -*- c++ -*-
+#extension GL_ARB_shader_texture_lod : require  // For textureCubeLod
 /**
   \file SS_NonShadowedPass.pix
   \author Morgan McGuire, http://graphics.cs.williams.edu

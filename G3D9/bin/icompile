@@ -425,7 +425,7 @@ def makeExecutable(state, objectFiles, linkOptions):
     # Create the command line arguments for the linker.
     # Note that the object files must come first
     options = []
-    
+
     if (os.uname()[0] == 'Darwin'):
         filelistFileName = state.tempDir + 'filelist.txt'
 
@@ -440,6 +440,7 @@ def makeExecutable(state, objectFiles, linkOptions):
         options += objectFiles
 
     options += linkOptions + ['-o', state.binaryDir + state.binaryName]
+
 
     if ('OpenGL' in options) or ('GL' in options):
         # Suppress the multiply defined symbols warning that 
@@ -929,6 +930,12 @@ def configureGpp(state):
         state.linkerOptions.remove('')
     while '' in state.compilerOptions:
         state.compilerOptions.remove('')
+
+    #if verbosity >= VERBOSE:
+    #    state.linkerOptions += ['--verbose']
+    #    state.compilerOptions += ['--verbose']
+    
+
 
 #########################################################################
 
