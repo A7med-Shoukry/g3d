@@ -373,13 +373,6 @@ void App::onInit() {
 
     debugPane->addCustom(new GuiCFrameBox(debugPane, "CFrame"));
 
-    GImage src(System::findDataFile("testimage.jpg"));
-    Texture::Ref stexture = Texture::fromMemory("", src.byte(), ImageFormat::RGB8(), src.width(), src.height(), 1, ImageFormat::SRGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
-    debugPane->addTextureBox("sRGB", stexture);
-
-    Texture::Ref texture = Texture::fromMemory("", src.byte(), ImageFormat::RGB8(), src.width(), src.height(), 1, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
-    debugPane->addTextureBox("RGB", texture);
-
 #if 0
     std::string materialPath = System::findDataFile("material");
     std::string crateFile = System::findDataFile("crate.ifs");
@@ -393,8 +386,8 @@ void App::onInit() {
     b.iterations = 1;
     mat.setBump(base + "B.png", b);
     Material::Ref material = Material::create(mat);
-
     /*
+
     // Save material
     {
         BinaryOutput b("material.mat.sl", G3D_LITTLE_ENDIAN);
@@ -450,10 +443,22 @@ bool App::onEvent(const GEvent& e) {
     // if ((e.type == GEventType::GUI_ACTION) && (e.gui.control == m_button)) { ... return true;}
     // if ((e.type == GEventType::KEY_DOWN) && (e.key.keysym.sym == GKey::TAB)) { ... return true; }
 
+    switch (e.type) {
+    case GEventType::KEY_DOWN:
+        debugPrintf("KEY_DOWN: %d (LSHIFT = %d)\n", e.key.keysym.sym, GKey::LSHIFT);
+        break;
+
+    case GEventType::KEY_UP:
+        debugPrintf("KEY_UP: %d\n", e.key.keysym.sym);
+        break;
+    }
+    
     return false;
 }
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
+    screenPrintf("LShift down: %d\n", userInput->keyDown(GKey::LSHIFT));
+    screenPrintf("RShift down: %d\n", userInput->keyDown(GKey::RSHIFT));
     Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
 
 //    model->pose(surface3D);

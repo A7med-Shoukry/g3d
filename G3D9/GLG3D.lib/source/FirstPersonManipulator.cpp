@@ -28,7 +28,8 @@ FirstPersonManipulator::FirstPersonManipulator(UserInput* ui) :
     m_pitch(0),
     m_active(false),
     m_userInput(ui),
-    m_mouseMode(MOUSE_DIRECT) {
+    m_mouseMode(MOUSE_DIRECT),
+    m_rightDown(false) {
 }
 
 
@@ -90,8 +91,9 @@ bool FirstPersonManipulator::active() const {
 
 void FirstPersonManipulator::reset() {
     m_active      = false;
-    m_yaw        = -halfPi();
-    m_pitch      = 0;
+    m_rightDown   = false;
+    m_yaw         = -halfPi();
+    m_pitch       = 0;
     m_translation  = Vector3::zero();
     setMoveRate(10);
 
@@ -137,7 +139,7 @@ void FirstPersonManipulator::setActive(bool a) {
         break;
 
     case MOUSE_DIRECT_RIGHT_BUTTON:
-        // Only turn on when activeand the right mouse button is down
+        // Only turn on when active and the right mouse button is down
         m_userInput->setPureDeltaMouse(m_active && rightDown(m_userInput));
         break;
 
@@ -237,9 +239,13 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
     switch (m_mouseMode) {
     case MOUSE_DIRECT_RIGHT_BUTTON:
         {
-            bool mouseDown = rightDown(m_userInput);
-            m_userInput->setPureDeltaMouse(mouseDown);
-            if (! mouseDown) {
+            if (! m_active) {
+                // In case we missed losing focus
+                m_rightDown = false;
+            }
+
+            m_userInput->setPureDeltaMouse(m_rightDown);
+            if (! m_rightDown) {
                 // Skip bottom case
                 break;
             }
@@ -255,7 +261,9 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
 
     case MOUSE_SCROLL_AT_EDGE:
         {
-            Rect2D viewport = Rect2D::xywh(0, 0, m_userInput->window()->width(), m_userInput->window()->height());
+            Rect2D viewport = 
+                Rect2D::xywh(0, 0, m_userInput->window()->width(), 
+                             m_userInput->window()->height());
             Vector2 mouse = m_userInput->mouseXY();
 
             Vector2 hotExtent(max(50.0f, viewport.width() / 8), 
@@ -310,7 +318,11 @@ void FirstPersonManipulator::onUserInput(UserInput* ui) {
 
 
 bool FirstPersonManipulator::onEvent(const GEvent& event) {
-    if (m_active && (m_mouseMode == MOUSE_DIRECT_RIGHT_BUTTON) && (event.type == GEventType::MOUSE_BUTTON_DOWN)) {
+    if (m_active && 
+        (m_mouseMode == MOUSE_DIRECT_RIGHT_BUTTON) && 
+        ((event.type == GEventType::MOUSE_BUTTON_DOWN) ||
+         (event.type == GEventType::MOUSE_BUTTON_UP))) {
+
         // This may be the "right-click" (OS dependent) that will
         // start camera movement.  If it is, we don't want other
         // Widgets to see the event.
@@ -319,6 +331,7 @@ bool FirstPersonManipulator::onEvent(const GEvent& event) {
 
         if (event.button.button == 1) {
             // Right click
+            m_rightDown = (event.type == GEventType::MOUSE_BUTTON_DOWN);
             return true;
         }
 
@@ -330,10 +343,12 @@ bool FirstPersonManipulator::onEvent(const GEvent& event) {
              m_userInput->keyDown(GKey::LCTRL)  ||
              m_userInput->keyDown(GKey::RCTRL))) {
             // "Right click"
+            m_rightDown = (event.type == GEventType::MOUSE_BUTTON_DOWN);
             return true;
         }
 #       endif
     }
+
     return false;
 }
 

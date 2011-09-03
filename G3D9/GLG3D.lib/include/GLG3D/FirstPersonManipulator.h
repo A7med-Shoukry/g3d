@@ -1,10 +1,10 @@
 /**
   \file GLG3D/FirstPersonManipulator.h
 
-  \maintainer Morgan McGuire, morgan@cs.brown.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2002-07-28
-  \edited  2011-06-24
+  \edited  2011-09-03
 */
 
 #ifndef G3D_FirstPersonManipulator_h
@@ -39,23 +39,22 @@ typedef ReferenceCountedPointer<class FirstPersonManipulator> FirstPersonManipul
  */
 class FirstPersonManipulator : public Manipulator {
 public:
-    /**
-     MOUSE_DIRECT              = Shooter/Quake style (default), mouse cursor is hidden and mouse controls yaw/pitch
-
-     MOUSE_DIRECT_RIGHT_BUTTON = RPG/World of Warcraft style, on right
-     mouse button cursor is hidden and mouse controls yaw/pitch.  On
-     OS X, ctrl+left and shift+left button are treated as the right mouse button.
-
-     MOUSE_SCROLL_AT_EDGE = Leaves mouse cursor visible and rotates
-     while mouse is near the window edge
-
-     MOUSE_PUSH_AT_EDGE = Leaves mouse cursor visible and rotates when
-     the mouse is actively pushing against the window edge
-     */
     enum MouseMode {
+        /** Shooter/Quake style (default), mouse cursor is hidden and mouse controls yaw/pitch */
         MOUSE_DIRECT,
+
+        /** RPG/World of Warcraft style, on right mouse button cursor
+            is hidden and mouse controls yaw/pitch.  On OS X,
+            ctrl+left and shift+left button are treated as the right
+            mouse button.*/
         MOUSE_DIRECT_RIGHT_BUTTON,
+
+        /** Leaves mouse cursor visible and rotates
+            while mouse is near the window edge. */
         MOUSE_SCROLL_AT_EDGE,
+
+        /** RTS style. Leaves mouse cursor visible and rotates when
+            the mouse is actively pushing against the window edge */
         MOUSE_PUSH_AT_EDGE
     };
 
@@ -79,8 +78,11 @@ private:
 
     MouseMode                   m_mouseMode;
 
-    /** Returns true if the right mouse button is down, or on OSX, the user is using
-        the left mouse and ctrl */
+    /** Is the right mouse button currently held down? */
+    bool                        m_rightDown;
+
+    /** Returns true if the right mouse button is down, or on OSX, the
+        user is using the left mouse and ctrl */
     bool rightDown(UserInput*) const;
 
     FirstPersonManipulator(UserInput* ui);
