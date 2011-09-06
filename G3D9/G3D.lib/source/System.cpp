@@ -911,7 +911,7 @@ void System::initTime() {
 
 
 RealTime System::time() { 
-#   ifdef G3D_WIN32
+#   ifdef G3D_WINDOWS
         LARGE_INTEGER now;
         QueryPerformanceCounter(&now);
 
