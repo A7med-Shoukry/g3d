@@ -139,7 +139,8 @@ void FirstPersonManipulator::setActive(bool a) {
         break;
 
     case MOUSE_DIRECT_RIGHT_BUTTON:
-        // Only turn on when active and the right mouse button is down
+        // Only turn on when active and the right mouse button is down before
+        // activation.
         m_userInput->setPureDeltaMouse(m_active && rightDown(m_userInput));
         break;
 
@@ -329,7 +330,7 @@ bool FirstPersonManipulator::onEvent(const GEvent& event) {
 
         //debugPrintf("Button = %d\n", event.button.button);
 
-        if (event.button.button == 1) {
+        if (event.button.button == 2) {
             // Right click
             m_rightDown = (event.type == GEventType::MOUSE_BUTTON_DOWN);
             return true;
