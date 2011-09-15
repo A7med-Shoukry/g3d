@@ -209,6 +209,72 @@ static GEvent makeRelative(const GEvent& e, const Vector2& clientOrigin) {
 }
 
 
+bool GuiWindow::processMouseButtonDownEventForFocusChangeAndWindowDrag(const GEvent& event) {
+    bool consumed = false;
+
+    // Mouse down; change the focus
+    Vector2 mouse(event.button.x, event.button.y);
+
+    if (! m_rect.contains(mouse)) {
+        // The click was not on this object.  Lose focus if we have it
+        m_manager->defocusWidget(this);
+        return false;
+    }
+
+    if (! focused()) {
+        // Set focus
+        bool moveToFront = (m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::PANEL_WINDOW_STYLE);
+        m_manager->setFocusedWidget(this, moveToFront);
+        m_focused = true;
+
+        // Most windowing systems do not allow the original click
+        // to reach a control if it was consumed on focusing the
+        // window.  However, we deliver events because, for most
+        // 3D programs, the multiple windows are probably acting
+        // like tool windows and should not require multiple
+        // clicks for selection.
+    }
+
+    Rect2D titleRect;
+    Rect2D closeRect;
+    if ((m_style == GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
+        // Prevent anyone from clicking here.
+        titleRect = Rect2D::xyxy(-1,-1,-1,-1);
+        closeRect = titleRect;
+    } else {
+        titleRect = m_skin->windowToTitleBounds(m_rect, GuiTheme::WindowStyle(m_style));
+        closeRect = m_skin->windowToCloseButtonBounds(m_rect, GuiTheme::WindowStyle(m_style));
+    }
+
+    if ((m_closeAction != NO_CLOSE) && closeRect.contains(mouse)) {
+        close();
+        return true;
+    }
+
+    if (titleRect.contains(mouse) && (m_style != GuiTheme::MENU_WINDOW_STYLE)) {
+        inDrag = true;
+        dragStart = mouse;
+        dragOriginalRect = m_rect;
+        return true;
+
+    } else {
+
+        mouse -= m_clientRect.x0y0();
+
+        keyFocusGuiControl = NULL;
+        m_rootPane->findControlUnderMouse(mouse, keyFocusGuiControl);
+    }
+
+    if (m_style != GuiTheme::NO_WINDOW_STYLE) {
+        // Consume the click, since it was somewhere on this window (it may still
+        // be used by another one of the controls on this window).
+        consumed = true;
+    }
+
+    return consumed;
+}
+
+
 bool GuiWindow::onEvent(const GEvent& event) {
     if (! m_mouseVisible || ! m_visible) {
         // Can't be using the GuiWindow if the mouse isn't visible or the gui isn't visible
@@ -223,74 +289,16 @@ bool GuiWindow::onEvent(const GEvent& event) {
         return true;
     }
 
-    bool consumed = false;
+    bool consumedForFocus = false;
 
-    switch (event.type){
+    switch (event.type) {
     case GEventType::MOUSE_BUTTON_DOWN:
-        {
-        // Mouse down; change the focus
-        Vector2 mouse(event.button.x, event.button.y);
-
-        if (! m_rect.contains(mouse)) {
-            // The click was not on this object.  Lose focus if we have it
-            m_manager->defocusWidget(this);
-            return false;
-        }
-
-        if (! focused()) {
-            // Set focus
-            bool moveToFront = (m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::PANEL_WINDOW_STYLE);
-            m_manager->setFocusedWidget(this, moveToFront);
-            m_focused = true;
-
-            // Most windowing systems do not allow the original click
-            // to reach a control if it was consumed on focusing the
-            // window.  However, we deliver events because, for most
-            // 3D programs, the multiple windows are probably acting
-            // like tool windows and should not require multiple
-            // clicks for selection.
-        }
-
-        Rect2D titleRect;
-        Rect2D closeRect;
-        if ((m_style == GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::NO_WINDOW_STYLE)) {
-            // Prevent anyone from clicking here.
-            titleRect = Rect2D::xyxy(-1,-1,-1,-1);
-            closeRect = titleRect;
-        } else {
-            titleRect = m_skin->windowToTitleBounds(m_rect, GuiTheme::WindowStyle(m_style));
-            closeRect = m_skin->windowToCloseButtonBounds(m_rect, GuiTheme::WindowStyle(m_style));
-        }
-
-        if ((m_closeAction != NO_CLOSE) && closeRect.contains(mouse)) {
-            close();
-            return true;
-        }
-
-        if (titleRect.contains(mouse) && (m_style != GuiTheme::MENU_WINDOW_STYLE)) {
-            inDrag = true;
-            dragStart = mouse;
-            dragOriginalRect = m_rect;
-            return true;
-
-        } else {
-
-            mouse -= m_clientRect.x0y0();
-
-            keyFocusGuiControl = NULL;
-            m_rootPane->findControlUnderMouse(mouse, keyFocusGuiControl);
-        }
-
-        if (m_style != GuiTheme::NO_WINDOW_STYLE) {
-            // Consume the click, since it was somewhere on this window (it may still
-            // be used by another one of the controls on this window).
-            consumed = true;
-        }
-        }
+        consumedForFocus = processMouseButtonDownEventForFocusChangeAndWindowDrag(event);
         break;
 
     case GEventType::MOUSE_BUTTON_UP:
         if (inDrag) {
+            // We're dragging the entire window--the controls don't need to know
             inDrag = false;
             return true;
         }
@@ -302,11 +310,14 @@ bool GuiWindow::onEvent(const GEvent& event) {
     // If this window is not in focus, don't bother checking to see if
     // its controls will receive the event.
     if (! focused()) {
-        return consumed;
+        return consumedForFocus;
     }
     
+    bool consumed = false;
+
+    // TODO: make the code below propagate back towards the GUI root
     if (keyFocusGuiControl != NULL) {
-        // Deliver event to the control
+        // Deliver event to the control that has focus
 
         if (isMouseEvent(event)) {
 
@@ -317,22 +328,40 @@ bool GuiWindow::onEvent(const GEvent& event) {
                 origin += p->clientRect().x0y0();
                 p = p->m_parent;
             }
-            consumed = keyFocusGuiControl->onEvent(makeRelative(event, origin)) || consumed;
+
+            // Even if GuiWindow wants to consume the event for a focus change, still deliver.
+            consumed = keyFocusGuiControl->onEvent(makeRelative(event, origin));
 
         } else {
-            consumed = keyFocusGuiControl->onEvent(event) || consumed;
+            consumed = keyFocusGuiControl->onEvent(event);
         }
     }
 
+    // If the controls inside the window didn't consume the event, still consume it if used for
+    // focus or drag.
+    consumed = consumed || consumedForFocus;
+
+    // TODO: make the code below propagate back towards the GUI root, checking to see if we ever hit some parent of 
+    // keyFocusGuiControl
+
+    // If not consumed, also deliver mouse motion events to the control under the mouse
     if (! consumed && (event.type == GEventType::MOUSE_MOTION)) {
         // Deliver to the control under the mouse
         Vector2 mouse(event.button.x, event.button.y);
         mouse -= m_clientRect.x0y0();
 
-        GuiControl* underMouse = NULL;
-        m_rootPane->findControlUnderMouse(mouse, underMouse);
-        if (underMouse && underMouse->enabled()) {
-            consumed = underMouse->onEvent(event);
+        GuiControl* underMouseControl = NULL;
+        m_rootPane->findControlUnderMouse(mouse, underMouseControl);
+
+        if (underMouseControl && underMouseControl->enabled() && (underMouseControl != keyFocusGuiControl)) {
+            Vector2 origin = m_clientRect.x0y0();
+            GuiContainer* p = underMouseControl->m_parent;
+            while (p != NULL) {
+                origin += p->clientRect().x0y0();
+                p = p->m_parent;
+            }
+
+            consumed = underMouseControl->onEvent(makeRelative(event, origin));
         }
     }
 

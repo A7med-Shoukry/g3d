@@ -191,6 +191,15 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 class GuiCFrameBox : public GuiContainer {
 private:
 
+    Pointer<CFrame>         m_cframe;
+
+    /** Cached to avoid recomputing for every draw call */
+    CFrame                  m_lastCFrame;
+    float                   m_yaw;
+    float                   m_pitch;
+    float                   m_roll;
+    std::string             m_centerString;
+
     GuiTextBox*             m_centerBox;
     GuiNumberBox<float>*    m_yawBox;
     GuiNumberBox<float>*    m_pitchBox;
@@ -204,14 +213,48 @@ private:
     GuiControl*             m_child[NUM_CHILDREN];
 
     static const int        smallFontHeight = 7;
+    
+    /** Override m_cframe from the internal state variables. */
+    void overrideCFrameValues() {
+        try {
+            TextInput t(TextInput::FROM_STRING, m_centerString);
+
+            m_lastCFrame.translation.x = t.readNumber();
+            t.readSymbol(",");
+            m_lastCFrame.translation.y = t.readNumber();
+            t.readSymbol(",");
+            m_lastCFrame.translation.z = t.readNumber();
+        } catch (...) {
+            // Ignore parse errors
+        }
+
+        m_lastCFrame.rotation = Matrix3::fromEulerAnglesYXZ(toRadians(m_yaw), toRadians(m_pitch), toRadians(m_roll));
+        
+        *m_cframe = m_lastCFrame;
+    }
+
+    /** Update the internal state variables from m_cframe */
+    void copyStateFromCFrame() {
+        m_lastCFrame = *m_cframe;        
+        m_lastCFrame.rotation.toEulerAnglesYXZ(m_yaw, m_pitch, m_roll);
+        m_yaw   = toDegrees(m_yaw);
+        m_pitch = toDegrees(m_pitch);
+        m_roll  = toDegrees(m_roll);
+        m_centerString = format("%6.2f, %6.2f, %6.2f", 
+            m_lastCFrame.translation.x, m_lastCFrame.translation.y, m_lastCFrame.translation.z);
+    }
+
 
 public:
 
     GuiCFrameBox
-       (GuiContainer*           parent, 
-        const GuiText&          caption) : GuiContainer(parent, caption) {
-            
-        static float x,y,z;
+       (const Pointer<CFrame>&  cframe,
+        GuiContainer*           parent, 
+        const GuiText&          caption) : 
+        GuiContainer(parent, caption), m_cframe(cframe) {
+
+        copyStateFromCFrame();
+
         static const float rotationControlWidth = 52;
         static const float captionWidth = 10;
         static const float rotationPrecision = 0.1f;
@@ -219,20 +262,19 @@ public:
         static const std::string degrees = "\xba";
         static const float unitsSize = 8.0;
         GuiNumberBox<float>* c = NULL;
-        static std::string s = "-100.00, -100.00, -100.00";
 
-        m_centerBox = new GuiTextBox(this, "", &s, GuiTextBox::DELAYED_UPDATE, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE);
+        m_centerBox = new GuiTextBox(this, "", &m_centerString, GuiTextBox::DELAYED_UPDATE, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE);
         m_centerBox->setSize(Vector2(160, CONTROL_HEIGHT));
 
-        m_yawBox = new GuiNumberBox<float>(this, "", &x, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+        m_yawBox = new GuiNumberBox<float>(this, "", &m_yaw, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
         m_yawBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
         c = m_yawBox; c->setCaptionWidth(0);  c->setUnitsSize(unitsSize);
 
-        m_pitchBox = new GuiNumberBox<float>(this, "", &y, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+        m_pitchBox = new GuiNumberBox<float>(this, "", &m_pitch, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
         m_pitchBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
         c = m_pitchBox;  c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
 
-        m_rollBox = new GuiNumberBox<float>(this, "", &z, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+        m_rollBox = new GuiNumberBox<float>(this, "", &m_roll, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
         m_rollBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
         c = m_rollBox; c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
 
@@ -322,8 +364,38 @@ public:
         }
     }
 
+    virtual bool onEvent(const GEvent& e) override {
+        if (GuiContainer::onEvent(e)) {
+            return true;
+        }
+
+        if ((e.type == GEventType::GUI_ACTION) &&
+            ((e.gui.control == m_centerBox) ||
+             (e.gui.control == m_yawBox) ||
+             (e.gui.control == m_rollBox) ||
+             (e.gui.control == m_pitchBox))) {
+
+            // One of the text boxes changed.  Fire an action event
+            overrideCFrameValues();
+
+            // Fire my own action event
+            GEvent response;
+            response.type = GEventType::GUI_ACTION;
+            response.gui.control = this;
+            m_gui->fireEvent(response);
+            return true;
+        }
+
+        return false;
+    }
+
 
     virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const override {
+        // Ensure that we're in sync with the CFrame
+        if (m_lastCFrame != *m_cframe) {
+            const_cast<GuiCFrameBox*>(this)->overrideCFrameValues();
+        }
+
         static const float smallFontSize = 8;
 
         if (! m_visible) {
@@ -374,7 +446,8 @@ void App::onInit() {
 
     debugPane->addButton("Hi");
 
-    debugPane->addCustom(new GuiCFrameBox(debugPane, "CFrame"));
+    static CFrame C;
+    debugPane->addCustom(new GuiCFrameBox(Pointer<CFrame>(&defaultCamera, &GCamera::coordinateFrame, &GCamera::setCoordinateFrame), debugPane, "CFrame"));
 
 #if 0
     std::string materialPath = System::findDataFile("material");

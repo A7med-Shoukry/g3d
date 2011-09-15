@@ -307,9 +307,11 @@ public:
     }
 protected:
 
-    /** Events are only delivered to a control when the control that
-        control has the key focus (which is transferred during a mouse
-        down) */
+    /** Events are only delivered (by GuiWindow) to a GuiControl when the control has the key focus.
+        If the control does not consume the event, the event is delivered to
+        each of its GUI parents in order, back to the window's root pane.
+        
+        Key focus is transferred during a mouse down event. */
     virtual bool onEvent(const GEvent& event) { (void)event; return false; }
 
 };

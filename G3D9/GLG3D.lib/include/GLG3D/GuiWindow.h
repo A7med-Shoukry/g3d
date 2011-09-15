@@ -227,6 +227,10 @@ protected:
     /** Called by GuiPane::increaseBounds() */
     void increaseBounds(const Vector2& extent);
 
+    /** Resolve the mouse button down event.  Called from onEvent.  
+     This is handled specially because it can change the focus */
+    bool processMouseButtonDownEventForFocusChangeAndWindowDrag(const GEvent& event);
+
 public:
 
     /** 

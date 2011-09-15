@@ -157,6 +157,7 @@
 	 <li> Fix: Fixed memory leak in GImage::decodePNG when a PNG was loaded over an existing GImage
 	 <li> Fix: Texture min now computed correctly (was always NaN for RGB8 and multiplied by 255 for RGBA8 before)
      <li> Fix: Win32Window now distinguishes KEY_DOWN and KEY_REPEAT events
+	 <li> Fix: GEventType::MOUSE_MOTION events are now only delivered once to each GuiControl, and are in the correct coordinate system
     </ul>
 
      <b>Backwards Incompatible Changes</b>:

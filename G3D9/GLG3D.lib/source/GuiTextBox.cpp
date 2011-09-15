@@ -159,6 +159,8 @@ void GuiTextBox::processRepeatKeysym() {
             m_userValue = 
                 m_userValue.substr(0, m_cursorPos) + 
                 m_userValue.substr(m_cursorPos + 1, std::string::npos);
+
+            debugAssert(m_cursorPos <= (int)m_userValue.size());
         }
         break;
 
@@ -170,6 +172,8 @@ void GuiTextBox::processRepeatKeysym() {
                   m_userValue.substr(m_cursorPos, std::string::npos) :
                  std::string());
            --m_cursorPos;
+           
+            debugAssert(m_cursorPos <= (int)m_userValue.size());
         }
         break;
 
@@ -239,6 +243,7 @@ bool GuiTextBox::onEvent(const GEvent& event) {
         case GKey::END:
             setRepeatKeysym(event.key.keysym);
             processRepeatKeysym();
+            debugAssert(m_cursorPos <= (int)m_userValue.size());
             return true;
 
         case GKey::RETURN:
@@ -277,10 +282,10 @@ bool GuiTextBox::onEvent(const GEvent& event) {
             } else if (((event.key.keysym.mod & GKeyMod::CTRL) != 0) &&
                 (event.key.keysym.sym == 'k')) {
 
-                debugAssert(m_cursorPos < (int)m_userValue.size());
+                debugAssert(m_cursorPos <= (int)m_userValue.size());
 
                 // Cut (not autorepeatable)
-                std::string cut = m_userValue.substr(m_cursorPos);
+                const std::string& cut = m_userValue.substr(m_cursorPos);
                 m_userValue = m_userValue.substr(0, m_cursorPos);
 
                 System::setClipboardText(cut);
