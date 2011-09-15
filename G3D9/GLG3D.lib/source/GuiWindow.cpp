@@ -315,25 +315,28 @@ bool GuiWindow::onEvent(const GEvent& event) {
     
     bool consumed = false;
 
-    // TODO: make the code below propagate back towards the GUI root
     if (keyFocusGuiControl != NULL) {
         // Deliver event to the control that has focus
 
-        if (isMouseEvent(event)) {
+      
+        // Walk the GUI hierarchy  
+        for (GuiControl* target = keyFocusGuiControl; (target != NULL) && ! consumed; target = target->m_parent) {
+            if (isMouseEvent(event)) {
 
-            // Make the event relative by accumulating all of the transformations
-            Vector2 origin = m_clientRect.x0y0();
-            GuiContainer* p = keyFocusGuiControl->m_parent;
-            while (p != NULL) {
-                origin += p->clientRect().x0y0();
-                p = p->m_parent;
+                Point2 origin = m_clientRect.x0y0();
+
+                // Make the event relative by accumulating all of the transformations
+                GuiContainer* p = target->m_parent;
+                while (p != NULL) {
+                    origin += p->clientRect().x0y0();
+                    p = p->m_parent;
+                }
+
+                consumed = target->onEvent(makeRelative(event, origin));
+
+            } else {
+                consumed = target->onEvent(event);
             }
-
-            // Even if GuiWindow wants to consume the event for a focus change, still deliver.
-            consumed = keyFocusGuiControl->onEvent(makeRelative(event, origin));
-
-        } else {
-            consumed = keyFocusGuiControl->onEvent(event);
         }
     }
 
