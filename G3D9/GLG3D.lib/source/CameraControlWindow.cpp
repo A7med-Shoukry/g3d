@@ -1,10 +1,10 @@
 /**
-  @file CameraControlWindow.cpp
+  \file CameraControlWindow.cpp
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2007-06-01
-  @edited  2010-03-01
+  \created 2007-06-01
+  \edited  2010-03-01
 */
 #include "G3D/platform.h"
 #include "G3D/GCamera.h"

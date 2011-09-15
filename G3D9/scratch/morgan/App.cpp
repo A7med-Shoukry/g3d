@@ -2,6 +2,476 @@
 #include "App.h"
 
 
+//////////////////////////////////////////
+
+
+
+
+class GuiCFrameBox : public GuiContainer {
+private:
+
+    Pointer<CFrame>         m_cframe;
+
+    /** Cached to avoid recomputing for every draw call */
+    CFrame                  m_lastCFrame;
+    float                   m_yaw;
+    float                   m_pitch;
+    float                   m_roll;
+    std::string             m_centerString;
+
+    GuiTextBox*             m_centerBox;
+    GuiNumberBox<float>*    m_yawBox;
+    GuiNumberBox<float>*    m_pitchBox;
+    GuiNumberBox<float>*    m_rollBox;
+
+    GuiButton*              m_bookmarkButton;
+    GuiButton*              m_showBookmarksButton;
+    GuiButton*              m_copyButton;
+
+    static const int        NUM_CHILDREN = 7;
+    GuiControl*             m_child[NUM_CHILDREN];
+
+    static const int        smallFontHeight = 7;
+
+    /** A Any::TABLE shared over all instances. */
+    static Any              m_bookmarks;
+    
+    /** Override m_cframe from the internal state variables. */
+    void overrideCFrameValues();
+
+    /** Update the internal state variables from m_cframe */
+    void copyStateFromCFrame();
+    
+    void copyToClipboardButton();
+
+    void setBookmark(const std::string& name, const CFrame& frame);
+    void removeBookmark(const std::string& name);
+    void onBookmarkButton();
+    void saveBookmarks();
+    void loadBookmarks();
+
+public:
+
+    GuiCFrameBox
+       (const Pointer<CFrame>&  cframe,
+        GuiContainer*           parent, 
+        const GuiText&          caption);
+    
+    ~GuiCFrameBox();
+
+    virtual void setCaption(const GuiText& c) override;
+    
+    virtual void setEnabled(bool e) override;
+
+    virtual void setRect(const Rect2D& rect) override;
+
+    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override;
+
+    virtual bool onChildControlEvent(const GEvent& e) override;
+
+    virtual bool onEvent(const GEvent& e) override;
+
+    virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const override;
+};
+
+
+Any GuiCFrameBox::m_bookmarks;
+
+
+/////////////////////////////////////////
+
+static const std::string noSpline = "< None >";
+static const std::string untitled = "< Unsaved >";
+
+typedef ReferenceCountedPointer<class BookmarkDialog> BookmarkDialogRef;
+class BookmarkDialog : public GuiWindow {
+public:
+    enum Result {RESULT_OK, RESULT_CANCEL, RESULT_DELETE};
+
+    bool               ok;
+
+    Result&            m_result;
+    std::string&       m_name;
+    std::string        m_originalName;
+    GuiButton*         m_okButton;
+    GuiButton*         m_deleteButton;
+
+    /** Name */
+    GuiTextBox*        m_textBox;
+
+    OSWindow*          m_osWindow;
+    
+    BookmarkDialog(OSWindow* osWindow, const Vector2& position, GuiThemeRef skin, 
+                   std::string& name, Result& result,
+                   const std::string& note) : 
+        GuiWindow("Bookmark Properties", skin, Rect2D::xywh(position - Vector2(160, 0), Vector2(300, 100)), 
+                  GuiTheme::DIALOG_WINDOW_STYLE, GuiWindow::NO_CLOSE),
+        m_result(result),
+        m_name(name),
+        m_originalName(name) {
+
+        m_textBox = pane()->addTextBox("Name", &name, GuiTextBox::IMMEDIATE_UPDATE);
+        
+        GuiLabel* loc = pane()->addLabel("Location");
+        loc->setWidth(84);
+        GuiLabel* locDisplay = pane()->addLabel(note);
+        locDisplay->moveRightOf(loc);
+
+        m_okButton = pane()->addButton("Ok");
+        m_okButton->moveBy(130, 20);
+        m_deleteButton = pane()->addButton("Delete");
+        m_deleteButton->moveRightOf(m_okButton);
+        setRect(Rect2D::xywh(rect().x0y0(), Vector2::zero()));
+        pane()->setSize(0, 0);
+        pane()->pack();
+        sync();
+
+        m_textBox->setFocused(true);
+    }
+
+protected:
+
+    void close(Result r) {
+        setVisible(false);
+        m_manager->remove(this);
+        m_result = r;
+    }
+
+    /** Update enables/captions */
+    void sync() {
+        if ((m_originalName != m_name) || (m_name == "")) {
+            m_deleteButton->setCaption("Cancel");
+        }
+
+        m_okButton->setEnabled(m_name != "");
+    }
+
+public:
+
+    virtual bool onEvent(const GEvent& e) {
+        if (GuiWindow::onEvent(e)) {
+            return true;
+        }
+
+        sync();
+
+        if (e.type == GEventType::GUI_ACTION) {
+            if (e.gui.control == m_okButton) {
+                close(RESULT_OK);
+                return true;
+            } else if (e.gui.control == m_deleteButton) {
+                if (m_deleteButton->caption().text() == "Cancel") {
+                    close(RESULT_CANCEL);
+                } else {
+                    close(RESULT_DELETE);
+                }
+                return true;
+            }
+        }
+
+        if ((e.type == GEventType::KEY_DOWN) && (e.key.keysym.sym == GKey::ESCAPE)) {
+            close(RESULT_CANCEL);
+            return true;
+        }
+
+        return false;
+    }
+
+};
+
+
+void GuiCFrameBox::overrideCFrameValues() {
+    try {
+        TextInput t(TextInput::FROM_STRING, m_centerString);
+
+        m_lastCFrame.translation.x = t.readNumber();
+        t.readSymbol(",");
+        m_lastCFrame.translation.y = t.readNumber();
+        t.readSymbol(",");
+        m_lastCFrame.translation.z = t.readNumber();
+    } catch (...) {
+        // Ignore parse errors
+    }
+
+    m_lastCFrame.rotation = Matrix3::fromEulerAnglesYXZ(toRadians(m_yaw), toRadians(m_pitch), toRadians(m_roll));
+        
+    *m_cframe = m_lastCFrame;
+}
+
+
+void GuiCFrameBox::copyStateFromCFrame() {
+    m_lastCFrame = *m_cframe;        
+    m_lastCFrame.rotation.toEulerAnglesYXZ(m_yaw, m_pitch, m_roll);
+    m_yaw   = toDegrees(m_yaw);
+    m_pitch = toDegrees(m_pitch);
+    m_roll  = toDegrees(m_roll);
+    m_centerString = format("%6.2f, %6.2f, %6.2f", 
+        m_lastCFrame.translation.x, m_lastCFrame.translation.y, m_lastCFrame.translation.z);
+}
+    
+
+void GuiCFrameBox::copyToClipboardButton() {        
+    System::setClipboardText(m_lastCFrame.toXYZYPRDegreesString());
+}
+
+
+void GuiCFrameBox::setBookmark(const std::string& name, const CFrame& frame) {
+    m_bookmarks[name] = frame;
+    saveBookmarks();
+}
+
+
+void GuiCFrameBox::removeBookmark(const std::string& name) {
+    if (m_bookmarks.containsKey(name)) {
+        m_bookmarks.remove(name);
+        saveBookmarks();
+    }
+}    
+
+void GuiCFrameBox::saveBookmarks() {
+    m_bookmarks.save("g3d-boomarks.any");
+}
+
+
+void GuiCFrameBox::loadBookmarks() {
+    m_bookmarks = Any(Any::TABLE);
+    if (FileSystem::exists("g3d-boomarks.any")) {
+        m_bookmarks.load("g3d-boomarks.any");
+    }
+}
+
+
+
+void GuiCFrameBox::onBookmarkButton() {
+    std::string name;
+    BookmarkDialog::Result result = BookmarkDialog::RESULT_CANCEL;
+
+    BookmarkDialogRef dialog = 
+        new BookmarkDialog(m_gui->window(), rect().center() + Vector2(0, 100), 
+         theme(), name, result, m_lastCFrame.toXYZYPRDegreesString());
+
+    dialog->showModal(m_gui->window());
+
+    dialog = NULL;
+
+    switch (result) {
+    case BookmarkDialog::RESULT_CANCEL:
+        break;
+
+    case BookmarkDialog::RESULT_OK:
+        setBookmark(name, m_lastCFrame);
+        break;
+
+    case BookmarkDialog::RESULT_DELETE:
+        removeBookmark(name);
+        break;
+    }
+}
+
+
+GuiCFrameBox::GuiCFrameBox
+    (const Pointer<CFrame>&  cframe,
+    GuiContainer*           parent, 
+    const GuiText&          caption) : 
+    GuiContainer(parent, caption), m_cframe(cframe) {
+
+    copyStateFromCFrame();
+    loadBookmarks();
+
+    static const float rotationControlWidth = 52;
+    static const float captionWidth = 10;
+    static const float rotationPrecision = 0.1f;
+    static const float translationPrecision = 0.001f;
+    static const std::string degrees = "\xba";
+    static const float unitsSize = 8.0;
+    GuiNumberBox<float>* c = NULL;
+
+    m_centerBox = new GuiTextBox(this, "", &m_centerString, GuiTextBox::DELAYED_UPDATE, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE);
+    m_centerBox->setSize(Vector2(160, CONTROL_HEIGHT));
+
+    m_yawBox = new GuiNumberBox<float>(this, "", &m_yaw, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+    m_yawBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
+    c = m_yawBox; c->setCaptionWidth(0);  c->setUnitsSize(unitsSize);
+
+    m_pitchBox = new GuiNumberBox<float>(this, "", &m_pitch, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+    m_pitchBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
+    c = m_pitchBox;  c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
+
+    m_rollBox = new GuiNumberBox<float>(this, "", &m_roll, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
+    m_rollBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
+    c = m_rollBox; c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
+
+    // Change to black "r" (x) for remove
+    const char* DOWN = "6";
+    const char* CHECK = "\x98";
+    const char* CLIPBOARD = "\xA4";
+    GFontRef iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
+    GFontRef greekFont = GFont::fromFile(System::findDataFile("greek.fnt"));
+
+    m_bookmarkButton = new GuiButton(this, GuiControl::Callback(this, &GuiCFrameBox::onBookmarkButton), 
+            GuiText(CHECK, iconFont, 16, Color3::blue() * 0.8f), 
+            GuiTheme::TOOL_BUTTON_STYLE);
+
+    m_showBookmarksButton = new GuiButton(this, GuiButton::Callback(), GuiText(DOWN, iconFont, 18), GuiTheme::TOOL_BUTTON_STYLE);
+
+    m_copyButton = new GuiButton(this, GuiControl::Callback(this, &GuiCFrameBox::copyToClipboardButton), GuiText(CLIPBOARD, iconFont, 16), GuiTheme::TOOL_BUTTON_STYLE);
+#   ifdef G3D_OSX
+        m_copyButton->setEnabled(false);
+#   endif
+
+    float w = 18;
+    float h = 21;
+    m_showBookmarksButton->setSize(w, h);
+    m_bookmarkButton->setSize(w, h);
+    m_copyButton->setSize(w, h);
+
+    m_child[0] = m_centerBox;
+    m_child[1] = m_yawBox;
+    m_child[2] = m_pitchBox;
+    m_child[3] = m_rollBox;
+    m_child[4] = m_bookmarkButton;
+    m_child[5] = m_showBookmarksButton;
+    m_child[6] = m_copyButton;
+
+    // Slightly taller than most controls because of the labels
+    setRect(Rect2D::xywh(0, 0, 500, CONTROL_HEIGHT + smallFontHeight));
+}
+    
+
+GuiCFrameBox:: ~GuiCFrameBox() {
+    for (int c = 0; c < NUM_CHILDREN; ++c) {
+        delete m_child[c];
+    }
+}
+
+
+void GuiCFrameBox::setCaption(const GuiText& c) {
+    GuiContainer::setCaption(c);
+
+    // Resize other parts in response to caption size changing
+    setRect(m_rect);
+}
+
+
+void GuiCFrameBox::setEnabled(bool e) {
+    for (int c = 0; c < NUM_CHILDREN; ++c) {
+        m_child[c]->setEnabled(e);
+    }
+}
+
+
+void GuiCFrameBox::setRect(const Rect2D& rect) {
+    GuiContainer::setRect(rect);
+
+    // Total size of the GUI, after the caption
+    float controlSpace = m_rect.width() - m_captionWidth;
+
+    // Position the children
+    m_centerBox->setPosition(m_captionWidth, 0);
+    m_yawBox->moveRightOf(m_centerBox);
+    m_yawBox->moveBy(10, 0);
+    m_pitchBox->moveRightOf(m_yawBox);
+    m_rollBox->moveRightOf(m_pitchBox);
+
+    m_showBookmarksButton->moveRightOf(m_rollBox);
+    m_showBookmarksButton->moveBy(0, 2);
+    m_bookmarkButton->moveRightOf(m_showBookmarksButton);
+    m_copyButton->moveRightOf(m_bookmarkButton);
+
+}
+
+
+void GuiCFrameBox::findControlUnderMouse(Vector2 mouse, GuiControl*& control) {
+    if (! m_clientRect.contains(mouse) || ! m_visible || ! m_enabled) {
+        return;
+    }
+
+    mouse -= m_clientRect.x0y0();
+    for (int c = 0; c < NUM_CHILDREN; ++c) {
+        m_child[c]->findControlUnderMouse(mouse, control);
+    }
+}
+
+
+bool GuiCFrameBox::onChildControlEvent(const GEvent& e) {
+    if (e.type == GEventType::GUI_ACTION) {
+
+        if ((e.gui.control == m_centerBox) ||
+                (e.gui.control == m_yawBox) ||
+                (e.gui.control == m_rollBox) ||
+                (e.gui.control == m_pitchBox)) {
+
+            // One of the text boxes changed.  Update the underlying CFrame
+            overrideCFrameValues();
+
+            // Fire my own action event
+            GEvent response;
+            response.type = GEventType::GUI_ACTION;
+            response.gui.control = this;
+            m_gui->fireEvent(response);
+        }
+
+        // Hide the child event from other windows
+        return true;
+    }
+
+    return false;
+}
+
+
+bool GuiCFrameBox::onEvent(const GEvent& e)  {
+    if (GuiContainer::onEvent(e)) {
+        return true;
+    }
+
+    return false;
+}
+
+
+void GuiCFrameBox::render(RenderDevice* rd, const GuiThemeRef& skin) const {
+    // Ensure that we're in sync with the CFrame
+    if (m_lastCFrame != *m_cframe) {
+        const_cast<GuiCFrameBox*>(this)->overrideCFrameValues();
+    }
+
+    static const float smallFontSize = 8;
+
+    if (! m_visible) {
+        return;
+    }
+    skin->pushClientRect(m_clientRect); {
+        // Render caption
+        skin->renderLabel(m_rect - m_clientRect.x0y0() - Vector2(0, 4), m_caption, GFont::XALIGN_LEFT, GFont::YALIGN_CENTER, m_enabled);
+
+        // Render the canvas surrounding the individual text boxes            
+        skin->renderCanvas(Rect2D::xyxy(m_centerBox->rect().x0y0(), m_rollBox->rect().x1y1() + Vector2(2, 0)), m_enabled, false, "", 0);
+
+        // Render child controls
+        for (int c = 0; c < NUM_CHILDREN; ++c) {
+            m_child[c]->render(rd, skin);
+        }
+
+        static const GuiText label[NUM_CHILDREN] = 
+        {GuiText("center", NULL, smallFontSize),
+         GuiText("yaw", NULL, smallFontSize),
+         GuiText("pitch", NULL, smallFontSize),
+         GuiText("roll", NULL, smallFontSize)};
+
+        // Render labels
+        for (int c = 0; c < 4; ++c) {
+            skin->renderLabel(m_child[c]->rect() + Vector2((c > 0) ? -4 : 0, smallFontHeight), label[c], GFont::XALIGN_CENTER, GFont::YALIGN_BOTTOM, m_enabled);
+        }        
+    } skin->popClientRect();
+}
+
+
+/////////////////////////////////////////////////////
+
+
+
+
+
+
 
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
@@ -188,244 +658,6 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 }
 
 
-class GuiCFrameBox : public GuiContainer {
-private:
-
-    Pointer<CFrame>         m_cframe;
-
-    /** Cached to avoid recomputing for every draw call */
-    CFrame                  m_lastCFrame;
-    float                   m_yaw;
-    float                   m_pitch;
-    float                   m_roll;
-    std::string             m_centerString;
-
-    GuiTextBox*             m_centerBox;
-    GuiNumberBox<float>*    m_yawBox;
-    GuiNumberBox<float>*    m_pitchBox;
-    GuiNumberBox<float>*    m_rollBox;
-
-    GuiButton*              m_bookmarkButton;
-    GuiButton*              m_showBookmarksButton;
-    GuiButton*              m_copyButton;
-
-    static const int        NUM_CHILDREN = 7;
-    GuiControl*             m_child[NUM_CHILDREN];
-
-    static const int        smallFontHeight = 7;
-    
-    /** Override m_cframe from the internal state variables. */
-    void overrideCFrameValues() {
-        try {
-            TextInput t(TextInput::FROM_STRING, m_centerString);
-
-            m_lastCFrame.translation.x = t.readNumber();
-            t.readSymbol(",");
-            m_lastCFrame.translation.y = t.readNumber();
-            t.readSymbol(",");
-            m_lastCFrame.translation.z = t.readNumber();
-        } catch (...) {
-            // Ignore parse errors
-        }
-
-        m_lastCFrame.rotation = Matrix3::fromEulerAnglesYXZ(toRadians(m_yaw), toRadians(m_pitch), toRadians(m_roll));
-        
-        *m_cframe = m_lastCFrame;
-    }
-
-    /** Update the internal state variables from m_cframe */
-    void copyStateFromCFrame() {
-        m_lastCFrame = *m_cframe;        
-        m_lastCFrame.rotation.toEulerAnglesYXZ(m_yaw, m_pitch, m_roll);
-        m_yaw   = toDegrees(m_yaw);
-        m_pitch = toDegrees(m_pitch);
-        m_roll  = toDegrees(m_roll);
-        m_centerString = format("%6.2f, %6.2f, %6.2f", 
-            m_lastCFrame.translation.x, m_lastCFrame.translation.y, m_lastCFrame.translation.z);
-    }
-
-
-public:
-
-    GuiCFrameBox
-       (const Pointer<CFrame>&  cframe,
-        GuiContainer*           parent, 
-        const GuiText&          caption) : 
-        GuiContainer(parent, caption), m_cframe(cframe) {
-
-        copyStateFromCFrame();
-
-        static const float rotationControlWidth = 52;
-        static const float captionWidth = 10;
-        static const float rotationPrecision = 0.1f;
-        static const float translationPrecision = 0.001f;
-        static const std::string degrees = "\xba";
-        static const float unitsSize = 8.0;
-        GuiNumberBox<float>* c = NULL;
-
-        m_centerBox = new GuiTextBox(this, "", &m_centerString, GuiTextBox::DELAYED_UPDATE, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE);
-        m_centerBox->setSize(Vector2(160, CONTROL_HEIGHT));
-
-        m_yawBox = new GuiNumberBox<float>(this, "", &m_yaw, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
-        m_yawBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
-        c = m_yawBox; c->setCaptionWidth(0);  c->setUnitsSize(unitsSize);
-
-        m_pitchBox = new GuiNumberBox<float>(this, "", &m_pitch, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
-        m_pitchBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
-        c = m_pitchBox;  c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
-
-        m_rollBox = new GuiNumberBox<float>(this, "", &m_roll, degrees, GuiTheme::NO_SLIDER, -finf(), finf(), rotationPrecision, GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE); 
-        m_rollBox->setSize(Vector2(rotationControlWidth, CONTROL_HEIGHT));
-        c = m_rollBox; c->setCaptionWidth(0); c->setUnitsSize(unitsSize);
-
-        // Change to black "r" (x) for remove
-        const char* DOWN = "6";
-        const char* CHECK = "\x98";
-        const char* CLIPBOARD = "\xA4";
-        GFontRef iconFont = GFont::fromFile(System::findDataFile("icon.fnt"));
-        GFontRef greekFont = GFont::fromFile(System::findDataFile("greek.fnt"));
-
-        m_bookmarkButton = new GuiButton(this, GuiButton::Callback(),GuiText(CHECK, iconFont, 16, Color3::blue() * 0.8f), 
-//                GuiControl::Callback(this, &CameraControlWindow::onBookmarkButton),
-                GuiTheme::TOOL_BUTTON_STYLE);
-
-        m_showBookmarksButton = new GuiButton(this, GuiButton::Callback(), GuiText(DOWN, iconFont, 18), GuiTheme::TOOL_BUTTON_STYLE);
-
-        m_copyButton = new GuiButton(this, GuiButton::Callback(), GuiText(CLIPBOARD, iconFont, 16), GuiTheme::TOOL_BUTTON_STYLE);//, GuiControl::Callback(this, &CameraControlWindow::copyToClipboard), GuiTheme::TOOL_BUTTON_STYLE);
-#       ifdef G3D_OSX
-            m_copyButton->setEnabled(false);
-#       endif
-
-        float w = 18;
-        float h = 21;
-        m_showBookmarksButton->setSize(w, h);
-        m_bookmarkButton->setSize(w, h);
-        m_copyButton->setSize(w, h);
-
-        m_child[0] = m_centerBox;
-        m_child[1] = m_yawBox;
-        m_child[2] = m_pitchBox;
-        m_child[3] = m_rollBox;
-        m_child[4] = m_bookmarkButton;
-        m_child[5] = m_showBookmarksButton;
-        m_child[6] = m_copyButton;
-
-        // Slightly taller than most controls because of the labels
-        setRect(Rect2D::xywh(0, 0, 500, CONTROL_HEIGHT + smallFontHeight));
-    }
-    
-    ~GuiCFrameBox() {
-        for (int c = 0; c < NUM_CHILDREN; ++c) {
-            delete m_child[c];
-        }
-    }
-
-    virtual void setCaption(const std::string& c) {
-        GuiContainer::setCaption(c);
-
-        // Resize other parts in response to caption size changing
-        setRect(m_rect);
-    }
-    
-    virtual void setEnabled(bool e) {
-        for (int c = 0; c < NUM_CHILDREN; ++c) {
-            m_child[c]->setEnabled(e);
-        }
-    }
-
-    virtual void setRect(const Rect2D& rect) {
-        GuiContainer::setRect(rect);
-
-        // Total size of the GUI, after the caption
-        float controlSpace = m_rect.width() - m_captionWidth;
-
-        // Position the children
-        m_centerBox->setPosition(m_captionWidth, 0);
-        m_yawBox->moveRightOf(m_centerBox);
-        m_yawBox->moveBy(10, 0);
-        m_pitchBox->moveRightOf(m_yawBox);
-        m_rollBox->moveRightOf(m_pitchBox);
-
-        m_showBookmarksButton->moveRightOf(m_rollBox);
-        m_showBookmarksButton->moveBy(0, 2);
-        m_bookmarkButton->moveRightOf(m_showBookmarksButton);
-        m_copyButton->moveRightOf(m_bookmarkButton);
-
-    }
-
-    virtual void findControlUnderMouse(Vector2 mouse, GuiControl*& control) override {
-        if (! m_clientRect.contains(mouse) || ! m_visible || ! m_enabled) {
-            return;
-        }
-
-        mouse -= m_clientRect.x0y0();
-        for (int c = 0; c < NUM_CHILDREN; ++c) {
-            m_child[c]->findControlUnderMouse(mouse, control);
-        }
-    }
-
-    virtual bool onEvent(const GEvent& e) override {
-        if (GuiContainer::onEvent(e)) {
-            return true;
-        }
-
-        if ((e.type == GEventType::GUI_ACTION) &&
-            ((e.gui.control == m_centerBox) ||
-             (e.gui.control == m_yawBox) ||
-             (e.gui.control == m_rollBox) ||
-             (e.gui.control == m_pitchBox))) {
-
-            // One of the text boxes changed.  Fire an action event
-            overrideCFrameValues();
-
-            // Fire my own action event
-            GEvent response;
-            response.type = GEventType::GUI_ACTION;
-            response.gui.control = this;
-            m_gui->fireEvent(response);
-            return true;
-        }
-
-        return false;
-    }
-
-
-    virtual void render(RenderDevice* rd, const GuiThemeRef& skin) const override {
-        // Ensure that we're in sync with the CFrame
-        if (m_lastCFrame != *m_cframe) {
-            const_cast<GuiCFrameBox*>(this)->overrideCFrameValues();
-        }
-
-        static const float smallFontSize = 8;
-
-        if (! m_visible) {
-            return;
-        }
-        skin->pushClientRect(m_clientRect); {
-            // Render caption
-            skin->renderLabel(m_rect - m_clientRect.x0y0() - Vector2(0, 4), m_caption, GFont::XALIGN_LEFT, GFont::YALIGN_CENTER, m_enabled);
-
-            // Render the canvas surrounding the individual text boxes            
-            skin->renderCanvas(Rect2D::xyxy(m_centerBox->rect().x0y0(), m_rollBox->rect().x1y1() + Vector2(2, 0)), m_enabled, false, "", 0);
-
-            // Render child controls
-            for (int c = 0; c < NUM_CHILDREN; ++c) {
-                m_child[c]->render(rd, skin);
-            }
-
-            static const GuiText label[NUM_CHILDREN] = 
-            {GuiText("center", NULL, smallFontSize),
-             GuiText("yaw", NULL, smallFontSize),
-             GuiText("pitch", NULL, smallFontSize),
-             GuiText("roll", NULL, smallFontSize)};
-
-            // Render labels
-            for (int c = 0; c < 4; ++c) {
-                skin->renderLabel(m_child[c]->rect() + Vector2((c > 0) ? -4 : 0, smallFontHeight), label[c], GFont::XALIGN_CENTER, GFont::YALIGN_BOTTOM, m_enabled);
-            }        
-        } skin->popClientRect();
-    }
-};
 
 
 void App::onInit() {
