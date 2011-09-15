@@ -213,14 +213,8 @@ bool GuiWindow::processMouseButtonDownEventForFocusChangeAndWindowDrag(const GEv
     bool consumed = false;
 
     // Mouse down; change the focus
-    Vector2 mouse(event.button.x, event.button.y);
-
-    if (! m_rect.contains(mouse)) {
-        // The click was not on this object.  Lose focus if we have it
-        m_manager->defocusWidget(this);
-        return false;
-    }
-
+    Point2 mouse(event.button.x, event.button.y);
+    
     if (! focused()) {
         // Set focus
         bool moveToFront = (m_style != GuiTheme::NO_WINDOW_STYLE) && (m_style != GuiTheme::PANEL_WINDOW_STYLE);
@@ -268,7 +262,7 @@ bool GuiWindow::processMouseButtonDownEventForFocusChangeAndWindowDrag(const GEv
     if (m_style != GuiTheme::NO_WINDOW_STYLE) {
         // Consume the click, since it was somewhere on this window (it may still
         // be used by another one of the controls on this window).
-        consumed = true;
+        return true;
     }
 
     return consumed;
@@ -293,6 +287,12 @@ bool GuiWindow::onEvent(const GEvent& event) {
 
     switch (event.type) {
     case GEventType::MOUSE_BUTTON_DOWN:
+
+        if (! m_rect.contains(Point2(event.button.x, event.button.y))) {
+            // The click was not on this object.  Lose focus if we have it
+            m_manager->defocusWidget(this);
+            return false;
+        }
         consumedForFocus = processMouseButtonDownEventForFocusChangeAndWindowDrag(event);
         break;
 
@@ -317,7 +317,6 @@ bool GuiWindow::onEvent(const GEvent& event) {
 
     if (keyFocusGuiControl != NULL) {
         // Deliver event to the control that has focus
-
       
         // Walk the GUI hierarchy  
         for (GuiControl* target = keyFocusGuiControl; (target != NULL) && ! consumed; target = target->m_parent) {

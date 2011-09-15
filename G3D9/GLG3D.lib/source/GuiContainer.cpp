@@ -27,6 +27,15 @@ void GuiContainer::setRect(const Rect2D& rect) {
 }
 
 
+bool GuiContainer::onChildControlEvent(const GEvent& event) {
+    if (m_parent == NULL) {
+        return false;
+    } else {
+        return m_parent->onChildControlEvent(event);
+    }
+}
+
+
 void GuiContainer::increaseBounds(const Vector2& extent) {
     if ((m_clientRect.width() < extent.x) || (m_clientRect.height() < extent.y)) {
         // Create the new client rect

@@ -29,6 +29,8 @@ class GuiControl {
     friend class GuiWindow;
     friend class GuiPane;
     friend class GuiContainer;
+    friend class WidgetManager;
+
 protected:
 
     enum {
@@ -203,7 +205,7 @@ protected:
     GuiControl(GuiWindow* gui, const GuiText& text = "");
     GuiControl(GuiContainer* parent, const GuiText& text = "");
 
-    /** Fires an action event */
+    /** Fires an event. */
     void fireEvent(GEventType type);    
 
 public:

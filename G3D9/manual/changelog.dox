@@ -20,6 +20,8 @@
    <p>
    Changes in 9.00:
    <ul>
+     <li> GuiContainer is now notified through G3D::GuiContainer::onChildControlEvent() when one of its children fires a GUI event.
+     <li> GuiWindow now delivers events up the GUI hierarchy until they are consumed
      <li> G3D::ArticulatedModel::intersect
      <li> G3D::Color3 and G3D::Color4 now initialize to zero
      <li> G3D::Color2uint8

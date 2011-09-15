@@ -333,6 +333,10 @@ private:
 public:
 
     G3D_DECLARE_ENUM_CLASS_METHODS(GEventType);
+
+    bool isGuiEvent() const {
+        return value >= GUI_DOWN && value <= GUI_CLOSE;
+    }
 };
 
 }

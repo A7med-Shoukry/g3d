@@ -1,15 +1,16 @@
 /**
- @file Widget.cpp
+ \file Widget.cpp
 
- @maintainer Morgan McGuire, morgan3d@users.sourceforge.net
+ \maintainer Morgan McGuire, morgan3d@users.sourceforge.net
 
- @created 2006-04-22
- @edited  2009-12-28
+ \created 2006-04-22
+ \edited  2011-09-15
 */
 
 #include "GLG3D/Widget.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/GEvent.h"
+#include "GLG3D/GuiContainer.h"
 
 namespace G3D {
 
@@ -40,6 +41,15 @@ WidgetManager::Ref WidgetManager::create(OSWindow* window) {
 
 
 void WidgetManager::fireEvent(const GEvent& event) {
+    if (GEventType(event.type).isGuiEvent()) {
+        GuiContainer* parent = event.gui.control->m_parent;
+        if (parent != NULL) {
+            if (parent->onChildControlEvent(event)) {
+                // The event was suppressed by the GUI hierarchy
+                return;
+            }
+        }
+    }
     m_window->fireEvent(event);
 }
 

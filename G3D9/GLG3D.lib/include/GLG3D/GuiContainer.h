@@ -67,6 +67,16 @@ public:
         increaseBounds on its parent.  Used during automatic layout sizing.  */
     virtual void increaseBounds(const Vector2& extent);
 
+    /** Invoked immediately (i.e., outside of the queue sequence) when a child fires an event 
+    through Widget::fireEvent. 
+      If this method returns true, the event is never submitted to the event queue. 
+      The default implementation passes the event to the GUI parent of this GuiContainer. 
+      
+      This enables creation of new custom controls by embedding other controls inside
+      a GuiContainer; the container can suppress or watch the child control events
+      in order to present its own behavior to its parent and the GuiWindow.
+      */
+    virtual bool onChildControlEvent(const GEvent& event);
 };
 
 }
