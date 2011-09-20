@@ -43,7 +43,7 @@ void ArticulatedModel2::forEachPart(PartCallback& callback, Part* part, const CF
     }
 
     // Invoke the callback on this part
-    callback(part, parentFrame, Ref(this), treeDepth);
+    callback(part, net, Ref(this), treeDepth);
 }
 
 
