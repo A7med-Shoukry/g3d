@@ -1979,11 +1979,20 @@ public:
 
      @param textureUnit The texture unit to use for shadowing. 0...RenderDevice::numTextureUnits()
             That unit cannot be used for texturing at the same time.
+
+            \deprecated
      */
 
     void configureReflectionMap(
         int                 textureUnit,
         Texture::Ref        reflectionTexture);
+
+    /** 
+        \brief Override the invertY() flag, which is normally set automatically by calls to setFramebuffer.
+        \beta */
+    void setInvertY(bool i) {
+        m_state.matrices.invertY = i;
+    }
 
     #ifdef G3D_WIN32
         HDC getWindowHDC() const;

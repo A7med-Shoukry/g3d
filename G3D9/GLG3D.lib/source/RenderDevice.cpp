@@ -1934,7 +1934,7 @@ void RenderDevice::copyTextureFromScreen(const Texture::Ref& texture, const Rect
         format = texture->format();
     }
 
-    bool invertY = readFramebuffer().notNull();
+    const bool invertY = readFramebuffer().notNull();
 
     int y = 0;
     if (invertY) {
