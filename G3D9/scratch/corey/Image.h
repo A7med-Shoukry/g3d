@@ -46,6 +46,8 @@ public:
     void set(const Point2int32& pos, const Color3& color);
     void set(const Point2int32& pos, const Color4unorm8& color);
     void set(const Point2int32& pos, const Color3unorm8& color);
+
+    ImageBuffer::Ref copyBuffer();
 };
 
 } // namespace G3D

@@ -28,7 +28,7 @@ Image::Ref Image::fromFile(const std::string& filename, FREE_IMAGE_FORMAT fileFo
     if (! detectedFormat) {
         delete img;
         img = NULL;
-    } 
+    }
     
     if (imageFormat == ImageFormat::AUTO()) {
         img->m_format = detectedFormat;
@@ -37,6 +37,9 @@ Image::Ref Image::fromFile(const std::string& filename, FREE_IMAGE_FORMAT fileFo
         img->m_format = imageFormat;
     }
     
+    // Flip image to use g3d coordinates since we can't flip when uploading texture
+    img->m_image.flipVertical();
+
     return img;
 }
 
@@ -186,6 +189,17 @@ void Image::set(const Point2int32& pos, const Color4unorm8& color) {
 
 void Image::set(const Point2int32& pos, const Color3unorm8& color) {
     set(pos, Color4unorm8(color, unorm8::fromBits(255)));
+}
+
+ImageBuffer::Ref Image::copyBuffer() {
+    ImageBuffer::Ref buffer = ImageBuffer::create(AlignedMemoryManager::create(), m_format, m_image.getWidth(), m_image.getHeight(), 1, 16);
+
+    BYTE* pixels = m_image.accessPixels();
+    if (pixels) {
+        System::memcpy(buffer->buffer(), pixels, buffer->size());
+    }
+
+    return buffer;
 }
 
 const ImageFormat* Image::determineImageFormat() const {

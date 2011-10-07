@@ -15,24 +15,25 @@
 namespace G3D {
 
 
-ImageBuffer::ImageBuffer(const ImageFormat* format, int width, int height, int depth, int alignment) 
+ImageBuffer::ImageBuffer(const ImageFormat* format, int width, int height, int depth, int rowAlignment) 
     : m_buffer(NULL)
     , m_format(format)
-    , m_alignment(alignment)
+    , m_rowAlignment(rowAlignment)
+    , m_rowStride(0)
     , m_width(width)
     , m_height(height)
     , m_depth(depth)
     , m_memoryManager(NULL) {
 
     debugAssert(m_format);
-    debugAssert(isPow2(m_alignment));
+    debugAssert(isPow2(m_rowAlignment));
     debugAssert(m_width > 0);
     debugAssert(m_height > 0);
     debugAssert(m_depth > 0);
 }
 
-ImageBuffer::Ref ImageBuffer::create(MemoryManager* memoryManager, const ImageFormat* format, int width, int height, int depth, int alignment) {
-    ImageBuffer* imageBuffer = new ImageBuffer(format, width, height, depth, alignment);
+ImageBuffer::Ref ImageBuffer::create(MemoryManager::Ref memoryManager, const ImageFormat* format, int width, int height, int depth, int rowAlignment) {
+    ImageBuffer* imageBuffer = new ImageBuffer(format, width, height, depth, rowAlignment);
 
     // Allocate buffer with memory manager, this reference now owns the buffer
     imageBuffer->allocateBuffer(memoryManager);
@@ -40,42 +41,44 @@ ImageBuffer::Ref ImageBuffer::create(MemoryManager* memoryManager, const ImageFo
     return imageBuffer;
 }
 
-ImageBuffer::Ref ImageBuffer::create(void* buffer, const ImageFormat* format, int width, int height, int depth, int alignment) {
-    ImageBuffer* imageBuffer = new ImageBuffer(format, width, height, depth, alignment);
-
-    // Set buffer to use, this reference does not own the buffer
-    imageBuffer->m_buffer = buffer;
-
-    return imageBuffer;
-}
-
 ImageBuffer::~ImageBuffer() {
-    if (m_memoryManager) {
+    if (m_buffer) {
         freeBuffer();
     }
 }
 
-void ImageBuffer::allocateBuffer(MemoryManager* memoryManager) {
-    debugAssert(m_memoryManager == NULL);
+void ImageBuffer::allocateBuffer(MemoryManager::Ref memoryManager) {
+    debugAssert(m_memoryManager.isNull());
     debugAssert(m_buffer == NULL);
 
     // set memory manager
     m_memoryManager = memoryManager;
 
     // allocate buffer
-    int rowStride = m_width * (m_format->cpuBitsPerPixel / 8);
-    rowStride = (rowStride + (m_alignment - 1)) & (~ (m_alignment - 1));
+    m_rowStride = m_width * (m_format->cpuBitsPerPixel / 8);
+    m_rowStride = (m_rowStride + (m_rowAlignment - 1)) & (~ (m_rowAlignment - 1));
 
-    int bufferSize = m_depth * m_height * m_width * rowStride;
+    int bufferSize = m_depth * m_height * m_width * m_rowStride;
     m_buffer = m_memoryManager->alloc(bufferSize);
 }
 
 void ImageBuffer::freeBuffer() {
-    debugAssert(m_memoryManager);
+    debugAssert(m_memoryManager.notNull());
     debugAssert(m_buffer);
 
     m_memoryManager->free(m_buffer);
     m_buffer = NULL;
 }
+
+void* ImageBuffer::row(int y, int d) {
+    debugAssert(y < m_height && d < m_depth);
+    return static_cast<uint8*>(m_buffer) + (d * m_height * m_rowStride) + (y * m_rowStride); 
+}
+
+const void* ImageBuffer::row(int y, int d) const {
+    debugAssert(y < m_height && d < m_depth);
+    return static_cast<uint8*>(m_buffer) + (d * m_height * m_rowStride) + (y * m_rowStride); 
+}
+
 
 } // namespace G3D

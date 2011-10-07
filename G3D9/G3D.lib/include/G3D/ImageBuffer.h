@@ -20,31 +20,32 @@ namespace G3D {
 
 class ImageBuffer : public ReferenceCountedObject {
 private:
+    MemoryManager::Ref  m_memoryManager;
     void*               m_buffer;
+
     const ImageFormat*  m_format;
-    int                 m_alignment;
+    int                 m_rowAlignment;
+    int                 m_rowStride;
 
     int                 m_width;
     int                 m_height;
     int                 m_depth;
 
-    MemoryManager*      m_memoryManager;
+    ImageBuffer(const ImageFormat* format, int width, int height, int depth, int rowAlignment);
 
-    ImageBuffer(const ImageFormat* format, int width, int height, int depth, int alignment);
-
-    void allocateBuffer(MemoryManager* memoryManager);
+    void allocateBuffer(MemoryManager::Ref memoryManager);
     void freeBuffer();
 
 public:
     typedef ReferenceCountedPointer<ImageBuffer> Ref;
 
-    static Ref create(MemoryManager* memoryManager, const ImageFormat* format, int width, int height, int depth = 1, int alignment = 1);
-    static Ref create(void* buffer, const ImageFormat* format, int width, int height, int depth = 1, int alignment = 1);
+    static Ref create(MemoryManager::Ref memoryManager, const ImageFormat* format, int width, int height, int depth = 1, int rowAlignment = 1);
 
     ~ImageBuffer();
 
     const ImageFormat* format() const   { return m_format; }
-    int alignment() const               { return m_alignment; }
+    int rowAlignment() const            { return m_rowAlignment; }
+    int size() const                    { return m_width * m_height * m_depth * m_rowStride; }
 
     int width() const                   { return m_width; }
     int height() const                  { return m_height; }
@@ -53,8 +54,8 @@ public:
     void* buffer()                      { return m_buffer; }
     const void* buffer() const          { return m_buffer; }
 
-    void* row(int y);
-    const void* row(int y) const;
+    void* row(int y, int d = 0);
+    const void* row(int y, int d = 0) const;
 
 };
 
