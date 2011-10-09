@@ -38,7 +38,11 @@ static void getTextureAndConstant(const Any& src, Any& texture, Color4& constant
         src.verifySize(1, 2);
         texture = src[0];
         if (src.size() == 2) {
-            constant = src[1];
+            if ((src[1].type() == Any::ARRAY) && src[1].nameBeginsWith("Color4")) {
+                constant = src[1];
+            } else {  
+                constant = Color4(Color3(src[1]));
+            } 
         }
     } else if (src.type() == Any::STRING) {
         // Filename
@@ -49,7 +53,7 @@ static void getTextureAndConstant(const Any& src, Any& texture, Color4& constant
     } else if (src.nameBeginsWith("Color3")) {
         // Color
         constant = Color4(Color3(src), 1.0f);
-    } else if (src.nameBeginsWith("Color4")) {
+    } else if ((src.type() == Any::ARRAY) && src.nameBeginsWith("Color4")) {
         // Color
         constant = Color4(src);
     } else {
