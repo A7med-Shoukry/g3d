@@ -40,7 +40,9 @@ static void getTextureAndConstant(const Any& src, Any& texture, Color4& constant
         if (src.size() == 2) {
             if ((src[1].type() == Any::ARRAY) && src[1].nameBeginsWith("Color4")) {
                 constant = src[1];
-            } else {  
+            } else if (src[1].type() == Any::NUMBER) {
+                constant = Color4(Color3(src[1].number()));
+            } else {
                 constant = Color4(Color3(src[1]));
             } 
         }
