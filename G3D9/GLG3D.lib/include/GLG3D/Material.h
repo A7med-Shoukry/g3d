@@ -116,6 +116,8 @@ public:
 		      shininess = "shinemap.png",
 		      transmissive = "transmap.png", # Simple transmission
 		      emissive = "emitmap.png",
+                 emissive = mul("emitmap.png", 3.0), # various options for emissive
+                 emissive = Color3(0.5),
 		      bump = "bumpmap.png",  # see BumpMap::Specification
 
 		      # Sophisticated transmission
@@ -203,7 +205,7 @@ public:
         void setLambertian(const std::string& filename,
                            const Color4& constant = Color4::one());
 
-        void setLambertian(const Texture::Specification& spec);
+        void setLambertian(const Texture::Specification& spec, const Color4& constant = Color4::one());
         
         void setLambertian(const std::string& filename, float c) {
             setLambertian(filename, Color4(Color3(c), 1.0f));
@@ -227,7 +229,7 @@ public:
         
         void setEmissive(const Color3& constant);
 
-        void setEmissive(const Texture::Specification& spec);
+        void setEmissive(const Texture::Specification& spec, const Color3& constant = Color3::one());
         
         void removeEmissive();
 
@@ -291,7 +293,7 @@ public:
         
         void setTransmissive(const Color3& constant);
 
-        void setTransmissive(const Texture::Specification& spec);
+        void setTransmissive(const Texture::Specification& spec, const Color3& constant = Color3::one());
         
         void removeTransmissive();
 

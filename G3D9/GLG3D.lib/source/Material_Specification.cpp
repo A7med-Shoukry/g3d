@@ -2,7 +2,7 @@
  @file   Material_Specification.h
  @author Morgan McGuire, http://graphics.cs.williams.edu
  @date   2009-03-10
- \edited 2010-03-29
+ \edited 2011-10-09
 */
 #include "GLG3D/Material.h"
 #include "G3D/Any.h"
@@ -30,6 +30,34 @@ Material::Specification::Specification(const Color3& lambertian) {
     setLambertian(lambertian);
 }
 
+static void getTextureAndConstant(const Any& src, Any& texture, Color4& constant) {
+    constant = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    if ((src.type() == Any::ARRAY) && (src.name() == "mul")) {
+        // Product
+        src.verifySize(1, 2);
+        texture = src[0];
+        if (src.size() == 2) {
+            constant = src[1];
+        }
+    } else if (src.type() == Any::STRING) {
+        // Filename
+        texture = src;
+    } else if (src.type() == Any::NUMBER) {
+        // Number
+        constant = Color4(Color3(src), 1.0f);
+    } else if (src.nameBeginsWith("Color3")) {
+        // Color
+        constant = Color4(Color3(src), 1.0f);
+    } else if (src.nameBeginsWith("Color4")) {
+        // Color
+        constant = Color4(src);
+    } else {
+        // Texture::Specification
+        texture = src;
+    }
+}
+
 
 Material::Specification::Specification(const Any& any) {
     *this = Specification();
@@ -47,27 +75,32 @@ Material::Specification::Specification(const Any& any) {
     
     any.verifyName("Material::Specification");
 
+
+    Any texture;
+    Color4 constant;
     for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         const std::string& key = toLower(it->key);
         if (key == "lambertian") {
-            if (it->value.type() == Any::STRING) {
-                setLambertian(it->value.resolveStringAsFilename());
-            } else if (it->value.nameBeginsWith("Color4")) {
-                setLambertian(Color4(it->value));
-            } else if (it->value.nameBeginsWith("Color3")) {
-                setLambertian(Color3(it->value));
+             getTextureAndConstant(it->value, texture, constant);
+
+            if (texture.type() == Any::STRING) {
+                setLambertian(texture.resolveStringAsFilename(), constant);
+            } else if (texture.type() == Any::NONE) {
+                setLambertian(constant.rgb());
             } else {
                 // Full specification
-                setLambertian(Texture::Specification(it->value));
+                setLambertian(Texture::Specification(texture), constant);
             }
         } else if (key == "specular") {
-            if (it->value.type() == Any::STRING) {
-                setSpecular(it->value.resolveStringAsFilename());
-            } else if (it->value.nameBeginsWith("Color3")) {
-                setSpecular(Color3(it->value));
+            getTextureAndConstant(it->value, texture, constant);
+
+            if (texture.type() == Any::STRING) {
+                setSpecular(texture.resolveStringAsFilename(), constant.rgb());
+            } else if (texture.type() == Any::NONE) {
+                setSpecular(constant.rgb());
             } else {
                 // Full specification
-                setSpecular(Texture::Specification(it->value));
+                setSpecular(Texture::Specification(texture), constant.rgb());
             }
         } else if (key == "shininess") {
             switch (it->value.type()) {
@@ -94,22 +127,28 @@ Material::Specification::Specification(const Any& any) {
                 break;
             }    
         } else if (key == "transmissive") {
-            if (it->value.type() == Any::STRING) {
-                setTransmissive(it->value.resolveStringAsFilename());
-            } else if (beginsWith(toLower(it->value.name()), "color3")) {
-                setTransmissive(Color3(it->value));
+
+            getTextureAndConstant(it->value, texture, constant);
+
+            if (texture.type() == Any::STRING) {
+                setTransmissive(texture.resolveStringAsFilename(), constant.rgb());
+            } else if (texture.type() == Any::NONE) {
+                setTransmissive(constant.rgb());
             } else {
                 // Full specification
-                setTransmissive(Texture::Specification(it->value));
+                setTransmissive(Texture::Specification(texture), constant.rgb());
             }
         } else if (key == "emissive") {
-            if (it->value.type() == Any::STRING) {
-                setEmissive(it->value.resolveStringAsFilename());
-            } else if (it->value.nameBeginsWith("Color3")) {
-                setEmissive(Color3(it->value));
+
+            getTextureAndConstant(it->value, texture, constant);
+
+            if (texture.type() == Any::STRING) {
+                setEmissive(texture.resolveStringAsFilename(), constant.rgb());
+            } else if (texture.type() == Any::NONE) {
+                setEmissive(constant.rgb());
             } else {
                 // Full specification
-                setEmissive(Texture::Specification(it->value));
+                setEmissive(Texture::Specification(texture), constant.rgb());
             }
         } else if (key == "bump") {
             setBump(BumpMap::Specification(it->value));
@@ -157,8 +196,8 @@ void Material::Specification::setLambertian(const Color4& constant) {
 }
 
 
-void Material::Specification::setLambertian(const Texture::Specification& spec) {
-    m_lambertianConstant = Color4::one();
+void Material::Specification::setLambertian(const Texture::Specification& spec, const Color4& constant) {
+    m_lambertianConstant = constant;
     m_lambertian = spec;        
 }
 
@@ -186,8 +225,8 @@ void Material::Specification::removeEmissive() {
 }
 
 
-void Material::Specification::setEmissive(const Texture::Specification& spec) {
-    m_emissiveConstant = Color3::one();
+void Material::Specification::setEmissive(const Texture::Specification& spec, const Color3& constant) {
+    m_emissiveConstant = constant;
     m_emissive = spec;        
 }
 
@@ -250,8 +289,8 @@ void Material::Specification::setTransmissive(const Color3& constant) {
 }
 
 
-void Material::Specification::setTransmissive(const Texture::Specification& spec) {
-    m_transmissiveConstant = Color3::one();
+void Material::Specification::setTransmissive(const Texture::Specification& spec, const Color3& constant) {
+    m_transmissiveConstant = constant;
     m_transmissive = spec;        
 }
 

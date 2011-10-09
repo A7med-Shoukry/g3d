@@ -39,6 +39,10 @@ void Any::deserialize(BinaryInput& b) {
 
 std::string Any::resolveStringAsFilename() const {
     verifyType(STRING);
+    if ((string().length() > 0) && (string()[0] == '<') && (string()[string().length() - 1] == '>')) {
+        return string();
+    }
+
     std::string f = FileSystem::resolve(string(), sourceDirectory());
     if (FileSystem::exists(f)) {
         return f;

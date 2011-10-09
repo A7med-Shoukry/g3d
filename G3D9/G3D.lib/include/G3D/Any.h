@@ -5,7 +5,7 @@
  \maintainer Morgan McGuire
   
  \created 2006-06-11
- \edited  2010-09-16
+ \edited  2011-10-09
 
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
@@ -462,9 +462,11 @@ public:
         
         - In the directory from which the Any was loaded.
         - By calling System::findDataFile as you would with other data files.
+
+        Strings that begin with '<' and end with '>' are treated as escape sequences and 
+        are returned unmodifed.
      */
     std::string resolveStringAsFilename() const;
-
 
     /** If this is named ARRAY or TABLE, returns the name. */
     const std::string& name() const;
