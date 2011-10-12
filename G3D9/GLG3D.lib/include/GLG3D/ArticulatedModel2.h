@@ -40,6 +40,7 @@ namespace G3D {
  - <a href="http://www.geomview.org/docs/html/OFF.html">OFF</a>
  - <a href="http://www.riken.jp/brict/Yoshizawa/Research/PLYformat/PLYformat.html">PLY2</a>
  - Quake 3 <a href="http://www.mralligator.com/q3/">BSP</a>
+ - Any image format supported by G3D::GImage will be treated as a heighfield; apply a scale factor and material to transform it as desired
 
  Does not copy geometry to the GPU until it has to render.  This means that CPU rendering
  code need not consume GPU vertex buffer resources (or transfer time).  The current
@@ -219,7 +220,7 @@ public:
     };
 
 
-    /** \brief Parameters for constructing a new ArticulatedModel from a file on disk.*/
+    /** \brief Parameters for constructing a new ArticulatedModel2 from a file on disk.*/
     class Specification {
     public:
         /** Materials will be loaded relative to this file.*/
@@ -666,6 +667,8 @@ protected:
     void load3DS(const Specification& specification);
 
     void loadBSP(const Specification& specification);
+
+    void loadHeightfield(const Specification& specification);
 
     void load(const Specification& specification);
 

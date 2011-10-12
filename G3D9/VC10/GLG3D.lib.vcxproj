@@ -203,6 +203,7 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_BSP.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_cleanGeometry.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_heightfield.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_IFS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OBJ.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OFF.cpp" />
