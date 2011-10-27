@@ -75,6 +75,9 @@ public:
         VertexRange             normal;
         VertexRange             packedTangent;
         VertexRange             texCoord0;
+
+        /** Reserved for future use */
+        VertexRange             texCoord1;
         
         /** When true, this primitive should be rendered with
             two-sided lighting and texturing and not cull
