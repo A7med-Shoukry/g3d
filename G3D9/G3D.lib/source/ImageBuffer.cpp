@@ -58,7 +58,7 @@ void ImageBuffer::allocateBuffer(MemoryManager::Ref memoryManager) {
     m_rowStride = m_width * (m_format->cpuBitsPerPixel / 8);
     m_rowStride = (m_rowStride + (m_rowAlignment - 1)) & (~ (m_rowAlignment - 1));
 
-    int bufferSize = m_depth * m_height * m_width * m_rowStride;
+    int bufferSize = m_depth * m_height * m_rowStride;
     m_buffer = m_memoryManager->alloc(bufferSize);
 }
 

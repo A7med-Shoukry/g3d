@@ -282,43 +282,10 @@ void GImage::decode(
         debugAssert(false);
     }
 
-    debugAssert(m_width >= 0);
-    debugAssert(m_height >= 0);
-    debugAssert(m_channels == 1 || m_channels == 3 || m_channels == 4);
-    debugAssert(m_byte != NULL);
-}
-
-
-GImage::GImage(ShareData s, uint8* data, int w, int h, const ImageFormat* fmt, const MemoryManager::Ref& memMan) {
-    m_memMan = memMan;
-    m_ownsData = false;
-    m_byte = data;
-    m_imageFormat = fmt;
-    m_width = w;
-    m_height = h;
-
-    switch (m_imageFormat->code) {
-    case ImageFormat::CODE_R8:
-    case ImageFormat::CODE_L8:
-        m_channels = 1;
-        break;
-
-    case ImageFormat::CODE_RG8:
-    case ImageFormat::CODE_LA8:
-        m_channels = 2;
-        break;
-
-    case ImageFormat::CODE_RGB8:
-        m_channels = 3;
-        break;
-
-    case ImageFormat::CODE_RGBA8:
-        m_channels = 4;
-        break;
-
-    default:
-        alwaysAssertM(false, "Unsupported image format for GImage");
-    }
+    debugAssert(width() >= 0);
+    debugAssert(height() >= 0);
+    debugAssert(channels() == 1 || channels() == 3 || channels() == 4);
+    debugAssert(m_buffer.notNull());
 }
 
 
@@ -351,10 +318,8 @@ void GImage::decodePCX(
 
     (void)bytesPerLine;
 
-    m_width  = xmax - xmin + 1;
-    m_height = ymax - ymin + 1;
-    m_channels = 3;
-    m_imageFormat = ImageFormat::RGB8();
+    int width  = xmax - xmin + 1;
+    int height = ymax - ymin + 1;
 
     if ((manufacturer != 0x0A) || (encoding != 0x01)) {
         throw GImage::Error("PCX file is corrupted", input.getFilename());
@@ -369,18 +334,18 @@ void GImage::decodePCX(
     }
 
     // Prepare the pointer object for the pixel data
-    m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
+    m_buffer = ImageBuffer::create(m_memMan, ImageFormat::RGB8(), width, height);
 
     if ((paletteType == 1) && (planes == 3)) {
 
         Color3unorm8* pixel = pixel3();
 
         // Iterate over each scan line
-        for (int row = 0; row < m_height; ++row) {
+        for (int row = 0; row < height; ++row) {
             // Read each scan line once per plane
             for (int plane = 0; plane < planes; ++plane) {
-                int p = row * m_width;
-                int p1 = p + m_width;
+                int p = row * width;
+                int p1 = p + width;
                 while (p < p1) {
                     uint8 value = input.readUInt8();
                     int length = 1;
@@ -394,7 +359,7 @@ void GImage::decodePCX(
 
                     // Set the whole run
                     for (int i = length - 1; i >= 0; --i, ++p) {
-                        debugAssert(p < m_width * m_height);
+                        debugAssert(p < width * height);
                         pixel[p][plane] = unorm8::fromBits(value);
                     }
                 }
@@ -424,7 +389,7 @@ void GImage::decodePCX(
         
         // The palette indices are run length encoded.
         int p = 0;
-        while (p < m_width * m_height) {
+        while (p < width * height) {
             uint8 index  = input.readUInt8();
             uint8 length = 1;
 
@@ -439,7 +404,7 @@ void GImage::decodePCX(
 
             // Set the whole run
             for (int i = length - 1; i >= 0; --i, ++p) {
-                if (p > m_width * m_height) {
+                if (p > width * height) {
                     break;
                 }
                 pixel[p] = color;
@@ -545,13 +510,7 @@ GImage::GImage
    (const std::string&  filename,
     Format              format,
     const MemoryManager::Ref& m) : 
-    m_memMan(m),
-    m_ownsData(true),
-    m_byte(NULL), 
-    m_imageFormat(NULL),
-    m_channels(0),
-    m_width(0),
-    m_height(0) {
+    m_memMan(m) {
     
     load(filename, format);
 }
@@ -582,12 +541,7 @@ GImage::GImage
  int                 length,
  Format              format,
     const MemoryManager::Ref& m) : 
-    m_memMan(m),
-    m_byte(NULL),
-    m_imageFormat(NULL),
-    m_channels(0),
-    m_width(0),
-    m_height(0) {
+    m_memMan(m) {
 
     BinaryInput b(data, length, G3D_LITTLE_ENDIAN);
     // It is safe to cast away the const because we
@@ -602,13 +556,7 @@ GImage::GImage
     int                 height,
     int                 channels,
     const MemoryManager::Ref& mem) : 
-    m_memMan(mem),
-    m_ownsData(true),
-    m_byte(0),
-    m_imageFormat(NULL),
-    m_channels(0), 
-    m_width(0), 
-    m_height(0) {
+    m_memMan(mem) {
     
     resize(width, height, channels);
 }
@@ -619,15 +567,7 @@ GImage::GImage
     int                 height,
     const ImageFormat*  im,
     const MemoryManager::Ref& mem) : 
-    m_memMan(mem),
-    m_ownsData(true),
-    m_byte(0),
-    m_imageFormat(NULL),
-    m_channels(0), 
-    m_width(0), 
-    m_height(0) {
-    
-    resize(width, height, im);
+    m_memMan(mem) {
 }
 
 
@@ -666,27 +606,18 @@ void GImage::resize
     debugAssert(height >= 0);
     debugAssert(im != NULL);
 
-    if ((m_width == width) && (m_height == height) && (m_imageFormat == im) && (zero == false)) {
+    if ((this->width() == width) && (this->height() == height) && (imageFormat() == im) && (zero == false)) {
         // Nothing to do
         return;
     }
 
     clear();
 
-    m_width = width;
-    m_height = height;
-    m_channels = im->numComponents;
-    m_imageFormat = im;
-    const size_t sz = width * height * iCeil(im->cpuBitsPerPixel / 8.0f);
+    m_buffer = ImageBuffer::create(m_memMan, im, width, height);
 
-    if (sz > 0) {
-        m_byte = (uint8*)m_memMan->alloc(sz);
-        if (zero) {
-            System::memset(m_byte, 0, sz);
-        }
-        debugAssert(isValidHeapPointer(m_byte));
+    if (zero) {
+        System::memset(m_buffer->buffer(), 0, m_buffer->size());
     }
-    m_ownsData = true;
 }
 
 
@@ -695,53 +626,39 @@ void GImage::_copy
 
     clear();
 
-    m_width  = other.m_width;
-    m_height = other.m_height;
-    m_channels = other.m_channels;
-    m_imageFormat = other.m_imageFormat;
-    int s  = m_width * m_height * m_channels * sizeof(unorm8);
-    m_byte  = (uint8*)m_memMan->alloc(s);
-    debugAssert(isValidHeapPointer(m_byte));
-    memcpy(m_byte, other.m_byte, s);
+    // DISABLED FOR ImageBuffer
+    //m_buffer = other.buffer().copy();
 }
 
 
 void GImage::flipHorizontal() {
     unorm8 temp[4];
-    int rowBytes = m_width * m_channels;
-    for (int y = 0; y < m_height; ++y) {
-        uint8* row = m_byte + y * rowBytes; 
-        for (int x = 0; x < m_width / 2; ++x) { 
-            System::memcpy(temp, row + x * m_channels, m_channels);
-            System::memcpy(row + x * m_channels, row + (m_width - x - 1) * m_channels, m_channels);
-            System::memcpy(row + (m_width - x - 1) * m_channels, temp, m_channels);
+    int rowBytes = m_buffer->stride();
+    for (int y = 0; y < height(); ++y) {
+        uint8* row = static_cast<uint8*>(m_buffer->row(y));
+        for (int x = 0; x < width() / 2; ++x) { 
+            System::memcpy(temp, row + x * channels(), channels());
+            System::memcpy(row + x * channels(), row + (width() - x - 1) * channels(), channels());
+            System::memcpy(row + (width() - x - 1) * channels(), temp, channels());
         }
     }
 }
 
 
 void GImage::flipVertical() {
-    uint8* old = m_byte;
-    m_byte = (uint8*)m_memMan->alloc(m_width * m_height * m_channels);
+    ImageBuffer::Ref old = m_buffer;
+    m_buffer = ImageBuffer::create(m_memMan, imageFormat(), width(), height());
 
     // We could do this with only a single-row temp buffer, but then
     // we'd have to copy twice as much data.
-    int rowBytes = m_width * m_channels;
-    for (int y = 0; y < m_height; ++y) {
-        System::memcpy(m_byte + y * rowBytes, old + (m_height - y - 1) * rowBytes, rowBytes);
-    }
-
-    if (m_ownsData) {
-        m_memMan->free(old);
-    } else {
-        // No matter what, we own the data at the end
-        m_ownsData = true;
+    for (int y = 0; y < height(); ++y) {
+        System::memcpy(m_buffer->row(y), old->row(height() - y - 1), old->stride());
     }
 }
 
 
 void GImage::rotate90CW(int numTimes) {
-
+    /* DISABLED FOR CONVERSION TO ImageBuffer
     uint8* old = NULL;
     numTimes = iWrap(numTimes, 4);
     if (numTimes > 0) {
@@ -769,19 +686,14 @@ void GImage::rotate90CW(int numTimes) {
             }
         }
     }
-    if (m_ownsData) {
-        m_memMan->free(old);
-    } else {
-        // No matter what, we own the data at the end
-        m_ownsData = true;
-    }
+    */
 }
 
 
 
 GImage::GImage(
     const GImage&        other,
-    const MemoryManager::Ref& m) : m_memMan(m), m_ownsData(true), m_byte(NULL) {
+    const MemoryManager::Ref& m) : m_memMan(m) {
 
     _copy(other);
 }
@@ -793,13 +705,7 @@ GImage::~GImage() {
 
 
 void GImage::clear() {
-    m_width = 0;
-    m_height = 0;
-    if (m_ownsData) {
-        m_memMan->free(m_byte);
-    }
-    m_ownsData = true;
-    m_byte = NULL;
+    m_buffer = NULL;
 }
 
 
@@ -812,15 +718,15 @@ GImage& GImage::operator=(const GImage& other) {
 bool GImage::copyRect(
     GImage & dest, const GImage & src,
     int srcX, int srcY, int srcWidth, int srcHeight) {
-    if ((src.m_width < srcX + srcWidth) ||
-        (src.m_height < srcY + srcHeight) ||
+    if ((src.width() < srcX + srcWidth) ||
+        (src.height() < srcY + srcHeight) ||
         (srcY < 0) ||
         (srcX < 0)) {
 
         return false;
     }
 
-    dest.resize(srcWidth, srcHeight, src.m_channels);
+    dest.resize(srcWidth, srcHeight, src.channels());
     
     bool ret;
     ret = copyRect(dest, src, 0, 0, srcX, srcY, srcWidth, srcHeight);
@@ -840,10 +746,10 @@ bool GImage::copyRect
  int srcWidth, 
  int srcHeight) {
     
-    if ((src.m_width < srcX + srcWidth) ||
-        (src.m_height < srcY + srcHeight) ||
-        (dest.m_width < destX + srcWidth) ||
-        (dest.m_height < destY + srcHeight) ||
+    if ((src.width() < srcX + srcWidth) ||
+        (src.height() < srcY + srcHeight) ||
+        (dest.width() < destX + srcWidth) ||
+        (dest.height() < destY + srcHeight) ||
         (srcY < 0) ||
         (srcX < 0) ||
         (destY < 0) ||
@@ -855,10 +761,10 @@ bool GImage::copyRect
 
     for (int i = 0; i < srcHeight; i++) {
         const uint8* srcRow = src.byte() +
-            ((i + srcY) * src.m_width + srcX) * src.channels();
+            ((i + srcY) * src.width() + srcX) * src.channels();
         uint8* destRow = dest.byte() +
             ((i + destY) * dest.width() + destX) * dest.channels();
-        memcpy(destRow, srcRow, srcWidth * src.m_channels);
+        memcpy(destRow, srcRow, srcWidth * src.channels());
     }
 
     return true;
@@ -967,33 +873,33 @@ void GImage::insertRedAsAlpha(const GImage& alpha, GImage& output) const {
         output.resize(width(), height(), 4);
     }
 
-    int N = m_width * m_height;
+    int N = width() * height();
     for (int i = 0; i < N; ++i) {
-        output.byte()[i * 4 + 0] = byte()[i * m_channels + 0];
-        output.byte()[i * 4 + 1] = byte()[i * m_channels + 1];
-        output.byte()[i * 4 + 2] = byte()[i * m_channels + 2];
-        output.byte()[i * 4 + 3] = alpha.byte()[i * alpha.m_channels];
+        output.byte()[i * 4 + 0] = byte()[i * channels() + 0];
+        output.byte()[i * 4 + 1] = byte()[i * channels() + 1];
+        output.byte()[i * 4 + 2] = byte()[i * channels() + 2];
+        output.byte()[i * 4 + 3] = alpha.byte()[i * alpha.channels()];
     }
 }
 
 
 void GImage::stripAlpha(GImage& output) const {
 
-    if (output.m_width != m_width || output.m_height != m_height || output.m_channels != 3) {
-        output.resize(m_width, m_height, 3);
+    if (output.width() != width() || output.height() != height() || output.channels() != 3) {
+        output.resize(width(), height(), 3);
     }
 
-    int N = m_width * m_height;
+    int N = width() * height();
     for (int i = 0; i < N; ++i) {
-        output.byte()[i * 3 + 0] = byte()[i * m_channels + 0];
-        output.byte()[i * 3 + 1] = byte()[i * m_channels + 1];
-        output.byte()[i * 3 + 2] = byte()[i * m_channels + 2];
+        output.byte()[i * 3 + 0] = byte()[i * channels() + 0];
+        output.byte()[i * 3 + 1] = byte()[i * channels() + 1];
+        output.byte()[i * 3 + 2] = byte()[i * channels() + 2];
     }
 }
 
 
 int GImage::sizeInMemory() const {
-    return sizeof(GImage) + m_width * m_height * m_channels;
+    return sizeof(GImage) + m_buffer.notNull() ? m_buffer->size() : 0;
 }
 
 
@@ -1001,7 +907,7 @@ void GImage::computeNormalMap(
     const GImage&       bump,
     GImage&             normal,
     const BumpMapPreprocess& preprocess) {
-    computeNormalMap(bump.m_width, bump.m_height, bump.m_channels, 
+    computeNormalMap(bump.width(), bump.height(), bump.channels(), 
                      bump.rawData<unorm8>(), normal, preprocess);    
 }
 
@@ -1112,26 +1018,20 @@ void GImage::computeNormalMap
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void GImage::convertToL8() {
-    switch (m_channels) {
+    switch (channels()) {
     case 1:
         return;
 
     case 3:
         {            
             // Average
-            Color3unorm8* src = (Color3unorm8*)m_byte;
-            m_byte = NULL;
-            resize(m_width, m_height, 1);
-            for (int i = m_width * m_height - 1; i >= 0; --i) {
+            ImageBuffer::Ref old = m_buffer;
+            Color3unorm8* src = pixel3();
+            resize(width(), height(), 1);
+            for (int i = width() * height() - 1; i >= 0; --i) {
                 const Color3unorm8   s = src[i];
-                uint8&               d = m_byte[i]; 
+                uint8&               d = static_cast<uint8*>(m_buffer->buffer())[i]; 
                 d = ((int)s.r.bits() + (int)s.g.bits() + (int)s.b.bits()) / 3;
-            }
-            if (m_ownsData) {
-                m_memMan->free(src);
-            } else {
-                // No matter what, we own the data at the end
-                m_ownsData = true;
             }
         }
         break;
@@ -1139,19 +1039,13 @@ void GImage::convertToL8() {
     case 4:
         {            
             // Average
-            Color4unorm8* src = (Color4unorm8*)m_byte;
-            m_byte = NULL;
-            resize(m_width, m_height, 1);
-            for (int i = m_width * m_height - 1; i >= 0; --i) {
+            ImageBuffer::Ref old = m_buffer;
+            Color4unorm8* src = pixel4();
+            resize(width(), height(), 1);
+            for (int i = width() * height() - 1; i >= 0; --i) {
                 const Color4unorm8   s = src[i];
-                uint8&               d = m_byte[i]; 
+                uint8&               d = static_cast<uint8*>(m_buffer->buffer())[i]; 
                 d = ((int)s.r.bits() + (int)s.g.bits() + (int)s.b.bits()) / 3;
-            }
-            if (m_ownsData) {
-                m_memMan->free(src);
-            } else {
-                // No matter what, we own the data at the end
-                m_ownsData = true;
             }
         }
         return;
@@ -1163,24 +1057,17 @@ void GImage::convertToL8() {
 
 
 void GImage::convertToRGBA() {
-    switch (m_channels) {
+    switch (channels()) {
     case 1:
         {            
             // Spread
-            uint8* old = m_byte;
-            m_byte = NULL;
-            resize(m_width, m_height, 4);
-            for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const unorm8  s = unorm8::fromBits(old[i]);
-                Color4unorm8& d = ((Color4unorm8*)m_byte)[i]; 
+            ImageBuffer::Ref old = m_buffer;
+            resize(width(), height(), 4);
+            for (int i = width() * height() - 1; i >= 0; --i) {
+                const unorm8  s = unorm8::fromBits(static_cast<uint8*>(old->buffer())[i]);
+                Color4unorm8& d = pixel4()[i]; 
                 d.r = d.g = d.b = s;
                 d.a = unorm8::one();
-            }
-            if (m_ownsData) {
-                m_memMan->free(old);
-            } else {
-                // No matter what, we own the data at the end
-                m_ownsData = true;
             }
         }
         break;
@@ -1188,22 +1075,16 @@ void GImage::convertToRGBA() {
     case 3:
         {            
             // Add alpha
-            Color3unorm8* old = (Color3unorm8*)m_byte;
-            m_byte = NULL;
-            resize(m_width, m_height, 4);
-            for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const Color3unorm8   s = old[i];
-                Color4unorm8&        d = ((Color4unorm8*)m_byte)[i]; 
+            ImageBuffer::Ref old = m_buffer;
+            Color3unorm8* src = pixel3();
+            resize(width(), height(), 4);
+            for (int i = width() * height() - 1; i >= 0; --i) {
+                const Color3unorm8   s = src[i];
+                Color4unorm8&        d = pixel4()[i]; 
                 d.r = s.r;
                 d.g = s.g;
                 d.b = s.b;
                 d.a = unorm8::one();
-            }
-            if (m_ownsData) {
-                m_memMan->free(old);
-            } else {
-                // No matter what, we own the data at the end
-                m_ownsData = true;
             }
         }
         break;
@@ -1219,23 +1100,16 @@ void GImage::convertToRGBA() {
 
 
 void GImage::convertToRGB() {
-    switch (m_channels) {
+    switch (channels()) {
     case 1:
         {            
             // Spread
-            unorm8* old = reinterpret_cast<unorm8*>(m_byte);
-            m_byte = NULL;
-            resize(m_width, m_height, 3);
-            for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const unorm8  s = old[i];
-                Color3unorm8& d = ((Color3unorm8*)m_byte)[i]; 
+            ImageBuffer::Ref old = m_buffer;
+            resize(width(), height(), 3);
+            for (int i = width() * height() - 1; i >= 0; --i) {
+                const unorm8  s = static_cast<unorm8*>(old->buffer())[i];
+                Color3unorm8& d = pixel3()[i]; 
                 d.r = d.g = d.b = s;
-            }
-            if (m_ownsData) {
-                m_memMan->free(old);
-            } else {
-                // No matter what, we own the data at the end
-                m_ownsData = true;
             }
         }
         break;
@@ -1246,21 +1120,15 @@ void GImage::convertToRGB() {
     case 4:
 		// Strip alpha
         {            
-            Color4unorm8* old = (Color4unorm8*)m_byte;
-            m_byte = NULL;
-            resize(m_width, m_height, 3);
-            for (int i = m_width * m_height - 1; i >= 0; --i) {
-                const Color4unorm8   s = old[i];
-                Color3unorm8&        d = ((Color3unorm8*)m_byte)[i]; 
+            ImageBuffer::Ref old = m_buffer;
+            Color4unorm8* src = pixel4();
+            resize(width(), height(), 3);
+            for (int i = width() * height() - 1; i >= 0; --i) {
+                const Color4unorm8   s = src[i];
+                Color3unorm8&        d = pixel3()[i]; 
                 d.r = s.r;
                 d.g = s.g;
                 d.b = s.b;
-            }
-            if (m_ownsData) {
-                m_memMan->free(old);
-            } else {
-                // No matter what, we own the data at the end
-                m_ownsData = true;
             }
         }
         break;
@@ -1306,12 +1174,12 @@ void GImage::Y8U8V8_to_R8G8B8(int width, int height, const unorm8* _in, unorm8* 
 
 
 void GImage::makeCheckerboard(GImage& im, int checkerSize, const Color4unorm8& A, const Color4unorm8& B) {
-    for (int y = 0; y < im.m_height; ++y) {
-        for (int x = 0; x < im.m_width; ++x) {
+    for (int y = 0; y < im.height(); ++y) {
+        for (int x = 0; x < im.width(); ++x) {
             bool checker = isOdd((x / checkerSize) + (y / checkerSize));
             const Color4unorm8& color = checker ? A : B;
-            for (int c = 0; c < im.m_channels; ++c) {
-                uint8* v = im.byte() + (x + y * im.m_width) * im.m_channels + c;
+            for (int c = 0; c < im.channels(); ++c) {
+                uint8* v = im.byte() + (x + y * im.width()) * im.channels() + c;
                 *v = color[c];
             }
         }

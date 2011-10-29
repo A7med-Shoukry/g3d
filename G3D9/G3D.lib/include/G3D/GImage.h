@@ -26,6 +26,7 @@
 #include "G3D/MemoryManager.h"
 #include "G3D/BumpMapPreprocess.h"
 #include "G3D/ImageFormat.h"
+#include "G3D/ImageBuffer.h"
 
 namespace G3D {
 
@@ -120,19 +121,8 @@ private:
      implementation that allocates directly on a GPU.*/
     MemoryManager::Ref      m_memMan;
 
-    /** If false, the data is not freed on destruction. */
-    bool                    m_ownsData;
+    ImageBuffer::Ref        m_buffer;
 
-    /** Pointer to the beginning of the data (which may not actually be uint8's)*/
-    uint8*                  m_byte;
-
-    const ImageFormat*      m_imageFormat;
-
-    /** \deprecated Use m_imageFormat */
-    int                     m_channels;
-    int                     m_width;
-    int                     m_height;
-    
     void encodeBMP
        (BinaryOutput&       out) const;
 
@@ -200,38 +190,41 @@ private:
 
 public:
     
-    enum ShareData {SHARE_DATA};
-
-    /** Creates a GImage that does not own (or deallocate) its underlying data as long as it is not resized. */
-    GImage(ShareData s, uint8* data, int w, int h, const ImageFormat* fmt, const MemoryManager::Ref& memMan = MemoryManager::create());
-
     /**
      The number of channels; either 1 (luminance), 3 (RGB), or 4 (RGBA)
 
      \deprecated Use imageFormat()
      */
     int channels() const {
-        return m_channels;
+        return m_buffer.notNull() ? m_buffer->format()->numComponents : 0;
     }
 
     int width() const {
-        return m_width;
+        return m_buffer.notNull() ? m_buffer->width() : 0;
     }
 
     int height() const {
-        return m_height;
+        return m_buffer.notNull() ? m_buffer->height() : 0;
+    }
+
+    ImageBuffer::Ref buffer() const {
+        return m_buffer;
     }
 
     /** Pointer to the underlying data.
         \deprecated
         \sa rawData */
     const uint8* byte() const {
-        return m_byte;
+        return static_cast<const uint8*>(m_buffer->buffer());
+    }
+
+    uint8* byte() {
+        return static_cast<uint8*>(m_buffer->buffer());
     }
 
     /** Format of the data in memory.  Not all ImageFormat%s are supported by all methods. */
-    const ImageFormat* imageFormat() {
-        return m_imageFormat;
+    const ImageFormat* imageFormat() const {
+        return m_buffer->format();
     }
 
     /** Returns a pointer to the underlying data, which is stored
@@ -244,26 +237,26 @@ public:
     */
     template<typename Type>
     inline const Type* rawData() const {
-        return (Type*)m_byte;
+        return (Type*)m_buffer->buffer();
     }
 
     /** \copybrief GImage::rawData() const */
     template<typename Type>
     inline Type* rawData() {
-        return (Type*)m_byte;
+        return (Type*)m_buffer->buffer();
     }
 
     inline const Color1unorm8* pixel1() const {
-        debugAssertM(m_imageFormat->representableAsColor1unorm8(), 
-                     format("Tried to call GImage::pixel1 on an image in %s format.", m_imageFormat->name().c_str()));
-        debugAssertM(m_channels == 1, format("Tried to call GImage::pixel1 on an image with %d channels", m_channels));            
+        debugAssertM(imageFormat()->representableAsColor1unorm8(), 
+                     format("Tried to call GImage::pixel1 on an image in %s format.", imageFormat()->name().c_str()));
+        debugAssertM(channels() == 1, format("Tried to call GImage::pixel1 on an image with %d channels", channels()));            
         return rawData<Color1unorm8>();
     }
 
     inline Color1unorm8* pixel1() {
-        debugAssertM(m_imageFormat->representableAsColor1unorm8(), 
-            format("Tried to call GImage::pixel1 on an image in %s format.", m_imageFormat->name().c_str()));
-        debugAssertM(m_channels == 1, format("Tried to call GImage::pixel1 on an image with %d channels", m_channels));            
+        debugAssertM(imageFormat()->representableAsColor1unorm8(), 
+            format("Tried to call GImage::pixel1 on an image in %s format.", imageFormat()->name().c_str()));
+        debugAssertM(channels() == 1, format("Tried to call GImage::pixel1 on an image with %d channels", channels()));            
         return rawData<Color1unorm8>();
     }
 
@@ -273,16 +266,16 @@ public:
         The imageFormat() must be representable by four 8-bit channels.
      */
     inline const Color4unorm8* pixel4() const {
-        debugAssertM(m_imageFormat->representableAsColor4unorm8(), 
-            format("Tried to call GImage::pixel4 on an image in %s format.", m_imageFormat->name().c_str()));
-        debugAssertM(m_channels == 4, format("Tried to call GImage::pixel4 on an image with %d channels", m_channels));            
+        debugAssertM(imageFormat()->representableAsColor4unorm8(), 
+            format("Tried to call GImage::pixel4 on an image in %s format.", imageFormat()->name().c_str()));
+        debugAssertM(channels() == 4, format("Tried to call GImage::pixel4 on an image with %d channels", channels()));            
         return rawData<Color4unorm8>();
     }
 
     inline Color4unorm8* pixel4() {
-        debugAssertM(m_imageFormat->representableAsColor4unorm8(), 
-            format("Tried to call GImage::pixel4 on an image in %s format.", m_imageFormat->name().c_str()));
-        debugAssert(m_channels == 4);
+        debugAssertM(imageFormat()->representableAsColor4unorm8(), 
+            format("Tried to call GImage::pixel4 on an image in %s format.", imageFormat()->name().c_str()));
+        debugAssert(channels() == 4);
         return rawData<Color4unorm8>();
     }
 
@@ -290,60 +283,56 @@ public:
         as Color3unorm8.
      */
     inline const Color3unorm8* pixel3() const {
-        debugAssertM(m_imageFormat->representableAsColor3unorm8(), 
-            format("Tried to call GImage::pixel3 on an image in %s format.", m_imageFormat->name().c_str()));
-         debugAssertM(m_channels == 3, format("Tried to call GImage::pixel3 on an image with %d channels", m_channels));            
+        debugAssertM(imageFormat()->representableAsColor3unorm8(), 
+            format("Tried to call GImage::pixel3 on an image in %s format.", imageFormat()->name().c_str()));
+         debugAssertM(channels() == 3, format("Tried to call GImage::pixel3 on an image with %d channels", channels()));            
         return rawData<Color3unorm8>();
     }
 
     inline Color3unorm8* pixel3() {
-        debugAssertM(m_imageFormat->representableAsColor3unorm8(), 
-            format("Tried to call GImage::pixel3 on an image in %s format.", m_imageFormat->name().c_str()));
-        debugAssert(m_channels == 3);
+        debugAssertM(imageFormat()->representableAsColor3unorm8(), 
+            format("Tried to call GImage::pixel3 on an image in %s format.", imageFormat()->name().c_str()));
+        debugAssert(channels() == 3);
         return rawData<Color3unorm8>();
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
     inline const Color1unorm8& pixel1(int x, int y) const {
-        debugAssert(y >= 0 && y < m_height);
-        return pixel1()[x + y * m_width];
+        debugAssert(y >= 0 && y < height());
+        return pixel1()[x + y * width()];
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
     inline Color1unorm8& pixel1(int x, int y) {
-        debugAssert(x >= 0 && x < m_width);
-        debugAssert(y >= 0 && y < m_height);
-        return pixel1()[x + y * m_width];
+        debugAssert(x >= 0 && x < width());
+        debugAssert(y >= 0 && y < height());
+        return pixel1()[x + y * width()];
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
     inline const Color3unorm8& pixel3(int x, int y) const {
-        debugAssert(x >= 0 && x < m_width);
-        debugAssert(y >= 0 && y < m_height);
-        return pixel3()[x + y * m_width];
+        debugAssert(x >= 0 && x < width());
+        debugAssert(y >= 0 && y < height());
+        return pixel3()[x + y * width()];
     }
 
     inline Color3unorm8& pixel3(int x, int y) {
-        debugAssert(x >= 0 && x < m_width);
-        debugAssert(y >= 0 && y < m_height);
-        return pixel3()[x + y * m_width];
+        debugAssert(x >= 0 && x < width());
+        debugAssert(y >= 0 && y < height());
+        return pixel3()[x + y * width()];
     }
 
     /** Returns the pixel at (x, y), where (0,0) is the upper left. */
     inline const Color4unorm8& pixel4(int x, int y) const {
-        debugAssert(x >= 0 && x < m_width);
-        debugAssert(y >= 0 && y < m_height);
-        return pixel4()[x + y * m_width];
+        debugAssert(x >= 0 && x < width());
+        debugAssert(y >= 0 && y < height());
+        return pixel4()[x + y * width()];
     }
 
     inline Color4unorm8& pixel4(int x, int y) {
-        debugAssert(x >= 0 && x < m_width);
-        debugAssert(y >= 0 && y < m_height);
-        return pixel4()[x + y * m_width];
-    }
-
-    inline uint8* byte() {
-        return m_byte;
+        debugAssert(x >= 0 && x < width());
+        debugAssert(y >= 0 && y < height());
+        return pixel4()[x + y * width()];
     }
 
     /** Predicts the image file format of \a filename */

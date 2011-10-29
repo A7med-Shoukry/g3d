@@ -22,13 +22,13 @@ static const int BI_RGB = 0;
 void GImage::encodeBMP(
     BinaryOutput&       out) const {
 
-    debugAssert(m_channels == 1 || m_channels == 3);
+    debugAssert(channels() == 1 || channels() == 3);
     out.setEndian(G3D_LITTLE_ENDIAN);
 
     uint8 red;
     uint8 green;
     uint8 blue;
-    int pixelBufferSize = m_width * m_height * 3;
+    int pixelBufferSize = width() * height() * 3;
     int fileHeaderSize = 14;
     int infoHeaderSize = 40;
     int BMScanWidth;
@@ -75,8 +75,8 @@ void GImage::encodeBMP(
     out.writeUInt32(infoHeaderSize);
  
     // Width and height of the image
-	out.writeUInt32(m_width);
-    out.writeUInt32(m_height);
+	out.writeUInt32(width());
+    out.writeUInt32(height());
 
     // Planes ("must be set to 1")
     out.writeUInt16(1);
@@ -99,7 +99,7 @@ void GImage::encodeBMP(
     // biClrImportant
     out.writeUInt32(0); 
     
-    BMScanWidth = m_width * 3;
+    BMScanWidth = width() * 3;
 
     if (BMScanWidth & 3) {
         BMPadding = 4 - (BMScanWidth & 3);
@@ -107,31 +107,31 @@ void GImage::encodeBMP(
         BMPadding = 0;
     }
 
-    int hStart = m_height - 1;
+    int hStart = height() - 1;
     int hEnd   = -1;
     int hDir   = -1;
     int dest;
 
     // Write the pixel data
     for (int h = hStart; h != hEnd; h += hDir) {
-        dest = m_channels * h * m_width;
-        for (int w = 0; w < m_width; ++w) {
+        dest = channels() * h * width();
+        for (int w = 0; w < width(); ++w) {
 
-            if (m_channels == 3) {
-                red   = m_byte[dest];
-                green = m_byte[dest + 1];
-                blue  = m_byte[dest + 2];
+            if (channels() == 3) {
+                red   = byte()[dest];
+                green = byte()[dest + 1];
+                blue  = byte()[dest + 2];
             } else {
-                red   = m_byte[dest];
-                green = m_byte[dest];
-                blue  = m_byte[dest];
+                red   = byte()[dest];
+                green = byte()[dest];
+                blue  = byte()[dest];
             }
 
             out.writeUInt8(blue);
             out.writeUInt8(green);
             out.writeUInt8(red);
 
-            dest += m_channels;
+            dest += channels();
         }
 
         if (BMPadding > 0) {
@@ -168,13 +168,12 @@ void GImage::decodeBMP(
         throw Error("Not a BMP file", input.getFilename());
     }
 
-    m_channels = 3;
-    m_imageFormat = ImageFormat::RGB8();
+    const ImageFormat* imageFormat = ImageFormat::RGB8();
 	// Skip to the BITMAPINFOHEADER's width and height
 	input.skip(16);
 
-    m_width  = input.readUInt32();
-    m_height = input.readUInt32();
+    int width  = input.readUInt32();
+    int height = input.readUInt32();
 
 	// Skip to the bit count and compression type
 	input.skip(2);
@@ -227,20 +226,19 @@ void GImage::decodeBMP(
     int hEnd   = 0;
     int hDir   = 0;
 
-    if (m_height < 0) {
-        m_height = -m_height;
+    if (height < 0) {
+        height = -height;
         hStart = 0;
-        hEnd   = m_height;
+        hEnd   = height;
         hDir   = 1;
     } else {
         //height = height;
-        hStart = m_height - 1;
+        hStart = height - 1;
         hEnd   = -1;
         hDir   = -1;
     }
 
-    m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
-    debugAssert(m_byte);
+    m_buffer = ImageBuffer::create(m_memMan, imageFormat, width, height);
 
     int BMScanWidth;
     int BMPadding;
@@ -257,7 +255,7 @@ void GImage::decodeBMP(
         flags = PICTURE_BITMAP | PICTURE_UNCOMPRESSED | PICTURE_MONOCHROME;
 
         // For bitmaps, each scanline is dword-aligned.
-        BMScanWidth = (m_width + 7) >> 3;
+        BMScanWidth = (width + 7) >> 3;
         if (BMScanWidth & 3) {
             BMScanWidth += 4 - (BMScanWidth & 3);
         }
@@ -268,7 +266,7 @@ void GImage::decodeBMP(
         for (int h = hStart; h != hEnd; h += hDir) {
 
             currPixel = 0;
-            dest = 3 * h * m_width;
+            dest = 3 * h * width;
 
             for (int w = 0; w < BMScanWidth; ++w) {
 
@@ -281,12 +279,12 @@ void GImage::decodeBMP(
                 // dword-alignment padding. So we keep checking to see if we've
                 // already read "width" number of pixels.
                 for (int i = 7; i >= 0; --i) {
-                    if (currPixel < m_width) {
+                    if (currPixel < width) {
                         int src  = 3 * ((BMGroup & pow2[i]) >> i);
                     
-                        m_byte[dest]     = palette[src];
-                        m_byte[dest + 1] = palette[src + 1];
-                        m_byte[dest + 2] = palette[src + 2];
+                        byte()[dest]     = palette[src];
+                        byte()[dest + 1] = palette[src + 1];
+                        byte()[dest + 2] = palette[src + 2];
                     
                         ++currPixel;
                         dest += 3;
@@ -300,7 +298,7 @@ void GImage::decodeBMP(
         flags = PICTURE_BITMAP | PICTURE_UNCOMPRESSED | PICTURE_4BIT;
 
         // For bitmaps, each scanline is dword-aligned.
-        int BMScanWidth = (m_width + 1) >> 1;
+        int BMScanWidth = (width + 1) >> 1;
         if (BMScanWidth & 3) {
             BMScanWidth += 4 - (BMScanWidth & 3);
         }
@@ -308,7 +306,7 @@ void GImage::decodeBMP(
         for (int h = hStart; h != hEnd; h += hDir) {
 
             currPixel = 0;
-            dest = 3 * h * m_width;
+            dest = 3 * h * width;
 
             for (int w = 0; w < BMScanWidth; w++) {
 
@@ -325,12 +323,12 @@ void GImage::decodeBMP(
                 // already read "Width" number of pixels.
 
                 for (int i = 0; i < 2; ++i) {
-                    if (currPixel < m_width) {
+                    if (currPixel < width) {
                         int tsrc  = src[i];
                     
-                        m_byte[dest]     = palette[tsrc];
-                        m_byte[dest + 1] = palette[tsrc + 1];
-                        m_byte[dest + 2] = palette[tsrc + 2];
+                        byte()[dest]     = palette[tsrc];
+                        byte()[dest + 1] = palette[tsrc + 1];
+                        byte()[dest + 2] = palette[tsrc + 2];
 
                         ++currPixel;
                         dest += 3;
@@ -344,7 +342,7 @@ void GImage::decodeBMP(
         flags = PICTURE_BITMAP | PICTURE_UNCOMPRESSED | PICTURE_8BIT;
 
         // For bitmaps, each scanline is dword-aligned.
-        BMScanWidth = m_width;
+        BMScanWidth = width;
         if (BMScanWidth & 3) {
             BMScanWidth += 4 - (BMScanWidth & 3);
         }
@@ -357,13 +355,13 @@ void GImage::decodeBMP(
 
                 BMPixel8 = input.readUInt8();
 
-                if (currPixel < m_width) {
-                    dest = 3 * ((h * m_width) + currPixel);
+                if (currPixel < width) {
+                    dest = 3 * ((h * width) + currPixel);
                     int src  = 3 * BMPixel8;
                     
-                    m_byte[dest]     = palette[src];
-                    m_byte[dest + 1] = palette[src + 1];
-                    m_byte[dest + 2] = palette[src + 2];
+                    byte()[dest]     = palette[src];
+                    byte()[dest + 1] = palette[src + 1];
+                    byte()[dest + 2] = palette[src + 2];
                     
                     ++currPixel;
                 }
@@ -372,8 +370,7 @@ void GImage::decodeBMP(
 
     } else if (bitCount == 16) {
 
-        m_memMan->free(m_byte);
-        m_byte = NULL;
+        m_buffer = NULL;
         System::free(palette); 
         palette = NULL;
     	throw Error("16-bit bitmaps not supported", input.getFilename());
@@ -384,7 +381,7 @@ void GImage::decodeBMP(
         flags = PICTURE_BITMAP | PICTURE_UNCOMPRESSED | PICTURE_24BIT;
 
         // For bitmaps, each scanline is dword-aligned.
-        BMScanWidth = m_width * 3;
+        BMScanWidth = width * 3;
 
         if (BMScanWidth & 3) {
             BMPadding = 4 - (BMScanWidth & 3);
@@ -393,16 +390,16 @@ void GImage::decodeBMP(
         }
 
         for (int h = hStart; h != hEnd; h += hDir) {
-            dest = 3 * h * m_width;
-            for (int w = 0; w < m_width; ++w) {
+            dest = 3 * h * width;
+            for (int w = 0; w < width; ++w) {
 
                 blue  = input.readUInt8();
                 green = input.readUInt8();
                 red   = input.readUInt8();
 
-                m_byte[dest]     = red;
-                m_byte[dest + 1] = green;
-                m_byte[dest + 2] = blue;
+                byte()[dest]     = red;
+                byte()[dest + 1] = green;
+                byte()[dest + 2] = blue;
 
                 dest += 3;
             }
@@ -414,8 +411,7 @@ void GImage::decodeBMP(
 
 	} else if (bitCount == 32) {
 
-        m_memMan->free(m_byte);
-        m_byte = NULL;
+        m_buffer = NULL;
         System::free(palette); 
         palette = NULL;
     	throw Error("32 bit bitmaps not supported", input.getFilename());
@@ -423,8 +419,7 @@ void GImage::decodeBMP(
     } else {
         // We support all possible bit depths, so if the
         //     code gets here, it's not even a real bitmap.
-        m_memMan->free(m_byte);
-        m_byte = NULL;
+        m_buffer = NULL;
         throw Error("Not a bitmap!", input.getFilename());
 	}
 
@@ -446,8 +441,7 @@ void GImage::decodeICO(
 	// first one.
 	int count = input.readUInt16();
 
-	m_channels = 4;
-    m_imageFormat = ImageFormat::RGBA8();
+    const ImageFormat* imageFormat = ImageFormat::RGBA8();
 
 	debugAssert(count > 0);
 
@@ -469,12 +463,11 @@ void GImage::decodeICO(
 
     input.skip(maxHeaderNum * 16);
 
-    m_width = input.readUInt8();
-    m_height = input.readUInt8();
+    int width = input.readUInt8();
+    int height = input.readUInt8();
     int numColors = input.readUInt8();
 	
-    m_byte = (uint8*)m_memMan->alloc(m_width * m_height * m_channels);
-    debugAssert(m_byte);
+    m_buffer = ImageBuffer::create(m_memMan, imageFormat, width, height);
 
     // Bit mask for packed bits
     int mask = 0;
@@ -557,14 +550,14 @@ void GImage::decodeICO(
     int hEnd   = 0;
     int hDir   = 0;
 
-    if (m_height < 0) {
-        m_height = -m_height;
+    if (height < 0) {
+        height = -height;
         hStart = 0;
-        hEnd   = m_height;
+        hEnd   = height;
         hDir   = 1;
     } else {
         //height = height;
-        hStart = m_height - 1;
+        hStart = height - 1;
         hEnd   = -1;
         hDir   = -1;
     }
@@ -581,7 +574,7 @@ void GImage::decodeICO(
         // programs only write 1-bit images if they're black-and-white.
 
         // For bitmaps, each scanline is dword-aligned.
-        BMScanWidth = (m_width + 7) >> 3;
+        BMScanWidth = (width + 7) >> 3;
         if (BMScanWidth & 3) {
             BMScanWidth += 4 - (BMScanWidth & 3);
         }
@@ -592,7 +585,7 @@ void GImage::decodeICO(
         for (int h = hStart; h != hEnd; h += hDir) {
 
             currPixel = 0;
-            dest = 3 * h * m_width;
+            dest = 3 * h * width;
 
             for (int w = 0; w < BMScanWidth; ++w) {
 
@@ -605,12 +598,12 @@ void GImage::decodeICO(
                 // dword-alignment padding. So we keep checking to see if we've
                 // already read "width" number of pixels.
                 for (int i = 7; i >= 0; --i) {
-                    if (currPixel < m_width) {
+                    if (currPixel < width) {
                         int src  = ((BMGroup & pow2[i]) >> i);
                     
-                        m_byte[dest]     = palette[src].r.bits();
-                        m_byte[dest + 1] = palette[src].g.bits();
-                        m_byte[dest + 2] = palette[src].b.bits();
+                        byte()[dest]     = palette[src].r.bits();
+                        byte()[dest + 1] = palette[src].g.bits();
+                        byte()[dest + 2] = palette[src].b.bits();
                     
                         ++currPixel;
                         dest += 4;
@@ -622,7 +615,7 @@ void GImage::decodeICO(
 	} else if (bitsPerPixel == 4) {
 
         // For bitmaps, each scanline is dword-aligned.
-        int BMScanWidth = (m_width + 1) >> 1;
+        int BMScanWidth = (width + 1) >> 1;
         if (BMScanWidth & 3) {
             BMScanWidth += 4 - (BMScanWidth & 3);
         }
@@ -630,7 +623,7 @@ void GImage::decodeICO(
         for (int h = hStart; h != hEnd; h += hDir) {
 
             currPixel = 0;
-            dest = 4 * h * m_width;
+            dest = 4 * h * width;
 
             for (int w = 0; w < BMScanWidth; w++) {
 
@@ -647,12 +640,12 @@ void GImage::decodeICO(
                 // already read "Width" number of pixels.
 
                 for (int i = 0; i < 2; ++i) {
-                    if (currPixel < m_width) {
+                    if (currPixel < width) {
                         int tsrc  = src[i];
                     
-                        m_byte[dest]     = palette[tsrc].r;
-                        m_byte[dest + 1] = palette[tsrc].g;
-                        m_byte[dest + 2] = palette[tsrc].b;
+                        byte()[dest]     = palette[tsrc].r;
+                        byte()[dest + 1] = palette[tsrc].g;
+                        byte()[dest + 2] = palette[tsrc].b;
 
                         ++currPixel;
                         dest += 4;
@@ -664,7 +657,7 @@ void GImage::decodeICO(
 	} else if (bitsPerPixel == 8) {
         
         // For bitmaps, each scanline is dword-aligned.
-        BMScanWidth = m_width;
+        BMScanWidth = width;
         if (BMScanWidth & 3) {
             BMScanWidth += 4 - (BMScanWidth & 3);
         }
@@ -677,13 +670,13 @@ void GImage::decodeICO(
 
                 BMPixel8 = input.readUInt8();
 
-                if (currPixel < m_width) {
-                    dest = 4 * ((h * m_width) + currPixel);
+                if (currPixel < width) {
+                    dest = 4 * ((h * width) + currPixel);
                     int src  = BMPixel8;
                     
-                    m_byte[dest]     = palette[src].r;
-                    m_byte[dest + 1] = palette[src].g;
-                    m_byte[dest + 2] = palette[src].b;
+                    byte()[dest]     = palette[src].r;
+                    byte()[dest + 1] = palette[src].g;
+                    byte()[dest + 2] = palette[src].b;
                     
                     ++currPixel;
                 }
@@ -692,7 +685,7 @@ void GImage::decodeICO(
     }
 
 	// Read the mask into the alpha channel
-	int bitsPerRow  = m_width;
+	int bitsPerRow  = width;
 	int bytesPerRow = iCeil((double)bitsPerRow / 8);
 
     // For bitmaps, each scanline is dword-aligned.
@@ -701,12 +694,12 @@ void GImage::decodeICO(
         bytesPerRow += 4 - (bytesPerRow & 3);
     }
     
-    for (int y = m_height - 1; y >= 0; --y) {
+    for (int y = height - 1; y >= 0; --y) {
         int x = 0;
         // Read the row
         for (int i = 0; i < bytesPerRow; ++i) {
             uint8 byte = input.readUInt8();
-            for (int j = 0; (j < 8) && (x < m_width); ++x, ++j) {
+            for (int j = 0; (j < 8) && (x < width); ++x, ++j) {
                 int bit = (byte >> (7 - j)) & 0x01;
                 pixel4(x, y).a = unorm8::fromBits((1 - bit) * 0xFF);
             }

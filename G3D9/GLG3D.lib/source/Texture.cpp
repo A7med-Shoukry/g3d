@@ -584,6 +584,105 @@ Texture::Texture(
 }
 
 
+///// Texture ImageBuffer interface start
+
+Texture::Texture(const std::string&         name,
+                 const MipsPerCubeFace&     mipsPerCubeFace,
+                 Dimension                  dimension,
+                 InterpolateMode            interpolation,
+                 WrapMode                   wrapping,
+                 const ImageFormat*         desiredFormat,
+                 const Settings&            settings)
+    : m_textureID(0)
+    , m_settings(settings)
+    , m_name(name)
+    , m_dimension(dimension)
+    , m_opaque(desiredFormat->opaque)
+    , m_format(desiredFormat)
+    , m_width(0)
+    , m_height(0)
+    , m_depth(0)
+    , m_min(Color4::nan())
+    , m_max(Color4::nan())
+    , m_mean(Color4::nan()) {
+
+    // Verify that enough ImageBuffer's were passed in to create a texture
+    debugAssert(mipsPerCubeFace.length() > 0);
+    debugAssert(mipsPerCubeFace[0].length() > 0);
+
+    if (mipsPerCubeFace.length() == 0 || mipsPerCubeFace[0].length() == 0) {
+        debugAssertM(false, "Cannot create Texture without source images");
+        return;
+    }
+
+    // Validate settings are valid before pre-processing and uploading
+    if (! validateSettings()) {
+        // validateSettings should throw any asserts necessary
+        return;
+    }
+
+    // Generate texture id and configure texture settings
+    configureTexture(mipsPerCubeFace);
+
+    // Preprocess texture and possibly return new buffers
+    // TODO: Should we allow editing in-place?
+    const MipsPerCubeFace& preprocessedImages = preprocessImages(mipsPerCubeFace);
+
+    uploadImages(preprocessedImages);
+
+    m_sizeOfAllTexturesInMemory += sizeInMemory();
+}
+
+bool Texture::validateSettings() {
+    return true;
+}
+
+void Texture::configureTexture(const MipsPerCubeFace& mipsPerCubeFace) {
+    // Get new texture from OpenGL
+    m_textureID = newGLTextureID();
+    debugAssertGLOk();
+
+    const ImageBuffer::Ref& fullImage = mipsPerCubeFace[0][0];
+
+    // Get image dimensions
+    m_width = fullImage->width();
+    m_height = fullImage->height();
+    m_depth = fullImage->depth();
+
+    glStatePush();
+    {
+        // Behind texture to target for configuration
+        GLenum target = dimensionToTarget(m_dimension);
+        glBindTexture(target, m_textureID);
+        debugAssertGLOk();
+
+        // Configure target texture settings
+        setTexParameters(target, m_settings);
+        debugAssertGLOk();
+    }
+    glStatePop();
+    debugAssertGLOk();
+}
+
+Texture::MipsPerCubeFace Texture::preprocessImages(const MipsPerCubeFace& mipsPerCubeFace) {
+    return mipsPerCubeFace;
+}
+
+void Texture::uploadImages(const MipsPerCubeFace& mipsPerCubeFace) {
+    glBindTexture(openGLTextureTarget(), m_textureID);
+    debugAssertGLOk();
+
+    for (int mipIndex = 0; mipIndex < mipsPerCubeFace[0].length(); ++mipIndex) {
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glTexImage2D(openGLTextureTarget(), mipIndex, m_format->openGLFormat, m_width, m_height, 0, mipsPerCubeFace[0][mipIndex]->format()->openGLBaseFormat, mipsPerCubeFace[0][mipIndex]->format()->openGLDataFormat, mipsPerCubeFace[0][mipIndex]->buffer());
+        debugAssertGLOk();
+    }
+}
+
+
+///// Texture ImageBuffer interface end
+
+
 Texture::Ref Texture::fromMemory(
     const std::string&              name,
     const void*                     bytes,
@@ -1312,6 +1411,25 @@ Texture::Ref Texture::fromGImage(
     return t;
 }
 
+Texture::Ref Texture::fromImageBuffer(
+    const std::string&              name,
+    const ImageBuffer::Ref&         image,
+    const ImageFormat*              desiredFormat,
+    Dimension                       dimension,
+	const Settings&					settings,
+	const Preprocess&				preprocess) {
+
+    Array< Array< ImageBuffer::Ref > > mips;
+    mips.append( Array< ImageBuffer::Ref >() );
+    mips[0].append(image);
+
+    if (desiredFormat == ImageFormat::AUTO()) {
+        desiredFormat = image->format();
+    }
+
+    Texture::Ref t = new Texture(name, mips, dimension, settings.interpolateMode, settings.wrapMode, desiredFormat, settings);
+    return t;
+}
 
 Texture::Ref Texture::createEmpty
 (const std::string&               name,
@@ -1913,14 +2031,13 @@ void Texture::setTexParameters
     debugAssert(
         target == GL_TEXTURE_2D ||
         target == GL_TEXTURE_RECTANGLE_EXT ||
-        target == GL_TEXTURE_CUBE_MAP_ARB ||
+        target == GL_TEXTURE_CUBE_MAP ||
         target == GL_TEXTURE_3D);
 
     debugAssertGLOk();
 
     // Set the wrap and interpolate state
 
-    bool supports3D = GLCaps::supports_GL_EXT_texture3D();
     GLenum mode = GL_NONE;
     
     switch (settings.wrapMode) {
@@ -1952,9 +2069,7 @@ void Texture::setTexParameters
     
     glTexParameteri(target, GL_TEXTURE_WRAP_S, mode);
     glTexParameteri(target, GL_TEXTURE_WRAP_T, mode);
-    if (supports3D) {
-        glTexParameteri(target, GL_TEXTURE_WRAP_R, mode);
-    }
+    glTexParameteri(target, GL_TEXTURE_WRAP_R, mode);
 
     debugAssertGLOk();
 

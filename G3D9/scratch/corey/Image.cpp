@@ -192,11 +192,15 @@ void Image::set(const Point2int32& pos, const Color3unorm8& color) {
 }
 
 ImageBuffer::Ref Image::copyBuffer() {
-    ImageBuffer::Ref buffer = ImageBuffer::create(AlignedMemoryManager::create(), m_format, m_image.getWidth(), m_image.getHeight(), 1, 16);
+    ImageBuffer::Ref buffer = ImageBuffer::create(AlignedMemoryManager::create(), m_format, m_image.getWidth(), m_image.getHeight(), 1, 1);
 
     BYTE* pixels = m_image.accessPixels();
     if (pixels) {
-        System::memcpy(buffer->buffer(), pixels, buffer->size());
+        int rowStride = buffer->width() * (m_format->cpuBitsPerPixel / 8);
+
+        for (int row = 0; row < buffer->height(); ++row) {
+            System::memcpy(buffer->row(row), m_image.getScanLine(row), rowStride);
+        }
     }
 
     return buffer;
@@ -221,7 +225,7 @@ const ImageFormat* Image::determineImageFormat() const {
                     break;
 
                 case 24:
-                    imageFormat = ImageFormat::RGB8();
+                    imageFormat = ImageFormat::BGR8();
                     break;
 
                 case 32:

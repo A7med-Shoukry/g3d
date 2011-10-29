@@ -23,6 +23,7 @@
 #include "G3D/Image3unorm8.h"
 #include "G3D/Image4.h"
 #include "G3D/Image4unorm8.h"
+#include "G3D/ImageBuffer.h"
 #include "G3D/BumpMapPreprocess.h"
 #include "GLG3D/glheaders.h"
 
@@ -95,8 +96,6 @@ typedef ReferenceCountedPointer<Texture> TextureRef;
  */
 class Texture : public ReferenceCountedObject {
 public:
-
-
 
     struct CubeMapInfo {
         struct Face {
@@ -618,6 +617,23 @@ public:
     };
 
 private:
+    // New texture creation functions for ImageBuffer::Ref interface
+    typedef Array< Array<ImageBuffer::Ref> > MipsPerCubeFace;
+
+    bool            validateSettings();
+    void            configureTexture(const MipsPerCubeFace& mipsPerCubeFace);
+    MipsPerCubeFace preprocessImages(const MipsPerCubeFace& mipsPerCubeFace);
+    void            uploadImages(const MipsPerCubeFace& mipsPerCubeFace);
+
+    Texture(const std::string&          name,
+            const MipsPerCubeFace&      mipsPerCubeFace,
+            Dimension                   dimension,
+            InterpolateMode             interpolation,
+            WrapMode                    wrapping,
+            const ImageFormat*          format,
+            const Settings&             settings); 
+
+private:
 
     /** OpenGL texture ID */
     GLuint                          m_textureID;
@@ -647,7 +663,7 @@ private:
      const ImageFormat*          format,
      bool                        opaque,
      const Settings&             settings);
-    
+
 public:
 
     /** Used to display this Texture in a GuiTextureBox \beta */
@@ -893,6 +909,14 @@ public:
     static Texture::Ref fromGImage(
         const std::string&              name,
         const GImage&                   image,
+        const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
+        Dimension                       dimension      = defaultDimension(),
+        const Settings&                 settings       = Settings::defaults(),
+        const Preprocess&               preprocess     = Preprocess::defaults());
+
+    static Texture::Ref fromImageBuffer(
+        const std::string&              name,
+        const ImageBuffer::Ref&          image,
         const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
         Dimension                       dimension      = defaultDimension(),
         const Settings&                 settings       = Settings::defaults(),

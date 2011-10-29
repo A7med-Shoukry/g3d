@@ -23,14 +23,14 @@ void GImage::encodePPMASCII(
     ppmOptions.wordWrap = TextOutput::Settings::WRAP_WITHOUT_BREAKING;
     TextOutput ppm(ppmOptions);
 
-    switch (m_channels) {
+    switch (channels()) {
     case 1:
         {
-            ppm.printf("P2\n%d %d\n255\n", m_width, m_height);
+            ppm.printf("P2\n%d %d\n255\n", width(), height());
             
             const Color1unorm8* c = this->pixel1();
             // Insert newlines every 70 characters max
-            for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
+            for (uint32 i = 0; i < (uint32)(width() * height()); ++i) {
                 ppm.printf("%d%c", c[i].value.bits(), (i % (70/4) == 0) ? '\n' : ' '); 
             }
         }
@@ -38,11 +38,11 @@ void GImage::encodePPMASCII(
 
     case 3:
         {
-            ppm.printf("P3\n%d %d\n255\n", m_width, m_height);
+            ppm.printf("P3\n%d %d\n255\n", width(), height());
             
             const Color3unorm8* c = this->pixel3();
             // Insert newlines every 70 characters max
-            for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
+            for (uint32 i = 0; i < (uint32)(width() * height()); ++i) {
                 ppm.printf("%d %d %d%c", c[i].r.bits(), c[i].g.bits(), c[i].b.bits(), 
                     (i % (70/12) == 0) ?
                            '\n' : ' '); 
@@ -62,14 +62,14 @@ void GImage::encodePPM(
     BinaryOutput&       out) const {
 
     // http://netpbm.sourceforge.net/doc/ppm.html
-    if (m_channels == 3) {
-        std::string header = format("P6 %d %d 255 ", m_width, m_height);
+    if (channels() == 3) {
+        std::string header = format("P6 %d %d 255 ", width(), height());
         out.writeBytes(header.c_str(), header.size());
-        out.writeBytes(this->pixel3(), m_width * m_height * 3);
-    } else if (m_channels == 1) {
-        std::string header = format("P5 %d %d 255 ", m_width, m_height);
+        out.writeBytes(this->pixel3(), width() * height() * 3);
+    } else if (channels() == 1) {
+        std::string header = format("P5 %d %d 255 ", width(), height());
         out.writeBytes(header.c_str(), header.size());
-        out.writeBytes(this->pixel1(), m_width * m_height);
+        out.writeBytes(this->pixel1(), width() * height());
     } else {
         alwaysAssertM(false, "PPM requires either 1 or 3 channels exactly.");
     }
@@ -121,16 +121,14 @@ void GImage::decodePPMASCII(
         maxColor = 255.0;
     }
 
-    m_width = ppmWidth;
-    m_height = ppmHeight;
-    m_channels = 3;
-    m_imageFormat = ImageFormat::RGB8();
+    int width = ppmWidth;
+    int height = ppmHeight;
     // always scale down to 1 byte per channel
-    m_byte = (uint8*)m_memMan->alloc(m_width * m_height * 3);
+    m_buffer = ImageBuffer::create(m_memMan, ImageFormat::RGB8(), width, height);
 
     // Read in the image data.  I am not validating if the values match the maxColor
     // requirements.  I only scale if needed to fit within the byte available.
-    for (uint32 i = 0; i < (uint32)(m_width * m_height); ++i) {
+    for (uint32 i = 0; i < (uint32)(width * height); ++i) {
         // read in color and scale to max pixel defined in header
         // A max color less than 255 might need to be left alone and not scaled.
         Color3unorm8& curPixel = *(pixel3() + i);
@@ -207,11 +205,11 @@ void GImage::decodePPM(
     if (head[1] == '6') {
         // 3 channel
         resize(w, h, 3);
-        input.readBytes(m_byte, m_width * m_height * 3);
+        input.readBytes(byte(), width() * height() * 3);
     } else if (head[1] == '5') {
         // 1 channel
         resize(w, h, 1);
-        input.readBytes(m_byte, m_width * m_height);
+        input.readBytes(byte(), width() * height());
     }
 }
 

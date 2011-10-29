@@ -16,6 +16,8 @@ public:
     MD3Model::Ref       model;
     MD3Model::Pose      modelPose;
 
+    Texture::Ref        imgTexture;
+
     //irrklang::ISoundEngine* irrklangDevice;
 
     App(const GApp::Settings& settings = GApp::Settings());
@@ -62,12 +64,6 @@ int main(int argc, char** argv) {
         }
 #   endif
 
-    FreeImage_Initialise();
-    Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\3ds\\spaceFighter01\\diffuse.jpg");
-    Color4 c;
-    img->get(Point2int32(0, 0), c);
-    FreeImage_DeInitialise();
-
     return App(settings).run();
 
 }
@@ -97,17 +93,23 @@ void App::onInit() {
 
     //GuiTheme::Ref theme = GuiTheme::fromFile("osx_new.gtm");
     
-    MD3Model::Skin::Ref skin = MD3Model::Skin::create(dataDir + "/md3/chaos-marine/models/players/chaos-marine/", "default");
+    //MD3Model::Skin::Ref skin = MD3Model::Skin::create(dataDir + "/md3/chaos-marine/models/players/chaos-marine/", "default");
 
     MD3Model::Specification spec;
     spec.directory = dataDir + "/md3/chaos-marine/models/players/chaos-marine/";
-    spec.defaultSkin = skin;
+    //spec.defaultSkin = skin;
 
-    model = MD3Model::create(spec);
+    //model = MD3Model::create(spec);
 
-    modelPose.anim[MD3Model::PART_LOWER] = MD3Model::LOWER_WALK;
-    modelPose.anim[MD3Model::PART_UPPER] = MD3Model::UPPER_STAND;
+    //modelPose.anim[MD3Model::PART_LOWER] = MD3Model::LOWER_WALK;
+    //modelPose.anim[MD3Model::PART_UPPER] = MD3Model::UPPER_STAND;
 
+    FreeImage_Initialise();
+    {
+        Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\3ds\\spaceFighter01\\diffuse.jpg");
+        imgTexture = Texture::fromImageBuffer("imgTexture", img->copyBuffer());
+    }
+    FreeImage_DeInitialise();
 
 	// start the sound engine with default parameters
 	//irrklangDevice = irrklang::createIrrKlangDevice();
@@ -137,8 +139,8 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 
     //irrklangDevice->play2D("test.wmv");
 
-    modelPose.time[MD3Model::PART_LOWER] += sdt;
-    modelPose.time[MD3Model::PART_UPPER] += sdt;
+    //modelPose.time[MD3Model::PART_LOWER] += sdt;
+    //modelPose.time[MD3Model::PART_UPPER] += sdt;
 }
 
 
@@ -170,7 +172,7 @@ void App::onUserInput(UserInput* ui) {
 void App::onPose(Array<Surface::Ref>& posed3D, Array<Surface2D::Ref>& posed2D) {
     GApp::onPose(posed3D, posed2D);
 
-    model->pose(posed3D, CoordinateFrame(), modelPose);
+    //model->pose(posed3D, CoordinateFrame(), modelPose);
 }
 
 
@@ -186,6 +188,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
 
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
+
+    rd->push2D();
+    rd->setTexture(0, imgTexture);
+    Draw::fastRect2D(Rect2D::xywh(0, 0, 256, 256), rd);
+    rd->pop2D();
 }
 
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {

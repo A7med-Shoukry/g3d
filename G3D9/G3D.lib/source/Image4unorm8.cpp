@@ -27,8 +27,8 @@ void Image4unorm8::speedSerialize(class BinaryOutput& b) const {
     b.writeInt32(ImageFormat::CODE_RGBA8);
     
     // Write the data
-    GImage temp(GImage::SHARE_DATA, (uint8*)data.getCArray(), w, h, format());
-    temp.encode(GImage::PNG, b);
+    //GImage temp(GImage::SHARE_DATA, (uint8*)data.getCArray(), w, h, format());
+    //temp.encode(GImage::PNG, b);
 }
 
     
@@ -47,9 +47,9 @@ Image4unorm8::Ref Image4unorm8::speedCreate(class BinaryInput& b) {
     Ref im = createEmpty(w, h, wrap);
 
     // Read the data
-    GImage temp(GImage::SHARE_DATA, (uint8*)im->data.getCArray(), im->w, im->h, im->format());
-    temp.decode(b, GImage::PNG);
-    alwaysAssertM(im->data.getCArray() == temp.pixel4(), "GImage::decode failed to use the memory provided");
+    //GImage temp(GImage::SHARE_DATA, (uint8*)im->data.getCArray(), im->w, im->h, im->format());
+    //temp.decode(b, GImage::PNG);
+    //alwaysAssertM(im->data.getCArray() == temp.pixel4(), "GImage::decode failed to use the memory provided");
 
     return im;
 }

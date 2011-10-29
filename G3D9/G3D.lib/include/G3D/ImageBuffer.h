@@ -44,8 +44,10 @@ public:
     ~ImageBuffer();
 
     const ImageFormat* format() const   { return m_format; }
-    int rowAlignment() const            { return m_rowAlignment; }
+
     int size() const                    { return m_width * m_height * m_depth * m_rowStride; }
+    int rowAlignment() const            { return m_rowAlignment; }
+    int stride() const                  { return m_rowStride; }
 
     int width() const                   { return m_width; }
     int height() const                  { return m_height; }

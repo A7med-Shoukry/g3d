@@ -34,19 +34,19 @@ void GImage::encodeTGA(
     out.writeUInt16(0);
 
     // Width & height
-    out.writeUInt16(m_width);
-    out.writeUInt16(m_height);
+    out.writeUInt16(width());
+    out.writeUInt16(height());
 
     // Color depth
-    if (m_channels == 1) {
+    if (channels() == 1) {
         // Force RGB mode
         out.writeUInt8(8 * 3);
     } else {
-        out.writeUInt8(8 * m_channels);
+        out.writeUInt8(8 * channels());
     }
 
     // Image descriptor
-    if (m_channels < 4) {
+    if (channels() < 4) {
         // 0 alpha bits
         out.writeUInt8(0);
     } else {
@@ -56,21 +56,21 @@ void GImage::encodeTGA(
 
     // Image ID (zero length)
 
-    if (m_channels == 1) {
+    if (channels() == 1) {
         // Pixels are upside down in BGR format.
-        for (int y = m_height - 1; y >= 0; --y) {
-            for (int x = 0; x < m_width; ++x) {
-                uint8 p = (m_byte[(y * m_width + x)]);
+        for (int y = height() - 1; y >= 0; --y) {
+            for (int x = 0; x < width(); ++x) {
+                uint8 p = (byte()[(y * width() + x)]);
                 out.writeUInt8(p);
                 out.writeUInt8(p);
                 out.writeUInt8(p);
             }
         }
-    } else if (m_channels == 3) {
+    } else if (channels() == 3) {
         // Pixels are upside down in BGR format.
-        for (int y = m_height - 1; y >= 0; --y) {
-            for (int x = 0; x < m_width; ++x) {
-                uint8* p = &(m_byte[3 * (y * m_width + x)]);
+        for (int y = height() - 1; y >= 0; --y) {
+            for (int x = 0; x < width(); ++x) {
+                const uint8* p = &(byte()[3 * (y * width() + x)]);
                 out.writeUInt8(p[2]);
                 out.writeUInt8(p[1]);
                 out.writeUInt8(p[0]);
@@ -78,9 +78,9 @@ void GImage::encodeTGA(
         }
     } else {
         // Pixels are upside down in BGRA format.
-        for (int y = m_height - 1; y >= 0; --y) {
-            for (int x = 0; x < m_width; ++x) {
-                uint8* p = &(m_byte[4 * (y * m_width + x)]);
+        for (int y = height() - 1; y >= 0; --y) {
+            for (int x = 0; x < width(); ++x) {
+                const uint8* p = &(byte()[4 * (y * width() + x)]);
                 out.writeUInt8(p[2]);
                 out.writeUInt8(p[1]);
                 out.writeUInt8(p[0]);
@@ -143,8 +143,8 @@ void GImage::decodeTGA(
     // Skip x and y offsets
     input.skip(4); 
 
-    m_width  = input.readInt16();
-    m_height = input.readInt16();
+    int width  = input.readInt16();
+    int height = input.readInt16();
 
     int colorDepth = input.readUInt8();
 
@@ -152,12 +152,9 @@ void GImage::decodeTGA(
         throw Error("TGA files must be 24 or 32 bit.", input.getFilename());
     }
 
+    const ImageFormat* imageFormat = ImageFormat::RGB8();
     if (colorDepth == 32) {
-        m_channels = 4;
-        m_imageFormat = ImageFormat::RGBA8();
-    } else {
-        m_channels = 3;
-        m_imageFormat = ImageFormat::RGB8();
+        imageFormat = ImageFormat::RGBA8();
     }
 
     // Image descriptor contains overlay data as well
@@ -168,8 +165,7 @@ void GImage::decodeTGA(
     // Image ID
     input.skip(IDLength);
 
-    m_byte = (uint8*)m_memMan->alloc(m_width * m_height * m_channels);
-    debugAssert(m_byte);
+    m_buffer = ImageBuffer::create(m_memMan, imageFormat, width, height);
 	
     // Pixel data
     int x;
@@ -177,39 +173,39 @@ void GImage::decodeTGA(
 
     if (imageType == 2) {
         // Uncompressed
-        if (m_channels == 3) {
-            for (y = m_height - 1; y >= 0; --y) {
-              for (x = 0; x < m_width; ++x) {
-                int i = (x + y * m_width) * 3;
-                readBGR(m_byte + i, input);
+        if (channels() == 3) {
+            for (y = height - 1; y >= 0; --y) {
+              for (x = 0; x < width; ++x) {
+                int i = (x + y * width) * 3;
+                readBGR(byte() + i, input);
               }
             }
         } else {
-            for (y = m_height - 1; y >= 0; --y) {
-              for (x = 0; x < m_width; ++x) {
-                 int i = (x + y * m_width) * 4;
-                 readBGRA(m_byte + i, input);
+            for (y = height - 1; y >= 0; --y) {
+              for (x = 0; x < width; ++x) {
+                 int i = (x + y * width) * 4;
+                 readBGRA(byte() + i, input);
               }
             }
         }
     } else if (imageType == 10) {
 
         // Run-length encoded 
-        for (y = m_height - 1; y >= 0; --y) {
-            for (int x = 0; x < m_width; /* intentionally no x increment */) {
+        for (y = height - 1; y >= 0; --y) {
+            for (int x = 0; x < width; /* intentionally no x increment */) {
                 // The specification guarantees that no packet will wrap past the end of a row
                 const uint8 repetitionCount = input.readUInt8();
                 const uint8 numValues = (repetitionCount & (~128)) + 1;
-                int byteOffset = (x + y * m_width) * 3;
+                int byteOffset = (x + y * width) * 3;
 
                 if (repetitionCount & 128) {
                     // When the high bit is 1, this is a run-length packet
-                    if (m_channels == 3) {
+                    if (channels() == 3) {
                         Color3unorm8 value;
                         readBGR((uint8*)(&value), input);
                         for (int i = 0; i < numValues; ++i, ++x) {
                             for (int b = 0; b < 3; ++b, ++byteOffset) {
-                                m_byte[byteOffset] = value[b];
+                                byte()[byteOffset] = value[b];
                             }
                         }
                     } else {
@@ -217,15 +213,15 @@ void GImage::decodeTGA(
                         readBGRA((uint8*)(&value), input);
                         for (int i = 0; i < numValues; ++i, ++x) {
                             for (int b = 0; b < 3; ++b, ++byteOffset) {
-                                m_byte[byteOffset] = value[b];
+                                byte()[byteOffset] = value[b];
                             }
                         }
                     }
 
                 } else {
                     // When the high bit is 0, this is a raw packet
-                    for (int i = 0; i < numValues; ++i, ++x, byteOffset += m_channels) {
-                        readBGR(m_byte + byteOffset, input);
+                    for (int i = 0; i < numValues; ++i, ++x, byteOffset += channels()) {
+                        readBGR(byte() + byteOffset, input);
                     }
                 }
             }
