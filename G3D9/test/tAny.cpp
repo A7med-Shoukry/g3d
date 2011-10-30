@@ -1,13 +1,13 @@
 /**
- @file tAny.cpp
+ \file tAny.cpp
   
- @author Shawn Yarbrough
- @author Morgan McGuire  
+ \author Morgan McGuire  
+ \author Shawn Yarbrough
 
- @created 2009-11-03
- @edited  2009-12-06
+ \created 2009-11-03
+ \edited  2011-10-30
 
- Copyright 2000-2009, Morgan McGuire.
+ Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
  */
 
@@ -192,6 +192,7 @@ static void testPlaceholder() {
     try {
         Any t(Any::TABLE);
         Any& a = t["hello"];
+        (void)a;
     } catch (const Any::KeyNotFound& e) { 
         debugAssert(false);
         (void)e;
@@ -212,8 +213,7 @@ static void testParse() {
         const std::string& src =  
         "{v = 1,\r\n/*\r\n*/\r\nx = 1}";
 
-        Any a;
-        a.parse(src);
+        Any a = Any::parse(src);
         debugAssert(a.type() == Any::TABLE);
         debugAssert(a.size() == 2);
 
@@ -234,8 +234,7 @@ static void testParse() {
            val2 = true\n\
         }";
 
-        Any a;
-        a.parse(src);
+        Any a = Any::parse(src);
         debugAssert(a.type() == Any::TABLE);
         debugAssert(a.size() == 3);
 
@@ -255,10 +254,6 @@ static void testTableReader() {
     float f = 0;
     bool b = true;
 
-    // Test case insensitive reading
-    r.get("hi", f);
-    debugAssert(f == 3);
-
     f = 0;
     r.get("HI", f);
     debugAssert(f == 3);
@@ -270,7 +265,7 @@ static void testTableReader() {
 void testAny() {
 
     printf("G3D::Any ");
-//    testTableReader();
+    testTableReader();
     testParse();
 
     testRefCount1();

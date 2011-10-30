@@ -27,7 +27,7 @@ static void testEuler() {
     Matrix3 rY = Matrix3::fromAxisAngle(Vector3::unitY(), y);
     Matrix3 rZ = Matrix3::fromAxisAngle(Vector3::unitZ(), z);
     Matrix3 rot = rZ * rX * rY;
-    rot.toEulerAnglesZXY(x2, y2, z2);
+    rot.toEulerAnglesZXY(z2, x2, y2);
     debugAssert(fuzzyEq(x, x2));
     debugAssert(fuzzyEq(y, y2));
     debugAssert(fuzzyEq(z, z2));
@@ -152,7 +152,7 @@ void testMatrix3() {
     Matrix3 test( Matrix3::fromAxisAngle(axis, angle) );
     debugAssert(fuzzyEq(test.determinant(), 1.0f));
 
-    //testEuler();
+    testEuler();
 
     {
         Matrix3 M = Matrix3::identity();

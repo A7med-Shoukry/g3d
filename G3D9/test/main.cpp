@@ -1,5 +1,5 @@
 /**
- @file Test/main.cpp
+ \file test/main.cpp
 
  This file runs unit conformance and performance tests for G3D.  
  To write a new test, add a file named t<class>.cpp to the project
@@ -8,9 +8,9 @@
 
  Call those two methods from main() in main.cpp.
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- @created 2002-01-01
- @edited  2010-03-03
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \created 2002-01-01
+ \edited  2011-10-30
  */
 
 #include "G3D/G3D.h"
@@ -454,30 +454,6 @@ void measureNormalizationPerformance() {
 }
 
 
-void testColor3unorm8Array() {
-    printf("Array<Color3unorm8>\n");
-    Array<Color3unorm8> x;
-    x.resize(2);
-
-    debugAssert(sizeof(Color3unorm8) == 3);
-    x[0].r = unorm8::fromBits(60);
-    x[0].g = unorm8::fromBits(61);
-    x[0].b = unorm8::fromBits(62);
-    x[1].r = unorm8::fromBits(63);
-    x[1].g = unorm8::fromBits(64);
-    x[1].b = unorm8::fromBits(65);
-
-    uint8* y = (uint8*)x.getCArray();
-    (void)y;
-    debugAssert(y[0] == unorm8::fromBits(60));
-    debugAssert(y[1] == unorm8::fromBits(61));
-    debugAssert(y[2] == unorm8::fromBits(62));
-    debugAssert(y[3] == unorm8::fromBits(63));
-    debugAssert(y[4] == unorm8::fromBits(64));
-    debugAssert(y[5] == unorm8::fromBits(65));
-}
-
-
 
 void testFloat() {
     printf("Test Float\n");
@@ -766,13 +742,15 @@ int main(int argc, char* argv[]) {
 
     printf("\n\nTests:\n\n");
 
+    testMatrix();
+
+    testAny();
+
     testBinaryIO();
 
     testSpeedLoad();
 
     testReliableConduit(NetworkDevice::instance());
-
-    testAny();
 
     testFileSystem();
 
@@ -787,8 +765,6 @@ int main(int argc, char* argv[]) {
     testImageConvert();
 
     testKDTree();
-
-    testMatrix();
 
     testLineSegment2D();
 
@@ -866,8 +842,6 @@ int main(int argc, char* argv[]) {
     testBox2D();
     printf("  passed\n");
 
-    testColor3unorm8Array();
-    printf("  passed\n");
     testglFormatOf();
     printf("  passed\n");
     testSwizzle();
