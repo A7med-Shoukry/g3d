@@ -35,7 +35,7 @@ class CPUVertexArray;
    \brief An optimized implementation G3D::Surface for
    G3D::SuperShader / G3D::Material classes.
 
-   Used by G3D::ArticulatedModel.
+   Used by G3D::ArticulatedModel2, G3D::MD2Model, G3D::MD3Model
  */
 class SuperSurface : public Surface {
 public:
@@ -61,7 +61,7 @@ public:
         primitive using RenderDevice::sendIndices inside a
         RenderDevice::beginIndexedPrimitives() block.
         
-        \sa G3D::MeshAlg, G3D::ArticulatedModel, G3D::Surface, G3D::CPUVertexArray
+        \sa G3D::MeshAlg, G3D::ArticulatedModel2, G3D::Surface, G3D::CPUVertexArray
     */
     class GPUGeom : public ReferenceCountedObject {
     public:

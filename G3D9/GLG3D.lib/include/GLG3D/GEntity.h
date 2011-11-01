@@ -9,7 +9,6 @@
 
 #include "G3D/CoordinateFrame.h"
 #include "G3D/PhysicsFrameSpline.h"
-#include "GLG3D/ArticulatedModel.h"
 #include "GLG3D/ArticulatedModel2.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"
@@ -32,7 +31,6 @@ public:
 protected:
 
     enum ModelType {
-        ARTICULATED_MODEL,
         ARTICULATED_MODEL2,
         MD2_MODEL,
         MD3_MODEL
@@ -59,20 +57,6 @@ protected:
         decide if m_sourceAny is out of date. */
     bool                            m_frameSplineChanged;
     
-    //////////////////////////////////////////////
-
-    /** Current pose */
-    ArticulatedModel::Pose          m_artPose;
-
-    /** Pose for the previous onSimulation */
-    ArticulatedModel::Pose          m_artPreviousPose;
-
-    /** Pose over time. */
-    ArticulatedModel::PoseSpline    m_artPoseSpline;
-
-    ArticulatedModel::Ref           m_artModel;
-
-    //////////////////////////////////////////////
 
     /** Current pose */
     ArticulatedModel2::Pose          m_art2Pose;
@@ -127,7 +111,7 @@ protected:
        If specified, the castsShadows field overwrites the pose's castsShadows field.  This is a load-time convenience. 
 
        \param modelTable Maps model names that are referenced in \a propertyTable
-       to ArticulatedModel::Ref, MD2Model::Ref or MD3::ModelRef.
+       to ArticulatedModel2::Ref, MD2Model::Ref or MD3::ModelRef.
        
        The original caller (typically, a Scene class) should invoke
        AnyTableReader::verifyDone to ensure that all of the fields 
@@ -146,16 +130,6 @@ protected:
     virtual void simulatePose(GameTime absoluteTime, GameTime deltaTime);
 
 public:
-#if 0
-    /** \deprecated */
-    static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const ArticulatedModel::Ref& m, const ArticulatedModel::PoseSpline& poseSpline);
-
-    /** \deprecated */
-    static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD2Model::Ref& m);
-
-    /** \deprecated */
-    static GEntity::Ref create(const std::string& n, const PhysicsFrameSpline& frameSpline, const MD3Model::Ref& m);
-#endif
 
     /** \copydoc GEntity(const std::string&, AnyTableReader&, const ModelTable&)*/
     static GEntity::Ref create 

@@ -152,7 +152,7 @@ shader-driven GPU rendering and CPU ray tracing.
 <tr><td width=5% ></td><td width=25% ></td><td></td></tr>
 <tr><td></td><td>\link G3D::Sky <b>Sky</b>\endlink</td><td>Skybox, moon, sun, and stars</td></tr>
 <tr><td></td><td>\link G3D::IFSModel <b>IFSModel</b>\endlink</td><td>Rigid body</td></tr>
-<tr><td></td><td>\link G3D::ArticulatedModel <b>ArticulatedModel</b>\endlink</td><td>Rigid bodies connected by joints, loads 3DS and IFS models</td></tr>
+<tr><td></td><td>\link G3D::ArticulatedModel2 <b>ArticulatedModel2</b>\endlink</td><td>Rigid bodies connected by joints, loads 3DS and IFS models</td></tr>
 <tr><td></td><td>\link G3D::_BSPMAP::Map <b>BSPMap</b>\endlink</td><td>Quake 3 map</td></tr>
 <tr><td></td><td>\link G3D::MD2Model <b>MD2Model</b>\endlink</td><td>Quake 2 character</td></tr>
 <tr><td></td><td>\link G3D::Surface <b>Surface</b>\endlink</td><td>Static object that is prepared for rendering.  Exposes geometry and adjacency information</td></tr>

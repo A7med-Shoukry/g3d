@@ -7,7 +7,6 @@
 
 #include "G3D/ThreadSet.h"
 #include "GLG3D/DirectionHistogram.h"
-#include "GLG3D/IFSModel.h"
 #include "GLG3D/RenderDevice.h"
 
 namespace G3D {

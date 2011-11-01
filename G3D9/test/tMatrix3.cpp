@@ -34,7 +34,7 @@ static void testEuler() {
 }
 
 
-static double frobeniusNormDiff(const Matrix3 &a, const Matrix3 &b) {
+static double frobeniusNormDiff(const Matrix3 &a, const Matrix3& b) {
   double d = 0;
 
   for (int i = 0; i < 3; ++i) {

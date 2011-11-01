@@ -10,7 +10,6 @@
 #include "G3D/Sphere.h"
 #include "G3D/Box.h"
 #include "GLG3D/ShadowMap.h"
-#include "GLG3D/ArticulatedModel.h"
 #include "G3D/GCamera.h"
 #include "G3D/debugPrintf.h"
 #include "G3D/Log.h"
@@ -20,6 +19,7 @@
 #include "GLG3D/Surface.h"
 #include "GLG3D/RenderDevice.h"
 #include "GLG3D/SuperShader.h"
+#include "GLG3D/SuperSurface.h"
 
 namespace G3D {
 

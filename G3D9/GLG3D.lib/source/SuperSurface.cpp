@@ -10,7 +10,6 @@
  */
 #include "G3D/Log.h"
 #include "G3D/fileutils.h"
-#include "GLG3D/GApp.h" // TODO: remove
 #include "GLG3D/SuperSurface.h"
 #include "GLG3D/Lighting.h"
 #include "GLG3D/RenderDevice.h"
