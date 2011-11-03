@@ -115,7 +115,7 @@ static Material::Specification toMaterialSpecification
     if (filename != "" && FileSystem::exists(filename)) {
         s.setLambertian(filename);
     } else {
-        s.setLambertian(filename);
+        s.setLambertian(m->Kd);
     }
 
     filename = ArticulatedModel2::resolveRelativeFilename(m->map_Ks, m->basePath);

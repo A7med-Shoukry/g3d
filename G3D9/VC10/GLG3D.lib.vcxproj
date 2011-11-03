@@ -198,7 +198,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_BSP.cpp" />
@@ -212,10 +211,6 @@
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_pose.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_preprocess.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_serialize.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_SpeedLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAPLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BumpMap.cpp" />
@@ -306,7 +301,6 @@
     <ClCompile Include="..\GLG3D.lib\source\Win32Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel2.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BumpMap.h" />

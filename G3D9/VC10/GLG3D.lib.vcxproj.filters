@@ -20,12 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_Operation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -272,13 +266,7 @@
     <ClCompile Include="..\GLG3D.lib\source\GL\glew.c">
       <Filter>Source Files\GL</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\Texture_Visualization.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\SurfaceElement.cpp">
@@ -291,9 +279,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\Material_SpeedLoad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_SpeedLoad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2.cpp">
@@ -345,9 +330,6 @@
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\source\Load3DS.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h">
       <Filter>Header Files</Filter>

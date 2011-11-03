@@ -116,6 +116,10 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 
     lastGApp = this;
 
+#   ifdef G3D_DEBUG
+        catchCommonExceptions = false;
+#   endif
+
     char b[2048];
     getcwd(b, 2048);
     logLazyPrintf("cwd = %s\n", b);
