@@ -102,8 +102,6 @@ public:
      part and mesh ID%s.*/
     class ID {
     private:
-        friend class ArticulatedModel;
-
         int     m_value;
 
     public:

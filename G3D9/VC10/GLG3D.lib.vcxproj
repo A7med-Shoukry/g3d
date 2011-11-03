@@ -260,7 +260,6 @@
     <ClCompile Include="..\GLG3D.lib\source\GuiTheme.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\GuiWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\IconSet.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\IFSModel.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Lighting.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Material_Specification.cpp" />
@@ -356,7 +355,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\GuiWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Icon.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\IconSet.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\IFSModel.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Lighting.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Material.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\MD2Model.h" />

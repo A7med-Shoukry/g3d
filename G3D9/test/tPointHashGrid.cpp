@@ -245,7 +245,7 @@ void testPointHashGrid() {
     debugAssert(grid.size() == 0);
 }
 
-void getVertices(ArticulatedModel::Ref model, Array<Vector3>& vertexArray) {
+void getVertices(ArticulatedModel2::Ref model, Array<Vector3>& vertexArray) {
     for(int i = 0; i < model->partArray.size(); ++i) {
         for(int j = 0; j < model->partArray[i].geometry.vertexArray.size(); ++j) {
             vertexArray.append(model->partArray[i].geometry.vertexArray[j]);

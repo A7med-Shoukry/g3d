@@ -161,9 +161,6 @@
     <ClCompile Include="..\GLG3D.lib\source\IconSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\IFSModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -479,9 +476,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\IconSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\IFSModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Lighting.h">

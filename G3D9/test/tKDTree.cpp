@@ -204,7 +204,11 @@ void testRayIntersect() {
     Array<Vector2> texCoord;
     printf(" (load model, ");
     fflush(stdout);
-    IFSModel::load(System::findDataFile("cow.ifs"), name, index, vertex, texCoord);
+    
+    ArticulatedModel2::Ref model = ArticulatedModel2::fromFile("cow.ifs");
+
+    TODO:
+//    IFSModel::load(System::findDataFile("cow.ifs"), name, index, vertex, texCoord);
     
     for (int i = 0; i < index.size(); i += 3) {
         int i0 = index[i];
