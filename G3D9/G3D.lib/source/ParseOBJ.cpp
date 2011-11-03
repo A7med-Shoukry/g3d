@@ -17,7 +17,7 @@
 namespace G3D {
 
 
-void ParseOBJ::parse(const char* ptr, int len, const std::string& basePath) {
+void ParseOBJ::parse(const char* ptr, size_t len, const std::string& basePath) {
     vertexArray.clear();
     normalArray.clear();
     texCoordArray.clear();

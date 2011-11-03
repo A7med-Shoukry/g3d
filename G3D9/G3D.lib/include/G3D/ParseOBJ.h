@@ -379,7 +379,7 @@ private:
 
 public:
 
-    void parse(const char* ptr, int len, const std::string& basePath);
+    void parse(const char* ptr, size_t len, const std::string& basePath);
 
     void parse(BinaryInput& bi, const std::string& basePath = "<AUTO>");
 };

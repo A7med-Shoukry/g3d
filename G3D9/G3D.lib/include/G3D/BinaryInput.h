@@ -71,7 +71,14 @@ private:
 
     // The initial buffer will be no larger than this, but 
     // may grow if a large memory read occurs.  750 MB
-    enum {INITIAL_BUFFER_LENGTH = 750000000};
+    static const int64
+        INITIAL_BUFFER_LENGTH =
+#ifdef G3D_64BIT
+        5000000000L  // 5 GB
+#else
+        750000000 // 750 MB
+#endif
+    ;
 
     /**
      is the file big or little endian
