@@ -88,15 +88,6 @@ void World::insert(const ArticulatedModel2::Ref& model, const CFrame& frame) {
     }
 }
 
-
-void World::insert(const ArticulatedModel::Ref& model, const CFrame& frame) {
-    Array<Surface::Ref> posed;
-    model->pose(posed, frame);
-    for (int i = 0; i < posed.size(); ++i) {
-        insert(posed[i]);
-    }
-}
-
 void World::insert(const Surface::Ref& m) {
     debugAssert(m_mode == INSERT);
     m_surfaceArray.append(m);
