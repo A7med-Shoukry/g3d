@@ -492,6 +492,11 @@ void GApp::renderDebugInfo() {
                 debugFont->begin2DQuads(renderDevice);
 
                 const char* build = 
+#               ifdef G3D_64BIT
+                    " 64-bit"
+#               else
+                    " 32-bit"
+#               endif
 #               ifdef G3D_DEBUG
                     " (Debug)";
 #               else
