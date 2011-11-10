@@ -580,7 +580,27 @@ public:
     };
 
 
-    /** Base class for defining operations to perform on each part, in hierarchy order.*/
+    /** Base class for defining operations to perform on each part, in hierarchy order.
+    
+    Example:
+    \code
+
+    class ExtractVertexCallback : public ArticulatedModel2::PartCallback {
+    public:
+        Array<Point3>& vertexArray;
+
+        ExtractVertexCallback(Array<Point3>& vertexArray) : vertexArray(vertexArray) {}
+
+        void operator()(ArticulatedModel2::Part *part, const CFrame &worldToPartFrame, ArticulatedModel2::Ref model, const int treeDepth) {
+            for (int i = 0; i < part->cpuVertexArray.size(); ++i) {
+                vertexArray.append(worldToPartFrame.pointToObjectSpace(part->cpuVertexArray.vertex[i].position));
+            }
+        }
+    } callback(vertexArray);
+
+    model->forEachPart(callback);
+    \endcode
+    */
     class PartCallback {
     public:
         /** \brief Override to implement processing of \a part. 
