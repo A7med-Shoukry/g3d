@@ -231,7 +231,7 @@ void testRayIntersect() {
     printf(" (load model, ");
     fflush(stdout);
     
-    ArticulatedModel2::Ref model = ArticulatedModel2::fromFile("cow.ifs");
+    ArticulatedModel2::Ref model = ArticulatedModel2::fromFile(System::findDataFile("cow.ifs"));
     extractTriangles(model, vertex, index);
     
     for (int i = 0; i < index.size(); i += 3) {

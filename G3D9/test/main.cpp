@@ -655,10 +655,10 @@ int main(int argc, char* argv[]) {
     (void)argc;
     (void)argv;
 
-#   ifdef G3D_WIN32
+#   ifdef G3D_WINDOWS
     {
         // Change to the executable directory
-        chdir(filenamePath(argv[0]).c_str());
+        chdir(FilePath::parent(argv[0]).c_str());
     }
 #   endif
 
