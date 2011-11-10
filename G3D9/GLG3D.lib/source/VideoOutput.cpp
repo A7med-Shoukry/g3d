@@ -16,6 +16,12 @@ extern "C" {
 #include "libswscale/swscale.h"
 }
 
+// Define to disable FFMPEG.  This is a temporary feature while we debug the Windows 64-bit build 
+#if defined(G3D_WINDOWS) && defined(G3D_64BIT)
+#define NO_FFMPEG
+#pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
+#endif
+
 namespace G3D {
 
 // conversion routine helper

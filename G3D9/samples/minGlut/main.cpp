@@ -15,6 +15,9 @@
    directory.
  */
 #include "supportclasses.h"
+#ifdef G3D_64BIT
+#   error This project does not support 64-bit builds because it has no 64-bit GLUT.
+#endif
 
 // Make Microsoft Windows programs start from the main() entry point
 G3D_START_AT_MAIN();

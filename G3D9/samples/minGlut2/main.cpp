@@ -20,6 +20,10 @@
 #   pragma comment(lib, "glut32.lib")
 #endif
 
+#ifdef G3D_64BIT
+#   error This project does not support 64-bit builds because it has no 64-bit GLUT.
+#endif
+
 static const int WIDTH = 640;
 static const int HEIGHT = 400;
 
