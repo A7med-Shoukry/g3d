@@ -105,7 +105,8 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;__STDC_CONSTANT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -198,19 +199,19 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_3DS.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_BSP.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_cleanGeometry.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_heightfield.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_IFS.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OBJ.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OFF.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_PLY.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_PLY2.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_pose.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_preprocess.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_serialize.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_BSP.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_cleanGeometry.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_heightfield.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_IFS.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OFF.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_PLY.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_PLY2.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_pose.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_preprocess.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_serialize.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAP.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BSPMAPLoad.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\BumpMap.cpp" />
@@ -300,7 +301,7 @@
     <ClCompile Include="..\GLG3D.lib\source\Win32Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel2.h" />
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BumpMap.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\CameraControlWindow.h" />

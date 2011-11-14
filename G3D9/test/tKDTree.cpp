@@ -196,23 +196,23 @@ public:
 };
 
 
-void extractTriangles(ArticulatedModel2::Ref model, Array<Point3>& vertexArray, Array<int>& indexArray) {
+void extractTriangles(ArticulatedModel::Ref model, Array<Point3>& vertexArray, Array<int>& indexArray) {
 
-    class ExtractTrianglesCallback : public ArticulatedModel2::PartCallback {
+    class ExtractTrianglesCallback : public ArticulatedModel::PartCallback {
     public:
         Array<Point3>& vertexArray;
         Array<int>&     indexArray;
 
         ExtractTrianglesCallback(Array<Point3>& vertexArray, Array<int>& indexArray) : vertexArray(vertexArray), indexArray(indexArray) {}
 
-        void operator()(ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, ArticulatedModel2::Ref model, const int treeDepth) {
+        void operator()(ArticulatedModel::Part* part, const CFrame& worldToPartFrame, ArticulatedModel::Ref model, const int treeDepth) {
             int offset = vertexArray.size();
             for (int i = 0; i < part->cpuVertexArray.size(); ++i) {
                 vertexArray.append(worldToPartFrame.pointToObjectSpace(part->cpuVertexArray.vertex[i].position));
             }
 
             for (int m = 0; m < part->meshArray().size(); ++m) {
-                const ArticulatedModel2::Mesh* mesh = part->meshArray()[m];
+                const ArticulatedModel::Mesh* mesh = part->meshArray()[m];
                 for (int i = 0; i < mesh->cpuIndexArray.size(); ++i) {
                     indexArray.append(mesh->cpuIndexArray[i] + offset);
                 }
@@ -231,7 +231,7 @@ void testRayIntersect() {
     printf(" (load model, ");
     fflush(stdout);
     
-    ArticulatedModel2::Ref model = ArticulatedModel2::fromFile(System::findDataFile("cow.ifs"));
+    ArticulatedModel::Ref model = ArticulatedModel::fromFile(System::findDataFile("cow.ifs"));
     extractTriangles(model, vertex, index);
     
     for (int i = 0; i < index.size(); i += 3) {

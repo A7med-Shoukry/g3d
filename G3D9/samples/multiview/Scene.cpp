@@ -4,7 +4,7 @@ using namespace G3D::units;
 
 Entity::Entity() {}
 
-Entity::Ref Entity::create(const CFrame& c, const ArticulatedModel2::Ref& m) {
+Entity::Ref Entity::create(const CFrame& c, const ArticulatedModel::Ref& m) {
     Ref e = new Entity();
     e->frame = c;
     e->model = m;
@@ -21,7 +21,7 @@ Scene::Ref Scene::create() {
     Scene::Ref s = new Scene();
     s->m_lighting = GApp::defaultLighting();
 
-    ArticulatedModel2::Ref model = ArticulatedModel2::fromFile(System::findDataFile("models/dabrovic_sibenik/sibenik.zip/sibenik.obj"));
+    ArticulatedModel::Ref model = ArticulatedModel::fromFile(System::findDataFile("models/dabrovic_sibenik/sibenik.zip/sibenik.obj"));
     s->m_entityArray.append(Entity::create(Point3::zero(), model));
 
     return s;

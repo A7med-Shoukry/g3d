@@ -25,7 +25,7 @@ GEntity::GEntity
     modelNameAny.verify((model != NULL), 
                         "Can't instantiate undefined model named " + modelName + ".");
     
-    m_art2Model = model->downcast<ArticulatedModel2>();
+    m_art2Model = model->downcast<ArticulatedModel>();
     m_md2Model = model->downcast<MD2Model>();
     m_md3Model = model->downcast<MD3Model>();
 
@@ -160,8 +160,8 @@ bool GEntity::intersect(const Ray& R, float& maxDistance) const {
     switch (m_modelType) {
     case ARTICULATED_MODEL2:
         {
-            ArticulatedModel2::Part* part = NULL;
-            ArticulatedModel2::Mesh* mesh = NULL; 
+            ArticulatedModel::Part* part = NULL;
+            ArticulatedModel::Mesh* mesh = NULL; 
             int triIndex     = -1;
             float u = 0, v = 0;
             return m_art2Model->intersect(R, m_frame, m_art2Pose, maxDistance, part, mesh, triIndex, u, v);

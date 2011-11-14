@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_PLY.cpp
+ \file GLG3D/source/ArticulatedModel_PLY.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-23
@@ -8,14 +8,14 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/ParsePLY.h"
 #include "G3D/FileSystem.h"
 #include "G3D/MeshAlg.h"
 
 namespace G3D {
 
-void ArticulatedModel2::loadPLY(const Specification& specification) {
+void ArticulatedModel::loadPLY(const Specification& specification) {
 
     // Read the data in
     name = FilePath::base(specification.filename);

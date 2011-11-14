@@ -911,7 +911,7 @@ if __name__ == "__main__":
     code = dispatchOnTargets([(x + 'Target') for x in sys.argv[1:]],
         [libTarget, cleanTarget, testTarget,
          docTarget, allTarget, srczipTarget, sourceTarget, toolsTarget,
-         jarTarget, helpTarget, updateTarget, 
+         jarTarget, helpTarget, updateTarget,
          ffmpegWinTarget, ffmpegCCTarget, dataTarget])
 
     if (code == 0) and (sys.argv[1] != 'help') and doInstall:

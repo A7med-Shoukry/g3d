@@ -485,7 +485,7 @@ void convertToOBJFile(const std::string& srcFilename) {
 
     FILE* file = FileSystem::fopen(dstFilename.c_str(), "wt");
 
-    ArticulatedModel2::Ref m = ArticulatedModel2::fromFile(srcFilename);
+    ArticulatedModel::Ref m = ArticulatedModel::fromFile(srcFilename);
 
     {
         int tri, vert;
@@ -495,7 +495,7 @@ void convertToOBJFile(const std::string& srcFilename) {
 
     fprintf(file, "# %s\n\n", m->name.c_str());
     for (int p = 0; p < m->rootArray().size(); ++p) {
-        const ArticulatedModel2::Part* part = m->rootArray()[p];
+        const ArticulatedModel::Part* part = m->rootArray()[p];
 
         const CFrame& cframe = part->cframe;
         
@@ -590,7 +590,7 @@ void convertToOBJFile(const std::string& srcFilename) {
         // Triangle list
         fprintf(file, "\n");
         for (int t = 0; t < part->meshArray().size(); ++t) {
-            const ArticulatedModel2::Mesh* mesh = part->meshArray()[t];
+            const ArticulatedModel::Mesh* mesh = part->meshArray()[t];
             alwaysAssertM(mesh->primitive == PrimitiveType::TRIANGLES, "Only triangle lists supported");
             for (int i = 0; i < mesh->cpuIndexArray.size(); i += 3) {
                 fprintf(file, "f");

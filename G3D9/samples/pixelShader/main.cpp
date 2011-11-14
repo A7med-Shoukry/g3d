@@ -11,7 +11,7 @@
 class App : public GApp {
 private:
     Lighting::Ref       lighting;
-    ArticulatedModel2::Ref       model;
+    ArticulatedModel::Ref       model;
 
     Shader::Ref         phongShader;
     
@@ -49,12 +49,12 @@ void App::onInit() {
     window()->setCaption("Pixel Shader Demo");
         
     phongShader = Shader::fromFiles("phong.vrt", "phong.pix");
-    ArticulatedModel2::Specification spec;
+    ArticulatedModel::Specification spec;
     spec.filename = System::findDataFile("teapot/teapot.obj");
     spec.scale = 0.015f;
     spec.stripMaterials = true;
-    spec.preprocess.append(ArticulatedModel2::Instruction(Any::parse("setCFrame(root(), Point3(0, -0.5, 0));")));
-    model = ArticulatedModel2::create(spec);
+    spec.preprocess.append(ArticulatedModel::Instruction(Any::parse("setCFrame(root(), Point3(0, -0.5, 0));")));
+    model = ArticulatedModel::create(spec);
 
     makeLighting();
     makeColorList();

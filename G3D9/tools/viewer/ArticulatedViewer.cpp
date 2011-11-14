@@ -32,9 +32,9 @@ void ArticulatedViewer::onInit(const std::string& filename) {
         Any any;
         any.load(filename);
 
-        m_model = ArticulatedModel2::create(ArticulatedModel2::Specification(any));
+        m_model = ArticulatedModel::create(ArticulatedModel::Specification(any));
     } else {
-        m_model = ArticulatedModel2::fromFile(filename);
+        m_model = ArticulatedModel::fromFile(filename);
     }
     debugPrintf("%s loaded in %f seconds\n", filename.c_str(), System::time() - start);
 
@@ -100,7 +100,7 @@ void ArticulatedViewer::onInit(const std::string& filename) {
         }
 
         // Transform parts in-place
-        ArticulatedModel2::ScaleTransformCallback scaleTransform(scale);
+        ArticulatedModel::ScaleTransformCallback scaleTransform(scale);
         m_model->forEachPart(scaleTransform);
         m_model->cleanGeometry();
     }
@@ -151,8 +151,8 @@ void ArticulatedViewer::saveGeometry() {
 
 
 static void printHierarchy
-(const ArticulatedModel2::Ref& model,
- ArticulatedModel2::Part*      part,
+(const ArticulatedModel::Ref& model,
+ ArticulatedModel::Part*      part,
  const std::string&            indent) {
     
     screenPrintf("%s\"%s\" (ID %d)\n", indent.c_str(), part->name.c_str(), (int)part->id);
@@ -232,7 +232,7 @@ bool ArticulatedViewer::onEvent(const GEvent& e, App* app) {
         float u = 0, v = 0;
 
         float distance = finf();
-        const bool hit = m_model->intersect(ray, m_offset, ArticulatedModel2::defaultPose(), distance, 
+        const bool hit = m_model->intersect(ray, m_offset, ArticulatedModel::defaultPose(), distance, 
                                             m_selectedPart, m_selectedMesh, m_selectedTriangleIndex,
                                             u, v);
         return hit;

@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_cleanGeometry.cpp
+ \file GLG3D/source/ArticulatedModel_cleanGeometry.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-18
@@ -8,12 +8,12 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/AreaMemoryManager.h"
 
 namespace G3D {
 
-void ArticulatedModel2::cleanGeometry(const CleanGeometrySettings& settings) {
+void ArticulatedModel::cleanGeometry(const CleanGeometrySettings& settings) {
     for (int p = 0; p < m_partArray.size(); ++p) {
         m_partArray[p]->cleanGeometry(settings);
     }
@@ -21,7 +21,7 @@ void ArticulatedModel2::cleanGeometry(const CleanGeometrySettings& settings) {
 }
 
 
-void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& settings) {
+void ArticulatedModel::Part::cleanGeometry(const CleanGeometrySettings& settings) {
     Stopwatch timer;
     clearVertexRanges();
 
@@ -70,7 +70,7 @@ void ArticulatedModel2::Part::cleanGeometry(const CleanGeometrySettings& setting
 }
 
 
-void ArticulatedModel2::Part::clearVertexRanges() {
+void ArticulatedModel::Part::clearVertexRanges() {
     gpuPositionArray      = VertexRange();
     gpuNormalArray        = VertexRange();
     gpuTexCoord0Array     = VertexRange();
@@ -82,7 +82,7 @@ void ArticulatedModel2::Part::clearVertexRanges() {
 }
 
 
-void ArticulatedModel2::Part::determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents) {
+void ArticulatedModel::Part::determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents) {
     computeSomeTangents = false;
     computeSomeNormals = false;;
 
@@ -109,7 +109,7 @@ void ArticulatedModel2::Part::determineCleaningNeeds(bool& computeSomeNormals, b
 }
 
 
-void ArticulatedModel2::Part::debugPrint() const {
+void ArticulatedModel::Part::debugPrint() const {
     const Part* part = this;
     // Code for dumping the vertices
     debugPrintf("** Vertices:\n");
@@ -135,7 +135,7 @@ void ArticulatedModel2::Part::debugPrint() const {
 }
 
 
-void ArticulatedModel2::computePartBounds() {
+void ArticulatedModel::computePartBounds() {
     for (int p = 0; p < m_partArray.size(); ++p) {
         Part* part = m_partArray[p];
         const CPUVertexArray::Vertex* vertexArray = part->cpuVertexArray.vertex.getCArray();
@@ -162,7 +162,7 @@ void ArticulatedModel2::computePartBounds() {
 }
 
 
-void ArticulatedModel2::Part::computeMissingTangents() {
+void ArticulatedModel::Part::computeMissingTangents() {
 
     if (! m_hasTexCoord0) {
         cpuVertexArray.hasTangent = false;
@@ -281,7 +281,7 @@ struct AM2VertexHash {
 };
 
 
-void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float maxNormalWeldAngle) {
+void ArticulatedModel::Part::mergeVertices(const Array<Face>& faceArray, float maxNormalWeldAngle) {
     // Clear all mesh index arrays
     for (int m = 0; m < m_meshArray.size(); ++m) {
         Mesh* mesh = m_meshArray[m];
@@ -359,7 +359,7 @@ void ArticulatedModel2::Part::mergeVertices(const Array<Face>& faceArray, float 
 }
 
 
-void ArticulatedModel2::Part::computeMissingVertexNormals
+void ArticulatedModel::Part::computeMissingVertexNormals
  (Array<Face>&                      faceArray, 
   const Face::AdjacentFaceTable&    adjacentFaceTable, 
   const float                       maximumSmoothAngle) {
@@ -410,7 +410,7 @@ void ArticulatedModel2::Part::computeMissingVertexNormals
 }
 
 
-void ArticulatedModel2::Part::buildFaceArray(Array<Face>& faceArray, Face::AdjacentFaceTable& adjacentFaceTable) {
+void ArticulatedModel::Part::buildFaceArray(Array<Face>& faceArray, Face::AdjacentFaceTable& adjacentFaceTable) {
     adjacentFaceTable.clear();
     faceArray.fastClear();
     faceArray.reserve(m_triangleCount);

@@ -19,13 +19,13 @@
 class ArticulatedViewer : public Viewer {
 private:
 
-    ArticulatedModel2::Ref	m_model;
+    ArticulatedModel::Ref	m_model;
     int			        m_numFaces;
     int                         m_numVertices;
 
-    ArticulatedModel2::Part*    m_selectedPart;
+    ArticulatedModel::Part*    m_selectedPart;
 
-    ArticulatedModel2::Mesh*    m_selectedMesh;
+    ArticulatedModel::Mesh*    m_selectedMesh;
 
     /** In the Mesh's cpuIndexAray index array */
     int                         m_selectedTriangleIndex;

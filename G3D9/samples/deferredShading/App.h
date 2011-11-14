@@ -6,7 +6,7 @@
 class App : public GApp {
 protected:
 
-    ArticulatedModel2::Ref  model;
+    ArticulatedModel::Ref  model;
     GBuffer::Ref            gbuffer;
     Shader::Ref             shadingPass;
     CFrame                  previousCameraFrame;

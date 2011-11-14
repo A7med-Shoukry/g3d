@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_OBJ.cpp
+ \file GLG3D/source/ArticulatedModel_OBJ.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-19
@@ -8,7 +8,7 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/ParseOBJ.h"
 #include "G3D/FileSystem.h"
 
@@ -104,21 +104,21 @@ MTL illum constants:
 10	 Casts shadows onto invisible surfaces 
 */
 static Material::Specification toMaterialSpecification
-(const ArticulatedModel2::Specification& modelSpec, 
+(const ArticulatedModel::Specification& modelSpec, 
  const ParseMTL::Material::Ref&         m) {
 
     Material::Specification s;
     std::string filename;
 
     // Map OBJ model to G3D shading 
-    filename = ArticulatedModel2::resolveRelativeFilename(m->map_Kd, m->basePath);
+    filename = ArticulatedModel::resolveRelativeFilename(m->map_Kd, m->basePath);
     if (filename != "" && FileSystem::exists(filename)) {
         s.setLambertian(filename);
     } else {
         s.setLambertian(m->Kd);
     }
 
-    filename = ArticulatedModel2::resolveRelativeFilename(m->map_Ks, m->basePath);
+    filename = ArticulatedModel::resolveRelativeFilename(m->map_Ks, m->basePath);
     if (filename != "" && FileSystem::exists(filename)) {
         s.setSpecular(filename);
     } else {
@@ -143,7 +143,7 @@ static Material::Specification toMaterialSpecification
     }
 
     // TODO: apply modelSpec options to bump map
-    s.setBump(ArticulatedModel2::resolveRelativeFilename(m->map_bump, m->basePath));
+    s.setBump(ArticulatedModel::resolveRelativeFilename(m->map_bump, m->basePath));
 
     s.setEmissive(m->Ke);
 
@@ -156,7 +156,7 @@ inline static Point2 OBJToG3DTex(const Vector2& t) {
     return Vector2(t.x, 1.0f - t.y);
 }
 
-void ArticulatedModel2::loadOBJ(const Specification& specification) {
+void ArticulatedModel::loadOBJ(const Specification& specification) {
     // During loading, we make no attempt to optimize the mesh.  We leave that until the
     // Parts have been created.  The vertex arrays are therefore much larger than they
     // need to be.

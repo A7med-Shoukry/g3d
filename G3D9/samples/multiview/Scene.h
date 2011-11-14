@@ -14,9 +14,9 @@ public:
     typedef ReferenceCountedPointer<Entity> Ref;
 
     CFrame                  frame;
-    ArticulatedModel2::Ref  model;
+    ArticulatedModel::Ref  model;
 
-    static Entity::Ref create(const CFrame& c, const ArticulatedModel2::Ref& m);
+    static Entity::Ref create(const CFrame& c, const ArticulatedModel::Ref& m);
 
     virtual void onPose(Array<Surface::Ref>& surfaceArray);
 };

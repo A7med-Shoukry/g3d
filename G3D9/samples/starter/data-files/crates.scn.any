@@ -7,7 +7,7 @@
     models = {
        shipModel = #include("3ds/spaceFighter01/spaceFighter01.am.any");
        
-       groundModel = ArticulatedModel2::Specification {
+       groundModel = ArticulatedModel::Specification {
             filename = "ifs/squarex8.ifs";
             scale = 12.0f;
             preprocess = (
@@ -26,13 +26,13 @@
        };
 
         
-       crateModel = ArticulatedModel2::Specification {
+       crateModel = ArticulatedModel::Specification {
             filename = "ifs/crate.ifs";
             preprocess = (
                 // You can #include a material file, or simply put all of the
                 // options here as was done for groundModel.  #include can be
                 // used to replace any Any value, including a whole 
-                // ArticulatedModel2::Specification.
+                // ArticulatedModel::Specification.
                 setMaterial(all(), all(), #include("material/metalcrate/metalcrate.mat.any"));  
             );
        };

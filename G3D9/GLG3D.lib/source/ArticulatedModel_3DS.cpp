@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_3DS.cpp
+ \file GLG3D/source/ArticulatedModel_3DS.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-08-11
@@ -8,14 +8,14 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/Parse3DS.h"
 #include "G3D/FileSystem.h"
 #include "G3D/Log.h"
 
 namespace G3D {
 
-std::string ArticulatedModel2::resolveRelativeFilename(const std::string& filename, const std::string& basePath) {
+std::string ArticulatedModel::resolveRelativeFilename(const std::string& filename, const std::string& basePath) {
     if (filename.empty()) {
         return filename;
     } else {
@@ -54,7 +54,7 @@ static std::string find3DSTexture(std::string _filename, const std::string& path
 static Material::Specification compute3DSMaterial
 (const void*         ptr,
  const std::string&  path,
- const ArticulatedModel2::Specification&   specification) {
+ const ArticulatedModel::Specification&   specification) {
 
     const Parse3DS::Material& material = *reinterpret_cast<const Parse3DS::Material*>(ptr);
 
@@ -122,7 +122,7 @@ static Material::Specification compute3DSMaterial
 }
 
 
-void ArticulatedModel2::load3DS(const Specification& specification) {
+void ArticulatedModel::load3DS(const Specification& specification) {
     // During loading, we make no attempt to optimize the mesh.  We leave that until the
     // Parts have been created.  The vertex arrays are therefore much larger than they
     // need to be.

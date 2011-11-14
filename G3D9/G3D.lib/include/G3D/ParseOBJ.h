@@ -41,7 +41,7 @@ for object-level culling.
 Uses a special text parser instead of G3D::TextInput for peak performance (about 30x faster
 than TextInput).
 
-\sa G3D::ParseMTL, G3D::ParsePLY, G3D::Parse3DS, G3D::ArticulatedModel2
+\sa G3D::ParseMTL, G3D::ParsePLY, G3D::Parse3DS, G3D::ArticulatedModel
 */
 class ParseOBJ {
 public:

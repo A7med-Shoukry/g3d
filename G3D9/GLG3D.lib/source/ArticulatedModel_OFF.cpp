@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_OFF.cpp
+ \file GLG3D/source/ArticulatedModel_OFF.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-23
@@ -8,14 +8,14 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/FileSystem.h"
 
 namespace G3D {
 
 // There is no "ParseOFF" because OFF parsing is trivial--it has no subparts or materials,
 // and is directly an indexed format.
-void ArticulatedModel2::loadOFF(const Specification& specification) {
+void ArticulatedModel::loadOFF(const Specification& specification) {
     
     name = FilePath::base(specification.filename);
     Part* part = addPart(name);

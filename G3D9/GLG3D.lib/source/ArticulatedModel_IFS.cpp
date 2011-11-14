@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_IFS.cpp
+ \file GLG3D/source/ArticulatedModel_IFS.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-23
@@ -8,14 +8,14 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/FileSystem.h"
 
 namespace G3D {
 
 // There is no "ParseIFS" because IFS parsing is trivial--it has no subparts or materials,
 // and is directly an indexed format.
-void ArticulatedModel2::loadIFS(const Specification& specification) {
+void ArticulatedModel::loadIFS(const Specification& specification) {
     Part* part = addPart("root");
     Mesh* mesh = addMesh("mesh", part);
     mesh->material = Material::create();

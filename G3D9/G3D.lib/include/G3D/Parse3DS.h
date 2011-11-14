@@ -30,12 +30,12 @@ class TextInput;
 /** \brief Parses 3DS model files.
 
  This class maps the 3DS file format to a runtime object, which is then
- converted to a more useful runtime format and stored in G3D::ArticulatedModel2.
+ converted to a more useful runtime format and stored in G3D::ArticulatedModel.
 
  \cite Keyframe chunks from http://www.republika.pl/design3d/delphi/004.html
  \cite MLI chunks from http://www.programmersheaven.com/zone10/cat454/941.htm
 
- \sa G3D::ParseMTL, G3D::ParsePLY, G3D::ParseOBJ, G3D::ArticulatedModel2
+ \sa G3D::ParseMTL, G3D::ParsePLY, G3D::ParseOBJ, G3D::ArticulatedModel
 */
 class Parse3DS {
 protected:

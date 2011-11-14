@@ -278,46 +278,46 @@
     <ClCompile Include="..\GLG3D.lib\source\Material_SpeedLoad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_cleanGeometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OBJ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_pose.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_serialize.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GLG3D.lib\source\CPUVertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_preprocess.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_pose.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_IFS.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_preprocess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_PLY2.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_serialize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_OFF.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_PLY.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_3DS.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_BSP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_BSP.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_cleanGeometry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel2_heightfield.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_heightfield.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_IFS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OBJ.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_OFF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_PLY.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_PLY2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -595,10 +595,10 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\PhysicsFrameSplineEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel2.h">
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\CPUVertexArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\CPUVertexArray.h">
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

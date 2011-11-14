@@ -13,7 +13,7 @@
    <ul>
      <li> Coming soon: freeimage </li>
      <li> Coming soon: 64-bit libraries </li>
-     <li> Streamlined ArticulatedModel2 preprocessing </li>
+     <li> Streamlined ArticulatedModel preprocessing </li>
      <li> New 20x faster OBJ loader </li>
    </ul>
 

@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_PLY2.cpp
+ \file GLG3D/source/ArticulatedModel_PLY2.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-23
@@ -8,14 +8,14 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/FileSystem.h"
 
 namespace G3D {
 
 // There is no "ParsePLY2" because PLY2 parsing is trivial--it has no subparts or materials,
 // and is directly an indexed format.
-void ArticulatedModel2::loadPLY2(const Specification& specification) {
+void ArticulatedModel::loadPLY2(const Specification& specification) {
     
     name = FilePath::base(specification.filename);
     Part* part = addPart(name);

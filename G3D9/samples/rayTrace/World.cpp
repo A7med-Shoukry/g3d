@@ -9,7 +9,7 @@ World::World() : m_mode(TRACE) {
     ambient = Radiance3::fromARGB(0x304855) * 0.8f;
 
     Any teapot = PARSE_ANY
-        ( ArticulatedModel2::Specification {
+        ( ArticulatedModel::Specification {
             filename = "teapot/teapot.obj";
             scale = 0.01;
             stripMaterials = true;
@@ -23,10 +23,10 @@ World::World() : m_mode(TRACE) {
                  );
          } );
 
-    insert(ArticulatedModel2::create(teapot), CFrame::fromXYZYPRDegrees(19.4f, -0.2f, 0.94f, 70));
+    insert(ArticulatedModel::create(teapot), CFrame::fromXYZYPRDegrees(19.4f, -0.2f, 0.94f, 70));
 
     Any sphereOutside = PARSE_ANY 
-        ( ArticulatedModel2::Specification {
+        ( ArticulatedModel::Specification {
             filename = "sphere.ifs";
             scale = 0.3;
             preprocess =
@@ -43,7 +43,7 @@ World::World() : m_mode(TRACE) {
           });
 
     Any sphereInside = PARSE_ANY 
-        ( ArticulatedModel2::Specification {
+        ( ArticulatedModel::Specification {
             filename = "sphere.ifs";
             scale = -0.3;
             preprocess =
@@ -59,14 +59,14 @@ World::World() : m_mode(TRACE) {
                   );
           });
 
-    insert(ArticulatedModel2::create(sphereOutside), CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
-    insert(ArticulatedModel2::create(sphereInside),  CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
+    insert(ArticulatedModel::create(sphereOutside), CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
+    insert(ArticulatedModel::create(sphereInside),  CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
 
     Any sponza = PARSE_ANY
-        ( ArticulatedModel2::Specification {
+        ( ArticulatedModel::Specification {
             filename = "dabrovic_sponza/sponza.zip/sponza.obj";
           } );
-    insert(ArticulatedModel2::create(sponza), Vector3(8.2f, -6, 0));
+    insert(ArticulatedModel::create(sponza), Vector3(8.2f, -6, 0));
     
     end();
 }
@@ -80,7 +80,7 @@ void World::begin() {
 }
 
 
-void World::insert(const ArticulatedModel2::Ref& model, const CFrame& frame) {
+void World::insert(const ArticulatedModel::Ref& model, const CFrame& frame) {
     Array<Surface::Ref> posed;
     model->pose(posed, frame);
     for (int i = 0; i < posed.size(); ++i) {

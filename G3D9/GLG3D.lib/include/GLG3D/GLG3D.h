@@ -92,7 +92,7 @@
 
 #include "GLG3D/Discovery.h"
 #include "GLG3D/GEntity.h"
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "GLG3D/CPUVertexArray.h"
 
 #include "GLG3D/PhysicsFrameSplineEditor.h"

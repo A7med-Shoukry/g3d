@@ -30,7 +30,7 @@ public:
     bool lineOfSight(const Vector3& v0, const Vector3& v1) const;
 
     void begin();
-    void insert(const ArticulatedModel2::Ref& model, const CFrame& frame = CFrame());
+    void insert(const ArticulatedModel::Ref& model, const CFrame& frame = CFrame());
     void insert(const Surface::Ref& m);
     void end();
 

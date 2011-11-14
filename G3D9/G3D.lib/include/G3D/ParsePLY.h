@@ -33,7 +33,7 @@ Each may have any number of properties.
 
 \cite http://paulbourke.net/dataformats/ply/
 
-\sa G3D::ParseMTL, G3D::ParseOBJ, G3D::ArticulatedModel2
+\sa G3D::ParseMTL, G3D::ParseOBJ, G3D::ArticulatedModel
 */
 class ParsePLY {
 public:

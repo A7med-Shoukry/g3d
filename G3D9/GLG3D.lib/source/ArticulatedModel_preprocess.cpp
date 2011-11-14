@@ -1,9 +1,9 @@
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 
 namespace G3D {
     
 
-void ArticulatedModel2::preprocess(const Array<Instruction>& program) {
+void ArticulatedModel::preprocess(const Array<Instruction>& program) {
     for (int i = 0; i < program.size(); ++i) {
         const Instruction& instruction = program[i];
 
@@ -167,7 +167,7 @@ void ArticulatedModel2::preprocess(const Array<Instruction>& program) {
             }
             {
                 // Load the child part
-                ArticulatedModel2::Ref m2 = ArticulatedModel2::create(Specification(instruction.arg));
+                ArticulatedModel::Ref m2 = ArticulatedModel::create(Specification(instruction.arg));
 
                 // Update part table, mesh table, and overwrite IDs
                 for (int p = 0; p < m2->m_partArray.size(); ++p) {
@@ -209,7 +209,7 @@ void ArticulatedModel2::preprocess(const Array<Instruction>& program) {
 }
 
 
-void ArticulatedModel2::Part::transformGeometry(const Matrix4& xform) {
+void ArticulatedModel::Part::transformGeometry(const Matrix4& xform) {
     CPUVertexArray::Vertex* vertex = cpuVertexArray.vertex.getCArray();
     const int N = cpuVertexArray.size();
     for (int i = 0; i < N; ++i) {
@@ -226,7 +226,7 @@ void ArticulatedModel2::Part::transformGeometry(const Matrix4& xform) {
 }
 
 
-void ArticulatedModel2::moveToOrigin(bool centerY) {
+void ArticulatedModel::moveToOrigin(bool centerY) {
     BoundsCallback boundsCallback;
     computePartBounds();
     forEachPart(boundsCallback);
@@ -247,9 +247,9 @@ void ArticulatedModel2::moveToOrigin(bool centerY) {
 }
 
 
-void ArticulatedModel2::BoundsCallback::operator()
-    (ArticulatedModel2::Part* part, const CFrame& worldToPartFrame, 
-     ArticulatedModel2::Ref m, const int treeDepth) {
+void ArticulatedModel::BoundsCallback::operator()
+    (ArticulatedModel::Part* part, const CFrame& worldToPartFrame, 
+     ArticulatedModel::Ref m, const int treeDepth) {
     
     const Box& b = worldToPartFrame.toWorldSpace(part->boxBounds);
     AABox partBounds;
@@ -258,9 +258,9 @@ void ArticulatedModel2::BoundsCallback::operator()
 }
 
 
-void ArticulatedModel2::ScaleTransformCallback::operator()
-    (ArticulatedModel2::Part* part, const CFrame& worldToPartFrame,
-     ArticulatedModel2::Ref m, const int treeDepth) {
+void ArticulatedModel::ScaleTransformCallback::operator()
+    (ArticulatedModel::Part* part, const CFrame& worldToPartFrame,
+     ArticulatedModel::Ref m, const int treeDepth) {
     part->cframe.translation *= scaleFactor;
     
     const int N = part->cpuVertexArray.size();

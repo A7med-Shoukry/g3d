@@ -39,7 +39,7 @@
        },
        */
 
-       crateModel = ArticulatedModel2::Specification {
+       crateModel = ArticulatedModel::Specification {
            filename = "models/crate/crate.obj";
        };
     };

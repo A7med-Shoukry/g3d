@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_BSP.cpp
+ \file GLG3D/source/ArticulatedModel_BSP.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-08-23
@@ -8,13 +8,13 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/FileSystem.h"
 #include "GLG3D/BSPMap.h"
 
 namespace G3D {
 
-void ArticulatedModel2::loadBSP(const Specification& specification) {
+void ArticulatedModel::loadBSP(const Specification& specification) {
     std::string defaultTexture = "<white>";
 
     // TODO: make a load option

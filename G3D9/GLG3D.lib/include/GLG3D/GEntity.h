@@ -9,7 +9,7 @@
 
 #include "G3D/CoordinateFrame.h"
 #include "G3D/PhysicsFrameSpline.h"
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "GLG3D/MD2Model.h"
 #include "GLG3D/MD3Model.h"
 
@@ -59,15 +59,15 @@ protected:
     
 
     /** Current pose */
-    ArticulatedModel2::Pose          m_art2Pose;
+    ArticulatedModel::Pose          m_art2Pose;
 
     /** Pose for the previous onSimulation */
-    ArticulatedModel2::Pose          m_art2PreviousPose;
+    ArticulatedModel::Pose          m_art2PreviousPose;
 
     /** Pose over time. */
-    ArticulatedModel2::PoseSpline    m_art2PoseSpline;
+    ArticulatedModel::PoseSpline    m_art2PoseSpline;
 
-    ArticulatedModel2::Ref           m_art2Model;
+    ArticulatedModel::Ref           m_art2Model;
 
     //////////////////////////////////////////////
 
@@ -100,7 +100,7 @@ protected:
        <some base class name> {
            model    = <modelname>;
            position = <CFrame, Vector3, or PhysicsFrameSpline>;
-           pose     = <ArticulatedModel2::PoseSpline>;
+           pose     = <ArticulatedModel::PoseSpline>;
            castsShadows = <bool>;
        }
        \endcode
@@ -111,7 +111,7 @@ protected:
        If specified, the castsShadows field overwrites the pose's castsShadows field.  This is a load-time convenience. 
 
        \param modelTable Maps model names that are referenced in \a propertyTable
-       to ArticulatedModel2::Ref, MD2Model::Ref or MD3::ModelRef.
+       to ArticulatedModel::Ref, MD2Model::Ref or MD3::ModelRef.
        
        The original caller (typically, a Scene class) should invoke
        AnyTableReader::verifyDone to ensure that all of the fields 

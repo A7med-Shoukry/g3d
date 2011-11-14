@@ -30,12 +30,12 @@ App::App(const GApp::Settings& settings) : GApp(settings) {}
 
 
 void App::onInit() {
-    ArticulatedModel2::Specification spec;
+    ArticulatedModel::Specification spec;
     spec.filename       = System::findDataFile("teapot/teapot.obj");
     spec.stripMaterials = true;
     spec.scale          = 0.035f;
 
-    ArticulatedModel2::Ref model = ArticulatedModel2::create(spec);
+    ArticulatedModel::Ref model = ArticulatedModel::create(spec);
     model->pose(m_sceneGeometry, Point3(0, -1.7f, 0));
 
     m_extrudeShader = Shader::fromFiles("extrude.vrt", "extrude.geo", "extrude.pix", 12);

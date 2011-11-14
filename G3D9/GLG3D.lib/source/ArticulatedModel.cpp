@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2.h
+ \file GLG3D/source/ArticulatedModel.h
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-19
@@ -18,22 +18,22 @@
  - Remove ArticulatedModel
  - Pack tangents and normals into short4 format?
  */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/Ray.h"
 #include "G3D/FileSystem.h"
 
 namespace G3D {
 
-const CFrame ArticulatedModel2::Pose::identity;
+const CFrame ArticulatedModel::Pose::identity;
 
-ArticulatedModel2::Ref ArticulatedModel2::create(const ArticulatedModel2::Specification& specification) {
-    Ref a = new ArticulatedModel2();
+ArticulatedModel::Ref ArticulatedModel::create(const ArticulatedModel::Specification& specification) {
+    Ref a = new ArticulatedModel();
     a->load(specification);
     return a;
 }
 
 
-void ArticulatedModel2::forEachPart(PartCallback& callback, Part* part, const CFrame& parentFrame, const Pose& pose, const int treeDepth) {
+void ArticulatedModel::forEachPart(PartCallback& callback, Part* part, const CFrame& parentFrame, const Pose& pose, const int treeDepth) {
     // Net transformation from part to world space
     const CFrame& net = parentFrame * part->cframe * pose[part->name];
 
@@ -47,20 +47,20 @@ void ArticulatedModel2::forEachPart(PartCallback& callback, Part* part, const CF
 }
 
 
-void ArticulatedModel2::forEachPart(PartCallback& callback, const CFrame& cframe, const Pose& pose) {
+void ArticulatedModel::forEachPart(PartCallback& callback, const CFrame& cframe, const Pose& pose) {
     for (int p = 0; p < m_rootArray.size(); ++p) {
         forEachPart(callback, m_rootArray[p], cframe, pose, 0);
     }
 }
 
 
-ArticulatedModel2::Mesh* ArticulatedModel2::addMesh(const std::string& name, Part* part) {
+ArticulatedModel::Mesh* ArticulatedModel::addMesh(const std::string& name, Part* part) {
     part->m_meshArray.append(new Mesh(name, createID()));
     return part->m_meshArray.last();
 }
 
 
-ArticulatedModel2::Part* ArticulatedModel2::addPart(const std::string& name, Part* parent) {
+ArticulatedModel::Part* ArticulatedModel::addPart(const std::string& name, Part* parent) {
     m_partArray.append(new Part(name, parent, createID()));
     if (parent == NULL) {
         m_rootArray.append(m_partArray.last());
@@ -70,7 +70,7 @@ ArticulatedModel2::Part* ArticulatedModel2::addPart(const std::string& name, Par
 }
 
 
-ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const ID& id) {
+ArticulatedModel::Mesh* ArticulatedModel::mesh(const ID& id) {
     Mesh** ptr = m_meshTable.getPointer(id);
     if (ptr == NULL) {
         return NULL;
@@ -80,7 +80,7 @@ ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const ID& id) {
 }
 
 
-ArticulatedModel2::Part* ArticulatedModel2::part(const ID& id) {
+ArticulatedModel::Part* ArticulatedModel::part(const ID& id) {
     Part** ptr = m_partTable.getPointer(id);
     if (ptr == NULL) {
         return NULL;
@@ -90,7 +90,7 @@ ArticulatedModel2::Part* ArticulatedModel2::part(const ID& id) {
 }
 
 
-ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const std::string& partName, const std::string& meshName) {
+ArticulatedModel::Mesh* ArticulatedModel::mesh(const std::string& partName, const std::string& meshName) {
     Part* p = part(partName);
     if (p != NULL) {
         // Exhaustively cycle through all meshes
@@ -104,7 +104,7 @@ ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const std::string& partName, co
 }
 
 
-ArticulatedModel2::Part* ArticulatedModel2::part(const Instruction::Identifier& partIdent) {
+ArticulatedModel::Part* ArticulatedModel::part(const Instruction::Identifier& partIdent) {
     if (partIdent.id.initialized()) {
         return part(partIdent.id);
     } else {
@@ -113,7 +113,7 @@ ArticulatedModel2::Part* ArticulatedModel2::part(const Instruction::Identifier& 
 }
 
 
-ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const Instruction::Identifier& partIdent, const Instruction::Identifier& meshIdent) {
+ArticulatedModel::Mesh* ArticulatedModel::mesh(const Instruction::Identifier& partIdent, const Instruction::Identifier& meshIdent) {
     if (meshIdent.id.initialized()) {
         return mesh(meshIdent.id);
     }
@@ -132,7 +132,7 @@ ArticulatedModel2::Mesh* ArticulatedModel2::mesh(const Instruction::Identifier& 
 }
 
 
-ArticulatedModel2::Part* ArticulatedModel2::part(const std::string& partName) {
+ArticulatedModel::Part* ArticulatedModel::part(const std::string& partName) {
     // Exhaustively cycle through all parts
     for (int p = 0; p < m_partArray.size(); ++p) {
         if (m_partArray[p]->name == partName) {
@@ -144,7 +144,7 @@ ArticulatedModel2::Part* ArticulatedModel2::part(const std::string& partName) {
 
 
 
-void ArticulatedModel2::load(const Specification& specification) {
+void ArticulatedModel::load(const Specification& specification) {
     Stopwatch timer;
     
     const std::string& ext = toLower(FilePath::ext(specification.filename));
@@ -191,7 +191,7 @@ void ArticulatedModel2::load(const Specification& specification) {
 }
 
 
-void ArticulatedModel2::maybeCompactArrays() {
+void ArticulatedModel::maybeCompactArrays() {
     int numVertices = 0;
     int numIndices = 0;
 
@@ -220,27 +220,27 @@ void ArticulatedModel2::maybeCompactArrays() {
 }
 
 
-/** Used by ArticulatedModel2::intersect */
-class AMIntersector : public ArticulatedModel2::PartCallback {
+/** Used by ArticulatedModel::intersect */
+class AMIntersector : public ArticulatedModel::PartCallback {
 public:
     bool                        hit;
     const Ray&                  wsR;
     float&                      maxDistance;
-    ArticulatedModel2::Part*&   partHit;
-    ArticulatedModel2::Mesh*&   meshHit; 
+    ArticulatedModel::Part*&   partHit;
+    ArticulatedModel::Mesh*&   meshHit; 
     int&                        triStartIndex;
     float&                      u;
     float&                      v;
 
-    AMIntersector(const Ray& wsR, float& maxDistance, ArticulatedModel2::Part*& partHit, 
-        ArticulatedModel2::Mesh*& meshHit, int& triStartIndex, float& u, float& v) :
+    AMIntersector(const Ray& wsR, float& maxDistance, ArticulatedModel::Part*& partHit, 
+        ArticulatedModel::Mesh*& meshHit, int& triStartIndex, float& u, float& v) :
         hit(false),
         wsR(wsR), maxDistance(maxDistance), partHit(partHit), meshHit(meshHit),
         triStartIndex(triStartIndex), u(u), v(v) {
     }
 
-    virtual void operator()(ArticulatedModel2::Part* part, const CFrame& partFrame,
-                            ArticulatedModel2::Ref model, const int treeDepth) override {
+    virtual void operator()(ArticulatedModel::Part* part, const CFrame& partFrame,
+                            ArticulatedModel::Ref model, const int treeDepth) override {
 
         // Take the ray to object space
         const Ray& osRay = partFrame.toObjectSpace(wsR);
@@ -256,7 +256,7 @@ public:
         // For each mesh
         const CPUVertexArray::Vertex* vertex = part->cpuVertexArray.vertex.getCArray();
         for (int m = 0; m < part->meshArray().size(); ++m) {
-            ArticulatedModel2::Mesh* mesh = part->meshArray()[m];
+            ArticulatedModel::Mesh* mesh = part->meshArray()[m];
 
             const float testTime = osRay.intersectionTime(mesh->boxBounds);
             if (testTime >= maxDistance) {
@@ -316,7 +316,7 @@ public:
 }; // AMIntersector
 
 
-bool ArticulatedModel2::intersect
+bool ArticulatedModel::intersect
     (const Ray&     R, 
     const CFrame&   cframe, 
     const Pose&     pose, 
@@ -334,7 +334,7 @@ bool ArticulatedModel2::intersect
 }
 
 
-void ArticulatedModel2::countTrianglesAndVertices(int& tri, int& vert) const {
+void ArticulatedModel::countTrianglesAndVertices(int& tri, int& vert) const {
     tri = 0;
     vert = 0;
     for (int p = 0; p < m_partArray.size(); ++p) {

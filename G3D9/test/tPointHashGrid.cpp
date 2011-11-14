@@ -245,15 +245,15 @@ void testPointHashGrid() {
     debugAssert(grid.size() == 0);
 }
 
-void getVertices(ArticulatedModel2::Ref model, Array<Point3>& vertexArray) {
+void getVertices(ArticulatedModel::Ref model, Array<Point3>& vertexArray) {
 
-    class ExtractVertexCallback : public ArticulatedModel2::PartCallback {
+    class ExtractVertexCallback : public ArticulatedModel::PartCallback {
     public:
         Array<Point3>& vertexArray;
 
         ExtractVertexCallback(Array<Point3>& vertexArray) : vertexArray(vertexArray) {}
 
-        void operator()(ArticulatedModel2::Part *part, const CFrame &worldToPartFrame, ArticulatedModel2::Ref model, const int treeDepth) {
+        void operator()(ArticulatedModel::Part *part, const CFrame &worldToPartFrame, ArticulatedModel::Ref model, const int treeDepth) {
             for (int i = 0; i < part->cpuVertexArray.size(); ++i) {
                 vertexArray.append(worldToPartFrame.pointToObjectSpace(part->cpuVertexArray.vertex[i].position));
             }
@@ -293,7 +293,7 @@ void perfPointHashGrid() {
     */
 	
     Array<Vector3> v;
-    ArticulatedModel2::Ref m = ArticulatedModel2::fromFile(System::findDataFile("cow.ifs"));
+    ArticulatedModel::Ref m = ArticulatedModel::fromFile(System::findDataFile("cow.ifs"));
     getVertices(m, v);
     int numTestPts = v.size();
     Vector3 minCoords = min(v);

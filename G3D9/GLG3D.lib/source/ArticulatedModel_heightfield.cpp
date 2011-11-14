@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_heightfield.cpp
+ \file GLG3D/source/ArticulatedModel_heightfield.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-10-12
@@ -8,12 +8,12 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 #include "G3D/FileSystem.h"
 
 namespace G3D {
 
-void ArticulatedModel2::loadHeightfield(const Specification& specification) {
+void ArticulatedModel::loadHeightfield(const Specification& specification) {
     Part* part = addPart("root");
     Mesh* mesh = addMesh("mesh", part);
     mesh->material = Material::create();

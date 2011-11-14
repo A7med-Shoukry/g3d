@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_zerialize.cpp
+ \file GLG3D/source/ArticulatedModel_zerialize.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-18
@@ -8,11 +8,11 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 
 namespace G3D {
 
-ArticulatedModel2::CleanGeometrySettings::CleanGeometrySettings(const Any& a) {
+ArticulatedModel::CleanGeometrySettings::CleanGeometrySettings(const Any& a) {
     *this = CleanGeometrySettings();
     AnyTableReader r(a);
     r.getIfPresent("forceVertexMerging", forceVertexMerging);
@@ -22,8 +22,8 @@ ArticulatedModel2::CleanGeometrySettings::CleanGeometrySettings(const Any& a) {
 }
 
 
-Any ArticulatedModel2::CleanGeometrySettings::toAny() const {
-    Any a(Any::TABLE, "ArticulatedModel2::CleanGeometrySettings");
+Any ArticulatedModel::CleanGeometrySettings::toAny() const {
+    Any a(Any::TABLE, "ArticulatedModel::CleanGeometrySettings");
     a["forceVertexMerging"] = forceVertexMerging;
     a["maxNormalWeldAngle"] = maxNormalWeldAngle;
     a["maxSmoothAngle"]     = maxSmoothAngle;
@@ -33,7 +33,7 @@ Any ArticulatedModel2::CleanGeometrySettings::toAny() const {
 
 //////////////////////////////////////////////////////////////////////
 
-ArticulatedModel2::Specification::Specification(const Any& a) {
+ArticulatedModel::Specification::Specification(const Any& a) {
     *this = Specification();
     AnyTableReader r(a);
     Any f;
@@ -50,8 +50,8 @@ ArticulatedModel2::Specification::Specification(const Any& a) {
 }
 
 
-Any ArticulatedModel2::Specification::toAny() const {
-    Any a(Any::TABLE, "ArticulatedModel2::Specification");
+Any ArticulatedModel::Specification::toAny() const {
+    Any a(Any::TABLE, "ArticulatedModel::Specification");
     a["filename"]                  = filename;
     a["stripMaterials"]            = stripMaterials;
     a["mergeMeshesByMaterial"]     = mergeMeshesByMaterial;
@@ -66,11 +66,11 @@ Any ArticulatedModel2::Specification::toAny() const {
 
 //////////////////////////////////////////////////////////////////////
 
-ArticulatedModel2::PoseSpline::PoseSpline() : castsShadows(true) {}
+ArticulatedModel::PoseSpline::PoseSpline() : castsShadows(true) {}
 
 
-ArticulatedModel2::PoseSpline::PoseSpline(const Any& any) : castsShadows(true) {
-    any.verifyName("ArticulatedModel2::PoseSpline");
+ArticulatedModel::PoseSpline::PoseSpline(const Any& any) : castsShadows(true) {
+    any.verifyName("ArticulatedModel::PoseSpline");
     for (Any::AnyTable::Iterator it = any.table().begin(); it.isValid(); ++it) {
         if (it->key == "castsShadows") {
             castsShadows = it->value;
@@ -81,7 +81,7 @@ ArticulatedModel2::PoseSpline::PoseSpline(const Any& any) : castsShadows(true) {
 }
 
  
-void ArticulatedModel2::PoseSpline::get(float t, ArticulatedModel2::Pose& pose) {
+void ArticulatedModel::PoseSpline::get(float t, ArticulatedModel::Pose& pose) {
     for (SplineTable::Iterator it = partSpline.begin(); it.isValid(); ++it) {
         if (it->value.control.size() > 0) {
             pose.cframe.set(it->key, it->value.evaluate(t));
@@ -93,7 +93,7 @@ void ArticulatedModel2::PoseSpline::get(float t, ArticulatedModel2::Pose& pose) 
 
 ///////////////////////////////////////////////////////////////////////
 
-ArticulatedModel2::Instruction::Identifier::Identifier(const Any& a) {
+ArticulatedModel::Instruction::Identifier::Identifier(const Any& a) {
     switch (a.type()) {
     case Any::NUMBER:
         id = ID(iRound(a.number()));
@@ -120,7 +120,7 @@ ArticulatedModel2::Instruction::Identifier::Identifier(const Any& a) {
     }
 }
 
-Any ArticulatedModel2::Instruction::Identifier::toAny() const {
+Any ArticulatedModel::Instruction::Identifier::toAny() const {
     if (isAll()) {
         return Any(Any::ARRAY, "all");
     } else if (isRoot()) {
@@ -134,11 +134,11 @@ Any ArticulatedModel2::Instruction::Identifier::toAny() const {
 
 ///////////////////////////////////////////////////////////////////////
 
-Any ArticulatedModel2::Instruction::toAny() const {
+Any ArticulatedModel::Instruction::toAny() const {
     return source;
 }
 
-ArticulatedModel2::Instruction::Instruction(const Any& any) {
+ArticulatedModel::Instruction::Instruction(const Any& any) {
     any.verifyType(Any::ARRAY);
 
     source = any;

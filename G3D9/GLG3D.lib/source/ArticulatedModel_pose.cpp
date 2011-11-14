@@ -1,5 +1,5 @@
 /**
- \file GLG3D/source/ArticulatedModel2_pose.cpp
+ \file GLG3D/source/ArticulatedModel_pose.cpp
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-16
@@ -8,17 +8,17 @@
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 */
-#include "GLG3D/ArticulatedModel2.h"
+#include "GLG3D/ArticulatedModel.h"
 
 namespace G3D {
     
-const ArticulatedModel2::Pose& ArticulatedModel2::defaultPose() {
+const ArticulatedModel::Pose& ArticulatedModel::defaultPose() {
     static const Pose p;
     return p;
 }
 
 
-void ArticulatedModel2::pose
+void ArticulatedModel::pose
 (Array<Surface::Ref>&     surfaceArray,
  const CoordinateFrame&   cframe,
  const Pose&              ppose) {
@@ -27,7 +27,7 @@ void ArticulatedModel2::pose
 }
 
 
-void ArticulatedModel2::pose
+void ArticulatedModel::pose
 (Array<Surface::Ref>&     surfaceArray,
  const CoordinateFrame&   cframe,
  const Pose&              pose,
@@ -40,8 +40,8 @@ void ArticulatedModel2::pose
 }
 
 
-void ArticulatedModel2::Part::pose
-(const ArticulatedModel2::Ref& model,
+void ArticulatedModel::Part::pose
+(const ArticulatedModel::Ref& model,
  Array<Surface::Ref>&     surfaceArray,
  const CoordinateFrame&   parentFrame,
  const Pose&              posex,
@@ -77,7 +77,7 @@ void ArticulatedModel2::Part::pose
 }
 
 
-void ArticulatedModel2::Part::copyToGPU() {
+void ArticulatedModel::Part::copyToGPU() {
     cpuVertexArray.copyToGPU(gpuPositionArray, gpuNormalArray, gpuTangentArray, gpuTexCoord0Array);
 
     typedef uint16 smallIndexType;
