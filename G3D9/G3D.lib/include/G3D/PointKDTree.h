@@ -611,7 +611,7 @@ public:
     }
 
 
-    int size() const {
+    size_t size() const {
         return memberTable.size();
     }
 

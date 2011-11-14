@@ -1023,7 +1023,7 @@ public:
     }
 
     int debugGetDeepestBucketSize() const {
-        return m_data.debugGetDeepestBucketSize();
+        return (int)m_data.debugGetDeepestBucketSize();
     }
 
     float debugGetAverageBucketSize() const {
