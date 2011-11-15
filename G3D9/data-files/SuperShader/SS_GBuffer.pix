@@ -2,7 +2,8 @@
 /** \file SS_GBuffer.pix 
     \author Morgan McGuire, http://graphics.cs.williams.edu
     
-     This shader expects a prefix attached at runtime in SuperShader.cpp
+     This shader expects a prefix (GBuffer::macros()) to be attached
+     at runtime, e.g., as done in SuperShader.cpp
     */
 
 /** Texture coordinate */
@@ -124,7 +125,7 @@ void main() {
 #       endif
         ;
 #       ifdef LAMBERTIAN
-            LAMBERTIAN = temp.rgb;
+            LAMBERTIAN.rgb = temp.rgb;
 #       endif
         alpha = temp.a;
 
