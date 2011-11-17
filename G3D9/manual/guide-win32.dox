@@ -1,4 +1,4 @@
-/** \page guidewin32 Installing %G3D on Windows
+/** \page guidewin32 Installing G3D on Windows
 
 The following sections give step-by-step instructions for installing
 the 9.00 version of %G3D on Windows XP, Vista, and 7.
@@ -24,8 +24,8 @@ href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.
 \htmlonly
 Visual Studio 2010 (officially known as Visual C++ 2010 Express Edition)
 is available as a free download from Microsoft.
-For 64-bit application development, you will also need to install the free Windows SDK from
-Note that there is also a profession
+For 64-bit application development, you will also need to install the free Windows SDK.
+Note that there is also a professional
 edition of Visual Studio 2010 that can be purchased and includes 64-bit support directly.
 
 <ul>
@@ -50,9 +50,9 @@ All of the project files that come with G3D already have this done.
 <li> <p>
 
 Download <a
-href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-win32.zip?download">G3D-9.00-win32.zip</a>
+href="http://prdownloads.sourceforge.net/g3d/G3D-9.00-b03-win.zip?download">G3D-9.00-b03-win.zip</a>
 and unzip it into a directory like <code>c:\libraries</code>. This
-will create the directories <code>c:\libraries\G3D9</code>,
+will create the directories <b><code>c:\libraries\G3D9</code></b>,
 <code>c:\libraries\G3D9\manual</code>, etc.
 
 </p>
@@ -65,7 +65,7 @@ will create the directories <code>c:\libraries\G3D9</code>,
      <ol>
 	    <li> Open <i>any</i> VC10 project, for example C:\libraries\G3D9\samples\starter\starter.sln
 	    <li> Select View -&gt; Property Manager, as shown below:
-		<center><a href="vc10-property-menu.png"><img src="vc10-property-menu.png" border=1 align=top width=120></a></center></p>
+		<center><a href="vc10-property-menu.png"><img src="vc10-property-menu.png" border=1 align=top></a></center></p>
 		<li> Select Debug | Win32 \&gt; Microsoft.Cpp.Win32.user in the Property Manager.
 		<li> Select Common Properties -&gt; VC++ Directories as shown below:
 		<center><a href="vc10-directories.png"><img src="vc10-directories.png" border=1 align=top width=50%></a></center></p>
