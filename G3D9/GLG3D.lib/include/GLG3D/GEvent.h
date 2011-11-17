@@ -334,8 +334,9 @@ public:
 
     G3D_DECLARE_ENUM_CLASS_METHODS(GEventType);
 
+    /** False for GUI_CLOSE, which is a GuiCloseEvent */
     bool isGuiEvent() const {
-        return value >= GUI_DOWN && value <= GUI_CLOSE;
+        return value >= GUI_DOWN && value < GUI_CLOSE;
     }
 };
 
