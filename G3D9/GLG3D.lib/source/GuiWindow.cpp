@@ -331,7 +331,18 @@ bool GuiWindow::onEvent(const GEvent& event) {
                     p = p->m_parent;
                 }
 
-                consumed = target->onEvent(makeRelative(event, origin));
+                GEvent e2 = makeRelative(event, origin);
+                Point2 pt;
+                
+                if (e2.type == GEventType::MOUSE_MOTION) {
+                    pt = Point2((float)e2.motion.x, (float)e2.motion.y);
+                } else {
+                    pt = Point2((float)e2.button.x, (float)e2.button.y);
+                }
+
+                if (target->clickRect().contains(pt)) {
+                    consumed = target->onEvent(e2);
+                }
 
             } else {
                 consumed = target->onEvent(event);
