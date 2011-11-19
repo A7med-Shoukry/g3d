@@ -231,7 +231,7 @@ public:
         const Rect2D& texCoord2 = Rect2D::xywh(0,0,1,1),
         const Rect2D& texCoord3 = Rect2D::xywh(0,0,1,1));
 
-    /** Draws a border of size width about the rectangle
+    /** Draws a border about the rectangle
         using polygons (since PrimitiveType::LINE_STRIP doesn't 
         guarantee pixel widths). */
     static void rect2DBorder(
