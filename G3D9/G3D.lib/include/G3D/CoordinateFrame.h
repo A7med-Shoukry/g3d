@@ -288,6 +288,21 @@ public:
         return CoordinateFrame(rotation, translation - v);
     }
 
+
+    /**
+    Transform this coordinate frame towards \a goal, but not past it, goverened by maximum
+    rotation and translations.  This is a useful alternative to \a lerp, especially if the
+    goal is expected to change every transformation step so that constant start and end positions will
+    not be available.
+
+    \param goal Step from this towards goal
+    \param maxTranslationRate Meters 
+    \param maxRotationRate Radians
+
+    \sa lerp
+    */
+    void moveTowards(const CoordinateFrame& goal, float maxTranslation, float maxRotation);
+
     void lookAt(const Point3& target);
 
     void lookAt
@@ -322,6 +337,8 @@ public:
     /**
      Linearly interpolates between two coordinate frames, using
      Quat::slerp for the rotations.
+
+     \sa moveTowards
      */
     CoordinateFrame lerp
     (const CoordinateFrame&  other,

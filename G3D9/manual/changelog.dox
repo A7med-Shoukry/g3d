@@ -1,4 +1,5 @@
 /**
+
  \page changelog Change Log
 
 <P>
@@ -20,150 +21,154 @@
    <p>
    Changes in 9.00:
    <ul>
-     <li> GuiContainer is now notified through G3D::GuiContainer::onChildControlEvent() when one of its children fires a GUI event.
-     <li> GuiWindow now delivers events up the GUI hierarchy until they are consumed
-     <li> G3D::ArticulatedModel::intersect
-     <li> G3D::Color3 and G3D::Color4 now initialize to zero
-     <li> G3D::Color2uint8
-	 <li> G3D::Material defaults to assuming input should be in sRGB space for lambertian, emissive, transmissive, and glossy maps (shininess and bump are assumed linear)
-     <li> Added 64-bit targets and patched many warnings and errors for sizeof(size_t) == 64 (however, G3D is not fully 64-bit compatible yet)
-     <li> G3D::unorm8
-	 <li> Changed default BumpMap::Specification::Settings::iterations to 1 (parallax mapping) from normal mapping
-	 <li> G3D::Surface::castsShadows
-     <li> G3D::maxNotNPOS
-	 <li> GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE
-	 <li> G3D::GuiControl::findControlUnderMouse
-     <li> G3D::Array::trimToSize
-     <li> G3D::Shader now assumes GLSL 1.20 for files without a version specification
-     <li> G3D::CFrame when passed to GLSL and the built-in G3D uniforms in shaders now use mat4x3 instead of mat4
-     <li> G3D::ParseOBJ, ParseMTL, ParsePLY
-     <li> G3D::TextInput::readInteger
-     <li> G3D::CPUVertexArray; SuperSurface::CPUGeom now uses CPUVertexArray*
-     <li> G3D::TextInput::pushSettings, popSettings
-     <li> G3D::Icon, G3D::IconSet can now be used to put arbitrary images on GuiControl%s
-     <li> G3D::Array::swap
-     <li> G3D::ImageFormat::R16F
-     <li> G3D::GApp::setLowerFrameRateInBackground
-     <li> Updated to libzip 0.10
-     <li> G3D::VertexRange::operator==
-     <li> GApp::m_useFilm may now be changed after construction to disable Film per-frame
-     <li> G3D::Matrix3::fromUnitAxisAngle
-     <li> G3D::HashTrait<std::type_info* const> specialization
-     <li> G3D::categorizeByDerivedType
-     <li> G3D::Vector4int16
-     <li> Made alpha-testing optional in G3D::TriTree
-     <li> Extended G3D::GCamera to have lens parameters
-     <li> Lighting::Specification::Any toAny()
-     <li> G3D::PhysicsFrameSplineEditor
-     <li> G3D::Vector2int32
-     <li> G3D::Texture::Visualization, G3D::Texture::visualization
-     <li> Added ImageFormat::RGBA8I() format
-     <li> G3D::RayGridIterator
-     <li> Added FXAA post-process antialiasing to G3D::Film
-     <li> Array::deleteAll -> Array::invokeDeleteOnAllElements
-     <li> Improved error reporting from Any and ParseError
-     <li> PhysicsFrame::operator==, Quat::operator==, PhysicsFrameSpline::operator==
-     <li> G3D::GEntity::toAny, G3D::PhysicsFrameSpline::toAny, G3D::PhysicsFrame::toAny, G3D::Quat::toAny
-     <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable
-     <li> G3D::GCamera::exposureTime
-	 <li> G3D::Surface::getBoxBounds and getSphereBounds now ignore infinite child bounding boxes (makes for tighter shadow frustum bounds in scenes with unbounded 3D widgets)
-     <li> G3D::ArrowShape
-     <li> All-new streamlined interface for G3D::GBuffer, now no longer in "beta"
-     <li> G3D::GBuffer now supports face normals
-     <li> G3D::Any::operator=(Array<T>)
-     <li> G3D::debugDraw now allows specification of the display time
-     <li> G3D::GImage::copySubImage &rarr; G3D::GImage::copyRect
-     <li> G3D::GImage::pasteSubImage &rarr; G3D::GImage::copyRect (overload)
-     <li> G3D::VideoOutput::append(VideoInput)
-     <li> G3D::GApp::removeDebugShape, G3D::GApp::removeAllDebugShapes
-     <li> G3D::GApp::addWidget now sets the focus on the new widget by default
-     <li> G3D::GApp::show
-     <li> G3D::ShadowMap::updateDepth now allows small negative values
-     <li> G3D::MD2Model::Specification::negateNormals
-     <li> G3D::SurfaceElement
-     <li> G3D::Any::serialize, G3D::Any::deserialize
-     <li> G3D::GFont::draw2DWordWrap
-     <li> G3D::GEventType::KEY_REPEAT
-     <li> G3D::RenderDevice::setReadFramebuffer, setDrawFramebuffer
-     <li> G3D::PointHashGrid::Iterator::hasMore
-     <li> G3D::GLight::castsShadows
-     <li> G3D::GLight::power
-     <li> G3D::FileSystem::markFileUsed, G3D::FileSystem::usedFiles
-     <li> G3D::Point2 typedef
-     <li> G3D::Noise
-     <li> G3D::TriTree::intersectRay can now be invoked to early exit on any hit for shadow rays
-     <li> Replaced all instances of .hasMore() with .isValid(), deprecated hasMore, and added isValid to all iterators.
-     <li> Flipped the GCamera::project Y-axis to match RenderDevice's Y-axis
-     <li> Extended G3D::SuperSurface to work with inverted cameras for planar mirror rendering
-     <li> BIN8, BIN11, BIN16, BIN32
-     <li> GApp will now create a G3D::RenderBuffer if the preferred depth format cannot be satisfied by a texture, e.g., because it contains stencil bits
-     <li> G3D::GuiPane::setNewChildSize(), GuiPane::beginRow()...GuiPane::endRow()
-     <li> G3D::PointHashGrid::getIntersectingMembers()
-     <li> G3D::Surface::sendGeometry
-     <li> Substantially sharpened GFont text rendering
-     <li> G3D::Material::Specification(Color3)
-     <li> G3D::Matrix3::diagonal, G3D::Matrix4::diagonal
-     <li> G3D::Vector2::directionOrZero
-     <li> G3D::Crypto::md5 is now static
-     <li> G3D::Rect2D::serialize and deserialize
-     <li> Upgraded to libpng 1.4.4
-     <li> Added compatibility profile clipping support to SuperShader [Hai Zhou]
-     <li> Made documentation page titles not begin with "G3D..." for ease of use in tabbed browsing
-     <li> Tuned Vector4, Vector3, uint64, uint128 hash codes for performance instead of quality
+     <li> GuiContainer is now notified through G3D::GuiContainer::onChildControlEvent() when one of its children fires a GUI event.</li>
+     <li> GuiWindow now delivers events up the GUI hierarchy until they are consumed</li>
+     <li> G3D::ArticulatedModel::intersect</li>
+     <li> G3D::Color3 and G3D::Color4 now initialize to zero</li>
+     <li> G3D::Color2uint8</li>
+	 <li> G3D::Material defaults to assuming input should be in sRGB space for lambertian, emissive, transmissive, and glossy maps (shininess and bump are assumed linear)</li>
+     <li> Added 64-bit targets and patched many warnings and errors for sizeof(size_t) == 64 (however, G3D is not fully 64-bit compatible yet)</li>
+     <li> G3D::unorm8</li>
+	 <li> Changed default BumpMap::Specification::Settings::iterations to 1 (parallax mapping) from normal mapping</li>
+	 <li> G3D::Surface::castsShadows</li>
+     <li> G3D::maxNotNPOS</li>
+     <li> G3D::Quat::moveTowards </li>
+     <li> G3D::Vector3::moveTowards </li>
+     <li> G3D::CFrame::moveTowards </li>
+	 <li> GuiTheme::NO_BACKGROUND_UNLESS_FOCUSED_TEXT_BOX_STYLE</li>
+	 <li> G3D::GuiControl::findControlUnderMouse</li>
+     <li> G3D::Array::trimToSize</li>
+     <li> G3D::Shader now assumes GLSL 1.20 for files without a version specification</li>
+     <li> G3D::CFrame when passed to GLSL and the built-in G3D uniforms in shaders now use mat4x3 instead of mat4</li>
+     <li> G3D::ParseOBJ, ParseMTL, ParsePLY</li>
+     <li> G3D::TextInput::readInteger</li>
+     <li> G3D::CPUVertexArray; SuperSurface::CPUGeom now uses CPUVertexArray*</li>
+     <li> G3D::TextInput::pushSettings, popSettings</li>
+     <li> G3D::Icon, G3D::IconSet can now be used to put arbitrary images on GuiControl%s</li>
+     <li> G3D::Array::swap</li>
+     <li> G3D::ImageFormat::R16F</li>
+     <li> G3D::GApp::setLowerFrameRateInBackground</li>
+     <li> Updated to libzip 0.10</li>
+     <li> G3D::VertexRange::operator==</li>
+     <li> GApp::m_useFilm may now be changed after construction to disable Film per-frame</li>
+     <li> G3D::Matrix3::fromUnitAxisAngle</li>
+     <li> G3D::HashTrait<std::type_info* const> specialization</li>
+     <li> G3D::categorizeByDerivedType</li>
+     <li> G3D::Vector4int16</li>
+     <li> Made alpha-testing optional in G3D::TriTree</li>
+     <li> Extended G3D::GCamera to have lens parameters</li>
+     <li> Lighting::Specification::Any toAny()</li>
+     <li> G3D::PhysicsFrameSplineEditor</li>
+     <li> G3D::Vector2int32</li>
+     <li> G3D::Texture::Visualization, G3D::Texture::visualization</li>
+     <li> Added ImageFormat::RGBA8I() format</li>
+     <li> G3D::RayGridIterator</li>
+     <li> Added FXAA post-process antialiasing to G3D::Film</li>
+     <li> Array::deleteAll -> Array::invokeDeleteOnAllElements</li>
+     <li> Improved error reporting from Any and ParseError</li>
+     <li> PhysicsFrame::operator==, Quat::operator==, PhysicsFrameSpline::operator==</li>
+     <li> G3D::GEntity::toAny, G3D::PhysicsFrameSpline::toAny, G3D::PhysicsFrame::toAny, G3D::Quat::toAny</li>
+     <li> Updated G3D::CarbonWindow to follow latest Apple OS X 10.5 OpenGL recommendations; eliminated AGLDrawable</li>
+     <li> G3D::GCamera::exposureTime</li>
+	 <li> G3D::Surface::getBoxBounds and getSphereBounds now ignore infinite child bounding boxes (makes for tighter shadow frustum bounds in scenes with unbounded 3D widgets)</li>
+     <li> G3D::ArrowShape</li>
+     <li> All-new streamlined interface for G3D::GBuffer, now no longer in "beta"</li>
+     <li> G3D::GBuffer now supports face normals</li>
+     <li> G3D::Any::operator=(Array<T>)</li>
+     <li> G3D::debugDraw now allows specification of the display time</li>
+     <li> G3D::GImage::copySubImage &rarr; G3D::GImage::copyRect</li>
+     <li> G3D::GImage::pasteSubImage &rarr; G3D::GImage::copyRect (overload)</li>
+     <li> G3D::VideoOutput::append(VideoInput)</li>
+     <li> G3D::GApp::removeDebugShape, G3D::GApp::removeAllDebugShapes</li>
+     <li> G3D::GApp::addWidget now sets the focus on the new widget by default</li>
+     <li> G3D::GApp::show</li>
+     <li> G3D::ShadowMap::updateDepth now allows small negative values</li>
+     <li> G3D::MD2Model::Specification::negateNormals</li>
+     <li> G3D::SurfaceElement</li>
+     <li> G3D::Any::serialize, G3D::Any::deserialize</li>
+     <li> G3D::GFont::draw2DWordWrap</li>
+     <li> G3D::GEventType::KEY_REPEAT</li>
+     <li> G3D::RenderDevice::setReadFramebuffer, setDrawFramebuffer</li>
+     <li> G3D::PointHashGrid::Iterator::hasMore</li>
+     <li> G3D::GLight::castsShadows</li>
+     <li> G3D::GLight::power</li>
+     <li> G3D::FileSystem::markFileUsed, G3D::FileSystem::usedFiles</li>
+     <li> G3D::Point2 typedef</li>
+     <li> G3D::Noise</li>
+     <li> G3D::TriTree::intersectRay can now be invoked to early exit on any hit for shadow rays</li>
+     <li> Replaced all instances of .hasMore() with .isValid(), deprecated hasMore, and added isValid to all iterators.</li>
+     <li> Flipped the GCamera::project Y-axis to match RenderDevice's Y-axis</li>
+     <li> Extended G3D::SuperSurface to work with inverted cameras for planar mirror rendering</li>
+     <li> BIN8, BIN11, BIN16, BIN32</li>
+     <li> GApp will now create a G3D::RenderBuffer if the preferred depth format cannot be satisfied by a texture, e.g., because it contains stencil bits</li>
+     <li> G3D::GuiPane::setNewChildSize(), GuiPane::beginRow()...GuiPane::endRow()</li>
+     <li> G3D::PointHashGrid::getIntersectingMembers()</li>
+     <li> G3D::Surface::sendGeometry</li>
+     <li> Substantially sharpened GFont text rendering</li>
+     <li> G3D::Material::Specification(Color3)</li>
+     <li> G3D::Matrix3::diagonal, G3D::Matrix4::diagonal</li>
+     <li> G3D::Vector2::directionOrZero</li>
+     <li> G3D::Crypto::md5 is now static</li>
+     <li> G3D::Rect2D::serialize and deserialize</li>
+     <li> Upgraded to libpng 1.4.4</li>
+     <li> Added compatibility profile clipping support to SuperShader [Hai Zhou]</li>
+     <li> Made documentation page titles not begin with "G3D..." for ease of use in tabbed browsing</li>
+     <li> Tuned Vector4, Vector3, uint64, uint128 hash codes for performance instead of quality</li>
      <li> iCompile can now use ICE_EXTRA_SOURCE environment variable to find G3D sources if you move
-          them after compilation
-     <li> Build system output directory no longer includes platform name (affects icompile as well)
-     <li> Added new icompile working directory ([Global] workdir), defaults to data-files for new projects
-     <li> GImage::encodePNG16, GImage::decodePNG16; Image1::load and Image1::save now support PNG16
-     <li> Improved OFF file parsing compatibility
-     <li> Significantly increased the performance of BinaryOutput::compress
-     <li> G3D::GuiWindow subclasses can now initialize without OpenGL, for compute servers
-     <li> G3D::Discovery now can operate without a GUI.
-     <li> G3D::System::findDataFile now takes an optional caseSensitive argument
-     <li> G3D::FileSystem::exists now takes an optional caseSensitive argument
-     <li> G3D::GFont::makeFontFile now requires .tga input
-     <li> G3D::GImage::RGBAtoBGRA
-     <li> G3D::Surface::getObjectSpaceGeometry
-     <li> G3D::BinaryOutput::writeString32 no longer writes a NULL.  This behavior is backwards compatible to G3D 8.xx
-     <li> Added support for obsolete GL_EXT_framebuffer_object so that Film and ShadowMap will work on MacBooks with Intel GPUs
-     <li> Sample programs, viewer, and test now statically link FFMPEG on Win32 to avoid DLL/PATH problems when distributing the binaries.
-     <li> In the G3D source tree, renamed doc-files/ to manual/ and doc-files/data-files to doc-files/ to match icompile conventions
-     <li> Upgraded to icompile 0.5.16
-     <li> Fix: CFrame::toXYZYPRDegreesString and fromXYZYPRDegreesString are now correctly inverses (modulo 360 degrees) and have higher precision than in 8.xx
-     <li> Fix: GApp no longer passes consumed events to UserInput unless they are button up or key up
-     <li> Fix: BinaryInput and FilePath now convert Windows slashes to Unix ones on Unix
-     <li> Fix: GLCaps::glslVersion now returns the correct value
-     <li> Fix: G3D::Widget now uses G3D::Surface2D::depth for event delivery as well as rendering
-     <li> Fix: G3D::ThirdPersonManipulator renders "in front" of objects by artificially flagging itself as transparent
-     <li> Fix: G3D::Table::debugGetLoad now returns the correct load factor
-     <li> Fix: G3D::GApp ensures that UserInput always receives events, even if they are consumed by Widgets
-     <li> Fix: ShadowMap now enforces minimum bounds for empty scenes and a maximum bound for infinite scenes 
-     <li> Fix: G3D::CarbonWindow now returns proper mouse click events
-     <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area
-     <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload
-     <li> Fix: SuperBSDF::evaluate now computes the same result as SuperShader for glossy terms
-     <li> Fix: Diffuse colors for 3DS files loaded by ArticulatedModel
-     <li> Fix: Correct loading of texture maps for 3DS files with incorrect case in them on OS X, support for 3DS reflection
-     <li> Fix: VideoRecordDialog correctly inverts the Y axis on half-size video recording
-     <li> Fix: G3D::Tri::area is now correct (was too large by a factor of 2x before)
-     <li> Fix: CarbonWindow icons now load correctly
-     <li> Fix: BinaryOutput to memory now never creates a file on disk
-     <li> Fix: GuiWindow now consumes mouse motion events while being dragged.
-     <li> Fix: G3D::TriTree now finds ray intersections even when the ray lies entirely within a splitting plane
-     <li> Fix: G3D::Intersect::rayAABox had some bad logic for a few cases due to falling through a SWITCH-CASE.  These are now fixed.
-     <li> Fix: CarbonWindow now returns correct key codes when Ctrl+letter are held down
-     <li> Fix: G3D_BEGIN_PACKED_CLASS now uses correct syntax on Unix (the macro is not backwards compatible to 8.xx, however)
-     <li> Fix: Color4::fromARGB now works correctly inside Any deserialization
-     <li> Fix: increased the precision of Vector3::isZero, Vector2::isZero
-     <li> Fix: Windows shares are now properly detected as file system roots
-	 <li> Fix: Fixed memory leak in GImage::decodePNG when a PNG was loaded over an existing GImage
-	 <li> Fix: Texture min now computed correctly (was always NaN for RGB8 and multiplied by 255 for RGBA8 before)
-     <li> Fix: Win32Window now distinguishes KEY_DOWN and KEY_REPEAT events
-	 <li> Fix: GEventType::MOUSE_MOTION events are now only delivered once to each GuiControl, and are in the correct coordinate system
+          them after compilation</li>
+     <li> Build system output directory no longer includes platform name (affects icompile as well)</li>
+     <li> Added new icompile working directory ([Global] workdir), defaults to data-files for new projects</li>
+     <li> GImage::encodePNG16, GImage::decodePNG16; Image1::load and Image1::save now support PNG16</li>
+     <li> Improved OFF file parsing compatibility</li>
+     <li> Significantly increased the performance of BinaryOutput::compress</li>
+     <li> G3D::GuiWindow subclasses can now initialize without OpenGL, for compute servers</li>
+     <li> G3D::Discovery now can operate without a GUI.</li>
+     <li> G3D::System::findDataFile now takes an optional caseSensitive argument</li>
+     <li> G3D::FileSystem::exists now takes an optional caseSensitive argument</li>
+     <li> G3D::GFont::makeFontFile now requires .tga input</li>
+     <li> G3D::GImage::RGBAtoBGRA</li>
+     <li> G3D::Surface::getObjectSpaceGeometry</li>
+     <li> G3D::BinaryOutput::writeString32 no longer writes a NULL.  This behavior is backwards compatible to G3D 8.xx</li>
+     <li> Added support for obsolete GL_EXT_framebuffer_object so that Film and ShadowMap will work on MacBooks with Intel GPUs</li>
+     <li> Sample programs, viewer, and test now statically link FFMPEG on Win32 to avoid DLL/PATH problems when distributing the binaries.</li>
+     <li> In the G3D source tree, renamed doc-files/ to manual/ and doc-files/data-files to doc-files/ to match icompile conventions</li>
+     <li> Upgraded to icompile 0.5.16</li>
+     <li> Fix: CFrame::toXYZYPRDegreesString and fromXYZYPRDegreesString are now correctly inverses (modulo 360 degrees) and have higher precision than in 8.xx</li>
+     <li> Fix: GApp no longer passes consumed events to UserInput unless they are button up or key up</li>
+     <li> Fix: BinaryInput and FilePath now convert Windows slashes to Unix ones on Unix</li>
+     <li> Fix: GLCaps::glslVersion now returns the correct value</li>
+     <li> Fix: G3D::Widget now uses G3D::Surface2D::depth for event delivery as well as rendering</li>
+     <li> Fix: G3D::ThirdPersonManipulator renders "in front" of objects by artificially flagging itself as transparent</li>
+     <li> Fix: G3D::Table::debugGetLoad now returns the correct load factor</li>
+     <li> Fix: G3D::GApp ensures that UserInput always receives events, even if they are consumed by Widgets</li>
+     <li> Fix: ShadowMap now enforces minimum bounds for empty scenes and a maximum bound for infinite scenes </li>
+     <li> Fix: G3D::CarbonWindow now returns proper mouse click events</li>
+     <li> Fix: G3D::SuperBSDF::evaluate documentation now correctly explains that it does not contain projected area</li>
+     <li> Fix: G3D::PointHashGrid no longer requires a HashTrait overload</li>
+     <li> Fix: SuperBSDF::evaluate now computes the same result as SuperShader for glossy terms</li>
+     <li> Fix: Diffuse colors for 3DS files loaded by ArticulatedModel</li>
+     <li> Fix: Correct loading of texture maps for 3DS files with incorrect case in them on OS X, support for 3DS reflection</li>
+     <li> Fix: VideoRecordDialog correctly inverts the Y axis on half-size video recording</li>
+     <li> Fix: G3D::Tri::area is now correct (was too large by a factor of 2x before)</li>
+     <li> Fix: CarbonWindow icons now load correctly</li>
+     <li> Fix: BinaryOutput to memory now never creates a file on disk</li>
+     <li> Fix: GuiWindow now consumes mouse motion events while being dragged.</li>
+     <li> Fix: G3D::TriTree now finds ray intersections even when the ray lies entirely within a splitting plane</li>
+     <li> Fix: G3D::Intersect::rayAABox had some bad logic for a few cases due to falling through a SWITCH-CASE.  These are now fixed.</li>
+     <li> Fix: CarbonWindow now returns correct key codes when Ctrl+letter are held down</li>
+     <li> Fix: G3D_BEGIN_PACKED_CLASS now uses correct syntax on Unix (the macro is not backwards compatible to 8.xx, however)</li>
+     <li> Fix: Color4::fromARGB now works correctly inside Any deserialization</li>
+     <li> Fix: increased the precision of Vector3::isZero, Vector2::isZero</li>
+     <li> Fix: Windows shares are now properly detected as file system roots</li>
+	 <li> Fix: Fixed memory leak in GImage::decodePNG when a PNG was loaded over an existing GImage</li>
+	 <li> Fix: Texture min now computed correctly (was always NaN for RGB8 and multiplied by 255 for RGBA8 before)</li>
+     <li> Fix: Win32Window now distinguishes KEY_DOWN and KEY_REPEAT events</li>
+	 <li> Fix: GEventType::MOUSE_MOTION events are now only delivered once to each GuiControl, and are in the correct coordinate system</li>
     </ul>
 
      <b>Backwards Incompatible Changes</b>:
      <ul>
+     <li> All-new interface for ArticulatedModel and completely rewritten interface for performance and convenience </li>
      <li> All-new streamlined interface for G3D::Surface
      <li> G3D::Ray::bump -> G3D::Ray::bumpedRay
      <li> G3D::GApp subclasses must now invoke the super version of any method that they override to ensure that Widgets work correctly.

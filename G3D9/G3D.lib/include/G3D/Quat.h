@@ -23,7 +23,7 @@ namespace G3D {
 /**
   Arbitrary quaternion (not necessarily unit).
 
-  Unit quaternions are used in computer graphics to represent
+  Unit quaternions (aka versors) are used in computer graphics to represent
   rotation about an axis.  Any 3x3 rotation matrix can
   be stored as a quaternion.
 
@@ -214,26 +214,54 @@ public:
     void toRotationMatrix(
         Matrix3&            rot) const;
     
+private:
+    /**  \param maxAngle Maximum angle of rotation allowed.  If a larger rotation is required, the angle of rotation applied is clamped to maxAngle */
+    Quat slerp
+       (const Quat&         other,
+        float               alpha,
+        float               threshold,
+        float               maxAngle) const;
+public:
+
     /**
      Spherical linear interpolation: linear interpolation along the 
      shortest (3D) great-circle route between two quaternions.
 
+     Assumes that both arguments are unit quaternions.
+
      Note: Correct rotations are expected between 0 and PI in the right order.
 
-     @cite Based on Game Physics -- David Eberly pg 538-540
-     @param threshold Critical angle between between rotations at which
+     \cite Based on Game Physics -- David Eberly pg 538-540
+     
+     \param threshold Critical angle between between rotations (in radians) at which
 	        the algorithm switches to normalized lerp, which is more
-			numerically stable in those situations. 0.0 will always slerp. 
+			numerically stable in those situations. 0.0 will always slerp.
+
      */
-    Quat slerp(
-        const Quat&         other,
+    Quat slerp
+       (const Quat&         other,
         float               alpha,
-        float               threshold = 0.05f) const;
+        float               threshold = 0.05f) const {
+        return slerp(other, alpha, threshold, finf());
+    }
+
+    /** Rotates towards \a other by at most \a maxAngle. */
+    Quat movedTowards
+       (const Quat&         other,
+        float               maxAngle) const {
+        return slerp(other, 1.0f, 0.05f, maxAngle);
+    }
+    
+    /** Rotates towards \a other by at most \a maxAngle. */
+    void moveTowards
+       (const Quat&         other,
+        float               maxAngle) {
+        *this = movedTowards(other, maxAngle);
+    }
 
 	/** Normalized linear interpolation of quaternion components. */
 	Quat nlerp(const Quat& other, float alpha) const;
-
-
+    
 
     /** Note that q<SUP>-1</SUP> = q.conj() for a unit quaternion. 
         @cite Dam99 page 13 */

@@ -1403,6 +1403,42 @@ void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const
 }
 
 
+void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q, const std::string& r) const {
+    beforeRead();
+    const std::string& x = name();
+    verify(beginsWith(x, n) ||
+           beginsWith(x, m) ||
+           beginsWith(x, p) ||
+           beginsWith(x, q) ||
+           beginsWith(x, r), "Name must be " + n + ", " + m + ", " + p + ", or " + q + ", or " + r);
+}
+
+
+void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q, const std::string& r, const std::string& s) const {
+    beforeRead();
+    const std::string& x = name();
+    verify(beginsWith(x, n) ||
+           beginsWith(x, m) ||
+           beginsWith(x, p) ||
+           beginsWith(x, q) ||
+           beginsWith(x, r) ||
+           beginsWith(x, s), "Name must be " + n + ", " + m + ", " + p + ", or " + q + ", or " + r + ", or " + s);
+}
+
+
+void Any::verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q, const std::string& r, const std::string& s, const std::string& t) const {
+    beforeRead();
+    const std::string& x = name();
+    verify(beginsWith(x, n) ||
+           beginsWith(x, m) ||
+           beginsWith(x, p) ||
+           beginsWith(x, q) ||
+           beginsWith(x, r) ||
+           beginsWith(x, s) ||
+           beginsWith(x, t), "Name must be " + n + ", " + m + ", " + p + ", or " + q + ", or " + r + ", or " + s + ", or " + t);
+}
+
+
 void Any::verifyType(Type t) const {
     beforeRead();
     if (type() != t) {

@@ -3,9 +3,9 @@
 
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  \created 2002-10-05
- \edited  2011-06-10
+ \edited  2011-11-10
 
- Copyright 2000-2011, Morgan McGuire.
+ Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
  */
 #ifndef G3D_Lighting_h
@@ -23,11 +23,9 @@ namespace G3D {
 typedef ReferenceCountedPointer<class Lighting> LightingRef;
 
 /**
-   A rich environment lighting model that contains both global and local sources.
+   A rich environment-lighting model that contains both global and local sources.
 
    When loaded from an Any, environment maps specified as only a filename are assumed to be in sRGB space.
-
-   Note: This class will change substantially in G3D 9.00.
  */
 class Lighting : public ReferenceCountedObject {
 public:

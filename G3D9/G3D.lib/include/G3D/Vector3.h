@@ -166,6 +166,10 @@ public:
 
     /** Returns true if this vector has length ~= 1 */
     bool isUnit() const;
+
+    /** Returns a vector that is \a this translated towards \a goal with a maximum translation of \a maxTranslation. */
+    Vector3 movedTowards(const Vector3& goal, float maxTranslation) const;
+    void moveTowards(const Vector3& goal, float maxTranslation);
     
     // arithmetic operations
     Vector3 __fastcall operator+ (const Vector3& v) const;

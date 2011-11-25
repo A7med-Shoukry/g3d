@@ -231,6 +231,7 @@ href="classes.html">Classes</a>.
     \link G3D::Vector4int16 Vector4int8\endlink
 
   <li><b>Radiometry</b>  &nbsp;&nbsp;
+    \link G3D::Biradiance3 Biradiance3\endlink, 
     \link G3D::Color1 Color1\endlink,
     \link G3D::Color1unorm8 Color1unorm8\endlink,
     \link G3D::Color1unorm8 Color2unorm8\endlink,
@@ -238,8 +239,10 @@ href="classes.html">Classes</a>.
     \link G3D::Color3unorm8 Color3unorm8\endlink,
     \link G3D::Color4 Color4\endlink,
     \link G3D::Color4unorm8 Color4unorm8\endlink,
+    \link G3D::Energy3 Energy3\endlink, 
     \link G3D::Power3 Power3\endlink, 
     \link G3D::Radiance3 Radiance3\endlink, 
+    \link G3D::Radiosity3 Radiosity3\endlink, 
     \link G3D::Irradiance3 Irradiance3\endlink
       
   <LI><B>Integer math</B> &nbsp; &nbsp;

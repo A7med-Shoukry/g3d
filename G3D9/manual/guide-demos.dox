@@ -22,7 +22,7 @@
 
 <tr><td culspan=2 height=10> </td></tr>
 
-<tr><td culspan=2>Shader (<a href="../samples/shader">samples/shader</a>)</td></tr>
+<tr><td culspan=2>Shader (<a href="../samples/pixelShader">samples/pixelShader</a>)</td></tr>
 <tr valign=top>
 <td>
 \htmlonly<IMG SRC="demo-shader.png" width=250 >\endhtmlonly
@@ -53,7 +53,7 @@
 </tr>
 
 <tr><td culspan=2 height=10> </td></tr>
-<tr><td culspan=2>Compute Server Discovery (<a href="../samples/computeDiscovery">samples/computeDiscoveryk</a>)</td></tr>
+<tr><td culspan=2>Compute Server Discovery (<a href="../samples/computeDiscovery">samples/computeDiscovery</a>)</td></tr>
 <tr valign=top>
 <td>
 \htmlonly <IMG SRC="demo-network.png" width=250 > \endhtmlonly
@@ -67,6 +67,20 @@
 </tr>
 
 
+
+<tr><td culspan=2 height=10> </td></tr>
+<tr><td culspan=2>Deferred Shading (<a href="../samples/deferredShading">samples/deferredShading</a>)</td></tr>
+<tr valign=top>
+<td>
+\htmlonly <IMG SRC="demo-deferred.png" width=250 > \endhtmlonly
+</td>
+<td>
+<ul>
+ <li> G3D::GBuffer
+ <li> G3D::GuiTextureBox
+</ul>
+</td>
+</tr>
 
 <tr><td culspan=2 height=10> </td></tr>
 

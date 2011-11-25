@@ -160,11 +160,12 @@ void Quat::toRotationMatrix(
     rot = Matrix3(*this);
 }
 
-    
-Quat Quat::slerp(
-    const Quat&         _quat1,
+
+Quat Quat::slerp
+   (const Quat&         _quat1,
     float               alpha,
-    float               threshold) const {
+    float               threshold,
+    float               maxAngle) const {
 
     // From: Game Physics -- David Eberly pg 538-540
     // Modified to include lerp for small angles, which
@@ -192,6 +193,9 @@ Quat Quat::slerp(
     phi = static_cast<float>(G3D::aCos(cosphi));
     
     if (phi >= threshold) {
+        debugAssertM(phi >= 0.0f, "Assumed acos returned a value >= 0");
+        phi = min(phi, maxAngle);
+
         // For large angles, slerp
         float scale0, scale1;
 

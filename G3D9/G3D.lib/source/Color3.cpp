@@ -30,7 +30,7 @@ Color3& Color3::operator=(const Any& a) {
 
 Color3::Color3(const Any& any) {
     *this = Color3::zero();
-    any.verifyNameBeginsWith("Color3", "Power3", "Radiance3", "Irradiance3");
+    any.verifyNameBeginsWith("Color3", "Power3", "Radiance3", "Irradiance3", "Energy3", "Radiosity3", "Biradiance3");
 
     switch (any.type()) {
     case Any::TABLE:

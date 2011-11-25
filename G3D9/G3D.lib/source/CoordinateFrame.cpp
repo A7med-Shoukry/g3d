@@ -375,6 +375,14 @@ void CoordinateFrame::lookAt(
 }
 
 
+void CoordinateFrame::moveTowards(const CoordinateFrame& goal, float maxTranslation, float maxRotation) {
+    translation.moveTowards(goal.translation, maxTranslation);
+    Quat q(rotation);
+    q.moveTowards(Quat(goal.rotation), maxRotation);
+    rotation = Matrix3(q);
+}
+
+
 CoordinateFrame CoordinateFrame::lerp(
     const CoordinateFrame&  other,
     float                   alpha) const {

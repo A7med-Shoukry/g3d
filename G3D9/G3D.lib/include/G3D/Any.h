@@ -752,6 +752,18 @@ public:
         It may contain identifier operators after this */
     void verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q) const;
 
+    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p or \a q or \a r (case sensitive). 
+        It may contain identifier operators after this */
+    void verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q, const std::string& r) const;
+
+    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p or \a q or \a r or \a s (case sensitive). 
+        It may contain identifier operators after this */
+    void verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q, const std::string& r, const std::string& s) const;
+
+    /** Verifies that the name <i>begins with</i> identifier \a n or \a m or \a p or \a q or \a r or \a s or \a t(case sensitive). 
+        It may contain identifier operators after this */
+    void verifyNameBeginsWith(const std::string& n, const std::string& m, const std::string& p, const std::string& q, const std::string& r, const std::string& s, const std::string& t) const;
+
     /** Verifies that the type is \a t. */
     void verifyType(Type t) const;
 

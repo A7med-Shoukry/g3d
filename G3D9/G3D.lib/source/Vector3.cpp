@@ -1,14 +1,14 @@
 /**
- @file Vector3.cpp
+ \file G3D.lib/source/Vector3.cpp
  
  3D vector class
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @cite Portions based on Dave Eberly's Magic Software Library at http://www.magic-software.com
+ \cite Portions based on Dave Eberly's Magic Software Library at http://www.magic-software.com
  
- @created 2001-06-02
- @edited  2009-11-27
+ \created 2001-06-02
+ \edited  2011-11-27
  */
 
 #include <limits>
@@ -30,6 +30,26 @@
 #include "G3D/Any.h"
  
 namespace G3D {
+
+    
+Vector3 Vector3::movedTowards(const Vector3& goal, float maxTranslation) const {
+    Vector3 t = *this;
+    t.moveTowards(goal, maxTranslation);
+    return t;
+}
+
+
+void Vector3::moveTowards(const Vector3& goal, float maxTranslation) {
+    // Apply clamped translation
+    Vector3 dX = goal - *this;
+    float length = dX.length();
+    if ((length < 0.00001f) || (length < maxTranslation)) {
+        *this = goal;
+    } else {
+        *this += G3D::max(length, maxTranslation) * dX * (1.0f / length);
+    }
+}
+
 
 Vector3::Vector3(const Any& any) {
     if (any.name() == "Vector3::inf" || any.name() == "Point3::inf") {

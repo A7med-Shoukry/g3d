@@ -428,8 +428,21 @@ inline Color3 Color3::unitCross (const Color3& rkVector) const {
 }
 
 
+typedef Color3 Biradiance3;
+
+/** Power / (solidangle * area);  Watts / (m^2 sr) */
 typedef Color3 Radiance3;
+
+/** Joules */
+typedef Color3 Radiosity3;
+
+/** Force * distance; Joules */
+typedef Color3 Energy3;
+
+/** Incident power / area;  Watts/m^2*/
 typedef Color3 Irradiance3;
+
+/** Energy / time; Watts*/
 typedef Color3 Power3;
 
 } // namespace
