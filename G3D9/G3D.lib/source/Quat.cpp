@@ -192,10 +192,13 @@ Quat Quat::slerp
     // Using G3D::aCos will clamp the angle to 0 and pi
     phi = static_cast<float>(G3D::aCos(cosphi));
     
-    if (phi >= threshold) {
-        debugAssertM(phi >= 0.0f, "Assumed acos returned a value >= 0");
-        phi = min(phi, maxAngle);
+    debugAssertM(phi >= 0.0f, "Assumed acos returned a value >= 0");
+    if (phi * alpha > maxAngle) {
+        // Back off alpha        
+        alpha = maxAngle / phi;
+    }
 
+    if (phi >= threshold) {
         // For large angles, slerp
         float scale0, scale1;
 
