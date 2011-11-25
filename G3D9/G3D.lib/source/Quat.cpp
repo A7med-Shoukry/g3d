@@ -178,34 +178,34 @@ Quat Quat::slerp
     Quat quat1 = _quat1;
 
     // angle between quaternion rotations
-    float phi;
-    float cosphi = quat0.dot(quat1);
+    float halfPhi;
+    float cosHalfPhi = quat0.dot(quat1);
 
 
-    if (cosphi < 0) {
+    if (cosHalfPhi < 0) {
         // Change the sign and fix the dot product; we need to
         // loop the other way to get the shortest path
         quat1 = -quat1;
-        cosphi = -cosphi;
+        cosHalfPhi = -cosHalfPhi;
     }
 
     // Using G3D::aCos will clamp the angle to 0 and pi
-    phi = static_cast<float>(G3D::aCos(cosphi));
+    halfPhi = static_cast<float>(G3D::aCos(cosHalfPhi));
     
-    debugAssertM(phi >= 0.0f, "Assumed acos returned a value >= 0");
-    if (phi * alpha > maxAngle) {
+    debugAssertM(halfPhi >= 0.0f, "Assumed acos returned a value >= 0");
+    if (halfPhi * 2.0f * alpha > maxAngle) {
         // Back off alpha        
-        alpha = maxAngle / phi;
+        alpha = maxAngle * 0.5f / halfPhi;
     }
 
-    if (phi >= threshold) {
+    if (halfPhi >= threshold) {
         // For large angles, slerp
         float scale0, scale1;
 
-        scale0 = sin((1.0f - alpha) * phi);
-        scale1 = sin(alpha * phi);
+        scale0 = sin((1.0f - alpha) * halfPhi);
+        scale1 = sin(alpha * halfPhi);
         
-        return ( (quat0 * scale0) + (quat1 * scale1) ) / sin(phi);
+        return ( (quat0 * scale0) + (quat1 * scale1) ) / sin(halfPhi);
     } else {
         // For small angles, linear interpolate
 		return quat0.nlerp(quat1, alpha);
@@ -213,8 +213,13 @@ Quat Quat::slerp
 }
 
 
-Quat Quat::nlerp(
-    const Quat&         quat1,
+float Quat::angleBetween(const Quat& other) const {
+    return 2.0f * std::acos(this->dot(other));
+}
+
+
+Quat Quat::nlerp
+   (const Quat&         quat1,
     float               alpha) const {
 
     Quat result = (*this) * (1.0f - alpha) + quat1 * alpha;

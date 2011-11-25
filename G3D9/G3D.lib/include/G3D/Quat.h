@@ -259,6 +259,11 @@ public:
         *this = movedTowards(other, maxAngle);
     }
 
+    /** Returns the angle in radians between this and other, assuming both are unit quaternions. 
+    
+      \returns On the range [0, pif()]*/
+    float angleBetween(const Quat& other) const;
+
 	/** Normalized linear interpolation of quaternion components. */
 	Quat nlerp(const Quat& other, float alpha) const;
     
@@ -310,22 +315,6 @@ public:
             return Quat(t * x, t * y, t * z, ::logf(len));
         }
     }
-    /** log q = [Av, 0] where q = [sin(A) * v, cos(A)].
-        Only for unit quaternions 
-        debugAssertM(isUnit(), "Log only defined for unit quaternions");
-        // Solve for A in q = [sin(A)*v, cos(A)]
-        Vector3 u(x, y, z);
-        double len = u.magnitude();
-
-        if (len == 0.0) {
-            return 
-        }
-        double A = atan2((double)w, len);
-        Vector3 v = u / len;
-        
-        return Quat(v * A, 0);
-    }
-    */
 
     /** exp q = [sin(A) * v, cos(A)] where q = [Av, 0].
         Only defined for pure-vector quaternions */
