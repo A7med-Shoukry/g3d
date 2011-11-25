@@ -46,7 +46,7 @@ void Vector3::moveTowards(const Vector3& goal, float maxTranslation) {
     if ((length < 0.00001f) || (length < maxTranslation)) {
         *this = goal;
     } else {
-        *this += G3D::max(length, maxTranslation) * dX * (1.0f / length);
+        *this += G3D::min(1.0f, maxTranslation / length) * dX;
     }
 }
 
