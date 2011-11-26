@@ -354,6 +354,17 @@ public:
             G3D::clamp(z, low, high));
     }
 
+
+    inline Vector3 floor() const {
+        return G3D::Vector3(::floor(x), ::floor(y), ::floor(z));
+    }
+
+
+    inline Vector3 round() const {
+        return Vector3(G3D::round(x), G3D::round(y), G3D::round(z));
+    }
+
+
     /**
      Linear interpolation
      */
@@ -579,6 +590,8 @@ public:
     /** Can be passed to ignore a vector3 parameter */
     static Vector3& ignore();
 };
+
+
 
 inline G3D::Vector3 operator*(float s, const G3D::Vector3& v) {
     return v * s;

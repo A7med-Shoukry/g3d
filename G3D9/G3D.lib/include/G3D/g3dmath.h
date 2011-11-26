@@ -209,7 +209,14 @@ inline int iSign(float f) {
     return iSign((double)f);
 }
 
+inline double round(double f) {
+    return floor(f + 0.5f);
+}
 
+inline float round(float f) {
+    return floor(f + 0.5f);
+}
+    
 /** 
     Fast round to integer using the lrint routine.
     Typically 6x faster than casting to integer.

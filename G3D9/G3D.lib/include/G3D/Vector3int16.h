@@ -111,6 +111,10 @@ public:
         return ( x != rkVector.x || y != rkVector.y || z != rkVector.z );
     }
 
+    int dot(const Vector3int16& v) const {
+        return x * v.x + y * v.y + z * v.z;
+    }
+
     Vector3int16 max(const Vector3int16& v) const {
         return Vector3int16(std::max(x, v.x), std::max(y, v.y), std::max(z, v.z));
     }
