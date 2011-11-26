@@ -215,7 +215,7 @@ Quat Quat::slerp
 
 float Quat::angleBetween(const Quat& other) const {
     const float d = this->dot(other);
-    return 2.0f * std::acos(std::abs(d));
+    return 2.0f * acos(fabsf(d));
 }
 
 
