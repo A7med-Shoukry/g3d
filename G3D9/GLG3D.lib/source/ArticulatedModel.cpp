@@ -144,7 +144,6 @@ ArticulatedModel::Part* ArticulatedModel::part(const std::string& partName) {
 }
 
 
-
 void ArticulatedModel::load(const Specification& specification) {
     Stopwatch timer;
     

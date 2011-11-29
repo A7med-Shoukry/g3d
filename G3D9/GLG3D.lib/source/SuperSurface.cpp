@@ -134,6 +134,7 @@ void SuperSurface::renderIntoGBufferHomogeneous
 
             const GPUGeom::Ref& gpuGeom = surface->gpuGeom();
             const Material::Ref& material = gpuGeom->material;
+            debugAssert(material.notNull());
 
             // This is frequently the same shader as on the previous iteration, and RenderDevice will
             // optimize out the state change. 

@@ -47,12 +47,7 @@ namespace G3D {
  implementation eagerly loads Material%s onto the GPU.  If a future
  version also allows deferring that operation, then this class will be able to load models
  entirely on a non-rendering thread and will not require a GPU context to be active.
-
- \sa ArticulatedModel
-
- \beta This is a candidate to replace G3D::ArticulatedModel in G3D 9.00
-
-*/
+ */
 class ArticulatedModel : public ReferenceCountedObject {
 public:
 
@@ -485,10 +480,7 @@ public:
         VertexRange                 gpuTangentArray;
 
     private:
-
-        /** Discards all gpu vertex range data */
-        void clearVertexRanges();
-
+        
         /** Called from cleanGeometry to determine what needs to be computed. */
         void determineCleaningNeeds(bool& computeSomeNormals, bool& computeSomeTangents);
 
@@ -524,6 +516,9 @@ public:
         Part(const std::string& name, Part* parent, ID id) : name(name), id(id), m_parent(parent) {}
 
     public:
+
+        /** Discards all GPU vertex range data, which will then be re-uploaded automatically on the next pose() call. */
+        void clearVertexRanges();
 
         /** NULL if this is a root of the model. */
         const Part* parent() const {
@@ -696,9 +691,6 @@ protected:
 
     Part* part(const Instruction::Identifier& partIdent);
 
-    /** If this model's memory footprint is large, trim all of the internal arrays to size. */
-    void maybeCompactArrays();
-
     /** Called from preprocess.  
 
         \param centerY If false, move the base to the origin instead
@@ -719,7 +711,18 @@ public:
         return create(s);
     }
 
-    /** \sa create, fromFile, addMesh, addPart */
+    /** If this model's memory footprint is large, trim all of the internal CPU arrays to size. */
+    void maybeCompactArrays();
+
+    /** 
+        \brief Creates an empty ArticulatedModel that you can then programmatically construct Part%s and Mesh%es within.
+
+        Consider calling cleanGeometry() and maybeCompactArrays() after setting geometry during a preprocessing step.
+        If modifying geometry after the first call to pose(), invoke Part::clearVertexRanges() to wipe the out of date
+        GPU data.
+
+        \sa create, fromFile, addMesh, addPart
+       */
     static Ref createEmpty(const std::string& name);
 
     /** Root parts.  There may be more than one. */
@@ -806,6 +809,7 @@ public:
         float&          v);
 
     void countTrianglesAndVertices(int& tri, int& vert) const;
+    
 };
 
 /** \deprecated Use ArticulatedModel */
