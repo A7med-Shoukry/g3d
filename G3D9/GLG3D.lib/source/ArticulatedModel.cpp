@@ -3,19 +3,13 @@
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-19
- \edited  2011-07-22
+ \edited  2011-11-22
  
  Copyright 2000-2011, Morgan McGuire.
  All rights reserved.
 
 
  TODO:
- - Create heightfield
- - Create Cornell Box
- - Remove IFSModel
- - Set bump map parallax steps in specification
- - Implement other preprocess instructions
- - Remove ArticulatedModel
  - Pack tangents and normals into short4 format?
  */
 #include "GLG3D/ArticulatedModel.h"
@@ -29,6 +23,13 @@ const CFrame ArticulatedModel::Pose::identity;
 ArticulatedModel::Ref ArticulatedModel::create(const ArticulatedModel::Specification& specification) {
     Ref a = new ArticulatedModel();
     a->load(specification);
+    return a;
+}
+
+
+ArticulatedModel::Ref ArticulatedModel::createEmpty(const std::string& n) {
+    Ref a = new ArticulatedModel();
+    a->name = n;
     return a;
 }
 

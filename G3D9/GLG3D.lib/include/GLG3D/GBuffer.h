@@ -99,7 +99,7 @@ public:
      These use the abbreviations CS = camera space, WS = world space, SS = screen space.
 
      Normals are always encoded as n' = (n+1)/2, even if they are in
-     floating point format, to simplify the implemenation of routines
+     floating point format, to simplify the implementation of routines
      that read and write GBuffers.
      */
     class Field {
