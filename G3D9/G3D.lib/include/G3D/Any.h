@@ -456,7 +456,6 @@ public:
     bool boolean() const;
 
     /** If a valid string, takes the string value and creates a fully qualified filename.
-        If not found, the returned string is empty.
 
         The file is searched for the following ways:
         
@@ -466,7 +465,7 @@ public:
         Strings that begin with '<' and end with '>' are treated as escape sequences and 
         are returned unmodifed.
      */
-    std::string resolveStringAsFilename() const;
+    std::string resolveStringAsFilename(bool errorIfNotFound = true) const;
 
     /** If this is named ARRAY or TABLE, returns the name. */
     const std::string& name() const;
