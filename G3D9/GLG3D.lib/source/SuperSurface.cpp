@@ -790,27 +790,31 @@ void SuperSurface::renderNonShadowed
 
             // Render backfaces first, and then front faces.  Each will be culled exactly
             // once, so we aren't going to overdraw.
-            int passes = m_gpuGeom->twoSided ? 2 : 1;
+            const int passes = m_gpuGeom->twoSided ? 2 : 1;
 
             if (m_gpuGeom->twoSided) {
-                // We're going to render the front and back faces separately.
+                // We're going to render the front and back faces separately, starting with the 
+                // back faces.
+                rd->setCullFace(RenderDevice::CULL_FRONT);
+            } else {
                 rd->setCullFace(RenderDevice::CULL_BACK);
             }
 
             for (int i = 0; i < passes; ++i) {
                 // Modulate background by transparent color
                 // TODO: Fresnel for shader-driven pipeline
+                rd->setShader(NULL);
                 rd->setBlendFunc(RenderDevice::BLEND_ZERO, RenderDevice::BLEND_SRC_COLOR);
                 rd->setTexture(0, bsdf->transmissive().texture());
                 rd->setColor(bsdf->transmissive().constant());
                 sendGeometry2(rd);
 
-                // Draw normal terms on top
-                bool alreadyAdditive = false;
-                setAdditive(rd, alreadyAdditive);
+                // Add direct illumination
+                rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
+                rd->setDepthWrite(false);
                 renderNonShadowedOpaqueTerms(rd, lighting, false);
-                      
-                // restore depth write
+                  
+                // Restore depth write, prepare for the second (front-face) pass
                 rd->setDepthWrite(oldDepthWrite);
                 rd->setCullFace(RenderDevice::CULL_BACK);
             }

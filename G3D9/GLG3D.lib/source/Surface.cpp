@@ -367,7 +367,7 @@ void Surface::sortAndRender
         rd->popState();
     }
 
-    // Transparent, must be rendered from back to front
+    // Transparent objects must be rendered from back to front after everything else
     renderTranslucent(rd, translucent, lighting, extraAdditivePasses, 
                       shadowMaps, RefractionQuality::BEST, alphaMode);
     super.fastClear();
@@ -657,16 +657,14 @@ void Surface::renderTranslucent
             if (model->hasPartialCoverage()) {
                 if (alphaMode == ALPHA_BLEND) {
                     // Transmission, and alpha, and alpha blending.
-                    // We already knocked out the non-transmitted light, so just add, but
-                    // modulate down the source contribution.
+                    // Modulate down the source contribution.
                     rd->setBlendFunc(RenderDevice::BLEND_SRC_ALPHA, RenderDevice::BLEND_ONE);
                 } else {
-                    // Transmission, binary or alpha-to-coverage alpha.
-                    // We already knocked out the non-transmitted light, so just add
+                    // Transmission, binary or alpha-to-coverage alpha. Just add.
                     rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
                 }
             } else {
-                // Transmission, no alpha.  We already knocked out the non-transmitted light, so just add
+                // Transmission, no alpha.  Just add.
                 rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE);
             }
         } else if (model->hasPartialCoverage()) {
@@ -678,9 +676,11 @@ void Surface::renderTranslucent
                 rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
             }
         } else {
-            // Actually opaque
+            // Actually opaque!  Why did we get here in the translucent renderer?
+            debugAssert(false);
             rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
         }
+
         static Array<Surface::Ref> oneSurface(NULL);
         if (gmodel.notNull() && ! model->hasTransmission()) {
             if (! inSuperSurfaceAlphaMode) {

@@ -46,7 +46,7 @@ void App::onInit() {
     lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(8.5f)));
     lighting->lightArray.append( GLight::directional(Vector3(-1,0,-1), Radiance3(0.8f, 0.9f, 1), false));
     lighting->environmentMapConstant = 0.65f;
-    // TODO: load better lighting map
+    lighting->environmentMapTexture = Texture::fromFile(System::findDataFile("noonclouds/noonclouds_*.png"), ImageFormat::AUTO(), Texture::DIM_CUBE_MAP_NPOT, Texture::Settings::cubeMap());
     defaultCamera.setFarPlaneZ(-1000);
     defaultCamera.setNearPlaneZ(-0.05f);
 

@@ -115,6 +115,12 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
         m_currentMaterial->Ke.r = ti.readNumber();
         m_currentMaterial->Ke.g = ti.readNumber();
         m_currentMaterial->Ke.b = ti.readNumber();
+    } else if (cmd == "Tf") {
+        m_currentMaterial->Tf.r = ti.readNumber();
+        m_currentMaterial->Tf.g = ti.readNumber();
+        m_currentMaterial->Tf.b = ti.readNumber();
+    } else if (cmd == "illum") {
+        m_currentMaterial->illum = ti.readInteger();
     } else if (cmd == "map_Ka") {
         m_currentMaterial->map_Ka = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_Kd") {

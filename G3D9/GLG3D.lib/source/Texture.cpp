@@ -931,8 +931,8 @@ Texture::Ref Texture::fromFile(
 }
 
 
-Texture::Ref Texture::fromFile(
-    const std::string&      filename,
+Texture::Ref Texture::fromFile
+   (const std::string&      filename,
     const ImageFormat*      desiredFormat,
     Dimension               dimension,
     const Settings&         settings,
