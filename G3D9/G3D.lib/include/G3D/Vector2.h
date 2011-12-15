@@ -6,14 +6,14 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   
   \created 2001-06-02
-  \edited  2008-11-30
+  \edited  2011-11-30
 
   Copyright 2000-2011, Morgan McGuire.
   All rights reserved.
 */
 
-#ifndef G3D_VECTOR2_H
-#define G3D_VECTOR2_H
+#ifndef G3D_Vector2_h
+#define G3D_Vector2_h
 
 #include <string>
 
@@ -100,6 +100,11 @@ public:
     Vector2 operator+(const Vector2& v) const;
     Vector2 operator-(const Vector2& v) const;
     Vector2 operator*(float s) const;
+
+    /** Raise each component of this vector to a power */
+    Vector2 pow(float p) const {
+        return Vector2(powf(x, p), powf(y, p));
+    }
 
     /** Array (pointwise) multiplication */
     Vector2 operator*(const Vector2& v) const;

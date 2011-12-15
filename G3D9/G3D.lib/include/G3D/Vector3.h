@@ -193,9 +193,14 @@ public:
     Vector3& __fastcall operator/= (const Vector3& v);
 
     /** Same as magnitude */
-	float length() const;
+    float length() const;
 
     float magnitude() const;
+
+    /** Raise each component of this vector to a power */
+    Vector3 pow(float p) const {
+        return Vector3(powf(x, p), powf(y, p), powf(z, p));
+    }
     
     /**
      Returns a unit-length version of this vector.
