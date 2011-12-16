@@ -9,11 +9,9 @@ SET /p pythonLocation= < tmp
 
 IF "%pythonLocation%"=="INFO: Could not find files for the given pattern(s)." (
 
-  IF EXIST "c:\Python32\Python.exe" (
+  IF EXIST "c:\Python32\python.exe" (
       SET command="c:\Python32\python"
-  )
-  ELSE 
-  ( 
+  ) ELSE ( 
       echo Could not find python.exe--do you need to add C:\Python32\ or something similar to your PATH variable?
       EXIT /B 1
   )
