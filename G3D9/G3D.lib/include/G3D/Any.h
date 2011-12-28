@@ -455,31 +455,36 @@ public:
     const std::string& string() const;
     bool boolean() const;
 
-    /** If a valid string, takes the string value and creates a fully qualified filename.
+    /** If a valid string, takes the string value and creates a fully
+        qualified filename.
 
         The file is searched for the following ways:
         
         - In the directory from which the Any was loaded.
         - By calling System::findDataFile as you would with other data files.
 
-        Strings that begin with '<' and end with '>' are treated as escape sequences and 
-        are returned unmodifed.
+        Strings that begin with '<' and end with '>' are treated as
+        escape sequences and are returned unmodifed.
      */
     std::string resolveStringAsFilename(bool errorIfNotFound = true) const;
 
     /** If this is named ARRAY or TABLE, returns the name. */
     const std::string& name() const;
 
-    /** If this is named ARRAY or TABLE, returns true if the name begins with \a s.  The comparision is case insensitive. */
+    /** If this is named ARRAY or TABLE, returns true if the name
+        begins with \a s.  The comparision is case insensitive. */
     bool nameBeginsWith(const std::string& s) const;
 
-    /** If this is named ARRAY or TABLE, returns true if the name begins with \a s.  The comparision is case insensitive. */
+    /** If this is named ARRAY or TABLE, returns true if the name
+        begins with \a s.  The comparision is case insensitive. */
     bool nameBeginsWith(const char* s) const;
 
-    /** If this is named ARRAY or TABLE, returns true if the name is \a s.  The comparision is case insensitive. */
+    /** If this is named ARRAY or TABLE, returns true if the name is
+        \a s.  The comparision is case insensitive. */
     bool nameEquals(const std::string& s) const;
 
-    /** If this is named ARRAY or TABLE, returns true if the name is\a s.  The comparision is case insensitive. */
+    /** If this is named ARRAY or TABLE, returns true if the name is\a
+        s.  The comparision is case insensitive. */
     bool nameEquals(const char* s) const;
 
     /** \brief Set the name used when serializing an ARRAY or TABLE.

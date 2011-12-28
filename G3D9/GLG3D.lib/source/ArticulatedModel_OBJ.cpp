@@ -136,8 +136,8 @@ static Material::Specification toMaterialSpecification
     }
 
     if (m->illum == 4 || m->illum == 6 || m->illum == 7 || m->illum == 9) {
-        // Only apply transmission if the material
         s.setTransmissive(m->Tf);
+
         // Index of refraction (assume air)
         s.setEta(m->Ni, 1.0f);
     }
