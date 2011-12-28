@@ -39,6 +39,7 @@ App::App(const GApp::Settings& settings, const std::string& file) :
 
 void App::onInit() {
     showRenderingStats = false;
+    developerWindow->cameraControlWindow->setVisible(false);
     window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
 
     lighting = Lighting::create();

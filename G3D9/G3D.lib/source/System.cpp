@@ -386,9 +386,14 @@ std::string System::findDataFile
         baseDirArray.append("");
         if (! initialAppDataDir.empty()) {
             baseDirArray.append(initialAppDataDir);
+            baseDirArray.append(pathConcat(initialAppDataDir, "data"));
+            baseDirArray.append(pathConcat(initialAppDataDir, "data.zip"));
+        } else {
+            baseDirArray.append("data");
+            baseDirArray.append("data.zip");
         }
 
-#       ifdef G3D_WIN32
+#       ifdef G3D_WINDOWS
         if (g3dPath == NULL) {
             // If running the demos under visual studio from the G3D.sln file,
             // this will locate the data directory.

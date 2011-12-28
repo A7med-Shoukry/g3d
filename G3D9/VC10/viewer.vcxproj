@@ -69,14 +69,14 @@
     <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)32d</TargetName>
     <OutDir>$(SolutionDir)..\build\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)64d</TargetName>
     <OutDir>$(SolutionDir)..\build\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,12 +84,14 @@
     <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)..\build\bin\</OutDir>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)32</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)..\build\bin\</OutDir>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,7 +108,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions);G3D_STATIC_LINK_FFMPEG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NO_FFMPEG;_UNICODE;UNICODE;%(PreprocessorDefinitions);G3D_STATIC_LINK_FFMPEG</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -134,7 +136,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NO_FFMPEG;_UNICODE;UNICODE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

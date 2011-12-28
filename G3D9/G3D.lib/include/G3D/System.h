@@ -427,6 +427,32 @@ public:
      Tries to locate the resource by looking in related directories.
      If found, returns the full path to the resource, otherwise
      returns the empty string.
+
+     Looks in:
+
+         - Current directory
+         - App starting directory
+         - $G3D9DATA directory
+         - data/
+         - data.zip/
+         - ../data-files/  (windows)
+         - ../../data-files/ (windows)
+         - ../../../data-files/ (windows)
+
+       Plus the following subdirectories of those:
+
+         - cubemap
+         - gui
+         - font
+         - icon
+         - SuperShader
+         - models
+         - image
+         - sky
+         - md2
+         - md3
+         - ifs
+         - 3ds
      */    
     static std::string findDataFile(const std::string& full, bool errorIfNotFound = true, bool caseSensitive =
 #ifdef G3D_WIN32

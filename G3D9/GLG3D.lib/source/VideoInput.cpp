@@ -550,7 +550,7 @@ int VideoInput::height() const {
 
 RealTime VideoInput::fps() const {
 #ifdef NO_FFMPEG
-    return 0;
+    return 1;
 #else
     // return FFmpeg's calculated base frame rate
     return av_q2d(m_avFormatContext->streams[m_avVideoStreamIdx]->r_frame_rate);
