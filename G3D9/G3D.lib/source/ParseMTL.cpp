@@ -36,6 +36,7 @@ void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
     set.otherCommentCharacter = '#';
     set.generateNewlineTokens = true;
     set.msvcFloatSpecials = false;
+    set.sourceFileName = ti.filename();
     ti.pushSettings(set);
 
     // Always provide a default material
@@ -48,15 +49,23 @@ void ParseMTL::parse(TextInput& ti, const std::string& basePath) {
             ti.read();
         }
 
+        if (ti.peek().type() == Token::END) {
+            break;
+        }
+
         // Process one line
         const std::string& cmd = ti.readSymbol();
 
         processCommand(ti, cmd);
 
         // Read until the end of the line if this line did not consume it
-        while (ti.hasMore() && (ti.read().type() != Token::NEWLINE));
+        while (ti.hasMore()) {
+            const Token t = ti.read();
+            if ((t.type() == Token::NEWLINE) || (t.type() == Token::END)) {
+                break;
+            }
+        }
     }
-
 
     ti.popSettings();
 }

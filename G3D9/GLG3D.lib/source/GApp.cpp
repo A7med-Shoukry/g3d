@@ -117,7 +117,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
     lastGApp = this;
 
 #   ifdef G3D_DEBUG
-        catchCommonExceptions = false;
+        catchCommonExceptions = true;
 #   endif
 
     char b[2048];
