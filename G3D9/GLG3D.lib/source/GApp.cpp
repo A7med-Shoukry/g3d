@@ -436,6 +436,9 @@ int GApp::run() {
         } catch (const ParseError& e) {
             alwaysAssertM(false, e.formatFileInfo() + e.message);
             ret = -1;
+        } catch (const FileNotFound& e) {
+            alwaysAssertM(false, e.message);
+            ret = -1;
         }
     } else {
         onRun();
