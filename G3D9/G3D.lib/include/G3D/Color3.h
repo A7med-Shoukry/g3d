@@ -428,23 +428,32 @@ inline Color3 Color3::unitCross (const Color3& rkVector) const {
 }
 
 
+/** Radiance * measure(Solid Angle) between two points, measured at the receiver orthogonal to the axis between them; W/m^2 */
 typedef Color3 Biradiance3;
 
-/** Power / (solidangle * area);  Watts / (m^2 sr) */
+/** Power per (measure(SolidAngle) * measure(Area));  W / (m^2 sr) */
 typedef Color3 Radiance3;
 
-/** Joules */
+/** Power per area; J / m^2 */
 typedef Color3 Radiosity3;
 
-/** Force * distance; Joules */
+/** Force * distance; J */
 typedef Color3 Energy3;
 
-/** Incident power / area;  Watts/m^2*/
+/** Incident power per area;  W/m^2*/
 typedef Color3 Irradiance3;
 
-/** Energy / time; Watts*/
+/** Energy per time; W*/
 typedef Color3 Power3;
 
+#if 0 // Disabled to avoid taking these useful names from the namespace
+typedef float Power;
+typedef float Biradiance;
+typedef float Radiance;
+typedef float Radiosity;
+typedef float Energy;
+typedef float Irradiance;
+#endif
 } // namespace
 
 

@@ -871,6 +871,9 @@ Texture::Ref Texture::fromFile(
             image[0].pixel4(0, 0) = Color4unorm8::one();
         } else {
             image[0].load(realFilename[0]);
+
+            alwaysAssertM(image[0].width() > 0, 
+                G3D::format("Image not found: \"%s\" and GImage failed to throw an exception", realFilename[0].c_str()));
         }
     } else {
         // Load each cube face on a different thread to overlap compute and I/O

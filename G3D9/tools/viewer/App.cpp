@@ -33,7 +33,7 @@ App::App(const GApp::Settings& settings, const std::string& file) :
     shadowMap->setPolygonOffset(2.0, 2.0);
     setDesiredFrameRate(60);
 
-    catchCommonExceptions = false;
+    catchCommonExceptions = true;
 }
 
 
