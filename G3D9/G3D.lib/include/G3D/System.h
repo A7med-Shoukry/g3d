@@ -18,6 +18,7 @@
 #include "G3D/g3dmath.h"
 #include "G3D/G3DGameUnits.h"
 #include "G3D/BinaryFormat.h"
+#include "G3D/FileNotFound.h"
 #include <string>
 
 #ifdef G3D_OSX
@@ -26,6 +27,7 @@
 #endif
 
 namespace G3D {
+
 
 /**
  Routine used by the demos to find the data.  Searches in
@@ -453,8 +455,10 @@ public:
          - md3
          - ifs
          - 3ds
+
+        \param exceptionIfNotFound If true and the file is not found, throws G3D::FileNotFound.
      */    
-    static std::string findDataFile(const std::string& full, bool errorIfNotFound = true, bool caseSensitive =
+    static std::string findDataFile(const std::string& full, bool exceptionIfNotFound = true, bool caseSensitive =
 #ifdef G3D_WIN32
         false
 #else

@@ -26,6 +26,7 @@
 
 #include "G3D/platform.h"
 #include "G3D/BIN.h"
+#include "G3D/FileNotFound.h"
 #include "G3D/units.h"
 #include "G3D/ParseError.h"
 #include "G3D/Random.h"

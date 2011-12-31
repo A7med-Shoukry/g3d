@@ -727,5 +727,8 @@
     <ClInclude Include="..\G3D.lib\include\G3D\ImageBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\FileNotFound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -330,6 +330,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\debugPrintf.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\enumclass.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\EqualsTrait.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\FileNotFound.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\FileSystem.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\fileutils.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\filter.h" />

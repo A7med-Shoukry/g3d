@@ -126,7 +126,8 @@ void Film::init() {
         commonPreBloomShader = m_preBloomShader = Shader::fromStrings("", version + preBloomShaderCode);
         m_preBloomShader->setPreserveState(false);
 
-        const std::string& antialiasingShaderCode = readWholeFile(System::findDataFile("Film_FXAA.pix"));
+        const std::string& antialiasingShaderCode = readWholeFile(System::findDataFile("Film_FXAA.pix", true));
+        alwaysAssertM(antialiasingShaderCode != "", "Could not find Film_FXAA.pix and System::findDataFile failed to throw an exception about this.");
         commonAntialiasingShader = m_antialiasingShader = Shader::fromStrings("", version + antialiasingShaderCode);
         m_antialiasingShader->setPreserveState(false);
     }

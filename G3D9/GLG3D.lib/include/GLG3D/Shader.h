@@ -733,6 +733,7 @@ public:
         const std::string& vertexCode,
         const std::string& pixelCode,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
+        alwaysAssertM(vertexCode != "" || pixelCode != "", "No shader code provided!");
         return new Shader(VertexAndPixelShader::fromStrings(vertexCode, pixelCode, s, DEBUG_SHADER), s);
     }
 

@@ -463,6 +463,7 @@ std::string System::findDataFile
 
         msg += "\nLocations searched:\n" + locations;
 
+        throw FileNotFound(full, msg);
         alwaysAssertM(false, msg);
     }
 
