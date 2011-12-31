@@ -438,7 +438,8 @@ std::string System::findDataFile
     }
 
     if (errorIfNotFound) {
-        // Generate an error message
+        // Generate an error message.  Delay this operation until we know that we need it;
+        // otherwise all of the string concatenation would run on each successful find.
         std::string locations;
         for (int i = 0; i < directoryArray.size(); ++i) {
             locations += "\'" + pathConcat(directoryArray[i], full) + "'\n";
@@ -461,7 +462,7 @@ std::string System::findDataFile
         }
         msg += std::string(initialAppDataDir) + "\'\n";
 
-        msg += "\nLocations searched:\n" + locations;
+        msg += "\nFilenames tested:\n" + locations;
 
         throw FileNotFound(full, msg);
         alwaysAssertM(false, msg);

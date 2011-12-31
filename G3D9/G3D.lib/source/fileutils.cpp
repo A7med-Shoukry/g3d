@@ -95,6 +95,7 @@ bool zipfileExists(const std::string& filename) {
     return zipfileExists(filename, outZipfile, outInternalFile);
 }
 
+
 std::string readWholeFile(const std::string& filename) {
 
     std::string s;
@@ -102,8 +103,14 @@ std::string readWholeFile(const std::string& filename) {
     debugAssert(filename != "");
     debugAssertM(FileSystem::exists(filename), filename + " not found");
     FileSystem::markFileUsed(filename);
+    std::string zipfile;
 
-    if (! FileSystem::inZipfile(filename)) {
+    if (! FileSystem::inZipfile(filename, zipfile)) {
+        // Not in zipfile
+        if (! FileSystem::exists(filename)) {
+            throw FileNotFound(filename, std::string("File not found in readWholeFile: ") + filename);
+        }
+
         int64 length = FileSystem::size(filename);
 
         char* buffer = (char*)System::alignedMalloc(length + 1, 16);
@@ -119,8 +126,40 @@ std::string readWholeFile(const std::string& filename) {
 
         System::alignedFree(buffer);
 
-    } else if (zipfileExists(filename)) {
+    } else {
 
+        // In zipfile
+        FileSystem::markFileUsed(zipfile);
+
+        // Zipfiles require Unix-style slashes
+        std::string internalFile = FilePath::canonicalize(filename.substr(zipfile.length() + 1));
+        struct zip* z = zip_open(zipfile.c_str(), ZIP_CHECKCONS, NULL);
+        {
+            struct zip_stat info;
+            zip_stat_init( &info );    // TODO: Docs unclear if zip_stat_init is required.
+            zip_stat(z, internalFile.c_str(), ZIP_FL_NOCASE, &info);
+
+            // Add NULL termination
+            char* buffer = reinterpret_cast<char*>(System::alignedMalloc(info.size + 1, 16));
+            buffer[info.size] = '\0';
+
+            struct zip_file* zf = zip_fopen( z, internalFile.c_str(), ZIP_FL_NOCASE );
+            if (zf == NULL) {
+                throw std::string("\"") + internalFile + "\" inside \"" + zipfile + "\" could not be opened.";
+            } else {
+                const int64 bytesRead = zip_fread( zf, buffer, (info.size));
+                debugAssertM(bytesRead == info.size,
+                             internalFile + " was corrupt because it unzipped to the wrong size.");
+                (void)bytesRead;
+                zip_fclose( zf );
+            }
+            // Copy the string
+            s = buffer;
+            System::alignedFree(buffer);
+        }
+        zip_close( z );
+    }
+#if 0 // old, buggy code
         void* zipBuffer;
         size_t length  = 0;
         zipRead(filename, zipBuffer, length);
@@ -132,7 +171,10 @@ std::string readWholeFile(const std::string& filename) {
         buffer[length] = '\0';
         s = std::string(buffer);
         System::alignedFree(buffer);
+    } else {
+        throw FileNotFound(filename, std::string("File appears to be inside a zipfile, but was not found there by readWholeFile: ") + filename);
     }
+#endif 
 
     return s;
 }
@@ -317,7 +359,7 @@ static void _zip_resolveDirectory(std::string& completeDir, const std::string& d
 }
 
 
-// assumes that zipDir references a .zip file
+/** assumes that zipDir references a .zip file */
 static bool _zip_zipContains(const std::string& zipDir, const std::string& desiredFile){
         struct zip *z = zip_open( zipDir.c_str(), ZIP_CHECKCONS, NULL );
 	//the last parameter, an int, determines case sensitivity:
@@ -331,7 +373,7 @@ static bool _zip_zipContains(const std::string& zipDir, const std::string& desir
 }
 
 
-// If no zipfile exists, outZipfile and outInternalFile are unchanged
+/** If no zipfile exists, outZipfile and outInternalFile are unchanged */
 bool zipfileExists(const std::string& filename, std::string& outZipfile,
                    std::string& outInternalFile){
    
@@ -346,7 +388,7 @@ bool zipfileExists(const std::string& filename, std::string& outZipfile,
         infile = base + ext;
     }
     
-    // Remove "." from path
+    // Remove all standalone single dots (".") from path
     for (int i = 0; i < path.length(); ++i) {
         if (path[i] == ".") {
             path.remove(i);
@@ -354,7 +396,7 @@ bool zipfileExists(const std::string& filename, std::string& outZipfile,
         }
     }
     
-    // Remove ".." from path
+    // Remove non-leading ".." from path
     for (int i = 1; i < path.length(); ++i) {
         if ((path[i] == "..") && (i > 0) && (path[i - 1] != "..")) {
             // Remove both i and i - 1

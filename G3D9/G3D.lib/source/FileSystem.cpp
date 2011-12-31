@@ -119,8 +119,8 @@ void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::s
                 // There are more slashes, indicating that this is a directory
                 name = name.substr(start, end);
                 if (alreadyAdded.insert(name)) {
-                    Entry& e = nodeArray.next();
-                    e.name = name;
+                    Entry& e = nodeArray.next();                    
+                    e.name = FilePath::removeTrailingSlash(name);
                     e.type = DIR_TYPE;
                 }
             }
