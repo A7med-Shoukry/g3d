@@ -31,6 +31,7 @@ edition of Visual Studio 2010 that can be purchased and includes 64-bit support 
 <ul>
 <li> Visual Studio 2010: <a href="http://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a></li>
 <li> Windows SDK 7.1: <a href="http://msdn.microsoft.com/en-us/windows/bb980924">http://msdn.microsoft.com/en-us/windows/bb980924</a></li>
+<li> Windows SDK patch: (may not be needed; only install if you see the error "Error: The "ConfigurationGeneral" rule is missing from the project.") <a href="http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=4422">http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=4422</a></li>
 </ul>
 
 After installing the Windows SDK 7.1, any previous projects will still continue to use the old SDK.  You can fix this by changing the project's
