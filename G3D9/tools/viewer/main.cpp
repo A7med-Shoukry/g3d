@@ -4,10 +4,11 @@
  App that allows viewing of 3D assets, either as a command line argument or after dragging and dropping
  onto the window
  
+ \maintainer Morgan McGuire
  \author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
  
  \created 2007-05-31
- \edited  2011-02-25
+ \edited  2012-01-01
  */
 #include <G3D/G3DAll.h>
 #include <GLG3D/GLG3D.h>
@@ -31,10 +32,11 @@ int main(int argc, char** argv) {
     GApp::Settings settings;
 
     settings.window.resizable = true;
-    settings.film.enabled = true;
+    settings.film.enabled     = true;
 
-    settings.window.width = 1024;
-    settings.window.height = 768;
+    settings.window.width     = 1024;
+    settings.window.height    = 768;
+    settings.window.caption   = "G3D Viewer";
 
     return App(settings, filename).run();
 }

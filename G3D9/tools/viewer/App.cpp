@@ -40,7 +40,11 @@ App::App(const GApp::Settings& settings, const std::string& file) :
 void App::onInit() {
     showRenderingStats = false;
     developerWindow->cameraControlWindow->setVisible(false);
-    window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
+    developerWindow->setVisible(false);
+    m_film->setAntialiasingEnabled(true);
+    if (filename != "") {
+        window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
+    }
 
     lighting = Lighting::create();
     lighting->lightArray.clear();
