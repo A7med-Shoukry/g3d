@@ -237,5 +237,7 @@ void App::setViewer(const std::string& newFilename) {
         viewer->onInit(filename);
     }
     
-    window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
+    if (filename != "") {
+        window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
+    }
 }
