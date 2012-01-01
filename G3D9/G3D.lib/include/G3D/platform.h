@@ -5,7 +5,7 @@
 
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- Copyright 2000-2011, Morgan McGuire.
+ Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
 
  \created 2003-06-09

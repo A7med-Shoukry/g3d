@@ -6,7 +6,7 @@
   \created 2011-08-18
   \edited  2011-08-18
 
-  Copyright 2000-2011, Morgan McGuire.
+  Copyright 2000-2012, Morgan McGuire.
   All rights reserved.
  */
 #include "G3D/ImageBuffer.h"

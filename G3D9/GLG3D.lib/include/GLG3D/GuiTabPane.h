@@ -4,7 +4,7 @@
  \created 2010-03-01
  \edited  2011-08-29
 
- Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
+ Copyright 2000-2012, Morgan McGuire, http://graphics.cs.williams.edu
  All rights reserved.
 */
 #ifndef GLG3D_GuiTabPane_h

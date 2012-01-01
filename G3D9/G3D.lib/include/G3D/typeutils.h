@@ -6,7 +6,7 @@
   \created 2011-06-10
   \edited  2011-06-10
 
-  Copyright 2000-2011, Morgan McGuire.
+  Copyright 2000-2012, Morgan McGuire.
   All rights reserved.
  */
 #ifndef G3D_typeutils_h

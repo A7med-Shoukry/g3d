@@ -6,7 +6,7 @@
   \created 2009-01-01
   \edited  2010-12-20
 
-  Copyright 2000-2011, Morgan McGuire.
+  Copyright 2000-2012, Morgan McGuire.
   All rights reserved.
  */
 #ifndef GLG3D_SurfaceElement_h

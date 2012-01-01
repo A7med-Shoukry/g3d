@@ -10,7 +10,7 @@
   \created 2001-05-29
   \edited  2011-08-29
 
-  Copyright 2000-2011, Morgan McGuire
+  Copyright 2000-2012, Morgan McGuire
 */
 
 #ifndef GLG3D_RenderDevice_h

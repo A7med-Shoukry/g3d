@@ -4,7 +4,7 @@
  \created 2006-04-06
  \edited  2006-05-06
 
- Copyright 2000-2011, Morgan McGuire.
+ Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
 */
 

@@ -6,7 +6,7 @@
   \created 2007-05-16
   \edited  2010-11-10
 
-  Copyright 2000-2011, Morgan McGuire.
+  Copyright 2000-2012, Morgan McGuire.
   All rights reserved.
  */
 #ifndef G3D_Pointer_h

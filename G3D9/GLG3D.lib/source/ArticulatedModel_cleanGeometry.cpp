@@ -5,7 +5,7 @@
  \created 2011-07-18
  \edited  2011-07-23
  
- Copyright 2000-2011, Morgan McGuire.
+ Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
 */
 #include "GLG3D/ArticulatedModel.h"

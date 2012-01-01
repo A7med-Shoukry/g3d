@@ -7,7 +7,7 @@
   \created 2001-03-11
   \edited  2011-05-29
 
-  Copyright 2000-2011, Morgan McGuire, http://graphics.cs.williams.edu
+  Copyright 2000-2012, Morgan McGuire, http://graphics.cs.williams.edu
   All rights reserved.
  */
 

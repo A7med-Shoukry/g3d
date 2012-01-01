@@ -5,7 +5,7 @@
   \created 2010-01-01
   \edited  2011-06-29
 
-  Copyright 2000-2011, Morgan McGuire
+  Copyright 2000-2012, Morgan McGuire
  */
 
 #ifndef G3D_GuiText_h

@@ -5,7 +5,7 @@
  @edited  2009-09-11
 
  G3D Library http://g3d.sf.net
- Copyright 2000-2011, Morgan McGuire morgan@cs.williams.edu
+ Copyright 2000-2012, Morgan McGuire morgan@cs.williams.edu
  All rights reserved.
 */
 #ifndef G3D_GuiTextureBox_h

@@ -327,17 +327,37 @@ void System::init() {
 
 
 void getG3DVersion(std::string& s) {
+
+    const char* build = 
+#       ifdef G3D_64BIT
+            "64-bit";
+#       else
+            "32-bit";
+#       endif
+
+    const char* debug =
+#       ifdef G3D_DEBUG
+            " (Debug)";
+#       else
+            "";
+#       endif
+
     char cstr[100];
     if ((G3D_VER % 100) != 0) {
-        sprintf(cstr, "G3D %d.%02d beta %d",
+        sprintf(cstr, "G3D Innovation Engine %d.%02d beta %d, %s%s",
                 G3D_VER / 10000,
                 (G3D_VER / 100) % 100,
-                G3D_VER % 100);
+                G3D_VER % 100,
+                build,
+                debug);
     } else {
-        sprintf(cstr, "G3D %d.%02d",
+        sprintf(cstr, "G3D Innovation Engine %d.%02d, %s%s",
                 G3D_VER / 10000,
-                (G3D_VER / 100) % 100);
+                (G3D_VER / 100) % 100,
+                build,
+                debug);
     }
+
     s = cstr;
 }
 

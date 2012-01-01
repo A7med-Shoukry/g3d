@@ -6,7 +6,7 @@
  @created 2009-01-02
  @edited  2009-03-20
 
- Copyright 2000-2011, Morgan McGuire.
+ Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
  */
 #ifndef G3D_Random_h
