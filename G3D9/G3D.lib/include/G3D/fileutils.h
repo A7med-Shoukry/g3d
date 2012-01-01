@@ -32,27 +32,6 @@ std::string readWholeFile
 (const std::string&          filename);
 
 
-/** Reads from a zip file and decompresses the desired contents
-	into memory.  Does not support recursive zip calls (i.e. a .zip
-	stored within another .zip)
-
-	@param file the path, of the format C:\\...\\something.zip\\...\\desiredfile.ext
-	@param data a pointer to the memory where the file will be stored
-	@param length the size of the file decompressed to memory */
-void zipRead
-(const std::string& file,
- void*&             data,
- size_t&            length);
-
-
-/** Closes the contents of a zip file that had been decompressed to
-	memory.  Must be called in tandem with zipRead() to avoid memory
-	leaks.
-
-	@param data the pointer to the decompressed file in memory */
-void zipClose(void* data);
-
-
 /**
  @param flush If true (default), the file is ready for reading as soon
  as the function returns.  If false, the function returns immediately and

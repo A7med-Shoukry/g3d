@@ -115,28 +115,5 @@ void testZip() {
 	debugAssertM(zipLength, "Zip fileLength failed.");
 
 
-	// Contents of files
-	void* test = NULL;
-	size_t zLength, length;
-
-	zipRead("apiTest.zip/Test.txt", test, zLength);
-
-	// Read correct results
-	const char* filename = "TestDir/Test.txt";
-	FILE* file = fopen(filename, "r");
-    length = FileSystem::size(filename);
-	debugAssert(file);
-	void* correct = System::alignedMalloc(length, 16);
-	fread(correct, 1, length, file);
-    fclose(file);
-
-	// If the lengths aren't the same, the files can't be the same
-	debugAssertM(length == zLength, "After zipRead, files are not the same length");
-
-	debugAssertM(memcmp(correct, test, length) == 0, "After zipRead, files are not the same.");
-
-	System::alignedFree(correct);
-	zipClose(test);
-
 	printf("passed\n");
 }

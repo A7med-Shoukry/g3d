@@ -129,8 +129,6 @@ BinaryInput::BinaryInput
     std::string zipfile;
     if (FileSystem::inZipfile(m_filename, zipfile)) {
         // Load from zipfile
-//        zipRead(filename, v, s);
-
         FileSystem::markFileUsed(m_filename);
         FileSystem::markFileUsed(zipfile);
 

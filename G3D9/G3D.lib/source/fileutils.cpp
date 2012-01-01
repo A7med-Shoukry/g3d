@@ -159,62 +159,8 @@ std::string readWholeFile(const std::string& filename) {
         }
         zip_close( z );
     }
-#if 0 // old, buggy code
-        void* zipBuffer;
-        size_t length  = 0;
-        zipRead(filename, zipBuffer, length);
-
-        char* buffer = (char*)System::alignedMalloc(length + 1, 16);
-        System::memcpy(buffer,zipBuffer, length + 1);
-        zipClose(zipBuffer);
-
-        buffer[length] = '\0';
-        s = std::string(buffer);
-        System::alignedFree(buffer);
-    } else {
-        throw FileNotFound(filename, std::string("File appears to be inside a zipfile, but was not found there by readWholeFile: ") + filename);
-    }
-#endif 
 
     return s;
-}
-
-
-void zipRead(const std::string& file,
-             void*& data,
-             size_t& length) {
-    std::string zip, desiredFile;
-    
-    if (zipfileExists(file, zip, desiredFile)) {
-        FileSystem::markFileUsed(file);
-        FileSystem::markFileUsed(zip);
-
-        struct zip *z = zip_open( zip.c_str(), ZIP_CHECKCONS, NULL );
-        {
-            struct zip_stat info;
-            zip_stat_init( &info );    // TODO: Docs unclear if zip_stat_init is required.
-            zip_stat( z, desiredFile.c_str(), ZIP_FL_NOCASE, &info );
-            length = info.size;
-            // sets machines up to use MMX, if they want
-            data = System::alignedMalloc(length, 16);
-            struct zip_file *zf = zip_fopen( z, desiredFile.c_str(), ZIP_FL_NOCASE );
-            {
-                int test = zip_fread( zf, data, length );
-                debugAssertM((size_t)test == length,
-                             desiredFile + " was corrupt because it unzipped to the wrong size.");
-                (void)test;
-            }
-            zip_fclose( zf );
-        }
-        zip_close( z );
-    } else {
-        data = NULL;
-    }
-}
-
-
-void zipClose(void* data) {
-	System::alignedFree(data);
 }
 
 
