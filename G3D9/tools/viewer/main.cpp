@@ -34,6 +34,11 @@ int main(int argc, char** argv) {
     settings.window.resizable = true;
     settings.film.enabled     = true;
 
+#   ifdef G3D_OSX
+        settings.window.defaultIconFilename = System::findDataFile("G3D-128.png");
+#   else
+        settings.window.defaultIconFilename = System::findDataFile("G3D-64.png");
+#   endif
     settings.window.width     = 1024;
     settings.window.height    = 768;
     settings.window.caption   = "G3D Viewer";

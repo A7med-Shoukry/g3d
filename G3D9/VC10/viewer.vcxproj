@@ -171,6 +171,9 @@
     <ClCompile Include="..\tools\viewer\TextureViewer.cpp" />
     <ClCompile Include="..\tools\viewer\VideoViewer.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\tools\viewer\resources.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
