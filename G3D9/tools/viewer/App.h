@@ -31,11 +31,12 @@ public:
     
     App(const GApp::Settings& settings = GApp::Settings(), const std::string& file = "");
     
-    virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt);
-    virtual void onInit();
-    virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surfaceArray);
-    virtual void onCleanup();
-    virtual bool onEvent(const GEvent& event);
+    virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt) override;
+    virtual void onInit() override;
+    virtual void onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surfaceArray) override;
+    virtual void onGraphics2D(RenderDevice *rd, Array< Surface2D::Ref > &surface2D) override;
+    virtual void onCleanup() override;
+    virtual bool onEvent(const GEvent& event) override;
     
 private:
     /** Called from onInit() and after a FILE_DROP in onEvent()*/

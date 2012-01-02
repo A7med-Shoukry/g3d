@@ -1,13 +1,13 @@
 /**
- @file Viewer.h
+ \file Viewer.h
  
  The base class for the more specialized Viewers
  
- @maintainer Eric Muller 09edm@williams.edu
- @author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
+ \maintainer Morgan McGuire
+ \author Eric Muller, Dan Fast, Katie Creel
  
- @created 2007-05-31
- @edited  2007-06-08
+ \created 2007-05-31
+ \edited  2007-06-08
  */
 #ifndef VIEWER_H
 #define VIEWER_H
@@ -23,6 +23,7 @@ public:
     virtual bool onEvent(const GEvent& e, App* app) { return false; }
     virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {}
     virtual void onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) = 0;
+    virtual void onGraphics2D(RenderDevice* rd, App* app) {}
 
 };
 

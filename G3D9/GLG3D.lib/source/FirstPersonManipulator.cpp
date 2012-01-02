@@ -231,7 +231,7 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
         float dy = 0;
         if (m_userInput->keyDown(m_flyUpKey) && ! m_userInput->keyDown(m_flyDownKey)) {
             dy = 1;
-        }else if (! m_userInput->keyDown(m_flyUpKey) && m_userInput->keyDown(m_flyDownKey)) {
+        } else if (! m_userInput->keyDown(m_flyUpKey) && m_userInput->keyDown(m_flyDownKey)) {
             dy = -1;
         }
 

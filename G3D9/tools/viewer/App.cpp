@@ -41,6 +41,9 @@ void App::onInit() {
     showRenderingStats = false;
     developerWindow->cameraControlWindow->setVisible(false);
     developerWindow->setVisible(false);
+    developerWindow->videoRecordDialog->setCaptureGui(false);
+    developerWindow->videoRecordDialog->setCaptureGui(false);
+
     m_film->setAntialiasingEnabled(true);
     if (filename != "") {
         window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
@@ -141,6 +144,12 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
             posed3D[i]->render(rd);
         }
 	rd->disableLighting();
+}
+
+
+void App::onGraphics2D(RenderDevice *rd, Array< Surface2D::Ref > &surface2D) {
+    viewer->onGraphics2D(rd, this);
+    GApp::onGraphics2D(rd, surface2D);
 }
 
 

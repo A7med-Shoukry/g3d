@@ -19,16 +19,19 @@
 class ArticulatedViewer : public Viewer {
 private:
 
-    ArticulatedModel::Ref	m_model;
-    int			        m_numFaces;
+    ArticulatedModel::Ref	    m_model;
+    int			                m_numFaces;
     int                         m_numVertices;
 
-    ArticulatedModel::Part*    m_selectedPart;
+    ArticulatedModel::Part*     m_selectedPart;
 
-    ArticulatedModel::Mesh*    m_selectedMesh;
+    ArticulatedModel::Mesh*     m_selectedMesh;
 
     /** In the Mesh's cpuIndexAray index array */
     int                         m_selectedTriangleIndex;
+
+    GFont::Ref                  m_font;
+    Texture::Ref                m_keyguide;
 
     float                       m_scale;
     Vector3                     m_offset;
@@ -38,9 +41,10 @@ private:
 
 public:
     ArticulatedViewer();
-    virtual void onInit(const std::string& filename);
-    virtual bool onEvent(const GEvent& e, App* app);
-    virtual void onGraphics(RenderDevice* rd, App* app, const Lighting::Ref& lighting);
+    virtual void onInit(const std::string& filename) override;
+    virtual bool onEvent(const GEvent& e, App* app) override;
+    virtual void onGraphics(RenderDevice* rd, App* app, const Lighting::Ref& lighting) override;
+    virtual void onGraphics2D(RenderDevice* rd, App* app) override;
 
 };
 

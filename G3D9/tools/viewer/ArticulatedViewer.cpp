@@ -17,7 +17,12 @@ ArticulatedViewer::ArticulatedViewer() :
     m_selectedPart(NULL),
     m_selectedMesh(NULL),
     m_selectedTriangleIndex(0)
-{}
+{
+    Texture::Settings set;
+    set.wrapMode = WrapMode::CLAMP;
+    m_keyguide = Texture::fromFile(System::findDataFile("keyguide.png"), ImageFormat::RGBA8(), Texture::DIM_2D_NPOT, set);
+    m_font = GFont::fromFile(System::findDataFile("arial.fnt"));
+}
 
 static const float VIEW_SIZE = 10.0f;
 
@@ -217,6 +222,19 @@ void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef
     for (int i = 0; i < m_model->rootArray().size(); ++i) {
         printHierarchy(m_model, m_model->rootArray()[i], "");
     }
+}
+
+
+void ArticulatedViewer::onGraphics2D(RenderDevice* rd, App* app) {
+    rd->pushState();
+    {
+        Rect2D rect = Rect2D::xywh(8, rd->height() - m_keyguide->height() - 5, m_keyguide->width(), m_keyguide->height());
+        m_font->draw2D(rd, "ESC - Quit    F4 - Screenshot    F6 - Record Video", rect.x0y0() + Vector2(0, -25), 14);
+        rd->setBlendFunc(RenderDevice::BLEND_SRC_ALPHA, RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA);
+        rd->setTexture(0, m_keyguide);
+        Draw::fastRect2D(rect, rd, Color4(Color3::white(), 0.8f));
+    }
+    rd->popState();
 }
 
 
