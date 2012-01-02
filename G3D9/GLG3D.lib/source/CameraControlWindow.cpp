@@ -276,9 +276,9 @@ CameraControlWindow::CameraControlWindow(
     */
 
 #   ifdef G3D_OSX
-        m_manualHelpCaption = GuiText("W,A,S,D and right (or shift+left) mouse to move.", NULL, 10);
+        m_manualHelpCaption = GuiText("W,A,S,D,Z,C keys and right (or shift+left) mouse to move.", NULL, 10);
 #   else
-        m_manualHelpCaption = GuiText("W,A,S,D and right mouse to move.", NULL, 10);
+        m_manualHelpCaption = GuiText("W,A,S,D,Z,C keys and right mouse to move.", NULL, 10);
 #   endif
 
     m_autoHelpCaption = "";

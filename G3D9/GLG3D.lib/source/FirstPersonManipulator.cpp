@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, morgan@cs.brown.edu
 
   \created 2002-07-28
-  \edited  2011-08-15
+  \edited  2012-01-01
 */
 
 #include "G3D/platform.h"
@@ -22,6 +22,8 @@ FirstPersonManipulatorRef FirstPersonManipulator::create(UserInput* ui) {
 
 
 FirstPersonManipulator::FirstPersonManipulator(UserInput* ui) : 
+    m_flyUpKey('z'),
+    m_flyDownKey('c'),
     m_maxMoveRate(10),
     m_maxTurnRate(20),
     m_yaw(0),
@@ -226,10 +228,17 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
 
     {
         // Translation direction
-        Vector2 direction = Vector2(m_userInput->getX(), m_userInput->getY()).directionOrZero();
+        float dy = 0;
+        if (m_userInput->keyDown(m_flyUpKey) && ! m_userInput->keyDown(m_flyDownKey)) {
+            dy = 1;
+        }else if (! m_userInput->keyDown(m_flyUpKey) && m_userInput->keyDown(m_flyDownKey)) {
+            dy = -1;
+        }
+
+        const Vector3& direction = Vector3(m_userInput->getX(), m_userInput->getY(), dy).directionOrZero();
 
         // Translate forward
-        m_translation += (lookVector() * direction.y + frame().rightVector() * direction.x) *
+        m_translation += (lookVector() * direction.y + frame().rightVector() * direction.x + frame().upVector() * direction.y) *
             elapsedTime * m_maxMoveRate;
     }
     

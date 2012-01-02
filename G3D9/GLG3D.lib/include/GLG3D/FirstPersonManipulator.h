@@ -62,6 +62,9 @@ public:
 
 private:
 
+    GKey                        m_flyUpKey;
+    GKey                        m_flyDownKey;
+
     /** m/s */
     float                       m_maxMoveRate;
     
@@ -124,7 +127,27 @@ public:
     /** Invoke immediately before entering the main game loop. */
     void reset();
 
-	void setPosition(const Vector3& t) {
+    /** Key for translating +Y */
+    GKey flyUpKey() const {
+        return m_flyUpKey;
+    }
+
+    /** Key for translating -Y */
+    GKey flyDownKey() const {
+        return m_flyDownKey;
+    }
+
+    /** Default is 'z' */
+    void setFlyUpKey(GKey k) {
+        m_flyUpKey = k;
+    }
+
+    /** Default is 'c' */
+    void setFlyDownKey(GKey k) {
+        m_flyDownKey = k;
+    }
+
+    void setPosition(const Vector3& t) {
 		m_translation = t;
 	}
 
