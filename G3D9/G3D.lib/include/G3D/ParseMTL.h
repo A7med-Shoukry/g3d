@@ -59,7 +59,7 @@ public:
         /** map_bump/bump field filename*/
         std::string     map_bump;
 
-        /** Opacity/alpha level, on the range 0-1 */
+        /** Opacity (alpha) level, on the range 0-1, where 1 = opaque (default) */
         float           d;
 
         /** Transparency level, on the range 0-1. Amount of light transmitted.*/
@@ -82,7 +82,7 @@ public:
 
     private:
 
-        Material() : Ka(1.0f), Kd(1.0f), Ks(1.0f), Ns(10.0), d(1.0f), Tr(0.0f), Tf(1.0f), Ke(0.0f), illum(2), Ni(1.5f) {}
+        Material() : Ka(1.0f), Kd(1.0f), Ks(1.0f), Ns(10.0), d(1.0f), Tr(0.0f), Tf(0.0f), Ke(0.0f), illum(2), Ni(1.0f) {}
 
     public:
 

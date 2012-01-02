@@ -31,7 +31,7 @@ static bool allCubeMapFacesExist(const std::string& base, const std::string& ext
 	}
 
 	// Texture isn't the start of a cube map set at all
-	if (!foundMatch) {
+	if (! foundMatch) {
 		return false;
 	}
 
@@ -63,12 +63,12 @@ TextureViewer::TextureViewer() :
 void TextureViewer::onInit(const std::string& filename) {
 
 	// Determine if texture is part of a cubemap set
-	std::string path = filenamePath(filename);
-	std::string base = filenameBase(filename);
-	std::string ext = filenameExt(filename);
+	const std::string& path = FilePath::parent(filename);
+	const std::string& base = FilePath::base(filename);
+    const std::string& ext = FilePath::ext(filename);
 
 	std::string wildcardBase;
-	if (allCubeMapFacesExist(path + base, ext, wildcardBase)) {
+	if (allCubeMapFacesExist(FilePath::concat(path, base), ext, wildcardBase)) {
 		m_isSky = true;
 
 		m_texture = Texture::fromFile(wildcardBase + "*." + ext, ImageFormat::AUTO(), Texture::DIM_CUBE_MAP_NPOT, Texture::Settings::cubeMap());

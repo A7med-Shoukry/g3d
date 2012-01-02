@@ -30,9 +30,16 @@ static const float VIEW_SIZE = 10.0f;
 
 void ArticulatedViewer::onInit(const std::string& filename) {
 
+    m_filename = filename;
+
+    m_model = NULL;
     m_selectedPart = NULL;
     m_selectedMesh = NULL;
     m_selectedTriangleIndex = -1;
+    m_numFaces = 0;
+    m_numVertices = 0;
+
+    Material::clearCache();
     
     const RealTime start = System::time();
     if (toLower(filenameExt(filename)) == "any") {
@@ -232,8 +239,8 @@ void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef
 void ArticulatedViewer::onGraphics2D(RenderDevice* rd, App* app) {
     rd->pushState();
     {
-        Rect2D rect = Rect2D::xywh(10, rd->height() - m_keyguide->height() - 5, m_keyguide->width(), m_keyguide->height());
-        m_font->draw2D(rd, "ESC - Quit    F4 - Screenshot    F6 - Record Video", rect.x0y0() + Vector2(-5, -25), 13, Color3::black(), Color3::white());
+        Rect2D rect = Rect2D::xywh(15, rd->height() - m_keyguide->height() - 5, m_keyguide->width(), m_keyguide->height());
+        m_font->draw2D(rd, "ESC - Quit   F3 - Toggle Hierarchy   F4 - Screenshot    F6 - Record Video   R - Reload", rect.x0y0() + Vector2(-10, -25), 12, Color3::black(), Color3::white());
         rd->setBlendFunc(RenderDevice::BLEND_SRC_ALPHA, RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA);
         rd->setTexture(0, m_keyguide);
         Draw::fastRect2D(rect, rd, Color4(Color3::white(), 0.8f));
@@ -258,6 +265,9 @@ bool ArticulatedViewer::onEvent(const GEvent& e, App* app) {
                                             m_selectedPart, m_selectedMesh, m_selectedTriangleIndex,
                                             u, v);
         return hit;
+    } else if ((e.type == GEventType::KEY_DOWN) && (e.key.keysym.sym == 'r')) {
+        onInit(m_filename);
+        return true;
     }
 
     return false;

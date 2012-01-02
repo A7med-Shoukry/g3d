@@ -7,7 +7,7 @@
  \author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
  
  \created 2007-05-31
- \edited  2011-07-26
+ \edited  2012-01-02
  */
 #ifndef ArticulatedViewer_h
 #define ArticulatedViewer_h
@@ -19,6 +19,7 @@
 class ArticulatedViewer : public Viewer {
 private:
 
+    std::string                 m_filename;
     ArticulatedModel::Ref	    m_model;
     int			                m_numFaces;
     int                         m_numVertices;

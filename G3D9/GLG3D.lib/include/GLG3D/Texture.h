@@ -132,16 +132,12 @@ public:
      <pre>
      const Texture::CubeMapInfo::Face& faceInfo = cubeMapInfo.face[f];
      GImage temp;
-     renderTarget->getImage(temp, ImageFormat::RGB8(), true);
-
+     renderTarget->getImage(temp, ImageFormat::RGB8());
+     temp.flipVertical();
      temp.rotate90CW(-faceInfo.rotations);
-     if (faceInfo.flipY) {
-         temp.flipVertical();
-     }
-     if (faceInfo.flipX) {
-         temp.flipHorizontal();
-     }
-     temp.save(format("out-%s.png", faceInfo.suffix));
+     if (faceInfo.flipY) temp.flipVertical();
+     if (faceInfo.flipX) temp.flipHorizontal();
+     temp.save(format("out-%s.png", faceInfo.suffix.c_str()));
      </pre>
 
     */

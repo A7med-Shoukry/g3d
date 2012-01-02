@@ -113,9 +113,10 @@ static Material::Specification toMaterialSpecification
     // Map OBJ model to G3D shading 
     filename = ArticulatedModel::resolveRelativeFilename(m->map_Kd, m->basePath);
     if (filename != "" && FileSystem::exists(filename)) {
-        s.setLambertian(filename);
+        // OBJ texture map overrides the constant color in the spec
+        s.setLambertian(filename, Color4(Color3::white(), m->d));
     } else {
-        s.setLambertian(m->Kd);
+        s.setLambertian(Color4(m->Kd, m->d));
     }
 
     filename = ArticulatedModel::resolveRelativeFilename(m->map_Ks, m->basePath);

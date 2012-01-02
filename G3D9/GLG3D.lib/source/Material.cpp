@@ -72,6 +72,10 @@ static MaterialCache& globalCache() {
 }
 
 
+void Material::clearCache() {
+    globalCache().clear();
+}
+
 Material::Ref Material::create(const Specification& specification) {
     MaterialCache& cache = globalCache();
     Material::Ref value = cache[specification];

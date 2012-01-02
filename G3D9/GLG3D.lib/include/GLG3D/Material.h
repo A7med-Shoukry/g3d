@@ -403,6 +403,9 @@ public:
     
     static Material::Ref createDiffuse(const std::string& textureFilename);
 
+    /** Flush the material cache.  If you're editing texture maps on disk and want to reload them, invoke this first. */
+    static void clearCache();
+
     /** Serialize to G3D SpeedLoad format.  See the notes on the SpeedLoad doc item.
 
         Not threadsafe, and must be invoked on the OpenGL thread.
@@ -411,6 +414,7 @@ public:
 
         \sa Material::Ref create(BinaryInput& b)
         \sa computeSpeedLoadIdentifier()
+        \beta
     */
     void speedSerialize(SpeedLoadIdentifier& s, BinaryOutput& b) const;
 
@@ -423,6 +427,7 @@ public:
        Returns the SpeedLoadIdentifier for this material.
 
        \sa serialize
+        \beta
      */
     static Material::Ref speedCreate(SpeedLoadIdentifier& s, BinaryInput& b);
 

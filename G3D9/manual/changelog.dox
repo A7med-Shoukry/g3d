@@ -21,6 +21,8 @@
    <p>
    Changes in 9.00:
    <ul>
+     <li> G3D::WeakCache::clear </li>
+     <li> Removed shift + left button = right on OS X (ctrl+left still works) in FirstPersonManipulator </li>
      <li> G3D::FirstPersonManipulator now uses Z and C for vertical up and down translation (configurable)</li>
      <li> GuiContainer is now notified through G3D::GuiContainer::onChildControlEvent() when one of its children fires a GUI event.</li>
      <li> GuiWindow now delivers events up the GUI hierarchy until they are consumed</li>
