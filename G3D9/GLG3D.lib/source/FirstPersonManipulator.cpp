@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, morgan@cs.brown.edu
 
   \created 2002-07-28
-  \edited  2012-01-01
+  \edited  2012-01-02
 */
 
 #include "G3D/platform.h"
@@ -26,6 +26,7 @@ FirstPersonManipulator::FirstPersonManipulator(UserInput* ui) :
     m_flyDownKey('c'),
     m_maxMoveRate(10),
     m_maxTurnRate(20),
+    m_shiftSpeedMultiplier(0.15f),
     m_yaw(0),
     m_pitch(0),
     m_active(false),
@@ -233,11 +234,17 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
             dy = -1;
         }
 
+        float modifier = 1.0f;
+
+        if (m_userInput->keyDown(GKey::LSHIFT) || m_userInput->keyDown(GKey::RSHIFT)) {
+            modifier = m_shiftSpeedMultiplier;
+        }
+
         const Vector3& direction = Vector3(m_userInput->getX(), dy, m_userInput->getY()).directionOrZero();
 
         // Translate forward
         m_translation += (lookVector() * direction.z + frame().rightVector() * direction.x + frame().upVector() * direction.y) *
-            elapsedTime * m_maxMoveRate;
+            elapsedTime * m_maxMoveRate * modifier;
     }
     
     // Desired change in yaw and pitch

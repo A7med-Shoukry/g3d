@@ -70,6 +70,9 @@ private:
     
     /** rad/s */
     float                       m_maxTurnRate;
+
+    /** When the shift key is held down, multiply m_maxMoveRate by this.  Default is 0.15 */
+    float                       m_shiftSpeedMultiplier;
     
     float                       m_yaw;
     float                       m_pitch;
@@ -126,6 +129,15 @@ public:
 
     /** Invoke immediately before entering the main game loop. */
     void reset();
+
+    /** \copydoc m_shiftSpeedMultipler */
+    void setShiftSpeedMultipler(float m) {
+        m_shiftSpeedMultiplier = m;
+    }
+
+    float shiftSpeedMultipler() const {
+        return m_shiftSpeedMultiplier;
+    }
 
     /** Key for translating +Y */
     GKey flyUpKey() const {
