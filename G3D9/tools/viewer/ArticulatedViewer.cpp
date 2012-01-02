@@ -228,8 +228,8 @@ void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef
 void ArticulatedViewer::onGraphics2D(RenderDevice* rd, App* app) {
     rd->pushState();
     {
-        Rect2D rect = Rect2D::xywh(8, rd->height() - m_keyguide->height() - 5, m_keyguide->width(), m_keyguide->height());
-        m_font->draw2D(rd, "ESC - Quit    F4 - Screenshot    F6 - Record Video", rect.x0y0() + Vector2(0, -25), 14);
+        Rect2D rect = Rect2D::xywh(10, rd->height() - m_keyguide->height() - 5, m_keyguide->width(), m_keyguide->height());
+        m_font->draw2D(rd, "ESC - Quit    F4 - Screenshot    F6 - Record Video", rect.x0y0() + Vector2(-5, -25), 13, Color3::black(), Color3::white());
         rd->setBlendFunc(RenderDevice::BLEND_SRC_ALPHA, RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA);
         rd->setTexture(0, m_keyguide);
         Draw::fastRect2D(rect, rd, Color4(Color3::white(), 0.8f));
