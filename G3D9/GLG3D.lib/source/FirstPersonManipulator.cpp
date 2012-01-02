@@ -235,10 +235,10 @@ void FirstPersonManipulator::onSimulation(RealTime rdt, SimTime sdt, SimTime idt
             dy = -1;
         }
 
-        const Vector3& direction = Vector3(m_userInput->getX(), m_userInput->getY(), dy).directionOrZero();
+        const Vector3& direction = Vector3(m_userInput->getX(), dy, m_userInput->getY()).directionOrZero();
 
         // Translate forward
-        m_translation += (lookVector() * direction.y + frame().rightVector() * direction.x + frame().upVector() * direction.y) *
+        m_translation += (lookVector() * direction.z + frame().rightVector() * direction.x + frame().upVector() * direction.y) *
             elapsedTime * m_maxMoveRate;
     }
     
