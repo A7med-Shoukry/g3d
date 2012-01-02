@@ -328,6 +328,41 @@ protected:
     /** Used to track how much onWait overshot its desired target during the previous frame. */
     RealTime                m_lastFrameOverWait;
 
+    /** 
+      Helper for generating cube maps.  Invokes GApp::onGraphics3D six times, once for each face of a cube map.  This is convenient both for microrendering
+      and for generating cube maps to later use offline.
+
+      G3D::Film post-processing is not applied to the resulting images.
+  
+      \param output If empty or the first element is NULL, this is set to a series of new 1024 x 1024 ImageFormat::RGB16F() textures.  Otherwise, the provided elements are used. 
+      Textures are assumed to be square.  The images are generated in G3D::CubeFace order.
+
+      \param camera The field of view is changed to 90 degrees and the view is rotated in 90 degree increments, but other parameters from this camera are used unmodifed.
+      The app->defaultCamera is temporarily set to each face's camera as well, and then restored.
+
+      \param depthMap Optional pre-allocated depth texture to use as the depth map when rendering each face.  Will be allocated to match the texture resolution if not provided.
+      The default depth format is ImageFormat::DEPTH24().
+
+      Example:
+      \code
+        Array<Texture::Ref> output;
+        renderCubeMap(renderDevice, output, defaultCamera);
+
+        GImage temp;
+        const Texture::CubeMapInfo& cubeMapInfo = Texture::cubeMapInfo(CubeMapConvention::DIRECTX);
+        for (int f = 0; f < 6; ++f) {
+            const Texture::CubeMapInfo::Face& faceInfo = cubeMapInfo.face[f];
+            output[f]->getImage(temp, ImageFormat::RGB8());
+            temp.flipVertical();
+            temp.rotate90CW(-faceInfo.rotations);
+            if (faceInfo.flipY) { temp.flipVertical();   }
+            if (faceInfo.flipX) { temp.flipHorizontal(); }
+            temp.save(format("cube-%s.png", faceInfo.suffix.c_str()));     
+        }
+        \endcode
+    */
+    virtual void renderCubeMap(RenderDevice* rd, Array<Texture::Ref>& output, GCamera camera, Texture::Ref depthMap = NULL);
+
 public:
 
     /** Creates a default lighting environment for demos, which uses the file

@@ -21,9 +21,7 @@ private:
     Lighting::Ref	   lighting;
     Viewer*	           viewer;
     std::string	       filename;
-
-	virtual void renderCubeMap(RenderDevice* rd, Array<Texture::Ref>& output, GCamera camera, Texture::Ref depthMap = NULL);
-
+    
 public:
     /** Used by GUIViewer */
     Color4						colorClear;

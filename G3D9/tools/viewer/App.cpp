@@ -74,77 +74,6 @@ void App::onCleanup() {
     viewer = NULL;
 }
 
-/** 
-  Helper for generating cube maps.  Invokes GApp::onGraphics3D six times, once for each face of a cube map.
-
-  G3D::Film post-processing is not applied to the resulting images.
-  
-  \param output If empty or the first element is NULL, this is set to a series of new 512x512 ImageFormat::RGB16F() textures.  Otherwise, the provided elements are used. 
-  Textures are assumed to be square.  The images are generated in G3D::CubeFace order.
-
-  \param camera The field of view is changed to 90 degrees and the view is rotated in 90 degree increments, but other parameters from this camera are used unmodifed.
-  The app->defaultCamera is temporarily set to each face's camera as well, and then restored.
-
-  \param depthMap Optional pre-allocated depth texture to use as the depth map when rendering each face.  Will be allocated to match the texture resolution if not provided.
-  The default depth format is ImageFormat::DEPTH24().
-*/
-void App::renderCubeMap(RenderDevice* rd, Array<Texture::Ref>& output, GCamera camera, Texture::Ref depthMap) {
-    
-    // Obtain the surface argument needed later for onGraphics
-    Array<Surface::Ref> surface;
-    {
-        Array<Surface2D::Ref> ignore;
-        onPose(surface, ignore);
-    }
-
-    if ((output.size() == 0) || output[0].isNull()) {
-        // allocate cube maps
-        output.resize(6);
-        const int width = 512;
-        const int height = 512;
-        const ImageFormat* imageFormat = ImageFormat::RGB16F();
-        for (int face = 0; face < 6; ++face) {
-            output[face] = Texture::createEmpty(CubeFace(face).toString(), width, height, imageFormat, Texture::DIM_2D_NPOT, Texture::Settings::buffer());
-        }
-    }
-
-    // Configure the base camera
-    camera.setFieldOfView(90.0f * units::degrees(), GCamera::HORIZONTAL);
-    GCamera old = defaultCamera;
-
-    Framebuffer::Ref fb = Framebuffer::create("one face");
-    CFrame cframe;
-    camera.getCoordinateFrame(cframe);
-
-    for (int face = 0; face < 6; ++face) {
-        Texture::Ref color = output[face];
-        alwaysAssertM(color.notNull(), "NULL texture provided for renderCubeMap");
-        debugAssertM(color->width() == color->height(), "Cube map faces should be square");
-
-        if (depthMap.isNull() || (depthMap->width() != color->width()) || (depthMap->height() != color->height())) {
-            // Allocate depth map
-            depthMap = Texture::createEmpty("Depth", color->width(), color->height(), ImageFormat::DEPTH24(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
-        }
-
-        fb->clear();
-        fb->set(Framebuffer::COLOR0, color);
-        fb->set(Framebuffer::DEPTH,  depthMap);
-
-        Texture::getCubeMapRotation(CubeFace(face), cframe.rotation);
-        camera.setCoordinateFrame(cframe);
-
-        defaultCamera = camera;
-        rd->setProjectionAndCameraMatrix(camera);
-        rd->pushState(fb); {
-            rd->setProjectionAndCameraMatrix(camera);
-            rd->clear();
-            onGraphics3D(rd, surface);
-        } rd->popState();
-    }
-
-    defaultCamera = old;
-}
-
 
 bool App::onEvent(const GEvent& e) {
     if (GApp::onEvent(e)) {
@@ -164,12 +93,12 @@ bool App::onEvent(const GEvent& e) {
         if (e.key.keysym.sym == GKey::F3) {
             showDebugText = ! showDebugText;
             return true;
-        } else if (e.key.keysym.sym == 'l') {
+        } else if (e.key.keysym.sym == GKey::F8) {
             Array<Texture::Ref> output;
             renderCubeMap(renderDevice, output, defaultCamera);
 
             GImage temp;
-            const Texture::CubeMapInfo& cubeMapInfo = Texture::cubeMapInfo(CubeMapConvention::QUAKE);
+            const Texture::CubeMapInfo& cubeMapInfo = Texture::cubeMapInfo(CubeMapConvention::DIRECTX);
             for (int f = 0; f < 6; ++f) {
                 const Texture::CubeMapInfo::Face& faceInfo = cubeMapInfo.face[f];
                 output[f]->getImage(temp, ImageFormat::RGB8());

@@ -240,7 +240,7 @@ void ArticulatedViewer::onGraphics2D(RenderDevice* rd, App* app) {
     rd->pushState();
     {
         Rect2D rect = Rect2D::xywh(15, rd->height() - m_keyguide->height() - 5, m_keyguide->width(), m_keyguide->height());
-        m_font->draw2D(rd, "ESC - Quit   F3 - Toggle Hierarchy   F4 - Screenshot    F6 - Record Video   R - Reload", rect.x0y0() + Vector2(-10, -25), 12, Color3::black(), Color3::white());
+        m_font->draw2D(rd, "ESC - Quit  F3 - Toggle Hierarchy  F4 - Screenshot   F6 - Record Video   F8 - Render Cube Map   R - Reload", rect.x0y0() + Vector2(-10, -25), 10, Color3::black(), Color3::white());
         rd->setBlendFunc(RenderDevice::BLEND_SRC_ALPHA, RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA);
         rd->setTexture(0, m_keyguide);
         Draw::fastRect2D(rect, rd, Color4(Color3::white(), 0.8f));

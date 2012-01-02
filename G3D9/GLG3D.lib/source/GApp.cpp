@@ -1075,4 +1075,61 @@ void GApp::processGEventQueue() {
     userInput->endEvents();
 }
 
+
+void GApp::renderCubeMap(RenderDevice* rd, Array<Texture::Ref>& output, GCamera camera, Texture::Ref depthMap) {
+    
+    // Obtain the surface argument needed later for onGraphics
+    Array<Surface::Ref> surface;
+    {
+        Array<Surface2D::Ref> ignore;
+        onPose(surface, ignore);
+    }
+
+    if ((output.size() == 0) || output[0].isNull()) {
+        // allocate cube maps
+        output.resize(6);
+        const int width = 1024;
+        const int height = width;
+        const ImageFormat* imageFormat = ImageFormat::RGB16F();
+        for (int face = 0; face < 6; ++face) {
+            output[face] = Texture::createEmpty(CubeFace(face).toString(), width, height, imageFormat, Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+        }
+    }
+
+    // Configure the base camera
+    camera.setFieldOfView(90.0f * units::degrees(), GCamera::HORIZONTAL);
+    GCamera old = defaultCamera;
+
+    Framebuffer::Ref fb = Framebuffer::create("one face");
+    CFrame cframe;
+    camera.getCoordinateFrame(cframe);
+
+    for (int face = 0; face < 6; ++face) {
+        Texture::Ref color = output[face];
+        alwaysAssertM(color.notNull(), "NULL texture provided for renderCubeMap");
+        debugAssertM(color->width() == color->height(), "Cube map faces should be square");
+
+        if (depthMap.isNull() || (depthMap->width() != color->width()) || (depthMap->height() != color->height())) {
+            // Allocate depth map
+            depthMap = Texture::createEmpty("Depth", color->width(), color->height(), ImageFormat::DEPTH24(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+        }
+
+        fb->clear();
+        fb->set(Framebuffer::COLOR0, color);
+        fb->set(Framebuffer::DEPTH,  depthMap);
+
+        Texture::getCubeMapRotation(CubeFace(face), cframe.rotation);
+        camera.setCoordinateFrame(cframe);
+
+        defaultCamera = camera;
+        rd->setProjectionAndCameraMatrix(camera);
+        rd->pushState(fb); {
+            rd->setProjectionAndCameraMatrix(camera);
+            rd->clear();
+            onGraphics3D(rd, surface);
+        } rd->popState();
+    }
+
+    defaultCamera = old;
+}
 }
