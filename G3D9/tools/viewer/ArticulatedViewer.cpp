@@ -23,7 +23,7 @@ ArticulatedViewer::ArticulatedViewer() :
 
     m_keyguide   = Texture::fromFile(System::findDataFile("keyguide.png"), ImageFormat::RGBA8(), Texture::DIM_2D_NPOT, set);
     m_font       = GFont::fromFile(System::findDataFile("arial.fnt"));
-    m_skybox     = Texture::fromFile(FilePath::concat(System::findDataFile("whiteroom"), "whiteroom_*.png"), ImageFormat::AUTO(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
+    m_skybox     = Texture::fromFile(FilePath::concat(System::findDataFile("whiteroom"), "whiteroom-*.png"), ImageFormat::AUTO(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
 }
 
 static const float VIEW_SIZE = 10.0f;
