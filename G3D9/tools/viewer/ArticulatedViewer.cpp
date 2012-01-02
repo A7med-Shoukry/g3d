@@ -20,8 +20,10 @@ ArticulatedViewer::ArticulatedViewer() :
 {
     Texture::Settings set;
     set.wrapMode = WrapMode::CLAMP;
-    m_keyguide = Texture::fromFile(System::findDataFile("keyguide.png"), ImageFormat::RGBA8(), Texture::DIM_2D_NPOT, set);
-    m_font = GFont::fromFile(System::findDataFile("arial.fnt"));
+
+    m_keyguide   = Texture::fromFile(System::findDataFile("keyguide.png"), ImageFormat::RGBA8(), Texture::DIM_2D_NPOT, set);
+    m_font       = GFont::fromFile(System::findDataFile("arial.fnt"));
+    m_skybox     = Texture::fromFile(FilePath::concat(System::findDataFile("whiteroom"), "whiteroom_*.png"), ImageFormat::AUTO(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
 }
 
 static const float VIEW_SIZE = 10.0f;
@@ -175,7 +177,9 @@ static void printHierarchy
 void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
     // Separate and sort the models
     static Array<G3D::Surface::Ref> posed3D;
-    
+
+    Draw::skyBox(rd, m_skybox);
+
     m_model->pose(posed3D, m_offset);
     Surface::sortAndRender(rd, app->defaultCamera, posed3D, lighting, app->shadowMap);
     //Surface::renderWireframe(rd, posed3D);

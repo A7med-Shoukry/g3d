@@ -30,6 +30,7 @@ private:
     /** In the Mesh's cpuIndexAray index array */
     int                         m_selectedTriangleIndex;
 
+    Texture::Ref                m_skybox;
     GFont::Ref                  m_font;
     Texture::Ref                m_keyguide;
 
