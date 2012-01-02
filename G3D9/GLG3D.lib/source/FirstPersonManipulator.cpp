@@ -115,8 +115,6 @@ bool FirstPersonManipulator::rightDown(UserInput* ui) const {
            ui->keyDown(GKey::RIGHT_MOUSE) || 
            (ui->keyDown(GKey::LEFT_MOUSE) && 
             (
-             ui->keyDown(GKey::LSHIFT) ||
-             ui->keyDown(GKey::RSHIFT) ||
              ui->keyDown(GKey::LCTRL) ||
              ui->keyDown(GKey::RCTRL)));
 #   else
@@ -348,9 +346,7 @@ bool FirstPersonManipulator::onEvent(const GEvent& event) {
 #       ifdef G3D_OSX
         if ((m_userInput != NULL) && 
             (event.button.button == 0) &&
-            (m_userInput->keyDown(GKey::LSHIFT) ||
-             m_userInput->keyDown(GKey::RSHIFT) ||
-             m_userInput->keyDown(GKey::LCTRL)  ||
+            (m_userInput->keyDown(GKey::LCTRL)  ||
              m_userInput->keyDown(GKey::RCTRL))) {
             // "Right click"
             m_rightDown = (event.type == GEventType::MOUSE_BUTTON_DOWN);

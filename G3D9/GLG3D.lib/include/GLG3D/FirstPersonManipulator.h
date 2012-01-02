@@ -45,7 +45,7 @@ public:
 
         /** RPG/World of Warcraft style, on right mouse button cursor
             is hidden and mouse controls yaw/pitch.  On OS X,
-            ctrl+left and shift+left button are treated as the right
+            ctrl+left button are treated as the right
             mouse button.*/
         MOUSE_DIRECT_RIGHT_BUTTON,
 
