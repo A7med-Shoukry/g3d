@@ -406,8 +406,11 @@ def libTarget():
  
 def toolsTarget():
     if windows:
-        x = VC10('VC10/G3D.sln', ['viewer']);
+        x = VC10('VC10/G3D.sln', ['viewer'])
 
+        if (x == 0):
+            copyIfNewer('tools/viewer/register.bat', 'build/bin/')
+            copyIfNewer('tools/viewer/data-files' 'build/bin/')
     else:
         x = libTarget()
      
