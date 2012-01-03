@@ -252,6 +252,7 @@ void ArticulatedModel::load3DS(const Specification& specification) {
 
                         Mesh* mesh = addMesh(materialName, part);
                         debugAssert(isValidHeapPointer(mesh));
+                        mesh->material = mat;
                         mesh->twoSided = twoSided;
 
                         // Construct an index array for this part
