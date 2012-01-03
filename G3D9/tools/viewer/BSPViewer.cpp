@@ -51,6 +51,8 @@ void BSPViewer::onInit(const std::string& filename) {
 
 
 void BSPViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
+    lighting->lightArray[0] = GLight::directional(Vector3(1,1,1), Radiance3(8.5f));
+
 	if(reset == true){
 		reset = false;
 		app->defaultCamera.setCoordinateFrame(map->getStartingPosition());

@@ -38,6 +38,8 @@ private:
     float                       m_scale;
     Vector3                     m_offset;
 
+    bool                        m_shadowMapDirty;
+
     /** Saves the geometry for the first part to a flat file */
     void saveGeometry();
 

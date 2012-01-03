@@ -29,8 +29,8 @@ App::App(const GApp::Settings& settings, const std::string& file) :
     m_debugTextColor = Color3::black();
     m_debugTextOutlineColor = Color3::white();
 
-    shadowMap = ShadowMap::create("Shadow Map", 2048);
-    shadowMap->setPolygonOffset(2.0, 2.0);
+    shadowMap = ShadowMap::create("Shadow Map", 4096);
+//    shadowMap->setPolygonOffset(-0.1, -0.1);
     setDesiredFrameRate(60);
 
     catchCommonExceptions = true;
@@ -42,7 +42,6 @@ void App::onInit() {
     developerWindow->cameraControlWindow->setVisible(false);
     developerWindow->setVisible(false);
     developerWindow->videoRecordDialog->setCaptureGui(false);
-    developerWindow->videoRecordDialog->setCaptureGui(false);
 
     m_film->setAntialiasingEnabled(true);
     if (filename != "") {
@@ -51,7 +50,9 @@ void App::onInit() {
 
     lighting = Lighting::create();
     lighting->lightArray.clear();
-    lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(8.5f)));
+//    lighting->lightArray.append( GLight::directional(Vector3(1,1,1), Radiance3(8.5f)));
+    // The spot light is designed to just barely fit the 3D models
+    lighting->lightArray.append( GLight::spotTarget(Point3(100,100,100), Point3::zero(), 6 * units::degrees(), Power3(8.5f), 1, 0, 0, true));
     lighting->lightArray.append( GLight::directional(Vector3(-1,0,-1), Radiance3(0.8f, 0.9f, 1), false));
     lighting->environmentMapConstant = 0.65f;
     lighting->environmentMapTexture = Texture::fromFile(System::findDataFile("noonclouds/noonclouds_*.png"), ImageFormat::AUTO(), Texture::DIM_CUBE_MAP_NPOT, Texture::Settings::cubeMap());
@@ -59,9 +60,7 @@ void App::onInit() {
     defaultCamera.setNearPlaneZ(-0.05f);
 
     // Don't clip to the near plane
-    glDisable(GL_DEPTH_CLAMP);
-
-	
+    glDisable(GL_DEPTH_CLAMP);	
     colorClear = Color3::white() * 0.9f;
     //modelController = ThirdPersonManipulator::create();
 
@@ -172,12 +171,13 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& posed3D) {
 
 
 void App::onGraphics2D(RenderDevice *rd, Array< Surface2D::Ref > &surface2D) {
-    viewer->onGraphics2D(rd, this);
     GApp::onGraphics2D(rd, surface2D);
+    viewer->onGraphics2D(rd, this);
 }
 
 
 void App::setViewer(const std::string& newFilename) {
+    drawMessage("Loading " + newFilename);
     filename = newFilename;
 
     CFrame cframe(Vector3(0,8,15));

@@ -26,18 +26,19 @@ ArticulatedViewer::ArticulatedViewer() :
     m_skybox     = Texture::fromFile(FilePath::concat(System::findDataFile("whiteroom"), "whiteroom-*.png"), ImageFormat::AUTO(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
 }
 
-static const float VIEW_SIZE = 10.0f;
+static const float VIEW_SIZE = 20.0f;
 
 void ArticulatedViewer::onInit(const std::string& filename) {
 
     m_filename = filename;
 
-    m_model = NULL;
-    m_selectedPart = NULL;
-    m_selectedMesh = NULL;
+    m_model          = NULL;
+    m_selectedPart   = NULL;
+    m_selectedMesh   = NULL;
     m_selectedTriangleIndex = -1;
-    m_numFaces = 0;
-    m_numVertices = 0;
+    m_numFaces       = 0;
+    m_numVertices    = 0;
+    m_shadowMapDirty = true;
 
     Material::clearCache();
     
@@ -182,14 +183,22 @@ static void printHierarchy
 
 
 void ArticulatedViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
+    // The spot light is designed to just barely fit the 3D models
+    lighting->lightArray[0] = GLight::spotTarget(Point3(100,100,100), Point3::zero(), 6 * units::degrees(), Power3(8.5f), 1, 0, 0, true);
 
     // Separate and sort the models
     static Array<G3D::Surface::Ref> posed3D;
+    static Array<ShadowMap::Ref>    shadowMapArray;
+    static Array<SuperShader::PassRef> ignore;
 
     Draw::skyBox(rd, m_skybox);
 
     m_model->pose(posed3D, m_offset);
-    Surface::sortAndRender(rd, app->defaultCamera, posed3D, lighting, app->shadowMap);
+    shadowMapArray.resize(1);
+    shadowMapArray[0] = app->shadowMap;
+    Surface::sortAndRender(rd, app->defaultCamera, posed3D, lighting, shadowMapArray, ignore, Surface::ALPHA_BINARY, m_shadowMapDirty);
+    m_shadowMapDirty = false;
+
     //Surface::renderWireframe(rd, posed3D);
 
     if (m_selectedMesh != NULL) {

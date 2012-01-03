@@ -1,5 +1,5 @@
 /**
- @file FontViewer.h
+ \file FontViewer.h
  
  Viewer for supported video files.
  
@@ -19,9 +19,10 @@ private:
 
 public:
 	VideoViewer();
-	virtual void onInit(const std::string& filename);
-    virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt);
-    virtual void onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting);
+	virtual void onInit(const std::string& filename) override;
+    virtual void onSimulation(RealTime rdt, SimTime sdt, SimTime idt) override;
+    virtual void onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) override {}
+    virtual void onGraphics2D(RenderDevice* rd, App* app) override;
 
 };
 

@@ -213,7 +213,8 @@ void Surface::sortAndRender
  const LightingRef&             _lighting, 
  const Array<ShadowMap::Ref>&   shadowMaps,
  const Array<SuperShader::PassRef>& extraAdditivePasses,
- AlphaMode                      alphaMode) {
+ AlphaMode                      alphaMode,
+ bool                           updateShadowMaps) {
 
     const bool previous = false;
 
@@ -239,40 +240,42 @@ void Surface::sortAndRender
                 --numShadowCastingLights;
             }
         } 
+        if (updateShadowMaps) {
  
-        // Find the scene bounds
-        AABox shadowCasterBounds;
-        Surface::getBoxBounds(allModels, shadowCasterBounds, false, ignoreBool, true);
+            // Find the scene bounds
+            AABox shadowCasterBounds;
+            Surface::getBoxBounds(allModels, shadowCasterBounds, false, ignoreBool, true);
 
-        Array<Surface::Ref> lightVisible;
+            Array<Surface::Ref> lightVisible;
 
-        // Generate shadow maps
-        int s = 0;
-        for (int L = 0; L < lighting->lightArray.size(); ++L) {
-            const GLight& light = lighting->lightArray[L];
-            if (light.castsShadows) {
+            // Generate shadow maps
+            int s = 0;
+            for (int L = 0; L < lighting->lightArray.size(); ++L) {
+                const GLight& light = lighting->lightArray[L];
+                if (light.castsShadows) {
 
-                GCamera lightFrame;
-                Matrix4 lightProjectionMatrix;
+                    GCamera lightFrame;
+                    Matrix4 lightProjectionMatrix;
                 
-                ShadowMap::computeMatrices(light, shadowCasterBounds, lightFrame, lightProjectionMatrix);
+                    ShadowMap::computeMatrices(light, shadowCasterBounds, lightFrame, lightProjectionMatrix);
                 
-                // Cull objects not visible to the light
-                Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible, previous);
+                    // Cull objects not visible to the light
+                    Surface::cull(lightFrame, shadowMaps[s]->rect2DBounds(), allModels, lightVisible, previous);
 
-                // Cull objects that don't cast shadows
-                for (int i = 0; i < lightVisible.size(); ++i) {
-                    if (! lightVisible[i]->castsShadows()) {
-                        lightVisible.fastRemove(i);
-                        --i;
+                    // Cull objects that don't cast shadows
+                    for (int i = 0; i < lightVisible.size(); ++i) {
+                        if (! lightVisible[i]->castsShadows()) {
+                            lightVisible.fastRemove(i);
+                            --i;
+                        }
                     }
+
+                    Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
+                    shadowMaps[s]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
+
+                    lightVisible.fastClear();
+                    ++s;
                 }
-
-                Surface::sortFrontToBack(lightVisible, lightFrame.coordinateFrame().lookVector());
-                shadowMaps[s]->updateDepth(rd, lightFrame.coordinateFrame(), lightProjectionMatrix, lightVisible);
-
-                lightVisible.fastClear();
-                ++s;
             }
         }
     } else {

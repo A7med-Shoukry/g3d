@@ -23,12 +23,10 @@ void VideoViewer::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 }
 
 
-void VideoViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
+void VideoViewer::onGraphics2D(RenderDevice* rd, App* app) {
 
     // set clear color
     app->colorClear = Color3::white();
-
-    rd->push2D();
 
     Rect2D windowBounds = rd->viewport();
 
@@ -42,6 +40,4 @@ void VideoViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& ligh
     }
 
     screenPrintf("Window: %d x %d", rd->width(), rd->height());
-
-    rd->pop2D();
 }

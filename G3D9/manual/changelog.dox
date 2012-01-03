@@ -21,6 +21,7 @@
    <p>
    Changes in 9.00:
    <ul>
+     <li> New "updateShadowMaps" argument to Surface::sortAndRender </li>
      <li> G3D::WeakCache::clear </li>
      <li> Removed shift + left button = right on OS X (ctrl+left still works) in FirstPersonManipulator </li>
      <li> G3D::FirstPersonManipulator now uses Z and C for vertical up and down translation (configurable)</li>

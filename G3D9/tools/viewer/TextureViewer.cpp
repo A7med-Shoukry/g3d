@@ -79,42 +79,43 @@ void TextureViewer::onInit(const std::string& filename) {
 	}
 }
 
-
-void TextureViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
-	if (m_isSky) {
-
-		rd->disableLighting();
-        Draw::skyBox(rd, m_texture);
-
-	} else {
-
+void TextureViewer::onGraphics2D(RenderDevice* rd, App* app) {
+	if (! m_isSky) {
+		screenPrintf("(Rendered with gamma=1.0 and no post-processing)",  m_width);
 		screenPrintf("Width: %d",  m_width);
 		screenPrintf("Height: %d",  m_height);
 
-		rd->push2D();
+		// Creates a rectangle the size of the window.
+		float windowHeight = rd->viewport().height();
+		float windowWidth = rd->viewport().width();
 			
-			// Creates a rectangle the size of the window.
-			float windowHeight = rd->viewport().height();
-			float windowWidth = rd->viewport().width();
-			
-			Rect2D rect;
-			if((windowWidth > m_width) && (windowHeight > m_height)){
-				// creates a rectangle the size of the texture
-				// centered in the window
-				rect = Rect2D::xywh(windowWidth/2 - m_width/2,
-									windowHeight/2 - m_height/2,
-									m_width,
-									m_height);
-			} else {
-				// Creates a rectangle the size of the texture
-				// in the top left corner of the window, if the window
-				// is smaller than the image currently
-				rect = m_texture->rect2DBounds();
-			}
+		Rect2D rect;
+		if((windowWidth > m_width) && (windowHeight > m_height)){
+			// creates a rectangle the size of the texture
+			// centered in the window
+			rect = Rect2D::xywh(windowWidth/2 - m_width/2,
+								windowHeight/2 - m_height/2,
+								m_width,
+								m_height);
+		} else {
+			// Creates a rectangle the size of the texture
+			// in the top left corner of the window, if the window
+			// is smaller than the image currently
+			rect = m_texture->rect2DBounds();
+		}
 
-			rd->setTexture(0, m_texture);
-			Draw::rect2D(rect, rd);
-		rd->pop2D();
+		rd->setTexture(0, m_texture);
+		Draw::rect2D(rect, rd);
+    }
+}
+
+
+void TextureViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
+	if (m_isSky) {
+		screenPrintf("(Rendered with gamma encoding and post-processing)",  m_width);
+
+		rd->disableLighting();
+        Draw::skyBox(rd, m_texture);
 
 	}
 }

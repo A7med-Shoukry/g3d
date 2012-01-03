@@ -18,7 +18,10 @@ void EmptyViewer::onInit(const std::string& filename) {}
 
 
 void EmptyViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting) {
-    screenPrintf("Viewer");
+    screenPrintf("G3D Asset Viewer");
+    screenPrintf("\n");
+    screenPrintf("\n");
+    screenPrintf("Built " __TIME__ " " __DATE__);
     screenPrintf(System::version().c_str());
     screenPrintf("http://g3d.sf.net");
     screenPrintf("\n");

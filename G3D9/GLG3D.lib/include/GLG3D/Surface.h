@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2003-11-15
-  \edited  2011-06-09
+  \edited  2012-01-03
  */ 
 
 #ifndef GLG3D_Surface_h
@@ -591,6 +591,9 @@ public:
        \param shadowMaps As many shadow maps as there are
        shadow casting lights must be provided.  Do not render the shadow maps yourself;
        sortAndRender() does that and puts the results back into the array. 
+
+       \param updateShadowMaps If the scene and lighting have not changed since the previous call,
+       you may set this to false to avoid re-rendering the static shadow map.
     */
     static void sortAndRender
     (class RenderDevice*                rd, 
@@ -599,7 +602,8 @@ public:
      const LightingRef&                 lighting, 
      const Array<ReferenceCountedPointer<ShadowMap> >&  shadowMaps,
      const Array<SuperShader::PassRef>& extraAdditivePasses,
-     AlphaMode                          alphaMode = ALPHA_BINARY);
+     AlphaMode                          alphaMode = ALPHA_BINARY,
+     bool                               updateShadowMaps = true);
 
     static void sortAndRender
     (class RenderDevice*                rd, 

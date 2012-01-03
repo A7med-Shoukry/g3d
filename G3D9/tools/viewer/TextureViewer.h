@@ -28,6 +28,7 @@ public:
 	TextureViewer();
 	virtual void onInit(const std::string& filename);
     virtual void onGraphics(RenderDevice* rd, App* app, const LightingRef& lighting);
+    virtual void onGraphics2D(RenderDevice* rd, App* app) override;
 
 };
 
