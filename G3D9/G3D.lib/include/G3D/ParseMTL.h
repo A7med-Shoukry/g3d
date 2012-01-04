@@ -61,11 +61,13 @@ public:
 
         /** Opacity (alpha) level, on the range 0-1, where 1 = opaque (default) */
         float           d;
+        std::string     map_d;
 
-        /** Transparency level, on the range 0-1. Amount of light transmitted.*/
+        /** Transparency level, on the range 0-1. Amount of light transmitted.  This is questionable and does not seem to be widely used.*/
         float           Tr;
 
-        /** Transmission */
+        /** 1 - Transmission, as processed by 3DS Max (http://casual-effects.blogspot.com/2012/01/translucency-in-obj-mtl-files.html).  Other specs say that it is
+           transmission (http://paulbourke.net/dataformats/mtl/) but I haven't found software that implements it that way. */
         Color3          Tf;
 
         /** emissive? */
@@ -82,7 +84,7 @@ public:
 
     private:
 
-        Material() : Ka(1.0f), Kd(1.0f), Ks(1.0f), Ns(10.0), d(1.0f), Tr(0.0f), Tf(0.0f), Ke(0.0f), illum(2), Ni(1.0f) {}
+        Material() : Ka(1.0f), Kd(1.0f), Ks(1.0f), Ns(10.0), d(1.0f), Tr(0.0f), Tf(1.0f), Ke(0.0f), illum(2), Ni(1.0f) {}
 
     public:
 

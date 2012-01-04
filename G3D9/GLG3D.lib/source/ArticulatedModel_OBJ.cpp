@@ -113,9 +113,13 @@ static Material::Specification toMaterialSpecification
     // Map OBJ model to G3D shading 
     filename = ArticulatedModel::resolveRelativeFilename(m->map_Kd, m->basePath);
     if (filename != "" && FileSystem::exists(filename)) {
+        // TODO: if map_d is specified, merge it into the alpha channel
+
         // OBJ texture map overrides the constant color in the spec
         s.setLambertian(filename, Color4(Color3::white(), m->d));
     } else {
+        // TODO: if map_d is specified, merge it into the alpha channel
+
         s.setLambertian(Color4(m->Kd, m->d));
     }
 
@@ -137,7 +141,7 @@ static Material::Specification toMaterialSpecification
     }
 
     if (m->illum == 4 || m->illum == 6 || m->illum == 7 || m->illum == 9) {
-        s.setTransmissive(m->Tf);
+        s.setTransmissive(Color3::white() - m->Tf);
 
         // Index of refraction (assume air)
         s.setEta(m->Ni, 1.0f);

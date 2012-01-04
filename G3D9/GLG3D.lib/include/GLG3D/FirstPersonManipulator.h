@@ -71,7 +71,7 @@ private:
     /** rad/s */
     float                       m_maxTurnRate;
 
-    /** When the shift key is held down, multiply m_maxMoveRate by this.  Default is 0.15 */
+    /** When the shift key is held down, multiply m_maxMoveRate by this.  Default is 0.1 */
     float                       m_shiftSpeedMultiplier;
     
     float                       m_yaw;

@@ -26,7 +26,7 @@ FirstPersonManipulator::FirstPersonManipulator(UserInput* ui) :
     m_flyDownKey('c'),
     m_maxMoveRate(10),
     m_maxTurnRate(20),
-    m_shiftSpeedMultiplier(0.15f),
+    m_shiftSpeedMultiplier(0.1f),
     m_yaw(0),
     m_pitch(0),
     m_active(false),

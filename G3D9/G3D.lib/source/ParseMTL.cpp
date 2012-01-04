@@ -3,7 +3,7 @@
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2011-07-16
- \edited  2011-07-22
+ \edited  2012-01-04
  
  Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
@@ -134,6 +134,8 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
         m_currentMaterial->map_Ka = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_Kd") {
         m_currentMaterial->map_Kd = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
+    } else if (cmd == "map_d") {
+        m_currentMaterial->map_d = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_Ks") {
         m_currentMaterial->map_Ks = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_bump" || cmd == "bump") {
