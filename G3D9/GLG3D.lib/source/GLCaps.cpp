@@ -43,6 +43,8 @@ bool GLCaps::bug_slowVBO = false;
 int GLCaps::m_maxTextureSize = 0;
 int GLCaps::m_maxCubeMapSize = 0;
 
+bool GLCaps::m_hasTexelFetch = false;
+
 float GLCaps::m_glslVersion = 0.0f;
 
 /**
@@ -422,6 +424,8 @@ void GLCaps::loadExtensions(Log* debugLog) {
 
     m_maxTextureSize = glGetInteger(GL_MAX_TEXTURE_SIZE);
     m_maxCubeMapSize = glGetInteger(GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT);
+
+    m_hasTexelFetch = (m_glslVersion >= 1.3) || GLCaps::supports("GL_EXT_gpu_shader4");
 
     m_initialized = true;
 }

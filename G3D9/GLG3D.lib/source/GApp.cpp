@@ -223,6 +223,10 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
                 // This GPU can't support the film class
                 m_useFilm = false;
                 logPrintf("Warning: Disabled GApp::Settings::film.enabled because none of the provided color formats could be supported on this GPU.");
+            } else if (! GLCaps::supportsTexelFetch()) {
+                // This GPU can't support the film class
+                m_useFilm = false;
+                logPrintf("Warning: Disabled GApp::Settings::film.enabled because the GPU does not provide texelFetch in GLSL.");
             } else {
                 m_film = Film::create(colorFormat);
                 m_frameBuffer = Framebuffer::create("GApp::m_frameBuffer");

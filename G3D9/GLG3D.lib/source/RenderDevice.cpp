@@ -3419,7 +3419,7 @@ static void var(TextOutput& t, const std::string& name, const bool val) {
 static void var(TextOutput& t, const std::string& name, const int val) {
     t.writeSymbols(name, "=");
     t.writeNumber(val);
-    t.writeSymbol(name + ";");
+    t.printf(";");
     t.writeNewline();
 }
 

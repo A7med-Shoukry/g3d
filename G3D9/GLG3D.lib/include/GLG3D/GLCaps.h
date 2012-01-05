@@ -1,10 +1,10 @@
 /**
- @file GLCaps.h
+ \file GLG3D/GLCaps.h
 
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
- @created 2004-03-28
- @edited  2010-11-31
+ \created 2004-03-28
+ \edited  2012-01-05
 
  Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
@@ -112,6 +112,8 @@ private:
 
     static int          m_maxTextureSize;
     static int          m_maxCubeMapSize;
+
+    static bool         m_hasTexelFetch;
 
     static Vendor computeVendor();
 
@@ -256,6 +258,11 @@ public:
     /** Between 8 and 16 on most cards.  Can be more than number of textures. */
     static int numTextureCoords() {
         return m_numTextureCoords;
+    }
+
+    /** True if texelFetch or texelFetch2D is available in GLSL */
+    static bool supportsTexelFetch() {
+        return m_hasTexelFetch;
     }
 
     /** Between 16 and 32 on most cards. Can be more than number of fixed-function texture units. */

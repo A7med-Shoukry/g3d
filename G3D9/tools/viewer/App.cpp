@@ -42,6 +42,7 @@ App::App(const GApp::Settings& settings, const std::string& file) :
 void App::onInit() {
     logPrintf("App::onInit()\n");
     showRenderingStats = false;
+
     developerWindow->cameraControlWindow->setVisible(false);
     developerWindow->setVisible(false);
     developerWindow->videoRecordDialog->setCaptureGui(false);

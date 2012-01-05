@@ -99,6 +99,7 @@ Film::Ref Film::create(const ImageFormat* f, const ImageFormat* t) {
 
 void Film::init() {
     debugAssertM(m_framebuffer.isNull(), "init called twice");
+    alwaysAssertM(GLCaps::supportsTexelFetch(), "Your GPU or driver does not support OpenGL 1.3.  Try installing the latest driver.");
 
     debugAssertGLOk();
     m_framebuffer       = Framebuffer::create("Film");
