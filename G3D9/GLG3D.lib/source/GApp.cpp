@@ -120,15 +120,18 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
         catchCommonExceptions = true;
 #   endif
 
+    logLazyPrintf("\nEntering GApp::GApp()\n");
     char b[2048];
     getcwd(b, 2048);
     logLazyPrintf("cwd = %s\n", b);
     
     if (settings.dataDir == "<AUTO>") {
-        dataDir = demoFindData(false);
+        dataDir = FilePath::parent(System::currentProgramFilename());
+    //        dataDir = demoFindData(false);
     } else {
         dataDir = settings.dataDir;
     }
+    logPrintf("System::setAppDataDir(\"%s\")\n", dataDir.c_str());
     System::setAppDataDir(dataDir);
 
     if (settings.writeLicenseFile && ! FileSystem::exists("g3d-license.txt")) {
@@ -157,7 +160,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
     {
         TextOutput t;
 
-        t.writeSymbols("System","{");
+        t.writeSymbols("System","=", "{");
         t.pushIndent();
         t.writeNewline();
         System::describeSystem(t);
@@ -167,7 +170,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
 
         NetworkDevice::instance()->describeSystem(t);
         t.writeNewline();
-        t.writeSymbol("}");
+        t.writeSymbol("};");
         t.writeNewline();
 
         std::string s;
@@ -271,6 +274,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
     m_lastWaitTime  = System::time();
 
     renderDevice->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
+    logPrintf("Done GApp::GApp()\n\n");
 }
 
 
@@ -362,7 +366,9 @@ void GApp::setExitCode(int code) {
 
 
 void GApp::loadFont(const std::string& fontName) {
-    std::string filename = System::findDataFile(fontName);
+    logPrintf("Entering GApp::loadFont(\"%s\")\n", fontName.c_str());
+    const std::string& filename = System::findDataFile(fontName);
+    logPrintf("Found \"%s\" at \"%s\"\n", fontName.c_str(), filename.c_str());
     if (FileSystem::exists(filename)) {
         debugFont = GFont::fromFile(filename);
     } else {
@@ -374,6 +380,7 @@ void GApp::loadFont(const std::string& fontName) {
 
         debugFont = NULL;
     }
+    logPrintf("Done GApp::loadFont(...)\n");
 }
 
 

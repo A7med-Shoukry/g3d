@@ -106,12 +106,8 @@ public:
         OSWindow::Settings       window;
 
         /**
-           If "<AUTO>", G3D will search for the standard
-           data files.  It is recommended that you override this
-           default and set dataDir to a directory relative
-           to your executable (e.g. "./data/")
-           so your programs can be distributed to users who
-           do not have full the G3D data directory.
+           If "<AUTO>", will be set to the directory in which the executable resides.
+           This is used to invoke System::setDataDir()
         */
         std::string             dataDir;
     	

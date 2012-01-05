@@ -966,12 +966,12 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
     }
     
     supported = supported && hasGLSL330;
-    explanation += format("GLSL version 3.30                   %s (GLSL version on this driver is %d.%d)\n",
+    explanation += format("GLSL version 3.30                   %s - GLSL version on this driver is %d.%d\n",
                           hasGLSL330 ? "yes" : "NO", smajor, sminor);
     
     if (major > 3 || (major == 3 && minor >= 3)) {
         supported = true;
-        explanation += format("GPU Supports OpenGL 3.3 or later  (OpenGL version on this driver is %d.%d)\n", major, minor);
+        explanation += format("GPU Supports OpenGL 3.3 or later    yes - OpenGL version on this driver is %d.%d\n", major, minor);
     } else {
         explanation += format("                                   OpenGL version on this driver is %d.%d\n", major, minor);
 #       define REQUIRE(ext, alt) \
@@ -981,7 +981,7 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
         }
 #       define RECOMMEND(ext, alt) \
         { bool has = supports(ext) || supports(alt);\
-            explanation += format("%33s  %s\n", ext, (has ? "(yes)" : "(NO - Recommended but not required.)"));\
+            explanation += format("%33s  %s\n", ext, (has ? " yes - Optional" : " NO - Recommended but not required."));\
         }
 
         // This is an older OpenGL, but we can support it through extensions
@@ -1013,7 +1013,7 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
     }
    
     RECOMMEND("GL_ARB_seamless_cube_map", "");
-    REQUIRE("GL_ARB_sample_shading", "");
+    RECOMMEND("GL_ARB_sample_shading", "");
 
 
     return supported;

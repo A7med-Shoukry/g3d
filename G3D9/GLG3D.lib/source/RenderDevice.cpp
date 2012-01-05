@@ -244,36 +244,7 @@ void RenderDevice::init(OSWindow* window) {
         if (GLCaps::supports_GL_ARB_fragment_program()) {
             t = glGetInteger(GL_MAX_TEXTURE_IMAGE_UNITS_ARB);
         }
-        
-        logLazyPrintf("numTextureCoords                      = %d\n"
-                     "numTextures                           = %d\n"
-                     "numTextureUnits                       = %d\n"
-                     "glGet(GL_MAX_TEXTURE_UNITS_ARB)       = %d\n"
-                     "glGet(GL_MAX_TEXTURE_IMAGE_UNITS_ARB) = %d\n",
-                     m_numTextureCoords, m_numTextures, m_numTextureUnits,
-                     t0,
-                     t);   
-
-        logLazyPrintf("Operating System: %s\n",
-                         System::operatingSystem().c_str());
-
-        logLazyPrintf("Processor Architecture: %s\n\n", 
-                         System::cpuArchitecture().c_str());
-
-        logLazyPrintf("GL Vendor:      %s\n", GLCaps::vendor().c_str());
-
-        logLazyPrintf("GL Renderer:    %s\n", GLCaps::renderer().c_str());
-
-        logLazyPrintf("GL Version:     %s\n", GLCaps::glVersion().c_str());
-
-        logLazyPrintf("Driver version: %s\n\n", GLCaps::driverVersion().c_str());
-
-        std::string extStringCopy = (char*)glGetString(GL_EXTENSIONS);
-
-        logLazyPrintf(
-            "GL extensions: \"%s\"\n\n",
-            extStringCopy.c_str());
-
+                
         // Test which texture and render buffer formats are supported by this card
         logLazyPrintf("Supported Formats:\n");
         logLazyPrintf("%20s  %s %s\n", "Format", "Texture", "RenderBuffer");
@@ -3434,29 +3405,29 @@ void RenderDevice::Stats::reset() {
 
 static void var(TextOutput& t, const std::string& name, const std::string& val) {
     t.writeSymbols(name,"=");
-    t.writeString(val);
+    t.writeString(val + ";");
     t.writeNewline();
 }
 
 
 static void var(TextOutput& t, const std::string& name, const bool val) {
-    t.writeSymbols(name, "=", val ? "Yes" : "No");
+    t.writeSymbols(name, "=", val ? "true;" : "false;");
     t.writeNewline();
 }
 
 
 static void var(TextOutput& t, const std::string& name, const int val) {
-    t.writeSymbols(name,"=");
+    t.writeSymbols(name, "=");
     t.writeNumber(val);
+    t.writeSymbol(name + ";");
     t.writeNewline();
 }
 
 
-void RenderDevice::describeSystem(
-    TextOutput& t) {
+void RenderDevice::describeSystem(TextOutput& t) {
 
     debugAssertGLOk();
-    t.writeSymbols("GPU", "{");
+    t.writeSymbols("GPU", "=", "{");
     t.writeNewline();
     t.pushIndent();
         var(t, "Chipset", GLCaps::renderer());
@@ -3485,7 +3456,7 @@ void RenderDevice::describeSystem(
         }
     debugAssertGLOk();
     t.popIndent();
-    t.writeSymbols("}");
+    t.writeSymbols("}", ";");
     t.writeNewline();
     t.writeNewline();
 
@@ -3493,7 +3464,7 @@ void RenderDevice::describeSystem(
     OSWindow::Settings settings;
     w->getSettings(settings);
 
-    t.writeSymbols("Window", "{");
+    t.writeSymbols("Window", "=", "{");
     t.writeNewline();
     t.pushIndent();
         var(t, "API", w->getAPIName());
@@ -3523,8 +3494,22 @@ void RenderDevice::describeSystem(
         var(t, "Stereo", settings.stereo);
         var(t, "FSAA samples", settings.msaaSamples);
 
+
+        t.writeSymbols("GL extensions", "=", "[");
+        t.pushIndent();
+        std::string extStringCopy = (char*)glGetString(GL_EXTENSIONS);
+        Array<std::string> ext = stringSplit(extStringCopy, ' ');
+        std::string s = ",\n";
+        for (int i = 0; i < ext.length(); ++i) {
+            if (i == ext.length() - 1) { s = ""; } // skip the last comma
+            t.writeSymbol(trimWhitespace(ext[i]) + s);
+        }
+        t.popIndent();
+        t.writeSymbol("];");
+        t.writeNewline();
+
     t.popIndent();
-    t.writeSymbols("}");
+    t.writeSymbols("};");
     t.writeNewline();
     t.writeNewline();
     debugAssertGLOk();

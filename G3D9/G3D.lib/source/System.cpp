@@ -1,7 +1,7 @@
 /** 
-  @file System.cpp
+  \file System.cpp
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   Note: every routine must call init() first.
 
@@ -10,8 +10,8 @@
   can be used at all.  At runtime, processor detection is used to
   determine if we can safely call the routines that use that assembly.
 
-  @created 2003-01-25
-  @edited  2010-01-03
+  \created 2003-01-25
+  \edited  2012-01-05
  */
 
 #include "G3D/platform.h"
@@ -323,6 +323,8 @@ void System::init() {
     initTime();
 
     getStandardProcessorExtensions();
+
+    m_appDataDir = FilePath::parent(System::currentProgramFilename());
 }
 
 
@@ -361,11 +363,13 @@ void getG3DVersion(std::string& s) {
     s = cstr;
 }
 
-
+#define MARK_LOG()
+//#define MARK_LOG() logPrintf("%s(%d)\n", __FILE__, __LINE__)
 std::string System::findDataFile
 (const std::string&  _full,
  bool                errorIfNotFound,
  bool                caseSensitive) {
+MARK_LOG();
      const std::string full = FilePath::expandEnvironmentVariables(_full);
 
     // Places where specific files were most recently found.  This is
@@ -378,6 +382,7 @@ std::string System::findDataFile
         return full;
     }
 
+MARK_LOG();
     // Now check where we previously found this file.
     std::string* last = lastFound.getPointer(full);
     if (last != NULL) {
@@ -391,10 +396,11 @@ std::string System::findDataFile
         }
     }
 
+MARK_LOG();
     // Places to look
     static Array<std::string> directoryArray;
 
-    std::string initialAppDataDir(instance().m_appDataDir);
+    const std::string initialAppDataDir(instance().m_appDataDir);
     const char* g3dPath = getenv("G3D9DATA");
 
     if (directoryArray.size() == 0) {
@@ -404,14 +410,18 @@ std::string System::findDataFile
         Array<std::string> baseDirArray;
         
         baseDirArray.append("");
+MARK_LOG();
         if (! initialAppDataDir.empty()) {
+MARK_LOG();
             baseDirArray.append(initialAppDataDir);
             baseDirArray.append(pathConcat(initialAppDataDir, "data"));
             baseDirArray.append(pathConcat(initialAppDataDir, "data.zip"));
         } else {
+MARK_LOG();
             baseDirArray.append("data");
             baseDirArray.append("data.zip");
         }
+MARK_LOG();
 
 #       ifdef G3D_WINDOWS
         if (g3dPath == NULL) {
@@ -435,7 +445,9 @@ std::string System::findDataFile
             {"font", "gui", "SuperShader", "models", "cubemap", "icon", "material", "image", "md2", "md3", "ifs", "3ds", "sky", ""};
         for (int j = 0; j < baseDirArray.size(); ++j) {
             std::string d = baseDirArray[j];
+//logPrintf("%s", d.c_str());
             if ((d == "") || FileSystem::exists(d)) {
+//logPrintf(" exists\n");
                 directoryArray.append(d);
                 for (int i = 0; ! subdirs[i].empty(); ++i) {
                     const std::string& p = pathConcat(d, subdirs[i]);
@@ -443,11 +455,15 @@ std::string System::findDataFile
                         directoryArray.append(p);
                     }
                 }
+            } else {
+//logPrintf(" does not exist\n");
             }
         }
 
         logLazyPrintf("Initializing System::findDataFile took %fs\n", System::time() - t0);
+
     }
+MARK_LOG();
 
     for (int i = 0; i < directoryArray.size(); ++i) {
         const std::string& p = pathConcat(directoryArray[i], full);
@@ -456,6 +472,7 @@ std::string System::findDataFile
             return p;
         }
     }
+MARK_LOG();
 
     if (errorIfNotFound) {
         // Generate an error message.  Delay this operation until we know that we need it;
@@ -464,34 +481,39 @@ std::string System::findDataFile
         for (int i = 0; i < directoryArray.size(); ++i) {
             locations += "\'" + pathConcat(directoryArray[i], full) + "'\n";
         }
+MARK_LOG();
 
         std::string msg = "Could not find '" + full + "'.\n\n";
-        msg += "cwd = \'" + FileSystem::currentDirectory() + "\'\n";
+        msg +=     "  cwd                    = '" + FileSystem::currentDirectory() + "'\n";
         if (g3dPath) {
-            msg += "G3D9DATA = ";
+            msg += "  G3D9DATA               = '" + std::string(g3dPath) + "'";
             if (! FileSystem::exists(g3dPath, true, caseSensitive)) {
-                msg += "(illegal path!) ";
+                msg += " (illegal path!)";
             }
-            msg += std::string(g3dPath) + "\'\n";
+            msg += "\n";
         } else {
-            msg += "(G3D9DATA environment variable is undefined)\n";
+            msg += "  G3D9DATA               = (environment variable is not defined)\n";
         }
-        msg += "GApp::Settings.dataDir = ";
+MARK_LOG();
+        msg +=     "  GApp::Settings.dataDir = '" + initialAppDataDir + "'";
         if (! FileSystem::exists(initialAppDataDir, true, caseSensitive)) {
-            msg += "(illegal path!) ";
+            msg += " (illegal path!)";
         }
-        msg += std::string(initialAppDataDir) + "\'\n";
+        msg += "\n";
 
         msg += "\nFilenames tested:\n" + locations;
 
+MARK_LOG();
+logPrintf("%s\n", msg.c_str());
         throw FileNotFound(full, msg);
         alwaysAssertM(false, msg);
     }
+MARK_LOG();
 
     // Not found
     return "";
 }
-
+#undef MARK_LOG
 
 void System::setAppDataDir(const std::string& path) {
     instance().m_appDataDir = path;

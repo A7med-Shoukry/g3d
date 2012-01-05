@@ -192,31 +192,31 @@ void NetworkDevice::EthernetAdapter::describe(TextOutput& t) const {
     t.writeNewline();
     
     t.writeSymbols("hostname", "=");
-    t.writeString(hostname);
+    t.writeString(hostname + ";");
     t.writeNewline();
 
     t.writeSymbols("name", "=");
-    t.writeString(name);
+    t.writeString(name + ";");
     t.writeNewline();    
 
     t.writeSymbols("ip", "=");
-    t.writeSymbol(formatIP(ip));
+    t.writeSymbol("\"" + formatIP(ip) + "\";");
     t.writeNewline();    
 
     t.writeSymbols("subnet", "=");
-    t.writeSymbol(formatIP(subnet));
+    t.writeSymbol("\"" + formatIP(subnet) + "\";");
     t.writeNewline();    
 
     t.writeSymbols("broadcast", "=");
-    t.writeSymbol(formatIP(broadcast));
+    t.writeSymbol("\"" + formatIP(broadcast) + "\";");
     t.writeNewline();    
 
     t.writeSymbols("mac", "=");
-    t.writeSymbol(formatMAC(mac));
+    t.writeSymbol("\"" + formatMAC(mac) + "\";");
     t.writeNewline();    
 
     t.popIndent();
-    t.writeSymbol("}");
+    t.writeSymbol("};");
     t.writeNewline();
 }
 
@@ -1247,18 +1247,17 @@ bool NetListener::clientWaiting() const {
 void NetworkDevice::describeSystem(
     TextOutput& t) {
 
-    t.writeSymbols("Network", "{");
+    t.writeSymbols("Network", "=", "{");
     t.writeNewline();
     t.pushIndent();
     
     for (int i = 0; i < m_adapterArray.size(); ++i) {
-        t.printf("Adapter%d ", i);
+        t.printf("Adapter%d =", i);
         m_adapterArray[i].describe(t);
     }
 
-
     t.popIndent();
-    t.writeSymbols("}");
+    t.writeSymbols("};");
     t.writeNewline();
     t.writeNewline();
 }

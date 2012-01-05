@@ -26,6 +26,8 @@ App::App(const GApp::Settings& settings, const std::string& file) :
     viewer(NULL),
     filename(file) {
 
+    logPrintf("App()\n");
+
     m_debugTextColor = Color3::black();
     m_debugTextOutlineColor = Color3::white();
 
@@ -38,6 +40,7 @@ App::App(const GApp::Settings& settings, const std::string& file) :
 
 
 void App::onInit() {
+    logPrintf("App::onInit()\n");
     showRenderingStats = false;
     developerWindow->cameraControlWindow->setVisible(false);
     developerWindow->setVisible(false);
@@ -65,6 +68,7 @@ void App::onInit() {
     //modelController = ThirdPersonManipulator::create();
 
     setViewer(filename);
+    logPrintf("Done App::onInit()\n");
 }
 
 
@@ -177,6 +181,7 @@ void App::onGraphics2D(RenderDevice *rd, Array< Surface2D::Ref > &surface2D) {
 
 
 void App::setViewer(const std::string& newFilename) {
+    logPrintf("App::setViewer(\"%s\")\n", filename.c_str());
     drawMessage("Loading " + newFilename);
     filename = newFilename;
 
@@ -274,4 +279,6 @@ void App::setViewer(const std::string& newFilename) {
     if (filename != "") {
         window()->setCaption(filenameBaseExt(filename) + " - G3D Viewer");
     }
+
+    logPrintf("Done App::setViewer(...)\n");
 }

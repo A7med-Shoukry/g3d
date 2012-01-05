@@ -28,6 +28,13 @@ int main(int argc, char** argv) {
     if (argc > 1) {
         filename = argv[1];
     }
+
+    // Force the log to start and write out information before we hit the first
+    // System::findDataFile call
+    logLazyPrintf("Launch command: %s %s\n", argv[0], filename.c_str());
+    char b[2048];
+    getcwd(b, 2048);
+    logPrintf("cwd = %s\n\n", b);
     
     GApp::Settings settings;
 
@@ -35,13 +42,22 @@ int main(int argc, char** argv) {
     settings.film.enabled     = true;
 
 #   ifdef G3D_OSX
-        settings.window.defaultIconFilename = System::findDataFile("G3D-128.png");
+        settings.window.defaultIconFilename = System::findDataFile("G3D-128.png", false);
 #   else
-        settings.window.defaultIconFilename = System::findDataFile("G3D-64.png");
+        settings.window.defaultIconFilename = System::findDataFile("G3D-64.png", false);
 #   endif
     settings.window.width     = 1024;
     settings.window.height    = 768;
     settings.window.caption   = "G3D Viewer";
 
-    return App(settings, filename).run();
+    logLazyPrintf("---------------------------------------------------------------------\n\n");
+    logPrintf("Invoking App constructor\n");
+
+    try {
+        return App(settings, filename).run();
+    } catch (FileNotFound& e) {
+        logPrintf("Uncaught exception at main(): %s\n", e.message.c_str());
+    } catch (...) {
+        logPrintf("Uncaught exception at main().\n");
+    }
 }
