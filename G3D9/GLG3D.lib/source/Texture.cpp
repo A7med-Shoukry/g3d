@@ -1309,8 +1309,25 @@ Texture::Ref Texture::fromMemory(
                                   preprocess.computeMinMaxMean,
                                   minval, maxval, meanval);
                 }
-
                 debugAssertGLOk();
+
+#               ifndef G3D_DEBUG
+                {
+                    GLenum e = glGetError();
+                    if (e == GL_OUT_OF_MEMORY) {
+                        throw std::string("The texture map was too large (GL_OUT_OF_MEMORY)");
+                    }
+                    if (e != GL_NO_ERROR) {
+                    std::string errors;
+                    while (e != GL_NO_ERROR) {
+                        e = glGetError();
+                        if (e == GL_OUT_OF_MEMORY) {
+                            throw std::string("The texture map was too large (GL_OUT_OF_MEMORY)");
+                        }
+                    }
+                    }
+                }
+#               endif
             }
 
             mipWidth = iMax(1, mipWidth / 2);

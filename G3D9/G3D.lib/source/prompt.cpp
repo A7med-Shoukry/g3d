@@ -357,8 +357,8 @@ static int guiPrompt(
     const char**        choice,
     int                 numChoices) {
 
-    int width = 280;
-    int height = 128;
+    int width = 340;
+    int height = 220;
 
     const int buttonSpacing = 2;
     const int buttonWidth = 

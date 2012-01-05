@@ -55,8 +55,12 @@ int main(int argc, char** argv) {
 
     try {
         return App(settings, filename).run();
-    } catch (FileNotFound& e) {
+    } catch (const FileNotFound& e) {
         logPrintf("Uncaught exception at main(): %s\n", e.message.c_str());
+        alwaysAssertM(false, e.message);
+    } catch (const std::string& e) {
+        logPrintf("Uncaught exception at main(): %s\n", e.c_str());
+        alwaysAssertM(false, e);
     } catch (...) {
         logPrintf("Uncaught exception at main().\n");
     }
