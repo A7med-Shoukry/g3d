@@ -353,11 +353,11 @@ public:
          updateInterleaved(src1, var1, src2, var2, src3, var3, src4, var4, src5, var5);
     }
 
-    /** @brief Creates four interleaved VertexRange arrays simultaneously. 
+    /** @brief Creates five interleaved VertexRange arrays simultaneously. 
 
-        Creates four interleaved VertexRange arrays simultaneously.  This is
-        convenient for uploading vertex, normal, texcoord, and tangent
-        arrays although it can be used for any four arrays.  This is
+        Creates five interleaved VertexRange arrays simultaneously.  This is
+        convenient for uploading vertex, normal, texcoords, and tangent
+        arrays although it can be used for any five arrays.  This is
         substantially faster than creating a single "void VertexRange" and
         uploading arrays within it using a stride.
 

@@ -62,6 +62,11 @@ Material::Ref Material::createDiffuse(const std::string& lambertianFilename) {
     return create(s);
 }
 
+Material::Ref Material::createDiffuse(Texture::Ref texture){
+	SuperBSDF::Ref bsdf = SuperBSDF::create(Component4(Color4::one(), texture));
+	return create(bsdf);
+}
+
 typedef WeakCache<Material::Specification, Material::Ref> MaterialCache;
 
 /** Provides access to the cache.  This is not a global because the order of initialization

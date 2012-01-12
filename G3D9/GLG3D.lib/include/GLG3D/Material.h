@@ -403,6 +403,11 @@ public:
     
     static Material::Ref createDiffuse(const std::string& textureFilename);
 
+	/**
+     Create a G3D::Material using the @texture as the Lambertian (pure diffuse), with no emissive or bump.
+     */
+    static Material::Ref createDiffuse(Texture::Ref texture);
+
     /** Flush the material cache.  If you're editing texture maps on disk and want to reload them, invoke this first. */
     static void clearCache();
 

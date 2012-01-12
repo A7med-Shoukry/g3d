@@ -177,12 +177,13 @@ public:
 
     static Ref create
     (const Component4& lambertian,
-     const Component4& glossy,
-     const Component3& transmissive,
+     const Component4& glossy = Color4::zero(),
+     const Component3& transmissive = Color3::zero(),
      float             eta_transmit = 1.0f,
      const Color3&     extinction_transmit = Color3::zero(),
      float             eta_reflect = 1.0f,
      const Color3&     extinction_reflect = Color3::zero());
+
 
     /** \sa SpeedLoad */
     static Ref speedCreate(BinaryInput& b);

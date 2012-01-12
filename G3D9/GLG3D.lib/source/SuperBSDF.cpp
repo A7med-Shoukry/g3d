@@ -68,6 +68,7 @@ SuperBSDF::Ref SuperBSDF::create
 }
 
 
+
 void SuperBSDF::setStorage(ImageStorage s) const {
     m_lambertian.setStorage(s);
     m_transmissive.setStorage(s);
