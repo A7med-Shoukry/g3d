@@ -1,0 +1,531 @@
+EXPORTS
+    av_add_index_entry @1
+    av_alloc_format_context @2
+    av_alloc_put_byte @3
+    av_append_packet @4
+    av_close_input_file @5
+    av_close_input_stream @6
+    av_codec_get_id @7
+    av_codec_get_tag @8
+    av_convert_lang_to @9
+    av_demuxer_open @10
+    av_destruct_packet@LIBAVFORMAT_52 @11
+    av_destruct_packet_nofree@LIBAVFORMAT_52 @12
+    av_dump_format @13
+    av_dup_packet@LIBAVFORMAT_52 @14
+    av_filename_number_test @15
+    av_find_best_stream @16
+    av_find_default_stream_index @17
+    av_find_input_format @18
+    av_find_stream_info @19
+    av_free_packet@LIBAVFORMAT_52 @20
+    av_gen_search @21
+    av_get_frame_filename @22
+    av_get_packet @23
+    av_gettime @24
+    av_guess_codec @25
+    av_guess_format @26
+    av_guess_image2_codec @27
+    av_hex_dump @28
+    av_hex_dump_log @29
+    av_iformat_next @30
+    av_index_search_timestamp @31
+    av_init_packet@LIBAVFORMAT_52 @32
+    av_interleave_packet_per_dts @33
+    av_interleaved_write_frame @34
+    av_match_ext @35
+    av_metadata_conv @36
+    av_metadata_copy @37
+    av_metadata_free @38
+    av_metadata_get @39
+    av_metadata_set @40
+    av_metadata_set2 @41
+    av_new_packet@LIBAVFORMAT_52 @42
+    av_new_program @43
+    av_new_stream @44
+    av_oformat_next @45
+    av_open_input_file @46
+    av_open_input_stream @47
+    av_pkt_dump @48
+    av_pkt_dump2 @49
+    av_pkt_dump_log @50
+    av_pkt_dump_log2 @51
+    av_probe_input_buffer @52
+    av_probe_input_format @53
+    av_probe_input_format2 @54
+    av_probe_input_format3 @55
+    av_protocol_next @56
+    av_read_frame @57
+    av_read_packet @58
+    av_read_pause @59
+    av_read_play @60
+    av_register_all @61
+    av_register_input_format @62
+    av_register_output_format @63
+    av_register_protocol @64
+    av_register_protocol2 @65
+    av_register_rdt_dynamic_payload_handlers @66
+    av_register_rtp_dynamic_payload_handlers @67
+    av_sdp_create @68
+    av_seek_frame @69
+    av_seek_frame_binary @70
+    av_set_parameters @71
+    av_set_pts_info @72
+    av_update_cur_dts @73
+    av_url_read_fpause @74
+    av_url_read_fseek @75
+    av_url_read_pause @76
+    av_url_read_seek @77
+    av_url_split @78
+    av_write_frame @79
+    av_write_header @80
+    av_write_trailer @81
+    avf_sdp_create @82
+    avformat_alloc_context @83
+    avformat_alloc_output_context @84
+    avformat_alloc_output_context2 @85
+    avformat_configuration @86
+    avformat_free_context @87
+    avformat_license @88
+    avformat_open_input @89
+    avformat_seek_file @90
+    avformat_version @91
+    avformat_write_header @92
+    avio_alloc_context @93
+    avio_check @94
+    avio_close @95
+    avio_close_dyn_buf @96
+    avio_enum_protocols @97
+    avio_flush @98
+    avio_get_str @99
+    avio_get_str16be @100
+    avio_get_str16le @101
+    avio_open @102
+    avio_open_dyn_buf @103
+    avio_pause @104
+    avio_printf @105
+    avio_put_str @106
+    avio_put_str16le @107
+    avio_r8 @108
+    avio_rb16 @109
+    avio_rb24 @110
+    avio_rb32 @111
+    avio_rb64 @112
+    avio_read @113
+    avio_rl16 @114
+    avio_rl24 @115
+    avio_rl32 @116
+    avio_rl64 @117
+    avio_seek @118
+    avio_seek_time @119
+    avio_set_interrupt_cb @120
+    avio_size @121
+    avio_skip @122
+    avio_w8 @123
+    avio_wb16 @124
+    avio_wb24 @125
+    avio_wb32 @126
+    avio_wb64 @127
+    avio_wl16 @128
+    avio_wl24 @129
+    avio_wl32 @130
+    avio_wl64 @131
+    avio_write @132
+    brktimegm @133
+    codec_movaudio_tags @134 DATA
+    codec_movvideo_tags @135 DATA
+    dump_format @136
+    dv_get_packet @137
+    dv_init_demux @138
+    dv_offset_reset @139
+    dv_produce_packet @140
+    ff_add_index_entry @141
+    ff_adts_decode_extradata @142
+    ff_adts_write_frame_header @143
+    ff_amf_get_field_value @144
+    ff_amf_tag_size @145
+    ff_amf_write_bool @146
+    ff_amf_write_field_name @147
+    ff_amf_write_null @148
+    ff_amf_write_number @149
+    ff_amf_write_object_end @150
+    ff_amf_write_object_start @151
+    ff_amf_write_string @152
+    ff_amr_nb_dynamic_handler @153 DATA
+    ff_amr_wb_dynamic_handler @154 DATA
+    ff_ape_parse_tag @155
+    ff_asf_audio_conceal_none @156 DATA
+    ff_asf_audio_conceal_spread @157 DATA
+    ff_asf_audio_stream @158 DATA
+    ff_asf_codec_comment1_header @159 DATA
+    ff_asf_codec_comment_header @160 DATA
+    ff_asf_command_stream @161 DATA
+    ff_asf_comment_header @162 DATA
+    ff_asf_content_encryption @163 DATA
+    ff_asf_data_header @164 DATA
+    ff_asf_digital_signature @165 DATA
+    ff_asf_ext_content_encryption @166 DATA
+    ff_asf_ext_stream_audio_stream @167 DATA
+    ff_asf_ext_stream_embed_stream_header @168 DATA
+    ff_asf_ext_stream_header @169 DATA
+    ff_asf_extended_content_header @170 DATA
+    ff_asf_file_header @171 DATA
+    ff_asf_head1_guid @172 DATA
+    ff_asf_head2_guid @173 DATA
+    ff_asf_header @174 DATA
+    ff_asf_jfif_media @175 DATA
+    ff_asf_language_guid @176 DATA
+    ff_asf_marker_header @177 DATA
+    ff_asf_metadata_conv @178 DATA
+    ff_asf_metadata_header @179 DATA
+    ff_asf_my_guid @180 DATA
+    ff_asf_simple_index_header @181 DATA
+    ff_asf_stream_header @182 DATA
+    ff_asf_video_conceal_none @183 DATA
+    ff_asf_video_stream @184 DATA
+    ff_asfcrypt_dec @185
+    ff_audio_interleave_close @186
+    ff_audio_interleave_init @187
+    ff_audio_rechunk_interleave @188
+    ff_avc_find_startcode @189
+    ff_avc_parse_nal_units @190
+    ff_avc_parse_nal_units_buf @191
+    ff_avi_metadata_conv @192 DATA
+    ff_avi_tags @193 DATA
+    ff_celt_codec @194 DATA
+    ff_codec_bmp_tags @195 DATA
+    ff_codec_caf_tags @196 DATA
+    ff_codec_get_id @197
+    ff_codec_get_tag @198
+    ff_codec_guid_get_id @199
+    ff_codec_movsubtitle_tags @200 DATA
+    ff_codec_rso_tags @201 DATA
+    ff_codec_wav_guids @202 DATA
+    ff_codec_wav_tags @203 DATA
+    ff_crc04C11DB7_update @204
+    ff_data_guid @205 DATA
+    ff_data_to_hex @206
+    ff_dir_entry_guid @207 DATA
+    ff_dirac_codec @208 DATA
+    ff_end_tag @209
+    ff_find_stream_index @210
+    ff_flac_codec @211 DATA
+    ff_flac_write_header @212
+    ff_format_none @213 DATA
+    ff_free_parser_state @214
+    ff_gen_syncpoint_search @215
+    ff_get_bmp_header @216
+    ff_get_guid @217
+    ff_get_line @218
+    ff_get_v_length @219
+    ff_get_wav_header @220
+    ff_guess_image2_codec @221
+    ff_h263_1998_dynamic_handler @222 DATA
+    ff_h263_2000_dynamic_handler @223 DATA
+    ff_h264_dynamic_handler @224 DATA
+    ff_hex_to_data @225
+    ff_http_auth_create_response @226
+    ff_http_auth_handle_header @227
+    ff_http_init_auth_state @228
+    ff_http_set_chunked_transfer_encoding @229
+    ff_http_set_headers @230
+    ff_id3v1_genre_str @231 DATA
+    ff_id3v1_read @232
+    ff_id3v2_2_metadata_conv @233 DATA
+    ff_id3v2_34_metadata_conv @234 DATA
+    ff_id3v2_3_tags @235 DATA
+    ff_id3v2_4_metadata_conv @236 DATA
+    ff_id3v2_4_tags @237 DATA
+    ff_id3v2_match @238
+    ff_id3v2_read @239
+    ff_id3v2_tag_len @240
+    ff_id3v2_tags @241 DATA
+    ff_index_search_timestamp @242
+    ff_inet_aton @243
+    ff_interleave_add_packet @244
+    ff_isom_write_avcc @245
+    ff_lsb2full @246
+    ff_make_absolute_url @247
+    ff_mediatype_audio @248 DATA
+    ff_mediatype_video @249 DATA
+    ff_metadata_conv @250
+    ff_metadata_conv_ctx @251
+    ff_metadata_demux_compat @252
+    ff_metadata_mux_compat @253
+    ff_mkv_codec_tags @254 DATA
+    ff_mkv_metadata_conv @255 DATA
+    ff_mkv_mime_tags @256 DATA
+    ff_mms_asf_header_parser @257
+    ff_mms_read_data @258
+    ff_mms_read_header @259
+    ff_mov_add_hinted_packet @260
+    ff_mov_close_hinting @261
+    ff_mov_get_lpcm_codec_id @262
+    ff_mov_init_hinting @263
+    ff_mov_iso639_to_lang @264
+    ff_mov_lang_to_iso639 @265
+    ff_mov_read_chan @266
+    ff_mov_read_esds @267
+    ff_mov_read_stsd_entries @268
+    ff_mov_write_chan @269
+    ff_mov_write_packet @270
+    ff_mp4_obj_type @271 DATA
+    ff_mp4_read_dec_config_descr @272
+    ff_mp4_read_descr @273
+    ff_mp4_read_descr_len @274
+    ff_mp4a_latm_dynamic_handler @275 DATA
+    ff_mp4v_es_dynamic_handler @276 DATA
+    ff_mpeg4_generic_dynamic_handler @277 DATA
+    ff_mpegts_parse_close @278
+    ff_mpegts_parse_open @279
+    ff_mpegts_parse_packet @280
+    ff_ms_rtp_asf_pfa_handler @281 DATA
+    ff_ms_rtp_asf_pfv_handler @282 DATA
+    ff_mxf_codec_uls @283 DATA
+    ff_mxf_data_definition_uls @284 DATA
+    ff_mxf_decode_pixel_layout @285
+    ff_new_chapter @286
+    ff_ntp_time @287
+    ff_nut_add_sp @288
+    ff_nut_dispositions @289 DATA
+    ff_nut_free_sp @290
+    ff_nut_metadata_conv @291 DATA
+    ff_nut_reset_ts @292
+    ff_nut_sp_pos_cmp @293
+    ff_nut_sp_pts_cmp @294
+    ff_nut_subtitle_tags @295 DATA
+    ff_nut_video_tags @296 DATA
+    ff_ogm_audio_codec @297 DATA
+    ff_ogm_old_codec @298 DATA
+    ff_ogm_text_codec @299 DATA
+    ff_ogm_video_codec @300 DATA
+    ff_old_dirac_codec @301 DATA
+    ff_old_flac_codec @302 DATA
+    ff_parse_fmtp @303
+    ff_parse_key_value @304
+    ff_parse_mpeg2_descriptor @305
+    ff_parse_specific_params @306
+    ff_program_add_stream_index @307
+    ff_put_bmp_header @308
+    ff_put_v @309
+    ff_put_wav_header @310
+    ff_qcelp_dynamic_handler @311 DATA
+    ff_qdm2_dynamic_handler @312 DATA
+    ff_qt_rtp_aud_handler @313 DATA
+    ff_qt_rtp_vid_handler @314 DATA
+    ff_quicktime_rtp_aud_handler @315 DATA
+    ff_quicktime_rtp_vid_handler @316 DATA
+    ff_raw_audio_read_header @317
+    ff_raw_read_header @318
+    ff_raw_read_partial_packet @319
+    ff_raw_video_read_header @320
+    ff_raw_write_packet @321
+    ff_rawaudio_demuxer_class @322 DATA
+    ff_rawvideo_demuxer_class @323 DATA
+    ff_rdt_calc_response_and_checksum @324
+    ff_rdt_parse_close @325
+    ff_rdt_parse_header @326
+    ff_rdt_parse_open @327
+    ff_rdt_parse_packet @328
+    ff_rdt_subscribe_rule @329
+    ff_read_frame_flush @330
+    ff_real_parse_sdp_a_line @331
+    ff_reduce_index @332
+    ff_register_dynamic_payload_handler @333
+    ff_restore_parser_state @334
+    ff_rm_alloc_rmstream @335
+    ff_rm_codec_tags @336 DATA
+    ff_rm_free_rmstream @337
+    ff_rm_metadata @338 DATA
+    ff_rm_parse_packet @339
+    ff_rm_read_mdpr_codecdata @340
+    ff_rm_reorder_sipr_data @341
+    ff_rm_retrieve_cache @342
+    ff_rtmp_packet_create @343
+    ff_rtmp_packet_destroy @344
+    ff_rtmp_packet_dump @345
+    ff_rtmp_packet_read @346
+    ff_rtmp_packet_write @347
+    ff_rtp_chain_mux_open @348
+    ff_rtp_codec_id @349
+    ff_rtp_enc_name @350
+    ff_rtp_get_codec_info @351
+    ff_rtp_get_payload_type @352
+    ff_rtp_handler_find_by_id @353
+    ff_rtp_handler_find_by_name @354
+    ff_rtp_queued_packet_time @355
+    ff_rtp_reset_packet_queue @356
+    ff_rtp_send_aac @357
+    ff_rtp_send_amr @358
+    ff_rtp_send_data @359
+    ff_rtp_send_h263 @360
+    ff_rtp_send_h264 @361
+    ff_rtp_send_latm @362
+    ff_rtp_send_mpegvideo @363
+    ff_rtp_send_vp8 @364
+    ff_rtp_send_xiph @365
+    ff_rtsp_close_connections @366
+    ff_rtsp_close_streams @367
+    ff_rtsp_connect @368
+    ff_rtsp_fetch_packet @369
+    ff_rtsp_make_setup_request @370
+    ff_rtsp_next_attr_and_value @371
+    ff_rtsp_parse_line @372
+    ff_rtsp_read_reply @373
+    ff_rtsp_send_cmd @374
+    ff_rtsp_send_cmd_async @375
+    ff_rtsp_send_cmd_with_content @376
+    ff_rtsp_setup_input_streams @377
+    ff_rtsp_setup_output_streams @378
+    ff_rtsp_skip_packet @379
+    ff_rtsp_tcp_read_packet @380
+    ff_rtsp_undo_setup @381
+    ff_sauce_read @382
+    ff_sdp_parse @383
+    ff_sdp_write_media @384
+    ff_sipr_subpk_size @385 DATA
+    ff_skeleton_codec @386 DATA
+    ff_socket_nonblock @387
+    ff_spdif_bswap_buf16 @388
+    ff_speex_codec @389 DATA
+    ff_start_tag @390
+    ff_store_parser_state @391
+    ff_stream_guid @392 DATA
+    ff_svq3_dynamic_handler @393 DATA
+    ff_theora_codec @394 DATA
+    ff_theora_dynamic_handler @395 DATA
+    ff_timestamp_guid @396 DATA
+    ff_udp_get_local_port @397
+    ff_udp_set_remote_url @398
+    ff_url_join @399
+    ff_url_split @400
+    ff_video_guids @401 DATA
+    ff_voc_codec_tags @402 DATA
+    ff_voc_magic @403 DATA
+    ff_vorbis_codec @404 DATA
+    ff_vorbis_comment @405
+    ff_vorbis_dynamic_handler @406 DATA
+    ff_vorbiscomment_length @407
+    ff_vorbiscomment_metadata_conv @408 DATA
+    ff_vorbiscomment_write @409
+    ff_vp8_dynamic_handler @410 DATA
+    ff_wav_codec_get_id @411
+    ff_win32_open @412
+    ff_wms_parse_sdp_a_line @413
+    ff_write_chained @414
+    ff_wtv_guid @415 DATA
+    ffio_fdopen @416
+    ffio_fill @417
+    ffio_get_checksum @418
+    ffio_init_checksum @419
+    ffio_init_context @420
+    ffio_open_dyn_packet_buf @421
+    ffio_read_partial @422
+    ffio_read_varlen @423
+    ffio_rewind_with_probe_data @424
+    ffio_set_buf_size @425
+    ffurl_alloc @426
+    ffurl_close @427
+    ffurl_connect @428
+    ffurl_get_file_handle @429
+    ffurl_open @430
+    ffurl_read @431
+    ffurl_read_complete @432
+    ffurl_register_protocol @433
+    ffurl_seek @434
+    ffurl_size @435
+    ffurl_write @436
+    find_info_tag @437
+    first_iformat @438 DATA
+    first_oformat @439 DATA
+    first_protocol @440 DATA
+    gai_strerrorA @441
+    get_be16 @442
+    get_be24 @443
+    get_be32 @444
+    get_be64 @445
+    get_buffer @446
+    get_byte @447
+    get_checksum @448
+    get_le16 @449
+    get_le24 @450
+    get_le32 @451
+    get_le64 @452
+    get_partial_buffer @453
+    get_strz @454
+    guess_format @455
+    guess_stream_format @456
+    init_checksum @457
+    init_put_byte @458
+    matroska_video_stereo_mode @459 DATA
+    matroska_video_stereo_plane @460 DATA
+    parse_date @461
+    parse_frame_rate @462
+    parse_image_size @463
+    pcm_read_seek @464
+    poll @465
+    put_be16 @466
+    put_be24 @467
+    put_be32 @468
+    put_be64 @469
+    put_buffer @470
+    put_byte @471
+    put_flush_packet @472
+    put_le16 @473
+    put_le24 @474
+    put_le32 @475
+    put_le64 @476
+    put_nbyte @477
+    put_strz @478
+    put_tag @479
+    register_protocol @480
+    rtp_check_and_send_back_rr @481
+    rtp_get_local_rtcp_port @482
+    rtp_get_local_rtp_port @483
+    rtp_get_rtcp_file_handle @484
+    rtp_parse_close @485
+    rtp_parse_open @486
+    rtp_parse_packet @487
+    rtp_parse_set_dynamic_protocol @488
+    rtp_send_punch_packets @489
+    rtp_set_remote_url @490
+    rtsp_demuxer_class @491 DATA
+    udp_get_file_handle @492
+    url_alloc @493
+    url_close @494
+    url_close_buf @495
+    url_close_dyn_buf @496
+    url_connect @497
+    url_exist @498
+    url_fclose @499
+    url_fdopen @500
+    url_feof @501
+    url_ferror @502
+    url_fget_max_packet_size @503
+    url_fgetc @504
+    url_fgets @505
+    url_fileno @506
+    url_filesize @507
+    url_fopen @508
+    url_fprintf @509
+    url_fseek @510
+    url_fsize @511
+    url_fskip @512
+    url_ftell @513
+    url_get_file_handle @514
+    url_get_filename @515
+    url_get_max_packet_size @516
+    url_interrupt_cb @517 DATA
+    url_open @518
+    url_open_buf @519
+    url_open_dyn_buf @520
+    url_open_dyn_packet_buf @521
+    url_open_protocol @522
+    url_read @523
+    url_read_complete @524
+    url_resetbuf @525
+    url_seek @526
+    url_set_interrupt_cb @527
+    url_setbufsize @528
+    url_write @529
+    voc_get_packet @530
