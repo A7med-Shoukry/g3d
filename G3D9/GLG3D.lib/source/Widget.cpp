@@ -42,6 +42,7 @@ WidgetManager::Ref WidgetManager::create(OSWindow* window) {
 
 void WidgetManager::fireEvent(const GEvent& event) {
     if (GEventType(event.type).isGuiEvent()) {
+        debugAssertM(event.gui.control != NULL, "GUI events must have non-NULL controls.");
         GuiContainer* parent = event.gui.control->m_parent;
         if (parent != NULL) {
             if (parent->onChildControlEvent(event)) {
