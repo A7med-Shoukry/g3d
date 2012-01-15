@@ -410,7 +410,9 @@ def toolsTarget():
 
         if (x == 0):
             copyIfNewer('tools/viewer/register.bat', 'build/bin/')
-            copyIfNewer('tools/viewer/data-files' 'build/bin/')
+            # The viewer knows how to run fine without the background images,
+            # and they are rarely used
+            # copyIfNewer('tools/viewer/data-files/', 'build/bin/')
     else:
         x = libTarget()
      
