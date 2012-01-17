@@ -2,8 +2,7 @@
 // Converts the Crytek Sponza to a convenient scale for G3D
 ArticulatedModel::Specification {
     filename = "sponza.zip/sponza.obj";
-
-    preprocess = ArticulatedModel::Preprocess {
-        xform = Matrix4::scale(0.02);
+    preprocess = (
+        scale(0.02);
     };
 }
