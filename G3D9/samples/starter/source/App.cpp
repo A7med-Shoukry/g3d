@@ -104,7 +104,7 @@ void App::makeGUI() {
     addWidget(m_splineEditor);
     developerWindow->cameraControlWindow->moveTo(Point2(window()->width() - developerWindow->cameraControlWindow->rect().width(), 0));
     m_splineEditor->moveTo(developerWindow->cameraControlWindow->rect().x0y0() - Vector2(m_splineEditor->rect().width(), 0));
-
+    entityPane->pack();
 
     GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
     infoPane->moveRightOf(entityPane);

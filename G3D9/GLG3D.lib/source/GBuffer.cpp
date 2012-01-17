@@ -155,6 +155,7 @@ void GBuffer::prepare
     float           timeOffset, 
     float           velocityStartTimeOffset) {
 
+    debugAssertM(m_framebuffer.notNull(), "Must invoke GBuffer::resize before GBuffer::prepare");
     rd->pushState(m_framebuffer); {
         rd->setColorClearValue(Color4::clear());
         rd->clear();
