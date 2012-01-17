@@ -37,7 +37,7 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 
 void App::onInit() {
     GApp::onInit();
-    // Called before the application loop beings.  Load data here and
+    // Called before the application loop begins.  Load data here and
     // not in the constructor so that common exceptions will be
     // automatically caught.
 
@@ -47,6 +47,9 @@ void App::onInit() {
     m_showWireframe       = false;
     m_preventEntityDrag   = false;
     m_preventEntitySelect = false;
+
+    // For higher-quality screenshots:
+    // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
 
     makeGUI();
 

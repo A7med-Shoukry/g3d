@@ -152,6 +152,17 @@ protected:
 
 public:
 
+    /** Returns true if the format is supported.  e.g., PNG, JPG, BMP */
+    bool setScreenShotFormat(const std::string& fmt) {
+        int i = m_ssFormatList.findIndex(fmt);
+        if (i > -1) {
+            m_ssFormatIndex = i;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
        @param app If not NULL, the VideoRecordDialog will set the app's
        simTimeStep.
