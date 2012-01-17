@@ -172,6 +172,7 @@
 
      <b>Backwards Incompatible Changes</b>:
      <ul>
+     <li>Renamed data/SuperShader to data/shader </li>
      <li> Removed zipRead and zipClose (use G3D::readWholeFile or G3D::BinaryInput) </li>
      <li> All-new interface for ArticulatedModel and completely rewritten interface for performance and convenience </li>
      <li> All-new streamlined interface for G3D::Surface
