@@ -606,46 +606,43 @@
     <None Include="..\GLG3D.lib\source\NSAutoreleasePoolWrapper.mm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_Refract.vrt">
+    <None Include="..\data-files\shader\SS_ShadowMappedLightPass.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.pix">
+    <None Include="..\data-files\shader\SS_ShadowMappedLightPass.vrt">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_ShadowMappedLightPass.vrt">
+    <None Include="..\data-files\shader\BumpMap.glsl">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_GBuffer.pix">
+    <None Include="..\data-files\shader\Film_FXAA.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_GBufferPosition.pix">
+    <None Include="..\data-files\shader\SS_GBuffer.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_Globals.pix">
+    <None Include="..\data-files\shader\SS_GBuffer.vrt">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_LambertianComponent.pix">
+    <None Include="..\data-files\shader\SS_Globals.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_Light.pix">
+    <None Include="..\data-files\shader\SS_LambertianComponent.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_NonShadowedPass.pix">
+    <None Include="..\data-files\shader\SS_Light.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_NonShadowedPass.vrt">
+    <None Include="..\data-files\shader\SS_NonShadowedPass.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_Refract.pix">
+    <None Include="..\data-files\shader\SS_NonShadowedPass.vrt">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\Film_FXAA.pix">
+    <None Include="..\data-files\shader\SS_Refract.pix">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\SuperShader\SS_GBuffer.vrt">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\data-files\SuperShader\BumpMap.glsl">
+    <None Include="..\data-files\shader\SS_Refract.vrt">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>
