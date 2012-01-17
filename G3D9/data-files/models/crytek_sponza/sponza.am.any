@@ -4,5 +4,5 @@ ArticulatedModel::Specification {
     filename = "sponza.zip/sponza.obj";
     preprocess = (
         scale(0.02);
-    };
+    );
 }
