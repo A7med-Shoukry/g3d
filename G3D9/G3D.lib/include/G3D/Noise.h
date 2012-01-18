@@ -26,10 +26,10 @@ namespace G3D {
  Example:
  \code
     Noise n;
-    GImage im(256, 256,1);
+    GImage im(256, 256, 1);
     for (int y = 0; y < im.height(); ++y) {
         for (int x = 0; x < im.width(); ++x) {
-            im.pixel1(x, y) = Color1uint8(n.sampleUint8(x << 12, y <<12, 0));
+            im.pixel1(x, y) = Color1unorm8(n.sampleUint8(x << 12, y << 12, 0));
         }
     }
     im.save("noise.png");

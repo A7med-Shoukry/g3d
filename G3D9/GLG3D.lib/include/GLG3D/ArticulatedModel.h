@@ -38,6 +38,7 @@ namespace G3D {
  - <a href="http://paulbourke.net/dataformats/ply/">PLY</a>
  - <a href="http://g3d.svn.sourceforge.net/viewvc/g3d/data/ifs/fileformat.txt?revision=27&view=markup">IFS</a> 
  - <a href="http://www.geomview.org/docs/html/OFF.html">OFF</a>
+ - <a href="http://www.the-labs.com/Blender/3DS-details.html">3DS</a>
  - <a href="http://www.riken.jp/brict/Yoshizawa/Research/PLYformat/PLYformat.html">PLY2</a>
  - Quake 3 <a href="http://www.mralligator.com/q3/">BSP</a>
  - Any image format supported by G3D::GImage will be treated as a heighfield; apply a scale factor and material to transform it as desired

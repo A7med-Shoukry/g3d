@@ -100,7 +100,7 @@ GBuffer::GBuffer(const std::string& name, const Specification& specification) :
     m_depthOnly(true),
     m_hasFaceNormals(false) {
 
-    // Compute the attachment point for each Field.
+    // Compute the attachment point for each Field and initialize the clear value.
     int a = Framebuffer::COLOR0;
     for (int f = 0; f < Field::COUNT; ++f) {
         const ImageFormat* format = m_specification.format[f];
@@ -130,6 +130,9 @@ GBuffer::GBuffer(const std::string& name, const Specification& specification) :
         } else {
             m_fieldToAttachmentPoint[f] = Framebuffer::AttachmentPoint(GL_NONE);
         } // if format != NULL
+
+        m_clearValue[f] = Color4::zero();
+
     } // for each format
 }
 

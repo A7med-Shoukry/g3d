@@ -71,10 +71,12 @@ namespace G3D {
     \code
     GBuffer::Specification specification;
     specification.format[GBuffer::Field::WS_NORMAL]   = ImageFormat::RGB8();
+    specification.encoding[GBuffer::Field::WS_NORMAL].readMultiplyFirst =  2.0f;
+    specification.encoding[GBuffer::Field::WS_NORMAL].readAddSecond     = -1.0f;
     specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB16F();
     specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
-    specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH24();
+    specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH32();
     specification.depthEncoding = GBuffer::DepthEncoding::HYPERBOLIC;
     
     gbuffer = GBuffer::create(specification);
@@ -190,16 +192,45 @@ public:
     
     class Specification {
     public:
-        /**
-        Formats corresponding to the values of Field.
-        If a format is NULL, it is not allocated or rendered. 
+
+        /** Buffers can be optionally scaled and biased to
+            facilitate packing signed or large-range values in
+            unsigned normalized formats.  For example, surface
+            normals can be packed into ImageFormat::RGB8 using \a
+            readMultiplyFirst = 2, \a readAddSecond = -1.
+            
+            <b>Reading:</b>
+            <br/><code>texelFetch(buffer, pixel, 0) * readMultiplyFirst + readAddSecond;</code>
+            
+            <b>Writing</b> (e.g., as done by G3D::Surface::renderIntoGBuffer):
+            <br/><code>gl_FragData[n] = (value - readAddSecond) / readMultiplyFirst;</code>
+            
+            The default add bias is zero and default multiply scale is one.
         */
+        class Encoding {
+        public:
+            float               readMultiplyFirst;
+
+            float               readAddSecond;           
+            
+            Encoding() : 
+                readMultiplyFirst(1.0f), 
+                readAddSecond(0.0f) {}
+        };
+
+        /** Formats corresponding to the values of Field.
+            If a format is NULL, it is not allocated or rendered. */
         const ImageFormat*      format[Field::COUNT];
-        
+
+        /** Parallel array to format[] */
+        Encoding                encoding[Field::COUNT];
+
+        /** Reserved for future use--not currently supported */
         DepthEncoding           depthEncoding;
         
-        /** All fields for specific buffers default to false.  In the future, more buffers may be added, which will also 
-            default to false for backwards compatibility. */
+        /** All fields for specific buffers default to NULL.  In the
+            future, more buffers may be added, which will also default
+            to NULL for backwards compatibility. */
         Specification() {
             for (int f = 0; f < Field::COUNT; ++f) {
                 format[f] = NULL;
@@ -220,6 +251,7 @@ public:
         typedef Table<GBuffer::Specification, Shader::Ref, GBuffer::Specification::SameFields, GBuffer::Specification::SameFields> ShaderCache;
         \endcode
 
+        Does not compare encoding or depthEncoding.
         */
         class SameFields {
         public:
@@ -263,6 +295,11 @@ protected:
     bool                        m_depthOnly;
 
     bool                        m_hasFaceNormals;
+
+    /** The value that GBuffer::prepare clears this buffer to.  Defaults to (0,0,0,0).
+        This value does not receive scale and bias.
+        Corresponds to the glClearColor(). */
+    Color4                      m_clearValue[Field::COUNT];
     
     GBuffer(const std::string& name, const Specification& specification);
 
@@ -310,6 +347,16 @@ public:
         return m_fieldToAttachmentPoint[field.value];
     }
 
+    /** \copydoc m_clearValue */
+    void setClearValue(Field field, const Color4& c) {
+        m_clearValue[field] = c;
+    }
+
+    /** \copydoc m_clearValue */
+    const Color4& clearValue(Field field) const {
+        return m_clearValue[field];
+    }
+
     const Specification& specification() const {
         return m_specification;
     }
@@ -319,6 +366,7 @@ public:
         return m_framebuffer;
     }
 
+    /** \copydoc framebuffer() const */
     Framebuffer::Ref framebuffer() {
         return m_framebuffer;
     }
