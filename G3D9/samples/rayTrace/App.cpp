@@ -127,8 +127,7 @@ Radiance3 App::rayTrace(const Ray& ray, World* world, int bounce) {
                 
             for (int i = 0; i < impulseArray.size(); ++i) {
                 const SurfaceElement::Impulse& impulse = impulseArray[i];
-                // Bump along the ray direction, which may be into the surface
-                const Vector3& offset = impulse.w * sign(impulse.w.dot(surfel.geometric.normal)) * BUMP_DISTANCE;
+                const Vector3& offset = impulse.w * BUMP_DISTANCE;
                 const Ray& secondaryRay = Ray::fromOriginAndDirection(surfel.geometric.location + offset, impulse.w);
 				debugAssert(secondaryRay.direction().isFinite());
                 radiance += rayTrace(secondaryRay, world, bounce + 1) * impulse.magnitude;
