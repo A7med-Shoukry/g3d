@@ -1,12 +1,20 @@
 #version 120 // -*- c++ -*-
-#extension GL_EXT_gpu_shader4 : require
+#extension GL_EXT_gpu_shader4 : require // Allows GLSL 1.3 texelFetch2D
+#define texelFetch texelFetch2D         // Allows GLSL 1.3 texelFetch2D
 
 #define PI (3.1415926)
 
-uniform sampler2D wsPosition;
-uniform sampler2D wsNormal;
-uniform sampler2D lambertian;
-uniform sampler2D glossy;
+uniform sampler2D WS_POSITION_buffer;
+uniform vec2 WS_POSITION_readScaleBias;
+
+uniform sampler2D WS_NORMAL_buffer;
+uniform vec2 WS_NORMAL_readScaleBias;
+
+// We know that we're not using scale and bias with these, so don't bother 
+// bringing in the constants for them
+uniform sampler2D LAMBERTIAN_buffer;
+uniform sampler2D GLOSSY_buffer;
+
 uniform vec3      wsEye;
 
 // Direction to the light in world space
@@ -47,16 +55,16 @@ void main() {
     ivec2 C = ivec2(gl_FragCoord.xy);
     
     // Surface normal
-    vec3 n = texelFetch2D(wsNormal, C, 0).xyz;
+    vec3 n = texelFetch(WS_NORMAL_buffer, C, 0).xyz;
     if (dot(n, n) < 0.01) {
         // This is a background pixel, not part of an object
         discard;
     } else {
-        n = n * 2.0 - 1.0;
+        n = n  * WS_NORMAL_readScaleBias.x + vec3(WS_NORMAL_readScaleBias.y);
     }
 
     // Point being shaded
-    vec3 X = texelFetch2D(wsPosition, C, 0).xyz;
+    vec3 X = texelFetch(WS_POSITION_buffer, C, 0).xyz * WS_POSITION_readScaleBias.x + vec3(WS_POSITION_readScaleBias.y);
     
     // View vector
     vec3 w_o = normalize(wsEye - X);
@@ -68,10 +76,10 @@ void main() {
     float cos_i = dot(n, w_o);
     
     // Lambertian coefficient in BSDF
-    vec3 p_L  = texelFetch2D(lambertian, C, 0).rgb / PI;
+    vec3 p_L  = texelFetch(LAMBERTIAN_buffer, C, 0).rgb / PI;
 
     // Glossy coefficient in BSDF (this code unpacks G3D::SuperBSDF's encoding)
-    vec4 temp = texelFetch2D(glossy, C, 0);
+    vec4 temp = texelFetch(GLOSSY_buffer, C, 0);
     float exponent = unpackSpecularExponent(temp.a);
     vec3 p_G = computeF(temp.rgb * ((exponent + 8.0) / (8.0 * PI)), max(0.0, cos_i));
     

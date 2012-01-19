@@ -89,13 +89,27 @@ GBuffer::Ref GBuffer::create
 }
 
 
+GBuffer::Specification::Specification() {
+    for (int f = 0; f < Field::COUNT; ++f) {
+        format[f] = NULL;
+    }
+    depthEncoding = DepthEncoding::HYPERBOLIC;
+    encoding[Field::WS_FACE_NORMAL] = Encoding(2.0f, -1.0f);
+    encoding[Field::CS_FACE_NORMAL] = Encoding(2.0f, -1.0f);
+    encoding[Field::CS_NORMAL]      = Encoding(2.0f, -1.0f);
+    encoding[Field::WS_NORMAL]      = Encoding(2.0f, -1.0f);
+    encoding[Field::SS_POSITION_CHANGE] = Encoding(64.0f, -32.0f);
+}
+
+
 GBuffer::GBuffer(const std::string& name, const Specification& specification) :
     m_name(name),
     m_specification(specification), 
     m_timeOffset(0),
     m_velocityStartTimeOffset(0),
     m_framebuffer(Framebuffer::create(name)),
-    m_macroString("\n"),
+    m_readDeclarationString("\n"),
+    m_writeDeclarationString("\n"),
     m_texturesAllocated(false),
     m_depthOnly(true),
     m_hasFaceNormals(false) {
@@ -113,7 +127,10 @@ GBuffer::GBuffer(const std::string& name, const Specification& specification) :
                 } else if (format->depthBits > 0) {
                     m_fieldToAttachmentPoint[f] = Framebuffer::DEPTH;
                 }
-                m_macroString += "#define DEPTH gl_FragDepth\n";
+                
+                m_writeDeclarationString += "#define DEPTH gl_FragDepth\n";
+                m_readDeclarationString  += "#define DEPTH\n";
+
             } else {
                 m_depthOnly = false;
 
@@ -122,9 +139,15 @@ GBuffer::GBuffer(const std::string& name, const Specification& specification) :
                 }
 
                 m_fieldToAttachmentPoint[f] = Framebuffer::AttachmentPoint(a);
-                m_macroString += G3D::format("#define %s gl_FragData[%d]\n", 
+
+                m_writeDeclarationString += G3D::format("#define %s gl_FragData[%d]\n", 
                     Field(f).toString(),
                     a - Framebuffer::COLOR0);
+                m_writeDeclarationString += std::string("uniform vec2 ") + Field(f).toString() + "_writeScaleBias;\n";
+
+                m_readDeclarationString += "#define Field(f).toString()";
+                m_readDeclarationString += std::string("uniform vec2 ") + Field(f).toString() + "_readScaleBias;\n";
+
                 ++a;
             }
         } else {
@@ -135,6 +158,33 @@ GBuffer::GBuffer(const std::string& name, const Specification& specification) :
 
     } // for each format
 }
+
+
+void GBuffer::bindWriteUniforms(Shader::ArgList& args) const {
+    for (int f = 0; f < Field::COUNT; ++f) {
+        const ImageFormat* format = m_specification.format[f];
+        if ((format != NULL) && (f != Field::DEPTH_AND_STENCIL)) {
+            const Encoding& encoding = m_specification.encoding[f];
+
+            // Set the inverse of the read values
+            args.set(std::string(Field(f).toString()) + "_writeScaleBias", 
+                Vector2(1.0f / encoding.readMultiplyFirst, -encoding.readAddSecond / encoding.readMultiplyFirst), true);
+        }
+    }
+}
+
+
+void GBuffer::bindReadUniforms(Shader::ArgList& args) const {
+    for (int f = 0; f < Field::COUNT; ++f) {
+        const ImageFormat* format = m_specification.format[f];
+        if ((format != NULL) && (f != Field::DEPTH_AND_STENCIL)) {
+            const Encoding& encoding = m_specification.encoding[f];
+
+            args.set(std::string(Field(f).toString()) + "_readScaleBias", (Vector2)encoding, true);
+        }
+    }
+}
+
 
 
 int GBuffer::width() const {
@@ -160,6 +210,12 @@ void GBuffer::prepare
 
     debugAssertM(m_framebuffer.notNull(), "Must invoke GBuffer::resize before GBuffer::prepare");
     rd->pushState(m_framebuffer); {
+
+/*        for (int f = 0; f < Field::COUNT; ++f) {
+            Framebuffer::AttachmentPoint a = m_fieldToAttachmentPoint[f];
+        }
+        // TODO: per-buffer clear constants
+        */
         rd->setColorClearValue(Color4::clear());
         rd->clear();
     } rd->popState();

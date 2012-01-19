@@ -190,39 +190,57 @@ public:
     }; // class Field
 
     
+    /** Buffers can be optionally scaled and biased to
+        facilitate packing signed or large-range values in
+        unsigned normalized formats.  For example, surface
+        normals can be packed into ImageFormat::RGB8 using \a
+        readMultiplyFirst = 2, \a readAddSecond = -1.
+            
+        <b>Reading:</b>
+        <br/><code>texelFetch(buffer, pixel, 0) * readMultiplyFirst + readAddSecond;</code>
+            
+        <b>Writing</b> (e.g., as done by G3D::Surface::renderIntoGBuffer):
+        <br/><code>gl_FragData[n] = (value - readAddSecond) / readMultiplyFirst;</code>
+            
+        The default add bias is zero and default multiply scale is one.
+    */
+    class Encoding {
+    public:
+        float               readMultiplyFirst;
+
+        float               readAddSecond;           
+            
+        Encoding() : 
+            readMultiplyFirst(1.0f), 
+            readAddSecond(0.0f) {}
+
+        Encoding(float m, float a ) : 
+            readMultiplyFirst(m), 
+            readAddSecond(a) {}
+
+        Encoding(const Vector2& packed) : 
+            readMultiplyFirst(packed.x), 
+            readAddSecond(packed.y) {}
+
+        /** Returns vec2(readMultiplyFirst, readAddSecond). */
+        operator Vector2() const { return Vector2(readMultiplyFirst, readAddSecond); }
+    };
+
     class Specification {
     public:
-
-        /** Buffers can be optionally scaled and biased to
-            facilitate packing signed or large-range values in
-            unsigned normalized formats.  For example, surface
-            normals can be packed into ImageFormat::RGB8 using \a
-            readMultiplyFirst = 2, \a readAddSecond = -1.
-            
-            <b>Reading:</b>
-            <br/><code>texelFetch(buffer, pixel, 0) * readMultiplyFirst + readAddSecond;</code>
-            
-            <b>Writing</b> (e.g., as done by G3D::Surface::renderIntoGBuffer):
-            <br/><code>gl_FragData[n] = (value - readAddSecond) / readMultiplyFirst;</code>
-            
-            The default add bias is zero and default multiply scale is one.
-        */
-        class Encoding {
-        public:
-            float               readMultiplyFirst;
-
-            float               readAddSecond;           
-            
-            Encoding() : 
-                readMultiplyFirst(1.0f), 
-                readAddSecond(0.0f) {}
-        };
 
         /** Formats corresponding to the values of Field.
             If a format is NULL, it is not allocated or rendered. */
         const ImageFormat*      format[Field::COUNT];
 
-        /** Parallel array to format[] */
+        /** Parallel array to format[].  
+        
+            The default encoding for Field::WS_NORMAL, 
+            Field::CS_NORMAL, Field::WS_FACE_NORMAL, and Field::CS_FACE_NORMAL is Encoding(2.0f, -1.0f)
+            to map [0, 1] to [-1, +1].
+
+            The default encoding for Field::SS_POSITION_CHANGE is Encoding(64.0f, -32.0f) to map
+            [0, 1] to [-32, +32]. For all other fields the default encoding is Encoding(1.0, 0.0). */
         Encoding                encoding[Field::COUNT];
 
         /** Reserved for future use--not currently supported */
@@ -231,12 +249,7 @@ public:
         /** All fields for specific buffers default to NULL.  In the
             future, more buffers may be added, which will also default
             to NULL for backwards compatibility. */
-        Specification() {
-            for (int f = 0; f < Field::COUNT; ++f) {
-                format[f] = NULL;
-            }
-            depthEncoding = DepthEncoding::HYPERBOLIC;
-        }
+        Specification();
 
         size_t hashCode() const {
             return
@@ -287,7 +300,9 @@ protected:
 
     Framebuffer::AttachmentPoint m_fieldToAttachmentPoint[Field::COUNT];
 
-    std::string                 m_macroString;
+    std::string                 m_readDeclarationString;
+
+    std::string                 m_writeDeclarationString;
 
     /** True when the textures have been allocated */
     bool                        m_texturesAllocated;
@@ -326,7 +341,7 @@ public:
 
     /**
     \brief A series of macros to prepend before a Surface's shader
-    for rendering to GBuffers.  
+    for rendering <b>to</b> GBuffers.  
     
     This defines each of the fields
     in use and maps it to a GLSL output variable.  For example,
@@ -334,13 +349,42 @@ public:
 
     \code
     #define WS_NORMAL   gl_FragData[0]
+    uniform vec2 WS_NORMAL_writeScaleBias;
+
     #define LAMBERTIAN  gl_FragData[1]
+    uniform vec2 LAMBERTIAN_writeScaleBias;
+
     #define DEPTH       gl_FragDepth
     \endcode
     */
-    const std::string macros() const {
-        return m_macroString;
+    const std::string writeDeclarations() const {
+        return m_writeDeclarationString;
     }
+
+   /**
+    Example:
+
+    \code
+    #define WS_NORMAL  
+    uniform vec2 WS_NORMAL_readScaleBias;
+
+    #define LAMBERTIAN  gl_FragData[1]
+    uniform vec2 LAMBERTIAN_readScaleBias;
+
+    #define DEPTH
+    \endcode
+
+    This helper is not always desirable--you may wish to manually bind the scaleBias values
+    */
+    const std::string readDeclarations() const {
+        return m_readDeclarationString;
+    }
+
+    /** Binds the writeScaleBias values defined in writeDeclarations() in the form FIELD_writeScaleBias = vec2(writeMultiplyFirst, writeAddSecond) */
+    void bindWriteUniforms(Shader::ArgList& args) const;
+
+    /** Binds the readScaleBias values defined in readDeclarations(). */
+    void bindReadUniforms(Shader::ArgList& args) const;
 
     /** Returns the attachment point on framebuffer() for \a field.*/
     Framebuffer::AttachmentPoint attachmentPoint(Field field) const {

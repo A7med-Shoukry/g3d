@@ -37,7 +37,7 @@ void App::makeGBuffer() {
     GBuffer::Specification specification;
     specification.format[GBuffer::Field::WS_NORMAL]   = ImageFormat::RGB16F();
     //specification.format[GBuffer::Field::SS_POSITION_CHANGE]   = ImageFormat::RG8();
-    specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB16F();
+    specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB32F();
     specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
     specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH24();
@@ -123,11 +123,12 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
     // Make a pass over the screen, performing shading
     rd->push2D(); {
-        shadingPass->args.set("wsNormal",   gbuffer->texture(GBuffer::Field::WS_NORMAL));
-        shadingPass->args.set("wsPosition", gbuffer->texture(GBuffer::Field::WS_POSITION));
-        shadingPass->args.set("lambertian", gbuffer->texture(GBuffer::Field::LAMBERTIAN));
-        shadingPass->args.set("glossy",     gbuffer->texture(GBuffer::Field::GLOSSY));
-        shadingPass->args.set("wsEye",      gbuffer->camera().coordinateFrame().translation);
+        shadingPass->args.set("WS_NORMAL_buffer",   gbuffer->texture(GBuffer::Field::WS_NORMAL));
+        shadingPass->args.set("WS_POSITION_buffer", gbuffer->texture(GBuffer::Field::WS_POSITION));
+        shadingPass->args.set("LAMBERTIAN_buffer",  gbuffer->texture(GBuffer::Field::LAMBERTIAN));
+        shadingPass->args.set("GLOSSY_buffer",      gbuffer->texture(GBuffer::Field::GLOSSY));
+        shadingPass->args.set("wsEye",              gbuffer->camera().coordinateFrame().translation);
+        gbuffer->bindReadUniforms(shadingPass->args);
  
         rd->setShader(shadingPass);
 

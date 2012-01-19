@@ -89,7 +89,7 @@ public:
     Shader::Ref get(const GBuffer::Ref& gbuffer, const Material::Ref& material) {
         static const std::string version = "#version 120\n#extension GL_EXT_gpu_shader4 : require\n";
 
-        const std::string& prefixMacros = version + "\n// GBuffer macros:\n" + gbuffer->macros() +
+        const std::string& prefixMacros = version + "\n// GBuffer definitions:\n" + gbuffer->writeDeclarations() +
             "\n// Material macros:\n\n" + material->macros() + "///////////////////\n\n";
 
         bool created = false;
@@ -170,6 +170,9 @@ void SuperSurface::renderIntoGBufferHomogeneous
 
             // Bind material arguments            
             material->configure(shader->args);
+
+            // Bind bias and scale arguments
+            gbuffer->bindWriteUniforms(shader->args);
 
             // Alpha testing is handled explicitly inside the shader.
             surface->sendGeometry(rd);

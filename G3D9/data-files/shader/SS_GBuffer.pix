@@ -198,11 +198,11 @@ void main() {
 
     ///////////////////////// NORMALS //////////////////////////////
 #   ifdef WS_NORMAL
-        WS_NORMAL.xyz = wsN * 0.5 + vec3(0.5);
+        WS_NORMAL.xyz = wsN * WS_NORMAL_writeBiasScale.x + vec3(WS_NORMAL_writeBiasScale.y);
 #   endif
 
 #   ifdef CS_NORMAL
-        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)) * 0.5 + vec3(0.5);
+        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)) * CS_NORMAL_writeBiasScale.x + vec3(CS__NORMAL_writeBiasScale.y);
 #   endif
 
 #   if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
@@ -211,18 +211,18 @@ void main() {
 
     // For simplicity, all normals are encoded regardless of format.
 #   ifdef WS_FACE_NORMAL
-        WS_FACE_NORMAL.xyz = wsFaceNormal * 0.5 + vec3(0.5);
+        WS_FACE_NORMAL.xyz = wsFaceNormal * WS_FACE_NORMAL_writeBiasScale.x + vec3(WS_FACE_NORMAL_writeBiasScale.y);
 #   endif
 
 #   ifdef CS_FACE_NORMAL
-        CS_FACE_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsFaceNormal, 0.0)) * 0.5 + vec3(0.5);
+        CS_FACE_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsFaceNormal, 0.0)) * CS_FACE_NORMAL_writeBiasScale.x + vec3(CS_FACE_NORMAL_writeBiasScale.y);
 #   endif
 
     //////////////////////// POSITIONS /////////////////////////////
     // NVIDIA drivers miscompile this unless we write WS_POSITION after the normals
 
 #   ifdef WS_POSITION
-        WS_POSITION.xyz = wsPosition;
+        WS_POSITION.xyz = wsPosition * WS_POSITION_writeBiasScale.x + vec3(WS_POSITION_writeBiasScale.y);
 #   endif
 
 #   if defined(CS_POSITION) || defined(CS_POSITION_CHANGE) || defined(SS_POSITION_CHANGE) || defined(CS_Z)
@@ -230,22 +230,22 @@ void main() {
 #   endif
 
 #   ifdef CS_POSITION
-        CS_POSITION.xyz = csPosition;
+        CS_POSITION.xyz = csPosition * CS_POSITION_writeBiasScale.x + vec3(CS_POSITION_writeBiasScale.y);
 #   endif
 
 #   ifdef CS_Z
-        CS_Z.r = csPosition.z;
+        CS_Z.r = csPosition.z * CS_Z_writeBiasScale.x + CS_Z_writeBiasScale.y;
 #   endif
 
 #   ifdef CS_POSITION_CHANGE
-        CS_POSITION_CHANGE.xyz = csPosition - csPrevPosition;
+        CS_POSITION_CHANGE.xyz = (csPosition - csPrevPosition) * CS_POSITION_CHANGE_writeScaleBias.x + vec3(CS_POSITION_CHANGE_writeScaleBias.y);
 #   endif
 
 #   ifdef SS_POSITION_CHANGE
         {
             vec4 temp = ProjectToScreenMatrix * vec4(csPrevPosition, 1.0);
             vec2 ssPrevPosition = temp.xy / temp.w;
-            SS_POSITION_CHANGE.xy = gl_FragCoord.xy - ssPrevPosition;
+            SS_POSITION_CHANGE.xy = (gl_FragCoord.xy - ssPrevPosition) * SS_POSITION_CHANGE.x + vec2(SS_POSITION_CHANGE.y);
         }
 #   endif
 }
