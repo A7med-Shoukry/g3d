@@ -123,19 +123,19 @@ GCamera::GCamera() : m_lensRadius(0.0f), m_focusPlaneZ(-10.0f), m_exposureTime(0
 
 
 GCamera::GCamera(const Matrix4& proj, const CFrame& frame) {
-    float left, right, bottom, top, nearval, farval;
+    double left, right, bottom, top, nearval, farval;
     proj.getPerspectiveProjectionParameters(left, right, bottom, top, nearval, farval);
     setNearPlaneZ(-nearval);
     setFarPlaneZ(-farval);
     float x = right;
 
     // Assume horizontal field of view
-    setFieldOfView(atan2(x, -m_nearPlaneZ) * 2.0f, HORIZONTAL);
+    setFieldOfView(atan2(x, -m_nearPlaneZ) * 2.0, HORIZONTAL);
     setCoordinateFrame(frame);
 
-    m_lensRadius = 0.0f;
-    m_focusPlaneZ = -10.0f;
-    m_exposureTime = 0.0f;
+    m_lensRadius   =   0.0f;
+    m_focusPlaneZ  = -10.0f;
+    m_exposureTime =   0.0f;
 }
 
 
@@ -263,12 +263,14 @@ void GCamera::getProjectPixelMatrix(const Rect2D& viewport, Matrix4& P) const {
 
 void GCamera::getProjectUnitMatrix(const Rect2D& viewport, Matrix4& P) const {
 
-    float screenWidth  = viewport.width();
-    float screenHeight = viewport.height();
+    // Uses double precision because the division operations may otherwise 
+    // significantly hurt prevision.
+    const double screenWidth  = viewport.width();
+    const double screenHeight = viewport.height();
 
-    float r, l, t, b, n, f, x, y;
+    double r, l, t, b, n, f, x, y;
 
-    float s = 1.0f;
+    double s = 1.0f;
     if (m_direction == VERTICAL) {
         y = -m_nearPlaneZ * tan(m_fieldOfView / 2);
         x = y * (screenWidth / screenHeight);
@@ -281,9 +283,9 @@ void GCamera::getProjectUnitMatrix(const Rect2D& viewport, Matrix4& P) const {
 
     n = -m_nearPlaneZ;
     f = -m_farPlaneZ;
-    r = x  - m_pixelOffset.x/s;
+    r =  x - m_pixelOffset.x/s;
     l = -x - m_pixelOffset.x/s;
-    t = y  + m_pixelOffset.y/s;
+    t =  y + m_pixelOffset.y/s;
     b = -y + m_pixelOffset.y/s;
 
     P = Matrix4::perspectiveProjection(l, r, b, t, n, f);

@@ -220,6 +220,7 @@ href="classes.html">Classes</a>.
     \link G3D::Matrix2 Matrix2\endlink,
     \link G3D::Matrix3 Matrix3\endlink,
     \link G3D::Matrix4 Matrix4\endlink,
+    \link G3D::Matrix4float64 Matrix4float64\endlink,
     \link G3D::Vector2 Vector2\endlink,
     \link G3D::Vector2int16 Vector2int16\endlink,
     \link G3D::Vector2int32 Vector2int32\endlink,

@@ -595,9 +595,9 @@ RenderDevice::RenderState::RenderState(int width, int height, int htutc) :
     }
 
     // Set projection matrix
-    float aspect = viewport.width() / viewport.height();
+    const double aspect = (double)viewport.width() / viewport.height();
 
-    matrices.projectionMatrix = Matrix4::perspectiveProjection(-aspect, aspect, -1, 1, 0.1f, 100.0f);
+    matrices.projectionMatrix = Matrix4::perspectiveProjection(-aspect, aspect, -1, 1, 0.1, 100.0);
 
     cullFace                    = CULL_BACK;
 

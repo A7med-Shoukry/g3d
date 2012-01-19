@@ -1,11 +1,10 @@
 /**
-  \file G3D/source/Matrix4.cpp
- 
+  \file G3D/source/Matrix4.cpp 
  
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2003-10-02
-  \edited  2011-08-29
+  \edited  2012-01-19
  */
 
 #include "G3D/platform.h"
@@ -179,59 +178,59 @@ Matrix4 Matrix4::orthogonalProjection(
 
 
 Matrix4 Matrix4::perspectiveProjection(
-    float left,    
-    float right,
-    float bottom,  
-    float top,
-    float nearval, 
-    float farval,
-    float upDirection) {
+    double left,    
+    double right,
+    double bottom,  
+    double top,
+    double nearval, 
+    double farval,
+    float  upDirection) {
 
-    float x, y, a, b, c, d;
+    double x, y, a, b, c, d;
 
-    x = (2.0f*nearval) / (right-left);
-    y = (2.0f*nearval) / (top-bottom);
+    x = (2.0*nearval) / (right-left);
+    y = (2.0*nearval) / (top-bottom);
     a = (right+left) / (right-left);
     b = (top+bottom) / (top-bottom);
 
-    if (farval >= finf()) {
+    if (farval >= inf()) {
        // Infinite view frustum
-       c = -1.0f;
-       d = -2.0f * nearval;
+       c = -1.0;
+       d = -2.0 * nearval;
     } else {
        c = -(farval+nearval) / (farval-nearval);
-       d = -(2.0f*farval*nearval) / (farval-nearval);
+       d = -(2.0*farval*nearval) / (farval-nearval);
     }
 
-    debugAssertM(abs(upDirection) == 1.0f, "upDirection must be -1 or +1");
+    debugAssertM(abs(upDirection) == 1.0, "upDirection must be -1 or +1");
     y *= upDirection;
     b *= upDirection;
 
     return Matrix4(
-        x,  0,  a,  0,
-        0,  y,  b,  0,
-        0,  0,  c,  d,
+        (float)x,  0,  (float)a,  0,
+        0,  (float)y,  (float)b,  0,
+        0,  0,  (float)c,  (float)d,
         0,  0, -1,  0);
 }
 
 
 void Matrix4::getPerspectiveProjectionParameters(
-    float& left,    
-    float& right,
-    float& bottom,  
-    float& top,
-    float& nearval, 
-    float& farval,
+    double& left,    
+    double& right,
+    double& bottom,  
+    double& top,
+    double& nearval, 
+    double& farval,
     float upDirection) const {
 
     debugAssertM(abs(upDirection) == 1.0f, "upDirection must be -1 or +1");
 
-    float x = elt[0][0];
-    float y = elt[1][1] * upDirection;
-    float a = elt[0][2];
-    float b = elt[1][2] * upDirection;
-    float c = elt[2][2];
-    float d = elt[2][3];
+    double x = elt[0][0];
+    double y = elt[1][1] * upDirection;
+    double a = elt[0][2];
+    double b = elt[1][2] * upDirection;
+    double c = elt[2][2];
+    double d = elt[2][3];
 
     // Verify that this really is a projection matrix
     debugAssertM(elt[3][2] == -1, "Not a projection matrix");
@@ -247,18 +246,18 @@ void Matrix4::getPerspectiveProjectionParameters(
 
     if (c == -1) {
         farval = finf();
-        nearval = -d / 2.0f;
+        nearval = -d / 2.0;
     } else {
-        nearval = d * ((c - 1.0f) / (c + 1.0f) - 1.0f) / (-2.0f * (c - 1.0f) / (c + 1.0f));
-        farval = nearval * ((c - 1.0f) / (c + 1.0f));
+        nearval = d * ((c - 1.0) / (c + 1.0) - 1.0) / (-2.0 * (c - 1.0) / (c + 1.0));
+        farval = nearval * ((c - 1.0) / (c + 1.0));
     }
 
 
-    left = (a - 1.0f) * nearval / x;
-    right = 2.0f * nearval / x + left;
+    left = (a - 1.0) * nearval / x;
+    right = 2.0 * nearval / x + left;
 
-    bottom = (b - 1.0f) * nearval / y;
-    top = 2.0f * nearval / y + bottom;
+    bottom = (b - 1.0) * nearval / y;
+    top = 2.0 * nearval / y + bottom;
 }
 
 
@@ -537,6 +536,132 @@ std::string Matrix4::toString() const {
 			elt[2][0], elt[2][1], elt[2][2], elt[2][3],
 			elt[3][0], elt[3][1], elt[3][2], elt[3][3]);
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Matrix4float64::Matrix4float64(const Matrix4& m) {
+    for (int r = 0; r < 4; ++r) {
+        for (int c = 0; c < 4; ++c) {
+            elt[r][c] = m[r][c];
+        }
+    }
+}
+
+
+Matrix4float64::Matrix4float64() {
+    for (int r = 0; r < 4; ++r) {
+        for (int c = 0; c < 4; ++c) {
+            elt[r][c] = 0.0;
+        }
+    }
+}
+
+
+Matrix4float64::Matrix4float64
+   (double r1c1, double r1c2, double r1c3, double r1c4,
+    double r2c1, double r2c2, double r2c3, double r2c4,
+    double r3c1, double r3c2, double r3c3, double r3c4,
+    double r4c1, double r4c2, double r4c3, double r4c4) {
+    elt[0][0] = r1c1;  elt[0][1] = r1c2;  elt[0][2] = r1c3;  elt[0][3] = r1c4;
+    elt[1][0] = r2c1;  elt[1][1] = r2c2;  elt[1][2] = r2c3;  elt[1][3] = r2c4;
+    elt[2][0] = r3c1;  elt[2][1] = r3c2;  elt[2][2] = r3c3;  elt[2][3] = r3c4;
+    elt[3][0] = r4c1;  elt[3][1] = r4c2;  elt[3][2] = r4c3;  elt[3][3] = r4c4;
+}
+
+
+const Matrix4float64& Matrix4float64::identity() {
+    static Matrix4float64 m(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1);
+    return m;
+}
+    
+
+const Matrix4float64& Matrix4float64::zero() {
+    static Matrix4float64 m;
+    return m;
+}
+
+
+bool Matrix4float64::operator!=(const Matrix4float64& other) const {
+    return ! (*this == other);
+}
+
+
+bool Matrix4float64::operator==(const Matrix4float64& other) const {
+
+    // If the bit patterns are identical, they must be
+    // the same matrix.  If not, they *might* still have
+    // equal elements due to floating point weirdness.
+    if (memcmp(this, &other, sizeof(Matrix4float64) == 0)) {
+        return true;
+    } 
+
+    for (int r = 0; r < 4; ++r) {
+        for (int c = 0; c < 4; ++c) {
+            if (elt[r][c] != other.elt[r][c]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
+Vector4 Matrix4float64::operator*(const Vector4& vector) const {
+    Vector4 result;
+    for (int r = 0; r < 4; ++r) {
+        double sum = 0;
+        for (int c = 0; c < 4; ++c) {
+            sum += elt[r][c] * vector[c];
+        }
+        result[r] = sum;
+    }
+
+    return result;
+}
+
+
+static Matrix4float64 perspectiveProjection(
+    double            left,
+    double            right,
+    double            bottom,
+    double            top,
+    double            nearval,
+    double            farval,
+    float             upDirection) {
+    double x, y, a, b, c, d;
+
+    x = (2.0*nearval) / (right-left);
+    y = (2.0*nearval) / (top-bottom);
+    a = (right+left) / (right-left);
+    b = (top+bottom) / (top-bottom);
+
+    if (farval >= inf()) {
+       // Infinite view frustum
+       c = -1.0;
+       d = -2.0 * nearval;
+    } else {
+       c = -(farval+nearval) / (farval-nearval);
+       d = -(2.0*farval*nearval) / (farval-nearval);
+    }
+
+    debugAssertM(abs(upDirection) == 1.0, "upDirection must be -1 or +1");
+    y *= upDirection;
+    b *= upDirection;
+
+    return Matrix4float64(
+        (float)x,  0,  (float)a,  0,
+        0,  (float)y,  (float)b,  0,
+        0,  0,  (float)c,  (float)d,
+        0,  0, -1,  0);
+}
+
 
 } // namespace
 
