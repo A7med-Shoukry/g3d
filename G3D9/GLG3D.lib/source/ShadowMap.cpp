@@ -92,7 +92,7 @@ void ShadowMap::setSize(int desiredSize, const Texture::Settings& textureSetting
     m_depthTexture = Texture::createEmpty
         (m_name,
          desiredSize, desiredSize,
-         ImageFormat::DEPTH32(),
+         ImageFormat::DEPTH32(), // Could be DEPTH32F if supported on target
          dim, 
          textureSettings);
 

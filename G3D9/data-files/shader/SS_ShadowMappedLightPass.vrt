@@ -66,6 +66,9 @@ void main(void) {
     shadowCoord      = lightMVP * vec4(wsPosition, 1.0);
 
     texCoord         = gl_MultiTexCoord0.st;
-    gl_Position      = ftransform();
-    gl_ClipVertex    = gl_ModelViewMatrix * gl_Vertex;
+
+    // This has higher precision than multiplying with the matrix on the right on NVIDIA GPUs
+    gl_Position   = gl_Vertex * gl_ModelViewProjectionMatrixTranspose;
+    gl_ClipVertex = gl_Vertex * gl_ModelViewMatrixTranspose;
+
 }
