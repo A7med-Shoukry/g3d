@@ -2,8 +2,8 @@
 
 namespace G3D {
 
-Texture::Visualization::Visualization(Channels c, float g, float mn, float mx) : 
-    channels(c), documentGamma(g), min(mn), max(mx), invertIntensity(false) {
+Texture::Visualization::Visualization(Channels c, float g, float mn, float mx, bool isCube) : 
+    channels(c), documentGamma(g), min(mn), max(mx), invertIntensity(false), isCubemap(isCube) {
 }
 
 const static std::string name[] = 
@@ -32,6 +32,7 @@ Any Texture::Visualization::toAny() const {
     a["min"] = min;
     a["max"] = max;
     a["invertIntensity"] = invertIntensity;
+	a["isCubemap"] = isCubemap;
     return a;
 }
 
@@ -74,6 +75,7 @@ Texture::Visualization::Visualization(const Any& a) {
         r.getIfPresent("invertIntensity", invertIntensity);
         r.getIfPresent("max", max);
         r.getIfPresent("min", min);
+		r.getIfPresent("isCubemap", isCubemap);
 
         r.verifyDone();
     }
@@ -117,7 +119,8 @@ bool Texture::Visualization::needsShader() const {
         (documentGamma != 2.2f) ||
         (min != 0.0f) ||
         (max != 1.0f) ||
-        invertIntensity;
+        invertIntensity ||
+		isCubemap;
 }
 
 }
