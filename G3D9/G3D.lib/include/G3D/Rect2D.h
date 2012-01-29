@@ -303,6 +303,10 @@ public:
         return xyxy(min.x * s, min.y * s, max.x * s, max.y * s);
     }
 
+	Rect2D operator*(const Vector2& s) const {
+        return xyxy(min * s, max * s);
+    }
+
     Rect2D operator/(float s) const {
         return xyxy(min / s, max / s);
     }
