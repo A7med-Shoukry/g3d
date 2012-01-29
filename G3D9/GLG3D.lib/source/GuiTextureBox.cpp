@@ -23,6 +23,7 @@ namespace G3D {
 static const float DRAWER_Y_OFFSET = 5.0f;
 
 WeakReferenceCountedPointer<Shader> GuiTextureBox::g_cachedShader;
+WeakReferenceCountedPointer<Shader> GuiTextureBox::g_cachedCubemapShader;
 
 GuiTextureBox::GuiTextureBox
 (GuiContainer*       parent,
@@ -319,6 +320,7 @@ protected:
 
     mutable GuiLabel*           m_xyLabel;
     mutable GuiLabel*           m_uvLabel;
+	mutable GuiLabel*           m_xyzLabel;
     mutable GuiLabel*           m_rgbaLabel;
     mutable GuiLabel*           m_ARGBLabel;
 
@@ -420,8 +422,13 @@ public:
         int captionWidth = 55;
         m_xyLabel = addPair(dataPane, "xy =", "", 30);
         m_xyLabel->setWidth(70);
-        m_uvLabel = addPair(dataPane, "uv =", "", 30, m_xyLabel);
-        m_uvLabel->setWidth(120);
+        if(m_settings.isCubemap){
+			m_xyzLabel = addPair(dataPane, "xyz =", "", 30, m_xyLabel);
+			m_xyzLabel->setWidth(160);
+		} else {
+			m_uvLabel = addPair(dataPane, "uv =", "", 30, m_xyLabel);
+			m_uvLabel->setWidth(120);
+		}
 
         m_rgbaLabel = addPair(dataPane, "rgba =", "", captionWidth);
         m_ARGBLabel = addPair(dataPane, "ARGB =", "", captionWidth);
@@ -510,9 +517,22 @@ public:
         }
 
         m_xyLabel->setCaption(format("(%d, %d)", m_textureBox->m_readbackXY.x, m_textureBox->m_readbackXY.y));
-        m_uvLabel->setCaption(format("(%6.4f, %6.4f)", m_textureBox->m_readbackXY.x / w, m_textureBox->m_readbackXY.y / h));
-        m_rgbaLabel->setCaption(format("(%6.4f, %6.4f, %6.4f, %6.4f)", m_textureBox->m_texel.r, 
-            m_textureBox->m_texel.g, m_textureBox->m_texel.b, m_textureBox->m_texel.a));
+		float u = m_textureBox->m_readbackXY.x / w;
+		float v = m_textureBox->m_readbackXY.y / h;
+
+		if(m_settings.isCubemap){
+			float theta = v * pif();
+			float phi   = u * 2 * pif();
+			float sinTheta = sin(theta);
+			float x = cos(phi) * sinTheta;
+			float y = cos(theta);
+			float z = sin(phi) * sinTheta; 
+			m_xyzLabel->setCaption(format("(%6.4f, %6.4f, %6.4f)", x, y, z));
+		} else {
+			m_uvLabel->setCaption(format("(%6.4f, %6.4f)", u, v));
+		}
+		m_rgbaLabel->setCaption(format("(%6.4f, %6.4f, %6.4f, %6.4f)", m_textureBox->m_texel.r, 
+						m_textureBox->m_texel.g, m_textureBox->m_texel.b, m_textureBox->m_texel.a));
         Color4unorm8 c(m_textureBox->m_texel);
         m_ARGBLabel->setCaption(format("0x%02x%02x%02x%02x", c.a.bits(), c.r.bits(), c.g.bits(), c.b.bits()));
     }
@@ -588,23 +608,8 @@ void GuiTextureBox::showInspector() {
     manager->setFocusedWidget(ins);
 }
 
-
-void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
-    rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0);
-    rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
-
-    // If this is a depth texture, make sure we flip it into normal read mode.
-    Texture::DepthReadMode oldReadMode = m_texture->settings().depthReadMode;
-    m_texture->setDepthReadMode(Texture::DEPTH_NORMAL);
-
-    // The GuiTextureBox inspector can directly manipulate this value,
-    // so it might not reflect the value we had at the last m_settings
-    // call.
-    const_cast<GuiTextureBox*>(this)->setSettings(m_settings);
-
-    // Draw texture
-    if (m_settings.needsShader()) {
-        debugAssert(m_shader.notNull());
+void GuiTextureBox::setUpShader(Shader::Ref shader){
+	debugAssert(shader.notNull());
 
         static const Matrix4 colorShift[] = {
             // RGB
@@ -674,17 +679,41 @@ void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
               0,  0, -1,  1,
               0,  0,  0,  0);
 
-        m_shader->args.set("texture", m_texture);
-        m_shader->args.set("adjustGamma", m_settings.documentGamma / 2.2f);
-        m_shader->args.set("bias", -m_settings.min);
-        m_shader->args.set("scale", 1.0f / (m_settings.max - m_settings.min));
+        shader->args.set("texture", m_texture);
+        shader->args.set("adjustGamma", m_settings.documentGamma / 2.2f);
+        shader->args.set("bias", -m_settings.min);
+        shader->args.set("scale", 1.0f / (m_settings.max - m_settings.min));
         //debugPrintf("%s\n", Any(m_settings).unparse().c_str());
 
-        m_shader->args.set("invertIntensity", m_settings.invertIntensity);
-        m_shader->args.set("colorShift", colorShift[m_settings.channels]);
+        shader->args.set("invertIntensity", m_settings.invertIntensity);
+        shader->args.set("colorShift", colorShift[m_settings.channels]);
+}
 
-        rd->setShader(m_shader);
-        debugAssert(m_shader.notNull());
+void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
+    rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0);
+    rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
+
+    // If this is a depth texture, make sure we flip it into normal read mode.
+    Texture::DepthReadMode oldReadMode = m_texture->settings().depthReadMode;
+    m_texture->setDepthReadMode(Texture::DEPTH_NORMAL);
+
+    // The GuiTextureBox inspector can directly manipulate this value,
+    // so it might not reflect the value we had at the last m_settings
+    // call.
+    const_cast<GuiTextureBox*>(this)->setSettings(m_settings);
+
+    // Draw texture
+    if (m_settings.needsShader()) {
+        Shader::Ref relevantShader;
+		if(m_settings.isCubemap){
+			relevantShader = m_cubemapShader;
+		} else {
+			relevantShader = m_shader;
+		}
+		// Magic incantation
+		const_cast<GuiTextureBox*>(this)->setUpShader(relevantShader);
+		rd->setShader(relevantShader);
+        debugAssert(relevantShader.notNull());
 
     } else {
         rd->setTexture(0, m_texture);
@@ -765,6 +794,9 @@ void GuiTextureBox::render(RenderDevice* rd, const GuiTheme::Ref& theme) const {
         // Shrink by the border size to save space for the border,
         // and then draw the largest rect that we can fit inside.
         Rect2D r = m_texture->rect2DBounds();
+		if(m_settings.isCubemap){
+			r = r * Vector2(2.0f, 1.0f);
+		}
         r = r + (m_offset - r.center());
         r = r * m_zoom;
         r = r + m_clipBounds.center();
@@ -924,34 +956,70 @@ void GuiTextureBox::setSettings(const Texture::Visualization& s) {
 
         alwaysAssertM(GLCaps::supports_GL_ARB_shading_language_100(), 
                       "GuiTextureBox requires GLSL shader support for these GuiTextureBox::Settings");
+		if(m_settings.isCubemap){
+			if (m_cubemapShader.isNull()) {
+				// Load the shader
+				m_cubemapShader = g_cachedCubemapShader.createStrongPtr();
+				if (m_cubemapShader.isNull()) {
+					// Load the global shader
+					m_cubemapShader = Shader::fromStrings
+						("",
+						 STR(
+							 uniform samplerCube texture;
+							 uniform float     adjustGamma;
+							 uniform mat4      colorShift;
+							 uniform float     bias;
+							 uniform float     scale;
+							 uniform bool      invertIntensity;\n
+							 #define PI (3.1415926536)\n
+							 #define TWOPI (6.28318531)\n
 
-        if (m_shader.isNull()) {
-            // Load the shader
-            m_shader = g_cachedShader.createStrongPtr();
-            if (m_shader.isNull()) {
-                // Load the global shader
-                m_shader = Shader::fromStrings
-                    ("",
-                     STR(
-                         uniform sampler2D texture;
-                         uniform float     adjustGamma;
-                         uniform mat4      colorShift;
-                         uniform float     bias;
-                         uniform float     scale;
-                         uniform bool      invertIntensity;
-
-                         void main(void) {
-                             vec4 c = texture2D(texture, gl_TexCoord[g3d_Index(texture)].xy);
-                             c = (c + bias) * scale;
-                             c = invertIntensity ? vec4(1.0 - c) : c;
-                             c = colorShift * c;
-                             c = max(c, vec4(0.0));
-                             gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
-                             gl_FragColor.a = 1.0;
-                             }));
-                g_cachedShader = m_shader;
-            }
-        }
+							 void main(void) {
+								 vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
+								 float theta = sphericalCoord.y * PI;
+								 float phi   = sphericalCoord.x * TWOPI;
+								 float sinTheta = sin(theta);
+								 vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
+								 vec4 c = textureCube(texture, cartesianCoord);
+								 c = (c + bias) * scale;
+								 c = invertIntensity ? vec4(1.0 - c) : c;
+								 c = colorShift * c;
+								 c = max(c, vec4(0.0));
+								 gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
+								 gl_FragColor.a = 1.0;
+								 }));
+					g_cachedCubemapShader = m_cubemapShader;
+				}
+			}
+		} else {
+			if (m_shader.isNull()) {
+				// Load the shader
+				m_shader = g_cachedShader.createStrongPtr();
+				if (m_shader.isNull()) {
+					// Load the global shader
+					m_shader = Shader::fromStrings
+						("",
+						 STR(
+							 uniform sampler2D texture;
+							 uniform float     adjustGamma;
+							 uniform mat4      colorShift;
+							 uniform float     bias;
+							 uniform float     scale;
+							 uniform bool      invertIntensity;
+							 void main(void) {
+								 vec4 c = texture2D(texture, gl_TexCoord[g3d_Index(texture)].xy);
+								 c = (c + bias) * scale;
+								 c = invertIntensity ? vec4(1.0 - c) : c;
+								 c = colorShift * c;
+								 c = max(c, vec4(0.0));
+								 gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
+								 gl_FragColor.a = 1.0;
+								 }));
+					g_cachedShader = m_shader;
+				}
+			}
+		}
+        
     }
 }
 
