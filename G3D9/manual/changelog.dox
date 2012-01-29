@@ -21,11 +21,12 @@
    <p>
    Changes in 9.00:
    <ul>
+     <li> G3D::Texture::update(), G3D::Texture::getTexImage(), and Texture::getImage() all have a new parameter that specifies the face of the cubemap to use. [Mike]</li>
      <li> G3D::VideoRecordDialog::setScreenShotFormat</li>
      <li> New "updateShadowMaps" argument to Surface::sortAndRender </li>
      <li> G3D::WeakCache::clear </li>
-	 <li> G3D::Matrix4float64 </li>
-	 <li> G3D::GBuffer now allows scale and bias on every field (except depth) </li>
+     <li> G3D::Matrix4float64 </li>
+     <li> G3D::GBuffer now allows scale and bias on every field (except depth) </li>
      <li> Removed shift + left button = right on OS X (ctrl+left still works) in FirstPersonManipulator </li>
      <li> G3D::FirstPersonManipulator now uses Z and C for vertical up and down translation (configurable)</li>
      <li> GuiContainer is now notified through G3D::GuiContainer::onChildControlEvent() when one of its children fires a GUI event.</li>

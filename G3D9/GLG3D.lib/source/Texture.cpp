@@ -581,6 +581,11 @@ Texture::Texture(
     debugAssertGLOk();
 
     m_sizeOfAllTexturesInMemory += sizeInMemory();
+
+	/* Set visualization isCubemap value correctly for cubemaps */
+	if ((dimension == DIM_CUBE_MAP) || (dimension == DIM_CUBE_MAP_NPOT)){
+		visualization.isCubemap = true;
+	}
 }
 
 
@@ -631,6 +636,11 @@ Texture::Texture(const std::string&         name,
     uploadImages(preprocessedImages);
 
     m_sizeOfAllTexturesInMemory += sizeInMemory();
+
+	/* Set visualization isCubemap value correctly for cubemaps */
+	if ((dimension == DIM_CUBE_MAP) || (dimension == DIM_CUBE_MAP_NPOT)){
+		visualization.isCubemap = true;
+	}
 }
 
 bool Texture::validateSettings() {
@@ -1505,6 +1515,7 @@ Texture::Ref Texture::createEmpty
         t->visualization = Visualization::depthBuffer();
     }
 
+
     debugAssertGLOk();
     return t;
 }
@@ -1580,7 +1591,7 @@ const Texture::Settings& Texture::settings() const {
 }
 
 
-void Texture::getImage(GImage& dst, const ImageFormat* outFormat) const {
+void Texture::getImage(GImage& dst, const ImageFormat* outFormat, int face) const {
     alwaysAssertM(outFormat == ImageFormat::AUTO() ||
                   outFormat == ImageFormat::RGB8() ||
                   outFormat == ImageFormat::RGBA8() ||
@@ -1632,25 +1643,35 @@ void Texture::getImage(GImage& dst, const ImageFormat* outFormat) const {
 
     dst.resize(m_width, m_height, channels);
 
-    getTexImage(dst.byte(), outFormat);
+    getTexImage(dst.byte(), outFormat, face);
 }
 
 
-void Texture::getTexImage(void* data, const ImageFormat* desiredFormat) const {
-    GLenum target = dimensionToTarget(m_dimension);
+void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, int face) const {
+	
+	GLenum target = openGLTextureTarget();
+
+	GLenum faceTarget;
+	if(face == -1){ // Not a cubemap
+		faceTarget = target;
+	} else {
+		debugAssert(m_dimension == DIM_CUBE_MAP || m_dimension == DIM_CUBE_MAP_NPOT);
+		faceTarget = cubeFaceTarget[face];
+	}
 
     glPushAttrib(GL_TEXTURE_BIT);
-    glBindTexture(target, m_textureID);
+    glBindTexture(target, openGLID());
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
     glGetTexImage(
-       target,
+       faceTarget,
        0,
        desiredFormat->openGLBaseFormat,
        desiredFormat->openGLDataFormat,
        data);
 
     glPopAttrib();
+
 }
 
 Image4Ref Texture::toImage4() const {
@@ -1831,6 +1852,8 @@ void Texture::copyFromScreen(const Rect2D& rect, const ImageFormat* fmt) {
 
     m_sizeOfAllTexturesInMemory += sizeInMemory();
 }
+
+
 
 void Texture::copyFromScreen(
     const Rect2D&       rect,

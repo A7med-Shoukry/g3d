@@ -244,7 +244,7 @@ public:
                reflectance or energy of a texture */
             MeanRGBasL,
     
-            /** (Perceptula) Luminance; visualizes the brightness
+            /** (Perceptual) Luminance; visualizes the brightness
                 people perceive of an image. */
             Luminance
         };
@@ -263,9 +263,12 @@ public:
         /** If true, show as 1 - (adjusted value) */
         bool             invertIntensity;
 
+		/** If true, the texture is a cubemap (thus require special rendering code) */
+		bool			 isCubemap;
+
         /** Defaults to linear data on [0, 1]: packed normal maps,
             reflectance maps, etc. */
-        Visualization(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f);
+        Visualization(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f, bool isCube = false);
 
         /** Accepts the name of any static factory method as an Any::ARRAY, e.g.,
             "v = sRGB()" or a table, e.g., "v = Texture::Visualization { documentGamma = 2.2, ... }"
@@ -280,7 +283,8 @@ public:
                 (documentGamma == v.documentGamma) &&
                 (min == v.min) &&
                 (max == v.max) &&
-                (invertIntensity == v.invertIntensity);
+                (invertIntensity == v.invertIntensity) &&
+				(isCubemap == v.isCubemap);
         }
 
         /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
@@ -707,6 +711,10 @@ public:
     static Ref create(const Specification& s);
 
     /** Call glGetTexImage with appropriate target. 
+
+		@param face specifies the face of the cubemap (it is an index into the static
+		cubeFaceTarget array). If left at it's default (-1), the function treats the texture
+		as a non-cubemap.
     
         This will normally perform a synchronous read, which causes
         the CPU to stall while the GPU catches up, and then stalls the
@@ -741,7 +749,7 @@ public:
             glBindBuffer(GL_PIXEL_PACK_BUFFER_ARB, 0);
          </pre>
     */
-    void getTexImage(void* data, const ImageFormat* desiredFormat) const;
+    void getTexImage(void* data, const ImageFormat* desiredFormat, int face = -1) const;
 
     /** Reads back a single texel.  This is faster than reading an entire image, but 
         still stalls the pipeline because it is synchronous.
@@ -1014,8 +1022,9 @@ public:
      Returns the level 0 mip-map data in the format that most closely matches
      outFormat.
      @param outFormat Must be one of: ImageFormat::AUTO, ImageFormat::RGB8, ImageFormat::RGBA8, ImageFormat::L8, ImageFormat::A8
+	 @param face Specifies the cubemap face to access (using face as an index into Texture's static cubeFaceTarget array. If -1, ignore.
      */
-    void getImage(GImage& dst, const ImageFormat* outFormat = ImageFormat::AUTO()) const;
+    void getImage(GImage& dst, const ImageFormat* outFormat = ImageFormat::AUTO(), int face = -1) const;
 
     /** Extracts the data as ImageFormat::RGBA32F. */
     Image4::Ref toImage4() const;
@@ -1163,6 +1172,10 @@ public:
        If \a src is smaller than the current dimensions of \a this, only
        part of \a this is updated.
 
+	   @param face If specified, determines the cubemap face to copy into (treats face
+			as an index into Texture's static cubeFaceTarget array).
+			If set to a negative number, it is ignored.
+
        This routine does not provide the same protections as creating a
        new Texture from memory: you must handle scaling and ensure
        compatible formats yourself.
@@ -1170,8 +1183,9 @@ public:
        \param src Must be Image1::Ref, Image1unorm8::Ref, Image3::Ref
        Image3::uint8Ref, Image4::Ref, or Image4unorm8::Ref
     */
-    template<class ImageRef>
-    void update(const ImageRef& src, int mipLevel = 0) {
+	template<class ImageRef>
+    void update(const ImageRef& src, int mipLevel = 0, int face = -1) {
+		alwaysAssertM(face < 6, "Invalid cubemap face");
         alwaysAssertM(format()->openGLBaseFormat == src->format()->openGLBaseFormat,
             "Data must have the same number of channels as the texture: this = " + format()->name() + 
             "  src = " + src->format()->name());
@@ -1183,8 +1197,13 @@ public:
             const GLint xoffset = 0;
             const GLint yoffset = 0;
             
+			GLenum target = openGLTextureTarget();
+			if(face >= 0){
+				target = cubeFaceTarget[face];
+			}
+
             glTexSubImage2D
-                (openGLTextureTarget(), 
+                (target, 
                  mipLevel,
                  xoffset,
                  yoffset,
@@ -1196,6 +1215,8 @@ public:
         }
         glPopAttrib();
     }
+
+
 
 private:
 
