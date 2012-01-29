@@ -58,6 +58,7 @@ protected:
     mutable GuiButton*       m_inspectorButton;
 
     Shader::Ref              m_shader;
+	Shader::Ref              m_cubemapShader;
 
     float                    m_zoom;
     Vector2                  m_offset;
@@ -77,6 +78,8 @@ protected:
     bool                     m_showFormat;
 
     static WeakReferenceCountedPointer<Shader> g_cachedShader;
+
+	static WeakReferenceCountedPointer<Shader> g_cachedCubemapShader;
 
     /** Returns the bounds of the canvas (display) region for this GuiTextBox */
     Rect2D canvasRect() const;
@@ -171,6 +174,11 @@ public:
 
     /** Invoked by the drawer button. Do not call directly. */
     void toggleDrawer();
+
+	/* Pass arguments to the specified shader */
+	void setUpShader(Shader::Ref shader);
+
+
 };
 
 } // namespace
