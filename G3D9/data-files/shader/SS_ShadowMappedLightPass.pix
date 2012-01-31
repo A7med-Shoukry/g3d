@@ -47,7 +47,7 @@ void main(void) {
     if (-dot(lightDirection0, wsL) >= lightAttenuation0.w) {
 
         // Compute projected shadow coord.
-        vec4 projShadowCoord = shadowCoord / shadowCoord.w;
+        vec3 projShadowCoord = shadowCoord.xyz / shadowCoord.w;
 
         // "side" and "diagonal" offset variables used to produce vectors to the 
         // 8-neighbors, which leads to a smoother shadow result (0.71 is sqrt(2)/2).
@@ -55,17 +55,17 @@ void main(void) {
         vec4 d = s * 0.71;
 
         shadow = 
-            (shadow2D(shadowMap, projShadowCoord.xyz).r +
+            (shadow2D(shadowMap, projShadowCoord).r +
              
-             shadow2D(shadowMap, projShadowCoord.xyz + s.xww).r +
-             shadow2D(shadowMap, projShadowCoord.xyz - s.xww).r +
-             shadow2D(shadowMap, projShadowCoord.xyz + s.wyw).r +
-             shadow2D(shadowMap, projShadowCoord.xyz - s.wyw).r +
+             shadow2D(shadowMap, projShadowCoord + s.xww).r +
+             shadow2D(shadowMap, projShadowCoord - s.xww).r +
+             shadow2D(shadowMap, projShadowCoord + s.wyw).r +
+             shadow2D(shadowMap, projShadowCoord - s.wyw).r +
          
-             shadow2D(shadowMap, projShadowCoord.xyz + d.xyw).r +
-             shadow2D(shadowMap, projShadowCoord.xyz - d.zyw).r +
-             shadow2D(shadowMap, projShadowCoord.xyz + d.zyw).r +
-             shadow2D(shadowMap, projShadowCoord.xyz - d.xyw).r) / 9.0;
+             shadow2D(shadowMap, projShadowCoord + d.xyw).r +
+             shadow2D(shadowMap, projShadowCoord - d.zyw).r +
+             shadow2D(shadowMap, projShadowCoord + d.zyw).r +
+             shadow2D(shadowMap, projShadowCoord - d.xyw).r) / 9.0;
 
         // Clamp to zero beyond border.  The texture clamping mode is supposed
         // to do this but is not working.  We clamp 1 pixel beyond in order to

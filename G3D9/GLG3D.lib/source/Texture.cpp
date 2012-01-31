@@ -1066,14 +1066,6 @@ Texture::Ref Texture::fromTwoFiles(
     return t;
 }
 
-static const GLenum cubeFaceTarget[] =
-    {GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB,
-     GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB,
-     GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB,
-     GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB,
-     GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB,
-     GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB};
-
 
 static bool isMipMapformat(Texture::InterpolateMode i) {
     switch (i) {
@@ -1277,7 +1269,7 @@ Texture::Ref Texture::fromMemory(
                 // Test for both DIM_CUBE_MAP and DIM_CUBE_MAP_NPOT
                 if (numFaces == 6) {
                     // Choose the appropriate face target
-                    target = cubeFaceTarget[f];
+                    target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + f;
                 }
 
                 if (isMipMapformat(settings.interpolateMode) && ! hasAutoMipMap() && (numMipMaps == 1)) {
@@ -1591,7 +1583,7 @@ const Texture::Settings& Texture::settings() const {
 }
 
 
-void Texture::getImage(GImage& dst, const ImageFormat* outFormat, int face) const {
+void Texture::getImage(GImage& dst, const ImageFormat* outFormat, CubeFace face) const {
     alwaysAssertM(outFormat == ImageFormat::AUTO() ||
                   outFormat == ImageFormat::RGB8() ||
                   outFormat == ImageFormat::RGBA8() ||
@@ -1647,32 +1639,31 @@ void Texture::getImage(GImage& dst, const ImageFormat* outFormat, int face) cons
 }
 
 
-void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, int face) const {
+void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace face) const {
 	
-	GLenum target = openGLTextureTarget();
+    GLenum target;
+    if (isCubeMap()) { 
+        target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + (int)face;
+    } else {
+        // Not a cubemap
+        target = openGLTextureTarget();
+    }
 
-	GLenum faceTarget;
-	if(face == -1){ // Not a cubemap
-		faceTarget = target;
-	} else {
-		debugAssert(m_dimension == DIM_CUBE_MAP || m_dimension == DIM_CUBE_MAP_NPOT);
-		faceTarget = cubeFaceTarget[face];
-	}
+    glPushAttrib(GL_TEXTURE_BIT); {
+        glBindTexture(target, openGLID());
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        
+    glGetTexImage
+        (target,
+         0,
+         desiredFormat->openGLBaseFormat,
+         desiredFormat->openGLDataFormat,
+         data);
 
-    glPushAttrib(GL_TEXTURE_BIT);
-    glBindTexture(target, openGLID());
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
-    glGetTexImage(
-       faceTarget,
-       0,
-       desiredFormat->openGLBaseFormat,
-       desiredFormat->openGLDataFormat,
-       data);
-
-    glPopAttrib();
+    } glPopAttrib();
 
 }
+
 
 Image4Ref Texture::toImage4() const {
 	Image4Ref im = Image4::createEmpty(m_width, m_height, m_settings.wrapMode); 
@@ -1874,7 +1865,10 @@ void Texture::copyFromScreen(
     glEnable(GL_TEXTURE_CUBE_MAP_ARB);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, m_textureID);
 
-    GLenum target = cubeFaceTarget[(int)face];
+    GLenum target = openGLTextureTarget();
+    if (isCubeMap()) {
+        target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + (int)face;
+    }
 
     debugAssertGLOk();
 
@@ -2343,12 +2337,12 @@ static void createTexture(
     }
 
     switch (target) {
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
         maxSize = GLCaps::maxCubeMapSize();
 
         // Fall through
@@ -2474,12 +2468,12 @@ static void createMipMapTexture(
 
     switch (target) {
     case GL_TEXTURE_2D:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
         {
             bool freeBytes = false;
             const uint8* bytes = _bytes;

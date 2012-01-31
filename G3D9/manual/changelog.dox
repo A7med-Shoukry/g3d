@@ -21,11 +21,11 @@
    <p>
    Changes in 9.00:
    <ul>
-	
-	 <li> G3D::GuiTextureBoxInspector displays the x,y,z vector used to access the texel the mouse hovers over, instead of u,v coordinates. The texel value display is broken for cubemaps, however. [Mike] </li>
-	 <li> G3D::GuiTextureBox supports rendering cubemaps as a panoramic texture (of double a single face's width), using u,v coordinates as scaled spherical coordinates. [Mike] </li>
-	 <li> G3D::Texture now checks for if it is a cubemap on construction and sets visualization.isCubemap appropriately. [Mike]</li>
-	 <li> G3D::Texture::Visualization: Added isCubemap boolean. Modified the constructors, ==, needsShader() and toAny to reflect this change. [Mike]</li>
+      <li> G3D::Texture::isCubeMap</li>
+      <li> G3D::GuiTextureBoxInspector displays the x,y,z vector used to access the texel the mouse hovers over, instead of u,v coordinates.	 The texel value display is broken for cubemaps, however. [Mike] </li>
+	<li> G3D::GuiTextureBox supports rendering cubemaps as a panoramic texture (of double a single face's width), using u,v coordinates as scaled spherical coordinates. [Mike] </li>
+	<li> G3D::Texture now checks for if it is a cubemap on construction and sets visualization.isCubemap appropriately. [Mike]</li>
+	<li> G3D::Texture::Visualization: Added isCubemap boolean. Modified the constructors, ==, needsShader() and toAny to reflect this change. [Mike]</li>
      <li> G3D::Rect2D::operator*(const Vector2& s) [Mike] </li>
      <li> G3D::Texture::update(), G3D::Texture::getTexImage(), and G3DTexture::getImage() all have a new parameter that specifies the face of the cubemap to use. [Mike]</li>
      <li> G3D::VideoRecordDialog::setScreenShotFormat</li>

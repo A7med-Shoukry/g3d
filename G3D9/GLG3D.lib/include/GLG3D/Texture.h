@@ -263,8 +263,8 @@ public:
         /** If true, show as 1 - (adjusted value) */
         bool             invertIntensity;
 
-		/** If true, the texture is a cubemap (thus require special rendering code) */
-		bool			 isCubemap;
+        /** If true, the texture is a cubemap (thus require special rendering code) */
+        bool             isCubemap;
 
         /** Defaults to linear data on [0, 1]: packed normal maps,
             reflectance maps, etc. */
@@ -284,7 +284,7 @@ public:
                 (min == v.min) &&
                 (max == v.max) &&
                 (invertIntensity == v.invertIntensity) &&
-				(isCubemap == v.isCubemap);
+                (isCubemap == v.isCubemap);
         }
 
         /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
@@ -625,14 +625,15 @@ private:
     MipsPerCubeFace preprocessImages(const MipsPerCubeFace& mipsPerCubeFace);
     void            uploadImages(const MipsPerCubeFace& mipsPerCubeFace);
 
-    Texture(const std::string&          name,
-            const MipsPerCubeFace&      mipsPerCubeFace,
-            Dimension                   dimension,
-            InterpolateMode             interpolation,
-            WrapMode                    wrapping,
-            const ImageFormat*          format,
-            const Settings&             settings); 
-
+    Texture
+    (const std::string&          name,
+     const MipsPerCubeFace&      mipsPerCubeFace,
+     Dimension                   dimension,
+     InterpolateMode             interpolation,
+     WrapMode                    wrapping,
+     const ImageFormat*          format,
+     const Settings&             settings); 
+    
 private:
 
     /** OpenGL texture ID */
@@ -665,6 +666,12 @@ private:
      const Settings&             settings);
 
 public:
+
+    inline bool isCubeMap() const {
+        return
+            (m_dimension == DIM_CUBE_MAP) || 
+            (m_dimension == DIM_CUBE_MAP_NPOT);
+    }
 
     /** Used to display this Texture in a GuiTextureBox \beta */
     Visualization                   visualization;
@@ -712,10 +719,6 @@ public:
 
     /** Call glGetTexImage with appropriate target. 
 
-		@param face specifies the face of the cubemap (it is an index into the static
-		cubeFaceTarget array). If left at it's default (-1), the function treats the texture
-		as a non-cubemap.
-    
         This will normally perform a synchronous read, which causes
         the CPU to stall while the GPU catches up, and then stalls the
         GPU while data is being read.  For higher performance, use an
@@ -748,8 +751,10 @@ public:
             glUnmapBuffer(GL_PIXEL_PACK_BUFFER_ARB);
             glBindBuffer(GL_PIXEL_PACK_BUFFER_ARB, 0);
          </pre>
+
+        \param face specifies the face of the cubemap
     */
-    void getTexImage(void* data, const ImageFormat* desiredFormat, int face = -1) const;
+    void getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace face = CubeFace::POS_X) const;
 
     /** Reads back a single texel.  This is faster than reading an entire image, but 
         still stalls the pipeline because it is synchronous.
@@ -787,60 +792,62 @@ public:
     */
     void clear(CubeFace face = CubeFace::POS_X, int mipLevel = 0, class RenderDevice* rd = NULL);
 
-    /** Resize the underlying OpenGL texture memory buffer, without reallocating the OpenGL texture ID.  This does not scale the contents; 
-        the contents are undefined after resizing.  This is only useful for textures that are render targets. */
+    /** Resize the underlying OpenGL texture memory buffer, without
+        reallocating the OpenGL texture ID.  This does not scale the
+        contents; the contents are undefined after resizing.  This is
+        only useful for textures that are render targets. */
     void resize(int w, int h);
 
     /**
      Wrap and interpolate will override the existing parameters on the
      GL texture.
 
-     @param name Arbitrary name for this texture to identify it
-     @param textureID Set to newGLTextureID() to create an empty texture.
+     \param name Arbitrary name for this texture to identify it
+     \param textureID Set to newGLTextureID() to create an empty texture.
      */
-    static Texture::Ref fromGLTexture(
-        const std::string&              name,
-        GLuint                          textureID,
-        const ImageFormat*              textureFormat,
-        Dimension                       dimension      = defaultDimension(),
-        const Settings&                 settings       = Settings::defaults());
-
+    static Texture::Ref fromGLTexture
+    (const std::string&              name,
+     GLuint                          textureID,
+     const ImageFormat*              textureFormat,
+     Dimension                       dimension      = defaultDimension(),
+     const Settings&                 settings       = Settings::defaults());
+    
     /**
      Creates a texture from a single image.  The image must have a format understood
      by G3D::GImage or a DirectDraw Surface (DDS).  If dimension is DIM_CUBE_MAP, this loads the 6 files with names
      _ft, _bk, ... following the G3D::Sky documentation.
      */    
-    static Texture::Ref fromFile(
-        const std::string&              filename,
-        const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
-        Dimension                       dimension      = defaultDimension(),
-        const Settings&                 settings       = Settings::defaults(),
-        const Preprocess&               process        = Preprocess());
+    static Texture::Ref fromFile
+    (const std::string&              filename,
+     const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
+     Dimension                       dimension      = defaultDimension(),
+     const Settings&                 settings       = Settings::defaults(),
+     const Preprocess&               process        = Preprocess());
 
     /**
      Creates a cube map from six independently named files.  The first
      becomes the name of the texture.
      */
-    static Texture::Ref fromFile(
-        const std::string               filename[6],
-        const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
-        Dimension                       dimension      = defaultDimension(),
-        const Settings&                 settings       = Settings::defaults(),
-        const Preprocess&               process        = Preprocess());
-
+    static Texture::Ref fromFile
+    (const std::string               filename[6],
+     const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
+     Dimension                       dimension      = defaultDimension(),
+     const Settings&                 settings       = Settings::defaults(),
+     const Preprocess&               process        = Preprocess());
+    
     /**
      Creates a texture from the colors of filename and takes the alpha values
      from the red channel of alpha filename. See G3D::RenderDevice::setBlendFunc
 	 for important information about turning on alpha blending. 
      */
-    static Texture::Ref fromTwoFiles(
-        const std::string&              filename,
-        const std::string&              alphaFilename,
-        const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
-        Dimension                       dimension      = defaultDimension(),
-        const Settings&                 settings       = Settings::defaults(),
-        const Preprocess&               process        = Preprocess());
-
+    static Texture::Ref fromTwoFiles
+    (const std::string&              filename,
+     const std::string&              alphaFilename,
+     const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
+     Dimension                       dimension      = defaultDimension(),
+     const Settings&                 settings       = Settings::defaults(),
+     const Preprocess&               process        = Preprocess());
+    
     /**
     Construct from an explicit set of (optional) mipmaps and (optional) cubemap faces.
 
@@ -1021,10 +1028,12 @@ public:
     /**
      Returns the level 0 mip-map data in the format that most closely matches
      outFormat.
-     @param outFormat Must be one of: ImageFormat::AUTO, ImageFormat::RGB8, ImageFormat::RGBA8, ImageFormat::L8, ImageFormat::A8
-	 @param face Specifies the cubemap face to access (using face as an index into Texture's static cubeFaceTarget array. If -1, ignore.
+
+     \param outFormat Must be one of: ImageFormat::AUTO, ImageFormat::RGB8, ImageFormat::RGBA8, ImageFormat::L8, ImageFormat::A8
+
+     \param face Specifies the cubemap face to access.
      */
-    void getImage(GImage& dst, const ImageFormat* outFormat = ImageFormat::AUTO(), int face = -1) const;
+    void getImage(GImage& dst, const ImageFormat* outFormat = ImageFormat::AUTO(), CubeFace face = CubeFace::POS_X) const;
 
     /** Extracts the data as ImageFormat::RGBA32F. */
     Image4::Ref toImage4() const;
@@ -1176,16 +1185,13 @@ public:
        new Texture from memory: you must handle scaling and ensure
        compatible formats yourself.
 
-       \param face If specified, determines the cubemap face to copy into (treats face
-       as an index into Texture's static cubeFaceTarget array).
-       If set to a negative number, it is ignored.
+       \param face If specified, determines the cubemap face to copy into
 
        \param src Must be Image1::Ref, Image1unorm8::Ref, Image3::Ref
        Image3::uint8Ref, Image4::Ref, or Image4unorm8::Ref
     */
     template<class ImageRef>
-    void update(const ImageRef& src, int mipLevel = 0, int face = -1) {
-        alwaysAssertM(face < 6, "Invalid cubemap face");
+    void update(const ImageRef& src, int mipLevel = 0, CubeFace face = CubeFace::POS_X) {
         alwaysAssertM(format()->openGLBaseFormat == src->format()->openGLBaseFormat,
                       "Data must have the same number of channels as the texture: this = " + format()->name() + 
                       "  src = " + src->format()->name());
@@ -1198,8 +1204,8 @@ public:
             const GLint yoffset = 0;
             
             GLenum target = openGLTextureTarget();
-            if(face >= 0){
-                target = cubeFaceTarget[face];
+            if (isCubeMap()) {
+                target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + (int)face;
             }
             
             glTexSubImage2D
