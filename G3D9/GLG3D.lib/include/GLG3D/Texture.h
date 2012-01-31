@@ -1172,23 +1172,23 @@ public:
        If \a src is smaller than the current dimensions of \a this, only
        part of \a this is updated.
 
-	   @param face If specified, determines the cubemap face to copy into (treats face
-			as an index into Texture's static cubeFaceTarget array).
-			If set to a negative number, it is ignored.
-
        This routine does not provide the same protections as creating a
        new Texture from memory: you must handle scaling and ensure
        compatible formats yourself.
 
+       \param face If specified, determines the cubemap face to copy into (treats face
+       as an index into Texture's static cubeFaceTarget array).
+       If set to a negative number, it is ignored.
+
        \param src Must be Image1::Ref, Image1unorm8::Ref, Image3::Ref
        Image3::uint8Ref, Image4::Ref, or Image4unorm8::Ref
     */
-	template<class ImageRef>
+    template<class ImageRef>
     void update(const ImageRef& src, int mipLevel = 0, int face = -1) {
-		alwaysAssertM(face < 6, "Invalid cubemap face");
+        alwaysAssertM(face < 6, "Invalid cubemap face");
         alwaysAssertM(format()->openGLBaseFormat == src->format()->openGLBaseFormat,
-            "Data must have the same number of channels as the texture: this = " + format()->name() + 
-            "  src = " + src->format()->name());
+                      "Data must have the same number of channels as the texture: this = " + format()->name() + 
+                      "  src = " + src->format()->name());
         glPushAttrib(GL_TEXTURE_BIT);
         {
             glBindTexture(openGLTextureTarget(), openGLID());
@@ -1197,11 +1197,11 @@ public:
             const GLint xoffset = 0;
             const GLint yoffset = 0;
             
-			GLenum target = openGLTextureTarget();
-			if(face >= 0){
-				target = cubeFaceTarget[face];
-			}
-
+            GLenum target = openGLTextureTarget();
+            if(face >= 0){
+                target = cubeFaceTarget[face];
+            }
+            
             glTexSubImage2D
                 (target, 
                  mipLevel,
@@ -1215,7 +1215,6 @@ public:
         }
         glPopAttrib();
     }
-
 
 
 private:
