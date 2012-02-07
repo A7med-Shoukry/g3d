@@ -52,20 +52,20 @@ void perfMatrix3();
 void testSpeedLoad();
 
 void testMatrix4() {
-   float L = -1.0f;
-    float R =  4.0f;
-    float B = -2.0f;
-    float T =  3.0f;
-    float N =  1.5f;
-    float F = 100.2f;
+   double L = -1.0f;
+    double R =  4.0f;
+    double B = -2.0f;
+    double T =  3.0f;
+    double N =  1.5f;
+    double F = 100.2f;
     Matrix4 P = Matrix4::perspectiveProjection(L, R, B, T, N, F);
 
-    float L2 = -1.0f;
-    float R2 =  4.0f;
-    float B2 = -2.0f;
-    float T2 =  3.0f;
-    float N2 =  1.5f;
-    float F2 = 100.2f;
+    double L2 = -1.0f;
+    double R2 =  4.0f;
+    double B2 = -2.0f;
+    double T2 =  3.0f;
+    double N2 =  1.5f;
+    double F2 = 100.2f;
     P.getPerspectiveProjectionParameters(L2, R2, B2, T2, N2, F2);
     
     debugAssert(fuzzyEq(L, L2));
