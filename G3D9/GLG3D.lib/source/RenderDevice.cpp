@@ -3069,17 +3069,8 @@ void RenderDevice::setLight(int i, const GLight* _light, bool force) {
                 glLightfv(gi, GL_SPOT_DIRECTION,        reinterpret_cast<const float*>(&light.spotDirection));
                 glLightf (gi, GL_SPOT_CUTOFF,           toDegrees(light.spotHalfAngle));
                 glLightfv(gi, GL_AMBIENT,               reinterpret_cast<const float*>(&zero));
-                /*
-                if (light.diffuse) {
-                    glLightfv(gi, GL_DIFFUSE,           reinterpret_cast<const float*>(&brightness));
-                } else {
-                    glLightfv(gi, GL_DIFFUSE,           reinterpret_cast<const float*>(&zero));
-                }
-                if (light.specular) {
-                    glLightfv(gi, GL_SPECULAR,          reinterpret_cast<const float*>(&brightness));
-                } else {
-                    glLightfv(gi, GL_SPECULAR,          reinterpret_cast<const float*>(&zero));
-                    }*/
+                glLightfv(gi, GL_DIFFUSE,           reinterpret_cast<const float*>(&brightness));
+                glLightfv(gi, GL_SPECULAR,          reinterpret_cast<const float*>(&brightness));
                 glLightf (gi, GL_CONSTANT_ATTENUATION,  light.attenuation[0]);
                 glLightf (gi, GL_LINEAR_ATTENUATION,    light.attenuation[1]);
                 glLightf (gi, GL_QUADRATIC_ATTENUATION, light.attenuation[2]);

@@ -44,7 +44,7 @@ void main(void) {
     tan_Z = g3d_ObjectToWorldNormalMatrix * gl_Normal.xyz;
 
 #   ifdef NORMALBUMPMAP      
-        tan_X = g3d_ObjectToWorldMatrix * vec4(gl_MultiTexCoord1.xyz, 0);
+        tan_X = (g3d_ObjectToWorldMatrix * vec4(gl_MultiTexCoord1.xyz, 0)).xyz;
 
         // T and N are guaranteed perpendicular, so B is normalized.  Its facing 
         // direction is stored in the texcoord w component.
