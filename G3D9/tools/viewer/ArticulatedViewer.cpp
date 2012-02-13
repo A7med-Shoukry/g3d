@@ -117,7 +117,9 @@ void ArticulatedViewer::onInit(const std::string& filename) {
         // Transform parts in-place
         ArticulatedModel::ScaleTransformCallback scaleTransform(scale);
         m_model->forEachPart(scaleTransform);
-        m_model->cleanGeometry();
+        ArticulatedModel::CleanGeometrySettings csg;
+        csg.allowVertexMerging = false; // Merging vertices is slow and won't change anything the second time around.
+        m_model->cleanGeometry(csg);
     }
 
 //    saveGeometry();

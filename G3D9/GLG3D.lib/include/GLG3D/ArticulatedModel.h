@@ -65,6 +65,12 @@ public:
            */
         bool                        forceVertexMerging;
 
+
+        /** Set to false to prevent the (slow) operation of merging colocated vertices that
+            have identical properties.  Merging vertices speeds up rendering but slows down
+            loading.  Setting to false overrides forceVertexMerging. */
+        bool                        allowVertexMerging;
+
         /**
           Maximum angle in radians that a normal can be bent through to merge two vertices. 
           Default: 8 degrees().
@@ -83,7 +89,8 @@ public:
         float                       maxSmoothAngle;
 
         CleanGeometrySettings() : 
-            forceVertexMerging(true), 
+            forceVertexMerging(true),
+            allowVertexMerging(true),
             maxNormalWeldAngle(8 * units::degrees()),
             maxSmoothAngle(65 * units::degrees()) {
         }

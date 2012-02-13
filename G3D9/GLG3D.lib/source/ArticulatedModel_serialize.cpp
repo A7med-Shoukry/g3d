@@ -16,6 +16,7 @@ ArticulatedModel::CleanGeometrySettings::CleanGeometrySettings(const Any& a) {
     *this = CleanGeometrySettings();
     AnyTableReader r(a);
     r.getIfPresent("forceVertexMerging", forceVertexMerging);
+    r.getIfPresent("allowVertexMerging", allowVertexMerging);
     r.getIfPresent("maxNormalWeldAngle", maxNormalWeldAngle);
     r.getIfPresent("maxSmoothAngle",     maxSmoothAngle);
     r.verifyDone();
@@ -25,6 +26,7 @@ ArticulatedModel::CleanGeometrySettings::CleanGeometrySettings(const Any& a) {
 Any ArticulatedModel::CleanGeometrySettings::toAny() const {
     Any a(Any::TABLE, "ArticulatedModel::CleanGeometrySettings");
     a["forceVertexMerging"] = forceVertexMerging;
+    a["allowVertexMerging"] = allowVertexMerging;
     a["maxNormalWeldAngle"] = maxNormalWeldAngle;
     a["maxSmoothAngle"]     = maxSmoothAngle;
     return a;

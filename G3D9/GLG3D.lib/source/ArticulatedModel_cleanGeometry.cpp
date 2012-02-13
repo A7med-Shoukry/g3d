@@ -37,7 +37,7 @@ void ArticulatedModel::Part::cleanGeometry(const CleanGeometrySettings& settings
     }
     timer.after("  m_triangleCount");
     
-    if (computeSomeNormals || settings.forceVertexMerging) {
+    if (computeSomeNormals || (settings.forceVertexMerging && settings.allowVertexMerging)) {
         // Expand into an un-indexed triangle list.  This allows us to consider
         // each vertex's normal independently if needed.
         Array<Face> faceArray;
@@ -55,8 +55,10 @@ void ArticulatedModel::Part::cleanGeometry(const CleanGeometrySettings& settings
         // Merge vertices that have nearly equal normals, positions, and texcoords.
         // We no longer need adjacency information because tangents can be computed
         // solely from shared vertex information.
-        mergeVertices(faceArray, settings.maxNormalWeldAngle);
-        timer.after("  mergeVertices");
+        if (settings.allowVertexMerging) {
+            mergeVertices(faceArray, settings.maxNormalWeldAngle);
+            timer.after("  mergeVertices");
+        }
     }
     timer.after("  deallocation of adjacentFaceTable");
 
