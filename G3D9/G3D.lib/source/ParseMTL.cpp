@@ -138,7 +138,7 @@ void ParseMTL::processCommand(TextInput& ti, const std::string& cmd) {
         m_currentMaterial->map_d = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
     } else if (cmd == "map_Ks") {
         m_currentMaterial->map_Ks = removeLeadingSlash(trimWhitespace(ti.readUntilNewlineAsString()));
-    } else if (cmd == "map_bump" || cmd == "bump") {
+    } else if ((cmd == "map_bump") || (cmd == "bump")) {
         Token t = ti.peek();
         if (t.type() == Token::SYMBOL && t.string() == "-") {
             // There are options coming

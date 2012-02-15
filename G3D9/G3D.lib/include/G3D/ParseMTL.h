@@ -58,16 +58,22 @@ public:
 
         /** map_bump/bump field filename*/
         std::string     map_bump;
+        float           bumpBias;
+        float           bumpGain;
 
         /** Opacity (alpha) level, on the range 0-1, where 1 = opaque (default) */
         float           d;
         std::string     map_d;
 
-        /** Transparency level, on the range 0-1. Amount of light transmitted.  This is questionable and does not seem to be widely used.*/
+        /** Transparency level, on the range 0-1. Amount of light
+            transmitted.  This is questionable and does not seem to be
+            widely used.*/
         float           Tr;
 
-        /** 1 - Transmission, as processed by 3DS Max (http://casual-effects.blogspot.com/2012/01/translucency-in-obj-mtl-files.html).  Other specs say that it is
-           transmission (http://paulbourke.net/dataformats/mtl/) but I haven't found software that implements it that way. */
+        /** 1 - Transmission, as processed by 3DS Max 
+            (http://casual-effects.blogspot.com/2012/01/translucency-in-obj-mtl-files.html).  Other specification documents
+            say that it is transmission (e.g, http://paulbourke.net/dataformats/mtl/) but I haven't found software 
+            that implements it that way. */
         Color3          Tf;
 
         /** emissive? */
@@ -79,12 +85,10 @@ public:
         /** Index of refraction */
         float           Ni;
 
-        float           bumpBias;
-        float           bumpGain;
 
     private:
 
-        Material() : Ka(1.0f), Kd(1.0f), Ks(1.0f), Ns(10.0), d(1.0f), Tr(0.0f), Tf(1.0f), Ke(0.0f), illum(2), Ni(1.0f) {}
+        Material() : Ka(1.0f), Kd(1.0f), Ks(1.0f), Ns(10.0f), bumpBias(0.0f), bumpGain(1.0f), d(1.0f), Tr(0.0f), Tf(1.0f), Ke(0.0f), illum(2), Ni(1.0f) {}
 
     public:
 
@@ -96,6 +100,7 @@ public:
     Table<std::string, Material::Ref> materialTable;
 
 private:
+
     /** Process one line of an OBJ file */
     void processCommand(TextInput& ti, const std::string& cmd);
 

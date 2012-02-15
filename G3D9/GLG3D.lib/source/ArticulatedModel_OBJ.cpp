@@ -148,7 +148,10 @@ static Material::Specification toMaterialSpecification
     }
 
     // TODO: apply modelSpec options to bump map
-    s.setBump(ArticulatedModel::resolveRelativeFilename(m->map_bump, m->basePath));
+    BumpMap::Settings bumpSettings;
+    bumpSettings.bias = m->bumpBias;
+    bumpSettings.scale = m->bumpGain * 0.05f;
+    s.setBump(ArticulatedModel::resolveRelativeFilename(m->map_bump, m->basePath), bumpSettings);
 
     s.setEmissive(m->Ke);
 
