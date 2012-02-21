@@ -500,6 +500,8 @@ public:
         must have computed, probably using renderNonShadowed).  Default implementation
         configures the shadow map in texture unit 1 and calls render. 
 
+        Not guaranteed to write to the depth buffer.
+
         \deprecated
         */
     virtual void renderShadowMappedLightPass(

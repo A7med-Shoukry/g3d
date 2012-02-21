@@ -6,7 +6,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
   \created 2003-10-02
-  \edited  2012-01-19
+  \edited  2012-02-19
  */
 
 #ifndef G3D_Matrix4_h
@@ -26,6 +26,7 @@
 namespace G3D {
 
 class Any;
+class Matrix2;
 
 /**
   A 4x4 matrix.  Do not subclass.  Data is initialized to 0 when default constructed.
@@ -151,6 +152,8 @@ public:
     }
 
     class Matrix3 upper3x3() const;
+
+    class Matrix2 upper2x2() const;
 
     /** Homogeneous multiplication. Let k = M * [v w]^T.  result = k.xyz() / k.w */
     class Vector3 homoMul(const class Vector3& v, float w) const;

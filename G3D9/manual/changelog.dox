@@ -22,6 +22,7 @@
    Changes in 9.00:
    <ul>
      <li> G3D::ArticulatedModel::CleanGeometrySettings::allowVertexMerging</li>
+	<li> G3D::Matrix4::upper2x2</li>
       <li> G3D::Texture::isCubeMap</li>
       <li> G3D::GuiTextureBoxInspector displays the x,y,z vector used to access the texel the mouse hovers over, instead of u,v coordinates.	 The texel value display is broken for cubemaps, however. [Mike] </li>
 	<li> G3D::GuiTextureBox supports rendering cubemaps as a panoramic texture (of double a single face's width), using u,v coordinates as scaled spherical coordinates. [Mike] </li>

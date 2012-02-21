@@ -4,12 +4,13 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2003-10-02
-  \edited  2012-01-19
+  \edited  2012-02-19
  */
 
 #include "G3D/platform.h"
 #include "G3D/Matrix4.h"
 #include "G3D/Matrix3.h"
+#include "G3D/Matrix2.h"
 #include "G3D/Vector4.h"
 #include "G3D/Vector3.h"
 #include "G3D/BinaryInput.h"
@@ -132,6 +133,12 @@ Matrix3 Matrix4::upper3x3() const {
     return Matrix3(elt[0][0], elt[0][1], elt[0][2],
                    elt[1][0], elt[1][1], elt[1][2],
                    elt[2][0], elt[2][1], elt[2][2]);
+}
+
+
+Matrix2 Matrix4::upper2x2() const {
+    return Matrix2(elt[0][0], elt[0][1],
+                   elt[1][0], elt[1][1]);
 }
 
 
