@@ -132,6 +132,7 @@ public:
     }
 };
 
+
 /** Slider.  See GuiWindow for an example of creating a slider. 
 
     <ul>

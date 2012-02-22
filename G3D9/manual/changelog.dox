@@ -21,6 +21,7 @@
    <p>
    Changes in 9.00:
    <ul>
+    <li> Added focus controls to G3D::CameraControlWindow </li>
      <li> G3D::ArticulatedModel::CleanGeometrySettings::allowVertexMerging</li>
 	<li> G3D::Matrix4::upper2x2</li>
       <li> G3D::Texture::isCubeMap</li>

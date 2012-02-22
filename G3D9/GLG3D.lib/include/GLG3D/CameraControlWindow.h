@@ -52,6 +52,12 @@ protected:
     /** Parses either prettyprinted or CFrame version */
     void setCameraLocation(const std::string& s);
 
+    void setFocusZ(float z);
+    float focusZ() const;
+
+    void setLensRadius(float r);
+    float lensRadius() const;
+
     /** Name of the file in which current bookmarks are stored. */
     std::string                 m_bookmarkFilename;
 
@@ -74,6 +80,8 @@ protected:
     int                         m_bookmarkSelection;
 
     GuiMenu::Ref                m_menu;
+
+    GCamera*                    m_camera;
 
     /** Allows the user to override the current camera position */
     GuiTextBox*                 m_cameraLocationTextBox;
@@ -122,6 +130,7 @@ protected:
         const FirstPersonManipulatorRef&    manualManipulator, 
         const UprightSplineManipulatorRef&  trackManipulator, 
         const Pointer<Manipulator::Ref>&    cameraManipulator,
+        GCamera*                            camera,
         const Film::Ref&                    film,
         const GuiThemeRef&                  skin);
 
@@ -194,6 +203,7 @@ public:
         const FirstPersonManipulatorRef&   manualManipulator,
         const UprightSplineManipulatorRef& trackManipulator,
         const Pointer<Manipulator::Ref>&   cameraManipulator,
+        GCamera*                           camera,
         const Film::Ref&                   film,
         const GuiThemeRef&                 skin);
 

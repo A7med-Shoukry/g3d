@@ -259,6 +259,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
              defaultController, 
              splineManipulator,
              Pointer<Manipulator::Ref>(this, &GApp::cameraManipulator, &GApp::setCameraManipulator), 
+             &defaultCamera,
              m_film,
              theme,
              console,

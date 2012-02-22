@@ -19,6 +19,7 @@ DeveloperWindow::Ref DeveloperWindow::create(
      const FirstPersonManipulatorRef&   manualManipulator,
      const UprightSplineManipulatorRef& trackManipulator,
      const Pointer<Manipulator::Ref>&   cameraManipulator,
+     GCamera*                           camera,
      const Film::Ref&                   film,
      const GuiThemeRef&                 skin,
      GConsoleRef                        console,
@@ -27,7 +28,7 @@ DeveloperWindow::Ref DeveloperWindow::create(
      bool*                              showText) {
 
     return new DeveloperWindow(app, manualManipulator, trackManipulator, cameraManipulator, 
-                               film, skin, console, debugVisible, showStats, showText);
+                               camera, film, skin, console, debugVisible, showStats, showText);
     
 }
 
@@ -36,6 +37,7 @@ DeveloperWindow::DeveloperWindow(
      const FirstPersonManipulatorRef&   manualManipulator,
      const UprightSplineManipulatorRef& trackManipulator,
      const Pointer<Manipulator::Ref>&   cameraManipulator,
+     GCamera*                           camera,
      const Film::Ref&                   film,
      const GuiThemeRef&                 skin,
      GConsoleRef                        console,
@@ -46,7 +48,7 @@ DeveloperWindow::DeveloperWindow(
 
     alwaysAssertM(this != NULL, "Memory corruption");
     cameraControlWindow = CameraControlWindow::create(manualManipulator, trackManipulator, cameraManipulator,
-                                                      film, skin);
+                                                      camera, film, skin);
 
     videoRecordDialog = VideoRecordDialog::create(skin, app);
 

@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2007-06-10
-  @edited  2009-03-30
+  @edited  2012-02-10
 */
 #ifndef G3D_DeveloperWindow_h
 #define G3D_DeveloperWindow_h
@@ -34,6 +34,7 @@ protected:
      const FirstPersonManipulatorRef&   manualManipulator,
      const UprightSplineManipulatorRef& trackManipulator,
      const Pointer<Manipulator::Ref>&   cameraManipulator,
+     GCamera*                           camera,
      const Film::Ref&                   film,
      const GuiThemeRef&                 theme,
      GConsoleRef                        console,
@@ -54,6 +55,7 @@ public:
      const FirstPersonManipulatorRef&   manualManipulator,
      const UprightSplineManipulatorRef& trackManipulator,
      const Pointer<Manipulator::Ref>&   cameraManipulator,
+     GCamera*                           camera,
      const Film::Ref&                   film,
      const GuiThemeRef&                 theme,
      GConsoleRef                        console,

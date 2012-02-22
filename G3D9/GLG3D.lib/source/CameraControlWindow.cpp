@@ -19,9 +19,9 @@
 
 namespace G3D {
 
-enum {FILM_PANE_SIZE = 102};
+enum {FILM_PANE_SIZE = 102, FOCUS_PANE_SIZE = 54};
 const Vector2 CameraControlWindow::sDefaultWindowSize(286 + 16, 46);
-const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 176 + FILM_PANE_SIZE);
+const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 176 + FILM_PANE_SIZE + FOCUS_PANE_SIZE);
 
 static const std::string noSpline = "< None >";
 static const std::string untitled = "< Unsaved >";
@@ -122,12 +122,58 @@ public:
 
 };
 
+
+void CameraControlWindow::setFocusZ(float z) {
+    m_camera->setFocusPlaneZ(z);
+}
+
+float CameraControlWindow::focusZ() const {
+    return m_camera->focusPlaneZ();
+}
+
+void CameraControlWindow::setLensRadius(float r) {
+    m_camera->setLensRadius(r);
+}
+
+float CameraControlWindow::lensRadius() const {
+    return m_camera->lensRadius();
+}
+
 static bool hasRoll = false;
+
+
+/** Negates a numeric type G3D::Pointer value */
+template<class T>
+class NegativeAdapter : public ReferenceCountedObject {
+private:
+
+    friend class Pointer<T>;
+
+    Pointer<T>      m_source;
+
+    typedef ReferenceCountedPointer<NegativeAdapter> Ptr;
+
+    NegativeAdapter(Pointer<T> ptr) : m_source(ptr) {}
+
+    /** For use by Pointer<T> */
+    T get() const {  return -m_source.getValue();     }
+
+    /** For use by Pointer<T> */
+    void set(const T& v) {   m_source.setValue(-v);   }
+
+public:
+
+    static Pointer<T> create(Pointer<T> ptr) {
+        Ptr p = new NegativeAdapter(ptr);
+        return Pointer<T>(p, &NegativeAdapter<T>::get, &NegativeAdapter<T>::set);
+    }
+};
 
 CameraControlWindow::CameraControlWindow(
     const FirstPersonManipulatorRef&      manualManipulator, 
     const UprightSplineManipulatorRef&    trackManipulator, 
     const Pointer<Manipulator::Ref>&      cameraManipulator,
+    GCamera*                              camera,
     const Film::Ref&                      film,
     const GuiThemeRef&                    skin) : 
     GuiWindow("Camera Control", 
@@ -136,6 +182,7 @@ CameraControlWindow::CameraControlWindow(
               GuiTheme::TOOL_WINDOW_STYLE,
               GuiWindow::HIDE_ON_CLOSE),
     m_trackFileIndex(0),
+    m_camera(camera),
     m_bookmarkSelection(NO_BOOKMARK),
     m_cameraManipulator(cameraManipulator),
     m_manualManipulator(manualManipulator),
@@ -195,11 +242,27 @@ CameraControlWindow::CameraControlWindow(
 #   endif
 
     /////////////////////////////////////////////////////////////////////////////////////////
+    const float sliderWidth = 290,  indent = 2.0f;
+
+    GuiPane* focusPane = pane->addPane();
+    focusPane->moveBy(-9, 2);
+    
+    GuiControl* n = focusPane->addNumberBox("Focus", 
+        NegativeAdapter<float>::create(Pointer<float>(this, &CameraControlWindow::focusZ, &CameraControlWindow::setFocusZ)),
+        "m", GuiTheme::LOG_SLIDER, 0.0f, 200.0f);
+    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
+
+    n = focusPane->addNumberBox("Lens Radius", 
+        Pointer<float>(this, &CameraControlWindow::lensRadius, &CameraControlWindow::setLensRadius),
+        "m", GuiTheme::LOG_SLIDER, 0.0f, 0.5f);
+    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
+
+    /////////////////////////////////////////////////////////////////////////////////////////
 
     GuiPane* filmPane = pane->addPane();
     filmPane->moveBy(-9, 2);
     if (film.notNull()) {
-        film->makeGui(filmPane, 10.0f, 290, 2);
+        film->makeGui(filmPane, 10.0f, sliderWidth, indent);
     }
     /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -330,10 +393,11 @@ CameraControlWindow::Ref CameraControlWindow::create(
     const FirstPersonManipulatorRef&   manualManipulator,
     const UprightSplineManipulatorRef& trackManipulator,
     const Pointer<Manipulator::Ref>&   cameraManipulator,
+    GCamera*                           camera,
     const Film::Ref&                   film,
     const GuiThemeRef&                 skin) {
 
-    return new CameraControlWindow(manualManipulator, trackManipulator, cameraManipulator, film, skin);
+    return new CameraControlWindow(manualManipulator, trackManipulator, cameraManipulator, camera, film, skin);
 }
 
 
