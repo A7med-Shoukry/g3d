@@ -249,7 +249,7 @@ CameraControlWindow::CameraControlWindow(
     
     GuiControl* n = focusPane->addNumberBox("Focus", 
         NegativeAdapter<float>::create(Pointer<float>(this, &CameraControlWindow::focusZ, &CameraControlWindow::setFocusZ)),
-        "m", GuiTheme::LOG_SLIDER, 0.0f, 200.0f);
+        "m", GuiTheme::LOG_SLIDER, 0.01f, 200.0f);
     n->setWidth(sliderWidth);  n->moveBy(indent, 0);
 
     n = focusPane->addNumberBox("Lens Radius", 
