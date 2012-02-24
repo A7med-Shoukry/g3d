@@ -184,6 +184,7 @@
 	 <li> Fix: Texture min now computed correctly (was always NaN for RGB8 and multiplied by 255 for RGBA8 before)</li>
      <li> Fix: Win32Window now distinguishes KEY_DOWN and KEY_REPEAT events</li>
 	 <li> Fix: GEventType::MOUSE_MOTION events are now only delivered once to each GuiControl, and are in the correct coordinate system</li>
+	 <li> Fix: FileSystem::exists now is insensitive to the direction of slashes inside zipfiles</li>
     </ul>
 
      <b>Backwards Incompatible Changes</b>:

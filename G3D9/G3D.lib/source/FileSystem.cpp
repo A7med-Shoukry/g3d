@@ -78,8 +78,8 @@ bool FileSystem::Dir::contains(const std::string& f, bool caseSensitive) const {
 }
 
     
-void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::string& pathInsideZipfile) {
-
+void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::string& _pathInsideZipfile) {
+    const std::string& pathInsideZipfile = FilePath::canonicalize(_pathInsideZipfile);
     struct zip* z = zip_open( FilePath::removeTrailingSlash(zipfile).c_str(), ZIP_CHECKCONS, NULL );
     debugAssert(z);
 
@@ -91,7 +91,7 @@ void FileSystem::Dir::computeZipListing(const std::string& zipfile, const std::s
         zip_stat_index( z, i, ZIP_FL_NOCASE, &info );
         
         // Fully-qualified name of a file inside zipfile
-        std::string name = info.name;
+        std::string name = FilePath::canonicalize(info.name);
 
         if (beginsWith(name, pathInsideZipfile)) {
             // We found something inside the directory we were looking for,
@@ -237,7 +237,6 @@ FileSystem::Dir& FileSystem::getContents(const std::string& path, bool forceUpda
                 // There is a zipfile somewhere in the path.  Does
                 // the rest of the path exist inside the zipfile?
                 dir.inZipfile = true;
-
                 dir.computeZipListing(zip, path.substr(zip.length() + 1));
             }
         }        
