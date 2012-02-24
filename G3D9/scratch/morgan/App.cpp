@@ -623,7 +623,14 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
-
+    int N = 9;
+    Array<float> coeff;
+    float stddev = (2*N +1) * 0.25f;
+    gaussian1D(coeff, (2*N +1), stddev);
+    for (int i = 0; i < coeff.size(); ++i) 
+        debugPrintf("weight[%d] = %f; ", i, coeff[i]);
+    debugPrintf("\n");
+    ::exit(0);
     /*
 
     Array<std::string> files;

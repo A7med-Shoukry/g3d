@@ -40,7 +40,7 @@ public:
 
     /** Creates an Any representing this scene by updating the one
      from which it was loaded with the current Entity positions.  This
-     will overwrite any <code>#include</code> entries that appeared in
+     will overwrite any \htmlonly <code>#include</code>\endhtmlonly entries that appeared in
      the original source Any.
 
      You can obtain the original filename as a.source().filename().

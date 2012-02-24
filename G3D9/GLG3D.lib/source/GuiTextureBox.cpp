@@ -936,6 +936,10 @@ void GuiTextureBox::findControlUnderMouse(Vector2 mouse, GuiControl*& control) {
 
     
 void GuiTextureBox::setTexture(const Texture::Ref& t) {
+    if (m_texture == t) {
+        // Setting back to the same texture
+        return;
+    }
     m_texture = t;
     ReferenceCountedPointer<GuiTextureBoxInspector> ins = m_inspector.createStrongPtr();
     if (ins.notNull()) {
