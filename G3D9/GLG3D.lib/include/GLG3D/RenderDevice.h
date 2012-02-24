@@ -32,6 +32,7 @@
 #include "GLG3D/Framebuffer.h"
 #include "GLG3D/Lighting.h"
 #include "G3D/Stopwatch.h"
+#include "G3D/Matrix2.h"
 
 namespace G3D {
 
@@ -1992,6 +1993,7 @@ public:
         \beta */
     void setInvertY(bool i) {
         m_state.matrices.invertY = i;
+		forceSetCullFace(m_state.cullFace);
     }
 
     #ifdef G3D_WIN32
