@@ -940,6 +940,9 @@ void GuiTextureBox::setTexture(const Texture::Ref& t) {
         // Setting back to the same texture
         return;
     }
+
+    const bool firstTime = m_texture.isNull();
+
     m_texture = t;
     ReferenceCountedPointer<GuiTextureBoxInspector> ins = m_inspector.createStrongPtr();
     if (ins.notNull()) {
@@ -949,9 +952,59 @@ void GuiTextureBox::setTexture(const Texture::Ref& t) {
     }
     if (t.notNull()) {
         setSettings(t->visualization);
+
+        if (firstTime) {
+            zoomToFit();
+        }
     }
 }
 
+
+static const std::string CUBEMAP_SHADER =
+STR(
+    uniform samplerCube texture;
+    uniform float     adjustGamma;
+    uniform mat4      colorShift;
+    uniform float     bias;
+    uniform float     scale;
+    uniform bool      invertIntensity;\n
+    #define PI (3.1415926536)\n
+    #define TWOPI (6.28318531)\n
+    
+    void main(void) {
+        vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
+        float theta = sphericalCoord.y * PI;
+        float phi   = sphericalCoord.x * TWOPI;
+        float sinTheta = sin(theta);
+        vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
+        vec4 c = textureCube(texture, cartesianCoord);
+        c = (c + bias) * scale;
+        c = invertIntensity ? vec4(1.0 - c) : c;
+        c = colorShift * c;
+        c = max(c, vec4(0.0));
+        gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
+        gl_FragColor.a = 1.0;
+    });
+
+
+static const std::string TEXTURE2D_SHADER =
+STR(
+    uniform sampler2D texture;
+    uniform float     adjustGamma;
+    uniform mat4      colorShift;
+    uniform float     bias;
+    uniform float     scale;
+    uniform bool      invertIntensity;
+
+    void main(void) {
+        vec4 c = texture2D(texture, gl_TexCoord[g3d_Index(texture)].xy);
+        c = (c + bias) * scale;
+        c = invertIntensity ? vec4(1.0 - c) : c;
+        c = colorShift * c;
+        c = max(c, vec4(0.0));
+        gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
+        gl_FragColor.a = 1.0;
+    });
 
 void GuiTextureBox::setSettings(const Texture::Visualization& s) {
     // Check the settings for this computer
@@ -960,70 +1013,29 @@ void GuiTextureBox::setSettings(const Texture::Visualization& s) {
 
         alwaysAssertM(GLCaps::supports_GL_ARB_shading_language_100(), 
                       "GuiTextureBox requires GLSL shader support for these GuiTextureBox::Settings");
-		if(m_settings.isCubemap){
-			if (m_cubemapShader.isNull()) {
-				// Load the shader
-				m_cubemapShader = g_cachedCubemapShader.createStrongPtr();
-				if (m_cubemapShader.isNull()) {
-					// Load the global shader
-					m_cubemapShader = Shader::fromStrings
-						("",
-						 STR(
-							 uniform samplerCube texture;
-							 uniform float     adjustGamma;
-							 uniform mat4      colorShift;
-							 uniform float     bias;
-							 uniform float     scale;
-							 uniform bool      invertIntensity;\n
-							 #define PI (3.1415926536)\n
-							 #define TWOPI (6.28318531)\n
-
-							 void main(void) {
-								 vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
-								 float theta = sphericalCoord.y * PI;
-								 float phi   = sphericalCoord.x * TWOPI;
-								 float sinTheta = sin(theta);
-								 vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
-								 vec4 c = textureCube(texture, cartesianCoord);
-								 c = (c + bias) * scale;
-								 c = invertIntensity ? vec4(1.0 - c) : c;
-								 c = colorShift * c;
-								 c = max(c, vec4(0.0));
-								 gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
-								 gl_FragColor.a = 1.0;
-								 }));
-					g_cachedCubemapShader = m_cubemapShader;
-				}
-			}
-		} else {
-			if (m_shader.isNull()) {
-				// Load the shader
-				m_shader = g_cachedShader.createStrongPtr();
-				if (m_shader.isNull()) {
-					// Load the global shader
-					m_shader = Shader::fromStrings
-						("",
-						 STR(
-							 uniform sampler2D texture;
-							 uniform float     adjustGamma;
-							 uniform mat4      colorShift;
-							 uniform float     bias;
-							 uniform float     scale;
-							 uniform bool      invertIntensity;
-							 void main(void) {
-								 vec4 c = texture2D(texture, gl_TexCoord[g3d_Index(texture)].xy);
-								 c = (c + bias) * scale;
-								 c = invertIntensity ? vec4(1.0 - c) : c;
-								 c = colorShift * c;
-								 c = max(c, vec4(0.0));
-								 gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
-								 gl_FragColor.a = 1.0;
-								 }));
-					g_cachedShader = m_shader;
-				}
-			}
-		}
-        
+        if (m_settings.isCubemap){
+            if (m_cubemapShader.isNull()) {
+                // Load the shader
+                m_cubemapShader = g_cachedCubemapShader.createStrongPtr();
+                if (m_cubemapShader.isNull()) {
+                    // Load the global shader
+                    m_cubemapShader = Shader::fromStrings
+                        ("", CUBEMAP_SHADER);
+                    g_cachedCubemapShader = m_cubemapShader;
+                }
+            }
+        } else {
+            if (m_shader.isNull()) {
+                // Load the shader
+                m_shader = g_cachedShader.createStrongPtr();
+                if (m_shader.isNull()) {
+                    // Load the global shader
+                    m_shader = Shader::fromStrings
+                        ("", TEXTURE2D_SHADER);
+                    g_cachedShader = m_shader;
+                }
+            }
+        }        
     }
 }
 

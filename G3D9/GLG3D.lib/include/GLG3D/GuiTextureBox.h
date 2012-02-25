@@ -140,6 +140,7 @@ public:
     /** Center the image and scale it to fill the viewport */
     void zoomToFit();
 
+    /** If the texture was previously NULL, also invokes zoomToFit() */
     void setTexture(const Texture::Ref& t);
     void setSettings(const Texture::Visualization& s);
 
