@@ -724,7 +724,7 @@ void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
 			relevantShader = m_shader;
 		}
 		// Magic incantation
-		const_cast<GuiTextureBox*>(this)->setUpShader(relevantShader);
+		const_cast<GuiTextureBox*>(this)->setUpShader(relevantShader, m_texture->isCubeMap());
 		rd->setShader(relevantShader);
         debugAssert(relevantShader.notNull());
 
