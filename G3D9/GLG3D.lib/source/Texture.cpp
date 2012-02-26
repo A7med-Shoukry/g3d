@@ -582,10 +582,7 @@ Texture::Texture(
 
     m_sizeOfAllTexturesInMemory += sizeInMemory();
 
-	/* Set visualization isCubemap value correctly for cubemaps */
-	if ((dimension == DIM_CUBE_MAP) || (dimension == DIM_CUBE_MAP_NPOT)){
-		visualization.isCubemap = true;
-	}
+	
 }
 
 
@@ -637,10 +634,6 @@ Texture::Texture(const std::string&         name,
 
     m_sizeOfAllTexturesInMemory += sizeInMemory();
 
-	/* Set visualization isCubemap value correctly for cubemaps */
-	if ((dimension == DIM_CUBE_MAP) || (dimension == DIM_CUBE_MAP_NPOT)){
-		visualization.isCubemap = true;
-	}
 }
 
 bool Texture::validateSettings() {
@@ -1643,15 +1636,15 @@ void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace
 	
     GLenum target;
     if (isCubeMap()) { 
-        target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + (int)face;
+        target = GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + (int)face;
     } else {
         // Not a cubemap
         target = openGLTextureTarget();
     }
 
     glPushAttrib(GL_TEXTURE_BIT); {
-        glBindTexture(target, openGLID());
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glBindTexture(openGLTextureTarget(), openGLID());
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
         
     glGetTexImage
         (target,

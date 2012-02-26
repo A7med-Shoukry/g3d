@@ -36,7 +36,8 @@ GuiTextureBox::GuiTextureBox
     m_dragging(false), 
     m_readbackXY(-1, -1),
     m_embeddedMode(embeddedMode),
-    m_showFormat(true) {
+    m_showFormat(true),
+	m_showCubemapEdges(false){
 
     // Height of caption and button bar
     const float cs = TOP_CAPTION_HEIGHT;
@@ -422,7 +423,7 @@ public:
         int captionWidth = 55;
         m_xyLabel = addPair(dataPane, "xy =", "", 30);
         m_xyLabel->setWidth(70);
-        if(m_settings.isCubemap){
+        if(texture->isCubeMap()){
 			m_xyzLabel = addPair(dataPane, "xyz =", "", 30, m_xyLabel);
 			m_xyzLabel->setWidth(160);
 		} else {
@@ -433,6 +434,9 @@ public:
         m_rgbaLabel = addPair(dataPane, "rgba =", "", captionWidth);
         m_ARGBLabel = addPair(dataPane, "ARGB =", "", captionWidth);
         dataPane->addLabel(GuiText("Before gamma correction", NULL, 8))->moveBy(Vector2(5, -5));
+		if(texture->isCubeMap()){
+			dataPane->addCheckBox("Show Cube Edges", &m_textureBox->m_showCubemapEdges);
+		}
         dataPane->pack();  
         dataPane->moveRightOf(visPane);
         leftPane->pack();
@@ -520,7 +524,7 @@ public:
 		float u = m_textureBox->m_readbackXY.x / w;
 		float v = m_textureBox->m_readbackXY.y / h;
 
-		if(m_settings.isCubemap){
+		if(tex->isCubeMap()){
 			float theta = v * pif();
 			float phi   = u * 2 * pif();
 			float sinTheta = sin(theta);
@@ -608,7 +612,7 @@ void GuiTextureBox::showInspector() {
     manager->setFocusedWidget(ins);
 }
 
-void GuiTextureBox::setUpShader(Shader::Ref shader){
+void GuiTextureBox::setUpShader(Shader::Ref shader, bool isCubemap){
 	debugAssert(shader.notNull());
 
         static const Matrix4 colorShift[] = {
@@ -687,6 +691,15 @@ void GuiTextureBox::setUpShader(Shader::Ref shader){
 
         shader->args.set("invertIntensity", m_settings.invertIntensity);
         shader->args.set("colorShift", colorShift[m_settings.channels]);
+		if(isCubemap){
+			if(m_showCubemapEdges){
+				float thresholdValue = 2.0f - 1.0/m_texture->width();
+				shader->args.set("edgeThreshold", thresholdValue);
+			} else {
+				shader->args.set("edgeThreshold", 3.0f); // Anything over 2.0 turns off edge rendering
+			}
+			
+		}
 }
 
 void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
@@ -705,7 +718,7 @@ void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
     // Draw texture
     if (m_settings.needsShader()) {
         Shader::Ref relevantShader;
-		if(m_settings.isCubemap){
+		if(m_texture->isCubeMap()){
 			relevantShader = m_cubemapShader;
 		} else {
 			relevantShader = m_shader;
@@ -794,7 +807,7 @@ void GuiTextureBox::render(RenderDevice* rd, const GuiTheme::Ref& theme) const {
         // Shrink by the border size to save space for the border,
         // and then draw the largest rect that we can fit inside.
         Rect2D r = m_texture->rect2DBounds();
-		if(m_settings.isCubemap){
+		if(m_texture->isCubeMap()){
 			r = r * Vector2(2.0f, 1.0f);
 		}
         r = r + (m_offset - r.center());
@@ -963,28 +976,37 @@ void GuiTextureBox::setTexture(const Texture::Ref& t) {
 static const std::string CUBEMAP_SHADER =
 STR(
     uniform samplerCube texture;
-    uniform float     adjustGamma;
-    uniform mat4      colorShift;
-    uniform float     bias;
-    uniform float     scale;
-    uniform bool      invertIntensity;\n
-    #define PI (3.1415926536)\n
-    #define TWOPI (6.28318531)\n
-    
-    void main(void) {
-        vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
-        float theta = sphericalCoord.y * PI;
-        float phi   = sphericalCoord.x * TWOPI;
-        float sinTheta = sin(theta);
-        vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
-        vec4 c = textureCube(texture, cartesianCoord);
-        c = (c + bias) * scale;
-        c = invertIntensity ? vec4(1.0 - c) : c;
-        c = colorShift * c;
-        c = max(c, vec4(0.0));
-        gl_FragColor.rgb = pow(c.rgb, vec3(adjustGamma));
-        gl_FragColor.a = 1.0;
-    });
+	uniform float     adjustGamma;
+	uniform mat4      colorShift;
+	uniform float     bias;
+	uniform float     scale;
+	uniform float	   edgeThreshold;
+	uniform bool      invertIntensity;\n
+	#define PI (3.1415926536)\n
+	#define TWOPI (6.28318531)\n
+
+	void main(void) {
+		vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
+		float theta = sphericalCoord.y * PI;
+		float phi   = sphericalCoord.x * TWOPI;
+		float sinTheta = sin(theta);
+		vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
+		vec4 c = textureCube(texture, cartesianCoord);
+		c = (c + bias) * scale;
+		c = invertIntensity ? vec4(1.0 - c) : c;
+		c = colorShift * c;
+		c = max(c, vec4(0.0));
+
+		vec3 cubeMapColor = pow(c.rgb, vec3(adjustGamma));
+		vec3 edgeColor = vec3( 0.196, 0.804, 0.196); // Lime Green
+
+								 
+		vec3 v = abs(cartesianCoord);
+		v = v / max(v.x, max(v.y, v.z));
+		bool onEdge = (v.x + v.y + v.z - min(v.x,min(v.y,v.z))) > edgeThreshold;
+		gl_FragColor.rgb = onEdge ? edgeColor : cubeMapColor;
+		gl_FragColor.a = 1.0;
+	});
 
 
 static const std::string TEXTURE2D_SHADER =
@@ -1013,7 +1035,7 @@ void GuiTextureBox::setSettings(const Texture::Visualization& s) {
 
         alwaysAssertM(GLCaps::supports_GL_ARB_shading_language_100(), 
                       "GuiTextureBox requires GLSL shader support for these GuiTextureBox::Settings");
-        if (m_settings.isCubemap){
+        if (m_texture->isCubeMap()){
             if (m_cubemapShader.isNull()) {
                 // Load the shader
                 m_cubemapShader = g_cachedCubemapShader.createStrongPtr();

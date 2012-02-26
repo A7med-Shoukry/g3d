@@ -43,6 +43,8 @@ protected:
     
     bool                     m_showInfo;
 
+	bool					 m_showCubemapEdges;
+
     /** Cached formatting of m_lastSize */
     mutable GuiText          m_lastSizeCaption;
     mutable Vector2int16     m_lastSize;
@@ -177,7 +179,7 @@ public:
     void toggleDrawer();
 
 	/* Pass arguments to the specified shader */
-	void setUpShader(Shader::Ref shader);
+	void setUpShader(Shader::Ref shader, bool isCubemap);
 
 
 };

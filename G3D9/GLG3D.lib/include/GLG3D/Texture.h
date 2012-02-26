@@ -263,12 +263,9 @@ public:
         /** If true, show as 1 - (adjusted value) */
         bool             invertIntensity;
 
-        /** If true, the texture is a cubemap (thus require special rendering code) */
-        bool             isCubemap;
-
         /** Defaults to linear data on [0, 1]: packed normal maps,
             reflectance maps, etc. */
-        Visualization(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f, bool isCube = false);
+        Visualization(Channels c = RGB, float g = 1.0f, float mn = 0.0f, float mx = 1.0f);
 
         /** Accepts the name of any static factory method as an Any::ARRAY, e.g.,
             "v = sRGB()" or a table, e.g., "v = Texture::Visualization { documentGamma = 2.2, ... }"
@@ -283,8 +280,7 @@ public:
                 (documentGamma == v.documentGamma) &&
                 (min == v.min) &&
                 (max == v.max) &&
-                (invertIntensity == v.invertIntensity) &&
-                (isCubemap == v.isCubemap);
+                (invertIntensity == v.invertIntensity);
         }
 
         /** For photographs and other images with document gamma of about 2.2.  Note that this does not 
