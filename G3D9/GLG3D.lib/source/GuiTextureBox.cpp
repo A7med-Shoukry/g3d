@@ -215,6 +215,7 @@ bool GuiTextureBox::onEvent(const GEvent& event) {
         return false;
     }
 
+    debugPrintf("Event type %d\n", event.type);
     if (GuiContainer::onEvent(event)) {
         // Event was handled by base class
         return true;
@@ -246,7 +247,7 @@ bool GuiTextureBox::onEvent(const GEvent& event) {
             Vector2 delta = mouse - m_dragStart;
 
             // Hide weird mouse event delivery
-            if (delta.squaredLength() < 100000) {
+            if (delta.squaredLength() < square(rect().width() + rect().height())) {
                 m_offset = m_offsetAtDragStart + delta / m_zoom;
                 return true;
             }
@@ -263,6 +264,7 @@ void GuiTextureBox::setRect(const Rect2D& rect) {
     debugAssert(! m_clientRect.isEmpty());
 
     m_clipBounds = theme()->canvasToClientBounds(canvasRect(), m_captionHeight);
+    m_clickRect = m_clipBounds;
 
     Rect2D oldRect = m_drawerPane->rect();
     float OPEN_Y = m_rect.height() - oldRect.height() - DRAWER_Y_OFFSET;
