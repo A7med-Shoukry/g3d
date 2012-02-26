@@ -4,7 +4,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
  \created 2003-05-23
- \edited  2011-06-23
+ \edited  2012-02-26
  */
 
 #include "GLG3D/glheaders.h"
@@ -143,6 +143,8 @@ const ImageFormat* ImageFormat::stencil(int bits) {
 
         "R16F",
         "RG16F",
+
+        "RG32F",
 
         "RGBA8",
         "RGBA16",
@@ -341,6 +343,9 @@ const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
 
     case ImageFormat::CODE_RG16F:
         return ImageFormat::RG16F();
+
+    case ImageFormat::CODE_R32F:
+        return ImageFormat::R32F();
 
     case ImageFormat::CODE_RGBA8:
         return ImageFormat::RGBA8();
@@ -564,6 +569,8 @@ DEFINE_TEXTUREFORMAT_METHOD(RG8UI,      2, UNCOMP_FORMAT,   GL_RG8UI,           
 DEFINE_TEXTUREFORMAT_METHOD(R16F,       1, UNCOMP_FORMAT,   GL_R16F,            GL_R,      0,  0,  16, 0,  0,  0,  0, 16, 16,       GL_FLOAT, OPAQUE_FORMAT, FLOAT_FORMAT, ImageFormat::CODE_R16F, ImageFormat::COLOR_SPACE_RGB);
 
 DEFINE_TEXTUREFORMAT_METHOD(RG16F,      2, UNCOMP_FORMAT,   GL_RG16F,           GL_RG,     0,  0,  16, 16,  0,  0,  0, 32, 32,      GL_FLOAT, OPAQUE_FORMAT, FLOAT_FORMAT, ImageFormat::CODE_RG16F, ImageFormat::COLOR_SPACE_RGB);
+
+DEFINE_TEXTUREFORMAT_METHOD(R32F,       1, UNCOMP_FORMAT,   GL_R32F,            GL_R,      0,  0,  32, 0,  0,  0,  0, 16, 16,       GL_FLOAT, OPAQUE_FORMAT, FLOAT_FORMAT, ImageFormat::CODE_R32F, ImageFormat::COLOR_SPACE_RGB);
 
 DEFINE_TEXTUREFORMAT_METHOD(RGB5,       3, UNCOMP_FORMAT,   GL_RGB5,            GL_RGBA,    0,  0,  5,  5,  5,  0,  0, 16, 16,      GL_UNSIGNED_BYTE, OPAQUE_FORMAT, INT_FORMAT, ImageFormat::CODE_RGB5, ImageFormat::COLOR_SPACE_RGB);
 

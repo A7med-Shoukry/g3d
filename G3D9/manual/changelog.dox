@@ -102,6 +102,7 @@
      <li> G3D::GApp::removeDebugShape, G3D::GApp::removeAllDebugShapes</li>
      <li> G3D::GApp::addWidget now sets the focus on the new widget by default</li>
      <li> G3D::GApp::show</li>
+	 <li> Added G3D::ImageFormat::R32F </li>
      <li> G3D::ShadowMap::updateDepth now allows small negative values</li>
      <li> G3D::MD2Model::Specification::negateNormals</li>
      <li> G3D::SurfaceElement</li>

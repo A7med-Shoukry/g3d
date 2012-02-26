@@ -74,6 +74,8 @@ public:
         CODE_R16F,
         CODE_RG16F,
 
+        CODE_R32F,
+
         CODE_RGBA8,
         CODE_RGBA16,
         CODE_RGBA16F,
@@ -274,6 +276,8 @@ public:
 
     static const ImageFormat* R16F();
     static const ImageFormat* RG16F();
+
+    static const ImageFormat* R32F();
 
     static const ImageFormat* RGB5();
 
