@@ -340,7 +340,9 @@ bool GuiWindow::onEvent(const GEvent& event) {
                     pt = Point2((float)e2.button.x, (float)e2.button.y);
                 }
 
-                if (target->clickRect().contains(pt)) {
+                // Notify all controls that are parents of the one with focus of mouse up and motion events (since they may be in the middle of a drag)
+                // but only deliver mouse down events to controls that are under the mouse.
+                if ((event.type == GEventType::MOUSE_BUTTON_UP) || (event.type == GEventType::MOUSE_MOTION) || target->clickRect().contains(pt)) {
                     consumed = target->onEvent(e2);
                 }
 
