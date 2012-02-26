@@ -1287,6 +1287,7 @@ Texture::Ref Texture::fromMemory(
 
                     const bool useNPOT = (dimension == DIM_2D_NPOT) || (dimension == DIM_CUBE_MAP_NPOT) || (dimension == DIM_3D_NPOT);
 
+                    debugAssertGLOk();
                     createTexture(target, 
                                   reinterpret_cast<const uint8*>((*bytesPtr)[mipLevel][f]), 
                                   bytesFormat->openGLFormat, 

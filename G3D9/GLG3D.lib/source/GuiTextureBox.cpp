@@ -215,7 +215,6 @@ bool GuiTextureBox::onEvent(const GEvent& event) {
         return false;
     }
 
-    debugPrintf("Event type %d\n", event.type);
     if (GuiContainer::onEvent(event)) {
         // Event was handled by base class
         return true;
