@@ -50,6 +50,7 @@ void App::onInit() {
 
     // For higher-quality screenshots:
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
+    // developerWindow->videoRecordDialog->setCaptureGui(false);
 
     makeGUI();
 
