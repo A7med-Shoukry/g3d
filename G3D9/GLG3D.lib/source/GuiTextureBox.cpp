@@ -2,7 +2,7 @@
  \file GLG3D/GuiTextureBox.cpp
 
  \created 2009-09-11
- \edited  2010-09-19
+ \edited  2012-02-26
 
  G3D Library http://g3d.sf.net
  Copyright 2000-2012, Morgan McGuire http://graphics.cs.williams.edu
@@ -410,10 +410,11 @@ public:
         GuiNumberBox<float>* maxBox;
         minBox = visPane->addNumberBox("Range", &m_settings.min);
         minBox->setUnitsSize(0.0f);
-        minBox->setWidth(145.0f);
+        minBox->setWidth(140.0f);
         
         maxBox = visPane->addNumberBox("-", &m_settings.max);
         maxBox->setCaptionWidth(10.0f);
+        maxBox->setWidth(95.0f);
         maxBox->moveRightOf(minBox);
         visPane->pack();
         visPane->setWidth(230);
@@ -439,6 +440,7 @@ public:
 		}
         dataPane->pack();  
         dataPane->moveRightOf(visPane);
+        dataPane->moveBy(0, -35);
         leftPane->pack();
 
         //////////////////////////////////////////////////////////////////////
