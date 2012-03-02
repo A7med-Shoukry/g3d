@@ -177,6 +177,7 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
     GApp::onSimulation(rdt, sdt, idt);
 
     m_splineEditor->setEnabled(m_splineEditor->enabled() && ! m_preventEntityDrag);
+	
     m_splineEditor->setVisible(m_splineEditor->enabled());
 
     // Add physical simulation here.  You can make your time

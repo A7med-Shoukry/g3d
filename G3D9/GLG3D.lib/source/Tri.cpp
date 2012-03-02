@@ -110,7 +110,7 @@ float Tri::area() const {
 #pragma float_control( precise, off )
 #endif
 
-bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distance) {
+bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided, float& distance) {
     // See RTR3 p.746 (RTR2 ch. 13.7) for the basic algorithm.
     static const float EPS = 1e-12f;
 
@@ -118,7 +118,8 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
     static const float conservative = 1e-8f;
 
     // Test for backfaces first because this eliminates 50% of all triangles.
-    if (tri.n.dot(ray.direction()) >= -EPS) {
+    // TODO: Add twoside test
+	if ((tri.n.dot(ray.direction()) >= -EPS)) {
         // Backface or nearly parallel
         return false;
     }
@@ -133,7 +134,7 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, float& distanc
     const Vector3& p = ray.direction().cross(e2);
     const float a = e1.dot(p);
 
-    debugAssert(a >= -1e-7);
+    debugAssert(a >= -1e-7); 
 
     const Vector3& s = ray.origin() - v0;
     const float ua = s.dot(p);

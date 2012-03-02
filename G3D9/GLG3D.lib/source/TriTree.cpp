@@ -397,7 +397,8 @@ bool __fastcall TriTree::Node::intersectRay
 (const Ray&          ray,
  Tri::Intersector&   intersectCallback, 
  float&              distance,
- bool                exitOnAnyHit) const {
+ bool                exitOnAnyHit,
+ bool				 twoSided) const {
 
     bool hit = false;
     
@@ -420,7 +421,7 @@ bool __fastcall TriTree::Node::intersectRay
     
     // Test on the side closer to the ray origin.
     if (firstChild != NONE) {
-        hit = child(firstChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit) || hit;
+        hit = child(firstChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit, twoSided) || hit;
         if (exitOnAnyHit && hit) {
             return true;
         }
@@ -435,7 +436,7 @@ bool __fastcall TriTree::Node::intersectRay
 
         // Test for intersection against every object at this node.
         for (int v = 0; v < valueArray->size; ++v) { 
-            hit = intersectCallback(ray, *valueArray->data[v], distance) || hit;
+            hit = intersectCallback(ray, *valueArray->data[v], twoSided, distance) || hit;
             if (exitOnAnyHit && hit) {
                 // Early out
                 return true;
@@ -461,7 +462,7 @@ bool __fastcall TriTree::Node::intersectRay
             }
         }
         
-        hit = child(secondChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit) || hit;
+        hit = child(secondChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit, twoSided) || hit;
     }
 
     return hit;
@@ -704,14 +705,15 @@ void TriTree::draw(RenderDevice* rd, int level, bool showBoxes, int minNodeSize)
 
 
 bool TriTree::intersectRay
-(const Ray& ray,
- Tri::Intersector& intersectCallback, 
- float& distance,
- bool exitOnAnyHit) const {
+(const Ray&			ray,
+ Tri::Intersector&	intersectCallback, 
+ float&				distance,
+ bool				exitOnAnyHit,
+ bool				twoSided) const {
 
     bool hit = false;
     if (m_root != NULL) {
-        hit = m_root->intersectRay(ray, intersectCallback, distance, exitOnAnyHit);
+        hit = m_root->intersectRay(ray, intersectCallback, distance, exitOnAnyHit, twoSided);
     }
     return hit;
 }

@@ -33,7 +33,7 @@ namespace G3D {
 static GApp* lastGApp = NULL;
 
 /** Framerate when the app does not have focus */
-static const float BACKGROUND_FRAME_RATE = 4.0; // fps
+static const float BACKGROUND_FRAME_RATE = 60.0; // fps
 
 void screenPrintf(const char* fmt ...) {
     va_list argList;

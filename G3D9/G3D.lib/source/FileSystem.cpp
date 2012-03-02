@@ -674,7 +674,7 @@ const Array<std::string>& FileSystem::_drives() {
         for (size_t i = 0; bufData[i] != '\0'; ++i) {
             const char* thisString = bufData + i;
             m_winDrive.append(toLower(thisString));
-            i += strlen(thisString) + 1;
+            i += strlen(thisString);
         }
     }
 

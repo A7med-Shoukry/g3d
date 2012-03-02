@@ -287,9 +287,12 @@ public:
           (This corresponds to an "AnyHit program" in the NVIDIA OptiX
           API.)
 
+		  \param twoSided If true, both sides of triangles are tested for intersections. If a back face is hit,
+			the normal will not automatically be flipped
+
           \return true if there was an intersection between the ray and triangle
           */
-        bool operator()(const Ray& ray, const Tri& tri, float& distance);
+        bool operator()(const Ray& ray, const Tri& tri, bool twoSided, float& distance);
 
         /** Computes information about the intersection from an
             established Intersector.  The normal will have unit
