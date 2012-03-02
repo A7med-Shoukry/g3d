@@ -176,8 +176,15 @@ void GuiTextureBox::save() {
     if (FileDialog::create(window())->getFilename(filename)) {
         // save code
         Framebuffer::Ref fb = Framebuffer::create("GuiTextureBox: save");
-        Texture::Ref color = Texture::createEmpty("GuiTextureBox: save", 
-            m_texture->width(), m_texture->height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
+		Texture::Ref color;
+		if(m_texture->isCubeMap()){
+			//Stretch cubemaps appropriately
+			color = Texture::createEmpty("GuiTextureBox: save", 
+				m_texture->width()*4, m_texture->height()*2, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
+		}else{
+			color = Texture::createEmpty("GuiTextureBox: save", 
+				m_texture->width(), m_texture->height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
+		}
         fb->set(Framebuffer::COLOR0, color);
         
         RenderDevice* rd = RenderDevice::lastRenderDeviceCreated;

@@ -21,6 +21,7 @@
    <p>
    Changes in 9.00:
    <ul>
+    <li> G3D::GuiTextureBox now saves out cubemaps at 4x the width and 2x the height of one of its faces, in the panoramic view </li>
     <li> Added Show Cube Edges option to GuiTextureBoxInspector </li>
     <li> Added focus controls to G3D::CameraControlWindow </li>
      <li> G3D::ArticulatedModel::CleanGeometrySettings::allowVertexMerging</li>
