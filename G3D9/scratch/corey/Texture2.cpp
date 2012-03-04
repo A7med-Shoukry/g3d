@@ -15,7 +15,7 @@ namespace G3D {
 //// Texture::Specification implementation
 
 Any Texture2::Specification::toAny() const {
-    Any a = Any(Any::TABLE, "Texture2::Specification");
+    Any a = Any(Any::TABLE, "Texture::Specification");
     a["filename"] = filename;
     a["desiredFormat"] = desiredFormat ? desiredFormat->name() : "AUTO";
     a["dimension"] = Texture2::toString(dimension);
