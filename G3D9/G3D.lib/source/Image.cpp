@@ -1,6 +1,6 @@
 
 // Dis-allow compilation by default due to dependency on freeImage (while in development)
-#if 1
+#if 0
 
 #include "G3D/Image.h"
 

@@ -4,7 +4,7 @@
 #define G3D_IMAGE_H
 
 // Dis-allow compilation by default due to dependency on freeImage (while in development)
-#if 1
+#if 0
 
 #include "FreeImagePlus.h" // todo: create file format enum in Image to remove this dependency in header
 #include "G3D/Color4.h"

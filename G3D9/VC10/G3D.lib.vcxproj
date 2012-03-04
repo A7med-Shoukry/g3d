@@ -74,13 +74,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)\..\G3D.lib\include;$(SolutionDir)\..\GLG3D.lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <TargetName>G3Dd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)\..\G3D.lib\include;$(SolutionDir)\..\GLG3D.lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <TargetName>G3D-64d</TargetName>
   </PropertyGroup>
@@ -88,14 +88,14 @@
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)$(PlatformArchitecture)\</IntDir>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)\..\G3D.lib\include;$(SolutionDir)\..\GLG3D.lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(IncludePath)</IncludePath>
     <TargetName>G3D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\..\build\lib\</OutDir>
     <IntDir>$(SolutionDir)\..\temp\$(ProjectName)\$(Configuration)$(PlatformArchitecture)\</IntDir>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)\..\G3D.lib\include;$(SolutionDir)\..\GLG3D.lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\jpeg.lib\include;$(SolutionDir)..\png.lib\include;$(SolutionDir)..\zip.lib\include;$(SolutionDir)..\zlib.lib\include;$(SolutionDir)..\freeimage.lib\include;$(SolutionDir)..\G3D.lib\include;$(SolutionDir)..\GLG3D.lib\include;$(IncludePath)</IncludePath>
     <TargetName>G3D-64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -233,6 +233,7 @@
     <ClCompile Include="..\G3D.lib\source\GLight.cpp" />
     <ClCompile Include="..\G3D.lib\source\GThread.cpp" />
     <ClCompile Include="..\G3D.lib\source\GUniqueID.cpp" />
+    <ClCompile Include="..\G3D.lib\source\Image.cpp" />
     <ClCompile Include="..\G3D.lib\source\Image1.cpp" />
     <ClCompile Include="..\G3D.lib\source\Image1unorm8.cpp" />
     <ClCompile Include="..\G3D.lib\source\Image3.cpp" />
@@ -351,6 +352,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\GThread.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\GUniqueID.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\HashTrait.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\Image.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Image1.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Image1unorm8.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Image3.h" />
