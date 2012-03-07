@@ -1195,38 +1195,29 @@ void Draw::fullScreenImage(const GImage& im, RenderDevice* renderDevice) {
 }
 
 
-void Draw::rect2D(
-    const Rect2D& rect,
-    RenderDevice* rd,
-    const Color4& color,
-    const Vector2& texCoord0,
-    const Vector2& texCoord1,
-    const Vector2& texCoord2,
-    const Vector2& texCoord3) { 
-    Draw::rect2D(rect, rd, color,
-        Rect2D::xywh(0,0,texCoord0.x, texCoord0.y),
-        Rect2D::xywh(0,0,texCoord1.x, texCoord1.y),
-        Rect2D::xywh(0,0,texCoord2.x, texCoord2.y),
-        Rect2D::xywh(0,0,texCoord3.x, texCoord3.y));
+void Draw::rect2D
+(const class Rect2D& rect,
+ RenderDevice* rd,
+ const Color4& color,
+ const Vector2& texCoord0,
+ const Vector2& texCoord1) {
+    Draw::rect2D(rect, rd, color, Rect2D::xyxy(Vector2::zero(), texCoord0),
+                 Rect2D::xyxy(Vector2::zero(), texCoord1));
 }
 
 
-void Draw::rect2D(
-    const Rect2D& rect,
-    RenderDevice* rd,
-    const Color4& color,
-    const Rect2D& texCoord0,
-    const Rect2D& texCoord1,
-    const Rect2D& texCoord2,
-    const Rect2D& texCoord3) {
-
-    const Rect2D* tx[8];
+void Draw::rect2D
+(const Rect2D& rect,
+ RenderDevice* rd,
+ const Color4& color,
+ const Rect2D& texCoord0,
+ const Rect2D& texCoord1) {
+    
+    const Rect2D* tx[2];
     tx[0] = &texCoord0;
     tx[1] = &texCoord1;
-    tx[2] = &texCoord2;
-    tx[3] = &texCoord3;
 
-    int N = iMin(4, GLCaps::numTextureCoords());
+    int N = iMin(2, GLCaps::numTextureCoords());
 
     rd->pushState();
     {
@@ -1247,10 +1238,10 @@ void Draw::rect2D(
 }
 
 
-void Draw::fastRect2D(
-    const Rect2D&       rect,
-    RenderDevice*       rd,
-    const Color4&       color) {
+void Draw::fastRect2D
+(const Rect2D&       rect,
+ RenderDevice*       rd,
+ const Color4&       color) {
 
     rd->setColor(color);
     // Use begin primitive in case there are any 

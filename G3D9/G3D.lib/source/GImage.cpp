@@ -290,13 +290,13 @@ void GImage::decode(
 
 
 
-void GImage::decodePCX(
-    BinaryInput&                input) {
+void GImage::decodePCX
+(BinaryInput&                input) {
 
-    unorm8  manufacturer = input.readUNorm8();
-    unorm8  version      = input.readUNorm8();
-    unorm8  encoding     = input.readUNorm8();
-    unorm8  bitsPerPixel = input.readUNorm8();
+    uint8  manufacturer = input.readUInt8();
+    uint8  version      = input.readUInt8();
+    uint8  encoding     = input.readUInt8();
+    uint8  bitsPerPixel = input.readUInt8();
 
     uint16 xmin         = input.readUInt16();
     uint16 ymin         = input.readUInt16();
@@ -311,7 +311,7 @@ void GImage::decodePCX(
 
     input.skip(1);
 
-    unorm8  planes       = input.readUNorm8();
+    uint8  planes       = input.readUInt8();
     uint16 bytesPerLine = input.readUInt16();
     uint16 paletteType  = input.readUInt16();
     input.skip(4 + 54);
@@ -634,6 +634,7 @@ void GImage::_copy
 void GImage::flipHorizontal() {
     unorm8 temp[4];
     int rowBytes = m_buffer->stride();
+    (void)rowBytes;
     for (int y = 0; y < height(); ++y) {
         uint8* row = static_cast<uint8*>(m_buffer->row(y));
         for (int x = 0; x < width() / 2; ++x) { 

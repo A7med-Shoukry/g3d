@@ -1,10 +1,10 @@
 /**
- @file Draw.h
+ \file Draw.h
   
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2003-10-29
- @edited  2010-03-05
+ \created 2003-10-29
+ \edited  2012-03-05
  */
 
 #ifndef G3D_Draw_h
@@ -203,33 +203,27 @@ public:
     Provided texture coordinates are upper bounds for each of four textures.  The actual tex
     coords will vary from (0, 0) to those bounds.
     */
-    static void rect2D(
-        const class Rect2D& rect,
-        RenderDevice* rd,
-        const Color4& color = Color3::white(),
-        const Vector2& texCoord0 = Vector2(1,1),
-        const Vector2& texCoord1 = Vector2(1,1),
-        const Vector2& texCoord2 = Vector2(1,1),
-        const Vector2& texCoord3 = Vector2(1,1));
+    static void rect2D
+    (const class Rect2D& rect,
+     RenderDevice* rd,
+     const Color4& color = Color3::white(),
+     const Vector2& texCoord0 = Vector2(1,1),
+     const Vector2& texCoord1 = Vector2(1,1));
+
+    static void rect2D
+    (const class Rect2D& rect,
+     RenderDevice* rd,
+     const Color4& color,
+     const Rect2D& texCoord0,
+     const Rect2D& texCoord1 = Rect2D::xywh(0,0,1,1));
 
     /** Leaves the renderDevice color and texture coordinates modified. Does not allow
         custom texture coordinates and only sets texture coordinate 0.*/
-    static void fastRect2D(
-        const Rect2D& rect,
-        RenderDevice* rd,
-        const Color4& color = Color3::white());
-
-
-    /** Draws the specified rectangle, setting coordinates for
-      the first four texture units as specified. */
-    static void rect2D(
-        const class Rect2D& rect,
-        RenderDevice* rd,
-        const Color4& color,
-        const Rect2D& texCoord0,
-        const Rect2D& texCoord1 = Rect2D::xywh(0,0,1,1),
-        const Rect2D& texCoord2 = Rect2D::xywh(0,0,1,1),
-        const Rect2D& texCoord3 = Rect2D::xywh(0,0,1,1));
+    static void fastRect2D
+    (const Rect2D& rect,
+     RenderDevice* rd,
+     const Color4& color = Color3::white());
+    
 
     /** Draws a border about the rectangle
         using polygons (since PrimitiveType::LINE_STRIP doesn't 
