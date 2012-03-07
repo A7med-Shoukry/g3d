@@ -6,7 +6,6 @@
 // Dis-allow compilation by default due to dependency on freeImage (while in development)
 #if 0
 
-#include "FreeImagePlus.h" // todo: create file format enum in Image to remove this dependency in header
 #include "G3D/Color4.h"
 #include "G3D/Color4unorm8.h"
 #include "G3D/ImageBuffer.h"
@@ -27,10 +26,38 @@ class Image : public ReferenceCountedObject {
 public:
     typedef ReferenceCountedPointer<Image> Ref;
 
+    /// Direct mapping of FreeImage FREE_IMAGE_FORMAT enum for common formats. Uncommon values can be used directly.
+    enum FileFormat {
+        FILEFORMAT_AUTO,
+
+	    FILEFORMAT_BMP,
+	    FILEFORMAT_ICO,
+	    FILEFORMAT_JPEG,
+	    FILEFORMAT_MNG,
+	    FILEFORMAT_PBM,
+	    FILEFORMAT_PBMRAW,
+	    FILEFORMAT_PCX,
+	    FILEFORMAT_PGM,
+	    FILEFORMAT_PGMRAW,
+	    FILEFORMAT_PNG,
+	    FILEFORMAT_PPM,
+	    FILEFORMAT_PPMRAW,
+	    FILEFORMAT_TARGA,
+	    FILEFORMAT_TIFF,
+	    FILEFORMAT_XBM,
+	    FILEFORMAT_XPM,
+	    FILEFORMAT_DDS,
+	    FILEFORMAT_GIF,
+	    FILEFORMAT_HDR,
+	    FILEFORMAT_EXR,
+	    FILEFORMAT_RAW,
+
+        FILEFORMAT_MAX = 256
+    };
+
 private:
     fipImage*           m_image;
     const ImageFormat*  m_format;
-
 
     Image();
 
@@ -39,8 +66,8 @@ private:
 public:
     virtual ~Image();
 
-    static Ref fromFile(const std::string& filename, FREE_IMAGE_FORMAT fileFormat = FIF_UNKNOWN, const ImageFormat* imageFormat = ImageFormat::AUTO());
-    static Ref fromInput(const BinaryInput& bi, FREE_IMAGE_FORMAT fileFormat = FIF_UNKNOWN, const ImageFormat* imageFormat = ImageFormat::AUTO());
+    static Ref fromFile(const std::string& filename, FileFormat fileFormat = Image::FILEFORMAT_AUTO, const ImageFormat* imageFormat = ImageFormat::AUTO());
+    static Ref fromInput(const BinaryInput& bi, FileFormat fileFormat = Image::FILEFORMAT_AUTO, const ImageFormat* imageFormat = ImageFormat::AUTO());
 
 
     void get(const Point2int32& pos, Color4& color) const;

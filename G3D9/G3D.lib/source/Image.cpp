@@ -2,15 +2,53 @@
 // Dis-allow compilation by default due to dependency on freeImage (while in development)
 #if 0
 
+#include "FreeImagePlus.h"
 #include "G3D/Image.h"
 
 
 namespace G3D {
 
+// Converts from Image::FileFormat to FREE_IMAGE_FORMAT respecting uncommon (casted) values
+static FREE_IMAGE_FORMAT ConvertFileFormatToFIFormat(Image::FileFormat fileFormat) {
+    FREE_IMAGE_FORMAT fiFormat = FIF_UNKNOWN;
+    switch (fileFormat) {
+        case Image::FILEFORMAT_AUTO:   fiFormat = FIF_UNKNOWN; break;
+        case Image::FILEFORMAT_BMP:    fiFormat = FIF_BMP; break;
+	    case Image::FILEFORMAT_ICO:    fiFormat = FIF_ICO; break;
+	    case Image::FILEFORMAT_JPEG:   fiFormat = FIF_JPEG; break;
+	    case Image::FILEFORMAT_MNG:    fiFormat = FIF_MNG; break;
+	    case Image::FILEFORMAT_PBM:    fiFormat = FIF_PBM; break;
+	    case Image::FILEFORMAT_PBMRAW: fiFormat = FIF_PBMRAW; break;
+	    case Image::FILEFORMAT_PCX:    fiFormat = FIF_PCX; break;
+        case Image::FILEFORMAT_PGM:    fiFormat = FIF_PGM; break;
+	    case Image::FILEFORMAT_PGMRAW: fiFormat = FIF_PGMRAW; break;
+	    case Image::FILEFORMAT_PNG:    fiFormat = FIF_PNG; break;
+	    case Image::FILEFORMAT_PPM:    fiFormat = FIF_PPM; break;
+	    case Image::FILEFORMAT_PPMRAW: fiFormat = FIF_PPMRAW; break;
+	    case Image::FILEFORMAT_TARGA:  fiFormat = FIF_TARGA; break;
+	    case Image::FILEFORMAT_TIFF:   fiFormat = FIF_TIFF; break;
+	    case Image::FILEFORMAT_XBM:    fiFormat = FIF_XBM; break;
+	    case Image::FILEFORMAT_XPM:    fiFormat = FIF_XPM; break;
+	    case Image::FILEFORMAT_DDS:    fiFormat = FIF_DDS; break;
+	    case Image::FILEFORMAT_GIF:    fiFormat = FIF_GIF; break;
+	    case Image::FILEFORMAT_HDR:    fiFormat = FIF_HDR; break;
+	    case Image::FILEFORMAT_EXR:    fiFormat = FIF_EXR; break;
+	    case Image::FILEFORMAT_RAW:    fiFormat = FIF_RAW; break;
+        default:
+            debugAssert(static_cast<int>(fileFormat) < Image::FILEFORMAT_MAX);
+            fiFormat = static_cast<FREE_IMAGE_FORMAT>(fileFormat);
+            break;
+    }
+
+    return fiFormat;
+}
+
 Image::Image()
     : m_image(NULL)
     , m_format(ImageFormat::AUTO()) {
 
+    // TODO: if g3d ever has a global init, then this would move there to avoid deinitializing before program exit
+    FreeImage_Initialise();
     m_image = new fipImage;
 }
 
@@ -18,17 +56,21 @@ Image::~Image() {
     if (m_image) {
         delete m_image;
     }
+    // This call can deinitialize the plugins if it's the last reference, but they can be re-initialized
+    FreeImage_DeInitialise();
 }
 
-Image::Ref Image::fromFile(const std::string& filename, FREE_IMAGE_FORMAT fileFormat, const ImageFormat* imageFormat) {
+Image::Ref Image::fromFile(const std::string& filename, Image::FileFormat fileFormat, const ImageFormat* imageFormat) {
     Image* img = new Image;
 
-    debugAssert(fileFormat == FIF_UNKNOWN || fileFormat == fipImage::identifyFIF(filename.c_str()));
+    FREE_IMAGE_FORMAT fiFormat = ConvertFileFormatToFIFormat(fileFormat);
+    debugAssert(fiFormat == FIF_UNKNOWN || fiFormat == fipImage::identifyFIF(filename.c_str()));
 
     if (! img->m_image->load(filename.c_str()))
     {
         delete img;
         img = NULL;
+        return img;
     }
 
     const ImageFormat* detectedFormat = img->determineImageFormat();
@@ -51,7 +93,7 @@ Image::Ref Image::fromFile(const std::string& filename, FREE_IMAGE_FORMAT fileFo
     return img;
 }
 
-Image::Ref Image::fromInput(const BinaryInput& bi, FREE_IMAGE_FORMAT fileFormat, const ImageFormat* imageFormat) {
+Image::Ref Image::fromInput(const BinaryInput& bi, Image::FileFormat fileFormat, const ImageFormat* imageFormat) {
     return NULL;
 }
 
@@ -253,6 +295,14 @@ const ImageFormat* Image::determineImageFormat() const {
             break;
         }
 
+        case FIT_RGBF:
+            imageFormat = ImageFormat::RGB32F();
+            break;
+
+        case FIT_RGBAF:
+            imageFormat = ImageFormat::RGBA32F();
+            break;
+
         case FIT_INT16:
         case FIT_UINT32:
         case FIT_INT32:
@@ -260,8 +310,6 @@ const ImageFormat* Image::determineImageFormat() const {
         case FIT_DOUBLE:
         case FIT_RGB16:
         case FIT_RGBA16:
-        case FIT_RGBF:
-        case FIT_RGBAF:
         case FIT_COMPLEX:
         default:
             debugAssertM(false, "Unsupported FreeImage type loaded.");

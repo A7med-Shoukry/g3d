@@ -1,7 +1,7 @@
 
 #include <G3D/G3DAll.h>
 #include "irrklang/irrKlang.h"
-#include "Image.h"
+#include "G3D/Image.h"
 #include "G3D/ImageBuffer.h"
 
 //#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
@@ -82,7 +82,7 @@ void App::onInit() {
 
     showRenderingStats = true;
 
-    sky = Texture::fromFile(dataDir + "/cubemap/noonclouds/noonclouds_*.png", ImageFormat::AUTO(), Texture::DIM_CUBE_MAP_NPOT, Texture::Settings::cubeMap(), Texture::Preprocess::gamma(2.1f));
+    sky = Texture::fromFile(FilePath::concat(System::findDataFile("noonclouds"), "noonclouds_*.png"), ImageFormat::AUTO(), Texture::DIM_CUBE_MAP_NPOT, Texture::Settings::cubeMap(), Texture::Preprocess::gamma(2.1f));
     lighting = Lighting::create();
 
     // Start wherever the developer HUD last marked as "Home"
@@ -104,12 +104,10 @@ void App::onInit() {
     //modelPose.anim[MD3Model::PART_LOWER] = MD3Model::LOWER_WALK;
     //modelPose.anim[MD3Model::PART_UPPER] = MD3Model::UPPER_STAND;
 
-    FreeImage_Initialise();
     {
-        Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\3ds\\spaceFighter01\\diffuse.jpg");
+        Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\squaresswirls.exr");
         imgTexture = Texture::fromImageBuffer("imgTexture", img->copyBuffer());
     }
-    FreeImage_DeInitialise();
 
 	// start the sound engine with default parameters
 	//irrklangDevice = irrklang::createIrrKlangDevice();
