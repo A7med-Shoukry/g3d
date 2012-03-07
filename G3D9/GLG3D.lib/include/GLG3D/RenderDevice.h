@@ -178,7 +178,7 @@ public:
     };
     
     /** Maximum fixed-function lights supported. \deprecated Use a Shader */
-    enum {MAX_LIGHTS = 4};
+    enum {MAX_LIGHTS = 2};
 
     /** Maximum number of fixed-function texture units RenderDevice can use or
         track with pushed/popped render states.  This affects texture combine,
@@ -190,7 +190,7 @@ public:
 
         \deprecated
      */
-    enum {MAX_TRACKED_TEXTURE_UNITS = 4};
+    enum {MAX_TRACKED_TEXTURE_UNITS = 2};
 
     /** Maximum number of programmable pipeline texture image units RenderDevice
         can use or track with pushed/popped states.  These are typically more than
@@ -200,7 +200,7 @@ public:
         due to the cost of tracking and restoring the state. Most users will not
         use more, but increasing this value is the only necessary change.
      */
-    enum {MAX_TRACKED_TEXTURE_IMAGE_UNITS = 16};
+    enum {MAX_TRACKED_TEXTURE_IMAGE_UNITS = 2};
 
 private:
 

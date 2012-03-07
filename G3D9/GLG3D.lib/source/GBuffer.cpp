@@ -168,7 +168,8 @@ void GBuffer::bindWriteUniforms(Shader::ArgList& args) const {
 
             // Set the inverse of the read values
             args.set(std::string(Field(f).toString()) + "_writeScaleBias", 
-                Vector2(1.0f / encoding.readMultiplyFirst, -encoding.readAddSecond / encoding.readMultiplyFirst), true);
+                Vector2(1.0f / encoding.readMultiplyFirst, -encoding.readAddSecond / encoding.readMultiplyFirst), 
+                     true);
         }
     }
 }

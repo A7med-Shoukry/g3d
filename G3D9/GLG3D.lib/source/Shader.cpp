@@ -1255,7 +1255,14 @@ void VertexAndPixelShader::bindArgList(RenderDevice* rd, const ArgList& args) co
                 // the texture is placed.
                 debugAssert(decl.textureUnit >= 0);
                 glUniform1iARB(location, decl.textureUnit);
-                rd->setTexture(decl.textureUnit, value.texture);
+                if (decl.textureUnit < RenderDevice::MAX_TRACKED_TEXTURE_IMAGE_UNITS) {
+                    // Use the old renderdevice API
+                    rd->setTexture(decl.textureUnit, value.texture);
+                } else {
+                    // Directly make the OpenGL binding call
+                    glActiveTexture(decl.textureUnit + GL_TEXTURE0);
+                    glBindTexture(value.texture->openGLTextureTarget(), value.texture->openGLID());
+                }
                 break;
 
             case GL_INT:
