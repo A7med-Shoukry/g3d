@@ -1996,6 +1996,24 @@ public:
 		forceSetCullFace(m_state.cullFace);
     }
 
+    /** Shorthand for:
+    
+        \code
+           rd->setShader(s);
+           Draw::fastRect2D(rd->viewport(), s);
+        \endcode
+      */
+    void applyRect(const Shader::Ref& s);
+
+    /** Shorthand for:
+    
+        \code
+           rd->setShader(s);
+           Draw::fastRect2D(r, rd);
+        \endcode
+      */
+    void applyRect(const Shader::Ref& s, const Rect2D& r);
+
     #ifdef G3D_WIN32
         HDC getWindowHDC() const;
     #endif

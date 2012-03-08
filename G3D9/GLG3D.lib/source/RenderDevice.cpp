@@ -23,7 +23,7 @@
 #include "GLG3D/ShadowMap.h"
 #include "GLG3D/SuperShader.h" // to purge cache
 #include "GLG3D/GLCaps.h"
-
+#include "GLG3D/Draw.h"
 #include "GLG3D/GApp.h" // for screenPrintf
 
 namespace G3D {
@@ -164,6 +164,17 @@ void RenderDevice::init(
 
 OSWindow* RenderDevice::window() const {
     return m_window;
+}
+
+
+void RenderDevice::applyRect(const Shader::Ref& s) {
+    applyRect(s, viewport());
+}
+
+
+void RenderDevice::applyRect(const Shader::Ref& s, const Rect2D& r) {
+    setShader(s);
+    Draw::fastRect2D(r, this);
 }
 
 

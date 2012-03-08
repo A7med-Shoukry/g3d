@@ -21,6 +21,7 @@
    <p>
    Changes in 9.00:
    <ul>
+    <li> G3D::RenderDevice::applyRect
     <li> G3D::GuiTextureBox now saves out cubemaps at 4x the width and 2x the height of one of its faces, in the panoramic view </li>
     <li> Added Show Cube Edges option to G3D::GuiTextureBoxInspector </li>
     <li> Reduced RenderDevice::MAX_TRACKED_TEXTURE_IMAGE_UNITS, RenderDevice::MAX_TRACKED_TEXTURE_UNITS, and RenderDevice::MAX_LIGHTS to 2 as we remove fixed-function to speed up programmable shading.</li>
