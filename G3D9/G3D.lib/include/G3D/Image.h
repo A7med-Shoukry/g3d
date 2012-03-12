@@ -60,6 +60,8 @@ private:
     const ImageFormat*  m_format;
 
     Image();
+    Image(const Image&);
+    Image& operator=(const Image&);
 
     const ImageFormat* determineImageFormat() const;
 
@@ -67,8 +69,10 @@ public:
     virtual ~Image();
 
     static Ref fromFile(const std::string& filename, FileFormat fileFormat = Image::FILEFORMAT_AUTO, const ImageFormat* imageFormat = ImageFormat::AUTO());
-    static Ref fromInput(const BinaryInput& bi, FileFormat fileFormat = Image::FILEFORMAT_AUTO, const ImageFormat* imageFormat = ImageFormat::AUTO());
+    static Ref fromBuffer(const ImageBuffer::Ref& buffer);
 
+    void toFile(const std::string& filename) const;
+    ImageBuffer::Ref toBuffer() const;
 
     void get(const Point2int32& pos, Color4& color) const;
     void get(const Point2int32& pos, Color3& color) const;
@@ -80,7 +84,6 @@ public:
     void set(const Point2int32& pos, const Color4unorm8& color);
     void set(const Point2int32& pos, const Color3unorm8& color);
 
-    ImageBuffer::Ref copyBuffer();
 };
 
 } // namespace G3D

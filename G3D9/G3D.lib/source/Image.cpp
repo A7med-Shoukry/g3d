@@ -8,46 +8,14 @@
 
 namespace G3D {
 
-// Converts from Image::FileFormat to FREE_IMAGE_FORMAT respecting uncommon (casted) values
-static FREE_IMAGE_FORMAT ConvertFileFormatToFIFormat(Image::FileFormat fileFormat) {
-    FREE_IMAGE_FORMAT fiFormat = FIF_UNKNOWN;
-    switch (fileFormat) {
-        case Image::FILEFORMAT_AUTO:   fiFormat = FIF_UNKNOWN; break;
-        case Image::FILEFORMAT_BMP:    fiFormat = FIF_BMP; break;
-	    case Image::FILEFORMAT_ICO:    fiFormat = FIF_ICO; break;
-	    case Image::FILEFORMAT_JPEG:   fiFormat = FIF_JPEG; break;
-	    case Image::FILEFORMAT_MNG:    fiFormat = FIF_MNG; break;
-	    case Image::FILEFORMAT_PBM:    fiFormat = FIF_PBM; break;
-	    case Image::FILEFORMAT_PBMRAW: fiFormat = FIF_PBMRAW; break;
-	    case Image::FILEFORMAT_PCX:    fiFormat = FIF_PCX; break;
-        case Image::FILEFORMAT_PGM:    fiFormat = FIF_PGM; break;
-	    case Image::FILEFORMAT_PGMRAW: fiFormat = FIF_PGMRAW; break;
-	    case Image::FILEFORMAT_PNG:    fiFormat = FIF_PNG; break;
-	    case Image::FILEFORMAT_PPM:    fiFormat = FIF_PPM; break;
-	    case Image::FILEFORMAT_PPMRAW: fiFormat = FIF_PPMRAW; break;
-	    case Image::FILEFORMAT_TARGA:  fiFormat = FIF_TARGA; break;
-	    case Image::FILEFORMAT_TIFF:   fiFormat = FIF_TIFF; break;
-	    case Image::FILEFORMAT_XBM:    fiFormat = FIF_XBM; break;
-	    case Image::FILEFORMAT_XPM:    fiFormat = FIF_XPM; break;
-	    case Image::FILEFORMAT_DDS:    fiFormat = FIF_DDS; break;
-	    case Image::FILEFORMAT_GIF:    fiFormat = FIF_GIF; break;
-	    case Image::FILEFORMAT_HDR:    fiFormat = FIF_HDR; break;
-	    case Image::FILEFORMAT_EXR:    fiFormat = FIF_EXR; break;
-	    case Image::FILEFORMAT_RAW:    fiFormat = FIF_RAW; break;
-        default:
-            debugAssert(static_cast<int>(fileFormat) < Image::FILEFORMAT_MAX);
-            fiFormat = static_cast<FREE_IMAGE_FORMAT>(fileFormat);
-            break;
-    }
-
-    return fiFormat;
-}
+static FREE_IMAGE_TYPE determineFreeImageType(const ImageFormat* imageFormat);
+static FREE_IMAGE_FORMAT convertFileFormatToFIFormat(Image::FileFormat fileFormat);
 
 Image::Image()
     : m_image(NULL)
     , m_format(ImageFormat::AUTO()) {
 
-    // TODO: if g3d ever has a global init, then this would move there to avoid deinitializing before program exit
+    // todo: if g3d ever has a global init, then this would move there to avoid deinitializing before program exit
     FreeImage_Initialise();
     m_image = new fipImage;
 }
@@ -63,21 +31,20 @@ Image::~Image() {
 Image::Ref Image::fromFile(const std::string& filename, Image::FileFormat fileFormat, const ImageFormat* imageFormat) {
     Image* img = new Image;
 
-    FREE_IMAGE_FORMAT fiFormat = ConvertFileFormatToFIFormat(fileFormat);
+    FREE_IMAGE_FORMAT fiFormat = convertFileFormatToFIFormat(fileFormat);
     debugAssert(fiFormat == FIF_UNKNOWN || fiFormat == fipImage::identifyFIF(filename.c_str()));
 
     if (! img->m_image->load(filename.c_str()))
     {
         delete img;
-        img = NULL;
-        return img;
+        return NULL;
     }
 
     const ImageFormat* detectedFormat = img->determineImageFormat();
     
     if (! detectedFormat) {
         delete img;
-        img = NULL;
+        return NULL;
     }
     
     if (imageFormat == ImageFormat::AUTO()) {
@@ -93,8 +60,53 @@ Image::Ref Image::fromFile(const std::string& filename, Image::FileFormat fileFo
     return img;
 }
 
-Image::Ref Image::fromInput(const BinaryInput& bi, Image::FileFormat fileFormat, const ImageFormat* imageFormat) {
-    return NULL;
+void Image::toFile(const std::string& filename) const {
+    if (! m_image->save(filename.c_str())) {
+        debugAssertM(false, format("Failed to write image to %s", filename.c_str()));
+    }
+}
+
+Image::Ref Image::fromBuffer(const ImageBuffer::Ref& buffer) {
+    FREE_IMAGE_TYPE fiType = determineFreeImageType(buffer->format());
+    debugAssertM(fiType != FIT_UNKNOWN, "Trying to create Image from unsupported ImageBuffer format %s");
+
+    if (fiType == FIT_UNKNOWN) {
+        return NULL;
+    }
+
+    Image* img = new Image;
+    if (! img->m_image->setSize(fiType, buffer->width(), buffer->height(), buffer->format()->cpuBitsPerPixel)) {
+        delete img;
+        return NULL;
+    }
+
+    BYTE* pixels = img->m_image->accessPixels();
+    debugAssert(pixels);
+
+    if (pixels) {
+        int rowStride = buffer->width() * (buffer->format()->cpuBitsPerPixel / 8);
+
+        for (int row = 0; row < buffer->height(); ++row) {
+            System::memcpy(img->m_image->getScanLine(row), buffer->row(row), rowStride);
+        }
+    }
+
+    return img;
+}
+
+ImageBuffer::Ref Image::toBuffer() const {
+    ImageBuffer::Ref buffer = ImageBuffer::create(AlignedMemoryManager::create(), m_format, m_image->getWidth(), m_image->getHeight(), 1, 1);
+
+    BYTE* pixels = m_image->accessPixels();
+    if (pixels) {
+        int rowStride = buffer->width() * (m_format->cpuBitsPerPixel / 8);
+
+        for (int row = 0; row < buffer->height(); ++row) {
+            System::memcpy(buffer->row(row), m_image->getScanLine(row), rowStride);
+        }
+    }
+
+    return buffer;
 }
 
 void Image::get(const Point2int32& pos, Color4& color) const {
@@ -241,21 +253,6 @@ void Image::set(const Point2int32& pos, const Color3unorm8& color) {
     set(pos, Color4unorm8(color, unorm8::fromBits(255)));
 }
 
-ImageBuffer::Ref Image::copyBuffer() {
-    ImageBuffer::Ref buffer = ImageBuffer::create(AlignedMemoryManager::create(), m_format, m_image->getWidth(), m_image->getHeight(), 1, 1);
-
-    BYTE* pixels = m_image->accessPixels();
-    if (pixels) {
-        int rowStride = buffer->width() * (m_format->cpuBitsPerPixel / 8);
-
-        for (int row = 0; row < buffer->height(); ++row) {
-            System::memcpy(buffer->row(row), m_image->getScanLine(row), rowStride);
-        }
-    }
-
-    return buffer;
-}
-
 const ImageFormat* Image::determineImageFormat() const {
     debugAssert(m_image->isValid() && m_image->getImageType() != FIT_UNKNOWN);
     
@@ -275,7 +272,7 @@ const ImageFormat* Image::determineImageFormat() const {
                     break;
 
                 case 24:
-                    imageFormat = ImageFormat::BGR8();
+                    imageFormat = ImageFormat::RGB8();
                     break;
 
                 case 32:
@@ -290,10 +287,8 @@ const ImageFormat* Image::determineImageFormat() const {
         }
 
         case FIT_UINT16:
-        {
             imageFormat = ImageFormat::L16();
             break;
-        }
 
         case FIT_RGBF:
             imageFormat = ImageFormat::RGB32F();
@@ -316,7 +311,8 @@ const ImageFormat* Image::determineImageFormat() const {
             break;
     }
 
-    if (m_image->getColorType() != FIC_RGB && m_image->getColorType() != FIC_RGBALPHA) {
+    if (m_image->getColorType() != FIC_RGB && m_image->getColorType() != FIC_RGBALPHA &&
+        m_image->getColorType() != FIC_MINISBLACK && m_image->getColorType() != FIC_MINISWHITE) {
         debugAssertM(false, "Unsupported FreeImage color space loaded.");
         imageFormat = NULL;
     }
@@ -324,6 +320,72 @@ const ImageFormat* Image::determineImageFormat() const {
     return imageFormat;
 }
 
+static FREE_IMAGE_TYPE determineFreeImageType(const ImageFormat* imageFormat) {
+    FREE_IMAGE_TYPE fiType = FIT_UNKNOWN;
+    if (imageFormat == NULL) {
+        return fiType;
+    }
+
+    switch (imageFormat->code) {
+        case ImageFormat::CODE_L8:
+        case ImageFormat::CODE_RGB8:
+        case ImageFormat::CODE_RGBA8:
+            fiType = FIT_BITMAP;
+            break;
+
+        case ImageFormat::CODE_L16:
+            fiType = FIT_UINT16;
+            break;
+
+        case ImageFormat::CODE_RGB32F:
+            fiType = FIT_RGBF;
+            break;
+
+        case ImageFormat::CODE_RGBA32F:
+            fiType = FIT_RGBAF;
+            break;
+
+        default:
+            break;
+    }
+
+    return fiType;
+}
+
+// Converts from Image::FileFormat to FREE_IMAGE_FORMAT respecting uncommon (casted) values
+static FREE_IMAGE_FORMAT convertFileFormatToFIFormat(Image::FileFormat fileFormat) {
+    FREE_IMAGE_FORMAT fiFormat = FIF_UNKNOWN;
+    switch (fileFormat) {
+        case Image::FILEFORMAT_AUTO:   fiFormat = FIF_UNKNOWN; break;
+        case Image::FILEFORMAT_BMP:    fiFormat = FIF_BMP; break;
+	    case Image::FILEFORMAT_ICO:    fiFormat = FIF_ICO; break;
+	    case Image::FILEFORMAT_JPEG:   fiFormat = FIF_JPEG; break;
+	    case Image::FILEFORMAT_MNG:    fiFormat = FIF_MNG; break;
+	    case Image::FILEFORMAT_PBM:    fiFormat = FIF_PBM; break;
+	    case Image::FILEFORMAT_PBMRAW: fiFormat = FIF_PBMRAW; break;
+	    case Image::FILEFORMAT_PCX:    fiFormat = FIF_PCX; break;
+        case Image::FILEFORMAT_PGM:    fiFormat = FIF_PGM; break;
+	    case Image::FILEFORMAT_PGMRAW: fiFormat = FIF_PGMRAW; break;
+	    case Image::FILEFORMAT_PNG:    fiFormat = FIF_PNG; break;
+	    case Image::FILEFORMAT_PPM:    fiFormat = FIF_PPM; break;
+	    case Image::FILEFORMAT_PPMRAW: fiFormat = FIF_PPMRAW; break;
+	    case Image::FILEFORMAT_TARGA:  fiFormat = FIF_TARGA; break;
+	    case Image::FILEFORMAT_TIFF:   fiFormat = FIF_TIFF; break;
+	    case Image::FILEFORMAT_XBM:    fiFormat = FIF_XBM; break;
+	    case Image::FILEFORMAT_XPM:    fiFormat = FIF_XPM; break;
+	    case Image::FILEFORMAT_DDS:    fiFormat = FIF_DDS; break;
+	    case Image::FILEFORMAT_GIF:    fiFormat = FIF_GIF; break;
+	    case Image::FILEFORMAT_HDR:    fiFormat = FIF_HDR; break;
+	    case Image::FILEFORMAT_EXR:    fiFormat = FIF_EXR; break;
+	    case Image::FILEFORMAT_RAW:    fiFormat = FIF_RAW; break;
+        default:
+            debugAssert(static_cast<int>(fileFormat) < Image::FILEFORMAT_MAX);
+            fiFormat = static_cast<FREE_IMAGE_FORMAT>(fileFormat);
+            break;
+    }
+
+    return fiFormat;
+}
 
 } // namespace G3D
 

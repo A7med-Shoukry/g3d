@@ -14,12 +14,12 @@
     <ClCompile Include="..\scratch\corey\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scratch\corey\Image.cpp">
+    <ClCompile Include="..\scratch\corey\Texture2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\scratch\corey\Image.h">
+    <ClInclude Include="..\scratch\corey\Texture2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

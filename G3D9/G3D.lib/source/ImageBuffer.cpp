@@ -1,11 +1,6 @@
 /**
   \file G3D/ImageBuffer.cpp
  
-  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
-  \created 2011-08-18
-  \edited  2011-08-18
-
   Copyright 2000-2012, Morgan McGuire.
   All rights reserved.
  */
@@ -68,16 +63,6 @@ void ImageBuffer::freeBuffer() {
 
     m_memoryManager->free(m_buffer);
     m_buffer = NULL;
-}
-
-void* ImageBuffer::row(int y, int d) {
-    debugAssert(y < m_height && d < m_depth);
-    return static_cast<uint8*>(m_buffer) + (d * m_height * m_rowStride) + (y * m_rowStride); 
-}
-
-const void* ImageBuffer::row(int y, int d) const {
-    debugAssert(y < m_height && d < m_depth);
-    return static_cast<uint8*>(m_buffer) + (d * m_height * m_rowStride) + (y * m_rowStride); 
 }
 
 

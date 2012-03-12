@@ -1,11 +1,6 @@
 /**
   \file G3D/ImageBuffer.h
  
-  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
-  \created 2011-08-18
-  \edited  2011-08-18
-
   Copyright 2000-2012, Morgan McGuire.
   All rights reserved.
  */
@@ -14,7 +9,6 @@
 
 #include "G3D/ReferenceCount.h"
 #include "G3D/ImageFormat.h"
-
 
 namespace G3D {
 
@@ -56,9 +50,15 @@ public:
     void* buffer()                      { return m_buffer; }
     const void* buffer() const          { return m_buffer; }
 
-    void* row(int y, int d = 0);
-    const void* row(int y, int d = 0) const;
+    void* row(int y, int d = 0) {
+        debugAssert(y < m_height && d < m_depth);
+        return static_cast<uint8*>(m_buffer) + (d * m_height * m_rowStride) + (y * m_rowStride); 
+    }
 
+    const void* row(int y, int d = 0) const {
+        debugAssert(y < m_height && d < m_depth);
+        return static_cast<uint8*>(m_buffer) + (d * m_height * m_rowStride) + (y * m_rowStride); 
+    }
 };
 
 } // namespace G3D

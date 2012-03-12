@@ -152,11 +152,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\scratch\corey\Image.cpp" />
     <ClCompile Include="..\scratch\corey\main.cpp" />
+    <ClCompile Include="..\scratch\corey\Texture2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\scratch\corey\Image.h" />
+    <ClInclude Include="..\scratch\corey\Texture2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
