@@ -177,6 +177,7 @@
     <ClCompile Include="..\test\tMatrix3.cpp" />
     <ClCompile Include="..\test\tMeshAlgAdjacency.cpp" />
     <ClCompile Include="..\test\tMeshAlgTangentSpace.cpp" />
+    <ClCompile Include="..\test\tnorm.cpp" />
     <ClCompile Include="..\test\tPointHashGrid.cpp" />
     <ClCompile Include="..\test\tQuat.cpp" />
     <ClCompile Include="..\test\tQueue.cpp" />

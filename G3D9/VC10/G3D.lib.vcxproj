@@ -403,6 +403,8 @@
     <ClInclude Include="..\G3D.lib\include\G3D\serialize.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Set.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\SmallArray.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\snorm16.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\snorm8.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\SpawnBehavior.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\SpeedLoad.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Sphere.h" />
@@ -419,6 +421,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\typeutils.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\uint128.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\units.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\unorm16.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\unorm8.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\UprightFrame.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector2.h" />

@@ -736,5 +736,11 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\snorm8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\snorm16.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

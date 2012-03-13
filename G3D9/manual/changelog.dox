@@ -39,7 +39,8 @@
      <li> New "updateShadowMaps" argument to Surface::sortAndRender </li>
      <li> G3D::WeakCache::clear </li>
      <li> G3D::Matrix4float64 </li>
-	 <li> Added two more default parameters to G3D::SuperBSDF::create(), glossy = Color4::zero(), transmissive = Color4::zero() [Mike] </li>
+	 <li> G3D::unorm16, G3D::snorm8, G3D::snorm16 [Zina] </li>
+	 <li> Added two more default parameters to G3D::SuperBSDF::create(), glossy = Color4::zero(), transmissive = Color4::zero() [Mike M.] </li>
 	 <li> G3D::Material::createDiffuse(Texture::Ref texture) [Mike] </li>
      <li> G3D::GBuffer now allows scale and bias on every field (except depth) </li>
      <li> Removed shift + left button = right on OS X (ctrl+left still works) in FirstPersonManipulator </li>

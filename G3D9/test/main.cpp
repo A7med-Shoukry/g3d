@@ -143,6 +143,12 @@ void testfilter();
 void testAny();
 
 
+void testunorm8();
+void testsnorm8();
+void testunorm16();
+void testsnorm16();
+
+
 void testPointHashGrid();
 void perfPointHashGrid();
 
@@ -742,6 +748,10 @@ int main(int argc, char* argv[]) {
 
     printf("\n\nTests:\n\n");
 
+	testunorm16();
+	testunorm8();
+	testsnorm8();
+	testsnorm16();
     testMatrix();
 
     testAny();
