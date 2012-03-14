@@ -186,6 +186,10 @@ void GBuffer::bindReadUniforms(Shader::ArgList& args) const {
 
 
 void GBuffer::bindReadArgs(Shader::ArgList& args, const Field& field, const Texture::Ref& texture, const Encoding& encoding) {
+    if (texture.isNull()) {
+        return;
+    }
+
     const bool optional = true;
     const std::string& base = field.toString();
 

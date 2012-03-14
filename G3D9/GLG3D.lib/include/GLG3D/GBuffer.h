@@ -478,10 +478,10 @@ public:
 
       Used by bindReadUniforms(), and available for writing your own shaders that use GBuffer encodings but may not 
       directly use a GBuffer or all of its fields. Note that you can
-      simply use bindReadUniforms() to bind all GBuffer fields; Shader will ignore the ones that are not used by the actual
+      simply use bindReadUniforms() to bind all GBuffer fields; G3D::Shader will ignore the ones that are not used by the actual
       shader.
 
-      \param texture May be NULL
+      \param texture If NULL, no binding is made.  Use Texture::blackIfNull and Texture::whiteIfNull to avoid this behavior.
       \param encoding Used for non-NULL, non-Field::DEPTH_AND_STENCIL input
     */
     static void bindReadArgs(Shader::ArgList& args, const Field& field, const Texture::Ref& texture, const Encoding& encoding);
