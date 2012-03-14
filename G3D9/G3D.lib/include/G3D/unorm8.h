@@ -56,12 +56,20 @@ public:
 
     /** Maps f to round(f * 255).*/
     explicit unorm8(float f) {
+        m_bits = iClamp(int(f * 255.0f + 0.5f), 0, 255);
+    }
+
+    explicit unorm8(double f) {
         m_bits = iClamp(int(f * 255.0 + 0.5), 0, 255);
     }
 
     /** Returns a number on [0.0f, 1.0f] */
     operator float() const {
         return float(m_bits) * (1.0f / 255.0f);
+    }
+
+    operator double() const {
+        return double(m_bits) * (1.0 / 255.0);
     }
 
     static unorm8 one() {

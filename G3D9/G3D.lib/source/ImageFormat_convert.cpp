@@ -817,7 +817,7 @@ static unorm8 applyFilter(const unorm8*    I,
     
 	for (int dx = 0; dx < 5; ++dx) {
 	    float f = filter[dy][dx];
-	    sum += f * I[((x + dx + w - 2) % w) + offset];
+	    sum += f * (float)I[((x + dx + w - 2) % w) + offset];
 	    denom += f;
 	}
     }

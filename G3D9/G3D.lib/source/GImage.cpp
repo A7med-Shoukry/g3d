@@ -1181,7 +1181,7 @@ void GImage::makeCheckerboard(GImage& im, int checkerSize, const Color4unorm8& A
             const Color4unorm8& color = checker ? A : B;
             for (int c = 0; c < im.channels(); ++c) {
                 uint8* v = im.byte() + (x + y * im.width()) * im.channels() + c;
-                *v = color[c];
+                *v = color[c].bits();
             }
         }
     }

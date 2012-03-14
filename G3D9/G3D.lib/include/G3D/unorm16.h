@@ -53,14 +53,26 @@ public:
     
     unorm16(const unorm16& other) : m_bits(other.m_bits) {}
 
+    explicit unorm16(const class Any& a);
+
+    class Any toAny() const;
+
     /** Maps f to round(f * 65535).*/
     explicit unorm16(float f) {
+        m_bits = iClamp(int(f * 65535.0f + 0.5f), 0, 65535);
+    }
+
+    explicit unorm16(double f) {
         m_bits = iClamp(int(f * 65535.0 + 0.5), 0, 65535);
     }
 
     /** Returns a number on [0.0f, 1.0f] */
     operator float() const {
         return float(m_bits) * (1.0f / 65535.0f);
+    }
+
+    operator double() const {
+        return double(m_bits) * (1.0 / 65535.0);
     }
 
     static unorm16 one() {

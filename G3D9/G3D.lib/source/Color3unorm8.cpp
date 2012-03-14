@@ -26,9 +26,9 @@ Color3unorm8::Color3unorm8(class BinaryInput& bi) {
 
 
 void Color3unorm8::serialize(class BinaryOutput& bo) const {
-    bo.writeUInt8(r);
-    bo.writeUInt8(g);
-    bo.writeUInt8(b);
+    bo.writeUInt8(r.bits());
+    bo.writeUInt8(g.bits());
+    bo.writeUInt8(b.bits());
 }
 
 

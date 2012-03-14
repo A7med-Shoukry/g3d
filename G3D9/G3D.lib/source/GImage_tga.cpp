@@ -205,7 +205,7 @@ void GImage::decodeTGA(
                         readBGR((uint8*)(&value), input);
                         for (int i = 0; i < numValues; ++i, ++x) {
                             for (int b = 0; b < 3; ++b, ++byteOffset) {
-                                byte()[byteOffset] = value[b];
+                                byte()[byteOffset] = value[b].bits();
                             }
                         }
                     } else {
@@ -213,7 +213,7 @@ void GImage::decodeTGA(
                         readBGRA((uint8*)(&value), input);
                         for (int i = 0; i < numValues; ++i, ++x) {
                             for (int b = 0; b < 3; ++b, ++byteOffset) {
-                                byte()[byteOffset] = value[b];
+                                byte()[byteOffset] = value[b].bits();
                             }
                         }
                     }

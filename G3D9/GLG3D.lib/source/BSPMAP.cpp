@@ -169,15 +169,15 @@ void Map::render(RenderDevice* renderDevice, const GCamera& worldCamera, float a
                             // In bounds
 
                             // Compute index (using Quake coordinate system)
-	                        int index = 
+                            int index = 
                                 idxX + 
                                 (lightVolumesGrid.z - idxZ - 1) * lightVolumesGrid.x + 
                                 idxY * (lightVolumesGrid.x * lightVolumesGrid.z);
-
-                	        const LightVolume* light = &lightVolumes[index];
-
+                            
+                            const LightVolume* light = &lightVolumes[index];
+                            
                             // Draw points that are likely inside the map
-                            if (light->ambient.r + light->ambient.g + light->ambient.b > 0) {
+                            if ((float)light->ambient.r + (float)light->ambient.g + (float)light->ambient.b > 0) {
                                 glColor(Color3(light->directional) + Color3(light->ambient));
                                 glVertex(v);
                             }

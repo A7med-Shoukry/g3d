@@ -643,9 +643,9 @@ void GImage::decodeICO(
                     if (currPixel < width) {
                         int tsrc  = src[i];
                     
-                        byte()[dest]     = palette[tsrc].r;
-                        byte()[dest + 1] = palette[tsrc].g;
-                        byte()[dest + 2] = palette[tsrc].b;
+                        byte()[dest]     = palette[tsrc].r.bits();
+                        byte()[dest + 1] = palette[tsrc].g.bits();
+                        byte()[dest + 2] = palette[tsrc].b.bits();
 
                         ++currPixel;
                         dest += 4;
@@ -674,9 +674,9 @@ void GImage::decodeICO(
                     dest = 4 * ((h * width) + currPixel);
                     int src  = BMPixel8;
                     
-                    byte()[dest]     = palette[src].r;
-                    byte()[dest + 1] = palette[src].g;
-                    byte()[dest + 2] = palette[src].b;
+                    byte()[dest]     = palette[src].r.bits();
+                    byte()[dest + 1] = palette[src].g.bits();
+                    byte()[dest + 2] = palette[src].b.bits();
                     
                     ++currPixel;
                 }
