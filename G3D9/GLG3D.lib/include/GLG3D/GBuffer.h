@@ -484,7 +484,7 @@ public:
       \param texture May be NULL
       \param encoding Used for non-NULL, non-Field::DEPTH_AND_STENCIL input
     */
-    static void bindReadArgs(Shader::ArgList& args, const Field& field, Texture::Ref& texture, const Encoding& encoding);
+    static void bindReadArgs(Shader::ArgList& args, const Field& field, const Texture::Ref& texture, const Encoding& encoding);
 
 };
 
