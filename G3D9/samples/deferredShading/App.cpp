@@ -123,10 +123,6 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
     // Make a pass over the screen, performing shading
     rd->push2D(); {
-        shadingPass->args.set("WS_NORMAL_buffer",   gbuffer->texture(GBuffer::Field::WS_NORMAL));
-        shadingPass->args.set("WS_POSITION_buffer", gbuffer->texture(GBuffer::Field::WS_POSITION));
-        shadingPass->args.set("LAMBERTIAN_buffer",  gbuffer->texture(GBuffer::Field::LAMBERTIAN));
-        shadingPass->args.set("GLOSSY_buffer",      gbuffer->texture(GBuffer::Field::GLOSSY));
         shadingPass->args.set("wsEye",              gbuffer->camera().coordinateFrame().translation);
         gbuffer->bindReadUniforms(shadingPass->args);
  

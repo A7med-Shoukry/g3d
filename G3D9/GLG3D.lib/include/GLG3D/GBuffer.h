@@ -471,6 +471,21 @@ public:
 
     /** Bind the framebuffer and clear it, then set the camera and time offsets */
     void prepare(RenderDevice* rd, const GCamera& camera, float timeOffset, float velocityStartTimeOffset);
+
+
+    /**
+      \brief Binds a single argument as fieldName + "_buffer" and fieldName + "_readScaleBias".
+
+      Used by bindReadUniforms(), and available for writing your own shaders that use GBuffer encodings but may not 
+      directly use a GBuffer or all of its fields. Note that you can
+      simply use bindReadUniforms() to bind all GBuffer fields; Shader will ignore the ones that are not used by the actual
+      shader.
+
+      \param texture May be NULL
+      \param encoding Used for non-NULL, non-Field::DEPTH_AND_STENCIL input
+    */
+    static void bindReadArgs(Shader::ArgList& args, const Field& field, Texture::Ref& texture, const Encoding& encoding);
+
 };
 
 } // namespace G3D

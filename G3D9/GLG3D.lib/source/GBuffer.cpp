@@ -178,14 +178,23 @@ void GBuffer::bindWriteUniforms(Shader::ArgList& args) const {
 void GBuffer::bindReadUniforms(Shader::ArgList& args) const {
     for (int f = 0; f < Field::COUNT; ++f) {
         const ImageFormat* format = m_specification.format[f];
-        if ((format != NULL) && (f != Field::DEPTH_AND_STENCIL)) {
-            const Encoding& encoding = m_specification.encoding[f];
-
-            args.set(std::string(Field(f).toString()) + "_readScaleBias", (Vector2)encoding, true);
+        if (format != NULL) {
+            bindReadArgs(args, Field(f), texture(f), m_specification.encoding[f]);
         }
     }
 }
 
+
+void GBuffer::bindReadArgs(Shader::ArgList& args, const Field& field, Texture::Ref& texture, const Encoding& encoding) {
+    const bool optional = true;
+    const std::string& base = field.toString();
+
+    args.set(base + "_buffer", texture, optional);
+    const ImageFormat* format = texture.isNull() ? NULL : texture->format();
+    if ((format != NULL) && (field != Field::DEPTH_AND_STENCIL)) {
+        args.set(base + "_readScaleBias", (Vector2)encoding, optional);
+    }
+}
 
 
 int GBuffer::width() const {
