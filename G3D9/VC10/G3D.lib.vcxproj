@@ -287,10 +287,12 @@
     <ClCompile Include="..\G3D.lib\source\ThreadSet.cpp" />
     <ClCompile Include="..\G3D.lib\source\Triangle.cpp" />
     <ClCompile Include="..\G3D.lib\source\uint128.cpp" />
+    <ClCompile Include="..\G3D.lib\source\unorm16.cpp" />
     <ClCompile Include="..\G3D.lib\source\UprightFrame.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector2.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector2int16.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector2int32.cpp" />
+    <ClCompile Include="..\G3D.lib\source\Vector2unorm16.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector3.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector3int16.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector3int32.cpp" />
@@ -427,6 +429,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Vector2.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector2int16.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector2int32.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\Vector2unorm16.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector3.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector3int16.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector3int32.h" />
