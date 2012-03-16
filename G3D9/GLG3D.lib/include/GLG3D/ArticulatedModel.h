@@ -390,8 +390,8 @@ public:
     class PoseSpline {
     public:
         typedef Table<std::string, PhysicsFrameSpline> SplineTable;
-        SplineTable partSpline;
-        bool     castsShadows;
+        SplineTable     partSpline;
+        bool            castsShadows;
 
         PoseSpline();
 
@@ -436,19 +436,19 @@ public:
         public:
 
             /** Index of a Face in a temporary array*/
-            typedef int Index;
-            typedef SmallArray<Index, 7> IndexArray;
-            typedef Table<Point3, IndexArray> AdjacentFaceTable;
+            typedef int                         Index;
+            typedef SmallArray<Index, 7>        IndexArray;
+            typedef Table<Point3, IndexArray>   AdjacentFaceTable;
 
-            CPUVertexArray::Vertex   vertex[3];
+            CPUVertexArray::Vertex              vertex[3];
 
             /** Mesh from which this face was originally created. Needed for reconstructing
               the index arrays after vertices are merged.*/
-            Mesh*       mesh;
+            Mesh*                               mesh;
             
             /** Non-unit face normal, used for weighted vertex normal computation */
-            Vector3     normal;
-            Vector3     unitNormal;
+            Vector3                             normal;
+            Vector3                             unitNormal;
 
             Face() : mesh(NULL) {}
         };
@@ -461,6 +461,7 @@ public:
     private:
 
         bool                        m_hasTexCoord0;
+        bool                        m_hasTexCoord1;
         Part*                       m_parent;
         Array<Part*>                m_child;
         Array<Mesh*>                m_meshArray;
@@ -486,6 +487,7 @@ public:
         VertexRange                 gpuNormalArray;
         VertexRange                 gpuTexCoord0Array;
         VertexRange                 gpuTangentArray;
+        VertexRange                 gpuTexCoord1Array;
 
     private:
         

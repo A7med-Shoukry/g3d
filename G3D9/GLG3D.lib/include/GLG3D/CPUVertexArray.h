@@ -17,6 +17,7 @@
 #include "G3D/Vector2.h"
 #include "G3D/Vector3.h"
 #include "G3D/Vector4.h"
+#include "G3D/Vector2unorm16.h"
 #include "GLG3D/VertexBuffer.h"
 
 namespace G3D {
@@ -46,29 +47,43 @@ public:
         /** xyz = tangent, w = sign */
         Vector4                 tangent;
 
-        /** Texture coordinate 0, setting a convention for expansion in later API versions. */
+        /** Texture coordinate 0. */
         Point2                  texCoord0;
     };
 
     Array<Vertex>               vertex;
 
+    /** A second texture coordinate (which is not necessarily stored in
+        texture coordinate attribute 1 on a GPU).  This must be on [0,1].
+        Typically used for light map coordinates. 
+        
+        This is stored outside of the CPUVertexArray::vertex array because 
+        it is not used by most models. */
+    Array<Point2unorm16>        texCoord1;
+
     /** True if texCoord0 contains valid data. */
     bool                        hasTexCoord0;
+
+    /** True if texCoord0 contains valid data. */
+    bool                        hasTexCoord1;
 
     /** True if tangent contains valid data. */
     bool                        hasTangent;
 
-    CPUVertexArray() : hasTexCoord0(true), hasTangent(true) {}
+    CPUVertexArray() : hasTexCoord0(true), hasTexCoord1(false), hasTangent(true) {}
 
     int size() const {
         return vertex.size();
     }
 
+    /** \param texCoord1 This is not interleaved with the other data in GPU memory. 
+         Note that G3D::SuperSurface stores this in texture coordinate <b>2</b> because texcoord 1 is used for the tangent. */
     void copyToGPU
     (VertexRange&               vertex, 
      VertexRange&               normal, 
      VertexRange&               packedTangent, 
      VertexRange&               texCoord0,
+     VertexRange&               texCoord1,
      VertexBuffer::UsageHint    hint = VertexBuffer::WRITE_ONCE) const;
 };
 

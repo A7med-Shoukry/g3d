@@ -78,7 +78,7 @@ void ArticulatedModel::Part::pose
 
 
 void ArticulatedModel::Part::copyToGPU() {
-    cpuVertexArray.copyToGPU(gpuPositionArray, gpuNormalArray, gpuTangentArray, gpuTexCoord0Array);
+    cpuVertexArray.copyToGPU(gpuPositionArray, gpuNormalArray, gpuTangentArray, gpuTexCoord0Array, gpuTexCoord1Array);
 
     typedef uint16 smallIndexType;
     // If fewer than 2^16 vertices, switch to uint16 indices

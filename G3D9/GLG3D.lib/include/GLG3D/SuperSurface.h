@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2008-11-12
-  \edited  2011-08-26
+  \edited  2012-03-16
  
  Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
@@ -126,17 +126,22 @@ public:
             - \f$ \vec{z} = \vec{n} \f$ */
         const Array<Vector4>*    packedTangent;
         const Array<Vector2>*    texCoord0;
+
+        /** May be NULL */
+        const Array<Vector2unorm16>* texCoord1;
         
         CPUGeom
            (const Array<int>*           index,
             const MeshAlg::Geometry*    geometry,
             const Array<Vector2>*       texCoord0,
+            const Array<Vector2unorm16>* texCoord1 = NULL,
             const Array<Vector4>*       packedTangent = NULL) : 
             index(index), 
             vertexArray(NULL),
             geometry(geometry), 
             packedTangent(packedTangent), 
-            texCoord0(texCoord0) {}
+            texCoord0(texCoord0), 
+            texCoord1(texCoord1) {}
 
         CPUGeom
            (const Array<int>*           index,
@@ -145,21 +150,27 @@ public:
             vertexArray(vertexArray),
             geometry(NULL),
             packedTangent(NULL), 
-            texCoord0(NULL) {}
+            texCoord0(NULL),
+            texCoord1(NULL){}
 
-        CPUGeom() : index(NULL), vertexArray(NULL), geometry(NULL), packedTangent(NULL), texCoord0(NULL) {}
+        CPUGeom() : index(NULL), vertexArray(NULL), geometry(NULL), packedTangent(NULL), texCoord0(NULL), texCoord1(NULL) {}
 
         /** Updates the interleaved vertex arrays.  If they are not
             big enough, allocates a new vertex buffer and reallocates
             the vertex arrays inside them.  This is often used as a
             helper to convert a CPUGeom to a GPUGeom.
          */
-        void copyVertexDataToGPU(VertexRange& vertex, VertexRange& normal, 
-                                 VertexRange& packedTangents, VertexRange& texCoord0, 
-                                 VertexBuffer::UsageHint hint);
+        void copyVertexDataToGPU
+            (VertexRange& vertex, 
+             VertexRange& normal, 
+             VertexRange& packedTangents, 
+             VertexRange& texCoord0, 
+             VertexRange& texCoord1, 
+             VertexBuffer::UsageHint hint);
     };
     
 protected:
+
     virtual void defaultRender(RenderDevice* rd) const {
         alwaysAssertM(false, "Not implemented");
     }

@@ -834,7 +834,7 @@ void MD3Model::posePart(PartType partType, const Pose& pose, Array<Surface::Ref>
         // Upload data to the GPU
         SuperSurface::GPUGeom::Ref gpuGeom = surface->gpuGeom();
         cpuGeom.copyVertexDataToGPU(gpuGeom->vertex, gpuGeom->normal, gpuGeom->packedTangent, 
-                                    gpuGeom->texCoord0, VertexBuffer::WRITE_EVERY_FRAME);
+                                    gpuGeom->texCoord0, gpuGeom->texCoord1, VertexBuffer::WRITE_EVERY_FRAME);
 
         gpuGeom->index = triList.m_gpuIndex;
 

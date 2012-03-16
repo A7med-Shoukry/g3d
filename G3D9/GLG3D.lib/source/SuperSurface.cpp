@@ -1041,14 +1041,17 @@ void SuperSurface::CPUGeom::copyVertexDataToGPU
  VertexRange&               normal, 
  VertexRange&               packedTangentVAR, 
  VertexRange&               texCoord0VAR, 
+ VertexRange&               texCoord1VAR, 
  VertexBuffer::UsageHint    hint) {
 
     if (vertexArray != NULL) {
         // G3D 9.00
 
-        vertexArray->copyToGPU(vertex, normal, packedTangentVAR, texCoord0VAR, hint);
+        vertexArray->copyToGPU(vertex, normal, packedTangentVAR, texCoord0VAR, texCoord1VAR, hint);
 
     } else {
+        texCoord1VAR = VertexRange();
+
         // G3D 8.00 support
 
         size_t vtxSize = sizeof(Vector3) * geometry->vertexArray.size();

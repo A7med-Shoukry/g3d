@@ -62,7 +62,7 @@ private:
     Vector3                 m_normal[3];
 
 	/** Twice the area: (e0 x e1).length() */
-    float                  doubleArea;
+    float                   m_doubleArea;
 
     /** Texture coordinates. */
     Vector2                 m_texCoord[3];
@@ -106,8 +106,10 @@ public:
         box = AABox(v0.min(v1).min(v2), v0.max(v1).max(v2));
     }
 
-    /** Surface area, computed each call. */
-    float area() const;
+    /** Surface area. */
+    float area() const {
+        return m_doubleArea * 0.5f;
+    }
 
     /** Vertex position (must be computed) */
     Vector3 vertex(int i) const {

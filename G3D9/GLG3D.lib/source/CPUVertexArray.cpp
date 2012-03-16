@@ -8,13 +8,19 @@ void CPUVertexArray::copyToGPU
  VertexRange&               normalVR, 
  VertexRange&               packedTangentVR, 
  VertexRange&               texCoord0VR,
+ VertexRange&               texCoord1VR,
  VertexBuffer::UsageHint    hint) const {
 
 #   define OFFSET(field) ((size_t)(&dummy.field) - (size_t)&dummy)
 
     const int numVertices = size();
     if (numVertices > 0) {
-        const int byteSize = sizeof(Vertex) * numVertices;
+        int byteSize = sizeof(Vertex) * numVertices;
+        
+        if (hasTexCoord1) { 
+            byteSize += sizeof(Vector2unorm16) * numVertices;
+        }
+
         const int padding = 16;
 
         VertexBuffer::Ref buffer = VertexBuffer::create(byteSize + padding, VertexBuffer::WRITE_ONCE);
@@ -26,6 +32,12 @@ void CPUVertexArray::copyToGPU
         normalVR        = VertexRange(dummy.normal,    numVertices, all, OFFSET(normal),    (int)sizeof(Vertex));
         packedTangentVR = VertexRange(dummy.tangent,   numVertices, all, OFFSET(tangent),   (int)sizeof(Vertex));
         texCoord0VR     = VertexRange(dummy.texCoord0, numVertices, all, OFFSET(texCoord0), (int)sizeof(Vertex));
+
+        if (hasTexCoord1) {
+            texCoord1VR = VertexRange(texCoord1, buffer);
+        } else {
+            texCoord1VR = VertexRange();
+        }
 
         // Copy all interleaved data at once
         Vertex* dst = (Vertex*)all.mapBuffer(GL_WRITE_ONLY);

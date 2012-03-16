@@ -24,7 +24,7 @@ Tri::Tri
     m_normal[1] = n;
     m_normal[2] = n;
 
-	doubleArea = e1.cross(e2).length();
+	m_doubleArea = e1.cross(e2).length();
 
 }
 
@@ -54,7 +54,7 @@ Tri::Tri
     m_packedTangent[1] = tan1;
     m_packedTangent[2] = tan2;
 
-    doubleArea = e1.cross(e2).length();
+    m_doubleArea = e1.cross(e2).length();
 }
 
 
@@ -70,7 +70,7 @@ Tri Tri::otherSide() const {
     t.v0     = v0;
     t.e1     = e2;
     t.e2     = e1;
-	t.doubleArea = doubleArea;
+	t.m_doubleArea = m_doubleArea;
 
     // Flip winding and normal/tangent direction
     // by swapping elements 1 and 2.
@@ -88,11 +88,6 @@ Tri Tri::otherSide() const {
     }
     
     return t;
-}
-
-
-float Tri::area() const {
-    return doubleArea * 0.5f;
 }
 
 
@@ -122,9 +117,9 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
     // TODO: Add twoside test
 
 	// This test is equivalent to n.dot(ray.direction()) >= -EPS
-	// Where n is the (not stored!) face unit normal.
+	// Where n is the face unit normal, which we do not explicitly store
 	
-	if (( (e1.cross(e2)).dot(ray.direction()) >= -EPS * tri.doubleArea)) {
+	if (( (e1.cross(e2)).dot(ray.direction()) >= -EPS * tri.m_doubleArea)) {
         // Backface or nearly parallel
         return false;
     }

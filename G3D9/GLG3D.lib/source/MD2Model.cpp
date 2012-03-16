@@ -664,13 +664,14 @@ void MD2Model::Part::pose(Array<Surface::Ref>& surfaceArray, const CoordinateFra
     cpuGeom.geometry      = &surface->internalGeometry();
     cpuGeom.packedTangent = &packedTangentArray;
     cpuGeom.texCoord0     = &_texCoordArray;
+    cpuGeom.texCoord1     = NULL;
 
     getGeometry(pose, *const_cast<MeshAlg::Geometry*>(cpuGeom.geometry), negateNormals);
     
     // Upload data to the GPU
     SuperSurface::GPUGeom::Ref gpuGeom = surface->gpuGeom();
     cpuGeom.copyVertexDataToGPU(gpuGeom->vertex, gpuGeom->normal, gpuGeom->packedTangent, 
-                                gpuGeom->texCoord0, VertexBuffer::WRITE_EVERY_FRAME);
+                                gpuGeom->texCoord0, gpuGeom->texCoord1, VertexBuffer::WRITE_EVERY_FRAME);
 
     gpuGeom->index = indexVAR;
 
