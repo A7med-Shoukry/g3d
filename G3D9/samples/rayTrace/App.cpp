@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
     settings.window.width       = 960; 
     settings.window.height      = 640;
 
+    debugPrintf("sizeof(Tri) = %d bytes\n", sizeof(Tri));
+
     return App(settings).run();
 }
 
