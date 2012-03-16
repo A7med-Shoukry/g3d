@@ -1,10 +1,10 @@
 /**
-  @file Tri.cpp
+  \file GLG3D.lib/source/Tri.cpp
   
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2009-05-25
-  @edited  2010-11-25
+  \created 2009-05-25
+  \edited  2012-03-16
  */ 
 #include "GLG3D/Tri.h"
 #include "G3D/Ray.h"
@@ -13,16 +13,10 @@
 #include "GLG3D/CPUVertexArray.h"
 
 namespace G3D {
-
-Tri::Tri() : m_data(NULL) {}
-
-Tri::~Tri() {}
-
+    
 Tri::Tri
 (const Vector3& v0, const Vector3& v1, const Vector3& v2) :
-    v0(v0), e1(v1 - v0), e2(v2 - v0),
-    m_material(NULL),
-    m_data(NULL) {
+    v0(v0), e1(v1 - v0), e2(v2 - v0) {
     
     n = e1.cross(e2).directionOrZero();
 
@@ -35,13 +29,11 @@ Tri::Tri
 Tri::Tri
 (const Vector3& v0, const Vector3& v1, const Vector3& v2, 
  const Vector3& n0, const Vector3& n1, const Vector3& n2,
- void* data,
- const Material::Ref& material,
+ const Proxy<Material>::Ref& material,
  const Vector2& t0, const Vector2& t1, const Vector2& t2,
  const Vector4& tan0, const Vector4& tan1, const Vector4& tan2) :
     v0(v0), e1(v1 - v0), e2(v2 - v0),
-    m_material(material),
-    m_data(data) {
+    m_material(material) {
     
     debugAssert(material.isNull() ||
                 (isValidHeapPointer(material.pointer()) &&
@@ -71,7 +63,6 @@ Tri::operator Triangle() const {
 Tri Tri::otherSide() const {
     Tri t;
     
-    t.m_data = m_data;
     t.m_material = m_material;
     t.v0     = v0;
     t.e1     = e2;
@@ -168,26 +159,33 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
         // Alpha masking
         u = ua * f;
         v = va * f;
-        if (alphaTest && tri.m_material.notNull() && (tri.m_material->bsdf()->lambertian().min().a < alphaThreshold)) {
-            // This texture has an alpha channel; we have to test against it.
-            const float w = 1.0f - u - v;
-            
-            const Image4::Ref& image = tri.m_material->bsdf()->lambertian().image();
+        if (alphaTest) {
+            const Material::Ref& material = tri.material();
 
-            Vector2 texCoord = 
-                w * tri.m_texCoord[0] + 
-                u * tri.m_texCoord[1] +
-                v * tri.m_texCoord[2];
+            if (material.notNull()) {
+                const Component4& lambertian = material->bsdf()->lambertian();
+                if (lambertian.min().a < alphaThreshold) {
+                    // This texture has an alpha channel; we have to test against it.
+                    const float w = 1.0f - u - v;
             
-            texCoord.x *= image->width();
-            texCoord.y *= image->height();
 
-            if (image->nearest(texCoord).a < alphaThreshold) {
-                // Alpha masked location--passed through this tri
-                return false;
+                    Vector2 texCoord = 
+                        w * tri.m_texCoord[0] + 
+                        u * tri.m_texCoord[1] +
+                        v * tri.m_texCoord[2];
+            
+                    const Image4::Ref& image = lambertian.image();
+                    texCoord.x *= image->width();
+                    texCoord.y *= image->height();
+
+                    if (image->nearest(texCoord).a < alphaThreshold) {
+                        // Alpha masked location--passed through this tri
+                        return false;
+                    }
+
+                    // Hit the opaque part
+                }
             }
-
-            // Hit the opaque part
         }
         
         // This is a new hit.  Save away the data about the hit
@@ -300,11 +298,10 @@ void Tri::getTris(const Surface::Ref& pmodel, Array<Tri>& triArray, const CFrame
                      cframe.vectorToWorldSpace(v0.normal),  
                      cframe.vectorToWorldSpace(v1.normal),  
                      cframe.vectorToWorldSpace(v2.normal),
-
-                     NULL,            
+     
                      material,
                     
-                     v0.texCoord0, 
+                     v0.texCoord0,
                      v1.texCoord0,
                      v2.texCoord0,
 
@@ -345,7 +342,6 @@ void Tri::getTris(const Surface::Ref& pmodel, Array<Tri>& triArray, const CFrame
                      cframe.vectorToWorldSpace(normal[v1]),  
                      cframe.vectorToWorldSpace(normal[v2]),
 
-                     NULL,            
                      material,
                             
                      hasTexCoords ? texCoord0[v0] : Vector2::zero(), 

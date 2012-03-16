@@ -1,8 +1,8 @@
 /**
-  @file DirectionHistogram.h
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2009-03-25
-  @edited  2009-03-25
+  \file DirectionHistogram.h
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2009-03-25
+  \edited  2012-03-16
 */
 
 #include "G3D/ThreadSet.h"
@@ -171,14 +171,14 @@ DirectionHistogram::DirectionHistogram(int numSlices, const Vector3& axis) : m_s
             int i1 = m_meshIndex[q + 1];
             int i2 = m_meshIndex[q + 2];
             int i3 = m_meshIndex[q + 3];
-
-            void* pointer = &m_meshIndex[q];
-
+            
             // Create two tris for each quad
             // Wind backwards; these tris have to face inward
 
-            Tri A(m_meshVertex[i0], m_meshVertex[i3], m_meshVertex[i2], m_meshVertex[i0], m_meshVertex[i3], m_meshVertex[i2], pointer);
-            Tri B(m_meshVertex[i0], m_meshVertex[i2], m_meshVertex[i1], m_meshVertex[i0], m_meshVertex[i2], m_meshVertex[i1], pointer);
+            const Proxy<Material>::Ref vii = VertexIndexIndex::create(q);
+
+            Tri A(m_meshVertex[i0], m_meshVertex[i3], m_meshVertex[i2], m_meshVertex[i0], m_meshVertex[i3], m_meshVertex[i2], vii);
+            Tri B(m_meshVertex[i0], m_meshVertex[i2], m_meshVertex[i1], m_meshVertex[i0], m_meshVertex[i2], m_meshVertex[i1], vii);
 
             triArray.append(A);
             triArray.append(B);
@@ -234,11 +234,11 @@ void DirectionHistogram::insert(const Vector3& vector, float weight) {
         ++m_numSamples;
 
         // Hit
-        const int* index = reinterpret_cast<int*>(intersector.tri->data());
+        const int index = intersector.tri->data<VertexIndexIndex>()->index;
         
         // Increment all vertices surrounding the quad
         for (int j = 0; j < 4; ++j) {
-            int k = index[j]; 
+            int k = m_meshIndex[j + index]; 
             m_bucket[k] += weight;
         }
         m_dirty = true;

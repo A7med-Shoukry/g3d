@@ -1,8 +1,8 @@
 /**
-  @file DirectionHistogram.h
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
-  @created 2009-03-25
-  @edited  2009-03-25
+  \file DirectionHistogram.h
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \created 2009-03-25
+  \edited  2012-03-16
 */
 
 #ifndef GLG3D_DirectionHistogram_h
@@ -67,6 +67,22 @@ private:
 
     int                 m_numSamples;
 
+    // Note that this is reference counted
+    /* index into m_meshIndex */
+    class VertexIndexIndex : public Proxy<Material> {
+    public:
+        int             index;
+        typedef ReferenceCountedPointer<VertexIndexIndex> Ref;
+
+    private:
+        VertexIndexIndex(int i) : index(i) {};
+
+    public:
+        static Proxy<Material>::Ref create(int i) {
+            return Proxy<Material>::Ref(new VertexIndexIndex(i));
+        }
+    };
+
     /** Volume of a tetrahedron whose 4th vertex is at the origin.  
         The vertices are assumed to be
         in ccw order.*/
@@ -79,8 +95,8 @@ private:
 
     /** Assumes vector has unit length.
 
-       @param startIndex Inclusive
-       @param stopIndex  Inclusive
+       \param startIndex Inclusive
+       \param stopIndex  Inclusive
     */
     void insert(const Vector3& vector, float weight, int startIndex, int stopIndex);
 

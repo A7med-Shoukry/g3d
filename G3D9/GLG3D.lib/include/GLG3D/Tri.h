@@ -1,10 +1,10 @@
 /**
-  @file GLG3D/Tri.h
+  \file GLG3D/Tri.h
 
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
-  @created 2008-08-10
-  @edited  2010-11-10
+  \created 2008-08-10
+  \edited  2012-03-16
 */
 #ifndef GLG3D_Tri_h
 #define GLG3D_Tri_h
@@ -26,7 +26,7 @@ namespace G3D {
 class Ray;
 
 /**
- @brief Triangle implementation optimized for ray-triangle intersection.  
+ \brief Triangle implementation optimized for ray-triangle intersection.  
 
  Single sided and immutable once created.
  
@@ -34,7 +34,9 @@ class Ray;
  implementation because they are stored in a format more efficient for 
  intersection computations.
 
- Implementation is 132 bytes, including the vtable pointer.
+ The size of this class is carefully controlled so that large scenes can
+ be stored efficiently and that cache coherence is maintained during processing.
+ The implementation is currently 176 bytes in a 64-bit build.
 
  \sa G3D::Triangle, G3D::MeshShape, G3D::ArticulatedModel, G3D::Surface, G3D::MeshAlg
  */
@@ -68,25 +70,26 @@ private:
     /** Per-vertex tangents for bump mapping. */
     Vector4                 m_packedTangent[3];
 
-    Material::Ref           m_material;
-
-    void*                   m_data;
+    /** Usually a material, but can be abstracted */
+    Proxy<Material>::Ref    m_material;
 
 public:
 
-    Tri();
+    /** Assumes that normals are perpendicular to tangents, or that the tangents are zero.
 
-    ~Tri();
-
-    /** Assumes that normals are perpendicular to tangents, or that the tangents are zero */
+      \param material Create your own Proxy<Material> subclass to store application-specific data; BSDF, image, etc.
+       without adding to the size of Tri or having to trampoline all of the Material factory methods.
+       To extract the actual material from the proxy use Tri::material and Tri::data<T>.
+    */
     Tri(const Vector3& v0, const Vector3& v1, const Vector3& v2, 
         const Vector3& n0, const Vector3& n1, const Vector3& n2, 
-        void* data = NULL,
-        const Material::Ref& material = NULL,
+        const Proxy<Material>::Ref& material = NULL,
         const Vector2& t0 = Vector2::zero(), const Vector2& t1 = Vector2::zero(), const Vector2& t2 = Vector2::zero(),
         const Vector4& tan0 = Vector4::zero(), const Vector4& tan1 = Vector4::zero(), const Vector4& tan2 = Vector4::zero());
 
     Tri(const Vector3& v0, const Vector3& v1, const Vector3& v2);
+
+    Tri() {}
 
     /** Cast to Triangle */
     operator Triangle() const;
@@ -109,12 +112,9 @@ public:
     /** Vertex position (must be computed) */
     Vector3 vertex(int i) const {
         switch (i) {
-        case 0:
-            return v0;
-        case 1:
-            return v0 + e1;
-        case 2:
-            return v0 + e2;
+        case 0: return v0;
+        case 1: return v0 + e1;
+        case 2: return v0 + e2;
         default:
             debugAssertM(false, "Illegal index");
             return v0;
@@ -156,17 +156,24 @@ public:
         debugAssert(i >= 0 && i <= 2);
         return m_normal[i].cross(m_packedTangent[i].xyz()) * m_packedTangent[i].w;
     }
-
-    /** Application-specific data. Can be used as a convenience 
-        hook instead of subclassing Tri.*/
-    void* data() const {
-        return m_data;
+    
+    /** \brief Resolve and return the material for this Tri.
+      */
+    Material::Ref material() const {
+        return Proxy<Material>::resolve(m_material);
     }
 
-    /** Application-specific data; BSDF, image, etc. Can be used as a convenience 
-        hook instead of subclassing Tri.*/
-    Material::Ref material() const {
-        return m_material;
+    /** 
+     Extract the data field.  Mostly useful when using a Proxy<Material> that is not a Material itself
+     to simplfy the downcast.  Exactly the same as:
+
+    \code
+        tri->
+    \endcode
+    */
+    template<class T>
+    ReferenceCountedPointer<T> data() const {
+        return m_material.downcast<T>();
     }
 
     /** Returns a (relatively) unique integer for this object */
@@ -185,7 +192,6 @@ public:
             (m_texCoord[0] == t.m_texCoord[0]) &&
             (m_texCoord[1] == t.m_texCoord[1]) &&
             (m_texCoord[2] == t.m_texCoord[2]) &&
-            (m_data == t.m_data) &&
             (m_material == t.m_material);
     }
 
