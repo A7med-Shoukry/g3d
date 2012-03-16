@@ -27,8 +27,9 @@ App::App(const GApp::Settings& settings) :
 
 void App::onInit() {
     message("Loading...");
+	Stopwatch timer;
     m_world = new World();
-
+	timer.after("World creation");
     showRenderingStats = false;
     developerWindow->setVisible(false);
     developerWindow->cameraControlWindow->setVisible(false);

@@ -105,7 +105,9 @@ void World::end() {
 
     TriTree::Settings s;
     s.algorithm = TriTree::MEAN_EXTENT;
+	Stopwatch timer;
     m_triTree.setContents(m_triArray, s);
+	timer.after("TriTree creation");
     m_triArray.clear();
 }
 
