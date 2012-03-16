@@ -76,7 +76,7 @@ public:
 
     Tri();
 
-    virtual ~Tri();
+    ~Tri();
 
     /** Assumes that normals are perpendicular to tangents, or that the tangents are zero */
     Tri(const Vector3& v0, const Vector3& v1, const Vector3& v2, 
@@ -241,7 +241,7 @@ public:
 
         Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f) {}
 
-        virtual ~Intersector() {}
+        ~Intersector() {}
 
         /** \brief Computes the two-sided intersection of the ray and
             triangle.

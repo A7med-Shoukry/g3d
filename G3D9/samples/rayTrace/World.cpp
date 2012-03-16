@@ -66,8 +66,10 @@ World::World() : m_mode(TRACE) {
         ( ArticulatedModel::Specification {
             filename = "dabrovic_sponza/sponza.zip/sponza.obj";
           } );
+
+	Stopwatch timer;
     insert(ArticulatedModel::create(sponza), Vector3(8.2f, -6, 0));
-    
+    timer.after("Sponza load");
     end();
 }
 

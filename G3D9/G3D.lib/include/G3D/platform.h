@@ -354,5 +354,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #endif
 
 
+
+// Define to disable FFMPEG.  This is a temporary feature while we debug the Windows 64-bit build 
+#if defined(G3D_WINDOWS) && defined(G3D_64BIT)
+#   define G3D_NO_FFMPEG
+
+#endif
+
+
 // Header guard
 #endif

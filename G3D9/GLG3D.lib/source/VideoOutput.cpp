@@ -16,11 +16,6 @@ extern "C" {
 #include "libswscale/swscale.h"
 }
 
-// Define to disable FFMPEG.  This is a temporary feature while we debug the Windows 64-bit build 
-#if defined(G3D_WINDOWS) && defined(G3D_64BIT)
-#define NO_FFMPEG
-#pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
-#endif
 
 namespace G3D {
 
@@ -137,7 +132,7 @@ VideoOutput::VideoOutput() :
 }
 
 VideoOutput::~VideoOutput() {
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     if (!m_isFinished && m_isInitialized) {
         abort();
     }
@@ -180,7 +175,7 @@ void VideoOutput::initialize(const std::string& filename, const Settings& settin
     debugAssert(settings.width > 0);
     debugAssert(settings.height > 0);
     debugAssert(settings.fps > 0);
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     // initialize list of available muxers/demuxers and codecs in ffmpeg
     av_register_all();
 
@@ -375,7 +370,7 @@ void VideoOutput::encodeFrame(uint8* frame, const ImageFormat* format, bool inve
     alwaysAssertM(! m_isFinished, "Cannot call VideoOutput::append() after commit() or abort().");
 
     convertFrame(frame, format, invertY);
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     // encode frame
     int encodeSize = avcodec_encode_video(m_avStream->codec, 
                                           m_avEncodingBuffer, 
@@ -459,7 +454,7 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
         matchingPixelFormat = PIX_FMT_RGB24;
 
     }
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     if (matchingPixelFormat != m_avStream->codec->pix_fmt) {
         // finally convert to the format the encoder expects
         AVFrame* convFrame = avcodec_alloc_frame();
@@ -494,7 +489,7 @@ void VideoOutput::convertFrame(uint8* frame, const ImageFormat* format, bool inv
 
 void VideoOutput::commit() {
     m_isFinished = true;
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     if (m_isInitialized) {
         // write the trailer to create a valid file
         av_write_trailer(m_avFormatContext);
@@ -506,7 +501,7 @@ void VideoOutput::commit() {
 
 void VideoOutput::abort() {
     m_isFinished = true;
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     if (m_avFormatContext && m_avFormatContext->pb) {
         url_fclose(m_avFormatContext->pb);
         m_avFormatContext->pb = NULL;
@@ -542,7 +537,7 @@ void VideoOutput::getSupportedCodecs(Array<CodecID>& list) {
 
 bool VideoOutput::supports(CodecID c) {
     AVCodec* codec = NULL;
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     av_register_all();
 
     codec = avcodec_find_encoder(static_cast< ::CodecID>(c));

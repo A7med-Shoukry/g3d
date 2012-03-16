@@ -17,12 +17,9 @@ extern "C" {
 #include <errno.h>
 }
 
-// Define to disable FFMPEG.  This is a temporary feature while we debug the Windows 64-bit build 
-#if defined(G3D_WINDOWS) && defined(G3D_64BIT)
-#define NO_FFMPEG
-#pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
+#ifdef G3D_NO_FFMPEG
+#	pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
 #endif
-
 
 namespace G3D {
 
@@ -63,7 +60,7 @@ VideoInput::~VideoInput() {
         m_decodingThread->waitForCompletion();
     }
 
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     // shutdown ffmpeg
     avcodec_close(m_avCodecContext);
     av_close_input_file(m_avFormatContext);
@@ -94,7 +91,7 @@ static const char* ffmpegError(int code);
 void VideoInput::initialize(const std::string& filename, const Settings& settings) {
     // helper for exiting VideoInput construction (exceptions caught by static ref creator)
     #define throwException(exp, msg) if (!(exp)) { throw std::string(msg); }
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     // initialize list of available muxers/demuxers and codecs in ffmpeg
     avcodec_register_all();
     av_register_all();
@@ -532,7 +529,7 @@ void VideoInput::skipFrames(int length) {
 
 
 int VideoInput::width() const {
-#ifdef NO_FFMPEG
+#ifdef G3D_NO_FFMPEG
     return 0;
 #else
     return m_avCodecContext->width;
@@ -541,7 +538,7 @@ int VideoInput::width() const {
 
 
 int VideoInput::height() const {
-#ifdef NO_FFMPEG
+#ifdef G3D_NO_FFMPEG
     return 0;
 #else
     return m_avCodecContext->height;
@@ -549,7 +546,7 @@ int VideoInput::height() const {
 }
 
 RealTime VideoInput::fps() const {
-#ifdef NO_FFMPEG
+#ifdef G3D_NO_FFMPEG
     return 1;
 #else
     // return FFmpeg's calculated base frame rate
@@ -558,7 +555,7 @@ RealTime VideoInput::fps() const {
 }
 
 RealTime VideoInput::length() const {
-#ifdef NO_FFMPEG
+#ifdef G3D_NO_FFMPEG
     return 0;
 #else
     // return duration in seconds calculated from stream duration in FFmpeg's stream time base
@@ -579,7 +576,7 @@ int VideoInput::index() const {
 }
 
 void VideoInput::decodingThreadProc(void* param) {
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     VideoInput* vi = reinterpret_cast<VideoInput*>(param);
 
     // allocate avframe to hold decoded frame
@@ -677,7 +674,7 @@ void VideoInput::decodingThreadProc(void* param) {
 
 // decoding thread helpers
 void VideoInput::seekToTimestamp(VideoInput* vi, AVFrame* decodingFrame, AVPacket* packet, bool& validPacket) {
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
     // maximum number of frames to decode before seeking (1 second)
     const int64 MAX_DECODE_FRAMES = iRound(vi->fps());
 
@@ -734,7 +731,7 @@ void VideoInput::seekToTimestamp(VideoInput* vi, AVFrame* decodingFrame, AVPacke
 
         } while (!validPacket);    
     }
-#endif // NO_FFMPEG
+#endif // G3D_NO_FFMPEG
 }
 
 

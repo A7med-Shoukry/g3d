@@ -22,7 +22,7 @@ namespace G3D {
  0.8 fixed-point value using the same encoding scheme as OpenGL.  
 
  Note that arithmetic operations may over and under-flow, just like
- uint8 arithmetic.
+ uint16 arithmetic.
 
  OpenGL specifications can be found here: 
  http://www.opengl.org/registry/specs/ARB/shading_language_packing.txt
@@ -85,8 +85,8 @@ public:
 
     /**\brief Returns the underlying bits in this representation. 
      Equivalent to:
-    \code uint8 i = reinterpret_cast<const uint8&>(u); \endcode */
-    uint8 bits() const {
+    \code uint16 i = reinterpret_cast<const uint16&>(u); \endcode */
+    uint16 bits() const {
         return m_bits;
     }
 

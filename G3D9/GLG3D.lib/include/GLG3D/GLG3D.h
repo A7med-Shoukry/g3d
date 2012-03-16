@@ -131,7 +131,7 @@
 //#   define G3D_STATIC_LINK_FFMPEG
 
 
-#ifndef NO_FFMPEG
+#ifndef G3D_NO_FFMPEG
 #   ifndef G3D_STATIC_LINK_FFMPEG
 //      DLL version
 #       ifdef G3D_64BIT
@@ -161,7 +161,7 @@
 #           pragma comment(lib, "swscale")
 #        endif
 #   endif
-#endif // NO_FFMPEG
+#endif // G3D_NO_FFMPEG
 
 #   ifdef _DEBUG
 #       ifdef G3D_64BIT
