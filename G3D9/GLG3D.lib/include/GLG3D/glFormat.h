@@ -99,7 +99,7 @@ namespace G3D {                                      \
 DECLARE_GLFORMATOF( Vector2,       GL_FLOAT,          false, false)
 DECLARE_GLFORMATOF( Vector2int16,  GL_SHORT,          false, false)
 DECLARE_GLFORMATOF( Vector2int32,  GL_INT,            false, false)
-DECLARE_GLFORMATOF( Vector2unorm16,GL_SHORT,          false,  true)
+DECLARE_GLFORMATOF( Vector2unorm16,GL_SHORT,          false, true)
 
 DECLARE_GLFORMATOF( Vector3,       GL_FLOAT,          false, false)
 DECLARE_GLFORMATOF( Vector3int16,  GL_SHORT,          false, false)
@@ -109,16 +109,16 @@ DECLARE_GLFORMATOF( Vector4,       GL_FLOAT,          false, false)
 DECLARE_GLFORMATOF( Vector4int16,  GL_SHORT,          false, false)
 DECLARE_GLFORMATOF( Vector4int8,   GL_BYTE,           false, false)
 
-DECLARE_GLFORMATOF( Color3unorm8,  GL_UNSIGNED_BYTE,  false, false)
+DECLARE_GLFORMATOF( Color3unorm8,  GL_UNSIGNED_BYTE,  false, true)
 DECLARE_GLFORMATOF( Color3,        GL_FLOAT,          false, false)
 DECLARE_GLFORMATOF( Color4,        GL_FLOAT,          false, false)
 DECLARE_GLFORMATOF( Color4unorm8,  GL_UNSIGNED_BYTE,  false, false)
 
-DECLARE_GLFORMATOF( snorm8,        GL_UNSIGNED_BYTE,  false, true)
-DECLARE_GLFORMATOF( snorm16,       GL_UNSIGNED_SHORT, false, true)
+DECLARE_GLFORMATOF( snorm8,        GL_BYTE,           false, true)
+DECLARE_GLFORMATOF( snorm16,       GL_SHORT,          false, true)
 
-DECLARE_GLFORMATOF( unorm8,        GL_UNSIGNED_BYTE,  false, false)
-DECLARE_GLFORMATOF( unorm16,       GL_UNSIGNED_SHORT, false, false)
+DECLARE_GLFORMATOF( unorm8,        GL_UNSIGNED_BYTE,  false, true)
+DECLARE_GLFORMATOF( unorm16,       GL_UNSIGNED_SHORT, false, true)
 
 DECLARE_GLFORMATOF( uint8,         GL_UNSIGNED_BYTE,  true,  false)
 DECLARE_GLFORMATOF( uint16,        GL_UNSIGNED_SHORT, true,  false)
