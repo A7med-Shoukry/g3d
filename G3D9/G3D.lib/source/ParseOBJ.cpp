@@ -30,7 +30,8 @@ void ParseOBJ::parse(const char* ptr, size_t len, const std::string& basePath) {
     m_basePath = basePath;
 
     nextCharacter = ptr;
-    remainingCharacters = len;
+    alwaysAssertM(len < 0xFFFFFFFF, "Cannot handle more than 4GB of input text.");
+    remainingCharacters = (int)len;
     m_line = 1;
 
     while (remainingCharacters > 0) {
