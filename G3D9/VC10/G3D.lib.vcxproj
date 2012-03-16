@@ -394,6 +394,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\PositionTrait.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\PrecomputedRandom.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\prompt.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\Proxy.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Quat.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Queue.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Random.h" />

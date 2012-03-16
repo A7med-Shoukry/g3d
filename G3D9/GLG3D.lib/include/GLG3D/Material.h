@@ -2,12 +2,13 @@
  \file   GLG3D/Material.h
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \date   2008-08-10
- \edited 2011-06-27
+ \edited 2012-03-16
 */
 #ifndef GLG3D_Material_h
 #define GLG3D_Material_h
 
 #include "G3D/platform.h"
+#include "G3D/Proxy.h"
 #include "G3D/HashTrait.h"
 #include "G3D/constants.h"
 #include "GLG3D/Component.h"
@@ -40,13 +41,34 @@ class Any;
   one for entering the material and one for exiting it (i.e., the "backfaces").  The eta of the exiting surface
   should be that of the medium that is being exited into--typically, air.  So a glass sphere is 
   a set of front faces with eta ~= 1.3 and a set of backfaces with eta = 1.0.
-     
+
+
+  \section Proxy
+  Material is a Proxy subclass so that classes using it  mayassociate arbitrary data with Material%s 
+  or computing Materials on demand without having to subclass Material itself. 
+  
+  Subclassing Material is often undesirable because
+  that class has complex initialization and data management routines.
+  Note that Material itself implements Proxy<Material>, so you can simply use a Material with any API
+  (such as Tri) that requires a proxy.  
+
   \sa G3D::SuperShader, G3D::BSDF, G3D::Component, G3D::Texture, G3D::BumpMap, G3D::ArticulatedModel, G3D::GBuffer
   */
-class Material : public ReferenceCountedObject {
+class Material : public Proxy<class Material> {
 public:
 
     typedef ReferenceCountedPointer<Material> Ref;
+
+    // Inherited from Proxy
+    virtual const ReferenceCountedPointer<Material> resolve() const override {
+        return Ref(this);
+    }
+
+    // Inherited from Proxy
+    virtual ReferenceCountedPointer<Material> resolve() override {
+        return Ref(this);
+    }
+
 
     /** \brief Specification of a material; used for loading.  
     

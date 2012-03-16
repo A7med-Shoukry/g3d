@@ -7,7 +7,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2001-08-25
- \edited  2011-08-11
+ \edited  2012-03-16
 
  Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
@@ -25,6 +25,7 @@
 #endif
 
 #include "G3D/platform.h"
+#include "G3D/Proxy.h"
 #include "G3D/BIN.h"
 #include "G3D/FileNotFound.h"
 #include "G3D/units.h"

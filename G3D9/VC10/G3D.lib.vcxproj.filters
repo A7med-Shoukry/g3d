@@ -754,5 +754,8 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Vector2unorm16.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\G3D.lib\include\G3D\Proxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

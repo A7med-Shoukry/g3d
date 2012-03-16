@@ -22,6 +22,7 @@
    Changes in 9.00:
    <ul>
     <li> G3D::RenderDevice::applyRect</li>
+	<li> G3D::Proxy</li>
     <li> G3D::GuiTextureBox now saves out cubemaps at 4x the width and 2x the height of one of its faces, in the panoramic view </li>
     <li> G3D::Vector2unorm16 </li>
     <li> Added Show Cube Edges option to G3D::GuiTextureBoxInspector </li>
