@@ -18,11 +18,14 @@ Tri::Tri
 (const Vector3& v0, const Vector3& v1, const Vector3& v2) :
     v0(v0), e1(v1 - v0), e2(v2 - v0) {
     
-    n = e1.cross(e2).directionOrZero();
+    Vector3 n = e1.cross(e2).directionOrZero();
 
     m_normal[0] = n;
     m_normal[1] = n;
     m_normal[2] = n;
+
+	doubleArea = e1.cross(e2).length();
+
 }
 
 
@@ -51,7 +54,7 @@ Tri::Tri
     m_packedTangent[1] = tan1;
     m_packedTangent[2] = tan2;
 
-    n = e1.cross(e2).directionOrZero();
+    doubleArea = e1.cross(e2).length();
 }
 
 
@@ -67,10 +70,11 @@ Tri Tri::otherSide() const {
     t.v0     = v0;
     t.e1     = e2;
     t.e2     = e1;
+	t.doubleArea = doubleArea;
 
     // Flip winding and normal/tangent direction
     // by swapping elements 1 and 2.
-    t.n = -n;
+    
 
     t.m_normal[0]   = -m_normal[0];
     t.m_texCoord[0] = m_texCoord[0];
@@ -88,7 +92,7 @@ Tri Tri::otherSide() const {
 
 
 float Tri::area() const {
-    return e1.cross(e2).length() * 0.5f;
+    return doubleArea * 0.5f;
 }
 
 
@@ -108,9 +112,19 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
     // How much to grow the edges of triangles by to allow for small roundoff.
     static const float conservative = 1e-8f;
 
-    // Test for backfaces first because this eliminates 50% of all triangles.
+    
+
+	const Vector3& e1 = tri.e1;
+    const Vector3& e2 = tri.e2;
+
+
+	// Test for backfaces first because this eliminates 50% of all triangles.
     // TODO: Add twoside test
-	if ((tri.n.dot(ray.direction()) >= -EPS)) {
+
+	// This test is equivalent to n.dot(ray.direction()) >= -EPS
+	// Where n is the (not stored!) face unit normal.
+	
+	if (( (e1.cross(e2)).dot(ray.direction()) >= -EPS * tri.doubleArea)) {
         // Backface or nearly parallel
         return false;
     }
@@ -119,8 +133,7 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
     eye = ray.direction();
 
     const Vector3& v0 = tri.v0;
-    const Vector3& e1 = tri.e1;
-    const Vector3& e2 = tri.e2;
+ 
 
     const Vector3& p = ray.direction().cross(e2);
     const float a = e1.dot(p);

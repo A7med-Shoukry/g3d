@@ -57,12 +57,12 @@ private:
     /** Edge vector v2 - v0 */
     Vector3                 e2;
 
-    /** True unit face normal: (e1 x e2).direction() */
-    Vector3                 n;
-
     /** If the Tri is in a "smooth" surface then the vertex normals,
         otherwise the face normal. */
     Vector3                 m_normal[3];
+
+	/** Twice the area: (e0 x e1).length() */
+    float                  doubleArea;
 
     /** Texture coordinates. */
     Vector2                 m_texCoord[3];
@@ -122,9 +122,9 @@ public:
     }
 
     /** Face normal.  For degenerate triangles, this is zero.  For all other triangles
-    it has unit length and is defined by counter-clockwise winding. */
-    const Vector3& normal() const {
-        return n;
+    it has unit length and is defined by counter-clockwise winding. Calculate every call*/
+    Vector3 normal() const {
+        return e1.cross(e2).directionOrZero();
     }
 
     /** Vertex normal */
@@ -332,8 +332,7 @@ public:
      */
     static void getTris(const ReferenceCountedPointer<class Surface>& model, Array<Tri>& triArray, 
                         const CFrame& xform = CFrame());
-};
-
+};// G3D_END_PACKED_CLASS(4)
 } // namespace G3D
 
 // Needed for InlineKDTree and KDTree

@@ -21,7 +21,10 @@
    <p>
    Changes in 9.00:
    <ul>
+
+    <li> Changed the NO_FFMPEG macro to G3D_NO_FFMPEG and changed it to be defined in platform.h instead of in VideoOutput.h  </li>
 	<li> G3D::Tri and G3D::Tri::Intersector no longer virtual, this decreases Tri size by 8 bytes in 64-bit builds </li>
+	<li> Removed n the facenormal from G3D::Tri and replaced with doubleArea (e1.cross(e2).length()) </li>
     <li> G3D::RenderDevice::applyRect</li>
 	<li> G3D::Proxy</li>
     <li> G3D::GuiTextureBox now saves out cubemaps at 4x the width and 2x the height of one of its faces, in the panoramic view </li>
