@@ -61,7 +61,8 @@ void SuperSurface::renderDepthOnlyHomogeneous
             CFrame cframe;
             surface->getCoordinateFrame(cframe, false);
             rd->setObjectToWorldMatrix(cframe);
-            rd->setVARs(geom->vertex, VertexRange(), geom->texCoord0);
+            // Since we're only rendering depth, we don't need normals (we might need texcoords for alpha test)
+            rd->setVARs(geom->vertex, VertexRange(), a ? geom->texCoord0 : VertexRange());
             rd->sendIndices(geom->primitive, geom->index);
             
             if (geom->twoSided) {
