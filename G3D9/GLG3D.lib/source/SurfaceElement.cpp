@@ -24,7 +24,7 @@ SurfaceElement::SurfaceElement(const Tri::Intersector& intersector) {
     Vector2 texCoord;
     Vector3 t1, t2;
     intersector.getResult(P, n, interpolated.texCoord, t1, t2);
-    set(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2, intersector.eye);
+    set(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2, intersector.eye, -1, intersector.u, intersector.v);
 }
 
     
@@ -155,13 +155,18 @@ void SurfaceElement::set
  const Vector2&  texCoord,
  const Vector3&  interpolatedTangent,
  const Vector3&  interpolatedTangent2,
- const Vector3&  eye) {
+ const Vector3&  eye,
+ int			 index,
+ float			 u,
+ float			 v) {
     this->material.source = material;
     interpolated.texCoord = texCoord;
     interpolated.normal   = interpolatedNormal;
     geometric.location    = geometricLocation;
     geometric.normal      = geometricNormal;
-    
+    sourcePrimitive.index = index;
+	sourcePrimitive.u	  = u;
+	sourcePrimitive.v     = v;
     setBump(material->bump(), eye);
     this->material = MaterialElement(material->bsdf(), material->emissive(), shading.texCoord);
 }

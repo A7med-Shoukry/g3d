@@ -247,7 +247,10 @@ public:
         /** Eye direction (ray direction from functor) */
         Vector3         eye;
 
-        Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f) {}
+		/** For SurfaceElement to copy. Not set by intersect, the caller must explicitly set this value */
+		int				primitiveIndex;
+
+        Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f), primitiveIndex(-1) {}
 
         ~Intersector() {}
 

@@ -425,7 +425,8 @@ private:
         void getStats(Stats& s, int level, int valuesPerNode) const;
 
         bool __fastcall intersectRay
-        (const Ray&      ray,
+        (const TriTree&  triTree,
+		 const Ray&      ray,
          Tri::Intersector& intersectCallback, 
          float&          distance,
          bool            exitOnAnyHit,
@@ -465,7 +466,8 @@ public:
     /** Walk the entire tree, computing statistics */
     Stats stats(int valuesPerNode) const;
 
-    /** The array will be copied.  Zero area triangles are removed. */
+    /** The array will be copied, the underlying Array<Tri> is guaranteed to be in the same order as the parameter triArray.
+		Zero area triangles are retained in the array, but will never be collided with. */
     void setContents(const Array<Tri>& triArray, const Settings& settings = Settings());
     
     /** Uses Tri::getTris to extract the triangles from each surface and then invokes setContents() */

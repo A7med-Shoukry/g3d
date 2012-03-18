@@ -394,7 +394,8 @@ float TriTree::Node::SAHCost(Vector3::Axis axis, float offset, const Array<Poly>
 
 
 bool __fastcall TriTree::Node::intersectRay
-(const Ray&          ray,
+(const TriTree&		 triTree,
+ const Ray&          ray,
  Tri::Intersector&   intersectCallback, 
  float&              distance,
  bool                exitOnAnyHit,
@@ -421,7 +422,7 @@ bool __fastcall TriTree::Node::intersectRay
     
     // Test on the side closer to the ray origin.
     if (firstChild != NONE) {
-        hit = child(firstChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit, twoSided) || hit;
+        hit = child(firstChild).intersectRay(triTree, ray, intersectCallback, distance, exitOnAnyHit, twoSided) || hit;
         if (exitOnAnyHit && hit) {
             return true;
         }
@@ -436,11 +437,19 @@ bool __fastcall TriTree::Node::intersectRay
 
         // Test for intersection against every object at this node.
         for (int v = 0; v < valueArray->size; ++v) { 
-            hit = intersectCallback(ray, *valueArray->data[v], twoSided, distance) || hit;
-            if (exitOnAnyHit && hit) {
-                // Early out
-                return true;
-            }
+			bool justHit = intersectCallback(ray, *valueArray->data[v], twoSided, distance);
+			
+			if(justHit){
+				hit = true;
+				// Pointer arithmetic to find what index in the tri tree array this triangle was
+				// Will not have to do Soon(TM)
+				intersectCallback.primitiveIndex = valueArray->data[v] - triTree.m_triArray;
+				if (exitOnAnyHit) {
+					return true;
+				}
+			}
+            
+            
         }        
     }
     
@@ -462,7 +471,7 @@ bool __fastcall TriTree::Node::intersectRay
             }
         }
         
-        hit = child(secondChild).intersectRay(ray, intersectCallback, distance, exitOnAnyHit, twoSided) || hit;
+        hit = child(secondChild).intersectRay(triTree, ray, intersectCallback, distance, exitOnAnyHit, twoSided) || hit;
     }
 
     return hit;
@@ -713,7 +722,7 @@ bool TriTree::intersectRay
 
     bool hit = false;
     if (m_root != NULL) {
-        hit = m_root->intersectRay(ray, intersectCallback, distance, exitOnAnyHit, twoSided);
+        hit = m_root->intersectRay(*this, ray, intersectCallback, distance, exitOnAnyHit, twoSided);
     }
     return hit;
 }

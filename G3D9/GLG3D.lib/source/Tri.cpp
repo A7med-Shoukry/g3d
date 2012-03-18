@@ -119,54 +119,55 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
 	// This test is equivalent to n.dot(ray.direction()) >= -EPS
 	// Where n is the face unit normal, which we do not explicitly store
 	
-	if (( (e1.cross(e2)).dot(ray.direction()) >= -EPS * tri.m_doubleArea)) {
+	if (!twoSided && (e1.cross(e2)).dot(ray.direction()) >= -EPS * tri.m_doubleArea) {
         // Backface or nearly parallel
         return false;
     }
-
-    // Cache off eye direction
-    eye = ray.direction();
 
     const Vector3& v0 = tri.v0;
  
 
     const Vector3& p = ray.direction().cross(e2);
+
+	// Will be negative if we are coming from the back.
     const float a = e1.dot(p);
 
-    debugAssert(a >= -1e-7); 
+    //debugAssert(a >= -1e-7); 
 
-    const Vector3& s = ray.origin() - v0;
-    const float ua = s.dot(p);
+	// Divide by a
+    const float f = 1.0f / a;
+	const float c = conservative * f;
+
+    const Vector3& s = (ray.origin() - v0)*f;
+    const float u = s.dot(p);
 
     // Note: (ua > a) == (u > 1). Delaying the division by a until
     // after all u-v tests have passed gives a 6% speedup.
-    if ((ua < -conservative) || (ua > a + conservative)) {
+    if ((u < -c) || (u > 1 + c)) {
         // We hit the plane of the triangle, but outside the triangle
         return false;
     }
 
     const Vector3& q = s.cross(e1);
-    const float va = ray.direction().dot(q);
+    const float v = ray.direction().dot(q);
 
-    if ((va < -conservative) || ((ua + va) > a + conservative)) {
+    if ((v < -c) || ((u + v) > 1 + c)) {
         // We hit the plane of the triangle, but outside the triangle.
         return false;
     }
 
-    if (a < EPS) {
+    if (abs(a) < EPS) {
         // This ray was parallel, but passed the backface test. We don't test until
         // down here because this case happens really infrequently.
         return false;
     }
 
-    // Divide by a
-    const float f = 1.0f / a;
-    const float t = e2.dot(q) * f;
+    
+    const float t = e2.dot(q);
 
     if ((t > 0.0f) && (t < distance)) {
         // Alpha masking
-        u = ua * f;
-        v = va * f;
+ 
         if (alphaTest) {
             const Material::Ref& material = tri.material();
 
@@ -203,6 +204,10 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
 
         distance = t;
         this->tri = &tri;
+
+		eye = ray.direction();
+		this->u = u;
+		this->v = v;
         return true;
     } else {
         return false;
