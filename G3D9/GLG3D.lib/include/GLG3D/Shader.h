@@ -125,13 +125,6 @@ protected:
         bool                        _ok;
         std::string                 _messages;
         
-        /** Returns true on success.  Called from init. */
-        void compile();
-        
-        /** Initialize a shader object and returns object.  
-            Called from subclass create methods. */
-        static ShaderObject*         init(ShaderObject* shader, bool debug);
-        
         /** Set to true when name and code both == "" */
         bool                        _fixedFunction;
         
@@ -139,8 +132,15 @@ protected:
         
         std::string                 _shaderType;
 
-        bool            m_usesG3DIndex;
+        bool                        m_usesG3DIndex;
        
+        /** Returns true on success.  Called from init. */
+        void compile();
+        
+        /** Initialize a shader object and returns object.  
+            Called from subclass create methods. */
+        static ShaderObject*         init(ShaderObject* shader, bool debug);
+        
         /** Checks to ensure that this profile is supported on this
             card. Called from init().*/
         void checkForSupport();
