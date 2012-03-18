@@ -105,7 +105,7 @@ void Shader::beforePrimitive(class RenderDevice* renderDevice) {
     }
     debugAssertGLOk();
 
-    renderDevice->setVertexAndPixelShader(_vertexAndPixelShader, args);
+    renderDevice->setShaderProgram(_vertexAndPixelShader, args);
     debugAssertGLOk();
 }
 
@@ -163,7 +163,7 @@ static void replace
 }
 
 
-bool VertexAndPixelShader::GPUShader::replaceG3DIndex
+bool ShaderProgram::ShaderObject::replaceG3DIndex
 (std::string&                   code, 
  std::string&                   defineString, 
  const Table<std::string, int>& samplerMappings, 
@@ -204,7 +204,7 @@ bool VertexAndPixelShader::GPUShader::replaceG3DIndex
     return replaced;
 }
 
-void VertexAndPixelShader::GPUShader::replaceG3DSize
+void ShaderProgram::ShaderObject::replaceG3DSize
 (std::string& code,
  std::string& uniformString) {
 
@@ -240,7 +240,7 @@ static int countNewlines(const std::string& s) {
 }
 
 
-void VertexAndPixelShader::GPUShader::checkForSupport() {
+void ShaderProgram::ShaderObject::checkForSupport() {
     switch (_glShaderType) {
     case GL_VERTEX_SHADER_ARB:
         if (! Shader::supportsVertexShaders()) {
@@ -305,7 +305,7 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
 }
 
 
-void VertexAndPixelShader::GPUShader::init
+void ShaderProgram::ShaderObject::init
 (const std::string&	            name,
  const std::string&	            code,
  bool			                _fromFile,
@@ -461,7 +461,7 @@ void VertexAndPixelShader::GPUShader::init
 }
 
 
-void VertexAndPixelShader::GPUShader::compile() {
+void ShaderProgram::ShaderObject::compile() {
 
     GLint compiled = GL_FALSE;
     _glShaderObject = glCreateShaderObjectARB(glShaderType());
@@ -544,7 +544,7 @@ void VertexAndPixelShader::GPUShader::compile() {
 }
 
 
-VertexAndPixelShader::GPUShader::~GPUShader() {
+ShaderProgram::ShaderObject::~ShaderObject() {
     if (! _fixedFunction) {
         glDeleteObjectARB(_glShaderObject);
     }
@@ -553,12 +553,12 @@ VertexAndPixelShader::GPUShader::~GPUShader() {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void VertexAndPixelShader::reload() {
+void ShaderProgram::reload() {
     debugAssert(false);
     // TODO
 }
 
-VertexAndPixelShader::VertexAndPixelShader
+ShaderProgram::ShaderProgram
 (const std::string&  vsCode,
  const std::string&  vsFilename,
  bool                vsFromFile,
@@ -711,7 +711,7 @@ VertexAndPixelShader::VertexAndPixelShader
 }
 
 
-bool VertexAndPixelShader::isSamplerType(GLenum e) {
+bool ShaderProgram::isSamplerType(GLenum e) {
     return
        (e == GL_SAMPLER_1D_ARB) ||
        (e == GL_UNSIGNED_INT_SAMPLER_1D) ||
@@ -810,7 +810,7 @@ static GLenum toGLType(const std::string& s) {
 }
 
 
-void VertexAndPixelShader::addUniformsFromCode(const std::string& code) {
+void ShaderProgram::addUniformsFromCode(const std::string& code) {
     TextInput ti(TextInput::FROM_STRING, code);
 
     while (ti.hasMore()) {
@@ -878,7 +878,7 @@ void VertexAndPixelShader::addUniformsFromCode(const std::string& code) {
 }
 
 
-void VertexAndPixelShader::computeUniformArray() {
+void ShaderProgram::computeUniformArray() {
     uniformArray.clear();
 
     // Length of the longest variable name
@@ -939,19 +939,19 @@ void VertexAndPixelShader::computeUniformArray() {
 }
 
 
-VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
+ShaderProgramRef ShaderProgram::fromStrings
 (const std::string& vs,
  const std::string& ps,
  PreprocessorStatus s,
  bool               debugErrors) {
-    return new VertexAndPixelShader(vs, "", false, 
+    return new ShaderProgram(vs, "", false, 
                                     "", "", false, 
                                     ps, "", false, 
                                     -1, debugErrors, s);
 }
 
 
-VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
+ShaderProgramRef ShaderProgram::fromStrings
 (
  const std::string& vsName,
  const std::string& vs,
@@ -963,7 +963,7 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
  PreprocessorStatus s,
  bool               debugErrors) {
 
-    return new VertexAndPixelShader
+    return new ShaderProgram
         (vs, vsName, false, 
          gs, gsName, false,
          ps, psName, false, 
@@ -972,7 +972,7 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromStrings
 }
 
 
-VertexAndPixelShaderRef VertexAndPixelShader::fromFiles
+ShaderProgramRef ShaderProgram::fromFiles
 (const std::string& vsFilename,
  const std::string& gsFilename,
  const std::string& psFilename,
@@ -994,7 +994,7 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromFiles
         ps = readWholeFile(psFilename);
     }
     
-    return new VertexAndPixelShader
+    return new ShaderProgram
         (vs, vsFilename, vsFilename != "", 
          gs, gsFilename, gsFilename != "", 
          ps, psFilename, psFilename != "",
@@ -1003,12 +1003,12 @@ VertexAndPixelShaderRef VertexAndPixelShader::fromFiles
 }
 
 
-VertexAndPixelShader::~VertexAndPixelShader() {
+ShaderProgram::~ShaderProgram() {
     glDeleteObjectARB(_glProgramObject);
 }
 
 
-bool VertexAndPixelShader::fullySupported() {
+bool ShaderProgram::fullySupported() {
     return
         GLCaps::supports_GL_ARB_shader_objects() && 
         GLCaps::supports_GL_ARB_shading_language_100() &&
@@ -1017,7 +1017,7 @@ bool VertexAndPixelShader::fullySupported() {
 }
 
 
-bool VertexAndPixelShader::compatibleTypes(GLenum actual, GLenum formal) {
+bool ShaderProgram::compatibleTypes(GLenum actual, GLenum formal) {
     return
         (canonicalType(actual) == canonicalType(formal)) ||
         (((actual == GL_FLOAT) || (actual == GL_INT) || (actual == GL_UNSIGNED_INT) || (actual == GL_BOOL)) &&
@@ -1025,7 +1025,7 @@ bool VertexAndPixelShader::compatibleTypes(GLenum actual, GLenum formal) {
 }
 
 
-GLenum VertexAndPixelShader::canonicalType(GLenum e) {
+GLenum ShaderProgram::canonicalType(GLenum e) {
 
     switch (e) {
     case GL_BOOL_VEC2_ARB:
@@ -1069,7 +1069,7 @@ GLenum VertexAndPixelShader::canonicalType(GLenum e) {
 }
 
 
-void VertexAndPixelShader::validateArgList(const ArgList& args) const {
+void ShaderProgram::validateArgList(const ArgList& args) const {
     // Number of distinct variables declared in the shader.
     int numVariables = 0;
 
@@ -1106,7 +1106,7 @@ void VertexAndPixelShader::validateArgList(const ArgList& args) const {
 
             if (! declared && ! decl.dummy) {
                 throw ArgumentError(
-                    format("No value provided for VertexAndPixelShader uniform variable %s.",
+                    format("No value provided for ShaderProgram uniform variable %s.",
                         textureName.c_str()));
             }
 
@@ -1117,7 +1117,7 @@ void VertexAndPixelShader::validateArgList(const ArgList& args) const {
             
             if (! declared && ! decl.dummy && ! beginsWith(decl.name, "_noset_") ) {
                 throw ArgumentError(
-                    format("No value provided for VertexAndPixelShader uniform variable %s of type %s.",
+                    format("No value provided for ShaderProgram uniform variable %s of type %s.",
                         decl.name.c_str(), GLenumToString(decl.type)));
             }
         }
@@ -1181,7 +1181,7 @@ void VertexAndPixelShader::validateArgList(const ArgList& args) const {
 
                 if (! foundArgument) {
                     // Put into a string so that it is visible in the debugger
-                    std::string msg = "Extra VertexAndPixelShader uniform variable provided at run time: " +
+                    std::string msg = "Extra ShaderProgram uniform variable provided at run time: " +
                          arg->key + ".";
 #if 1
 // Debugging code for particularly tricky shader errors
@@ -1202,8 +1202,8 @@ for (int u = 0; u < uniformArray.size(); ++u) {
 }
 
 
-void VertexAndPixelShader::bindArgList(RenderDevice* rd, const ArgList& args) const {
-    rd->forceVertexAndPixelShaderBind();
+void ShaderProgram::bindArgList(RenderDevice* rd, const ArgList& args) const {
+    rd->forceShaderProgramBind();
 
 #   if defined(G3D_DEBUG)
         validateArgList(args);
@@ -1383,7 +1383,7 @@ void VertexAndPixelShader::bindArgList(RenderDevice* rd, const ArgList& args) co
 
 ////////////////////////////////////////////////////////////////////////
 
-std::string VertexAndPixelShader::ArgList::toString() const {
+std::string ShaderProgram::ArgList::toString() const {
     Table<std::string, Arg>::Iterator it = argTable.begin();
     const Table<std::string, Arg>::Iterator& end = argTable.end();
 
@@ -1401,7 +1401,7 @@ std::string VertexAndPixelShader::ArgList::toString() const {
 }
 
 
-void VertexAndPixelShader::ArgList::set(const ArgList& a) {
+void ShaderProgram::ArgList::set(const ArgList& a) {
     debugAssert(&a != this);
     Table<std::string, Arg>::Iterator it = a.argTable.begin();
     const Table<std::string, Arg>::Iterator& end = a.argTable.end();
@@ -1413,7 +1413,7 @@ void VertexAndPixelShader::ArgList::set(const ArgList& a) {
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& key, const Arg& value) {
+void ShaderProgram::ArgList::set(const std::string& key, const Arg& value) {
     debugAssert(key != "");
 
     if (! contains(key)) {
@@ -1425,13 +1425,13 @@ void VertexAndPixelShader::ArgList::set(const std::string& key, const Arg& value
 }
 
 
-void VertexAndPixelShader::ArgList::remove(const std::string& key) {
+void ShaderProgram::ArgList::remove(const std::string& key) {
      --m_size;
     argTable.remove(key);
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Texture::Ref& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Texture::Ref& val, bool optional) {
     Arg arg;
     debugAssert(val.notNull());
     arg.type    = val->openGLTextureTarget();
@@ -1441,7 +1441,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Texture::R
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const CoordinateFrame& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const CoordinateFrame& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_MAT4x3;
     for (int r = 0; r < 3; ++r) {
@@ -1455,7 +1455,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Coordinate
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix4& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Matrix4& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_MAT4;
     for (int r = 0; r < 4; ++r) {
@@ -1466,7 +1466,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix4& v
     set(var, arg);
 }
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix3& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Matrix3& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_MAT3;
     for (int r = 0; r < 3; ++r) {
@@ -1478,7 +1478,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Matrix3& v
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector4& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Vector4& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_VEC4;
     arg.vector[0] = val;
@@ -1487,7 +1487,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector4& v
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector3& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Vector3& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_VEC3;
     arg.vector[0] = Vector4(val, 0);
@@ -1496,7 +1496,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector3& v
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Color4& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Color4& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_VEC4;
     arg.vector[0] = Vector4(val.r, val.g, val.b, val.a);
@@ -1505,7 +1505,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Color4& va
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Color3& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Color3& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_VEC3;
     arg.vector[0] = Vector4(val.r, val.g, val.b, 0);
@@ -1513,7 +1513,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Color3& va
     set(var, arg);
 }
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Vector2& val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT_VEC2;
     arg.vector[0] = Vector4(val, 0, 0);
@@ -1521,7 +1521,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2& v
     set(var, arg);
 }
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2int16& val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, const Vector2int16& val, bool optional) {
     Arg arg;
     arg.type = GL_INT_VEC2;
     arg.vector[0] = Vector4(Vector2(val), 0, 0);
@@ -1530,12 +1530,12 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, const Vector2int
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, double          val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, double          val, bool optional) {
     set(var, (float)val, optional);
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, float          val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, float          val, bool optional) {
     Arg arg;
     arg.type = GL_FLOAT;
     arg.vector[0] = Vector4(val, 0, 0, 0);
@@ -1544,7 +1544,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, float          v
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, int val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, int val, bool optional) {
     Arg arg;
     arg.type = GL_INT;
     arg.intVal = val;
@@ -1553,7 +1553,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, int val, bool op
 }
 
 
-void VertexAndPixelShader::ArgList::set(const std::string& var, bool val, bool optional) {
+void ShaderProgram::ArgList::set(const std::string& var, bool val, bool optional) {
     Arg arg;
     arg.type = GL_BOOL;
     arg.intVal = val;
@@ -1562,7 +1562,7 @@ void VertexAndPixelShader::ArgList::set(const std::string& var, bool val, bool o
 }
 
 
-void VertexAndPixelShader::ArgList::clear() {
+void ShaderProgram::ArgList::clear() {
     argTable.clear();
     m_size = 0;
 }

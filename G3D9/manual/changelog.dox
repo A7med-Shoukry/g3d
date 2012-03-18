@@ -27,6 +27,7 @@
 	<li> Removed n the facenormal from G3D::Tri and replaced with doubleArea (e1.cross(e2).length()) </li>
     <li> G3D::RenderDevice::applyRect</li>
 	<li> G3D::Proxy</li>
+	<li> Renamed VertexAndPixelShader to ShaderProgram, matching OpenGL terminology (this was deprecated anyway) </li>
     <li> G3D::GuiTextureBox now saves out cubemaps at 4x the width and 2x the height of one of its faces, in the panoramic view </li>
     <li> G3D::Vector2unorm16 </li>
     <li> Added Show Cube Edges option to G3D::GuiTextureBoxInspector </li>
@@ -617,7 +618,7 @@
      <li> G3D::SuperShader now does not ever light the "back" of a bump-mapped poly, even if the bumps should create a light-facing surface
      <li> G3D::Material promoted to its own class (was G3D::SuperShader::Material)
      <li> G3D::Matrix2
-     <li> G3D::VertexAndPixelShader::ArgList::size
+     <li> G3D::ShaderObject::ArgList::size
      <li> G3D::pathConcat
      <li> G3D::WidgetManager::moveWidgetToBack
      <li> SuperShader / NonShadowed.pix now uses arrays of lights instead of separate variables
@@ -627,14 +628,14 @@
      <li> G3D::SuperShader::Pass::purgeCache
      <li> G3D::GuiSlider::setRange
      <li> G3D::GuiPane::addPane no longer takes a
-     <li> G3D::VertexAndPixelShader::ArgList::remove
+     <li> G3D::ShaderObject::ArgList::remove
      <li> Optimized G3D::Matrix::pseudoInverse; now about 2x faster
      <li> G3D::GLight::effectSphere
      <li> G3D::GuiWindow::moveTo
      <li> G3D::GuiWindow::setEnabled, enabled
      <li> G3D::GuiButton now sizes to its caption
      <li> G3D::GuiSlider now fires events on change and drag
-     <li> G3D::Shader arguments (in G3D::VertexAndPixelShader::ArgList) may now be "optional"
+     <li> G3D::Shader arguments (in G3D::ShaderObject::ArgList) may now be "optional"
      <li> G3D::GLight::point now has quadratic attenuation by default.
      <li> G3D::ImageFormat::name
      <li> g3dmath.h now includes inttypes.h on gcc and simulates it on visual studio
@@ -1228,7 +1229,7 @@
      <LI> Fast G3D::BinaryInput::read / G3D::BinaryOutput::write methods for arrays 
      <LI> Enabled cube mapping on Radeon mobility cards and added a workaround to the known problems with texcoords on those cards.
      <LI> Can now create G3D::Win32Window with existing HWND and HDC [Corey]
-     <LI> G3D::VertexAndPixelShader::ArgList::set(std::string, Array<T>)-- [ 1192401 ] Shader support arrays
+     <LI> G3D::ShaderObject::ArgList::set(std::string, Array<T>)-- [ 1192401 ] Shader support arrays
      <LI> Fix: SDLWindow used std::string's instead of C strings in printf and format inside some exception handling code. [Peter]
      <LI> G3D::X11Window (same as SDLWindow in this release)
      <LI> Fix: [ 1277854 ] Win32Window fails on 24-bit modes
@@ -1475,7 +1476,7 @@
      <LI> G3D::ReferenceCountedPointer::notNull
      <LI> G3D::GLight::directional now normalizes the light vector
      <LI> G3D::setAssertionHook
-     <LI> [ 1029256 ] G3D::Shader / G3D::VertexAndPixelShader define g3d_ uniforms inside shaders
+     <LI> [ 1029256 ] G3D::Shader / G3D::ShaderObject define g3d_ uniforms inside shaders
      <LI> static G3D::IFSModel::save/load for writing/reading IFS files
      <LI> G3D::TextInput allows ' inside quoted strings
      <LI> G3D::TextInput allows \ as a symbol token
@@ -1507,7 +1508,7 @@
      <LI> serialize(Vector3::Axis, BinaryOutput), deserialize(Vector3::Axis, BinaryInput),
      <LI> "glslc" GLSL compiler in the tools directory for getting compile-time errors from shaders 
      <LI> GLCaps::init now takes optional debug log
-	 <LI> G3D::VertexAndPixelShader static constructors take optional 'debug' argument
+	 <LI> G3D::ShaderObject static constructors take optional 'debug' argument
      <LI> GWindowSettings::visible; Win32Window can now start invisible
      <LI> [ 991147 ] glBlendEquationEXT, RenderDevice::BlendEq, min, max, subtract, reverse subtract alpha blending
      <LI> [ 989785 ] Draw::rect2D
@@ -1534,7 +1535,7 @@
      <LI> serialize/deserialize for int, bool, double, float, std::string
      <LI> G3D::TextOutput
      <LI> [ 976924 ] Texture::texelWidth
-     <LI> [ 973413 ] VertexAndPixelShader::ArgList::set can be called more than once per variable
+     <LI> [ 973413 ] ShaderObject::ArgList::set can be called more than once per variable
      <LI> OSWindow::setIcon(std::string filename)
      <LI> Texture::fromMemory that takes a single image (instead of an array of images)
      <LI> [972604] RenderDevice::setTextureMatrix(uint, Matrix4)
@@ -1566,7 +1567,7 @@
      <LI> Fix: [ 961827 ] In debug mode, RenderDevice tries to access 
 	            GL_MAX_TEXTURE_IMAGE_UNITS_ARB and an assertion fails on cards that
 				don't support it.
-	 <LI> Fix: Texture binding for VertexAndPixelShader
+	 <LI> Fix: Texture binding for ShaderObject
    </UL>
 <hr>
    <P>
@@ -1575,7 +1576,7 @@
      <LI> Matrix4::approxCoordinateFrame
      <LI> Vector2(const Vector2int16&) [Giulio]
      <LI> RenderDevice::setObjectShader
-     <LI> RenderDevice::setVertexAndPixelShader
+     <LI> RenderDevice::setShaderObject
      <LI> G3D::RenderDevice supports "..._CURRENT" as an option for most settings
      <LI> inf -> inf(), nan -> nan(), NAN -> NAN()
 	        <B>This is an incompatible change-- it was needed to fix a bug with the order
@@ -1605,7 +1606,7 @@
 	 <LI> OSWindow::requiresMainLoop, OSWindow::runMainLoop (Beta)
      <LI> OSWindow::pollEvent, SDLWindow::pollEvent
      <LI> G3D::GApp accepts an optional OSWindow on construction
-     <LI> G3D::VertexAndPixelShader, G3D::ObjectShader (Beta)
+     <LI> G3D::ShaderObject, G3D::ObjectShader (Beta)
      <LI> Deprecated GPUProgram, VertexProgram, and PixelProgram (the OpenGL 1.5 shaders
 	      follow a different paradigm than the OpenGL 1.3 ones, so the G3D API must change
 		  to match it).

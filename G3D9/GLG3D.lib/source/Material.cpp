@@ -133,7 +133,7 @@ void Material::setStorage(ImageStorage s) const {
     }
 }
 
-void Material::configure(VertexAndPixelShader::ArgList& args) const {
+void Material::configure(ShaderProgram::ArgList& args) const {
     static const bool OPTIONAL = true;
 
     if (m_bsdf->lambertian().notBlack() || m_bsdf->lambertian().nonUnitAlpha()) {

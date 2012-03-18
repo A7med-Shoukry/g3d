@@ -439,7 +439,7 @@ int GApp::run() {
         } catch (const TextInput::WrongSymbol& t) {
             alwaysAssertM(false, t.message);
             ret = -1;
-        } catch (const VertexAndPixelShader::ArgumentError& e) {
+        } catch (const ShaderProgram::ArgumentError& e) {
             alwaysAssertM(false, e.message);
             ret = -1;
         } catch (const LightweightConduit::PacketSizeException& e) {

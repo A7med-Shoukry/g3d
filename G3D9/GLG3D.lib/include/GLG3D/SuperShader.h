@@ -114,27 +114,27 @@ namespace SuperShader {
 void configureShaderArgs(
     const LightingRef&              lighting,
     const Material&                 material,
-    VertexAndPixelShader::ArgList&  args);
+    ShaderProgram::ArgList&  args);
 
 /** Configures a SuperShader NonShadowed shader for an additive light pass
     using lights lightArray[lightIndex] through lightArray[lightIndex+LIGHTS_PER_PASS] (if both are in bounds.)*/
 void configureShaderExtraLightArgs(
     const Array<GLight>&           lightArray,
     int                            lightIndex,
-    VertexAndPixelShader::ArgList&  args);
+    ShaderProgram::ArgList&  args);
 
 void configureShadowShaderArgs(
     const GLight&                   light, 
     const ShadowMap::Ref&           shadowMap,
     const Material&                 material,
-    VertexAndPixelShader::ArgList&  args);
+    ShaderProgram::ArgList&  args);
 
 /**
  \param i The index of the light when bound in the shader */
 void configureSingleLightShaderArgs(
    const GLight& light,
    int i,
-   VertexAndPixelShader::ArgList&  args, 
+   ShaderProgram::ArgList&  args, 
    bool shadowMapPass = false);
 
 typedef ReferenceCountedPointer<class Pass>            PassRef;
@@ -239,7 +239,7 @@ public:
         will remain until you explicitly clear the list with
         args.clear().
       */
-    VertexAndPixelShader::ArgList args;
+    ShaderProgram::ArgList args;
 
     /** This will be added after the Material-based customShaderPrefix when getting the configured the shader.*/
     std::string customShaderPrefix;

@@ -23,7 +23,7 @@
 
 namespace G3D {
 
-typedef ReferenceCountedPointer<class VertexAndPixelShader>  VertexAndPixelShaderRef;
+typedef ReferenceCountedPointer<class ShaderProgram>  ShaderProgramRef;
 
 #ifdef _DEBUG
     #define DEBUG_SHADER true
@@ -31,14 +31,14 @@ typedef ReferenceCountedPointer<class VertexAndPixelShader>  VertexAndPixelShade
     #define DEBUG_SHADER false
 #endif
 
-/** Argument to G3D::VertexAndPixelShader and G3D::Shader create methods */
+/** Argument to G3D::ShaderProgram and G3D::Shader create methods */
 enum PreprocessorStatus {
     PREPROCESSOR_DISABLED,
     PREPROCESSOR_ENABLED};
 
 
 /**
-   This is used internally by Shader.
+  \brief Abstraction of an OpenGL Shader Program (not GL Shader Object). Used internally by Shader.
 
    \deprecated
 
@@ -47,7 +47,7 @@ enum PreprocessorStatus {
 
   Only newer graphics cards with recent drivers (e.g. GeForceFX cards
   with driver version 57 or greater) support this API.  Use the
-  VertexAndPixelShader::fullySupported method to determine at run-time
+  ShaderProgram::fullySupported method to determine at run-time
   if your graphics card is compatible.
 
   For purposes of shading, a "pixel" is technically a "fragment" in OpenGL terminology.
@@ -62,7 +62,7 @@ enum PreprocessorStatus {
   across the surface of a triangle (e.g. reflection vector).  The pixel shader
   computes the final color of a pixel (it does not perform alpha-blending, however).
 
-  Multiple VertexAndPixelShaders may share object, vertex, and pixel shaders.
+  Multiple ShaderPrograms may share object, vertex, and pixel shaders.
 
   Uniform variables that begin with 'gl_' are ignored because they are assumed to 
   be GL built-ins.
@@ -72,7 +72,7 @@ enum PreprocessorStatus {
 
 @deprecated
  */
-class VertexAndPixelShader : public ReferenceCountedObject {
+class ShaderProgram : public ReferenceCountedObject {
 public:
 
     /** If this shader was loaded from disk, reload it. */
@@ -108,7 +108,7 @@ public:
 
 protected:
 
-    class GPUShader {
+    class ShaderObject {
     protected:
         
         /** argument for output on subclasses */
@@ -130,7 +130,7 @@ protected:
         
         /** Initialize a shader object and returns object.  
             Called from subclass create methods. */
-        static GPUShader*           init(GPUShader* shader, bool debug);
+        static ShaderObject*           init(ShaderObject* shader, bool debug);
         
         /** Set to true when name and code both == "" */
         bool                        _fixedFunction;
@@ -213,7 +213,7 @@ protected:
         /** Deletes the underlying glShaderObject.  Between GL's reference
             counting and G3D's reference counting, an underlying object
             can never be deleted while in use. */
-        ~GPUShader();
+        ~ShaderObject();
         
         /** Shader type, e.g. GL_VERTEX_SHADER_ARB */
         GLenum glShaderType() const {
@@ -247,9 +247,9 @@ protected:
 
     static std::string      ignore;
 
-    GPUShader	            vertexShader;
-    GPUShader	            geometryShader;
-    GPUShader	            pixelShader;
+    ShaderObject	            vertexShader;
+    ShaderObject	            geometryShader;
+    ShaderObject	            pixelShader;
 
     GLhandleARB             _glProgramObject;
 
@@ -281,7 +281,7 @@ protected:
 
     /** Finds any uniform variables in the code that are not already
         in the uniform array that OpenGL returned and adds them to
-        that array.  This causes VertexAndPixelShader to surpress
+        that array.  This causes ShaderProgram to surpress
         warnings about setting variables that have been compiled
         away--those warnings are annoying when temporarily commenting
         out code. */
@@ -291,7 +291,7 @@ protected:
     static bool isSamplerType(GLenum e);
 
     /** \param maxGeometryOutputVertices Set to -1 if using a layout qualifier for GLSL version 1.5 or later.*/
-    VertexAndPixelShader
+    ShaderProgram
     (const std::string&  vsCode,
      const std::string&  vsFilename,
      bool                vsFromFile,
@@ -329,7 +329,7 @@ public:
         ArgumentError(const std::string& m) : message(m) {}
     };
     
-    static VertexAndPixelShaderRef fromStrings
+    static ShaderProgramRef fromStrings
     (const std::string& vertexShader,
      const std::string& pixelShader,       
      PreprocessorStatus u,
@@ -339,7 +339,7 @@ public:
        To use the default/fixed-function pipeline for part of the
        shader, pass an empty string.
     */
-    static VertexAndPixelShaderRef fromStrings
+    static ShaderProgramRef fromStrings
     (const std::string& vertexShaderName,
      const std::string& vertexShader,
      const std::string& geometryShaderName,
@@ -357,10 +357,10 @@ public:
        @param debugErrors If true, a debugging dialog will
        appear when there are syntax errors in the shaders.
        If false, failures will occur silently; check
-       VertexAndPixelShader::ok() to see if the files
+       ShaderProgram::ok() to see if the files
        compiled correctly.
     */
-    static VertexAndPixelShaderRef fromFiles
+    static ShaderProgramRef fromFiles
     (const std::string& vertexShader,
      const std::string& geometryShader,
      const std::string& pixelShader,
@@ -369,7 +369,7 @@ public:
      bool               debugErrors);
 
     /**
-     Bindings of values to uniform variables for a VertexAndPixelShader.
+     Bindings of values to uniform variables for a ShaderProgram.
      Be aware that 
      the uniform namespace is global across the pixel and vertex shader.
 
@@ -380,7 +380,7 @@ public:
      */
     class ArgList {
     private:
-        friend class VertexAndPixelShader;
+        friend class ShaderProgram;
 
         class Arg {
         public:
@@ -450,7 +450,7 @@ public:
         void clear();
     };
 
-    ~VertexAndPixelShader();
+    ~ShaderProgram();
 
     /**
      Returns GLCaps::supports_GL_ARB_shader_objects() && 
@@ -514,7 +514,7 @@ public:
     void bindArgList(class RenderDevice* rd, const ArgList& args) const;
 
     /** Returns information about one of the arguments expected
-        by this VertexAndPixelShader.  There are VertexAndPixelShader::numArgs()
+        by this ShaderProgram.  There are ShaderProgram::numArgs()
         total.*/
     const UniformDeclaration& arg(int i) const {
         return uniformArray[i];
@@ -536,7 +536,7 @@ typedef ReferenceCountedPointer<Shader> ShaderRef;
   code that executes for each vertex and each pixel.
     
   <P>
-  Uses G3D::VertexAndPixelShader internally.  What we call pixel shaders
+  Uses G3D::ShaderProgram internally.  What we call pixel shaders
   are really "fragment shaders" in OpenGL terminology.
 
   <P>
@@ -670,7 +670,7 @@ public:
 
 protected:
 
-    VertexAndPixelShaderRef         _vertexAndPixelShader;
+    ShaderProgramRef         _vertexAndPixelShader;
 
     /** If true, needs the built-in G3D uniforms that appear in the
         code to be bound */
@@ -678,7 +678,7 @@ protected:
 
     bool                            _preserveState;
 
-    inline Shader(VertexAndPixelShaderRef v, PreprocessorStatus s) : 
+    inline Shader(ShaderProgramRef v, PreprocessorStatus s) : 
         _vertexAndPixelShader(v), 
         m_useUniforms(s == PREPROCESSOR_ENABLED),
         _preserveState(true) {}
@@ -687,7 +687,7 @@ protected:
     inline Shader() {}
 
 public:
-    typedef VertexAndPixelShader::ArgList ArgList; 
+    typedef ShaderProgram::ArgList ArgList; 
 
     /** Mapping from strings to GLSL "uniform" variables.  You may change these either
         before or after the shader is set on G3D::RenderDevice--either way
@@ -700,7 +700,7 @@ public:
     }
 
     /** @beta */
-    const Array<VertexAndPixelShader::UniformDeclaration>& argumentArray() const {
+    const Array<ShaderProgram::UniformDeclaration>& argumentArray() const {
         return _vertexAndPixelShader->argumentArray();
     }
 
@@ -715,7 +715,7 @@ public:
         const std::string& vertexFile, 
         const std::string& pixelFile,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
-        return new Shader(VertexAndPixelShader::fromFiles(vertexFile, "", pixelFile, -1, s, DEBUG_SHADER), s);
+        return new Shader(ShaderProgram::fromFiles(vertexFile, "", pixelFile, -1, s, DEBUG_SHADER), s);
     }
 
     /** If a geometry shader is specified, a vertex shader must also be specified.
@@ -726,7 +726,7 @@ public:
         const std::string& pixelFile,
         int maxGeometryShaderOutputVertices = -1,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
-        return new Shader(VertexAndPixelShader::fromFiles(vertexFile, geomFile, pixelFile, maxGeometryShaderOutputVertices, s, DEBUG_SHADER), s);
+        return new Shader(ShaderProgram::fromFiles(vertexFile, geomFile, pixelFile, maxGeometryShaderOutputVertices, s, DEBUG_SHADER), s);
     }
 
     inline static ShaderRef fromStrings(
@@ -734,7 +734,7 @@ public:
         const std::string& pixelCode,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
         alwaysAssertM(vertexCode != "" || pixelCode != "", "No shader code provided!");
-        return new Shader(VertexAndPixelShader::fromStrings(vertexCode, pixelCode, s, DEBUG_SHADER), s);
+        return new Shader(ShaderProgram::fromStrings(vertexCode, pixelCode, s, DEBUG_SHADER), s);
     }
 
     inline static ShaderRef fromStrings(
@@ -743,7 +743,7 @@ public:
         const int maxGeometryOutputVertices,
         const std::string& pixelCode,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
-        return new Shader(VertexAndPixelShader::fromStrings("", vertexCode, "", geometryCode, maxGeometryOutputVertices, "", pixelCode, s, DEBUG_SHADER), s);
+        return new Shader(ShaderProgram::fromStrings("", vertexCode, "", geometryCode, maxGeometryOutputVertices, "", pixelCode, s, DEBUG_SHADER), s);
     }
 
     /** Names are purely for debugging purposes */
@@ -753,7 +753,7 @@ public:
         const std::string& pixelName,
         const std::string& pixelCode,
         PreprocessorStatus s = PREPROCESSOR_ENABLED) {
-        return new Shader(VertexAndPixelShader::fromStrings(vertexName, vertexCode, "", "", -1, pixelName, pixelCode, s, DEBUG_SHADER), s);
+        return new Shader(ShaderProgram::fromStrings(vertexName, vertexCode, "", "", -1, pixelName, pixelCode, s, DEBUG_SHADER), s);
     }
 
     /** When true, any RenderDevice state that the shader configured before a primitive it restores at

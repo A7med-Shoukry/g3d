@@ -246,7 +246,7 @@ NonShadowedPass::NonShadowedPass() :
 void configureSingleLightShaderArgs(
    const GLight& light,
    int i,
-   VertexAndPixelShader::ArgList&  args, 
+   ShaderProgram::ArgList&  args, 
    bool shadowMapPass) {
 
     initializeStringConstants();
@@ -287,7 +287,7 @@ static void configureLights
 (int lightIndex, 
  int N, 
  const Array<GLight>& lightArray,
- VertexAndPixelShader::ArgList&  args) {
+ ShaderProgram::ArgList&  args) {
     initializeStringConstants();
 
     for (int i = 0; i < N; ++i) {

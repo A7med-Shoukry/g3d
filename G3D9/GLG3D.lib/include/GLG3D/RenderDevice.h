@@ -208,7 +208,7 @@ private:
     friend class VertexBuffer;
     friend class Milestone;
     friend class UserInput;
-    friend class VertexAndPixelShader;
+    friend class ShaderProgram;
 
     OSWindow*                    m_window;
 
@@ -275,11 +275,11 @@ private:
      bool                    useInstances);
     
     /**
-     VertexAndPixelShader is set lazily.  This ensures that the
+     ShaderProgram is set lazily.  This ensures that the
      current value is actually bound so that the argument list can be
-     bound.  Called from VertexAndPixelShader::bindArgList and from
+     bound.  Called from ShaderProgram::bindArgList and from
      beforePrimitive.*/
-    void forceVertexAndPixelShaderBind();
+    void forceShaderProgramBind();
 
     static std::string dummyString;
 
@@ -1325,18 +1325,18 @@ public:
     /**
      Used by G3D::Shader.  Most programs do not need to call this directly.
 
-     Set the current shader.  You may call VertexAndPixelShader::bindArgList either
+     Set the current shader.  You may call ShaderProgram::bindArgList either
      before or after this, or use the variation of this call that
      includes an arg list.
 
      See also G3D::setShader. 
      */
-    void setVertexAndPixelShader(const VertexAndPixelShaderRef& s);
+    void setShaderProgram(const ShaderProgramRef& s);
 
-    /** Throws VertexAndPixelShader::ArgumentError if the arguments provided
+    /** Throws ShaderProgram::ArgumentError if the arguments provided
       do not match the arguments declared */
-    void setVertexAndPixelShader(const VertexAndPixelShaderRef& s,
-            const VertexAndPixelShader::ArgList& args);
+    void setShaderProgram(const ShaderProgramRef& s,
+            const ShaderProgram::ArgList& args);
 
     /**
      A G3D::Shader abstracts the programmable graphics pipeline.
@@ -1563,7 +1563,7 @@ private:
         float                       lowDepthRange;
         float                       highDepthRange;
 
-        VertexAndPixelShaderRef     vertexAndPixelShader;
+        ShaderProgramRef     vertexAndPixelShader;
 
         ShaderRef                   shader;
 
@@ -1596,7 +1596,7 @@ private:
 
     float                           m_minLineWidth;
 
-    VertexAndPixelShaderRef         m_lastVertexAndPixelShader;
+    ShaderProgramRef         m_lastShaderProgram;
 
     GLint toGLStencilOp(RenderDevice::StencilOp op) const;
 
@@ -1666,7 +1666,7 @@ public:
 
     /**
      @deprecated
-     Use VertexAndPixelShader
+     Use ShaderProgram
      */
     inline bool supportsVertexProgram() const;
 
@@ -1674,13 +1674,13 @@ public:
      When true, NVIDIA Vertex Program 2.0 vertex programs can
      be loaded by VertexProgram.
      @deprecated
-     Use VertexAndPixelShader
+     Use ShaderProgram
      */
     bool supportsVertexProgramNV2() const;
 
     /**
      @deprecated
-     Use VertexAndPixelShader
+     Use ShaderProgram
      */
     inline bool supportsPixelProgram() const;
 

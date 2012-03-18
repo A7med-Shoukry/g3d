@@ -529,7 +529,7 @@ public:
         by the lighting.emissiveScale and lighting.environmentConstant
         as needed (e.g., for some tone-mapping algorithms.)
       */
-    void configure(VertexAndPixelShader::ArgList& a) const;
+    void configure(ShaderProgram::ArgList& a) const;
 
     /** Returns true if this material has an alpha mask */
     bool hasAlphaMask() const;

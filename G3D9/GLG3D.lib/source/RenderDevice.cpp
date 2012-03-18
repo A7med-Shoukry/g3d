@@ -960,7 +960,7 @@ void RenderDevice::setState(
         setProjectionMatrix(newState.matrices.projectionMatrix);
     }
 
-    setVertexAndPixelShader(newState.vertexAndPixelShader);
+    setShaderProgram(newState.vertexAndPixelShader);
     setShader(newState.shader);
     
     // Adopt the popped state's deltas relative the state that it replaced.
@@ -1082,7 +1082,7 @@ void RenderDevice::beforePrimitive() {
     }
     
     // If a Shader was bound, it will force this.  Otherwise we need to do so.
-    forceVertexAndPixelShaderBind();
+    forceShaderProgramBind();
 }
 
 
@@ -1871,15 +1871,15 @@ void RenderDevice::setShader(const ShaderRef& s) {
     }
 
     if (s.isNull()) {
-        setVertexAndPixelShader(NULL);
+        setShaderProgram(NULL);
     }
 }
 
 
-void RenderDevice::forceVertexAndPixelShaderBind() {
+void RenderDevice::forceShaderProgramBind() {
     // Only change the vertex shader if it does not match the one used
     // last time.
-    if (m_lastVertexAndPixelShader != m_state.vertexAndPixelShader) {
+    if (m_lastShaderProgram != m_state.vertexAndPixelShader) {
 
         majGLStateChange();
         if (m_state.vertexAndPixelShader.isNull()) {
@@ -1890,12 +1890,12 @@ void RenderDevice::forceVertexAndPixelShaderBind() {
         }
         debugAssertGLOk();
 
-        m_lastVertexAndPixelShader = m_state.vertexAndPixelShader;
+        m_lastShaderProgram = m_state.vertexAndPixelShader;
     }
 }
 
 
-void RenderDevice::setVertexAndPixelShader(const VertexAndPixelShaderRef& s) {
+void RenderDevice::setShaderProgram(const ShaderProgramRef& s) {
     majStateChange();
 
     if (s != m_state.vertexAndPixelShader) {
@@ -1929,11 +1929,11 @@ void RenderDevice::copyTextureFromScreen(const Texture::Ref& texture, const Rect
 }
 
 
-void RenderDevice::setVertexAndPixelShader(
-    const VertexAndPixelShaderRef&          s,
-    const VertexAndPixelShader::ArgList&    args) {
+void RenderDevice::setShaderProgram(
+    const ShaderProgramRef&          s,
+    const ShaderProgram::ArgList&    args) {
 
-    setVertexAndPixelShader(s);
+    setShaderProgram(s);
 
     if (s.notNull()) {
         s->bindArgList(this, args);
