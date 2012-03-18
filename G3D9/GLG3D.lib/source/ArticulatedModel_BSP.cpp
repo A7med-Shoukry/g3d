@@ -10,7 +10,7 @@
 */
 #include "GLG3D/ArticulatedModel.h"
 #include "G3D/FileSystem.h"
-#include "GLG3D/BSPMap.h"
+#include "GLG3D/BSPMAP.h"
 
 namespace G3D {
 
