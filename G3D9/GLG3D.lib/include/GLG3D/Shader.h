@@ -139,7 +139,7 @@ protected:
         
         /** Initialize a shader object and returns object.  
             Called from subclass create methods. */
-        static ShaderObject*         init(ShaderObject* shader, bool debug);
+        static ShaderObject* init(ShaderObject* shader, bool debug);
         
         /** Checks to ensure that this profile is supported on this
             card. Called from init().*/
