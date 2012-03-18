@@ -130,7 +130,7 @@ protected:
         
         /** Initialize a shader object and returns object.  
             Called from subclass create methods. */
-        static ShaderObject*           init(ShaderObject* shader, bool debug);
+        static ShaderObject*         init(ShaderObject* shader, bool debug);
         
         /** Set to true when name and code both == "" */
         bool                        _fixedFunction;
@@ -138,6 +138,8 @@ protected:
         GLenum                      _glShaderType;
         
         std::string                 _shaderType;
+
+        bool            m_usesG3DIndex;
        
         /** Checks to ensure that this profile is supported on this
             card. Called from init().*/
@@ -172,16 +174,14 @@ protected:
          It must then compiled again with correct mappings, which are
          assigned elsewhere.
 
-         @param defineString New \#defines to insert at the top of the program
-         @param code modified in place
-         @param secondPass On the scond pass, the samplerMappings must not be empty.
-         @return True if there was one replacement, false otherwise
+         \param defineString New \#defines to insert at the top of the program
+         \param code modified in place
+         \param secondPass On the scond pass, the samplerMappings must not be empty.
+         \return True if there was one replacement, false otherwise
          */
         bool replaceG3DIndex(std::string& code, std::string& defineString, 
                              const Table<std::string, int>& samplerMappings, bool secondPass);
         
-        bool            m_usesG3DIndex;
-
     public:
 
         const std::string& code() const {
