@@ -50,7 +50,8 @@ typedef ReferenceCountedPointer<Texture> TextureRef;
  This can be slow (up to a second).
 
  The special filename "<white>" generates an all-white Color4 texture (this works for both
- 2D and cube map texures).  You can use Preprocess::modulate to create other colors from this.
+ 2D and cube map texures; "<whiteCube>" can also be used explicitly for cube maps).  You can use Preprocess::modulate
+ to create other colors from this.
 
  Unless DIM_2D_RECT, DIM_2D_NPOT, DIM_CUBE_MAP_NPOT are used, the texture is automatically
  scaled to the next power of 2 along each dimension to meet hardware requirements, if not

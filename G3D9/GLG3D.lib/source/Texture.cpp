@@ -2604,10 +2604,17 @@ Texture::Specification::Specification(const Any& any) {
     *this = Specification();
 
     if (any.type() == Any::STRING) {
-        filename = any.resolveStringAsFilename();
-        if (FilePath::containsWildcards(filename)) {
-            // Assume this is a cube map
+        filename = any.string();
+        if (filename == "<whiteCube>") {
             settings = Texture::Settings::cubeMap();
+        }
+
+        if (! beginsWith(filename, "<")) {
+            filename = any.resolveStringAsFilename();
+            if (FilePath::containsWildcards(filename)) {
+                // Assume this is a cube map
+                settings = Texture::Settings::cubeMap();
+            }
         }
     } else {
         any.verifyNameBeginsWith("Texture::Specification");
