@@ -2606,6 +2606,7 @@ Texture::Specification::Specification(const Any& any) {
     if (any.type() == Any::STRING) {
         filename = any.string();
         if (filename == "<whiteCube>") {
+            filename = "<white>";
             settings = Texture::Settings::cubeMap();
         }
 
