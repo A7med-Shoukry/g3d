@@ -17,8 +17,8 @@ ImageBuffer::ImageBuffer(const ImageFormat* format, int width, int height, int d
     , m_rowStride(0)
     , m_width(width)
     , m_height(height)
-    , m_depth(depth)
-    , m_memoryManager(NULL) {
+    , m_memoryManager(NULL)
+    , m_depth(depth) {
 
     debugAssert(m_format);
     debugAssert(isPow2(m_rowAlignment));
