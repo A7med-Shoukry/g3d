@@ -14,7 +14,7 @@ private:
     Array<Tri>               m_triArray;
     Array<Surface::Ref>      m_surfaceArray;
     TriTree                  m_triTree;
-
+    CPUVertexArray           m_cpuVertexArray;
     enum Mode {TRACE, INSERT} m_mode;
 
 public:

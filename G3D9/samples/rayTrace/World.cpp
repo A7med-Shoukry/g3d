@@ -143,7 +143,7 @@ bool World::intersect(const Ray& ray, float& distance, SurfaceElement& surfel) c
 
     Tri::Intersector intersector;
     if (m_triTree.intersectRay(ray, intersector, distance, false, false)) {
-        surfel = SurfaceElement(intersector);
+        surfel = SurfaceElement(m_cpuVertexArray, intersector);
         return true;
     } else {
         return false;
