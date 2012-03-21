@@ -42,7 +42,7 @@ private:
     int                 m_slices;
 
     /** Vertices of the visualization mesh, on the unit sphere. */
-    Array<Vector3>      m_meshVertex;
+    Array<Point3>       m_meshVertex;
 
     /** Indices into meshVertex of the trilist for the visualization mesh. */
     Array<int>          m_meshIndex;

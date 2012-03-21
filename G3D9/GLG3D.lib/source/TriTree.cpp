@@ -46,22 +46,36 @@ void TriTree::intersectBox
 
 
 void TriTree::setContents(const Array<Surface::Ref>& surfaceArray, ImageStorage newStorage, const Settings& settings) {
-    Array<Tri> triArray;
-
-    for (int i = 0; i < surfaceArray.size(); ++i) {
-        Tri::getTris(surfaceArray[i], triArray, CFrame());
-    }
-
+	static const float epsilon = 0.000001f;
+    clear();
+  
+    Surface::getTris(surfaceArray, m_cpuVertexArray, m_triArray);
+    
     if (newStorage != IMAGE_STORAGE_CURRENT) {
-        for (int i = 0; i < triArray.size(); ++i) {
-            const Tri& tri = triArray[i];
+        for (int i = 0; i < m_triArray.size(); ++i) {
+            const Tri& tri = m_triArray[i];
             if (tri.material().notNull()) {
                 tri.material()->setStorage(newStorage);
             }
         }
     }
 
-    setContents(triArray, settings);
+	Array<Poly> source;
+	// Don't add 0 area triangles to source
+    for (int i = 0; i < m_triArray.size(); ++i) {
+        if (m_triArray[i].area() > epsilon) {
+            source.append(Poly(&m_triArray[i]));
+        }
+    }
+    
+    m_size = source.size();
+    if (source.size() > 0) {
+        m_memoryManager = AreaMemoryManager::create();
+        m_root = new (m_memoryManager->alloc(sizeof(Node))) Node(source, settings, m_memoryManager);
+    }
+
+	alwaysAssertM(m_triArray.size() == m_triArray.capacity(), "Allocated too much memory for the Tri Array");
+	alwaysAssertM(m_cpuVertexArray.vertex.size() == m_cpuVertexArray.vertex.capacity(), "Allocated too much memory for the vertex array");
 }
 
 /** Returns true if \a ray hits \a box.
@@ -443,7 +457,7 @@ bool __fastcall TriTree::Node::intersectRay
 				hit = true;
 				// Pointer arithmetic to find what index in the tri tree array this triangle was
 				// Will not have to do Soon(TM)
-				intersectCallback.primitiveIndex = valueArray->data[v] - triTree.m_triArray;
+				intersectCallback.primitiveIndex = valueArray->data[v] - triTree.m_triArray.getCArray(); // TODO: FIgure out if I screwed anything up
 				if (exitOnAnyHit) {
 					return true;
 				}
@@ -517,7 +531,7 @@ void TriTree::Node::intersectSphere(const Sphere& sphere, Array<Tri>& triArray, 
         for (int v = 0; v < valueArray->size; ++v) {
             Tri* tri = const_cast<Tri*>(valueArray->data[v]);
             if (! alreadyAdded.contains(tri)) {
-                if ((tri->area() > 0) && CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri->vertex(0), tri->vertex(1), tri->vertex(2)))) {
+                if ((tri->area() > 0) && CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri->position(0), tri->position(1), tri->position(2)))) {
                     triArray.append(*tri);
                     alreadyAdded.insert(tri);
                 }
@@ -544,7 +558,7 @@ void TriTree::Node::intersectBox(const AABox& box, Array<Tri>& triArray, Set<Tri
         for (int v = 0; v < valueArray->size; ++v) {
             Tri* tri = const_cast<Tri*>(valueArray->data[v]);
             if (! alreadyAdded.contains(tri)) {
-                if ((tri->area() > 0) && CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri->vertex(0), tri->vertex(1), tri->vertex(2)))) {
+                if ((tri->area() > 0) && CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri->position(0), tri->position(1), tri->position(2)))) {
                     triArray.append(*tri);
                     alreadyAdded.insert(tri);
                 }
@@ -574,7 +588,7 @@ void TriTree::Node::draw(RenderDevice* rd, int level, bool showBoxes, int minNod
             for (int t = 0; t < valueArray->size; ++t) {
                 rd->setNormal(valueArray->data[t]->normal());
                 for (int v = 0; v < 3; ++v) {
-                    rd->sendVertex(valueArray->data[t]->vertex(v));
+                    rd->sendVertex(valueArray->data[t]->position(v));
                 }
             }
             rd->endPrimitive();
@@ -648,7 +662,7 @@ void TriTree::Node::getStats(Stats& s, int level, int valuesPerNode) const {
 }
 
 
-TriTree::TriTree() : m_root(NULL), m_triArray(NULL), m_size(0) {}
+TriTree::TriTree() : m_root(NULL), m_size(0) {}
 
 
 TriTree::~TriTree() {
@@ -675,23 +689,30 @@ void TriTree::clear() {
         m_root->destroy(m_memoryManager);
         m_memoryManager->free(m_root);
         m_root = NULL;
-        delete[] m_triArray;
-        m_triArray = NULL;
+        m_triArray.fastClear();
         m_size = 0;
         m_memoryManager = NULL;
     }
 }
 
 
-void TriTree::setContents(const Array<Tri>& triArray, const Settings& settings) {
+void TriTree::setContents(const Array<Tri>& triArray, const CPUVertexArray& vertexArray, const Settings& settings) {
     static const float epsilon = 0.000001f;
     clear();
     
     Array<Poly> source;
     // Copy the source data 
-    m_triArray = new Tri[triArray.size()];
+
+	// Copy the vertex array
+	m_cpuVertexArray.copyFrom(vertexArray);
+	
+	// Copy the tri array
+	m_triArray.copyFrom(triArray);
+
+	
     for (int i = 0; i < triArray.size(); ++i) {
-        m_triArray[i] = triArray[i];
+		// Fix the CPUVertexArrayPointers
+		m_triArray[i].m_cpuVertexArray = &m_cpuVertexArray;
         if (triArray[i].area() > epsilon) {
             source.append(Poly(&m_triArray[i]));
         }
@@ -702,6 +723,9 @@ void TriTree::setContents(const Array<Tri>& triArray, const Settings& settings) 
         m_memoryManager = AreaMemoryManager::create();
         m_root = new (m_memoryManager->alloc(sizeof(Node))) Node(source, settings, m_memoryManager);
     }
+
+	alwaysAssertM(m_triArray.size() == m_triArray.capacity(), "Allocated too much memory for the Tri Array");
+	alwaysAssertM(m_cpuVertexArray.vertex.size() == m_cpuVertexArray.vertex.capacity(), "Allocated too much memory for the vertex array");
 }
 
 

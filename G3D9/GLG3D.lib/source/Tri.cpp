@@ -14,52 +14,37 @@
 
 namespace G3D {
     
-Tri::Tri
-(const Vector3& v0, const Vector3& v1, const Vector3& v2) :
-    v0(v0), e1(v1 - v0), e2(v2 - v0) {
-    
-    Vector3 n = e1.cross(e2).directionOrZero();
-
-    m_normal[0] = n;
-    m_normal[1] = n;
-    m_normal[2] = n;
-
-	m_doubleArea = e1.cross(e2).length();
-
-}
 
 
-Tri::Tri
-(const Vector3& v0, const Vector3& v1, const Vector3& v2, 
- const Vector3& n0, const Vector3& n1, const Vector3& n2,
- const Proxy<Material>::Ref& material,
- const Vector2& t0, const Vector2& t1, const Vector2& t2,
- const Vector4& tan0, const Vector4& tan1, const Vector4& tan2) :
-    v0(v0), e1(v1 - v0), e2(v2 - v0),
+
+Tri::Tri(const int i0, const int i1, const int i2,
+		CPUVertexArray* vertexArray,
+        const Proxy<Material>::Ref& material) :
     m_material(material) {
     
+
     debugAssert(material.isNull() ||
                 (isValidHeapPointer(material.pointer()) &&
                  (material.pointer() > (void*)0xf)));
+	index[0] = i0;
+	index[1] = i1;
+	index[2] = i2;
 
-    m_normal[0] = n0;
-    m_normal[1] = n1;
-    m_normal[2] = n2;
+	m_cpuVertexArray = vertexArray;
+	
+	v0                = m_cpuVertexArray->vertex[i0].position;
+	const Vector3& v1 = m_cpuVertexArray->vertex[i1].position;
+	const Vector3& v2 = m_cpuVertexArray->vertex[i2].position;
 
-    m_texCoord[0] = t0;
-    m_texCoord[1] = t1;
-    m_texCoord[2] = t2;
-
-    m_packedTangent[0] = tan0;
-    m_packedTangent[1] = tan1;
-    m_packedTangent[2] = tan2;
+	e1 = v1 - v0;
+	e2 = v2 - v0;
 
     m_doubleArea = e1.cross(e2).length();
 }
 
 
 Tri::operator Triangle() const {
-    return Triangle(vertex(0), vertex(1), vertex(2));
+    return Triangle(position(0), position(1), position(2));
 }
     
 
@@ -72,19 +57,19 @@ Tri Tri::otherSide() const {
     t.e2     = e1;
 	t.m_doubleArea = m_doubleArea;
 
-    // Flip winding and normal/tangent direction
+
+	t.m_cpuVertexArray = m_cpuVertexArray;
+    // Flip winding 
     // by swapping elements 1 and 2.
+	// normal/tangents remain the same
     
 
-    t.m_normal[0]   = -m_normal[0];
-    t.m_texCoord[0] = m_texCoord[0];
-    t.m_packedTangent[0]  = -m_packedTangent[0];
+    t.index[0]   = index[0];
+    
 
     for (int i = 1; i < 3; ++i) {
         int j = 3 - i;
-        t.m_normal[i]   = -m_normal[j];
-        t.m_texCoord[i] = m_texCoord[j];
-        t.m_packedTangent[i]  = -m_packedTangent[j];
+        t.index[i]   = index[j];
     }
     
     return t;
@@ -114,7 +99,6 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
 
 
 	// Test for backfaces first because this eliminates 50% of all triangles.
-    // TODO: Add twoside test
 
 	// This test is equivalent to n.dot(ray.direction()) >= -EPS
 	// Where n is the face unit normal, which we do not explicitly store
@@ -178,10 +162,10 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
                     const float w = 1.0f - u - v;
             
 
-                    Vector2 texCoord = 
-                        w * tri.m_texCoord[0] + 
-                        u * tri.m_texCoord[1] +
-                        v * tri.m_texCoord[2];
+                    Point2 texCoord = 
+                        w * tri.texCoord(0) + 
+                        u * tri.texCoord(1) +
+                        v * tri.texCoord(2);
             
                     const Image4::Ref& image = lambertian.image();
                     texCoord.x *= image->width();
@@ -227,13 +211,19 @@ void Tri::Intersector::getResult
                u * tri->e1 +
                v * tri->e2;
 
-    texCoord = w * tri->m_texCoord[0] + 
-               u * tri->m_texCoord[1] +
-               v * tri->m_texCoord[2];
+	
+	const CPUVertexArray::Vertex& v0 = tri->vertex(0);
+	const CPUVertexArray::Vertex& v1 = tri->vertex(1);
+	const CPUVertexArray::Vertex& v2 = tri->vertex(2);
+	
+    texCoord = w * v0.texCoord0 + 
+               u * v1.texCoord0 +
+               v * v2.texCoord0;
 
-    normal   = ( w * tri->m_normal[0] + 
-                 u * tri->m_normal[1] +
-                 v * tri->m_normal[2] ).direction();
+    normal   = ( w * v0.normal + 
+                 u * v1.normal +
+                 v * v2.normal ).direction();
+				 
 }
 
 
@@ -244,17 +234,32 @@ void Tri::Intersector::getResult
  Vector3&        tangent1,
  Vector3&        tangent2) const {
 
-    getResult(location, normal, texCoord);
-
     float w = 1.0 - u - v;
+	// Identical to the parameter getResult, but copying code
+	// to save pointer indirections on the vertex attributes
+	location = tri->v0 + 
+               u * tri->e1 +
+               v * tri->e2;
 
-    if (tri->m_packedTangent[0].w == 0.0f) {
+	const CPUVertexArray::Vertex& v0 = tri->vertex(0);
+	const CPUVertexArray::Vertex& v1 = tri->vertex(1);
+	const CPUVertexArray::Vertex& v2 = tri->vertex(2);
+
+    texCoord = w * v0.texCoord0 + 
+               u * v1.texCoord0 +
+               v * v2.texCoord0;
+
+    normal   = ( w * v0.normal + 
+                 u * v1.normal +
+                 v * v2.normal ).direction();
+
+    if (v0.tangent.w == 0.0f) {
         tangent1 = Vector3::zero();
         tangent2 = Vector3::zero();
     } else {
-        tangent1  = ( w * tri->m_packedTangent[0].xyz() + 
-                      u * tri->m_packedTangent[1].xyz() +
-                      v * tri->m_packedTangent[2].xyz() ).direction();
+        tangent1  = ( w * v0.tangent.xyz() + 
+                      u * v1.tangent.xyz() +
+                      v * v2.tangent.xyz() ).direction();
 
         tangent2 = normal.cross(tangent1);
     }
@@ -267,110 +272,6 @@ void Tri::Intersector::getResult
 
 #endif
 
-void Tri::getTris(const Surface::Ref& pmodel, Array<Tri>& triArray, const CFrame& xform) {
-    const bool previous = false;
-    const SuperSurface::Ref& model = pmodel.downcast<SuperSurface>();
 
-    alwaysAssertM(model.notNull(), "Non-SuperSurface present in World.");
-    const SuperSurface::CPUGeom& cpuGeom = model->cpuGeom();
-    const SuperSurface::GPUGeom::Ref& gpuGeom = model->gpuGeom();
-    
-    bool twoSided = gpuGeom->twoSided;
-
-    Material* material = gpuGeom->material.pointer();
-    debugAssert(gpuGeom->primitive == PrimitiveType::TRIANGLES);
-    debugAssert(cpuGeom.index != NULL);
-    
-    const Array<int>&     index     = *cpuGeom.index;
-    
-    // Object to world matrix.  Guaranteed to be an RT transformation,
-    // so we can directly transform normals as if they were vectors.
-    CFrame modelFrame;
-    model->getCoordinateFrame(modelFrame, previous);
-    CFrame cframe = xform *modelFrame;
-
-    if (cpuGeom.vertexArray != NULL) {
-        // G3D 9.00 format with interlaced vertices
-
-        // All data are in object space
-        const Array<CPUVertexArray::Vertex>& vertex = cpuGeom.vertexArray->vertex;
-
-        //bool hasTexCoords = cpuGeom.vertexArray->hasTexCoord0;
-        //bool hasTangents  = cpuGeom.vertexArray->hasTangent;
-
-        for (int i = 0; i < index.size(); i += 3) {
-            const CPUVertexArray::Vertex& v0 = vertex[index[i + 0]];
-            const CPUVertexArray::Vertex& v1 = vertex[index[i + 1]];
-            const CPUVertexArray::Vertex& v2 = vertex[index[i + 2]];
-
-            triArray.append
-                (Tri(cframe.pointToWorldSpace(v0.position),    
-                     cframe.pointToWorldSpace(v1.position),
-                     cframe.pointToWorldSpace(v2.position),
-
-                     cframe.vectorToWorldSpace(v0.normal),  
-                     cframe.vectorToWorldSpace(v1.normal),  
-                     cframe.vectorToWorldSpace(v2.normal),
-     
-                     material,
-                    
-                     v0.texCoord0,
-                     v1.texCoord0,
-                     v2.texCoord0,
-
-                     v0.tangent,
-                     v1.tangent,
-                     v2.tangent));
-
-            if (twoSided) {
-                const Tri& t = triArray.last().otherSide();
-                triArray.append(t);
-            }
-        }
-    } else {
-
-        // G3D 8.00 format with separate arrays
-
-        // All data are in object space
-        const Array<Vector3>& vertex    = cpuGeom.geometry->vertexArray;
-        const Array<Vector3>& normal    = cpuGeom.geometry->normalArray;
-        const Array<Vector2>& texCoord0 = *cpuGeom.texCoord0;
-        const Array<Vector4>& packedTangent = *cpuGeom.packedTangent;
-
-        bool hasTexCoords = texCoord0.size() > 0;
-        bool hasTangents  = packedTangent.size() > 0;
-
-
-        for (int i = 0; i < index.size(); i += 3) {
-            const int v0 = index[i + 0];
-            const int v1 = index[i + 1];
-            const int v2 = index[i + 2];
-
-            triArray.append
-                (Tri(cframe.pointToWorldSpace(vertex[v0]),    
-                     cframe.pointToWorldSpace(vertex[v1]),
-                     cframe.pointToWorldSpace(vertex[v2]),
-
-                     cframe.vectorToWorldSpace(normal[v0]),  
-                     cframe.vectorToWorldSpace(normal[v1]),  
-                     cframe.vectorToWorldSpace(normal[v2]),
-
-                     material,
-                            
-                     hasTexCoords ? texCoord0[v0] : Vector2::zero(), 
-                     hasTexCoords ? texCoord0[v1] : Vector2::zero(), 
-                     hasTexCoords ? texCoord0[v2] : Vector2::zero(),
-
-                     hasTangents  ? Vector4(cframe.vectorToWorldSpace(packedTangent[v0].xyz()), packedTangent[v0].w) : Vector4::zero(),
-                     hasTangents  ? Vector4(cframe.vectorToWorldSpace(packedTangent[v1].xyz()), packedTangent[v0].w) : Vector4::zero(),
-                     hasTangents  ? Vector4(cframe.vectorToWorldSpace(packedTangent[v2].xyz()), packedTangent[v0].w) : Vector4::zero()));
-
-            if (twoSided) {
-                const Tri& t = triArray.last().otherSide();
-                triArray.append(t);
-            }
-        }
-    }
-}
 
 } // namespace G3D

@@ -7,7 +7,7 @@ World::World() : m_mode(TRACE) {
     lightArray.append(GLight::point(Vector3(22.6f, 2.9f,  6.6f), Color3::fromARGB(0xffe5bd) * 1000));
 
     ambient = Radiance3::fromARGB(0x304855) * 0.8f;
-
+	
     Any teapot = PARSE_ANY
         ( ArticulatedModel::Specification {
             filename = "teapot/teapot.obj";
@@ -24,7 +24,7 @@ World::World() : m_mode(TRACE) {
          } );
 
     insert(ArticulatedModel::create(teapot), CFrame::fromXYZYPRDegrees(19.4f, -0.2f, 0.94f, 70));
-
+	
     Any sphereOutside = PARSE_ANY 
         ( ArticulatedModel::Specification {
             filename = "sphere.ifs";
@@ -58,15 +58,23 @@ World::World() : m_mode(TRACE) {
                               });
                   );
           });
-
+	
     insert(ArticulatedModel::create(sphereOutside), CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
     insert(ArticulatedModel::create(sphereInside),  CFrame::fromXYZYPRDegrees(19.7f, 0.2f, -1.1f, 70));
+	
 
     Any sponza = PARSE_ANY
         ( ArticulatedModel::Specification {
             filename = "dabrovic_sponza/sponza.zip/sponza.obj";
           } );
+		  
 
+	/*Any sponza = PARSE_ANY
+        ( ArticulatedModel::Specification {
+             filename = "models/cube/cube.obj";
+			 scale = 5.0f;
+          } );
+		  */
 	Stopwatch timer;
     insert(ArticulatedModel::create(sponza), Vector3(8.2f, -6, 0));
     timer.after("Sponza load");
@@ -93,11 +101,11 @@ void World::insert(const ArticulatedModel::Ref& model, const CFrame& frame) {
 void World::insert(const Surface::Ref& m) {
     debugAssert(m_mode == INSERT);
     m_surfaceArray.append(m);
-    Tri::getTris(m, m_triArray, CFrame());
 }
 
 
 void World::end() {
+	Surface::getTris(m_surfaceArray, m_cpuVertexArray, m_triArray);
     for (int i = 0; i < m_triArray.size(); ++i) {
         m_triArray[i].material()->setStorage(MOVE_TO_CPU);
     }
@@ -108,8 +116,10 @@ void World::end() {
     TriTree::Settings s;
     s.algorithm = TriTree::MEAN_EXTENT;
 	Stopwatch timer;
-    m_triTree.setContents(m_triArray, s);
+	m_triTree.setContents(m_triArray, m_cpuVertexArray, s); 
 	timer.after("TriTree creation");
+	debugPrintf("# Tris: %d\n # Vertices: %d\n", m_triArray.size(), m_cpuVertexArray.vertex.size());
+	debugPrintf("Bytes of Tris: %d\n Bytes of Vertices: %d\n", m_triArray.size()*sizeof(Tri), m_cpuVertexArray.vertex.size()*sizeof(CPUVertexArray::Vertex));
     m_triArray.clear();
 }
 
@@ -132,7 +142,7 @@ bool World::intersect(const Ray& ray, float& distance, SurfaceElement& surfel) c
     debugAssert(m_mode == TRACE);
 
     Tri::Intersector intersector;
-    if (m_triTree.intersectRay(ray, intersector, distance)) {
+    if (m_triTree.intersectRay(ray, intersector, distance, false, false)) {
         surfel = SurfaceElement(intersector);
         return true;
     } else {

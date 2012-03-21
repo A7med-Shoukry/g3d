@@ -1,7 +1,46 @@
 #include "GLG3D/CPUVertexArray.h"
 #include "GLG3D/VertexRange.h"
+#include "G3D/CoordinateFrame.h"
 
 namespace G3D {
+
+
+void CPUVertexArray::Vertex::transformBy(const CoordinateFrame& cframe){
+	position  = cframe.pointToWorldSpace(position);
+	normal    = cframe.vectorToWorldSpace(normal);
+	// The w component is just packed in.
+	tangent   = Vector4(cframe.vectorToWorldSpace(tangent.xyz()), tangent.w);
+}
+
+CPUVertexArray::CPUVertexArray(const CPUVertexArray& otherArray) : hasTexCoord0(otherArray.hasTexCoord0), 
+															hasTexCoord1(otherArray.hasTexCoord1), 
+															hasTangent(otherArray.hasTangent) {
+
+	vertex.copyPOD(otherArray.vertex);
+	texCoord1.copyPOD(otherArray.texCoord1);
+}
+
+void CPUVertexArray::copyFrom(const CPUVertexArray& other){
+	vertex.copyPOD(other.vertex);
+	texCoord1.copyPOD(other.texCoord1);
+	hasTexCoord0 = other.hasTexCoord0; 
+	hasTexCoord1 = other.hasTexCoord1;
+	hasTangent   = other.hasTangent;
+}
+
+
+void CPUVertexArray::transformAndAppend(const CPUVertexArray& otherArray, const CFrame& cframe){
+	if(otherArray.hasTexCoord1){
+		texCoord1.appendPOD(otherArray.texCoord1);
+	}
+	const int oldSize = vertex.size();
+	vertex.appendPOD(otherArray.vertex);
+	for(int i = oldSize; i < vertex.size(); ++i){
+		vertex[i].transformBy(cframe);
+	}
+
+}
+
 
 void CPUVertexArray::copyToGPU
 (VertexRange&               vertexVR, 

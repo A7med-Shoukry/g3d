@@ -21,11 +21,27 @@
    <p>
    Changes in 9.00:
    <ul>
-    <li> Pass a pointer to the triTree throughout all intersectRay functions, and uses it to set intersector's primitive index</li>
-	<li> Added a primitive index variable to intersector, and use it to set SurfaceElement's SourcePrimitive's index</li>
-	<li> Modified Surface Element to contain a SourcePrimitive struct containing u, v, and, if set explicitly, the primitive's index </li> 
+	<li> Completely redesigned Tri. It now stores only v0, e1, e2, three indices into a G3D::CPUVertexArray, a pointer to G3D::CPUVertexArray, a Proxy<Material>, 
+	and doubleArea (72 bytes in a 64 bit build). [Mike]</li> 
+    <li> Now Passing  a pointer to the G3D::TriTree throughout all intersectRay functions, and uses it to set G3D::Tri::Intersector's primitive index [Mike]</li>
+	<li> Added G3D::Surface::getTris(), a static method which takes an array of surfaces and returns a G3D::CPUVertexArray and an Array<Tri> from the surfaces, by separating the
+	surfaces by subclass and calling getTrisHomogenous() on them. [Mike]</li> 
+	<li> Added G3D::Surface::getTrisHomogenous(), a virtual function that, when implemented in subclasses, will take an array of surfaces and append to the G3D::CPUVertexArray 
+	and the Array<Tri> appropriately. [Mike]</li> 
+	<li> Added G3D::SuperSurface::getTrisHomogenous(), which is a SuperSurface-specific implementation of G3D::Surface::getTrisHomogenous() [Mike]</li> 
+	<li> Added G3D::CPUVertexArray::Vertex::transformBy() that takes  a G3D::CoordinateFrame and transforms its position, tangent, and normals by the CFrame (object to world). [Mike]</li> 
+	<li> Added  G3D::CPUVertexArray::transformAndAppend() which takes a G3D::CPUVertexArray and a G3D::CoordinateFrame and appends the parameter array, transforming
+	tangents, normals and positions from object to world space. [Mike]</li> 
+	<li> Removed G3D::Tri::getTris(). Use G3D::Surface::getTris() instead. (updated everything internal to G3D to reflect this change) [Mike]</li> 
+	<li> Renamed G3D::Tri::vertex() to G3D::Tri::position(), and added a new G3D::Tri::vertex() that returns the G3D::CPUVertexArray::Vertex for the specified vertex. [Mike]</li> 
+	<li> Added G3D::Array::copyPOD() and G3D::Array::appendPOD() for fast array copy and append for "Plain Old Data" [Mike]</li> 
+	<li> Added G3D::Array::copyFrom() to wrap up the idiom of resize(0) append(*array*) [Mike]</li> 
+	<li> Disabled operator=() for G3D::CPUVertexArray [Mike]</li> 
+	<li> Added a copy constructor for G3D::CPUVertexArray, and added G3D::CPUVertexArray::copyFrom() [Mike]</li> 
+    <li> Added a primitive index variable to intersector, and use it to set G3D::SurfaceElement::SourcePrimitive index [Mike]</li>
+	<li> Modified G3D::SurfaceElement to contain a SourcePrimitive struct containing u, v, and, if set explicitly, the primitive's index [Mike]</li> 
 	<li> G3D::Tri::Intersector::operator() now correctly uses the twoSided boolean. We had to rewrite the code and
-		 we took a 3% performance hit for ease of maintenance.</li>
+		 we took a 3% performance hit for ease of maintenance. [Mike]</li>
     <li> Changed the NO_FFMPEG macro to G3D_NO_FFMPEG and changed it to be defined in platform.h instead of in VideoOutput.h  [Mike]</li>
 	<li> G3D::Tri and G3D::Tri::Intersector no longer virtual, this decreases Tri size by 8 bytes in 64-bit builds [Mike]</li>
 	<li> Removed n the facenormal from G3D::Tri and replaced with doubleArea (e1.cross(e2).length()) [Mike]</li>
@@ -33,10 +49,8 @@
 	<li> G3D::Proxy</li>
     <li> G3D::GuiTextureBox now saves out cubemaps at 4x the width and 2x the height of one of its faces, in the panoramic view [Mike]</li>
 	<li> Renamed VertexAndPixelShader to ShaderProgram, matching OpenGL terminology (this was deprecated anyway) </li>
-	<li> canBeIndexType renamed to glCanBeIndexType</li>
-	<li> glIsNormalizedFixedPoint</li>
-    <li> G3D::GuiTextureBox now saves out cubemaps at 4x the width and 2x the height of one of its faces, in the panoramic view </li>
-    <li> G3D::Vector2unorm16 </li>
+<li> canBeIndexType renamed to glCanBeIndexType</li>
+	<li> glIsNormalizedFixedPoint</li>    <li> G3D::Vector2unorm16 </li>
     <li> Added Show Cube Edges option to G3D::GuiTextureBoxInspector [Mike]</li>
     <li> Reduced RenderDevice::MAX_TRACKED_TEXTURE_IMAGE_UNITS, RenderDevice::MAX_TRACKED_TEXTURE_UNITS, and RenderDevice::MAX_LIGHTS to 2 as we remove fixed-function to speed up programmable shading.</li>
     <li> Added focus controls to G3D::CameraControlWindow </li>

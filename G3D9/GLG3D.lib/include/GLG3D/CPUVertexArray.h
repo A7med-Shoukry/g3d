@@ -23,6 +23,7 @@
 namespace G3D {
 
 class VertexRange;
+class CoordinateFrame;
 
 /** \brief Array of vertices with interlaced position, normal, texCoord, and tangent attributes.
 
@@ -30,7 +31,12 @@ class VertexRange;
 
 \sa G3D::Surface, G3D::SuperSurface::CPUGeom, G3D::MeshAlg, G3D::Triangle, G3D::TriTree
 */
+
 class CPUVertexArray {
+private:
+	//Intentionally unimplemented
+	CPUVertexArray& operator=(const CPUVertexArray&); 
+
 public:
 
     /** \brief Packed vertex attributes. 48 bytes per vertex.
@@ -49,7 +55,9 @@ public:
 
         /** Texture coordinate 0. */
         Point2                  texCoord0;
-    };
+
+		void transformBy(const CoordinateFrame& cframe);
+	};
 
     Array<Vertex>               vertex;
 
@@ -64,7 +72,7 @@ public:
     /** True if texCoord0 contains valid data. */
     bool                        hasTexCoord0;
 
-    /** True if texCoord0 contains valid data. */
+    /** True if texCoord1 contains valid data. */
     bool                        hasTexCoord1;
 
     /** True if tangent contains valid data. */
@@ -72,9 +80,17 @@ public:
 
     CPUVertexArray() : hasTexCoord0(true), hasTexCoord1(false), hasTangent(true) {}
 
+	
+	explicit CPUVertexArray(const CPUVertexArray& otherArray);
+
+
+	void transformAndAppend(const CPUVertexArray& otherArray, const CoordinateFrame& cframe);
+
     int size() const {
         return vertex.size();
     }
+
+	void copyFrom(const CPUVertexArray& other);
 
     /** \param texCoord1 This is not interleaved with the other data in GPU memory. 
          Note that G3D::SuperSurface stores this in texture coordinate <b>2</b> because texcoord 1 is used for the tangent. */

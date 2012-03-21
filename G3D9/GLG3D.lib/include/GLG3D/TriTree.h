@@ -21,6 +21,7 @@
 #include "G3D/CollisionDetection.h"
 #include "GLG3D/Tri.h"
 #include "GLG3D/Component.h"
+#include "GLG3D/CPUVertexArray.h"
 #ifndef _MSC_VER
 #include <stdint.h>
 #endif
@@ -442,12 +443,15 @@ private:
     /** All Tris in the tree.  These are stored here to reduce the
         memory footprint of duplicated Tris throughout the tree. There
         appears to be no significant performance overhead from the
-        pointer jump of not storing Tris directly in the nodes.
-        Allocated with ::new */
-    Tri*                 m_triArray;
+        pointer jump of not storing Tris directly in the nodes. */
+    Array<Tri>           m_triArray;
 
     /** Number of elements in m_triArray */
     int                  m_size;
+
+
+    /** All vertices referenced by the Tris in the TriTree */
+    CPUVertexArray       m_cpuVertexArray;
 
 public:
 
@@ -466,11 +470,17 @@ public:
     /** Walk the entire tree, computing statistics */
     Stats stats(int valuesPerNode) const;
 
-    /** The array will be copied, the underlying Array<Tri> is guaranteed to be in the same order as the parameter triArray.
+    /** The arrays will be copied, the underlying Array<Tri> is guaranteed to be in the same order as the parameter Tri Array.
 		Zero area triangles are retained in the array, but will never be collided with. */
-    void setContents(const Array<Tri>& triArray, const Settings& settings = Settings());
+    void setContents(const Array<Tri>& triArray, const CPUVertexArray& vertexArray, const Settings& settings = Settings());
+
+
+    /** This will construct a CPUVertexArray, setting all normals, tangents, and texture coordinates to 0, material will be NULL */
+
+    //void setContents(const Array<int>& indexArray, const Array<Point3>& vertexArray, const Settings& settings = Settings());
     
-    /** Uses Tri::getTris to extract the triangles from each surface and then invokes setContents() */
+    /** Uses Surface::getTris to extract the triangles from each surface and then is identical to the other setContents, without the
+        extra tri copying */
     void setContents(const Array<SurfaceRef>& surfaceArray,
                      ImageStorage newStorage = IMAGE_STORAGE_CURRENT, 
                      const Settings& settings = Settings());

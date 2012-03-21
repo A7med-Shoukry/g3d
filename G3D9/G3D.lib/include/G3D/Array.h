@@ -333,6 +333,49 @@ public:
        *this = other;
    }
 
+
+   /* Sets this to hold the same contents as other, with num = numAllocated (no unused allocated space) */
+   void copyFrom(const Array<T>& other) {
+		resize(0);
+		append(other);
+   }
+
+
+   /** Resizes this to match the size of \a other and then copies the data from other using memcpy.  This is only safe for POD types */
+   void copyPOD(const Array<T>& other) {
+	   if (numAllocated < other.num) {
+		   m_memoryManager->free(data);
+		   data = NULL;
+		   if (other.data) {
+			  data = (T*)m_memoryManager->alloc(sizeof(T) * other.num);
+		   }
+		   numAllocated = other.num;
+	   }
+
+	   num = other.num;
+	   if (other.data && (num > 0)) {
+		   System::memcpy(data, other.data, sizeof(T) * num);
+	   }
+   }
+
+   /** Resizes this to just barely match the size of \a other + itself and then copies the data to the end of the array from other using memcpy.  
+		This is only safe for POD types */
+   void appendPOD(const Array<T>& other) {
+	   const size_t oldSize = num;
+	   num += other.num;
+	   if (numAllocated < num) {
+		   alwaysAssertM(other.data, "non-zero array with no allocated space");
+		   T* old = data;
+		   data = (T*)m_memoryManager->alloc(sizeof(T) * num);
+		   System::memcpy(data, old, sizeof(T) * oldSize);
+		   m_memoryManager->free(old);
+		   numAllocated = num;
+	   }
+	   if (other.data) {
+		   System::memcpy((data + oldSize), other.data, sizeof(T) * other.num);
+	   }
+   }
+
    /**
     Destructor does not delete() the objects if T is a pointer type
     (e.g. T = int*) instead, it deletes the <B>pointers themselves</B> and 

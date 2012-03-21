@@ -404,6 +404,12 @@ public:
     virtual void renderDepthOnlyHomogeneous
     (RenderDevice*                rd, 
      const Array<Surface::Ref>&   surfaceArray) const override;
+
+
+    virtual void getTrisHomogeneous
+    (const Array<Surface::Ref>&   surfaceArray, 
+     CPUVertexArray&              cpuVertexArray, 
+     Array<Tri>&                  triArray) const override;
 };
 
 const char* toString(SuperSurface::GraphicsProfile p);

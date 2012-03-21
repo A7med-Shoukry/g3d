@@ -22,6 +22,8 @@
 namespace G3D {
 
 class ShadowMap;
+class Tri;
+class CPUVertexArray;
 
 namespace SuperShader {
 class Pass;
@@ -642,6 +644,29 @@ public:
      const Array< ReferenceCountedPointer<ShadowMap> >&   shadowMapArray = Array<ShadowMap::Ref>(),
      RefractionQuality              maxRefractionQuality = RefractionQuality::BEST,
      AlphaMode                      alphaMode = ALPHA_BINARY);    
+
+	/** 
+	  Returns a CPUVertexArray and an Array<Tri> generated from the surfaces in surfaceArray, with everything transformed to world space 
+	  First separates surfaceArray by derived type and then calls getTrisHomogenous
+	 */
+	static void getTris(const Array<Surface::Ref>& surfaceArray, CPUVertexArray& cpuVertexArray, Array<Tri>& triArray);
+
+
+	/** \brief Creates and appends Tris and CPUVertexArray::Vertices onto
+		the parameter arrays using the cpuGeom's of the surfaces in surfaceArray
+       
+       Invoking this with elements of \a surfaceArray that are not of
+       the same most-derived type as \a this will result in an error.
+
+       This function maintains a table of already used cpuGeoms, so that we don't need to
+	   duplicate things unneccessarily.
+    */
+    virtual void getTrisHomogeneous
+    (const Array<Surface::Ref>& surfaceArray, 
+     CPUVertexArray&            cpuVertexArray, 
+	 Array<Tri>&                triArray) const {}
+
+
 
 protected:
 

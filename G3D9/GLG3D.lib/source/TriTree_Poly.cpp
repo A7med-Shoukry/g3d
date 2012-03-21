@@ -22,7 +22,7 @@ TriTree::Poly::Poly(const Tri* tri) :
 
     m_vertex.resize(3);
     for (int v = 0; v < 3; ++v) {
-        const Vector3& x = tri->vertex(v);
+        const Vector3& x = tri->position(v);
         m_vertex[v] = x;
         m_low  = m_low.min(x);
         m_high = m_high.max(x);

@@ -20,6 +20,7 @@
 #include "G3D/ReferenceCount.h"
 #include "G3D/Triangle.h"
 #include "GLG3D/Material.h"
+#include "GLG3D/CPUVertexArray.h"
 
 
 namespace G3D {
@@ -36,7 +37,7 @@ class Ray;
 
  The size of this class is carefully controlled so that large scenes can
  be stored efficiently and that cache coherence is maintained during processing.
- The implementation is currently 176 bytes in a 64-bit build.
+ The implementation is currently 72 bytes in a 64-bit build.
 
  \sa G3D::Triangle, G3D::MeshShape, G3D::ArticulatedModel, G3D::Surface, G3D::MeshAlg
  */
@@ -45,8 +46,17 @@ private:
     // Intersector is declared below
     friend class Intersector;
 
-    // The size of the Tri class does not appear to significantly impact
-    // the performance of ray tracing under the current kd tree implementation.
+	friend class TriTree;
+
+
+    /** Usually a material, but can be abstracted  */
+    Proxy<Material>::Ref    m_material;
+
+    /** \deprecated */
+   	CPUVertexArray*			m_cpuVertexArray;
+
+    /** Indices into the CPU Vertex array */
+    uint32                  index[3];
 
     /** Vertex 0 */
     Vector3                 v0;
@@ -57,21 +67,9 @@ private:
     /** Edge vector v2 - v0 */
     Vector3                 e2;
 
-    /** If the Tri is in a "smooth" surface then the vertex normals,
-        otherwise the face normal. */
-    Vector3                 m_normal[3];
-
 	/** Twice the area: (e0 x e1).length() */
     float                   m_doubleArea;
 
-    /** Texture coordinates. */
-    Vector2                 m_texCoord[3];
-
-    /** Per-vertex tangents for bump mapping. */
-    Vector4                 m_packedTangent[3];
-
-    /** Usually a material, but can be abstracted */
-    Proxy<Material>::Ref    m_material;
 
 public:
 
@@ -81,13 +79,10 @@ public:
        without adding to the size of Tri or having to trampoline all of the Material factory methods.
        To extract the actual material from the proxy use Tri::material and Tri::data<T>.
     */
-    Tri(const Vector3& v0, const Vector3& v1, const Vector3& v2, 
-        const Vector3& n0, const Vector3& n1, const Vector3& n2, 
-        const Proxy<Material>::Ref& material = NULL,
-        const Vector2& t0 = Vector2::zero(), const Vector2& t1 = Vector2::zero(), const Vector2& t2 = Vector2::zero(),
-        const Vector4& tan0 = Vector4::zero(), const Vector4& tan1 = Vector4::zero(), const Vector4& tan2 = Vector4::zero());
+    Tri(const int i0, const int i1, const int i2,
+		CPUVertexArray* vertexArray,
+        const Proxy<Material>::Ref& material = NULL);
 
-    Tri(const Vector3& v0, const Vector3& v1, const Vector3& v2);
 
     Tri() {}
 
@@ -112,7 +107,7 @@ public:
     }
 
     /** Vertex position (must be computed) */
-    Vector3 vertex(int i) const {
+    Point3 position(int i) const {
         switch (i) {
         case 0: return v0;
         case 1: return v0 + e1;
@@ -123,6 +118,11 @@ public:
         }
     }
 
+	/** Useful for accessing several vertex properties at once (for less pointer indirection) */
+	const CPUVertexArray::Vertex& vertex(int i) const {
+		return m_cpuVertexArray->vertex[index[i]];
+	}
+
     /** Face normal.  For degenerate triangles, this is zero.  For all other triangles
     it has unit length and is defined by counter-clockwise winding. Calculate every call*/
     Vector3 normal() const {
@@ -132,31 +132,37 @@ public:
     /** Vertex normal */
     const Vector3& normal(int i) const {
         debugAssert(i >= 0 && i <= 2);
-        return m_normal[i];
+		debugAssert(m_cpuVertexArray != NULL);
+        return vertex(i).normal;
     }
 
     const Vector2& texCoord(int i) const {
         debugAssert(i >= 0 && i <= 2);
-        return m_texCoord[i];
+        debugAssert(m_cpuVertexArray != NULL);
+        return vertex(i).texCoord0;
     }
 
     const Vector4& packedTangent(int i) const {
         debugAssert(i >= 0 && i <= 2);
-        return m_packedTangent[i];
+        debugAssert(m_cpuVertexArray != NULL);
+        return vertex(i).tangent;
     }
 
     /** Per-vertex unit tangent, for bump mapping. Tangents are perpendicular to 
         the corresponding vertex normals.*/
     Vector3 tangent(int i) const {
-        debugAssert(i >= 0 && i <= 2);
-        return m_packedTangent[i].xyz();
+		debugAssert(i >= 0 && i <= 2);
+        debugAssert(m_cpuVertexArray != NULL);
+        return vertex(i).tangent.xyz();
     }
 
     /** Per-vertex unit tangent = normal x tangent, for bump mapping.
         (Erroneously called the "binormal" in some literature) */
     Vector3 tangent2(int i) const {
         debugAssert(i >= 0 && i <= 2);
-        return m_normal[i].cross(m_packedTangent[i].xyz()) * m_packedTangent[i].w;
+		debugAssert(m_cpuVertexArray != NULL);
+		const CPUVertexArray::Vertex& vertex = this->vertex(i);
+        return vertex.normal.cross(vertex.tangent.xyz()) * vertex.tangent.w;
     }
     
     /** \brief Resolve and return the material for this Tri.
@@ -188,12 +194,10 @@ public:
             (v0 == t.v0) &&
             (e1 == t.e1) &&
             (e2 == t.e2) &&
-            (m_normal[0] == t.m_normal[0]) &&
-            (m_normal[1] == t.m_normal[1]) &&
-            (m_normal[2] == t.m_normal[2]) &&
-            (m_texCoord[0] == t.m_texCoord[0]) &&
-            (m_texCoord[1] == t.m_texCoord[1]) &&
-            (m_texCoord[2] == t.m_texCoord[2]) &&
+            (index[0] == t.index[0]) &&
+            (index[1] == t.index[1]) &&
+            (index[2] == t.index[2]) &&
+            (m_cpuVertexArray == m_cpuVertexArray) &&
             (m_material == t.m_material);
     }
 
@@ -224,13 +228,13 @@ public:
         const Tri*      tri;
 
         /** Barycentric coordinate of the hit corresponding to
-            <code>tri->vertex(1)</code>. 
+            <code>tri->position(1)</code>. 
 
             This is an "output".*/
         float           u;
 
         /** Barycentric coordinate of the hit corresponding to
-            <code>tri->vertex(2)</code>. 
+            <code>tri->position(2)</code>. 
 
             This is an "output"*/
         float           v;
@@ -328,15 +332,7 @@ public:
          Vector2&        texCoord) const;
     };
 
-    /** Extract world-space triangles from the model and append them
-        onto triArray.
-
-        \param xform After transforming to world space, transform by this xform
-         (e.g., to get to a camera's object space, pass the inverse of the camera's
-          object-to-world matrix)
-     */
-    static void getTris(const ReferenceCountedPointer<class Surface>& model, Array<Tri>& triArray, 
-                        const CFrame& xform = CFrame());
+  
 };// G3D_END_PACKED_CLASS(4)
 } // namespace G3D
 

@@ -49,7 +49,7 @@ MeshShape::MeshShape(
     for (int t = 0; t < tri.size(); ++t) {
         for (int v = 0; v < 3; ++v, ++i) {
             _indexArray[i] = i;
-            _vertexArray[i] = tri[t].vertex(v);
+            _vertexArray[i] = tri[t].position(v);
         }
     }
 }
