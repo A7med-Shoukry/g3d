@@ -1127,7 +1127,6 @@ void SuperSurface::getTrisHomogeneous(const Array<Surface::Ref>& surfaceArray, C
 
         // G3D 9.00 format with interlaced vertices
         // All data are in object space
-        const Array<CPUVertexArray::Vertex>& vertex = cpuGeom.vertexArray->vertex;
 
         for (int i = 0; i < index.size(); i += 3) {
             triArray.append
