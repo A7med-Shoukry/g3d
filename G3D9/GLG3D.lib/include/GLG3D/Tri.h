@@ -195,7 +195,7 @@ public:
             (m_material == t.m_material);
     }
 
-    Triangle Tri::toTriangle(const CPUVertexArray& vertexArray) const;
+    Triangle toTriangle(const CPUVertexArray& vertexArray) const;
 
     /** \brief Performs intersection testing against Tri.  
 
