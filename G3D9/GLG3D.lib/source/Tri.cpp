@@ -31,15 +31,8 @@ Tri::Tri(const int i0, const int i1, const int i2,
     index[2] = i2;
 
     m_cpuVertexArray = vertexArray;
-    
-    v0                = m_cpuVertexArray->vertex[i0].position;
-    const Vector3& v1 = m_cpuVertexArray->vertex[i1].position;
-    const Vector3& v2 = m_cpuVertexArray->vertex[i2].position;
 
-    e1 = v1 - v0;
-    e2 = v2 - v0;
-
-    m_doubleArea = e1.cross(e2).length();
+    m_area = e1().cross(e2()).length() * 0.5f;
 }
 
 
@@ -52,10 +45,7 @@ Tri Tri::otherSide() const {
     Tri t;
     
     t.m_material = m_material;
-    t.v0     = v0;
-    t.e1     = e2;
-    t.e2     = e1;
-    t.m_doubleArea = m_doubleArea;
+    t.m_area     = m_area;
 
 
     t.m_cpuVertexArray = m_cpuVertexArray;
@@ -92,10 +82,14 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
     // How much to grow the edges of triangles by to allow for small roundoff.
     static const float conservative = 1e-8f;
 
+    // Get all vertex attributes from these to avoid unneccessary pointer indirection
+    const CPUVertexArray::Vertex& vertex0 = tri.vertex(0);
+    const CPUVertexArray::Vertex& vertex1 = tri.vertex(1);
+    const CPUVertexArray::Vertex& vertex2 = tri.vertex(2);
     
-
-    const Vector3& e1 = tri.e1;
-    const Vector3& e2 = tri.e2;
+    const Vector3& v0 = vertex0.position;
+    const Vector3& e1 = vertex1.position - v0;
+    const Vector3& e2 = vertex2.position - v0;
 
 
     // Test for backfaces first because this eliminates 50% of all triangles.
@@ -103,12 +97,12 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
     // This test is equivalent to n.dot(ray.direction()) >= -EPS
     // Where n is the face unit normal, which we do not explicitly store
     
-    if (!twoSided && (e1.cross(e2)).dot(ray.direction()) >= -EPS * tri.m_doubleArea) {
+    if (!twoSided && (e1.cross(e2)).dot(ray.direction()) >= -EPS * 2.0f * tri.m_area) {
         // Backface or nearly parallel
         return false;
     }
 
-    const Vector3& v0 = tri.v0;
+    
  
 
     const Vector3& p = ray.direction().cross(e2);
@@ -163,9 +157,9 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
             
 
                     Point2 texCoord = 
-                        w * tri.texCoord(0) + 
-                        u * tri.texCoord(1) +
-                        v * tri.texCoord(2);
+                        w * vertex0.texCoord0 + 
+                        u * vertex1.texCoord0 +
+                        v * vertex2.texCoord0;
             
                     const Image4::Ref& image = lambertian.image();
                     texCoord.x *= image->width();
@@ -207,22 +201,27 @@ void Tri::Intersector::getResult
     debugAssert(tri);
     float w = 1.0 - u - v;
 
-    location = tri->v0 + 
-               u * tri->e1 +
-               v * tri->e2;
+
+    const CPUVertexArray::Vertex& vert0 = tri->vertex(0);
+    const CPUVertexArray::Vertex& vert1 = tri->vertex(1);
+    const CPUVertexArray::Vertex& vert2 = tri->vertex(2);
+
+    const Point3& v0 = vert0.position;
+
+    location = v0 + 
+               u * (vert1.position - v0) +
+               v * (vert2.position - v0);
 
     
-    const CPUVertexArray::Vertex& v0 = tri->vertex(0);
-    const CPUVertexArray::Vertex& v1 = tri->vertex(1);
-    const CPUVertexArray::Vertex& v2 = tri->vertex(2);
     
-    texCoord = w * v0.texCoord0 + 
-               u * v1.texCoord0 +
-               v * v2.texCoord0;
+    
+    texCoord = w * vert0.texCoord0 + 
+               u * vert1.texCoord0 +
+               v * vert2.texCoord0;
 
-    normal   = ( w * v0.normal + 
-                 u * v1.normal +
-                 v * v2.normal ).direction();
+    normal   = ( w * vert0.normal + 
+                 u * vert1.normal +
+                 v * vert2.normal ).direction();
                  
 }
 
@@ -237,29 +236,34 @@ void Tri::Intersector::getResult
     float w = 1.0 - u - v;
     // Identical to the parameter getResult, but copying code
     // to save pointer indirections on the vertex attributes
-    location = tri->v0 + 
-               u * tri->e1 +
-               v * tri->e2;
+    const CPUVertexArray::Vertex& vert0 = tri->vertex(0);
+    const CPUVertexArray::Vertex& vert1 = tri->vertex(1);
+    const CPUVertexArray::Vertex& vert2 = tri->vertex(2);
 
-    const CPUVertexArray::Vertex& v0 = tri->vertex(0);
-    const CPUVertexArray::Vertex& v1 = tri->vertex(1);
-    const CPUVertexArray::Vertex& v2 = tri->vertex(2);
+    const Point3& v0 = vert0.position;
 
-    texCoord = w * v0.texCoord0 + 
-               u * v1.texCoord0 +
-               v * v2.texCoord0;
+    location = v0 + 
+               u * (vert1.position - v0) +
+               v * (vert2.position - v0);
 
-    normal   = ( w * v0.normal + 
-                 u * v1.normal +
-                 v * v2.normal ).direction();
+    
+    
+    
+    texCoord = w * vert0.texCoord0 + 
+               u * vert1.texCoord0 +
+               v * vert2.texCoord0;
 
-    if (v0.tangent.w == 0.0f) {
+    normal   = ( w * vert0.normal + 
+                 u * vert1.normal +
+                 v * vert2.normal ).direction();
+
+    if (vert0.tangent.w == 0.0f) {
         tangent1 = Vector3::zero();
         tangent2 = Vector3::zero();
     } else {
-        tangent1  = ( w * v0.tangent.xyz() + 
-                      u * v1.tangent.xyz() +
-                      v * v2.tangent.xyz() ).direction();
+        tangent1  = ( w * vert0.tangent.xyz() + 
+                      u * vert1.tangent.xyz() +
+                      v * vert2.tangent.xyz() ).direction();
 
         tangent2 = normal.cross(tangent1);
     }

@@ -31,13 +31,9 @@ class Ray;
 
  Single sided and immutable once created.
  
- The actual vertex positions have some roundoff error compared to a naive
- implementation because they are stored in a format more efficient for 
- intersection computations.
-
  The size of this class is carefully controlled so that large scenes can
  be stored efficiently and that cache coherence is maintained during processing.
- The implementation is currently 72 bytes in a 64-bit build.
+ The implementation is currently 32 bytes in a 64-bit build.
 
  \sa G3D::Triangle, G3D::MeshShape, G3D::ArticulatedModel, G3D::Surface, G3D::MeshAlg
  */
@@ -53,22 +49,13 @@ private:
     Proxy<Material>::Ref    m_material;
 
     /** \deprecated */
-       CPUVertexArray*            m_cpuVertexArray;
+    CPUVertexArray*         m_cpuVertexArray;
 
     /** Indices into the CPU Vertex array */
     uint32                  index[3];
 
-    /** Vertex 0 */
-    Vector3                 v0;
-
-    /** Edge vector v1 - v0 */
-    Vector3                 e1;
-
-    /** Edge vector v2 - v0 */
-    Vector3                 e2;
-
-    /** Twice the area: (e0 x e1).length() */
-    float                   m_doubleArea;
+    /** The area of the triangle: (e0 x e1).length() * 0.5 */
+    float                   m_area;
 
 
 public:
@@ -93,40 +80,46 @@ public:
         negated and the winding order is reversed. */
     Tri otherSide() const;
     
+    /** Edge vector v1 - v0 */
+    Vector3 e1() const{
+        return position(1) - position(0);
+    }
+
+    /** Edge vector v2 - v0 */
+    Vector3 e2() const{
+        return position(2) - position(0);
+    }
+
+
     /** Returns a bounding box */
     void getBounds(AABox& box) const {
-        const Vector3& v1 = v0 + e1;
-        const Vector3& v2 = v0 + e2;
+        const Vector3& v0 = position(0);
+        const Vector3& v1 = position(1);
+        const Vector3& v2 = position(2);
 
         box = AABox(v0.min(v1).min(v2), v0.max(v1).max(v2));
     }
 
     /** Surface area. */
     float area() const {
-        return m_doubleArea * 0.5f;
+        return m_area;
     }
 
     /** Vertex position (must be computed) */
     Point3 position(int i) const {
-        switch (i) {
-        case 0: return v0;
-        case 1: return v0 + e1;
-        case 2: return v0 + e2;
-        default:
-            debugAssertM(false, "Illegal index");
-            return v0;
-        }
+        return m_cpuVertexArray->vertex[index[i]].position;
     }
 
     /** Useful for accessing several vertex properties at once (for less pointer indirection) */
     const CPUVertexArray::Vertex& vertex(int i) const {
+        debugAssert(i >= 0 && i <= 2);
         return m_cpuVertexArray->vertex[index[i]];
     }
 
     /** Face normal.  For degenerate triangles, this is zero.  For all other triangles
     it has unit length and is defined by counter-clockwise winding. Calculate every call*/
     Vector3 normal() const {
-        return e1.cross(e2).directionOrZero();
+        return e1().cross(e2()).directionOrZero();
     }
 
     /** Vertex normal */
@@ -186,14 +179,11 @@ public:
 
     /** Returns a (relatively) unique integer for this object */
     uint32 hashCode() const {
-        return (uint32)((v0.hashCode() << 20) + (e1.hashCode() << 10) + e2.hashCode());
+        return (uint32)((position(0).hashCode() << 20) + (position(1).hashCode() << 10) + position(2).hashCode());
     }
 
     bool operator==(const Tri& t) const {
         return 
-            (v0 == t.v0) &&
-            (e1 == t.e1) &&
-            (e2 == t.e2) &&
             (index[0] == t.index[0]) &&
             (index[1] == t.index[1]) &&
             (index[2] == t.index[2]) &&
