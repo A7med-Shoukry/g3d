@@ -1090,62 +1090,62 @@ void SuperSurface::CPUGeom::copyVertexDataToGPU
 
 void SuperSurface::getTrisHomogeneous(const Array<Surface::Ref>& surfaceArray, CPUVertexArray& cpuVertexArray, Array<Tri>& triArray) const{
 
-	// Maps already seen surface-owned vertexArrays to the vertex index offset in the CPUVertexArray
-	Table<const CPUVertexArray*, uint32> indexOffsetTable;
-	const bool PREVIOUS = false;
+    // Maps already seen surface-owned vertexArrays to the vertex index offset in the CPUVertexArray
+    Table<const CPUVertexArray*, uint32> indexOffsetTable;
+    const bool PREVIOUS = false;
 
-	for (int i = 0; i < surfaceArray.size(); ++i) {
-			
-		const SuperSurface::Ref& surface = surfaceArray[i].downcast<SuperSurface>();
-		alwaysAssertM(surface.notNull(), "Non-SuperSurface passed to SuperSurface::getTrisHomogenous.");
+    for (int i = 0; i < surfaceArray.size(); ++i) {
+            
+        const SuperSurface::Ref& surface = surfaceArray[i].downcast<SuperSurface>();
+        alwaysAssertM(surface.notNull(), "Non-SuperSurface passed to SuperSurface::getTrisHomogenous.");
 
-		const SuperSurface::CPUGeom& cpuGeom		= surface->cpuGeom();
-		const SuperSurface::GPUGeom::Ref& gpuGeom = surface->gpuGeom();
+        const SuperSurface::CPUGeom& cpuGeom        = surface->cpuGeom();
+        const SuperSurface::GPUGeom::Ref& gpuGeom = surface->gpuGeom();
     
-		bool twoSided = gpuGeom->twoSided;
+        bool twoSided = gpuGeom->twoSided;
 
-		Material* material = gpuGeom->material.pointer();
-		debugAssert(gpuGeom->primitive == PrimitiveType::TRIANGLES);
-		debugAssert(cpuGeom.index != NULL);
+        Material* material = gpuGeom->material.pointer();
+        debugAssert(gpuGeom->primitive == PrimitiveType::TRIANGLES);
+        debugAssert(cpuGeom.index != NULL);
     
-		const Array<int>&     index     = *cpuGeom.index;
+        const Array<int>&     index     = *cpuGeom.index;
     
-		// Object to world matrix.  Guaranteed to be an RT transformation,
-		// so we can directly transform normals as if they were vectors.
-		CFrame cFrame;
-		surface->getCoordinateFrame(cFrame, PREVIOUS);
+        // Object to world matrix.  Guaranteed to be an RT transformation,
+        // so we can directly transform normals as if they were vectors.
+        CFrame cFrame;
+        surface->getCoordinateFrame(cFrame, PREVIOUS);
 
-		// Compute the offset to add to each vertex index
-		bool created = false;
-		uint32& indexOffset = indexOffsetTable.getCreate(cpuGeom.vertexArray, created);
-		if (created) {
-			indexOffset = cpuVertexArray.size();
-			cpuVertexArray.transformAndAppend(*(cpuGeom.vertexArray), cFrame);
-		} 
+        // Compute the offset to add to each vertex index
+        bool created = false;
+        uint32& indexOffset = indexOffsetTable.getCreate(cpuGeom.vertexArray, created);
+        if (created) {
+            indexOffset = cpuVertexArray.size();
+            cpuVertexArray.transformAndAppend(*(cpuGeom.vertexArray), cFrame);
+        } 
 
-		alwaysAssertM(cpuGeom.vertexArray != NULL, "No support for non-interlaced vertex formats");
+        alwaysAssertM(cpuGeom.vertexArray != NULL, "No support for non-interlaced vertex formats");
 
-		// G3D 9.00 format with interlaced vertices
-		// All data are in object space
-		const Array<CPUVertexArray::Vertex>& vertex = cpuGeom.vertexArray->vertex;
+        // G3D 9.00 format with interlaced vertices
+        // All data are in object space
+        const Array<CPUVertexArray::Vertex>& vertex = cpuGeom.vertexArray->vertex;
 
-		for (int i = 0; i < index.size(); i += 3) {
-			triArray.append
-				(Tri(index[i + 0] + indexOffset,
-					 index[i + 1] + indexOffset,
-					 index[i + 2] + indexOffset,
+        for (int i = 0; i < index.size(); i += 3) {
+            triArray.append
+                (Tri(index[i + 0] + indexOffset,
+                     index[i + 1] + indexOffset,
+                     index[i + 2] + indexOffset,
 
-					 &cpuVertexArray,
+                     &cpuVertexArray,
 
-					material));
+                    material));
 
-			if (twoSided) {
-				// TODO: Mike replace this with a TWO SIDED flag to the Tri constructor
-				const Tri& t = triArray.last().otherSide();
-				triArray.append(t);
-			}
-		} // for index
-	} // for surface
+            if (twoSided) {
+                // TODO: Mike replace this with a TWO SIDED flag to the Tri constructor
+                const Tri& t = triArray.last().otherSide();
+                triArray.append(t);
+            }
+        } // for index
+    } // for surface
 }
 
 

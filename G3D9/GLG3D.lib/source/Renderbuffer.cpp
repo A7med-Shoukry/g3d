@@ -18,7 +18,7 @@ namespace G3D {
 
 /////////////////////////////////////////////////////////////////////////////
 
-Renderbuffer::Renderbuffer (	
+Renderbuffer::Renderbuffer (    
     const std::string&          _name, 
     const GLuint                _imageID,
     const G3D::ImageFormat*   _format, 
@@ -40,7 +40,7 @@ Renderbuffer::~Renderbuffer () {
 
 
 RenderbufferRef Renderbuffer::fromGLRenderbuffer(
-    const std::string&		 _name, 
+    const std::string&         _name, 
     const GLuint             _imageID,
     const G3D::ImageFormat*  _format) {
 

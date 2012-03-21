@@ -276,32 +276,32 @@ bool MD2Model::Pose::operator==(const MD2Model::Pose& other) const {
 
 
 const Array<MeshAlg::Face>& MD2Model::Part::faces() const {
-	return faceArray;
+    return faceArray;
 }
 
 
 const Array<MeshAlg::Edge>& MD2Model::Part::edges() const {
-	return edgeArray;
+    return edgeArray;
 }
 
 
 const Array<MeshAlg::Vertex>& MD2Model::Part::vertices() const {
-	return vertexArray;
+    return vertexArray;
 }
 
 
 const Array<MeshAlg::Face>& MD2Model::Part::weldedFaces() const {
-	return weldedFaceArray;
+    return weldedFaceArray;
 }
 
 
 const Array<MeshAlg::Edge>& MD2Model::Part::weldedEdges() const {
-	return weldedEdgeArray;
+    return weldedEdgeArray;
 }
 
 
 const Array<MeshAlg::Vertex>& MD2Model::Part::weldedVertices() const {
-	return weldedVertexArray;
+    return weldedVertexArray;
 }
 
 

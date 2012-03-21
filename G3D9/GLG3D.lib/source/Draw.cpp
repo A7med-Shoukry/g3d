@@ -76,9 +76,9 @@ inline static void skyVertex
 
 
 void Draw::skyBox(RenderDevice* renderDevice, const Texture::Ref& cubeMap, float radianceScale, float gammaAdjust) {
-	debugAssert((cubeMap->dimension() == Texture::DIM_CUBE_MAP) || (cubeMap->dimension() == Texture::DIM_CUBE_MAP_NPOT));
+    debugAssert((cubeMap->dimension() == Texture::DIM_CUBE_MAP) || (cubeMap->dimension() == Texture::DIM_CUBE_MAP_NPOT));
 
-	enum Direction {UP = 0, LT = 1, RT = 2, BK = 3, FT = 4, DN = 5};
+    enum Direction {UP = 0, LT = 1, RT = 2, BK = 3, FT = 4, DN = 5};
     renderDevice->pushState();
 
     // Make a camera with an infinite view frustum

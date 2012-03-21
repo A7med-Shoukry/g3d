@@ -72,54 +72,54 @@ private:
     Renderbuffer 
     (const std::string&         _name,
      const GLuint               _renderbufferID,
-     const G3D::ImageFormat*	_format, 
+     const G3D::ImageFormat*    _format, 
      const int                  _width, 
      const int                  _height);
     
 public:
 
-	/** Destroys the underlying OpenGL id */
-	~Renderbuffer();
+    /** Destroys the underlying OpenGL id */
+    ~Renderbuffer();
 
-	/**
-	 Create a renderbuffer object from a previously initialized OpenGL
-	 renderbuffer context.
+    /**
+     Create a renderbuffer object from a previously initialized OpenGL
+     renderbuffer context.
 
-	 @param _name			Name of renderbuffer
-	 @param _renderbufferID OpenGL context of prior Renderbuffer
-	 @param _format			Texel format
-	 @param _width			Width
-	 @param _height			Height
-	 @param _depth			Image depth
-	 */
-	static RenderbufferRef fromGLRenderbuffer
+     @param _name            Name of renderbuffer
+     @param _renderbufferID OpenGL context of prior Renderbuffer
+     @param _format            Texel format
+     @param _width            Width
+     @param _height            Height
+     @param _depth            Image depth
+     */
+    static RenderbufferRef fromGLRenderbuffer
         (
          const std::string&          name, 
          const GLuint                imageID,
          const G3D::ImageFormat*     format);
     
-	/**
-	 Creates an empty renderbuffer object.
+    /**
+     Creates an empty renderbuffer object.
 
-	 @param _name	Name of renderbuffer
-	 @param _format	Texel format
-	 @param _width  Width
-	 @param _height Height
-	 @param _depth  Image depth
-	 */
+     @param _name    Name of renderbuffer
+     @param _format    Texel format
+     @param _width  Width
+     @param _height Height
+     @param _depth  Image depth
+     */
     static RenderbufferRef createEmpty
     (const std::string&        name, 
      const int                 width, 
      const int                 height,
      const class ImageFormat*  format); 
 
-	/**
-	 Get OpenGL renderbuffer ID, useful for accessing
+    /**
+     Get OpenGL renderbuffer ID, useful for accessing
      functionality not directly exposed by G3D.
-	*/
+    */
     inline unsigned int openGLID() const {
         return mImageID;
-	}
+    }
 
     inline const ImageFormat* format() const {
         return mFormat;
@@ -129,11 +129,11 @@ public:
         return mName;
     }
 
-	inline int width() const {
+    inline int width() const {
         return mWidth;
     }
 
-	inline int height() const {
+    inline int height() const {
         return mHeight;
     }
    

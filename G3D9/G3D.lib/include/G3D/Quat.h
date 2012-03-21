@@ -156,7 +156,7 @@ public:
     }
 
 
-	/** @cite Based on Watt & Watt, page 360 */
+    /** @cite Based on Watt & Watt, page 360 */
     friend Quat operator* (float s, const Quat& q);
 
     inline Quat operator/(float s) const {
@@ -204,10 +204,10 @@ public:
     void toAxisAngleRotation(
         Vector3&            axis,
         float&              angle) const {
-		double d;
-		toAxisAngleRotation(axis, d);
-		angle = (float)d;
-	}
+        double d;
+        toAxisAngleRotation(axis, d);
+        angle = (float)d;
+    }
 
     Matrix3 toRotationMatrix() const;
 
@@ -234,8 +234,8 @@ public:
      \cite Based on Game Physics -- David Eberly pg 538-540
      
      \param threshold Critical angle between between rotations (in radians) at which
-	        the algorithm switches to normalized lerp, which is more
-			numerically stable in those situations. 0.0 will always slerp.
+            the algorithm switches to normalized lerp, which is more
+            numerically stable in those situations. 0.0 will always slerp.
 
      */
     Quat slerp
@@ -264,8 +264,8 @@ public:
       \returns On the range [0, pif()]*/
     float angleBetween(const Quat& other) const;
 
-	/** Normalized linear interpolation of quaternion components. */
-	Quat nlerp(const Quat& other, float alpha) const;
+    /** Normalized linear interpolation of quaternion components. */
+    Quat nlerp(const Quat& other, float alpha) const;
     
 
     /** Note that q<SUP>-1</SUP> = q.conj() for a unit quaternion. 
@@ -373,7 +373,7 @@ public:
     float& operator[] (int i);
 
     /** Generate uniform random unit quaternion (i.e. random "direction") 
-	@cite From "Uniform Random Rotations", Ken Shoemake, Graphics Gems III.
+    @cite From "Uniform Random Rotations", Ken Shoemake, Graphics Gems III.
    */
     static Quat unitRandom();
 

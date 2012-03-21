@@ -101,8 +101,8 @@ private:
     /** A value annotated with precomputed position and hash code.*/
     class Entry {
     public:
-        Point3			 position;
-        Value			 value;
+        Point3             position;
+        Value             value;
     };
 
     /** One cell of the grid. */
@@ -251,7 +251,7 @@ public:
        
        \sa clearAndSetRadiusHint()
     */
-    PointHashGrid(const Array<Value>& init, float radiusHint = -1.0f, const MemoryManager::Ref& m = MemoryManager::create()) : m_size(0), m_memoryManager(m) {		
+    PointHashGrid(const Array<Value>& init, float radiusHint = -1.0f, const MemoryManager::Ref& m = MemoryManager::create()) : m_size(0), m_memoryManager(m) {        
         initOffsetArray();
         m_data.clearAndSetMemoryManager(m_memoryManager);
 
@@ -747,13 +747,13 @@ public:
             m_isEnd(false),
             m_sphere(sphere),
             m_boxIterator(grid, false, getBoundingBox(sphere)) {
-			
+            
             // Find the first element that is actually in the sphere,
             // not just the box.
             advance();
         }
 
-        const Value& value() const {			
+        const Value& value() const {            
             return *m_boxIterator;
         }
 
@@ -780,7 +780,7 @@ public:
             return !(*this != other);
         }
 
-	
+    
 
         /** Preincrement */
         SphereIterator& operator++() {
@@ -844,7 +844,7 @@ public:
 
        Example:
        <pre>
-       for(PointHashGrid<Vector3>::CellIterator iter = grid.beginCells(); iter != grid.endCells(); ++iter) {	
+       for(PointHashGrid<Vector3>::CellIterator iter = grid.beginCells(); iter != grid.endCells(); ++iter) {    
        entriesFound += iter->size();
        }
        </pre>
@@ -986,7 +986,7 @@ public:
         This is a helper to avoid requiring you to iterate through the data 
         structure, removing and deleting each one. Clears the PointHashGrid at the
         end.
-		
+        
         Using objects (instead of pointers) or reference counted pointers is 
         recommended over using pointers and this deleteAll method.*/
     void deleteAll() {

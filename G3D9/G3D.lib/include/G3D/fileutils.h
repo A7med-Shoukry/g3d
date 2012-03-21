@@ -62,8 +62,8 @@ FILE* createTempFile();
  */
 bool zipfileExists
 (const std::string&          filename,
- std::string&		     outZipfile,
- std::string&		     outInternalFile);
+ std::string&             outZipfile,
+ std::string&             outInternalFile);
 
 bool zipfileExists(const std::string& filename);
 

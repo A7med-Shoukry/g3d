@@ -35,10 +35,10 @@ const int jpegQuality = 96;
  */ 
 class memory_destination_mgr {
 public:
-	struct jpeg_destination_mgr pub;
-	JOCTET*                     buffer;
-	int                         size;
-	int                         count;
+    struct jpeg_destination_mgr pub;
+    JOCTET*                     buffer;
+    int                         size;
+    int                         count;
 };
 
 typedef memory_destination_mgr* mem_dest_ptr;
@@ -49,11 +49,11 @@ typedef memory_destination_mgr* mem_dest_ptr;
 static void init_destination (
     j_compress_ptr              cinfo) {
 
-	mem_dest_ptr dest = (mem_dest_ptr) cinfo->dest;
+    mem_dest_ptr dest = (mem_dest_ptr) cinfo->dest;
 
-	dest->pub.next_output_byte = dest->buffer;
-	dest->pub.free_in_buffer = dest->size;
-	dest->count=0;
+    dest->pub.next_output_byte = dest->buffer;
+    dest->pub.free_in_buffer = dest->size;
+    dest->count=0;
 }
 
 /**
@@ -62,12 +62,12 @@ static void init_destination (
 static boolean empty_output_buffer (
     j_compress_ptr              cinfo) {
 
-	mem_dest_ptr dest = (mem_dest_ptr) cinfo->dest;
+    mem_dest_ptr dest = (mem_dest_ptr) cinfo->dest;
 
-	dest->pub.next_output_byte = dest->buffer;
-	dest->pub.free_in_buffer = dest->size;
+    dest->pub.next_output_byte = dest->buffer;
+    dest->pub.free_in_buffer = dest->size;
 
-	return TRUE;
+    return TRUE;
 }
 
 /**
@@ -76,8 +76,8 @@ static boolean empty_output_buffer (
 static void term_destination (
     j_compress_ptr              cinfo) {
 
-	mem_dest_ptr dest = (mem_dest_ptr) cinfo->dest;
-	dest->count = dest->size - (int)dest->pub.free_in_buffer;
+    mem_dest_ptr dest = (mem_dest_ptr) cinfo->dest;
+    dest->count = dest->size - (int)dest->pub.free_in_buffer;
 }
 
 /**
@@ -88,23 +88,23 @@ static void jpeg_memory_dest (
     JOCTET*                     buffer,
     int                         size) {
 
-	mem_dest_ptr dest;
+    mem_dest_ptr dest;
 
-	if (cinfo->dest == NULL) {
+    if (cinfo->dest == NULL) {
         // First time for this JPEG object; call the
         // IJG allocator to get space.
-		cinfo->dest = (struct jpeg_destination_mgr*)
-			(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, 
+        cinfo->dest = (struct jpeg_destination_mgr*)
+            (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, 
                                         JPOOL_PERMANENT,
-                       				    sizeof(memory_destination_mgr));
-	}
+                                           sizeof(memory_destination_mgr));
+    }
 
-	dest                            = (mem_dest_ptr) cinfo->dest;
-	dest->size                      = size;
-	dest->buffer                    = buffer;
-	dest->pub.init_destination      = init_destination;
-	dest->pub.empty_output_buffer   = empty_output_buffer;
-	dest->pub.term_destination      = term_destination;
+    dest                            = (mem_dest_ptr) cinfo->dest;
+    dest->size                      = size;
+    dest->buffer                    = buffer;
+    dest->pub.init_destination      = init_destination;
+    dest->pub.empty_output_buffer   = empty_output_buffer;
+    dest->pub.term_destination      = term_destination;
 }
   
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -117,10 +117,10 @@ static void jpeg_memory_dest (
 class memory_source_mgr {
 public:
     struct jpeg_source_mgr  pub;
-	int                     source_size;
-	unsigned char*          source_data;
-	boolean                 start_of_data;
-	JOCTET*                 buffer;
+    int                     source_size;
+    unsigned char*          source_data;
+    boolean                 start_of_data;
+    JOCTET*                 buffer;
 };
 
 
@@ -145,26 +145,26 @@ static void init_source(
 static boolean fill_input_buffer(
     j_decompress_ptr        cinfo) {
 
-	mem_src_ptr src = (mem_src_ptr) cinfo->src;
+    mem_src_ptr src = (mem_src_ptr) cinfo->src;
 
-	size_t bytes_read = 0;
+    size_t bytes_read = 0;
 
-	if (src->source_size > INPUT_BUF_SIZE)
-		bytes_read = INPUT_BUF_SIZE;
-	else
-		bytes_read = src->source_size;
+    if (src->source_size > INPUT_BUF_SIZE)
+        bytes_read = INPUT_BUF_SIZE;
+    else
+        bytes_read = src->source_size;
 
-	memcpy (src->buffer, src->source_data, bytes_read);
+    memcpy (src->buffer, src->source_data, bytes_read);
 
-	src->source_data += bytes_read;
-	src->source_size -= (int)bytes_read;
+    src->source_data += bytes_read;
+    src->source_size -= (int)bytes_read;
 
-	src->pub.next_input_byte = src->buffer;
-	src->pub.bytes_in_buffer = bytes_read;
-	src->start_of_data = FALSE;
+    src->pub.next_input_byte = src->buffer;
+    src->pub.bytes_in_buffer = bytes_read;
+    src->start_of_data = FALSE;
 
 
-	return TRUE;
+    return TRUE;
 }
 
 
@@ -175,18 +175,18 @@ static void skip_input_data(
     j_decompress_ptr        cinfo,
     long                    num_bytes) {
 
-	mem_src_ptr src = (mem_src_ptr)cinfo->src;
+    mem_src_ptr src = (mem_src_ptr)cinfo->src;
 
-	if (num_bytes > 0) {
-		while (num_bytes > (long) src->pub.bytes_in_buffer) {
-			num_bytes -= (long) src->pub.bytes_in_buffer;
-			boolean s = fill_input_buffer(cinfo);
+    if (num_bytes > 0) {
+        while (num_bytes > (long) src->pub.bytes_in_buffer) {
+            num_bytes -= (long) src->pub.bytes_in_buffer;
+            boolean s = fill_input_buffer(cinfo);
             debugAssert(s); (void)s;
-		}
+        }
 
-		src->pub.next_input_byte += (size_t) num_bytes;
-		src->pub.bytes_in_buffer -= (size_t) num_bytes;
-	}
+        src->pub.next_input_byte += (size_t) num_bytes;
+        src->pub.bytes_in_buffer -= (size_t) num_bytes;
+    }
 }
 
 
@@ -196,7 +196,7 @@ static void skip_input_data(
 static void term_source (
     j_decompress_ptr        cinfo) {
     (void)cinfo;
-	// Intentionally empty
+    // Intentionally empty
 }
 
 
@@ -208,38 +208,38 @@ static void jpeg_memory_src (
     JOCTET*                 buffer,
     int                     size) {
 
-	mem_src_ptr src;
+    mem_src_ptr src;
 
-	if (cinfo->src == NULL) {
+    if (cinfo->src == NULL) {
         // First time for this JPEG object
-		cinfo->src = (struct jpeg_source_mgr*)
-			(*cinfo->mem->alloc_small)(
+        cinfo->src = (struct jpeg_source_mgr*)
+            (*cinfo->mem->alloc_small)(
                 (j_common_ptr) cinfo,
                 JPOOL_PERMANENT,
-				sizeof(memory_source_mgr));
-		
+                sizeof(memory_source_mgr));
+        
         src = (mem_src_ptr)cinfo->src;
-		
+        
         src->buffer = (JOCTET*)
-			(*cinfo->mem->alloc_small)(
+            (*cinfo->mem->alloc_small)(
                 (j_common_ptr) cinfo,
                 JPOOL_PERMANENT,
-				INPUT_BUF_SIZE * sizeof(JOCTET));
-	}
+                INPUT_BUF_SIZE * sizeof(JOCTET));
+    }
 
-	src = (mem_src_ptr)cinfo->src;
-	src->pub.init_source        = init_source;
-	src->pub.fill_input_buffer  = fill_input_buffer;
-	src->pub.skip_input_data    = skip_input_data;
+    src = (mem_src_ptr)cinfo->src;
+    src->pub.init_source        = init_source;
+    src->pub.fill_input_buffer  = fill_input_buffer;
+    src->pub.skip_input_data    = skip_input_data;
 
     // use default method
-	src->pub.resync_to_restart  = jpeg_resync_to_restart;
-	src->pub.term_source        = term_source;
-	src->source_data            = buffer;
-	src->source_size            = size;
+    src->pub.resync_to_restart  = jpeg_resync_to_restart;
+    src->pub.term_source        = term_source;
+    src->source_data            = buffer;
+    src->source_size            = size;
 
     // forces fill_input_buffer on first read
-	src->pub.bytes_in_buffer    = 0;
+    src->pub.bytes_in_buffer    = 0;
     
     // until buffer loaded
     src->pub.next_input_byte = NULL; 
@@ -313,7 +313,7 @@ void GImage::encodeJPEG(
     // Figure out how big the result was.
     int outLength = ((mem_dest_ptr)cinfo.dest)->count;
 
-    //	Release the JPEG compression object
+    //    Release the JPEG compression object
     jpeg_destroy_compress(&cinfo);
 
     // Copy into an appropriately sized output buffer.

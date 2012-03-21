@@ -40,7 +40,7 @@ public:
     Vector2int32(G3D::int32 _x, G3D::int32 _y) : x(_x), y(_y){}
     explicit Vector2int32(const class Vector2& v);
     explicit Vector2int32(class BinaryInput& bi);
-	Vector2int32(const class Vector2int16& v);
+    Vector2int32(const class Vector2int16& v);
 
     inline G3D::int32& operator[] (int i) {
         debugAssert(((unsigned int)i) <= 1);

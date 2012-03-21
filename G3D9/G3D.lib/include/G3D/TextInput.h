@@ -400,7 +400,7 @@ public:
 
         Settings();
     };
-	
+    
 private:
 
     /** \sa pushSettings / popSettings */

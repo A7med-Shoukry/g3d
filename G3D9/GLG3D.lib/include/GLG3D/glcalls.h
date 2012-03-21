@@ -146,37 +146,37 @@ Vector4 glGetVector4(GLenum which);
 
 
 inline void glMultiTexCoord(GLint unit, float v) {
-	glMultiTexCoord1fARB(unit, v);
+    glMultiTexCoord1fARB(unit, v);
 }
 
 
 inline void glMultiTexCoord(GLint unit, const G3D::Vector2& v) {
-	glMultiTexCoord2fvARB(unit, (const float*)&v);
+    glMultiTexCoord2fvARB(unit, (const float*)&v);
 }
 
 
 inline void glMultiTexCoord(GLint unit, const G3D::Vector2int16& v) {
-	glMultiTexCoord(unit, Vector2(v.x, v.y));
+    glMultiTexCoord(unit, Vector2(v.x, v.y));
 }
 
 
 inline void glMultiTexCoord(GLint unit, const G3D::Vector3& v) {
-	glMultiTexCoord3fvARB(unit, (const float*)&v);
+    glMultiTexCoord3fvARB(unit, (const float*)&v);
 }
 
 
 inline void glMultiTexCoord(GLint unit, const G3D::Vector3int16& v) {
-	glMultiTexCoord(unit, Vector3(v.x, v.y, v.z));
+    glMultiTexCoord(unit, Vector3(v.x, v.y, v.z));
 }
 
 
 inline void glMultiTexCoord(GLint unit, const G3D::Vector4& v) {
-	glMultiTexCoord4fvARB(unit, (const float*)&v);
+    glMultiTexCoord4fvARB(unit, (const float*)&v);
 }
 
 
 inline void glVertex(const G3D::Vector2& v) {
-	glVertex2fv((const float*)&v);
+    glVertex2fv((const float*)&v);
 }
 
 
@@ -186,62 +186,62 @@ inline void glVertex(const G3D::Vector2int16& v) {
 
 
 inline void glVertex(const G3D::Vector3& v) {
-	glVertex3fv((const float*)&v);
+    glVertex3fv((const float*)&v);
 }
 
 
 inline void glVertex(const G3D::Vector3int16& v) {
-	glVertex3i(v.x, v.y, v.z);
+    glVertex3i(v.x, v.y, v.z);
 }
 
 
 inline void glVertex(const G3D::Vector4& v) {
-	glVertex4fv((const float*)&v);
+    glVertex4fv((const float*)&v);
 }
 
 
 inline void glColor(const G3D::Color3 &c) {
-	glColor3fv((const float*)&c);
+    glColor3fv((const float*)&c);
 }
 
 
 inline void glColor(const G3D::Color4& c) {
-	glColor4fv((const float*)&c);
+    glColor4fv((const float*)&c);
 }
 
 
 inline void glColor(float r, float g, float b, float a) {
-	glColor4f(r, g, b, a);
+    glColor4f(r, g, b, a);
 }
 
 
 inline void glColor(float r, float g, float b) {
-	glColor3f(r, g, b);
+    glColor3f(r, g, b);
 }
 
 
 inline void glNormal(const G3D::Vector3& n) {
-	glNormal3fv((const float*)&n);
+    glNormal3fv((const float*)&n);
 }
 
 
 inline void glTexCoord(const G3D::Vector4& t) {
-	glTexCoord4fv((const float*)&t);
+    glTexCoord4fv((const float*)&t);
 }
 
 
 inline void glTexCoord(const G3D::Vector3& t) {
-	glTexCoord3fv((const float*)&t);
+    glTexCoord3fv((const float*)&t);
 }
 
 
 inline void glTexCoord(const G3D::Vector2& t) {
-	glTexCoord2fv((const float*)&t);
+    glTexCoord2fv((const float*)&t);
 }
 
 
 inline void glTexCoord(const float t) {
-	glTexCoord1f(t);
+    glTexCoord1f(t);
 }
 
 

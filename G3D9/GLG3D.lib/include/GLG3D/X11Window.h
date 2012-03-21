@@ -3,8 +3,8 @@
   
  A OSWindow that uses the X11 API.
 
- @created 	  2005-06-04
- @edited  	  2005-06-04
+ @created       2005-06-04
+ @edited        2005-06-04
     
  Copyright 2000-2005, Morgan McGuire.
  All rights reserved.

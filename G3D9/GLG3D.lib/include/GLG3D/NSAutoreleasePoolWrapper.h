@@ -11,8 +11,8 @@
 
 class NSApplicationWrapper {
 public:
-	NSApplicationWrapper();
-	virtual ~NSApplicationWrapper();
+    NSApplicationWrapper();
+    virtual ~NSApplicationWrapper();
 
 private:
 protected:
@@ -20,11 +20,11 @@ protected:
 
 class NSAutoreleasePoolWrapper {
 public:
-	NSAutoreleasePoolWrapper();
-	virtual ~NSAutoreleasePoolWrapper();
+    NSAutoreleasePoolWrapper();
+    virtual ~NSAutoreleasePoolWrapper();
 
 private:
-	void* _pool;
+    void* _pool;
 
 protected:
 

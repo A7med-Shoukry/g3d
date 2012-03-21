@@ -43,7 +43,7 @@ protected:
     
     bool                     m_showInfo;
 
-	bool					 m_showCubemapEdges;
+    bool                     m_showCubemapEdges;
 
     /** Cached formatting of m_lastSize */
     mutable GuiText          m_lastSizeCaption;
@@ -60,7 +60,7 @@ protected:
     mutable GuiButton*       m_inspectorButton;
 
     Shader::Ref              m_shader;
-	Shader::Ref              m_cubemapShader;
+    Shader::Ref              m_cubemapShader;
 
     float                    m_zoom;
     Vector2                  m_offset;
@@ -81,7 +81,7 @@ protected:
 
     static WeakReferenceCountedPointer<Shader> g_cachedShader;
 
-	static WeakReferenceCountedPointer<Shader> g_cachedCubemapShader;
+    static WeakReferenceCountedPointer<Shader> g_cachedCubemapShader;
 
     /** Returns the bounds of the canvas (display) region for this GuiTextBox */
     Rect2D canvasRect() const;
@@ -178,8 +178,8 @@ public:
     /** Invoked by the drawer button. Do not call directly. */
     void toggleDrawer();
 
-	/* Pass arguments to the specified shader */
-	void setUpShader(Shader::Ref shader, bool isCubemap);
+    /* Pass arguments to the specified shader */
+    void setUpShader(Shader::Ref shader, bool isCubemap);
 
 
 };

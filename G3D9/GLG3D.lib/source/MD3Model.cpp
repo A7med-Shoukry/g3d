@@ -434,7 +434,7 @@ void MD3Part::loadSurface(BinaryInput& bi, TriList& triList) {
 
     for (int shaderIndex = 0; shaderIndex < md3Surface.numShaders; ++shaderIndex) {
         // Read shader name and index (need this code to update the file position correctly)
-	// Currently discarding shader name and index
+    // Currently discarding shader name and index
         bi.readString(64);
         bi.readInt32();
         

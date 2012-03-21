@@ -173,28 +173,28 @@ public:
     class Material {
     public:
         /** The FaceMat inside an object will reference a material by name */
-        std::string			name;
+        std::string            name;
 
-        bool				twoSided;
-        Color3				diffuse;
-        Color3				specular;
+        bool                twoSided;
+        Color3                diffuse;
+        Color3                specular;
 
         // "Self illumination"
         float               emissive;
 
-        float				shininess;
-        float				shininessStrength;
-        float				transparency;
-        float				transparencyFalloff;
+        float                shininess;
+        float                shininessStrength;
+        float                transparency;
+        float                transparencyFalloff;
         float               reflection;
-        float				reflectionBlur;
+        float                reflectionBlur;
 
         Map                 texture1;
         Map                 texture2;
         Map                 bumpMap;
 
         /** 1 = flat, 2 = gouraud, 3 = phong, 4 = metal */
-        int					materialType;
+        int                    materialType;
 
         inline Material() : twoSided(false), diffuse(Color3::white()), specular(Color3::white()), 
             emissive(0), shininess(0.8f),  shininessStrength(0.25f), transparency(0),
@@ -262,10 +262,10 @@ public:
       */
     int                         currentObject;
 
-    int					        currentMaterial;
+    int                            currentMaterial;
 
     Array<Object>               objectArray;
-    Array<Material>		        materialArray;
+    Array<Material>                materialArray;
 
     /** Maps material names to indices into the MaterialArray */
     Table<std::string, int>     materialNameToIndex;
@@ -454,7 +454,7 @@ void Load3DS::processMaterialChunk(
         switch (curChunkHeader.id) {
 
         // EDITMATERIAL subchunks
-        case MATNAME:					
+        case MATNAME:                    
             material.name = b->readString();
             materialNameToIndex.set(material.name, currentMaterial);
             break;

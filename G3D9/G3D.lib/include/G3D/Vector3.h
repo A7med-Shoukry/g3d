@@ -118,11 +118,11 @@ public:
         return Vector3(x, -z, y);
     }
 
-	/** Format is three float32's */
+    /** Format is three float32's */
     void serialize(class BinaryOutput& b) const;
     void deserialize(class BinaryInput& b);
 
-	/** Format is "(%f, %f, %f)" */
+    /** Format is "(%f, %f, %f)" */
     void serialize(class TextOutput& t) const;
     void deserialize(class TextInput& t);
 
@@ -311,7 +311,7 @@ public:
     float squaredLength() const;
 
     float squaredMagnitude () const;
-	
+    
     float __fastcall dot(const Vector3& rkVector) const;
     
     /** Cross product.  Note that two cross products in a row

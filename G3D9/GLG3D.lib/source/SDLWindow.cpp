@@ -60,7 +60,7 @@ static bool SDL_handleDebugAssert_(
 
     SDL_ShowCursor(SDL_ENABLE);
     SDL_WM_GrabInput(SDL_GRAB_OFF);
-	
+    
     return _internal::_handleDebugAssert_(expression, message, filename, lineNumber, useGuiPrompt);
 }
 

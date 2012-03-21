@@ -24,11 +24,11 @@ public:
         float   normalSmoothingAngle;
 
         /** Default value is 0 */
-        float  	vertexWeldRadius;
+        float      vertexWeldRadius;
 
-        float  	textureWeldRadius;
+        float      textureWeldRadius;
 
-        float  	normalWeldRadius;
+        float      normalWeldRadius;
 
         inline Settings(float normalSmoothAngle = toRadians(70.0f)) : 
             normalSmoothingAngle(normalSmoothAngle),

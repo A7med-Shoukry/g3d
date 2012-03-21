@@ -319,19 +319,19 @@ void ShaderProgram::ShaderObject::init
 (const std::string&             name,
  const std::string&             code,
  bool                           _fromFile,
- bool                           debug,	
+ bool                           debug,    
  GLenum                         glType,
  const std::string&             type,
  PreprocessorStatus             preprocessor,
  const Table<std::string, int>& samplerMappings,
  bool                           secondPass) {
     
-    _name		= name;
-    _shaderType		= type;
-    _glShaderType	= glType;
-    _ok			= true;
-    fromFile		= _fromFile;
-    _fixedFunction	= (name == "") && (code == "");
+    _name        = name;
+    _shaderType        = type;
+    _glShaderType    = glType;
+    _ok            = true;
+    fromFile        = _fromFile;
+    _fixedFunction    = (name == "") && (code == "");
     //m_useUniforms       = false;
     
     if (_fixedFunction) {
@@ -490,7 +490,7 @@ void ShaderProgram::ShaderObject::compile() {
     glGetObjectParameterivARB(_glShaderObject, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
 
     // Read the result of compilation
-    GLint	  maxLength;
+    GLint      maxLength;
     glGetObjectParameterivARB(_glShaderObject, GL_OBJECT_INFO_LOG_LENGTH_ARB, &maxLength);
     GLcharARB* pInfoLog = (GLcharARB *)malloc(maxLength * sizeof(GLcharARB));
     glGetInfoLogARB(_glShaderObject, maxLength, &length, pInfoLog);
@@ -656,7 +656,7 @@ ShaderProgram::ShaderProgram
                     // Set the maximum output vertices
                     debugAssertM(maxGeometryOutputVertices <= glGetInteger(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT),
                         "maxGeometryOutputVertices exceeds GPU capabilities.");
-		            glProgramParameteriEXT(_glProgramObject, GL_GEOMETRY_VERTICES_OUT_EXT, maxGeometryOutputVertices);
+                    glProgramParameteriEXT(_glProgramObject, GL_GEOMETRY_VERTICES_OUT_EXT, maxGeometryOutputVertices);
                 }
             }
 
@@ -919,7 +919,7 @@ void ShaderProgram::computeUniformArray() {
         GLint size;
         GLenum type;
 
-	    glGetActiveUniformARB(glProgramObject(), 
+        glGetActiveUniformARB(glProgramObject(), 
             i, maxLength, NULL, &size, &type, name);
 
         uniformArray.next().name = name;

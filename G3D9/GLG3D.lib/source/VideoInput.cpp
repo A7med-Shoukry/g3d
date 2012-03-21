@@ -18,7 +18,7 @@ extern "C" {
 }
 
 #ifdef G3D_NO_FFMPEG
-#	pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
+#    pragma message("Warning: FFMPEG and VideoOutput are disabled in this 64-bit Windows build (" __FILE__ ")") 
 #endif
 
 namespace G3D {

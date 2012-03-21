@@ -177,15 +177,15 @@ void GuiTextureBox::save() {
     if (FileDialog::create(window())->getFilename(filename)) {
         // save code
         Framebuffer::Ref fb = Framebuffer::create("GuiTextureBox: save");
-		Texture::Ref color;
-		if(m_texture->isCubeMap()){
-			//Stretch cubemaps appropriately
-			color = Texture::createEmpty("GuiTextureBox: save", 
-				m_texture->width()*4, m_texture->height()*2, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
-		}else{
-			color = Texture::createEmpty("GuiTextureBox: save", 
-				m_texture->width(), m_texture->height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
-		}
+        Texture::Ref color;
+        if(m_texture->isCubeMap()){
+            //Stretch cubemaps appropriately
+            color = Texture::createEmpty("GuiTextureBox: save", 
+                m_texture->width()*4, m_texture->height()*2, ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
+        }else{
+            color = Texture::createEmpty("GuiTextureBox: save", 
+                m_texture->width(), m_texture->height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT, Texture::Settings::video());
+        }
         fb->set(Framebuffer::COLOR0, color);
         
         RenderDevice* rd = RenderDevice::lastRenderDeviceCreated;
@@ -330,7 +330,7 @@ protected:
 
     mutable GuiLabel*           m_xyLabel;
     mutable GuiLabel*           m_uvLabel;
-	mutable GuiLabel*           m_xyzLabel;
+    mutable GuiLabel*           m_xyzLabel;
     mutable GuiLabel*           m_rgbaLabel;
     mutable GuiLabel*           m_ARGBLabel;
 
@@ -434,19 +434,19 @@ public:
         m_xyLabel = addPair(dataPane, "xy =", "", 30);
         m_xyLabel->setWidth(70);
         if(texture->isCubeMap()){
-			m_xyzLabel = addPair(dataPane, "xyz =", "", 30, m_xyLabel);
-			m_xyzLabel->setWidth(160);
-		} else {
-			m_uvLabel = addPair(dataPane, "uv =", "", 30, m_xyLabel);
-			m_uvLabel->setWidth(120);
-		}
+            m_xyzLabel = addPair(dataPane, "xyz =", "", 30, m_xyLabel);
+            m_xyzLabel->setWidth(160);
+        } else {
+            m_uvLabel = addPair(dataPane, "uv =", "", 30, m_xyLabel);
+            m_uvLabel->setWidth(120);
+        }
 
         m_rgbaLabel = addPair(dataPane, "rgba =", "", captionWidth);
         m_ARGBLabel = addPair(dataPane, "ARGB =", "", captionWidth);
         dataPane->addLabel(GuiText("Before gamma correction", NULL, 8))->moveBy(Vector2(5, -5));
-		if(texture->isCubeMap()){
-			dataPane->addCheckBox("Show Cube Edges", &m_textureBox->m_showCubemapEdges);
-		}
+        if(texture->isCubeMap()){
+            dataPane->addCheckBox("Show Cube Edges", &m_textureBox->m_showCubemapEdges);
+        }
         dataPane->pack();  
         dataPane->moveRightOf(visPane);
         dataPane->moveBy(0, -35);
@@ -532,22 +532,22 @@ public:
         }
 
         m_xyLabel->setCaption(format("(%d, %d)", m_textureBox->m_readbackXY.x, m_textureBox->m_readbackXY.y));
-		float u = m_textureBox->m_readbackXY.x / w;
-		float v = m_textureBox->m_readbackXY.y / h;
+        float u = m_textureBox->m_readbackXY.x / w;
+        float v = m_textureBox->m_readbackXY.y / h;
 
-		if(tex->isCubeMap()){
-			float theta = v * pif();
-			float phi   = u * 2 * pif();
-			float sinTheta = sin(theta);
-			float x = cos(phi) * sinTheta;
-			float y = cos(theta);
-			float z = sin(phi) * sinTheta; 
-			m_xyzLabel->setCaption(format("(%6.4f, %6.4f, %6.4f)", x, y, z));
-		} else {
-			m_uvLabel->setCaption(format("(%6.4f, %6.4f)", u, v));
-		}
-		m_rgbaLabel->setCaption(format("(%6.4f, %6.4f, %6.4f, %6.4f)", m_textureBox->m_texel.r, 
-						m_textureBox->m_texel.g, m_textureBox->m_texel.b, m_textureBox->m_texel.a));
+        if(tex->isCubeMap()){
+            float theta = v * pif();
+            float phi   = u * 2 * pif();
+            float sinTheta = sin(theta);
+            float x = cos(phi) * sinTheta;
+            float y = cos(theta);
+            float z = sin(phi) * sinTheta; 
+            m_xyzLabel->setCaption(format("(%6.4f, %6.4f, %6.4f)", x, y, z));
+        } else {
+            m_uvLabel->setCaption(format("(%6.4f, %6.4f)", u, v));
+        }
+        m_rgbaLabel->setCaption(format("(%6.4f, %6.4f, %6.4f, %6.4f)", m_textureBox->m_texel.r, 
+                        m_textureBox->m_texel.g, m_textureBox->m_texel.b, m_textureBox->m_texel.a));
         Color4unorm8 c(m_textureBox->m_texel);
         m_ARGBLabel->setCaption(format("0x%02x%02x%02x%02x", c.a.bits(), c.r.bits(), c.g.bits(), c.b.bits()));
     }
@@ -624,7 +624,7 @@ void GuiTextureBox::showInspector() {
 }
 
 void GuiTextureBox::setUpShader(Shader::Ref shader, bool isCubemap){
-	debugAssert(shader.notNull());
+    debugAssert(shader.notNull());
 
         static const Matrix4 colorShift[] = {
             // RGB
@@ -702,15 +702,15 @@ void GuiTextureBox::setUpShader(Shader::Ref shader, bool isCubemap){
 
         shader->args.set("invertIntensity", m_settings.invertIntensity);
         shader->args.set("colorShift", colorShift[m_settings.channels]);
-		if(isCubemap){
-			if(m_showCubemapEdges){
-				float thresholdValue = 2.0f - 1.0/m_texture->width();
-				shader->args.set("edgeThreshold", thresholdValue);
-			} else {
-				shader->args.set("edgeThreshold", 3.0f); // Anything over 2.0 turns off edge rendering
-			}
-			
-		}
+        if(isCubemap){
+            if(m_showCubemapEdges){
+                float thresholdValue = 2.0f - 1.0/m_texture->width();
+                shader->args.set("edgeThreshold", thresholdValue);
+            } else {
+                shader->args.set("edgeThreshold", 3.0f); // Anything over 2.0 turns off edge rendering
+            }
+            
+        }
 }
 
 void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
@@ -729,14 +729,14 @@ void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
     // Draw texture
     if (m_settings.needsShader()) {
         Shader::Ref relevantShader;
-		if(m_texture->isCubeMap()){
-			relevantShader = m_cubemapShader;
-		} else {
-			relevantShader = m_shader;
-		}
-		// Magic incantation
-		const_cast<GuiTextureBox*>(this)->setUpShader(relevantShader, m_texture->isCubeMap());
-		rd->setShader(relevantShader);
+        if(m_texture->isCubeMap()){
+            relevantShader = m_cubemapShader;
+        } else {
+            relevantShader = m_shader;
+        }
+        // Magic incantation
+        const_cast<GuiTextureBox*>(this)->setUpShader(relevantShader, m_texture->isCubeMap());
+        rd->setShader(relevantShader);
         debugAssert(relevantShader.notNull());
 
     } else {
@@ -818,9 +818,9 @@ void GuiTextureBox::render(RenderDevice* rd, const GuiTheme::Ref& theme) const {
         // Shrink by the border size to save space for the border,
         // and then draw the largest rect that we can fit inside.
         Rect2D r = m_texture->rect2DBounds();
-		if(m_texture->isCubeMap()){
-			r = r * Vector2(2.0f, 1.0f);
-		}
+        if(m_texture->isCubeMap()){
+            r = r * Vector2(2.0f, 1.0f);
+        }
         r = r + (m_offset - r.center());
         r = r * m_zoom;
         r = r + m_clipBounds.center();
@@ -987,37 +987,37 @@ void GuiTextureBox::setTexture(const Texture::Ref& t) {
 static const std::string CUBEMAP_SHADER =
 STR(
     uniform samplerCube texture;
-	uniform float     adjustGamma;
-	uniform mat4      colorShift;
-	uniform float     bias;
-	uniform float     scale;
-	uniform float	   edgeThreshold;
-	uniform bool      invertIntensity;\n
-	#define PI (3.1415926536)\n
-	#define TWOPI (6.28318531)\n
+    uniform float     adjustGamma;
+    uniform mat4      colorShift;
+    uniform float     bias;
+    uniform float     scale;
+    uniform float       edgeThreshold;
+    uniform bool      invertIntensity;\n
+    #define PI (3.1415926536)\n
+    #define TWOPI (6.28318531)\n
 
-	void main(void) {
-		vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
-		float theta = sphericalCoord.y * PI;
-		float phi   = sphericalCoord.x * TWOPI;
-		float sinTheta = sin(theta);
-		vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
-		vec4 c = textureCube(texture, cartesianCoord);
-		c = (c + bias) * scale;
-		c = invertIntensity ? vec4(1.0 - c) : c;
-		c = colorShift * c;
-		c = max(c, vec4(0.0));
+    void main(void) {
+        vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
+        float theta = sphericalCoord.y * PI;
+        float phi   = sphericalCoord.x * TWOPI;
+        float sinTheta = sin(theta);
+        vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
+        vec4 c = textureCube(texture, cartesianCoord);
+        c = (c + bias) * scale;
+        c = invertIntensity ? vec4(1.0 - c) : c;
+        c = colorShift * c;
+        c = max(c, vec4(0.0));
 
-		vec3 cubeMapColor = pow(c.rgb, vec3(adjustGamma));
-		vec3 edgeColor = vec3( 0.196, 0.804, 0.196); // Lime Green
+        vec3 cubeMapColor = pow(c.rgb, vec3(adjustGamma));
+        vec3 edgeColor = vec3( 0.196, 0.804, 0.196); // Lime Green
 
-								 
-		vec3 v = abs(cartesianCoord);
-		v = v / max(v.x, max(v.y, v.z));
-		bool onEdge = (v.x + v.y + v.z - min(v.x,min(v.y,v.z))) > edgeThreshold;
-		gl_FragColor.rgb = onEdge ? edgeColor : cubeMapColor;
-		gl_FragColor.a = 1.0;
-	});
+                                 
+        vec3 v = abs(cartesianCoord);
+        v = v / max(v.x, max(v.y, v.z));
+        bool onEdge = (v.x + v.y + v.z - min(v.x,min(v.y,v.z))) > edgeThreshold;
+        gl_FragColor.rgb = onEdge ? edgeColor : cubeMapColor;
+        gl_FragColor.a = 1.0;
+    });
 
 
 static const std::string TEXTURE2D_SHADER =

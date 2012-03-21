@@ -59,22 +59,22 @@ class GPUProgram : public ReferenceCountedObject {
 public:
     /** Internal use only */
     enum Type {
-		FLOAT4X4, FLOAT3X3, FLOAT2X2, 
-		FLOAT4, FLOAT3, FLOAT2, FLOAT1,
-		SAMPLER1D, SAMPLER2D, SAMPLER3D, SAMPLERCUBE, SAMPLERRECT
-	};
+        FLOAT4X4, FLOAT3X3, FLOAT2X2, 
+        FLOAT4, FLOAT3, FLOAT2, FLOAT1,
+        SAMPLER1D, SAMPLER2D, SAMPLER3D, SAMPLERCUBE, SAMPLERRECT
+    };
 
     /** Internal use only */
     enum Source {VARIABLE, CONSTANT};
 
     /** Internal use only
-	 Converts a string name (e.g. "float4") to a Cg type.
-	 Returns false if it can't match the type.
-	*/
-	static bool CgType(const std::string& s, Type& t);
+     Converts a string name (e.g. "float4") to a Cg type.
+     Returns false if it can't match the type.
+    */
+    static bool CgType(const std::string& s, Type& t);
 
     /** Internal use only.  For printing error messages. */
-	static std::string toString(const Type& t);
+    static std::string toString(const Type& t);
 
 private:
 
@@ -116,7 +116,7 @@ private:
 
             Source              source;
 
-			/** Used by constants only */
+            /** Used by constants only */
             Vector4             vector;
         };
 
@@ -168,7 +168,7 @@ public:
             /** Row-major */ 
             Vector4                    vector[4];
 
-			Texture::Ref				   texture;
+            Texture::Ref                   texture;
 
             Type                       type;
         };
@@ -178,7 +178,7 @@ public:
     public:
 
 
-		void set(const std::string& var, const Texture::Ref& val);
+        void set(const std::string& var, const Texture::Ref& val);
         void set(const std::string& var, const CoordinateFrame& val);
         void set(const std::string& var, const Matrix4& val);
         void set(const std::string& var, const Vector4& val);

@@ -73,7 +73,7 @@ namespace G3D {
     <LI>GL_SGIS_generate_mipmap
     <LI>GL_EXT_texture_mirror_clamp
     <LI> GL_EXT_framebuffer_object
-	</UL>
+    </UL>
 
   These methods do not appear in the documentation because they
   are generated using macros.
@@ -344,12 +344,12 @@ public:
     static bool hasBug_mipmapGeneration();
 
     /**
-	 Some graphics cards (e.g. Radeon Mobility 7500) support the VBO extension
-	 but it is slower than main memory in most cases due to poor cache behavior.
-	 This method performs a speed test the first time it is invoked and identifies
-	 those cards.
-	*/
-	static bool hasBug_slowVBO();
+     Some graphics cards (e.g. Radeon Mobility 7500) support the VBO extension
+     but it is slower than main memory in most cases due to poor cache behavior.
+     This method performs a speed test the first time it is invoked and identifies
+     those cards.
+    */
+    static bool hasBug_slowVBO();
 
 };
 

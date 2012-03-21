@@ -160,8 +160,8 @@ public:
     }
 
     void setPosition(const Vector3& t) {
-		m_translation = t;
-	}
+        m_translation = t;
+    }
 
     void lookAt(const Vector3& position);
 
@@ -173,9 +173,9 @@ public:
         return m_pitch;
     }
 
-	const Vector3& translation() const {
-		return m_translation;
-	}
+    const Vector3& translation() const {
+        return m_translation;
+    }
 
     /**
       Sets to the closest legal controller orientation to the coordinate frame.

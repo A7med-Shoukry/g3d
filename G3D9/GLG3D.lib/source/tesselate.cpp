@@ -99,7 +99,7 @@ void tesselateComplexPolygon(const Array<Vector3>& input, Array<Triangle>& outpu
 #else
         #define CAST(x) reinterpret_cast<void (__stdcall *)(void)>(x) 
 #endif
-	gluTessCallback(tobj, GLU_TESS_BEGIN_DATA,    CAST(_tesselateBegin));
+    gluTessCallback(tobj, GLU_TESS_BEGIN_DATA,    CAST(_tesselateBegin));
         gluTessCallback(tobj, GLU_TESS_VERTEX_DATA,   CAST(_tesselateVertex));
         gluTessCallback(tobj, GLU_TESS_END_DATA,      CAST(_tesselateEnd));
         gluTessCallback(tobj, GLU_TESS_COMBINE_DATA,  CAST(_tesselateCombine));

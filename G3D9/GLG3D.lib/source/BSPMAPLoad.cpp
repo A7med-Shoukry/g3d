@@ -350,114 +350,114 @@ void Map::loadLumps(
 }
 
 
-void Map::loadEntities(BinaryInput&	bi,const BSPLump& lump){
-	char* entities = new char[lump.length];
-	bi.setPosition(lump.offset);
+void Map::loadEntities(BinaryInput&    bi,const BSPLump& lump){
+    char* entities = new char[lump.length];
+    bi.setPosition(lump.offset);
 
-	bi.readBytes(entities, lump.length);
-	std::string	entityString;
-	if (entities != NULL) {
+    bi.readBytes(entities, lump.length);
+    std::string    entityString;
+    if (entities != NULL) {
 
         entityString = entities;
 
         if (entityString == "") {
-			startingPosition = Vector3::zero();
-			return;			
-		}
+            startingPosition = Vector3::zero();
+            return;            
+        }
 
-	} else {
-		startingPosition = Vector3::zero();
-		return;
-	}
-	G3D::Array<std::string> entityStrArray = G3D::stringSplit(entityString,'}');
-	for(int	i =	0; i < entityStrArray.size(); ++i){
-		std::string	entity = entityStrArray[i];
-		G3D::Array<std::string>	subArray = G3D::stringSplit(entity,'\n');
-		BSPEntity currEntity;
-		currEntity.position	= Vector3::inf();
-		currEntity.spawnflags =	0;
-		currEntity.modelNum = -1;
+    } else {
+        startingPosition = Vector3::zero();
+        return;
+    }
+    G3D::Array<std::string> entityStrArray = G3D::stringSplit(entityString,'}');
+    for(int    i =    0; i < entityStrArray.size(); ++i){
+        std::string    entity = entityStrArray[i];
+        G3D::Array<std::string>    subArray = G3D::stringSplit(entity,'\n');
+        BSPEntity currEntity;
+        currEntity.position    = Vector3::inf();
+        currEntity.spawnflags =    0;
+        currEntity.modelNum = -1;
 
-		for(int	j =	0; j < subArray.size();	++j){
-			std::string	subStr = std::string(subArray[j]);
+        for(int    j =    0; j < subArray.size();    ++j){
+            std::string    subStr = std::string(subArray[j]);
 // TODO: Clean this code up to use TextInput and not strtok, which mutates the
-// underlying data in a way that is scary.			
+// underlying data in a way that is scary.            
 #ifdef G3D_WIN32
 #pragma message(" Fix destructive useage of strtok in BSPMAPLoad.cpp ")
 #endif
-			char* pt = const_cast<char*>(strstr(subStr.c_str(), "\"classname\""));
-			if (pt){
-				const char* name = strtok(pt + 13, "\"	");
-				if(name){
-					currEntity.name	= name + format(" %d",i);
-				}
-				continue;
-			}
-
-			pt = const_cast<char*>(strstr(subStr.c_str(),	"\"origin\""));
-			if(pt){
-				char temp[40];
-				strcpy(temp,pt);
-				Vector3	pos;
-				pos.x =	 atoi(strtok(pt	+ 10," ")) * G3D_LOAD_SCALE;
-				pos.z =	-atoi(strtok(NULL," "))	   * G3D_LOAD_SCALE;
-				pos.y =	 atoi(strtok(NULL,"\""))   * G3D_LOAD_SCALE;
-				currEntity.position	= pos;
-				continue;
-			}
-			pt = const_cast<char*>(strstr(subStr.c_str(),	"\"spawnflags\""));
-			if(pt){
-				currEntity.spawnflags =	atoi(strtok(pt+13,"\""));
-				continue;
-			}
-			pt = const_cast<char*>(strstr(subStr.c_str(),	"\"targetname\""));
-			if(pt){
-				char* name = strtok(pt + 14,"\"	");
-				if(name){
-					currEntity.targetName = name;
-				}
-				continue;
-			}
-			pt = const_cast<char*>(strstr(subStr.c_str(),	"\"model\""));
-			if(pt){
-				currEntity.modelNum = atoi(strtok(pt+10,"\"")) - 1;
-				continue;
-			}
-			pt = const_cast<char*>(strstr(subStr.c_str(),	"\"target\""));
-			if(pt){
-				char* name = strtok(pt + 10,"\"	");
-				if(name){
-					currEntity.target = name;
-				}
-				continue;
-			}
-			if(subStr != "{" &&	subStr != "\n{"	&& subStr != "\n"){
-				currEntity.otherInfo +=	subStr;
-				currEntity.otherInfo +=	"\n";
-			}
-		}
-
-		if (currEntity.name != "") {
-
-			if (strstr(currEntity.name.c_str(), "info_player_deathmatch")) {
-				if (currEntity.position != Vector3::inf()) {
-					startingPosition = currEntity.position;
-				} else {
-					startingPosition = Vector3::zero();
-				}
-			} else if(strstr(currEntity.name.c_str(), "info_player_start") ) {
-				if (currEntity.position != Vector3::inf()) {
-					startingPosition = currEntity.position;
-                } else {
-					startingPosition = Vector3::zero();
+            char* pt = const_cast<char*>(strstr(subStr.c_str(), "\"classname\""));
+            if (pt){
+                const char* name = strtok(pt + 13, "\"    ");
+                if(name){
+                    currEntity.name    = name + format(" %d",i);
                 }
-			}
+                continue;
+            }
 
-			entityArray.append(currEntity);
-		}
-	}
+            pt = const_cast<char*>(strstr(subStr.c_str(),    "\"origin\""));
+            if(pt){
+                char temp[40];
+                strcpy(temp,pt);
+                Vector3    pos;
+                pos.x =     atoi(strtok(pt    + 10," ")) * G3D_LOAD_SCALE;
+                pos.z =    -atoi(strtok(NULL," "))       * G3D_LOAD_SCALE;
+                pos.y =     atoi(strtok(NULL,"\""))   * G3D_LOAD_SCALE;
+                currEntity.position    = pos;
+                continue;
+            }
+            pt = const_cast<char*>(strstr(subStr.c_str(),    "\"spawnflags\""));
+            if(pt){
+                currEntity.spawnflags =    atoi(strtok(pt+13,"\""));
+                continue;
+            }
+            pt = const_cast<char*>(strstr(subStr.c_str(),    "\"targetname\""));
+            if(pt){
+                char* name = strtok(pt + 14,"\"    ");
+                if(name){
+                    currEntity.targetName = name;
+                }
+                continue;
+            }
+            pt = const_cast<char*>(strstr(subStr.c_str(),    "\"model\""));
+            if(pt){
+                currEntity.modelNum = atoi(strtok(pt+10,"\"")) - 1;
+                continue;
+            }
+            pt = const_cast<char*>(strstr(subStr.c_str(),    "\"target\""));
+            if(pt){
+                char* name = strtok(pt + 10,"\"    ");
+                if(name){
+                    currEntity.target = name;
+                }
+                continue;
+            }
+            if(subStr != "{" &&    subStr != "\n{"    && subStr != "\n"){
+                currEntity.otherInfo +=    subStr;
+                currEntity.otherInfo +=    "\n";
+            }
+        }
 
-	delete[] entities;
+        if (currEntity.name != "") {
+
+            if (strstr(currEntity.name.c_str(), "info_player_deathmatch")) {
+                if (currEntity.position != Vector3::inf()) {
+                    startingPosition = currEntity.position;
+                } else {
+                    startingPosition = Vector3::zero();
+                }
+            } else if(strstr(currEntity.name.c_str(), "info_player_start") ) {
+                if (currEntity.position != Vector3::inf()) {
+                    startingPosition = currEntity.position;
+                } else {
+                    startingPosition = Vector3::zero();
+                }
+            }
+
+            entityArray.append(currEntity);
+        }
+    }
+
+    delete[] entities;
 }
 
 
@@ -522,7 +522,7 @@ void Map::loadFaces(
                 for (int x = 0; x < widthCount; x++) {
                     for (int row = 0; row < 3; row++) {
                         for (int col = 0; col < 3; col++) {
-    				
+                    
                             face->bezierArray[y * widthCount + x].controls[row * 3 + col] =
                                 vertexArray[faceData[ct].firstVertex +
                                     (y * 2 * width + x * 2)+
@@ -618,7 +618,7 @@ void Map::loadTextures(
     bi.setPosition(lump.offset);
     bi.readBytes(textureData.getCArray(), sizeof(Q3BSPTexture) * texturesCount);
 
-    for (int ct = 0; ct < texturesCount; ++ct)	{
+    for (int ct = 0; ct < texturesCount; ++ct)    {
         const int CONTENTS_SOLID        = 0x00000001;
         const int CONTENTS_WINDOW       = 0x00000002;
         const int CONTENTS_PLAYERCLIP   = 0x00010000;
@@ -890,35 +890,35 @@ void Map::loadStaticModel(
 void Map::loadDynamicModels(
     BinaryInput&           bi,
     const BSPLump&         lump) {
-	int totalModels = lump.length / sizeof(BSPModel);
-	if(totalModels < 2){
-		return;
-	}
-	BSPModel* modelData = new BSPModel[totalModels];
+    int totalModels = lump.length / sizeof(BSPModel);
+    if(totalModels < 2){
+        return;
+    }
+    BSPModel* modelData = new BSPModel[totalModels];
     bi.setPosition(lump.offset);
     bi.readBytes(modelData, totalModels * sizeof(BSPModel));
 
-	for(int i = 1; i < totalModels; ++i){
-		BSPModel curr;
-		Vector3 a = modelData[i].min * G3D_LOAD_SCALE;
-		Vector3 b = modelData[i].max * G3D_LOAD_SCALE;
-		swizzle(a);
-		swizzle(b);
+    for(int i = 1; i < totalModels; ++i){
+        BSPModel curr;
+        Vector3 a = modelData[i].min * G3D_LOAD_SCALE;
+        Vector3 b = modelData[i].max * G3D_LOAD_SCALE;
+        swizzle(a);
+        swizzle(b);
 
-		curr.min = a.min(b);
-		curr.max = a.max(b);
+        curr.min = a.min(b);
+        curr.max = a.max(b);
 
-		curr.brushIndex = modelData[i].brushIndex;
-		curr.faceIndex = modelData[i].faceIndex;
-		curr.numOfBrushes = modelData[i].numOfBrushes;
-		curr.numOfFaces = modelData[i].numOfFaces;
+        curr.brushIndex = modelData[i].brushIndex;
+        curr.faceIndex = modelData[i].faceIndex;
+        curr.numOfBrushes = modelData[i].numOfBrushes;
+        curr.numOfFaces = modelData[i].numOfFaces;
 
-		debugAssert(curr.max.y >= curr.min.y);
-		debugAssert(curr.max.z >= curr.min.z);
+        debugAssert(curr.max.y >= curr.min.y);
+        debugAssert(curr.max.z >= curr.min.z);
 
-		dynamicModels.append(curr);
-	}
-	delete[] modelData;
+        dynamicModels.append(curr);
+    }
+    delete[] modelData;
 }
 
 

@@ -320,35 +320,35 @@ public:
         Zeroed by beginFrame.*/
     class Stats {
     public:
-        uint32			minorStateChanges;
-        uint32			minorOpenGLStateChanges;
+        uint32            minorStateChanges;
+        uint32            minorOpenGLStateChanges;
         
-        uint32			majorStateChanges;
-        uint32			majorOpenGLStateChanges;
+        uint32            majorStateChanges;
+        uint32            majorOpenGLStateChanges;
         
-        uint32			pushStates;
+        uint32            pushStates;
         
         /** Number of individual primitives (e.g., number of triangles) */
-        uint32			primitives;
+        uint32            primitives;
         
         /** Number of triangles since last beginFrame() */
-        uint32			triangles;
+        uint32            triangles;
         
         /** Exponentially weighted moving average of Stats::triangles.*/
         double           smoothTriangles;
         
         /** Amount of time spent in swapbuffers (when large, indicates 
             that the GPU is blocking the CPU). */
-        RealTime		swapbuffersTime;
+        RealTime        swapbuffersTime;
         
         /** Inverse of beginframe->endframe time.  Accounts for the frame
             timing of the system as a whole, not just graphics.*/
-        float			frameRate;
+        float            frameRate;
         
         /** Exponentially weighted moving average of frame rate */
         float           smoothFrameRate;
         
-        double			triangleRate;
+        double            triangleRate;
         
         /** Exponentially weighted moving average of triangleRate */
         double          smoothTriangleRate;
@@ -738,7 +738,7 @@ public:
      */
     void setStencilConstant(int reference);
 
-	/** If the alpha test is ALPHA_CURRENT, the reference is ignored */
+    /** If the alpha test is ALPHA_CURRENT, the reference is ignored */
     void setAlphaTest(AlphaTest test, float reference);
 
     AlphaTest alphaTest() const;
@@ -841,7 +841,7 @@ public:
 
     /**
      Equivalent to <A HREF="http://developer.3dlabs.com/GLmanpages/glblendfunc.htm">glBlendFunc</A>
-	 and <A HREF="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/glBlendEquation.3.html">glBlendEquation</A>.
+     and <A HREF="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/glBlendEquation.3.html">glBlendEquation</A>.
 
      Use 
        <CODE>setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO, RenderDevice::BLENDEQ_ADD)</CODE>
@@ -853,10 +853,10 @@ public:
        <CODE>setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ONE_MINUS_SRC_ALPHA, RenderDevice::BLENDEQ_ADD)</CODE>
      for premultiplied alpha.
 
-	 %Draw your objects from back to front, objects with alpha last. Objects with alpha only get drawn properly if the things
-	 they're occluding have been drawn before the alpha'd objects. 
+     %Draw your objects from back to front, objects with alpha last. Objects with alpha only get drawn properly if the things
+     they're occluding have been drawn before the alpha'd objects. 
 
-	 Generally, turn alpha on, draw your alpha-blended things, then turn alpha off. 
+     Generally, turn alpha on, draw your alpha-blended things, then turn alpha off. 
      */
     void setBlendFunc(
         BlendFunc                       src,
@@ -1341,7 +1341,7 @@ public:
      It contains routines that execute before and after
      each primitive group to set other RenderDevice state.     
      */
-	void setShader(const ShaderRef& s);
+    void setShader(const ShaderRef& s);
    
     Shader::Ref shader() const {
         return m_state.shader;
@@ -1374,7 +1374,7 @@ public:
     void enableTwoSidedLighting();
     void disableTwoSidedLighting();
 
-	/** Automatically called immediately before a primitive group.  User code should only
+    /** Automatically called immediately before a primitive group.  User code should only
         call this if making raw OpenGL calls (i.e., "glBegin"), in which case it should be
         called immediately before the glBegin and afterPrimitve should be called immediately
         after the glEnd.
@@ -1646,7 +1646,7 @@ private:
      */
     Table<const ImageFormat*, bool>      _supportedImageFormat;
 
-	void push2D(const FramebufferRef& fb, const Rect2D& viewport);
+    void push2D(const FramebufferRef& fb, const Rect2D& viewport);
 
     /** Sets the stencil test using the two-sided extension appropriate to this machine.*/
     void _setStencilTest(StencilTest test, int reference);
@@ -1820,14 +1820,14 @@ public:
      */
     void screenshotPic(GImage& dest, bool getAlpha = false, bool invertY = true) const;
 
-	/**
-	 Pixel dimensions of the OpenGL window interior
-	 */
+    /**
+     Pixel dimensions of the OpenGL window interior
+     */
     int width() const;
 
-	/**
-	 Pixel dimensions of the OpenGL window interior
-	 */
+    /**
+     Pixel dimensions of the OpenGL window interior
+     */
     int height() const;
 
     /**
@@ -1991,7 +1991,7 @@ public:
         \beta */
     void setInvertY(bool i) {
         m_state.matrices.invertY = i;
-		forceSetCullFace(m_state.cullFace);
+        forceSetCullFace(m_state.cullFace);
     }
 
     /** Shorthand for:

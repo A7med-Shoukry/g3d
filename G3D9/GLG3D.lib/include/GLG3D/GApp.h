@@ -110,7 +110,7 @@ public:
            This is used to invoke System::setDataDir()
         */
         std::string             dataDir;
-    	
+        
         /**
            Can be relative to the G3D data directory (e.g. "font/dominant.fnt")
            or relative to the current directory.
@@ -126,7 +126,7 @@ public:
             System::findDataFile can locate them (the program working directory is one such location).
         */  
         bool                    useDeveloperTools;
-    	
+        
         /** 
             When true, GAapp ensures that g3d-license.txt exists in the current
             directory.  That file is written from the return value of G3D::license() */
@@ -455,7 +455,7 @@ public:
     /**
        A default camera that is driven by the defaultController.
     */
-    GCamera		            defaultCamera;
+    GCamera                    defaultCamera;
 
     /**
        Allows first person (Quake game-style) control

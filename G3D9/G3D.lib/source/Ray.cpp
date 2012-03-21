@@ -36,7 +36,7 @@ void Ray::set(const Vector3& origin, const Vector3& direction) {
     c_yx = m_origin.x - ibyj * m_origin.y;
     c_yz = m_origin.z - kbyj * m_origin.y;
     c_zx = m_origin.x - ibyk * m_origin.z;
-    c_zy = m_origin.y - jbyk * m_origin.z;	
+    c_zy = m_origin.y - jbyk * m_origin.z;    
     
     //ray slope classification
     if (m_direction.x < 0) {
@@ -117,27 +117,27 @@ void Ray::set(const Vector3& origin, const Vector3& direction) {
                         classification = PPP;
                     }
                 }
-            }			
+            }            
         }
     }
 }
 
 
 Ray::Ray(class BinaryInput& b) {
-	deserialize(b);
+    deserialize(b);
 }
 
 
 void Ray::serialize(class BinaryOutput& b) const {
-	m_origin.serialize(b);
-	m_direction.serialize(b);
+    m_origin.serialize(b);
+    m_direction.serialize(b);
 }
 
 
 void Ray::deserialize(class BinaryInput& b) {
-	m_origin.deserialize(b);
-	m_direction.deserialize(b);
-	set(m_origin, m_direction);
+    m_origin.deserialize(b);
+    m_direction.deserialize(b);
+    set(m_origin, m_direction);
 }
 
 

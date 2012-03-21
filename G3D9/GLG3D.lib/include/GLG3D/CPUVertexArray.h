@@ -34,8 +34,8 @@ class CoordinateFrame;
 
 class CPUVertexArray {
 private:
-	//Intentionally unimplemented
-	CPUVertexArray& operator=(const CPUVertexArray&); 
+    //Intentionally unimplemented
+    CPUVertexArray& operator=(const CPUVertexArray&); 
 
 public:
 
@@ -56,8 +56,8 @@ public:
         /** Texture coordinate 0. */
         Point2                  texCoord0;
 
-		void transformBy(const CoordinateFrame& cframe);
-	};
+        void transformBy(const CoordinateFrame& cframe);
+    };
 
     Array<Vertex>               vertex;
 
@@ -80,17 +80,17 @@ public:
 
     CPUVertexArray() : hasTexCoord0(true), hasTexCoord1(false), hasTangent(true) {}
 
-	
-	explicit CPUVertexArray(const CPUVertexArray& otherArray);
+    
+    explicit CPUVertexArray(const CPUVertexArray& otherArray);
 
 
-	void transformAndAppend(const CPUVertexArray& otherArray, const CoordinateFrame& cframe);
+    void transformAndAppend(const CPUVertexArray& otherArray, const CoordinateFrame& cframe);
 
     int size() const {
         return vertex.size();
     }
 
-	void copyFrom(const CPUVertexArray& other);
+    void copyFrom(const CPUVertexArray& other);
 
     /** \param texCoord1 This is not interleaved with the other data in GPU memory. 
          Note that G3D::SuperSurface stores this in texture coordinate <b>2</b> because texcoord 1 is used for the tangent. */

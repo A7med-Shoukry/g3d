@@ -233,7 +233,7 @@ Ray GCamera::worldRay(float x, float y, const Rect2D& viewport) const {
     float vw = nearPlaneViewportWidth(viewport);
     float vh = nearPlaneViewportHeight(viewport);
 
-	Vector3 direction = Vector3( (x - cx) * vw / screenWidth,
+    Vector3 direction = Vector3( (x - cx) * vw / screenWidth,
                             -(y - cy) * vh / screenHeight,
                              m_nearPlaneZ);
 
@@ -464,7 +464,7 @@ void GCamera::frustum(const Rect2D& viewport, Frustum& fr) const {
 
     // Far plane
     if (-m_farPlaneZ < finf()) {
-    	face.plane = Plane(Vector3(0, 0, 1), Vector3(0, 0, m_farPlaneZ));
+        face.plane = Plane(Vector3(0, 0, 1), Vector3(0, 0, m_farPlaneZ));
         face.vertexIndex[0] = 4;
         face.vertexIndex[1] = 5;
         face.vertexIndex[2] = 6;

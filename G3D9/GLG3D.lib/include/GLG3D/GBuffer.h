@@ -428,7 +428,7 @@ public:
     /** Reallocate all buffers to this size if they are not already. */
     virtual void resize(int width, int height);
 
-	/** Explicitly override the camera stored in the GBuffer. */
+    /** Explicitly override the camera stored in the GBuffer. */
     void setCamera(const GCamera& camera) {
         m_camera = camera;
     }

@@ -43,21 +43,21 @@ void Matrix::serialize(TextOutput& t) const {
 
 
 std::string Matrix::toString(const std::string& name) const {
-	std::string s;
+    std::string s;
 
     if (name != "") {
         s += format("%s = \n", name.c_str());
     }
 
-	s += "[";
+    s += "[";
     for (int r = 0; r < rows(); ++r) {
         for (int c = 0; c < cols(); ++c) {
             double v = impl->get(r, c);
 
-			if (::fabs(v) < 0.00001) {
-				// Don't print "negative zero"
+            if (::fabs(v) < 0.00001) {
+                // Don't print "negative zero"
                 s += format("% 10.04g", 0.0);
-			} else if (v == iRound(v)) {
+            } else if (v == iRound(v)) {
                 // Print integers nicely
                 s += format("% 10.04g", v);
             } else {
@@ -68,12 +68,12 @@ std::string Matrix::toString(const std::string& name) const {
                 s += ",";
             } else if (r < rows() - 1) {
                 s += ";\n ";
-			} else {
-				s += "]\n";
-			}
+            } else {
+                s += "]\n";
+            }
         }
     }
-	return s;
+    return s;
 }
 
 
@@ -746,7 +746,7 @@ void Matrix::Impl::inverseViaAdjoint(Impl& out) const {
         det += elt[0][r] * out.elt[r][0];
     }
 
-	out.div(Matrix::T(det), out);
+    out.div(Matrix::T(det), out);
 }
 
 
@@ -848,7 +848,7 @@ Matrix::T Matrix::Impl::determinant() const {
           float cofactor10 = elt[1][2] * elt[2][0] - elt[1][0] * elt[2][2];
           float cofactor20 = elt[1][0] * elt[2][1] - elt[1][1] * elt[2][0];
       
-		  return Matrix::T(
+          return Matrix::T(
             elt[0][0] * cofactor00 +
             elt[0][1] * cofactor10 +
             elt[0][2] * cofactor20);
@@ -1428,7 +1428,7 @@ void Matrix::Impl::inverseInPlaceGaussJordan() {
         elt[col][col] = 1.0;
 
         for (int k = 0; k < R; ++k) {
-			elt[col][k] *= Matrix::T(pivotInverse);
+            elt[col][k] *= Matrix::T(pivotInverse);
         }
 
         // Reduce all rows
@@ -1440,7 +1440,7 @@ void Matrix::Impl::inverseInPlaceGaussJordan() {
                 elt[r][col] = 0.0;
 
                 for (int k = 0; k < R; ++k) {
-					elt[r][k] -= Matrix::T(elt[col][k] * oldValue);
+                    elt[r][k] -= Matrix::T(elt[col][k] * oldValue);
                 }
             }
         }

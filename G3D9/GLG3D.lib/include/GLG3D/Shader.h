@@ -247,9 +247,9 @@ protected:
 
     static std::string      ignore;
 
-    ShaderObject	            vertexShader;
-    ShaderObject	            geometryShader;
-    ShaderObject	            pixelShader;
+    ShaderObject                vertexShader;
+    ShaderObject                geometryShader;
+    ShaderObject                pixelShader;
 
     GLhandleARB             _glProgramObject;
 
@@ -782,16 +782,16 @@ public:
     /** Returns true if this card supports pixel shaders.  */
     static bool supportsPixelShaders();
 
-	/**
-	 Invoked by RenderDevice immediately before a primitive group.
-	 Override to set state on the RenderDevice (including the underlying
+    /**
+     Invoked by RenderDevice immediately before a primitive group.
+     Override to set state on the RenderDevice (including the underlying
      vertex and pixel shader).
 
      If overriding, do not call RenderDevice::setShader from this routine.
 
      Default implementation pushes state, sets the g3d_ uniforms,
      and loads the vertex and pixel shader.
-	 */
+     */
     virtual void beforePrimitive(class RenderDevice* renderDevice);
 
     /**

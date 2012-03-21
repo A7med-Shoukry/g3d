@@ -253,7 +253,7 @@ public:
         alwaysAssertM((_area->type() == VertexBuffer::DATA) || glCanBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
         init(sourcePtr, _numElements, _area, glFormatOf(T), sizeof(T), glIsNormalizedFixedPoint(T));
-    }		
+    }        
 
   
     template<class T>

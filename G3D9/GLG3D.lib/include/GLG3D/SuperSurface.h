@@ -291,7 +291,7 @@ public:
     /** Classification of a graphics card. 
         FIXED_FUNCTION  Use OpenGL fixed function lighting only.
         PS20            Use pixel shader 2.0 (shader objects; full feature)
-	 
+     
         @sa profile()
      */
     enum GraphicsProfile {
@@ -300,7 +300,7 @@ public:
         PS20};
 
     /** Called by Surface.
-	 
+     
         Renders an array of SuperSurfaces in the order that they
         appear in the array, taking advantage of the fact that all
         objects have the same subclass to optimize the rendering
@@ -315,7 +315,7 @@ public:
         bool preserveState = true);
 
     /** Called by Surface.
-	 
+     
         Renders an array of SuperSurfaces in the order that they
         appear in the array, taking advantage of the fact that all
         objects have the same subclass to optimize the rendering
@@ -328,7 +328,7 @@ public:
         bool preserveState = true);
 
     /** Called by Surface.
-	 
+     
         Removes the SuperSurfaces from array @a all and appends
         them to the \a super array.
         */

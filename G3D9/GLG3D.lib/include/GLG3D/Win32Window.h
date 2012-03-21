@@ -4,8 +4,8 @@
  A OSWindow that uses the Win32 API.
 
  @maintainer Morgan McGuire
- @created 	  2004-05-21
- @edited  	  2007-05-30
+ @created       2004-05-21
+ @edited        2007-05-30
     
  Copyright 2000-2007, Morgan McGuire.
  All rights reserved.
@@ -33,13 +33,13 @@ using _internal::_DirectInput;
 
 class Win32Window : public OSWindow {
 private:
-	
+    
     Vector2              m_clientRectOffset;
-	std::string			 m_title;
+    std::string             m_title;
     HDC                  m_hDC;
-	HGLRC				 m_glContext;
-	bool				 m_mouseVisible;
-	bool				 m_inputCapture;
+    HGLRC                 m_glContext;
+    bool                 m_mouseVisible;
+    bool                 m_inputCapture;
 
     /** Mouse Button State Array: false - up, true - down
         [0] - left, [1] - middle, [2] - right, [3] - X1,  [4] - X2 */
@@ -51,36 +51,36 @@ private:
     G3D::Set< int >      m_usedIcons;
 
     /** Coordinates of the client area in screen coordinates */
-    int		             m_clientX;
-    int			         m_clientY;
+    int                     m_clientX;
+    int                     m_clientY;
     
     /** Only one thread allowed for use with Win32Window::makeCurrent */
-    HANDLE				 m_thread;
+    HANDLE                 m_thread;
     
     Array<std::string>   m_droppedFiles;
 
     HWND                 m_window;
-    const bool		     createdWindow;
+    const bool             createdWindow;
 
     /** Called from all constructors */
-	void init(HWND hwnd, bool creatingShareWindow = false);
+    void init(HWND hwnd, bool creatingShareWindow = false);
 
     // Pointer to current queue passed to getOSEvents() for window proc to use
     Queue<GEvent>*      m_sysEventQueue;
 
     class DropTarget*   m_dropTarget;
 
-	static std::auto_ptr<Win32Window>& shareWindow();
+    static std::auto_ptr<Win32Window>& shareWindow();
 
-	/** OpenGL technically does not allow sharing of resources between
-	  multiple windows (although this tends to work most of the time
-	  in practice), so we create an invisible HDC and context with which
-	  to explicitly share all resources. 
-	  
-	  @param s The settings describing the pixel format of the windows with which
-	  resources will be shared.  Sharing may fail if all windows do not have the
-	  same format.*/ 
-	static void createShareWindow(OSWindow::Settings s);
+    /** OpenGL technically does not allow sharing of resources between
+      multiple windows (although this tends to work most of the time
+      in practice), so we create an invisible HDC and context with which
+      to explicitly share all resources. 
+      
+      @param s The settings describing the pixel format of the windows with which
+      resources will be shared.  Sharing may fail if all windows do not have the
+      same format.*/ 
+    static void createShareWindow(OSWindow::Settings s);
 
     /** Initializes the WGL extensions by creating and then destroying a window.  
         Also registers our window class.  
@@ -134,15 +134,15 @@ public:
     /** The HDC should be a private CS_OWNDC device context because it is assumed to
         be perisistant.*/
     static Win32Window* create(const OSWindow::Settings& settings, HDC hdc);
-	
+    
     virtual ~Win32Window();
-	
+    
     //virtual Array<Settings> enumerateAvailableSettings();
 
     virtual void getDroppedFilenames(Array<std::string>& files);
 
     void close();
-	
+    
     inline HWND hwnd() const {
         return m_window;
     }
@@ -154,57 +154,57 @@ public:
     void getSettings(OSWindow::Settings& settings) const;
 
     virtual int width() const;
-	
+    
     virtual int height() const;
-	
+    
     virtual Rect2D dimensions() const;
-	
+    
     virtual void setDimensions(const Rect2D& dims);
-	
+    
     virtual void setPosition(int x, int y) {
         setDimensions( Rect2D::xywh((float)x, (float)y, (float)m_settings.width, (float)m_settings.height) );
     }
-	
+    
     virtual bool hasFocus() const;
-	
+    
     virtual std::string getAPIVersion() const;
-	
+    
     virtual std::string getAPIName() const;
-	
+    
     virtual void setGammaRamp(const Array<uint16>& gammaRamp);
     
     virtual void setCaption(const std::string& caption);
-	
+    
     virtual int numJoysticks() const;
-	
+    
     virtual std::string joystickName(unsigned int sticknum);
-	
+    
     virtual std::string caption();
-	
+    
     virtual void setIcon(const GImage& image);
-	
+    
     virtual void swapGLBuffers();
-	
+    
     virtual void setRelativeMousePosition(double x, double y);
-	
+    
     virtual void setRelativeMousePosition(const Vector2& p);
-		
+        
     virtual void getRelativeMouseState(Vector2& position, uint8& mouseButtons) const;
-	
+    
     virtual void getRelativeMouseState(int& x, int& y, uint8& mouseButtons) const;
-	
+    
     virtual void getRelativeMouseState(double& x, double& y, uint8& mouseButtons) const;
-	
+    
     virtual void getJoystickState(unsigned int stickNum, Array<float>& axis, Array<bool>& button);
-	
+    
     virtual void setInputCapture(bool c);
-	
+    
     virtual bool inputCapture() const;
-	
+    
     virtual void setMouseVisible(bool b);
-	
+    
     virtual bool mouseVisible() const;
-	
+    
     virtual bool requiresMainLoop() const;
 
 protected:
@@ -213,7 +213,7 @@ protected:
     virtual void getOSEvents(Queue<GEvent>& events);
 
 private:
-	void enableDirectInput() const;
+    void enableDirectInput() const;
 };
 
 

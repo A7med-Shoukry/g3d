@@ -61,8 +61,8 @@ public:
     /** Returns a number on [0.0f, 1.0f] */
     operator float() const {
         return float(clamp((int) m_bits * (1.0f / 127.0f), -1, 1));
-	}
-	// Needs to be changed?
+    }
+    // Needs to be changed?
     static snorm8 one() {
         return fromBits(127);
     }

@@ -427,11 +427,11 @@ private:
 
         bool __fastcall intersectRay
         (const TriTree&  triTree,
-		 const Ray&      ray,
+         const Ray&      ray,
          Tri::Intersector& intersectCallback, 
          float&          distance,
          bool            exitOnAnyHit,
-		 bool			 twoSided) const;
+         bool             twoSided) const;
     };
 
     /** Memory manager used to allocate Nodes and Tri arrays. */
@@ -471,7 +471,7 @@ public:
     Stats stats(int valuesPerNode) const;
 
     /** The arrays will be copied, the underlying Array<Tri> is guaranteed to be in the same order as the parameter Tri Array.
-		Zero area triangles are retained in the array, but will never be collided with. */
+        Zero area triangles are retained in the array, but will never be collided with. */
     void setContents(const Array<Tri>& triArray, const CPUVertexArray& vertexArray, const Settings& settings = Settings());
 
 
@@ -504,15 +504,15 @@ public:
         </pre>
 
         \param exitOnAnyHit If true, return any intersection, not the first (faster for shadow rays)
-		\param twoSided If true, both sides of triangles are tested for intersections. If a back face is hit,
-		the normal will not automatically be flipped
+        \param twoSided If true, both sides of triangles are tested for intersections. If a back face is hit,
+        the normal will not automatically be flipped
      */
     bool intersectRay
     (const Ray& ray,
      Tri::Intersector& intersectCallback, 
      float& distance,
      bool exitOnAnyHit = false,
-	 bool twoSided = false) const;
+     bool twoSided = false) const;
 
     /** Returns all triangles that intersect or are contained within
         the sphere (technically, this is a ball intersection). */

@@ -46,14 +46,14 @@ private:
     // Intersector is declared below
     friend class Intersector;
 
-	friend class TriTree;
+    friend class TriTree;
 
 
     /** Usually a material, but can be abstracted  */
     Proxy<Material>::Ref    m_material;
 
     /** \deprecated */
-   	CPUVertexArray*			m_cpuVertexArray;
+       CPUVertexArray*            m_cpuVertexArray;
 
     /** Indices into the CPU Vertex array */
     uint32                  index[3];
@@ -67,7 +67,7 @@ private:
     /** Edge vector v2 - v0 */
     Vector3                 e2;
 
-	/** Twice the area: (e0 x e1).length() */
+    /** Twice the area: (e0 x e1).length() */
     float                   m_doubleArea;
 
 
@@ -80,7 +80,7 @@ public:
        To extract the actual material from the proxy use Tri::material and Tri::data<T>.
     */
     Tri(const int i0, const int i1, const int i2,
-		CPUVertexArray* vertexArray,
+        CPUVertexArray* vertexArray,
         const Proxy<Material>::Ref& material = NULL);
 
 
@@ -118,10 +118,10 @@ public:
         }
     }
 
-	/** Useful for accessing several vertex properties at once (for less pointer indirection) */
-	const CPUVertexArray::Vertex& vertex(int i) const {
-		return m_cpuVertexArray->vertex[index[i]];
-	}
+    /** Useful for accessing several vertex properties at once (for less pointer indirection) */
+    const CPUVertexArray::Vertex& vertex(int i) const {
+        return m_cpuVertexArray->vertex[index[i]];
+    }
 
     /** Face normal.  For degenerate triangles, this is zero.  For all other triangles
     it has unit length and is defined by counter-clockwise winding. Calculate every call*/
@@ -132,7 +132,7 @@ public:
     /** Vertex normal */
     const Vector3& normal(int i) const {
         debugAssert(i >= 0 && i <= 2);
-		debugAssert(m_cpuVertexArray != NULL);
+        debugAssert(m_cpuVertexArray != NULL);
         return vertex(i).normal;
     }
 
@@ -151,7 +151,7 @@ public:
     /** Per-vertex unit tangent, for bump mapping. Tangents are perpendicular to 
         the corresponding vertex normals.*/
     Vector3 tangent(int i) const {
-		debugAssert(i >= 0 && i <= 2);
+        debugAssert(i >= 0 && i <= 2);
         debugAssert(m_cpuVertexArray != NULL);
         return vertex(i).tangent.xyz();
     }
@@ -160,8 +160,8 @@ public:
         (Erroneously called the "binormal" in some literature) */
     Vector3 tangent2(int i) const {
         debugAssert(i >= 0 && i <= 2);
-		debugAssert(m_cpuVertexArray != NULL);
-		const CPUVertexArray::Vertex& vertex = this->vertex(i);
+        debugAssert(m_cpuVertexArray != NULL);
+        const CPUVertexArray::Vertex& vertex = this->vertex(i);
         return vertex.normal.cross(vertex.tangent.xyz()) * vertex.tangent.w;
     }
     
@@ -251,8 +251,8 @@ public:
         /** Eye direction (ray direction from functor) */
         Vector3         eye;
 
-		/** For SurfaceElement to copy. Not set by intersect, the caller must explicitly set this value */
-		int				primitiveIndex;
+        /** For SurfaceElement to copy. Not set by intersect, the caller must explicitly set this value */
+        int                primitiveIndex;
 
         Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f), primitiveIndex(-1) {}
 
@@ -302,8 +302,8 @@ public:
           (This corresponds to an "AnyHit program" in the NVIDIA OptiX
           API.)
 
-		  \param twoSided If true, both sides of triangles are tested for intersections. If a back face is hit,
-			the normal will not automatically be flipped
+          \param twoSided If true, both sides of triangles are tested for intersections. If a back face is hit,
+            the normal will not automatically be flipped
 
           \return true if there was an intersection between the ray and triangle
           */

@@ -39,7 +39,7 @@ private:
       by Martin Eisemann, Thorsten Grosch, Stefan MÅ¸ller and Marcus Magnor
       Computer Graphics Lab, TU Braunschweig, Germany and
       University of Koblenz-Landau, Germany */
-    enum Classification {MMM, MMP, MPM, MPP, PMM, PMP, PPM, PPP, POO, MOO, OPO, OMO, OOP, OOM, OMM, OMP, OPM, OPP, MOM, MOP, POM, POP, MMO, MPO, PMO, PPO};	
+    enum Classification {MMM, MMP, MPM, MPP, PMM, PMP, PPM, PPP, POO, MOO, OPO, OMO, OOP, OOM, OMM, OMP, OPM, OPP, MOM, MOP, POM, POP, MMO, MPO, PMO, PPO};    
 
     Classification classification;
 

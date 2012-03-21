@@ -582,7 +582,7 @@ Texture::Texture(
 
     m_sizeOfAllTexturesInMemory += sizeInMemory();
 
-	
+    
 }
 
 
@@ -738,17 +738,17 @@ Texture::Ref Texture::fromGLTexture(
     GLuint                  textureID,
     const ImageFormat*      imageFormat,
     Dimension               dimension,
-	const Settings&			settings) {
+    const Settings&            settings) {
 
     debugAssert(imageFormat);
 
     return new Texture(
-		name, 
-		textureID, 
-		dimension,
-		imageFormat, 
+        name, 
+        textureID, 
+        dimension,
+        imageFormat, 
         imageFormat->opaque, 
-		settings);
+        settings);
 }
 
 
@@ -835,16 +835,16 @@ Texture::Ref Texture::fromFile(
         }
 
         return fromMemory(
-			filename[0], 
-			byteMipMapFaces,
-			bytesFormat,
-			ddsTexture.getWidth(), 
-			ddsTexture.getHeight(), 
-			1,
-			desiredFormat,
-			dimension,
-			settings,
-			preprocess);
+            filename[0], 
+            byteMipMapFaces,
+            bytesFormat,
+            ddsTexture.getWidth(), 
+            ddsTexture.getHeight(), 
+            1,
+            desiredFormat,
+            dimension,
+            settings,
+            preprocess);
     }
 
     // Single mip-map level
@@ -961,8 +961,8 @@ Texture::Ref Texture::fromTwoFiles(
     const std::string&      alphaFilename,
     const ImageFormat*      desiredFormat,
     Dimension               dimension,
-	const Settings&			settings,
-	const Preprocess&		preprocess) {
+    const Settings&            settings,
+    const Preprocess&        preprocess) {
 
     debugAssert(desiredFormat);
 
@@ -998,11 +998,11 @@ Texture::Ref Texture::fromTwoFiles(
     Texture::Ref t;
 
     try {
-		for (int f = 0; f < numFaces; ++f) {
-			// Compose the two images to a single RGBA
-			color[f].load(filenameArray[f]);
-			alpha[f].load(alphaFilenameArray[f]);
-			uint8* data = NULL;
+        for (int f = 0; f < numFaces; ++f) {
+            // Compose the two images to a single RGBA
+            color[f].load(filenameArray[f]);
+            alpha[f].load(alphaFilenameArray[f]);
+            uint8* data = NULL;
 
 
             if (numFaces > 1) {
@@ -1010,45 +1010,45 @@ Texture::Ref Texture::fromTwoFiles(
                 transform(alpha[f], alphaInfo.face[f]);
             }
 
-			if (color[f].channels() == 4) {
-				data = color[f].byte();
-				// Write the data inline
-				for (int i = 0; i < color[f].width() * color[f].height(); ++i) {
-					data[i * 4 + 3] = alpha[f].byte()[i * alpha[f].channels()];
-				}
-			} else {
-				alwaysAssertM(color[f].channels() == 3, "Cannot load monochrome cube maps");
-				data = new uint8[color[f].width() * color[f].height() * 4];
-				// Write the data inline
-				for (int i = 0; i < color[f].width() * color[f].height(); ++i) {
-					data[i * 4 + 0] = color[f].byte()[i * 3 + 0];
-					data[i * 4 + 1] = color[f].byte()[i * 3 + 1];
-					data[i * 4 + 2] = color[f].byte()[i * 3 + 2];
-					data[i * 4 + 3] = alpha[f].byte()[i * alpha[f].channels()];
-				}
-			}
+            if (color[f].channels() == 4) {
+                data = color[f].byte();
+                // Write the data inline
+                for (int i = 0; i < color[f].width() * color[f].height(); ++i) {
+                    data[i * 4 + 3] = alpha[f].byte()[i * alpha[f].channels()];
+                }
+            } else {
+                alwaysAssertM(color[f].channels() == 3, "Cannot load monochrome cube maps");
+                data = new uint8[color[f].width() * color[f].height() * 4];
+                // Write the data inline
+                for (int i = 0; i < color[f].width() * color[f].height(); ++i) {
+                    data[i * 4 + 0] = color[f].byte()[i * 3 + 0];
+                    data[i * 4 + 1] = color[f].byte()[i * 3 + 1];
+                    data[i * 4 + 2] = color[f].byte()[i * 3 + 2];
+                    data[i * 4 + 3] = alpha[f].byte()[i * alpha[f].channels()];
+                }
+            }
 
-			array[f] = data;
-		}
+            array[f] = data;
+        }
 
-		t = fromMemory(
-				filename, 
-				mip, 
-				ImageFormat::RGBA8(),
-				color[0].width(), 
-				color[0].height(), 
-				1, 
-				desiredFormat, 
-				dimension,
-				settings,
-				preprocess);
+        t = fromMemory(
+                filename, 
+                mip, 
+                ImageFormat::RGBA8(),
+                color[0].width(), 
+                color[0].height(), 
+                1, 
+                desiredFormat, 
+                dimension,
+                settings,
+                preprocess);
 
-		if (color[0].channels() == 3) {
-			// Delete the data if it was dynamically allocated
-			for (int f = 0; f < numFaces; ++f) {
-				delete[] static_cast<uint8*>(const_cast<void*>(array[f]));
-			}
-		}
+        if (color[0].channels() == 3) {
+            // Delete the data if it was dynamically allocated
+            for (int f = 0; f < numFaces; ++f) {
+                delete[] static_cast<uint8*>(const_cast<void*>(array[f]));
+            }
+        }
 
     } catch (const GImage::Error& e) {
         Log::common()->printf("\n**************************\n\n"
@@ -1379,8 +1379,8 @@ Texture::Ref Texture::fromGImage(
     const GImage&                   image,
     const class ImageFormat*      desiredFormat,
     Dimension                       dimension,
-	const Settings&					settings,
-	const Preprocess&				preprocess) {
+    const Settings&                    settings,
+    const Preprocess&                preprocess) {
 
     const ImageFormat* format = ImageFormat::RGB8();
     bool opaque = true;
@@ -1413,16 +1413,16 @@ Texture::Ref Texture::fromGImage(
 
     Texture::Ref t =
         fromMemory(
-			name, 
-			image.byte(), 
-			format,
+            name, 
+            image.byte(), 
+            format,
             image.width(), 
-			image.height(), 
-			1,
+            image.height(), 
+            1,
             desiredFormat, 
-			dimension, 
-			settings,
-			preprocess);
+            dimension, 
+            settings,
+            preprocess);
 
     return t;
 }
@@ -1432,8 +1432,8 @@ Texture::Ref Texture::fromImageBuffer(
     const ImageBuffer::Ref&         image,
     const ImageFormat*              desiredFormat,
     Dimension                       dimension,
-	const Settings&					settings,
-	const Preprocess&				preprocess) {
+    const Settings&                    settings,
+    const Preprocess&                preprocess) {
 
     Array< Array< ImageBuffer::Ref > > mips;
     mips.append( Array< ImageBuffer::Ref >() );
@@ -1634,7 +1634,7 @@ void Texture::getImage(GImage& dst, const ImageFormat* outFormat, CubeFace face)
 
 
 void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace face) const {
-	
+    
     GLenum target;
     if (isCubeMap()) { 
         target = GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + (int)face;
@@ -1660,9 +1660,9 @@ void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace
 
 
 Image4Ref Texture::toImage4() const {
-	Image4Ref im = Image4::createEmpty(m_width, m_height, m_settings.wrapMode); 
-	getTexImage(im->getCArray(), ImageFormat::RGBA32F());
-	return im;
+    Image4Ref im = Image4::createEmpty(m_width, m_height, m_settings.wrapMode); 
+    getTexImage(im->getCArray(), ImageFormat::RGBA32F());
+    return im;
 }
 
 Image4unorm8Ref Texture::toImage4unorm8() const {
@@ -1671,13 +1671,13 @@ Image4unorm8Ref Texture::toImage4unorm8() const {
     return im;
 }
 
-Image3Ref Texture::toImage3() const {	
+Image3Ref Texture::toImage3() const {    
     Image3::Ref im = Image3::createEmpty(m_width, m_height, m_settings.wrapMode); 
     getTexImage(im->getCArray(), ImageFormat::RGB32F());
     return im;
 }
 
-Image3unorm8Ref Texture::toImage3unorm8() const {	
+Image3unorm8Ref Texture::toImage3unorm8() const {    
     Image3unorm8::Ref im = Image3unorm8::createEmpty(m_width, m_height, m_settings.wrapMode); 
     getTexImage(im->getCArray(), ImageFormat::RGB8());
     return im;
@@ -1690,9 +1690,9 @@ Map2D<float>::Ref Texture::toDepthMap() const {
 }
 
 Image1Ref Texture::toDepthImage1() const {
-	Image1Ref im = Image1::createEmpty(m_width, m_height, m_settings.wrapMode);
-	getTexImage(im->getCArray(), ImageFormat::DEPTH32F());
-	return im;
+    Image1Ref im = Image1::createEmpty(m_width, m_height, m_settings.wrapMode);
+    getTexImage(im->getCArray(), ImageFormat::DEPTH32F());
+    return im;
 }
 
 Image1unorm8Ref Texture::toDepthImage1unorm8() const {
@@ -1744,34 +1744,34 @@ void Texture::splitFilenameAtWildCard(
 
 
 bool Texture::isSupportedImage(const std::string& filename) {
-	// Reminder: this looks in zipfiles as well
-	if (! FileSystem::exists(filename)) {
-		return false;
-	}
+    // Reminder: this looks in zipfiles as well
+    if (! FileSystem::exists(filename)) {
+        return false;
+    }
 
-	std::string ext = toLower(filenameExt(filename));
+    std::string ext = toLower(filenameExt(filename));
 
-	if ((ext == "jpg") ||	
-		(ext == "ico") ||
-		(ext == "dds") ||
-		(ext == "png") ||
-		(ext == "tga") || 
-		(ext == "bmp") ||
-		(ext == "ppm") ||
-		(ext == "pgm") ||
-		(ext == "pbm") ||
-		(ext == "pcx")) {
-		return true;
-	} else {
-		return false;
-	}
+    if ((ext == "jpg") ||    
+        (ext == "ico") ||
+        (ext == "dds") ||
+        (ext == "png") ||
+        (ext == "tga") || 
+        (ext == "bmp") ||
+        (ext == "ppm") ||
+        (ext == "pgm") ||
+        (ext == "pbm") ||
+        (ext == "pcx")) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
 Texture::~Texture() {
     m_sizeOfAllTexturesInMemory -= sizeInMemory();
-	glDeleteTextures(1, &m_textureID);
-	m_textureID = 0;
+    glDeleteTextures(1, &m_textureID);
+    m_textureID = 0;
 }
 
 
@@ -2007,15 +2007,15 @@ Texture::Ref Texture::alphaOnlyVersion() const {
 
     Texture::Ref ret = 
         fromMemory(
-			m_name + " Alpha", 
-			mip,
-			bytesFormat,
+            m_name + " Alpha", 
+            mip,
+            bytesFormat,
             m_width, 
-			m_height, 
-			1, 
-			ImageFormat::A8(),
+            m_height, 
+            1, 
+            ImageFormat::A8(),
             m_dimension, 
-			m_settings);
+            m_settings);
 
     for (int f = 0; f < numFaces; ++f) {
         System::free(const_cast<void*>(bytes[f]));

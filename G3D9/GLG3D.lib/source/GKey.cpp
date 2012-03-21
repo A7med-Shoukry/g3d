@@ -1,8 +1,8 @@
 /**
   @file GLG3D/source/GKey.cpp
 
-  @created 	  2007-01-27
-  @edited  	  2007-01-27
+  @created       2007-01-27
+  @edited        2007-01-27
     
   Copyright 2000-2007, Morgan McGuire.
   All rights reserved.

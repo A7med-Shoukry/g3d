@@ -29,8 +29,8 @@ void ArticulatedModel::loadBSP(const Specification& specification) {
     debugAssertM(src.notNull(), "Could not find " + pk3File);
 
     Array< Vector3 >    vertexArray;
-    Array< Vector3 >   	normalArray;
-    Array< int >  	indexArray;
+    Array< Vector3 >       normalArray;
+    Array< int >      indexArray;
     Array< Vector2 >    texCoordArray;
     Array< int >        textureMapIndexArray;
     Array< Vector2 >    lightCoordArray;

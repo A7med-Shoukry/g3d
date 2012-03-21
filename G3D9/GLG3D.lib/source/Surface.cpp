@@ -761,12 +761,12 @@ void Surface2D::sort(Array<Surface2DRef>& array) {
 
 
 void Surface::getTris(const Array<Surface::Ref>& surfaceArray, CPUVertexArray& cpuVertexArray, Array<Tri>& triArray){
-	Array< Array<Surface::Ref> > derivedTable;
-	categorizeByDerivedType(surfaceArray, derivedTable);
-	for (int t = 0; t < derivedTable.size(); ++t) {
+    Array< Array<Surface::Ref> > derivedTable;
+    categorizeByDerivedType(surfaceArray, derivedTable);
+    for (int t = 0; t < derivedTable.size(); ++t) {
         Array<Surface::Ref>& derivedArray = derivedTable[t];
         derivedArray[0]->getTrisHomogeneous(derivedArray, cpuVertexArray, triArray);
-	}
+    }
 
 }
 

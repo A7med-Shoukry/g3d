@@ -541,8 +541,8 @@ public:
 
         /** @deprecated  Use isValid */
         bool hasMore() const {
-			return ! isDone;
-		}
+            return ! isDone;
+        }
     };
 
 

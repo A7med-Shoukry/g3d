@@ -72,7 +72,7 @@ protected:
     template<class Class>
     class MethodCallback : public CallbackInterface {
     private:
-        Class*		m_object;
+        Class*        m_object;
         void (Class::*m_callback)();
     public:
         MethodCallback(Class* object,
@@ -117,7 +117,7 @@ public:
     class Callback {
     private:
         
-        CallbackInterface*		m_internal;
+        CallbackInterface*        m_internal;
         
     public:
         
@@ -134,16 +134,16 @@ public:
          */
         template<class Class>
         inline Callback(
-			Class* const object,
-			void (Class::*method)()) : m_internal(new MethodCallback<Class>(object, method)) {}
+            Class* const object,
+            void (Class::*method)()) : m_internal(new MethodCallback<Class>(object, method)) {}
         
         /** Create a callback from a reference counted class and method of no arguments, 
             e.g., \code PlayerRef player = ...; 
             Callback( player, &Player::jump ) \endcode */
         template<class Class>
         inline Callback(
-			const ReferenceCountedPointer<Class>& object,
-			void (Class::*method)()) : m_internal(new MethodRefCallback<Class>(object, method)) {}
+            const ReferenceCountedPointer<Class>& object,
+            void (Class::*method)()) : m_internal(new MethodRefCallback<Class>(object, method)) {}
         
         /** Execute the callback.*/
         virtual void execute() {
@@ -198,7 +198,7 @@ protected:
     GuiText           m_caption;
 
     float             m_captionWidth;
-	float			  m_captionHeight;
+    float              m_captionHeight;
 
     bool              m_visible;
 
@@ -227,7 +227,7 @@ public:
         this is the size reserved for the caption. */
     float captionWidth() const;
 
-	/** For controls that have a caption outside the bounds of the control on the top or bottom,
+    /** For controls that have a caption outside the bounds of the control on the top or bottom,
         this is the size reserved for the caption. */
     float captionHeight() const;
 
@@ -282,7 +282,7 @@ public:
         return TOP_CAPTION_HEIGHT;
     }
 
-	virtual float defaultCaptionWidth() const {
+    virtual float defaultCaptionWidth() const {
         return LEFT_CAPTION_WIDTH;
     }
 

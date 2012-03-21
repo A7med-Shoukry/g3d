@@ -188,27 +188,27 @@ std::string GLCaps::getDriverVersion() {
             return "Unknown (Can't find driver)";
         }
 
-	    // Interpret the VS_VERSIONINFO header pseudo-struct
-	    VS_VERSIONINFO* pVS = (VS_VERSIONINFO*)buffer;
+        // Interpret the VS_VERSIONINFO header pseudo-struct
+        VS_VERSIONINFO* pVS = (VS_VERSIONINFO*)buffer;
         debugAssert(! wcscmp(pVS->szKey, L"VS_VERSION_INFO"));
 
-	    uint8* pVt = (uint8*) &pVS->szKey[wcslen(pVS->szKey) + 1];
+        uint8* pVt = (uint8*) &pVS->szKey[wcslen(pVS->szKey) + 1];
 
-        #define roundoffs(a,b,r)	(((uint8*)(b) - (uint8*)(a) + ((r) - 1)) & ~((r) - 1))
-        #define roundpos(b, a, r)	(((uint8*)(a)) + roundoffs(a, b, r))
+        #define roundoffs(a,b,r)    (((uint8*)(b) - (uint8*)(a) + ((r) - 1)) & ~((r) - 1))
+        #define roundpos(b, a, r)    (((uint8*)(a)) + roundoffs(a, b, r))
 
-	    VS_FIXEDFILEINFO* pValue = (VS_FIXEDFILEINFO*) roundpos(pVt, pVS, 4);
+        VS_FIXEDFILEINFO* pValue = (VS_FIXEDFILEINFO*) roundpos(pVt, pVS, 4);
 
         #undef roundoffs
         #undef roundpos
 
         std::string result = "Unknown (Can't find driver)";
 
-	    if (pVS->wValueLength) {
-	        result = format("%d.%d.%d.%d",
+        if (pVS->wValueLength) {
+            result = format("%d.%d.%d.%d",
                 pValue->dwProductVersionMS >> 16,
                 pValue->dwProductVersionMS & 0xFFFF,
-	            pValue->dwProductVersionLS >> 16,
+                pValue->dwProductVersionLS >> 16,
                 pValue->dwProductVersionLS & 0xFFFF);
         }
 
@@ -277,8 +277,8 @@ void GLCaps::init() {
     DECLARE_EXT(GL_ARB_framebuffer_object);
     DECLARE_EXT(GL_ARB_framebuffer_sRGB);
     DECLARE_EXT(GL_SGIS_generate_mipmap);
-	DECLARE_EXT(GL_EXT_texture_mirror_clamp);
-	DECLARE_EXT(GL_EXT_framebuffer_object);
+    DECLARE_EXT(GL_EXT_texture_mirror_clamp);
+    DECLARE_EXT(GL_EXT_framebuffer_object);
 #undef DECLARE_EXT
 
 
@@ -358,8 +358,8 @@ void GLCaps::loadExtensions(Log* debugLog) {
             DECLARE_EXT_GL3(GL_ARB_framebuffer_object);
             DECLARE_EXT_GL3(GL_ARB_framebuffer_sRGB);
             DECLARE_EXT(GL_SGIS_generate_mipmap);
-        	DECLARE_EXT(GL_EXT_texture_mirror_clamp);
-        	DECLARE_EXT(GL_EXT_framebuffer_object);
+            DECLARE_EXT(GL_EXT_texture_mirror_clamp);
+            DECLARE_EXT(GL_EXT_framebuffer_object);
 #       undef DECLARE_EXT_GL3
 #       undef DECLARE_EXT_GL2
 #       undef DECLARE_EXT
@@ -596,7 +596,7 @@ const std::string& GLCaps::glVersion() {
 const std::string& GLCaps::driverVersion() {
     alwaysAssertM(m_loadedExtensions, "Cannot call GLCaps::driverVersion before GLCaps::init().");
     static std::string _driverVersion = getDriverVersion().c_str();
-	return _driverVersion;
+    return _driverVersion;
 }
 
 
@@ -620,7 +620,7 @@ const std::string& GLCaps::vendor() {
 const std::string& GLCaps::renderer() {
     alwaysAssertM(m_loadedExtensions, "Cannot call GLCaps::renderer before GLCaps::init().");
     static std::string _glRenderer = (char*)glGetString(GL_RENDERER);
-	return _glRenderer;
+    return _glRenderer;
 }
 
  
@@ -843,10 +843,10 @@ void GLCaps::checkBug_redBlueMipmapSwap() {
 
     // Read the data back.
     glGetTexImage(GL_TEXTURE_2D,
-			      0,
-			      GL_RGB,
-			      GL_UNSIGNED_BYTE,
-			      bytes);
+                  0,
+                  GL_RGB,
+                  GL_UNSIGNED_BYTE,
+                  bytes);
 
     // Verify that the data made the round trip correctly
     bug_redBlueMipmapSwap = 
@@ -865,15 +865,15 @@ void GLCaps::checkBug_redBlueMipmapSwap() {
 void GLCaps::checkBug_mipmapGeneration() {
     const std::string& r = renderer();
 
-	// The mip-maps are arbitrarily corrupted; we have not yet generated
-	// a reliable test for this case.
+    // The mip-maps are arbitrarily corrupted; we have not yet generated
+    // a reliable test for this case.
 
     bug_mipmapGeneration = 
         GLCaps::supports("GL_SGIS_generate_mipmap") &&
-		(beginsWith(r, "MOBILITY RADEON 90") ||
-		    beginsWith(r, "MOBILITY RADEON 57") ||
-		    beginsWith(r, "Intel 845G") ||
-		    beginsWith(r, "Intel 854G"));
+        (beginsWith(r, "MOBILITY RADEON 90") ||
+            beginsWith(r, "MOBILITY RADEON 57") ||
+            beginsWith(r, "Intel 845G") ||
+            beginsWith(r, "Intel 854G"));
 }
 
 
@@ -885,15 +885,15 @@ void GLCaps::checkBug_slowVBO() {
             (glDeleteBuffersARB != NULL);
 
     if (! hasVBO) {
-		// Don't have VBO; don't have a bug!
+        // Don't have VBO; don't have a bug!
         bug_slowVBO = false;
         return;
     }
 
-	const std::string& r = renderer();
+    const std::string& r = renderer();
 
     bug_slowVBO = beginsWith(r, "MOBILITY RADEON 7500");
-	return;
+    return;
 
     // TODO: Make a real test for this case
 }

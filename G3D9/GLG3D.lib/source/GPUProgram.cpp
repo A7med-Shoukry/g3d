@@ -35,22 +35,22 @@ void GPUProgram::ArgList::set(const std::string& var, const Texture::Ref& val) {
     switch (val->dimension()) {
     case Texture::DIM_2D_NPOT:
     case Texture::DIM_2D:
-	    arg.type = SAMPLER2D;
-	    break;
+        arg.type = SAMPLER2D;
+        break;
 
     case Texture::DIM_3D:
     case Texture::DIM_3D_NPOT:
-	    arg.type = SAMPLER3D;
-	    break;
+        arg.type = SAMPLER3D;
+        break;
 
     case Texture::DIM_2D_RECT:
-	    arg.type = SAMPLERRECT;
-	    break;
+        arg.type = SAMPLERRECT;
+        break;
 
     case Texture::DIM_CUBE_MAP_NPOT:
     case Texture::DIM_CUBE_MAP:
-	    arg.type = SAMPLERCUBE;
-	    break;
+        arg.type = SAMPLERCUBE;
+        break;
     }
 
     arg.texture = val;
@@ -134,47 +134,47 @@ GLenum GPUProgram::getUnitFromCode(const std::string& code, Extension& extension
 
     if (beginsWith(code, "!!ARBvp1.0")) {
 
-		extension = ARB;
+        extension = ARB;
 
         return GL_VERTEX_PROGRAM_ARB;
 
     } if (beginsWith(code, "!!ARBfp1.0")) {
 
-		extension = ARB;
+        extension = ARB;
 
         return GL_FRAGMENT_PROGRAM_ARB;
 
     } if (beginsWith(code, "!!VP2.0")) {
 
-		extension = NVIDIA;
+        extension = NVIDIA;
 
         return GL_VERTEX_PROGRAM_NV;
 
 
     } if (beginsWith(code, "!!VP1.0")) {
 
-		extension = NVIDIA;
+        extension = NVIDIA;
 
         return GL_VERTEX_PROGRAM_NV;
 
 
     } if (beginsWith(code, "!!FP1.0")) {
 
-		extension = NVIDIA;
+        extension = NVIDIA;
 
         return GL_FRAGMENT_PROGRAM_NV;
 
 
     } if (beginsWith(code, "!!FP1.1")) {
 
-		extension = NVIDIA;
+        extension = NVIDIA;
 
         return GL_FRAGMENT_PROGRAM_NV;
 
 
     } if (beginsWith(code, "!!FP2.0")) {
 
-		extension = NVIDIA;
+        extension = NVIDIA;
 
         return GL_FRAGMENT_PROGRAM_NV;
 
@@ -452,12 +452,12 @@ void GPUProgram::setArgs(RenderDevice* renderDevice, const ArgList& args) {
             if (binding.slot != BindingTable::Binding::UNASSIGNED) {
                 switch (binding.type) {
                 case SAMPLER1D:
-			    case SAMPLER2D:
-			    case SAMPLER3D:
-			    case SAMPLERCUBE:
-			    case SAMPLERRECT:
-				    renderDevice->setTexture(binding.slot, arg.texture);
-				    break;
+                case SAMPLER2D:
+                case SAMPLER3D:
+                case SAMPLERCUBE:
+                case SAMPLERRECT:
+                    renderDevice->setTexture(binding.slot, arg.texture);
+                    break;
 
                 case FLOAT4:
                 case FLOAT3:
@@ -593,34 +593,34 @@ bool GPUProgram::CgType(const std::string& s, GPUProgram::Type& t) {
 
 std::string GPUProgram::toString(const Type& t) {
 
-	switch (t) {
-	case FLOAT4X4:
-		return "float4x4";
-	case FLOAT3X3:
-		return "float3x3";
-	case FLOAT2X2:
-		return "float2x2";
-	case FLOAT4:
-		return "float4";
-	case FLOAT3:
-		return "float3";
-	case FLOAT2:
-		return "float2";
-	case FLOAT1:
-		return "float1";
-	case SAMPLER1D:
-		return "sampler1D";
-	case SAMPLER2D:
-		return "sampler2D";
-	case SAMPLER3D:
-		return "sampler3D";
-	case SAMPLERCUBE:
-		return "samplerCUBE";
-	case SAMPLERRECT:
-		return "samplerRECT";
-	}
+    switch (t) {
+    case FLOAT4X4:
+        return "float4x4";
+    case FLOAT3X3:
+        return "float3x3";
+    case FLOAT2X2:
+        return "float2x2";
+    case FLOAT4:
+        return "float4";
+    case FLOAT3:
+        return "float3";
+    case FLOAT2:
+        return "float2";
+    case FLOAT1:
+        return "float1";
+    case SAMPLER1D:
+        return "sampler1D";
+    case SAMPLER2D:
+        return "sampler2D";
+    case SAMPLER3D:
+        return "sampler3D";
+    case SAMPLERCUBE:
+        return "samplerCUBE";
+    case SAMPLERRECT:
+        return "samplerRECT";
+    }
 
-	return "** unknown type**";
+    return "** unknown type**";
 }
 
 
@@ -650,45 +650,45 @@ void GPUProgram::BindingTable::parseVariable(TextInput& ti) {
     name = ti.readSymbol();
 
     if (! consumeSymbol(ti, ":")) {
-		goto abort;
-	}
+        goto abort;
+    }
 
     // see if it is the vertex or a constant register
     t = ti.peek();
 
     if (t.type() != Token::SYMBOL) {
-		goto abort;
-	}
+        goto abort;
+    }
 
-	// Sometimes there is an extra token between the colons
-	if (t.string() != ":") {
-		ti.readSymbol();
-		t = ti.peek();
-	}
+    // Sometimes there is an extra token between the colons
+    if (t.string() != ":") {
+        ti.readSymbol();
+        t = ti.peek();
+    }
 
     if (! consumeSymbol(ti, ":")) {
-		goto abort;
-	}
+        goto abort;
+    }
 
     // read the register number
-	t = ti.peek();
+    t = ti.peek();
 
-	if (t.type() != Token::SYMBOL) {
-		goto abort;
-	}
+    if (t.type() != Token::SYMBOL) {
+        goto abort;
+    }
 
     // Consume the symbol we just peeked
-	ti.readSymbol();
+    ti.readSymbol();
 
-	if (t.string() == "texunit") {
-		// We're reading a texture unit
+    if (t.string() == "texunit") {
+        // We're reading a texture unit
 
-	} else if (t.string() == "c") {
-		// We're reading a regular variable; parse the open bracket
+    } else if (t.string() == "c") {
+        // We're reading a regular variable; parse the open bracket
 
-		if (! consumeSymbol(ti, "[")) {
-			goto abort;
-		}
+        if (! consumeSymbol(ti, "[")) {
+            goto abort;
+        }
 
     } else if ((t.type() == Token::SYMBOL) && (t.string() == ":")) {        
         // Unused variable; must be present but is not bound
@@ -703,10 +703,10 @@ void GPUProgram::BindingTable::parseVariable(TextInput& ti) {
 
     } else {
 
-		// Something unexpected happened.
-		goto abort;
+        // Something unexpected happened.
+        goto abort;
 
-	}
+    }
 
     t = ti.peek();
 
@@ -721,7 +721,7 @@ void GPUProgram::BindingTable::parseVariable(TextInput& ti) {
     }
 
 abort:
-	;// Jump here if anything unexpected is encountered during parsing
+    ;// Jump here if anything unexpected is encountered during parsing
 }
 
 

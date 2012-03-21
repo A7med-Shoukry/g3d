@@ -135,23 +135,23 @@ GFont::GFont(const std::string& filename, BinaryInput& b) : m_texture(NULL) {
     const uint8* ptr = ((uint8*)b.getCArray()) + b.getPosition();
     debugAssertM((b.getLength() - b.getPosition()) >= width * height, "File does not contain enough data for this size texture");
 
-	Texture::Settings fontSettings;
-	fontSettings.wrapMode = WrapMode::CLAMP;
+    Texture::Settings fontSettings;
+    fontSettings.wrapMode = WrapMode::CLAMP;
     fontSettings.interpolateMode = Texture::TRILINEAR_MIPMAP;
     Texture::Preprocess preprocess;
     preprocess.computeMinMaxMean = false;
 
     m_texture = 
         Texture::fromMemory(
-			filename, 
-			ptr,
+            filename, 
+            ptr,
             ImageFormat::A8(), 
-			width, 
-			height,
-			1,
-			ImageFormat::A8(), 
-			Texture::DIM_2D,
-			fontSettings,
+            width, 
+            height,
+            1,
+            ImageFormat::A8(), 
+            Texture::DIM_2D,
+            fontSettings,
             preprocess);
    
     m_textureMatrix[0] = 1.0f / m_texture->width();
@@ -614,9 +614,9 @@ Vector2 GFont::draw3D(
                 for (int dx = -1; dx <= 1; dx += 2) {
                     if ((dx != 0) || (dy != 0)) {
                         drawString(renderDevice, s,
-	                       x + dx * borderOffset, 
-	                       y + dy * borderOffset,
-	                       w, h, spacing);
+                           x + dx * borderOffset, 
+                           y + dy * borderOffset,
+                           w, h, spacing);
                     }
                 }
             }

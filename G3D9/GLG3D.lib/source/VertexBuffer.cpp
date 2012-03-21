@@ -42,7 +42,7 @@ VertexBuffer::VertexBuffer(size_t _size, UsageHint hint, Type t) :  m_type(t), m
         if (GLCaps::supports_GL_ARB_vertex_buffer_object() &&
             (glGenBuffersARB != NULL) && 
             (glBufferDataARB != NULL) &&
-            (glDeleteBuffersARB != NULL) &&			
+            (glDeleteBuffersARB != NULL) &&            
             ! GLCaps::hasBug_slowVBO()) {
             m_mode = VBO_MEMORY;
         } else {

@@ -85,7 +85,7 @@ public:
         bits[i >> 5] &= ~(1 << (i & 31));
     }
 
-    void clearAll()	{
+    void clearAll()    {
         System::memset(bits, 0, sizeof(G3D::uint32) * size);
     }
 };
@@ -121,7 +121,7 @@ public:
     /**
      Used for bezier patch tesselation
      */
-    Vertex operator*(float factor) const	{
+    Vertex operator*(float factor) const    {
         Vertex res;
 
         res.position      = position        * factor;
@@ -237,7 +237,7 @@ class BSPEntity {
 public:
     Vector3             position;
     std::string         name;
-    int	                spawnflags;
+    int                    spawnflags;
     std::string         targetName;
     std::string         target;
     
@@ -498,7 +498,7 @@ private:
     Texture::Ref          defaultLightmap;
 
 public:
-	Array<BSPEntity>	  entityArray;
+    Array<BSPEntity>      entityArray;
 
 private:
     Vector3               startingPosition;
@@ -573,17 +573,17 @@ private:
      */
     inline bool isClusterVisible(int visCluster, int testCluster) const {
 
-	    if ((visData.bitsets == NULL) || (visCluster < 0)) {
-		    return true;
-	    }
+        if ((visData.bitsets == NULL) || (visCluster < 0)) {
+            return true;
+        }
 
-	    // Note: testCluster >> 3 == testCluster / 8
-	    int i = (visCluster * visData.bytesPerCluster) + (testCluster >> 3);
+        // Note: testCluster >> 3 == testCluster / 8
+        int i = (visCluster * visData.bytesPerCluster) + (testCluster >> 3);
 
         // uint8 in original implementation; believe uint32 will be faster.
         G3D::uint32 visSet = visData.bitsets[i];
 
-	    return (visSet & (1 << (testCluster & 7))) != 0;
+        return (visSet & (1 << (testCluster & 7))) != 0;
     }
     
     int findLeaf(const Vector3& pos) const;
@@ -692,7 +692,7 @@ public:
         return entityArray;
     }
     const Array<BSPModel>& getModelList() const {
-		return dynamicModels;
+        return dynamicModels;
     }
 
     /**

@@ -83,11 +83,11 @@ public:
         /** Initial x position of the client area in screen space(can
             be overridden by fullScreen and center) */
         int     x;
-    	
+        
         /** Initial y position of the client area in screen space(can
             be overridden by fullScreen and center) */
         int     y;
-    	
+        
         /** If true, overrides the x and y settings */
         bool    center;
         
@@ -106,11 +106,11 @@ public:
         
         /** <B>8</B> */
         int     stencilBits;
-    	
+        
         /** Number of samples per pixel for anti-aliasing purposes.
             <B>1</B> (none), 4, 8 */
         int     msaaSamples;
-    	
+        
         /** Will you accept a software rendering pipeline?  Used to
             determine if a hardware only pixel format is
             required. */
@@ -127,10 +127,10 @@ public:
         
         /** Allocate a stereo display context. true, <B>false</B> */
         bool    stereo;
-    	
+        
         /** Refresh rate for full-screen, in cycles/sec. If zero, the display can choose its own refresh. */
         int     refreshRate;
-    	
+        
         /**
            If true, you should set up your event loop as described in the 
            docs for RenderDevice::resize.
@@ -150,12 +150,12 @@ public:
            windows only)
         */
         bool    allowMaximize;
-    	
+        
         /**
            When true, a window frame and title bar are present.
         */
         bool    framed;
-    	
+        
         /**
            When true, the window begins visible.  <B>true</B>, false.
         */
@@ -257,12 +257,12 @@ protected:
     /** Subclasses should call from their idle function. */
     void executeLoopBody();
     
-	/** 
+    /** 
       Capture the keyboard and mouse focus, locking the mouse to the client area of this window.
       Sets the inputCaptureCount to 1 if @a c is true and 0 if @a c is false
      */
     virtual void setInputCapture(bool c) = 0;
-	virtual void setMouseVisible(bool b) = 0;
+    virtual void setMouseVisible(bool b) = 0;
 
 public:
 
@@ -414,7 +414,7 @@ public:
             setInputCapture(true);
         }
 
-		// Set this variable after the setInputCapture statements since
+        // Set this variable after the setInputCapture statements since
         // they corrupt its value.
         m_inputCaptureCount = c;
     }

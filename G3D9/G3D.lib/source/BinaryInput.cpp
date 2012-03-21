@@ -95,7 +95,7 @@ BinaryInput::BinaryInput(
         debugAssert(result == Z_OK); (void)result;
 
     } else {
-    	m_length = dataLen;
+        m_length = dataLen;
         m_bufferLength = m_length;
         if (! copyMemory) {
             debugAssert(!m_freeBuffer);

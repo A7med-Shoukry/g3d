@@ -17,11 +17,11 @@
 namespace G3D {
 
 TextOutput::TextOutput(const TextOutput::Settings& opt) :
-	startingNewLine(true),
+    startingNewLine(true),
     currentColumn(0),
-	inDQuote(false),
-	filename(""),
-	indentLevel(0),
+    inDQuote(false),
+    filename(""),
+    indentLevel(0),
     m_currentLine(0)
 {
     setOptions(opt);
@@ -31,9 +31,9 @@ TextOutput::TextOutput(const TextOutput::Settings& opt) :
 TextOutput::TextOutput(const std::string& fil, const TextOutput::Settings& opt) :
     startingNewLine(true),
     currentColumn(0),
-	inDQuote(false),
-	filename(fil),
-	indentLevel(0),
+    inDQuote(false),
+    filename(fil),
+    indentLevel(0),
     m_currentLine(0)
 {
 

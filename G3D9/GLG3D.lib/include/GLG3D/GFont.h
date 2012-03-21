@@ -42,11 +42,11 @@ public:
     typedef ReferenceCountedPointer<class GFont> Ref;
 
     /** Constant for draw2D.  Specifies the horizontal alignment
-	of an entire string relative to the supplied x,y position */
+    of an entire string relative to the supplied x,y position */
     enum XAlign {XALIGN_RIGHT, XALIGN_LEFT, XALIGN_CENTER};
 
     /** Constant for draw2D.  Specifies the vertical alignment
-	of the characters relative to the supplied x,y position.
+    of the characters relative to the supplied x,y position.
       */
     enum YAlign {YALIGN_TOP, YALIGN_BASELINE, YALIGN_CENTER, YALIGN_BOTTOM};
 
@@ -144,15 +144,15 @@ public:
       The Bitmap Font Builder program can be downloaded from http://www.lmnopc.com/bitmapfontbuilder/
 
       Use the full ASCII character set; the conversion will strip
-	  infrequently used characters automatically. Write out RAW files
-	  with characters CENTER aligned and right side up using this
-	  program.  Then, also write out an INI file; this contains the
-	  width of each character in the font.  Example: 
+      infrequently used characters automatically. Write out RAW files
+      with characters CENTER aligned and right side up using this
+      program.  Then, also write out an INI file; this contains the
+      width of each character in the font.  Example: 
 
       <PRE>
-	  GFont::makeFont(256,
+      GFont::makeFont(256,
                       "c:/tmp/g3dfont/news",
-	                  "d:/graphics3d/book/cpp/data/font/news.fnt"); 
+                      "d:/graphics3d/book/cpp/data/font/news.fnt"); 
       </PRE> 
 
 
@@ -290,7 +290,7 @@ public:
         XAlign                      xalign  = XALIGN_CENTER,
         YAlign                      yalign  = YALIGN_CENTER,
         Spacing                     spacing = PROPORTIONAL_SPACING) const;
-		
+        
     /**
      \brief Computes the bounding extent of \a s at the given font size.
      Useful for drawing centered text and boxes around text.

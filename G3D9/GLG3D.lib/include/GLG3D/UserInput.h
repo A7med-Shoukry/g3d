@@ -114,14 +114,14 @@ private:
     /**
      Expects SDL_MOUSEBUTTONDOWN, etc. to be translated into key codes.
      */
-	void processKey(GKey code, int event);
+    void processKey(GKey code, int event);
 
 public:
 
     bool                    useJoystick;
     
-	/**
-	 */
+    /**
+     */
     UserInput(OSWindow* window);
 
     /**
@@ -131,15 +131,15 @@ public:
 
     void setKeyMapping(Table<GKey, UIFunction>* keyMapping = NULL);
 
-	/**
-	 Closes the joystick if necessary.
-	 */
-	virtual ~UserInput();
+    /**
+     Closes the joystick if necessary.
+     */
+    virtual ~UserInput();
 
-	/**
-	 Call from inside the event loop for every event inside
-	 processEvents() (done for you by App3D.processEvents())
-	 */
+    /**
+     Call from inside the event loop for every event inside
+     processEvents() (done for you by App3D.processEvents())
+     */
     void processEvent(const GEvent& event);
 
     /**

@@ -67,15 +67,15 @@ enum { SDL_PRESSED = 0x01, SDL_RELEASED = 0x00 };
  * The return value is one of the following positions:
  */
 #ifndef SDL_HAT_CENTERED
-#define SDL_HAT_CENTERED	0x00
+#define SDL_HAT_CENTERED    0x00
 #define SDL_HAT_UP          0x01
-#define SDL_HAT_RIGHT		0x02
-#define SDL_HAT_DOWN		0x04
-#define SDL_HAT_LEFT		0x08
-#define SDL_HAT_RIGHTUP		(SDL_HAT_RIGHT|SDL_HAT_UP)
-#define SDL_HAT_RIGHTDOWN	(SDL_HAT_RIGHT|SDL_HAT_DOWN)
-#define SDL_HAT_LEFTUP		(SDL_HAT_LEFT|SDL_HAT_UP)
-#define SDL_HAT_LEFTDOWN	(SDL_HAT_LEFT|SDL_HAT_DOWN)
+#define SDL_HAT_RIGHT        0x02
+#define SDL_HAT_DOWN        0x04
+#define SDL_HAT_LEFT        0x08
+#define SDL_HAT_RIGHTUP        (SDL_HAT_RIGHT|SDL_HAT_UP)
+#define SDL_HAT_RIGHTDOWN    (SDL_HAT_RIGHT|SDL_HAT_DOWN)
+#define SDL_HAT_LEFTUP        (SDL_HAT_LEFT|SDL_HAT_UP)
+#define SDL_HAT_LEFTDOWN    (SDL_HAT_LEFT|SDL_HAT_DOWN)
 #endif
 
 /** Enumeration of valid key modifier codes (often used  ORed together) */
@@ -143,10 +143,10 @@ enum {
     GKEYMOD_RESERVED = 0x8000
 };
 
-#define GKEYMOD_CTRL	(GKEYMOD_LCTRL  | GKEYMOD_RCTRL)
-#define GKEYMOD_SHIFT	(GKEYMOD_LSHIFT | GKEYMOD_RSHIFT)
+#define GKEYMOD_CTRL    (GKEYMOD_LCTRL  | GKEYMOD_RCTRL)
+#define GKEYMOD_SHIFT    (GKEYMOD_LSHIFT | GKEYMOD_RSHIFT)
 #define GKEYMOD_ALT     (GKEYMOD_LALT   | GKEYMOD_RALT)
-#define GKEYMOD_META	(GKEYMOD_LMETA  | GKEYMOD_RMETA)
+#define GKEYMOD_META    (GKEYMOD_LMETA  | GKEYMOD_RMETA)
 
 
 /** Symbolic key structure */
@@ -156,25 +156,25 @@ public:
         Should not be used by general
         applications.  If no hardware scancode is available, it will be 0.
         */
-    uint8           scancode;			
+    uint8           scancode;            
 
     /** G3D virtual raw key code */
-    GKey::Value     sym;		
+    GKey::Value     sym;        
 
     /** Current key modifiers */
-    GKeyMod::Value  mod;	
+    GKeyMod::Value  mod;    
 
     /** Translated character. If non-zero,
      this is a UNICODE character corresponding to the keypress.  If the
      high 9 bits of the character are 0, then this maps to the equivalent
      ASCII character:
         <pre>
-	    char ch;
-	    if ( (keysym.unicode & 0xFF80) == 0 ) {
-		    ch = keysym.unicode & 0x7F;
-	    } else {
-		    An international character..
-	    }
+        char ch;
+        if ( (keysym.unicode & 0xFF80) == 0 ) {
+            ch = keysym.unicode & 0x7F;
+        } else {
+            An international character..
+        }
         </pre>
      */
     uint16          unicode;
@@ -200,30 +200,30 @@ public:
 class GEventType {
 public:
     enum Value { 
-       NONE = 0,	        /** Unused (do not remove) */
-       ACTIVE,	        	/** Application loses/gains visibility \deprecated.  Use FOCUS */
-       KEY_DOWN,	        /** Keys pressed */
-       KEY_UP,	                /** Keys released */
-       MOUSE_MOTION,		/** Mouse moved */
-       MOUSE_BUTTON_DOWN,	/** Mouse button pressed */
-       MOUSE_BUTTON_UP,		/** Mouse button released */
-       JOY_AXIS_MOTION,		/** Joystick axis motion */
-       JOY_BALL_MOTION,		/** Joystick trackball motion */
-       JOY_HAT_MOTION,		/** Joystick hat position change */
-       JOY_BUTTON_DOWN,		/** Joystick button pressed */
-       JOY_BUTTON_UP,		/** Joystick button released */
-       QUIT,		        /** User-requested quit */
-       SYSWMEVENT,	        /** System specific event */
-       EVENT_RESERVEDA,		/** Reserved for future use. */
-       EVENT_RESERVEDB,		/** Reserved for future use. */
-       VIDEO_RESIZE,		/** User resized video mode */
-       VIDEO_EXPOSE,		/** Screen needs to be redrawn */
-       EVENT_RESERVED2,		/** Reserved for future use. */
-       EVENT_RESERVED3,		/** Reserved for future use. */
-       EVENT_RESERVED4,		/** Reserved for future use. */
-       EVENT_RESERVED5,		/** Reserved for future use. */
-       EVENT_RESERVED6,		/** Reserved for future use. */
-       EVENT_RESERVED7,		/** Reserved for future use. */
+       NONE = 0,            /** Unused (do not remove) */
+       ACTIVE,                /** Application loses/gains visibility \deprecated.  Use FOCUS */
+       KEY_DOWN,            /** Keys pressed */
+       KEY_UP,                    /** Keys released */
+       MOUSE_MOTION,        /** Mouse moved */
+       MOUSE_BUTTON_DOWN,    /** Mouse button pressed */
+       MOUSE_BUTTON_UP,        /** Mouse button released */
+       JOY_AXIS_MOTION,        /** Joystick axis motion */
+       JOY_BALL_MOTION,        /** Joystick trackball motion */
+       JOY_HAT_MOTION,        /** Joystick hat position change */
+       JOY_BUTTON_DOWN,        /** Joystick button pressed */
+       JOY_BUTTON_UP,        /** Joystick button released */
+       QUIT,                /** User-requested quit */
+       SYSWMEVENT,            /** System specific event */
+       EVENT_RESERVEDA,        /** Reserved for future use. */
+       EVENT_RESERVEDB,        /** Reserved for future use. */
+       VIDEO_RESIZE,        /** User resized video mode */
+       VIDEO_EXPOSE,        /** Screen needs to be redrawn */
+       EVENT_RESERVED2,        /** Reserved for future use. */
+       EVENT_RESERVED3,        /** Reserved for future use. */
+       EVENT_RESERVED4,        /** Reserved for future use. */
+       EVENT_RESERVED5,        /** Reserved for future use. */
+       EVENT_RESERVED6,        /** Reserved for future use. */
+       EVENT_RESERVED7,        /** Reserved for future use. */
        GUI_DOWN,            /** GuiControl button, etc. pressed. */
        GUI_UP,              /** GuiControl button, etc. released. */
        GUI_ACTION,          /** Commit action: Button fire, enter pressed in a text box, slider released, menu selecion. */
@@ -239,36 +239,36 @@ public:
        FOCUS,               /** Application gains or loses keyboard focus */
 
        /** This last event is only for bounding internal arrays
-  	     It is the number of bits in the event mask datatype -- uint32 */
+           It is the number of bits in the event mask datatype -- uint32 */
        NUMEVENTS
     };
 private:
     static const char* toString(int i, Value& v) {
         static const char* str[] = {
-            "NONE",	        /* Unused (do not remove) */
-       "ACTIVE",	        /* Application loses/gains visibility \deprecated.  Use FOCUS */
-       "KEY_DOWN",	        /* Keys pressed */
-       "KEY_UP",	            /* Keys released */
-       "MOUSE_MOTION",		/* Mouse moved */
-       "MOUSE_BUTTON_DOWN",	/* Mouse button pressed */
-       "MOUSE_BUTTON_UP",		/* Mouse button released */
-       "JOY_AXIS_MOTION",		/* Joystick axis motion */
-       "JOY_BALL_MOTION",		/* Joystick trackball motion */
-       "JOY_HAT_MOTION",		/* Joystick hat position change */
-       "JOY_BUTTON_DOWN",		/* Joystick button pressed */
-       "JOY_BUTTON_UP",		/* Joystick button released */
-       "QUIT",		        /* User-requested quit */
-       "SYSWMEVENT",	        /* System specific event */
-       "EVENT_RESERVEDA",		/* Reserved for future use.. */
-       "EVENT_RESERVEDB",		/* Reserved for future use.. */
-       "VIDEO_RESIZE",		/* User resized video mode */
-       "VIDEO_EXPOSE",		/* Screen needs to be redrawn */
-       "EVENT_RESERVED2",		/* Reserved for future use.. */
-       "EVENT_RESERVED3",		/* Reserved for future use.. */
-       "EVENT_RESERVED4",		/* Reserved for future use.. */
-       "EVENT_RESERVED5",		/* Reserved for future use.. */
-       "EVENT_RESERVED6",		/* Reserved for future use.. */
-       "EVENT_RESERVED7",		/* Reserved for future use.. */
+            "NONE",            /* Unused (do not remove) */
+       "ACTIVE",            /* Application loses/gains visibility \deprecated.  Use FOCUS */
+       "KEY_DOWN",            /* Keys pressed */
+       "KEY_UP",                /* Keys released */
+       "MOUSE_MOTION",        /* Mouse moved */
+       "MOUSE_BUTTON_DOWN",    /* Mouse button pressed */
+       "MOUSE_BUTTON_UP",        /* Mouse button released */
+       "JOY_AXIS_MOTION",        /* Joystick axis motion */
+       "JOY_BALL_MOTION",        /* Joystick trackball motion */
+       "JOY_HAT_MOTION",        /* Joystick hat position change */
+       "JOY_BUTTON_DOWN",        /* Joystick button pressed */
+       "JOY_BUTTON_UP",        /* Joystick button released */
+       "QUIT",                /* User-requested quit */
+       "SYSWMEVENT",            /* System specific event */
+       "EVENT_RESERVEDA",        /* Reserved for future use.. */
+       "EVENT_RESERVEDB",        /* Reserved for future use.. */
+       "VIDEO_RESIZE",        /* User resized video mode */
+       "VIDEO_EXPOSE",        /* Screen needs to be redrawn */
+       "EVENT_RESERVED2",        /* Reserved for future use.. */
+       "EVENT_RESERVED3",        /* Reserved for future use.. */
+       "EVENT_RESERVED4",        /* Reserved for future use.. */
+       "EVENT_RESERVED5",        /* Reserved for future use.. */
+       "EVENT_RESERVED6",        /* Reserved for future use.. */
+       "EVENT_RESERVED7",        /* Reserved for future use.. */
        "GUI_DOWN",            /* GuiControl button, etc. pressed. */
        "GUI_UP",              /* GuiControl button, etc. released. */
        "GUI_ACTION",          /* Commit action: Button fire, enter pressed in a text box, slider released, menu selecion. */
@@ -283,30 +283,30 @@ private:
        "FOCUS",
 
         "NUMEVENTS", NULL};
-       static const Value val[] = {NONE,	        /* Unused (do not remove) */
-       ACTIVE,	        	/* Application loses/gains visibility \deprecated.  Use FOCUS */
-       KEY_DOWN,	        /* Keys pressed */
-       KEY_UP,	            /* Keys released */
-       MOUSE_MOTION,		/* Mouse moved */
-       MOUSE_BUTTON_DOWN,	/* Mouse button pressed */
-       MOUSE_BUTTON_UP,		/* Mouse button released */
-       JOY_AXIS_MOTION,		/* Joystick axis motion */
-       JOY_BALL_MOTION,		/* Joystick trackball motion */
-       JOY_HAT_MOTION,		/* Joystick hat position change */
-       JOY_BUTTON_DOWN,		/* Joystick button pressed */
-       JOY_BUTTON_UP,		/* Joystick button released */
-       QUIT,		        /* User-requested quit */
-       SYSWMEVENT,	        /* System specific event */
-       EVENT_RESERVEDA,		/* Reserved for future use.. */
-       EVENT_RESERVEDB,		/* Reserved for future use.. */
-       VIDEO_RESIZE,		/* User resized video mode */
-       VIDEO_EXPOSE,		/* Screen needs to be redrawn */
-       EVENT_RESERVED2,		/* Reserved for future use.. */
-       EVENT_RESERVED3,		/* Reserved for future use.. */
-       EVENT_RESERVED4,		/* Reserved for future use.. */
-       EVENT_RESERVED5,		/* Reserved for future use.. */
-       EVENT_RESERVED6,		/* Reserved for future use.. */
-       EVENT_RESERVED7,		/* Reserved for future use.. */
+       static const Value val[] = {NONE,            /* Unused (do not remove) */
+       ACTIVE,                /* Application loses/gains visibility \deprecated.  Use FOCUS */
+       KEY_DOWN,            /* Keys pressed */
+       KEY_UP,                /* Keys released */
+       MOUSE_MOTION,        /* Mouse moved */
+       MOUSE_BUTTON_DOWN,    /* Mouse button pressed */
+       MOUSE_BUTTON_UP,        /* Mouse button released */
+       JOY_AXIS_MOTION,        /* Joystick axis motion */
+       JOY_BALL_MOTION,        /* Joystick trackball motion */
+       JOY_HAT_MOTION,        /* Joystick hat position change */
+       JOY_BUTTON_DOWN,        /* Joystick button pressed */
+       JOY_BUTTON_UP,        /* Joystick button released */
+       QUIT,                /* User-requested quit */
+       SYSWMEVENT,            /* System specific event */
+       EVENT_RESERVEDA,        /* Reserved for future use.. */
+       EVENT_RESERVEDB,        /* Reserved for future use.. */
+       VIDEO_RESIZE,        /* User resized video mode */
+       VIDEO_EXPOSE,        /* Screen needs to be redrawn */
+       EVENT_RESERVED2,        /* Reserved for future use.. */
+       EVENT_RESERVED3,        /* Reserved for future use.. */
+       EVENT_RESERVED4,        /* Reserved for future use.. */
+       EVENT_RESERVED5,        /* Reserved for future use.. */
+       EVENT_RESERVED6,        /* Reserved for future use.. */
+       EVENT_RESERVED7,        /* Reserved for future use.. */
        GUI_DOWN,            /* GuiControl button, etc. pressed. */
        GUI_UP,              /* GuiControl button, etc. released. */
        GUI_ACTION,          /* Commit action: Button fire, enter pressed in a text box, slider released, menu selecion. */
@@ -348,9 +348,9 @@ namespace G3D {
 
 #ifndef SDL_APPMOUSEFOCUS
 /* The available application states */
-#define SDL_APPMOUSEFOCUS	0x01		/** \def SDL_APPMOUSEFOCUS The app has mouse coverage */
-#define SDL_APPINPUTFOCUS	0x02		/** \def SDL_APPINPUTFOCUS The app has input focus */
-#define SDL_APPACTIVE		0x04		/** \def SDL_APPACTIVE  The application is active */
+#define SDL_APPMOUSEFOCUS    0x01        /** \def SDL_APPMOUSEFOCUS The app has mouse coverage */
+#define SDL_APPINPUTFOCUS    0x02        /** \def SDL_APPINPUTFOCUS The app has input focus */
+#define SDL_APPACTIVE        0x04        /** \def SDL_APPACTIVE  The application is active */
 #endif
 
 /** Application visibility event structure \deprecated */
@@ -394,7 +394,7 @@ public:
 class MouseMotionEvent {
 public:
     /** GEventType::MOUSEMOTION */
-    uint8 type;	
+    uint8 type;    
 
     /** The mouse device index */
     uint8 which;
@@ -419,7 +419,7 @@ public:
     uint8 type;
 
     /** The mouse device index */
-    uint8 which;	
+    uint8 which;    
     
     /** The mouse button index */
     uint8 button;
@@ -434,7 +434,7 @@ public:
     /** The X/Y coordinates of the mouse at press time */
     uint16 x, y;
     
-    // TODO: add     /** Current key modifiers */    GKeyMod         mod;	
+    // TODO: add     /** Current key modifiers */    GKeyMod         mod;    
 };
 
 
@@ -443,10 +443,10 @@ class MouseScroll2DEvent {
 public:
     /** GEventType::MOUSE_SCROLL_2D */
     uint8 type;
-	
+    
     /** The mouse device index */
     uint8 which;
-	
+    
     /** The change in x and y directions of scroll */
     int16 dx, dy; 
 };
@@ -459,7 +459,7 @@ public:
     uint8 type;
 
     /** The joystick device index */
-    uint8 which;	
+    uint8 which;    
 
     /** The joystick axis index */
     uint8 axis;
@@ -516,7 +516,7 @@ public:
     uint8 type;
 
     /** The joystick device index */
-    uint8 which;	
+    uint8 which;    
 
     /** The joystick button index */
     uint8 button;
@@ -532,7 +532,7 @@ public:
 class ResizeEvent {
 public:
     /** GEventType::VIDEORESIZE */
-    uint8 type;	
+    uint8 type;    
 
     /** New width */
     int w;
@@ -565,7 +565,7 @@ public:
 class QuitEvent {
 public:
     /** GEventType::QUIT */
-    uint8 type;	
+    uint8 type;    
 };
 
 
@@ -576,7 +576,7 @@ public:
     uint8 type;
 
     /** User defined event code */
-    int code;	
+    int code;    
 
     /** User defined data pointer */
     void *data1;

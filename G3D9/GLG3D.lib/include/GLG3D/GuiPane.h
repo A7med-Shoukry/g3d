@@ -63,7 +63,7 @@ public:
 
 protected:
 
-    /** For use with setLayout */	 	  
+    /** For use with setLayout */           
     enum LayoutDirection {
         /** Controls are moved next to the previous control using
             GuiControl::moveRightOf.  Does not affect the first
@@ -124,7 +124,7 @@ private:
     void renderChildren(RenderDevice* rd, const GuiThemeRef& skin) const;
 
 public:
-	
+    
     /** For use by GuiContainers.  \sa GuiPane::addPane, GuiWindow::pane */
     GuiPane(GuiContainer* parent, const GuiText& text, const Rect2D& rect, GuiTheme::PaneStyle style);
 

@@ -191,7 +191,7 @@ public:
 
         BILINEAR_NO_MIPMAP = 2,
         NEAREST_NO_MIPMAP = 6
-	};
+    };
 
     static const char* toString(InterpolateMode m);
     static InterpolateMode toInterpolateMode(const std::string& s);
@@ -835,7 +835,7 @@ public:
     /**
      Creates a texture from the colors of filename and takes the alpha values
      from the red channel of alpha filename. See G3D::RenderDevice::setBlendFunc
-	 for important information about turning on alpha blending. 
+     for important information about turning on alpha blending. 
      */
     static Texture::Ref fromTwoFiles
     (const std::string&              filename,
@@ -853,7 +853,7 @@ public:
     face. If the outer array has only one element and the
     interpolation mode is
     TRILINEAR_MIPMAP, mip-maps are automatically generated from
-	the level 0 mip-map.
+    the level 0 mip-map.
 
     There must be exactly
     6 cube faces per mip-level if the dimensions are
@@ -893,7 +893,7 @@ public:
         const ImageFormat*              bytesFormat,
         int                             m_width,
         int                             m_height,
-        int	                        m_depth,
+        int                            m_depth,
         const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
         Dimension                       dimension      = defaultDimension(),
         const Settings&                 settings       = Settings::defaults(),
@@ -1015,8 +1015,8 @@ public:
      have a completely opaque alpha channel, causing texture->opaque to
      be true.  This is just a flag set for the user's convenience-- it does
      not affect rendering in any way.
-	 See G3D::RenderDevice::setBlendFunc
-	 for important information about turning on alpha blending. 
+     See G3D::RenderDevice::setBlendFunc
+     for important information about turning on alpha blending. 
      */
     inline bool opaque() const {
         return m_opaque;

@@ -6,8 +6,8 @@
 @cite       Special thanks to Max McGuire of Ironlore
 \cite http://sites.google.com/site/opengltutorialsbyaks/introduction-to-opengl-3-2---tutorial-01
 
-@created 	  2004-05-21
-@edited  	  2009-04-05
+@created       2004-05-21
+@edited        2009-04-05
 
 Copyright 2000-2009, Morgan McGuire.
 All rights reserved.
@@ -87,8 +87,8 @@ static LPCTSTR toTCHAR(const std::string& str) {
 
 static const UINT BLIT_BUFFER = 0xC001;
 
-#define WGL_SAMPLE_BUFFERS_ARB	0x2041
-#define WGL_SAMPLES_ARB		    0x2042
+#define WGL_SAMPLE_BUFFERS_ARB    0x2041
+#define WGL_SAMPLES_ARB            0x2042
 
 static bool hasWGLMultiSampleSupport = false;
 
@@ -679,7 +679,7 @@ void Win32Window::close() {
 
 Win32Window::~Win32Window() {
     if (OSWindow::current() == this) {
-        if (wglMakeCurrent(NULL, NULL) == FALSE)	{
+        if (wglMakeCurrent(NULL, NULL) == FALSE)    {
             debugAssertM(false, "Failed to set context");
         }
 
@@ -744,7 +744,7 @@ void Win32Window::getOSEvents(Queue<GEvent>& events) {
 
     if (m_settings.framed) {
         // Add the border offset
-        m_clientX	+= GetSystemMetrics(m_settings.resizable ? SM_CXSIZEFRAME : SM_CXFIXEDFRAME);
+        m_clientX    += GetSystemMetrics(m_settings.resizable ? SM_CXSIZEFRAME : SM_CXFIXEDFRAME);
         m_clientY += GetSystemMetrics(m_settings.resizable ? SM_CYSIZEFRAME : SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
     }
 
@@ -941,24 +941,24 @@ void Win32Window::initWGL() {
     alwaysAssertM(ret, "Registration Failed");
 
     // Create some dummy pixel format.
-    PIXELFORMATDESCRIPTOR pfd =	
+    PIXELFORMATDESCRIPTOR pfd =    
     {
-        sizeof (PIXELFORMATDESCRIPTOR),									// Size Of This Pixel Format Descriptor
-        1,																// Version Number
+        sizeof (PIXELFORMATDESCRIPTOR),                                    // Size Of This Pixel Format Descriptor
+        1,                                                                // Version Number
         PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER | PFD_SWAP_EXCHANGE,
-        PFD_TYPE_RGBA,													// Request An RGBA Format
-        24,		                        								// Select Our Color Depth
-        0, 0, 0, 0, 0, 0,												// Color Bits Ignored
-        0,																// Alpha Buffer
-        0,																// Shift Bit Ignored
-        0,																// No Accumulation Buffer
-        0, 0, 0, 0,														// Accumulation Bits Ignored
-        16,																// 16Bit Z-Buffer (Depth Buffer)  
-        0,																// No Stencil Buffer
-        0,																// No Auxiliary Buffer
-        PFD_MAIN_PLANE,													// Main Drawing Layer
-        0,																// Reserved
-        0, 0, 0															// Layer Masks Ignored
+        PFD_TYPE_RGBA,                                                    // Request An RGBA Format
+        24,                                                                // Select Our Color Depth
+        0, 0, 0, 0, 0, 0,                                                // Color Bits Ignored
+        0,                                                                // Alpha Buffer
+        0,                                                                // Shift Bit Ignored
+        0,                                                                // No Accumulation Buffer
+        0, 0, 0, 0,                                                        // Accumulation Bits Ignored
+        16,                                                                // 16Bit Z-Buffer (Depth Buffer)  
+        0,                                                                // No Stencil Buffer
+        0,                                                                // No Auxiliary Buffer
+        PFD_MAIN_PLANE,                                                    // Main Drawing Layer
+        0,                                                                // Reserved
+        0, 0, 0                                                            // Layer Masks Ignored
     };
 
     HWND hWnd = CreateWindow(_T("window"), _T(""), 0, 0, 0, 100, 100, NULL, NULL, GetModuleHandle(NULL), NULL);
@@ -978,7 +978,7 @@ void Win32Window::initWGL() {
     debugAssert(hRC);
 
     // wglMakeCurrent is the bottleneck of this routine; it takes about 0.1 s
-    if (wglMakeCurrent(hDC, hRC) == FALSE)	{
+    if (wglMakeCurrent(hDC, hRC) == FALSE)    {
         debugAssertM(false, "Failed to set context");
     }
 
@@ -1030,11 +1030,11 @@ void Win32Window::initWGL() {
     }
 
     // Now destroy the dummy windows
-    wglDeleteContext(hRC);			
-    hRC = 0;	
-    ReleaseDC(hWnd, hDC);	
-    hWnd = 0;				
-    DestroyWindow(hWnd);			
+    wglDeleteContext(hRC);            
+    hRC = 0;    
+    ReleaseDC(hWnd, hDC);    
+    hWnd = 0;                
+    DestroyWindow(hWnd);            
     hWnd = 0;
 }
 
@@ -1045,7 +1045,7 @@ void Win32Window::createShareWindow(OSWindow::Settings settings) {
         return;
     }
 
-    init = true;	
+    init = true;    
 
     // We want a small (low memory), invisible window
     settings.visible = false;
@@ -1066,7 +1066,7 @@ void Win32Window::reallyMakeCurrent() const {
     debugAssertM(m_thread == ::GetCurrentThread(), 
         "Cannot call OSWindow::makeCurrent on different threads.");
 
-    if (wglMakeCurrent(m_hDC, m_glContext) == FALSE)	{
+    if (wglMakeCurrent(m_hDC, m_glContext) == FALSE)    {
         debugAssertM(false, "Failed to set context");
     }
 }

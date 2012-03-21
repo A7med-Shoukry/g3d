@@ -140,9 +140,9 @@ private:
     class Display : public Surface2D {
     public:
         Client*    client;
-        virtual Rect2D 	bounds () const;
-        virtual float 	depth () const;
-        virtual void 	render (RenderDevice *rd) const;
+        virtual Rect2D     bounds () const;
+        virtual float     depth () const;
+        virtual void     render (RenderDevice *rd) const;
     };
 
     ReferenceCountedPointer<Display>  m_display;

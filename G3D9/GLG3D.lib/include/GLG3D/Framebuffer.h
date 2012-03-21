@@ -42,7 +42,7 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
 
 
  Basic Framebuffer Theory:
-	Every OpenGL program has at least one Framebuffer.  This framebuffer is
+    Every OpenGL program has at least one Framebuffer.  This framebuffer is
  setup by the windowing system and its image format is that specified by the
  OS.  With the Framebuffer Object extension, OpenGL gives the developer
  the ability to create offscreen framebuffers that can be used to render 
@@ -60,37 +60,37 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
 
  \code
     // Create Texture
-	static Texture::Ref tex = Texture::createEmpty(256, 256, "Rendered Texture", ImageFormat::RGB8, Texture::CLAMP, Texture::NEAREST_NO_MIPMAP, Texture::DIM_2D);
+    static Texture::Ref tex = Texture::createEmpty(256, 256, "Rendered Texture", ImageFormat::RGB8, Texture::CLAMP, Texture::NEAREST_NO_MIPMAP, Texture::DIM_2D);
 
-	// Create a framebuffer that uses this texture as the color buffer
-	static FramebufferRef fb = Framebuffer::create("Offscreen target");
-	bool init = false;
+    // Create a framebuffer that uses this texture as the color buffer
+    static FramebufferRef fb = Framebuffer::create("Offscreen target");
+    bool init = false;
 
-	if (! init) {
-		fb->set(Framebuffer::COLOR0, tex);
-		init = true;
-	}
+    if (! init) {
+        fb->set(Framebuffer::COLOR0, tex);
+        init = true;
+    }
 
-	rd->pushState();
-		rd->setFramebuffer(fb);
-		rd->push2D(fb->rect2DBounds());
+    rd->pushState();
+        rd->setFramebuffer(fb);
+        rd->push2D(fb->rect2DBounds());
 
-			// Set framebuffer as the render target
+            // Set framebuffer as the render target
 
-			// Draw on the texture
-			Draw::rect2D(Rect2D::xywh(0,0,128,256), rd, Color3::white());
-			Draw::rect2D(Rect2D::xywh(128,0,128,256), rd, Color3::red());
+            // Draw on the texture
+            Draw::rect2D(Rect2D::xywh(0,0,128,256), rd, Color3::white());
+            Draw::rect2D(Rect2D::xywh(128,0,128,256), rd, Color3::red());
 
-			// Restore renderdevice state (old frame buffer)
-		rd->pop2D();
-	rd->popState();
+            // Restore renderdevice state (old frame buffer)
+        rd->pop2D();
+    rd->popState();
 
-	app->renderDevice->setProjectionAndCameraMatrix(app->debugCamera);
+    app->renderDevice->setProjectionAndCameraMatrix(app->debugCamera);
 
-	// Remove the texture from the framebuffer
-	//	fb->set(Framebuffer::COLOR0, NULL);
+    // Remove the texture from the framebuffer
+    //    fb->set(Framebuffer::COLOR0, NULL);
 
-	// Can now render from the texture
+    // Can now render from the texture
 
     
     // Cyan background
@@ -98,9 +98,9 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
     app->renderDevice->clear();
 
     app->renderDevice->push2D();
-		rd->setTexture(0, tex);
-		Draw::rect2D(Rect2D::xywh(10,10,256,256), rd);
-	app->renderDevice->pop2D();
+        rd->setTexture(0, tex);
+        Draw::rect2D(Rect2D::xywh(10,10,256,256), rd);
+    app->renderDevice->pop2D();
  \endcode
 
  In addition to Textures, Renderbuffers may also be bound to the
@@ -114,7 +114,7 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
  <ol>
    <li> In order to render to a Framebuffer, there must be at least
    one image (Renderbuffer or Texture) attached to an attachment point.
-	
+    
    <li> All images must have the same height and width.
    
    <li> All images attached to a COLOR_ATTACHMENT[n] point must have
@@ -122,7 +122,7 @@ typedef ReferenceCountedPointer<class Framebuffer> FramebufferRef;
    
    <li> If RenderDevice->setDrawBuffer is used then the specified 
    attachment point must have a bound image.
-	
+    
    <li> The combination of internal formats of attached images does not
    violate some implementation-dependent set of restrictions (i.e., Your
    graphics card must completely implement all combinations that you
@@ -410,8 +410,8 @@ public:
        calls to actually set attachments must be delayed until the
        bind() call, when this Framebuffer is guaranteed to be bound.
        
-       \param texture	 Texture to bind to the Framebuffer.
-       \param ap	 Attachment point to bind texture to.
+       \param texture     Texture to bind to the Framebuffer.
+       \param ap     Attachment point to bind texture to.
        \param mipLevel   Target MIP-map level to render to.
     */
     void set(AttachmentPoint ap, const Texture::Ref& texture, 
@@ -421,8 +421,8 @@ public:
        Set one of the attachment points to reference a renderbuffer.
        Set to NULL to unset.
        
-       @param renderbuffer	Renderbuffer to bind to the framebuffer
-       @param slot		Attachment point to bind renderbuffer to.
+       @param renderbuffer    Renderbuffer to bind to the framebuffer
+       @param slot        Attachment point to bind renderbuffer to.
     */
     void set(AttachmentPoint ap, const Renderbuffer::Ref& renderbuffer);
     

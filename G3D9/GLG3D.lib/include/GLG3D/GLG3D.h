@@ -165,9 +165,9 @@
 
 #   ifdef _DEBUG
 #       ifdef G3D_64BIT
-#	        pragma comment(lib, "GLG3D-64d")
+#            pragma comment(lib, "GLG3D-64d")
 #       else
-#	        pragma comment(lib, "GLG3Dd")
+#            pragma comment(lib, "GLG3Dd")
 #       endif
 #   else
 #       ifdef G3D_64BIT

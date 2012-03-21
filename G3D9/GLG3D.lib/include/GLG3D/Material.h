@@ -125,67 +125,67 @@ public:
         Specification();
         
         /** 
-		  \brief Construct a Material::Specification from an Any, typically loaded by parsing a file.
+          \brief Construct a Material::Specification from an Any, typically loaded by parsing a file.
 
-		  Some simple examples follow.
+          Some simple examples follow.
 
-		  All fields as texture maps:
+          All fields as texture maps:
 
-		  \code
-		  Material::Specification {
-		      lambertian = "diffusemap.png",
-		      specular = "specmap.png",
-		      shininess = "shinemap.png",
-		      transmissive = "transmap.png", # Simple transmission
-		      emissive = "emitmap.png",
+          \code
+          Material::Specification {
+              lambertian = "diffusemap.png",
+              specular = "specmap.png",
+              shininess = "shinemap.png",
+              transmissive = "transmap.png", # Simple transmission
+              emissive = "emitmap.png",
                  emissive = mul("emitmap.png", 3.0), # various options for emissive
                  emissive = Color3(0.5),
-		      bump = "bumpmap.png",  # see BumpMap::Specification
+              bump = "bumpmap.png",  # see BumpMap::Specification
 
-		      # Sophisticated transmission
-		      etatransmit = 1.0, 
-		      extinctionTransmit = Color3(1,1,1),
-		      etaReflect = 1.0,
-		      extinctionReflect = Color3(1,1,1),
-		      
-		      # Hints and hacks
-		      refractionHint = "DYNAMIC_FLAT",
-		      mirrorHint = "STATIC_ENV",
-		      customShaderPrefix = "",
-		      depthWriteHintDistance = nan()
+              # Sophisticated transmission
+              etatransmit = 1.0, 
+              extinctionTransmit = Color3(1,1,1),
+              etaReflect = 1.0,
+              extinctionReflect = Color3(1,1,1),
+              
+              # Hints and hacks
+              refractionHint = "DYNAMIC_FLAT",
+              mirrorHint = "STATIC_ENV",
+              customShaderPrefix = "",
+              depthWriteHintDistance = nan()
                   }
                   \endcode
 
-		  Mirror:
-		  \code
-		  Material::Specification {
-		      lambertian = Color3(0.01),
-		      specular = Color3(0.9),
-		      shininess = mirror()
-		  }
-		  \endcode
+          Mirror:
+          \code
+          Material::Specification {
+              lambertian = Color3(0.01),
+              specular = Color3(0.9),
+              shininess = mirror()
+          }
+          \endcode
 
-		  Red plastic:
-		  \code
+          Red plastic:
+          \code
                   Material::Specification {
-		      lambertian = Color3(0.95, 0.2, 0.05),
-		      specular = Color3(0.3),
-		      shininess = glossyExponent(200)
-		  }
+              lambertian = Color3(0.95, 0.2, 0.05),
+              specular = Color3(0.3),
+              shininess = glossyExponent(200)
+          }
                   \endcode
-		  
-		  Green glass:
-		  \code
-		  Material::Specification {
-	      	      lambertian = Color3(0.01, 0.1, 0.05),
-		      transmissive = Color3(0.01, 0.9, 0.01),
-		      specular = Color3(0.4),
-		      shininess = mirror()
-		  }		    
-		  \endcode
+          
+          Green glass:
+          \code
+          Material::Specification {
+                    lambertian = Color3(0.01, 0.1, 0.05),
+              transmissive = Color3(0.01, 0.9, 0.01),
+              specular = Color3(0.4),
+              shininess = mirror()
+          }            
+          \endcode
 
          \sa G3D::RefractionQuality, \sa G3D::MirrorQuality, \sa G3D::BumpMapSpecification
-	 \beta */
+     \beta */
         Specification(const Any& any);
 
         Specification(const Color3& lambertian);
@@ -425,7 +425,7 @@ public:
     
     static Material::Ref createDiffuse(const std::string& textureFilename);
 
-	/**
+    /**
      Create a G3D::Material using the @texture as the Lambertian (pure diffuse), with no emissive or bump.
      */
     static Material::Ref createDiffuse(Texture::Ref texture);

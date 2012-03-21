@@ -129,7 +129,7 @@ void Parse3DS::processMaterialChunk
         switch (curChunkHeader.id) {
 
         // EDITMATERIAL subchunks
-        case MATNAME:					
+        case MATNAME:                    
             material.name = b->readString();
             materialNameToIndex.set(material.name, currentMaterial);
             break;

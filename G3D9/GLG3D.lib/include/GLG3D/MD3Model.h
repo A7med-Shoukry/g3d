@@ -219,7 +219,7 @@ public:
         /** 
           Format is:
              <pre>
-			 MD3Model::Specification {
+             MD3Model::Specification {
 
                 // Directory containing the *.md3 files
                 directory = "...",
@@ -270,7 +270,7 @@ public:
 
     virtual ~MD3Model();
 
-	static MD3Model::Ref create(const Specification& spec);
+    static MD3Model::Ref create(const Specification& spec);
 
     /**
         Poses then adds all available parts to \a posedModelArray.

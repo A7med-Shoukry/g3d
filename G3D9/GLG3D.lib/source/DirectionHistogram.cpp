@@ -163,19 +163,19 @@ DirectionHistogram::DirectionHistogram(int numSlices, const Vector3& axis) : m_s
     // Zero the array
     System::memset(m_invArea.getCArray(), 0, sizeof(float) * m_invArea.size());
 
-	CPUVertexArray vertexArray;
+    CPUVertexArray vertexArray;
     // Create triTree
     {
-		
-		vertexArray.hasTangent     = false;
-		vertexArray.hasTexCoord0   = false;
-		
-		for(int i = 0; i < m_meshVertex.size(); ++i){
-			CPUVertexArray::Vertex v;
-			v.position = m_meshVertex[i];
-			v.normal   = m_meshVertex[i];
-			vertexArray.vertex.append(v);
-		}
+        
+        vertexArray.hasTangent     = false;
+        vertexArray.hasTexCoord0   = false;
+        
+        for(int i = 0; i < m_meshVertex.size(); ++i){
+            CPUVertexArray::Vertex v;
+            v.position = m_meshVertex[i];
+            v.normal   = m_meshVertex[i];
+            vertexArray.vertex.append(v);
+        }
 
 
         Array<Tri> triArray;
@@ -189,7 +189,7 @@ DirectionHistogram::DirectionHistogram(int numSlices, const Vector3& axis) : m_s
             // Wind backwards; these tris have to face inward
 
             const Proxy<Material>::Ref vii = VertexIndexIndex::create(q);
-			
+            
             Tri A(i0, i3, i2, &vertexArray, vii);
             Tri B(i0, i2, i1, &vertexArray, vii);
 
@@ -204,10 +204,10 @@ DirectionHistogram::DirectionHistogram(int numSlices, const Vector3& axis) : m_s
             m_invArea[i2] += area;
             m_invArea[i3] += area;
         }
-		
+        
         m_tree.setContents(triArray, vertexArray);
-		//ASKMORGAN
-		vertexArray.vertex.clear();
+        //ASKMORGAN
+        vertexArray.vertex.clear();
 
         for (int i = 0; i < m_invArea.size(); ++i) {
             // Multiply by a small number to keep these from getting too large

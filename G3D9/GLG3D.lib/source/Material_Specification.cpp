@@ -319,7 +319,7 @@ void Material::Specification::setEta(float etaTransmit, float etaReflect) {
 void Material::Specification::setBump
 (const std::string&         filename, 
  const BumpMap::Settings&   settings,
- float 	                    normalMapWhiteHeightInPixels) {
+ float                         normalMapWhiteHeightInPixels) {
     
      m_bump = BumpMap::Specification();
      m_bump.texture.filename = filename;

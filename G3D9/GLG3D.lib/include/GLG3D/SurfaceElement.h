@@ -93,13 +93,13 @@ public:
         Vector3 location;
     } geometric;
 
-	/** Mostly for debugging */
-	struct SourcePrimitive {
-		int		index;
-		float	u;
-		float	v;
-		SourcePrimitive() : index(-1), u(0), v(0) {}
-	} sourcePrimitive;
+    /** Mostly for debugging */
+    struct SourcePrimitive {
+        int        index;
+        float    u;
+        float    v;
+        SourcePrimitive() : index(-1), u(0), v(0) {}
+    } sourcePrimitive;
 
     /** Screen space derivative of the texture coordinate.  \beta Currently unused. */
     Vector2    dTexCoorddX;
@@ -211,9 +211,9 @@ public:
      const Vector3&  interpolatedTangent,
      const Vector3&  interpolatedTangent2,
      const Vector3&  eye,
-	 int			 index = -1,
-	 float			 u = 0,
-	 float			 v = 0);
+     int             index = -1,
+     float             u = 0,
+     float             v = 0);
     
      /** \brief Evaluate the finite portion of the BSDF: \f$(f_L + f_g)\f$. 
 

@@ -93,7 +93,7 @@ public:
 
     /** Constructs a matrix from a quaternion.
         @cite Graphics Gems II, p. 351--354
- 	    @cite Implementation from Watt and Watt, pg 362*/
+         @cite Implementation from Watt and Watt, pg 362*/
     Matrix3(const class Quat& q);
 
     static Matrix3 diagonal(float e00, float e11, float e22) {
@@ -300,10 +300,10 @@ public:
                        0, 0, d.z);
     }
 
-	/** \sa fromUnitAxisAngle */
+    /** \sa fromUnitAxisAngle */
     static Matrix3 fromAxisAngle(const Vector3& rkAxis, float fRadians);
 
-	/** Assumes that rkAxis has unit length */
+    /** Assumes that rkAxis has unit length */
     static Matrix3 fromUnitAxisAngle(const Vector3& rkAxis, float fRadians);
 
     /**

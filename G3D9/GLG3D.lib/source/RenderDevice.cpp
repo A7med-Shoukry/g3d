@@ -39,7 +39,7 @@ static GLenum toGLBlendFunc(RenderDevice::BlendFunc b) {
 
 static void _glViewport(double a, double b, double c, double d) {
     glViewport(iRound(a), iRound(b), 
-	       iRound(a + c) - iRound(a), iRound(b + d) - iRound(b));
+           iRound(a + c) - iRound(a), iRound(b + d) - iRound(b));
 }
 
 
@@ -271,7 +271,7 @@ void RenderDevice::init(OSWindow* window) {
                 ImageFormat::fromCode((ImageFormat::Code)code);
             
             if (fmt) {
-	        // printf("Format: %s\n", fmt->name().c_str());
+            // printf("Format: %s\n", fmt->name().c_str());
                 bool t = GLCaps::supportsTexture(fmt);
                 bool r = GLCaps::supportsRenderBuffer(fmt);
                 logLazyPrintf("%20s  %s       %s\n", fmt->name().c_str(), t ? "Yes" : "No ", r ? "Yes" : "No ");
@@ -1714,9 +1714,9 @@ void RenderDevice::setStencilConstant(int reference) {
 void RenderDevice::setStencilTest(StencilTest test) {
     minStateChange();
 
-	if (test == STENCIL_CURRENT) {
-		return;
-	}
+    if (test == STENCIL_CURRENT) {
+        return;
+    }
 
     debugAssert(! m_inPrimitive);
 
@@ -2010,31 +2010,31 @@ void RenderDevice::setStencilOp(
 
     minStateChange();
 
-	if (frontStencilFail == STENCILOP_CURRENT) {
-		frontStencilFail = m_state.stencil.frontStencilFail;
-	}
-	
-	if (frontZFail == STENCILOP_CURRENT) {
-		frontZFail = m_state.stencil.frontStencilZFail;
-	}
-	
-	if (frontZPass == STENCILOP_CURRENT) {
-		frontZPass = m_state.stencil.frontStencilZPass;
-	}
-
-	if (backStencilFail == STENCILOP_CURRENT) {
-		backStencilFail = m_state.stencil.backStencilFail;
-	}
-	
-	if (backZFail == STENCILOP_CURRENT) {
-		backZFail = m_state.stencil.backStencilZFail;
-	}
-	
-	if (backZPass == STENCILOP_CURRENT) {
-		backZPass = m_state.stencil.backStencilZPass;
-	}
+    if (frontStencilFail == STENCILOP_CURRENT) {
+        frontStencilFail = m_state.stencil.frontStencilFail;
+    }
     
-	if ((frontStencilFail  != m_state.stencil.frontStencilFail) ||
+    if (frontZFail == STENCILOP_CURRENT) {
+        frontZFail = m_state.stencil.frontStencilZFail;
+    }
+    
+    if (frontZPass == STENCILOP_CURRENT) {
+        frontZPass = m_state.stencil.frontStencilZPass;
+    }
+
+    if (backStencilFail == STENCILOP_CURRENT) {
+        backStencilFail = m_state.stencil.backStencilFail;
+    }
+    
+    if (backZFail == STENCILOP_CURRENT) {
+        backZFail = m_state.stencil.backStencilZFail;
+    }
+    
+    if (backZPass == STENCILOP_CURRENT) {
+        backZPass = m_state.stencil.backStencilZPass;
+    }
+    
+    if ((frontStencilFail  != m_state.stencil.frontStencilFail) ||
         (frontZFail        != m_state.stencil.frontStencilZFail) ||
         (frontZPass        != m_state.stencil.frontStencilZPass) || 
         (GLCaps::supports_two_sided_stencil() && 
@@ -2387,7 +2387,7 @@ Matrix4 RenderDevice::getTextureMatrix(int unit) {
 
 void RenderDevice::setTextureMatrix(
     int                  unit,
-    const Matrix4&	     m) {
+    const Matrix4&         m) {
 
     float f[16];
     for (int r = 0; r < 4; ++r) {
@@ -2483,9 +2483,9 @@ void RenderDevice::setTextureCombineMode(
     const CombineMode       mode) {
 
     minStateChange();
-	if (mode == TEX_CURRENT) {
-		return;
-	}
+    if (mode == TEX_CURRENT) {
+        return;
+    }
 
     debugAssertM(unit < m_numTextureUnits,
         format("Attempted to access texture unit %d when only %d units supported.",
@@ -2798,11 +2798,11 @@ double RenderDevice::getDepthBufferValue(
     }
 
     glReadPixels(x,
-	         (height() - 1) - y,
+             (height() - 1) - y,
                  1, 1,
                  GL_DEPTH_COMPONENT,
-	         GL_FLOAT,
-	         &depth);
+             GL_FLOAT,
+             &depth);
 
     debugAssertM(glGetError() != GL_INVALID_OPERATION, 
         "getDepthBufferValue failed, probably because you did not allocate a depth buffer.");
@@ -3137,22 +3137,22 @@ void RenderDevice::configureShadowMap(
     
     const Matrix4& textureMatrix = m_state.textureUnits[unit].textureMatrix;
 
-	const Matrix4& textureProjectionMatrix2D =
+    const Matrix4& textureProjectionMatrix2D =
         textureMatrix  * lightMVP;
 
-	// Set up tex coord generation - all 4 coordinates required
-	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-	glTexGenfv(GL_S, GL_EYE_PLANE, textureProjectionMatrix2D[0]);
-	glEnable(GL_TEXTURE_GEN_S);
-	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-	glTexGenfv(GL_T, GL_EYE_PLANE, textureProjectionMatrix2D[1]);
-	glEnable(GL_TEXTURE_GEN_T);
-	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-	glTexGenfv(GL_R, GL_EYE_PLANE, textureProjectionMatrix2D[2]);
-	glEnable(GL_TEXTURE_GEN_R);
-	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-	glTexGenfv(GL_Q, GL_EYE_PLANE, textureProjectionMatrix2D[3]);
-	glEnable(GL_TEXTURE_GEN_Q);
+    // Set up tex coord generation - all 4 coordinates required
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+    glTexGenfv(GL_S, GL_EYE_PLANE, textureProjectionMatrix2D[0]);
+    glEnable(GL_TEXTURE_GEN_S);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+    glTexGenfv(GL_T, GL_EYE_PLANE, textureProjectionMatrix2D[1]);
+    glEnable(GL_TEXTURE_GEN_T);
+    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+    glTexGenfv(GL_R, GL_EYE_PLANE, textureProjectionMatrix2D[2]);
+    glEnable(GL_TEXTURE_GEN_R);
+    glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+    glTexGenfv(GL_Q, GL_EYE_PLANE, textureProjectionMatrix2D[3]);
+    glEnable(GL_TEXTURE_GEN_Q);
 
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
@@ -3344,23 +3344,23 @@ static bool checkFramebuffer(GLenum which, std::string& whyNot) {
 
     case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
         whyNot = "Framebuffer Incomplete: Incomplete Attachment.";
-		break;
+        break;
 
     case GL_FRAMEBUFFER_UNSUPPORTED:
         whyNot = "Unsupported framebuffer format.";
-		break;
+        break;
 
     case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
         whyNot = "Framebuffer Incomplete: Missing attachment.";
-		break;
+        break;
 
     case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
         whyNot = "Framebuffer Incomplete: Missing draw buffer.";
-		break;
+        break;
 
     case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
         whyNot = "Framebuffer Incomplete: Missing read buffer.";
-		break;
+        break;
 
     default:
         whyNot = format("Framebuffer Incomplete: Unknown error. (0x%X)", status);

@@ -232,7 +232,7 @@ private:
             if (x != NULL) {
                 debugAssert(G3D::isValidHeapPointer(x));
 
-		        m_pointer = x;
+                m_pointer = x;
 
                 // Note that the ref count can be zero if this is the
                 // first pointer to it

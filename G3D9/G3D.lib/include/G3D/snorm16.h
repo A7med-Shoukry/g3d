@@ -63,7 +63,7 @@ public:
         return float (clamp((int)(m_bits) * (1.0f / 32767.0f), -1, 1));
     }
 
-	// Change?
+    // Change?
     static snorm16 one() {
         return fromBits(32767);
     }

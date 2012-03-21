@@ -107,7 +107,7 @@ These control the version of Winsock used by G3D.
 #    ifndef __GNUC__
 #        error G3D only supports the gcc compiler on OS X.
 #    endif
-	
+    
 #    if defined(__i386__)
 #        define G3D_OSX_INTEL
 #    elif defined(__PPC__)
@@ -120,13 +120,13 @@ These control the version of Winsock used by G3D.
 
 
 #ifdef _MSC_VER
-// Microsoft Visual C++ 10.0				  = 1600
-// Microsoft Visual C++ 9.0					  = 1500
+// Microsoft Visual C++ 10.0                  = 1600
+// Microsoft Visual C++ 9.0                      = 1500
 // Microsoft Visual C++ 8.0 ("Express")       = 1400
-// Microsoft Visual C++ 7.1	("2003") _MSC_VER = 1310
-// Microsoft Visual C++ 7.0	("2002") _MSC_VER = 1300
-// Microsoft Visual C++ 6.0	_MSC_VER          = 1200
-// Microsoft Visual C++ 5.0	_MSC_VER          = 1100
+// Microsoft Visual C++ 7.1    ("2003") _MSC_VER = 1310
+// Microsoft Visual C++ 7.0    ("2002") _MSC_VER = 1300
+// Microsoft Visual C++ 6.0    _MSC_VER          = 1200
+// Microsoft Visual C++ 5.0    _MSC_VER          = 1100
 
 // Turn off warnings about deprecated C routines
 #   pragma warning (disable : 4996)
@@ -188,24 +188,24 @@ These control the version of Winsock used by G3D.
 
     // DLL runtime
     #ifndef _DLL
-	    #define _DLL
+        #define _DLL
     #endif
 
     // Multithreaded runtime
     #ifndef _MT
-	    #define _MT 1
+        #define _MT 1
     #endif
 
     // Ensure that we aren't forced into the static lib
     #ifdef _STATIC_CPPLIB
-	    #undef _STATIC_CPPLIB
+        #undef _STATIC_CPPLIB
     #endif
 
 #ifdef _DEBUG
-	// Some of the support libraries are always built in Release.
-	// Make sure the debug runtime library is linked in
-	#pragma comment(linker, "/NODEFAULTLIB:MSVCRT.LIB")
-	#pragma comment(linker, "/NODEFAULTLIB:MSVCPRT.LIB")
+    // Some of the support libraries are always built in Release.
+    // Make sure the debug runtime library is linked in
+    #pragma comment(linker, "/NODEFAULTLIB:MSVCRT.LIB")
+    #pragma comment(linker, "/NODEFAULTLIB:MSVCPRT.LIB")
 #endif
 
 

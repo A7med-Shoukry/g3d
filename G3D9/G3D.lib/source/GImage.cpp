@@ -1116,10 +1116,10 @@ void GImage::convertToRGB() {
         break;
 
     case 3:
-		return;
+        return;
 
     case 4:
-		// Strip alpha
+        // Strip alpha
         {            
             ImageBuffer::Ref old = m_buffer;
             Color4unorm8* src = pixel4();

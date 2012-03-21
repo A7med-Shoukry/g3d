@@ -22,6 +22,7 @@
 #include "G3D/Table.h"
 #include "G3D/HashTrait.h"
 #include "G3D/Vector2int16.h"
+#include "G3D/Vector2unorm16.h"
 #include "G3D/Random.h"
 
 namespace G3D {
@@ -62,6 +63,7 @@ public:
     Vector2(double coordinate[2]);
     Vector2(const Vector2& other);
     Vector2(const Vector2int16& other); 
+    Vector2(const Vector2unorm16& other); 
 
     Vector2& operator=(const Any& a);
 
@@ -276,7 +278,8 @@ inline Vector2::Vector2 (const Vector2& rkVector) {
 
 inline Vector2::Vector2 (const Vector2int16& v) : x(v.x), y(v.y) {
 }
-
+inline Vector2::Vector2 (const Vector2unorm16& v) : x(float(v.x)), y(float(v.y)) {
+}
 
 inline float& Vector2::operator[] (int i) {
     return ((float*)this)[i];

@@ -116,7 +116,7 @@ private:
     MilestoneRef                        milestone;
 
     /** Number of bytes currently m_allocated out of m_size total. */
-    size_t   		                    m_allocated;
+    size_t                               m_allocated;
     
     Type                                m_type;
 
@@ -125,16 +125,16 @@ private:
        accidentally being used-- it is incremented every time
        the VertexBuffer is reset.
     */
-    uint64				                m_generation;
+    uint64                                m_generation;
     
     /** The maximum m_size of this area that was ever used. */
-    size_t			                    m_peakAllocated;
+    size_t                                m_peakAllocated;
     
     /** Set by RenderDevice */
     RenderDevice*                       m_renderDevice;
     
     /** Total  number of bytes in this area.  May be zero if resources have been freed.*/
-    size_t			                    m_size;
+    size_t                                m_size;
     
     /**
        The OpenGL buffer object associated with this area
@@ -144,7 +144,7 @@ private:
     
     /** Pointer to the memory (NULL when
         the VBO extension is not present). */
-    void*				                m_basePointer;
+    void*                                m_basePointer;
     
     enum Mode {UNINITIALIZED, VBO_MEMORY, MAIN_MEMORY};
     static Mode                         m_mode;

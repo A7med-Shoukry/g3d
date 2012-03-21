@@ -1,8 +1,8 @@
 /**
   @file directinput8.h
 
-  @created 	  2004-10-16
-  @edited  	  2007-01-30
+  @created       2004-10-16
+  @edited        2007-01-30
     
 */
 
@@ -1270,17 +1270,17 @@ const uint32 DIK_MEDIASELECT     = 0xED;    /* Media Select */
 
 // Define missing Virtual Keys
 const uint32 VK_SEMICOLON        = 0xBA; // ;
-const uint32 VK_EQUALS	         = 0xBB; // =
-const uint32 VK_COMMA	         = 0xBC; // ,
-const uint32 VK_MINUS	         = 0xBD; // -
-const uint32 VK_PERIOD	         = 0xBE; // .
-const uint32 VK_SLASH	         = 0xBF; // /
-const uint32 VK_GRAVE	         = 0xC0; // ??
-const uint32 VK_LBRACKET	     = 0xDB; // [
-const uint32 VK_BACKSLASH	     = 0xDC; // '\'
-const uint32 VK_RBRACKET	     = 0xDD; // ]
-const uint32 VK_APOSTROPHE	     = 0xDE; // ??
-const uint32 VK_BACKTICK	     = 0xDF; // ??
+const uint32 VK_EQUALS             = 0xBB; // =
+const uint32 VK_COMMA             = 0xBC; // ,
+const uint32 VK_MINUS             = 0xBD; // -
+const uint32 VK_PERIOD             = 0xBE; // .
+const uint32 VK_SLASH             = 0xBF; // /
+const uint32 VK_GRAVE             = 0xC0; // ??
+const uint32 VK_LBRACKET         = 0xDB; // [
+const uint32 VK_BACKSLASH         = 0xDC; // '\'
+const uint32 VK_RBRACKET         = 0xDD; // ]
+const uint32 VK_APOSTROPHE         = 0xDE; // ??
+const uint32 VK_BACKTICK         = 0xDF; // ??
 
 
 namespace _internal{

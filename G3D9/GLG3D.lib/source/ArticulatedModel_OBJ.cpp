@@ -77,31 +77,31 @@ static void mergeGroupsAndMeshesByMaterial(ParseOBJ& parseData) {
 \cite http://www.fileformat.info/format/material/
 
 MTL illum constants:
-0	 Color on and Ambient off 
+0     Color on and Ambient off 
 
-1	 Color on and Ambient on 
+1     Color on and Ambient on 
 
-2	 Highlight on 
+2     Highlight on 
 
-3	 Reflection on and Ray trace on 
+3     Reflection on and Ray trace on 
 
-4	 Transparency: Glass on 
+4     Transparency: Glass on 
      Reflection: Ray trace on 
 
-5	 Reflection: Fresnel on and Ray trace on 
+5     Reflection: Fresnel on and Ray trace on 
 
-6	 Transparency: Refraction on 
+6     Transparency: Refraction on 
      Reflection: Fresnel off and Ray trace on 
 
-7	 Transparency: Refraction on 
+7     Transparency: Refraction on 
      Reflection: Fresnel on and Ray trace on 
 
-8	 Reflection on and Ray trace off 
+8     Reflection on and Ray trace off 
 
-9	 Transparency: Glass on 
+9     Transparency: Glass on 
      Reflection: Ray trace off 
 
-10	 Casts shadows onto invisible surfaces 
+10     Casts shadows onto invisible surfaces 
 */
 static Material::Specification toMaterialSpecification
 (const ArticulatedModel::Specification& modelSpec, 

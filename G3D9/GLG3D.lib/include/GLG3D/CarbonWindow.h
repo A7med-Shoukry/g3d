@@ -60,71 +60,71 @@ void HIDCollectJoyElementsArrayHandler(const void *value, void *parameter);
 class CarbonWindow : public OSWindow {
 private:
     // Window Settings
-    Vector2	                _clientRectOffset;
-    Vector2			_clientXY;
-    std::string	                _title;
-	
+    Vector2                    _clientRectOffset;
+    Vector2            _clientXY;
+    std::string                    _title;
+    
     /** Modifiers down on last key event */
     GKeyMod                     lastMod;
 
     // Process to Front Initialization
     static bool                 _ProcessBroughtToFront;
-	
+    
     // State Information
     bool                        _mouseVisible;
-    bool			_inputCapture;
-    bool			_windowActive;
+    bool            _inputCapture;
+    bool            _windowActive;
     
-    bool			_receivedCloseEvent;
+    bool            _receivedCloseEvent;
 
     //  Mouse Button State Array: false - up, true - down
-    //	[0] - left, [1] - middle, [2] - right, [3] - X1,  [4] - X2
-    bool			_mouseButtons[8];
-    bool			_keyboardButtons[256];
+    //    [0] - left, [1] - middle, [2] - right, [3] - X1,  [4] - X2
+    bool            _mouseButtons[8];
+    bool            _keyboardButtons[256];
     
     // Joystick Classes
     class GJoyElement {
     public:
-        IOHIDElementCookie cookie;	// unique value which identifies element, will NOT change
-        long min;					// reported min value possible
-        long max;					// reported max value possible
-	
+        IOHIDElementCookie cookie;    // unique value which identifies element, will NOT change
+        long min;                    // reported min value possible
+        long max;                    // reported max value possible
+    
         long value;                 // actual value of element
         
         // runtime variables used for auto-calibration
-        long minReport;				// min returned value
-        long maxReport;				// max returned value
+        long minReport;                // min returned value
+        long maxReport;                // max returned value
     };
     
     class GJoyDevice {
     public:
         IOHIDDeviceInterface**       interface;   // interface to device, NULL = no interface
         
-        std::string product;		   // name of product
-        long usage;			   // usage page from IOUSBHID Parser.h which defines general usage
-        long usagePage;			   // usage within above page from IOUSBHID Parser.h which defines specific usage
+        std::string product;           // name of product
+        long usage;               // usage page from IOUSBHID Parser.h which defines general usage
+        long usagePage;               // usage within above page from IOUSBHID Parser.h which defines specific usage
         
         Array<GJoyElement> axis;
         Array<GJoyElement> button;
         Array<GJoyElement> hat;
         
         int removed;
-        int uncentered;	
-	
+        int uncentered;    
+    
         bool buildDevice(io_object_t hidDevice);
         void addJoyElement(CFTypeRef refElement);
     };
     
     // TODO: Add Input Device Array
     bool                   _enabledJoysticks;
-    Array<GJoyDevice>	   _joysticks;
+    Array<GJoyDevice>       _joysticks;
     
     // Carbon Window Data
-    WindowRef 		_window;
-    AGLContext		_glContext;
+    WindowRef         _window;
+    AGLContext        _glContext;
     //    AGLDrawable         _glDrawable;
     
-    const bool		_createdWindow;
+    const bool        _createdWindow;
 
     // Make Event Handlers Capable of Seeing Private Parts
     friend pascal OSStatus _internal::OnWindowSized(EventHandlerCallRef handlerRef, EventRef event, void *userData);
@@ -144,8 +144,8 @@ private:
     static EventTypeSpec _deactivateSpec[];
     static EventTypeSpec _deviceScrollSpec[];
     
-    Array<GEvent>		_sizeEventInjects;
-    Array<std::string>	_droppedFiles;
+    Array<GEvent>        _sizeEventInjects;
+    Array<std::string>    _droppedFiles;
 
     void injectSizeEvent(int width, int height) {
         GEvent e;
@@ -154,17 +154,17 @@ private:
         e.resize.h = height;
         _sizeEventInjects.append(e);
     }
-	
+    
     bool makeMouseEvent(EventRef theEvent, GEvent& e);
-	
+    
     void findJoysticks(UInt32 usagePage, UInt32 usage);
     bool enableJoysticks();
-	
+    
     /** Called from all constructors */
     void init(WindowRef window, bool creatingShareWindow = false);
-	
+    
     static std::auto_ptr<CarbonWindow> _shareWindow;
-	
+    
     static void createShareWindow(OSWindow::Settings s);
     
     /** Constructs from a new window */

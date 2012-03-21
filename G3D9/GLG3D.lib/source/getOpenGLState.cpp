@@ -129,23 +129,23 @@ GLdouble glGetDouble(GLenum which) {
 }
 
 static std::string getClippingState() {
-	std::string result;
+    std::string result;
 
     int numPlanes = glGetInteger(GL_MAX_CLIP_PLANES);
-	int C;
+    int C;
 
-	for(C = 0; C < numPlanes; C++) {
-		result += format("// Clip plane %d\n", C);
-		
+    for(C = 0; C < numPlanes; C++) {
+        result += format("// Clip plane %d\n", C);
+        
         result += format("%s(GL_CLIP_PLANE0 + %d);\n", glIsEnabled(GL_CLIP_PLANE0 + C) ? "glEnable" : "glDisable", C);
 
-		double x[4];
-		glGetClipPlane(GL_CLIP_PLANE0 + C, x);
-		result += format("{double coefficients[]={%4.4e, %4.4e, %4.4e, %4.4e};\n glClipPlane(GL_CLIP_PLANE0 + %d, coefficients);}\n",
-			x[0], x[1], x[2], x[3], C);
-	}
+        double x[4];
+        glGetClipPlane(GL_CLIP_PLANE0 + C, x);
+        result += format("{double coefficients[]={%4.4e, %4.4e, %4.4e, %4.4e};\n glClipPlane(GL_CLIP_PLANE0 + %d, coefficients);}\n",
+            x[0], x[1], x[2], x[3], C);
+    }
 
-	return result;
+    return result;
 }
 
 static std::string getLightingState(bool showDisabled) {
@@ -383,8 +383,8 @@ static std::string getTextureState(bool showDisabled) {
 }
 
 static std::string enableEntry(GLenum which) {
-	return format("%s(%s);\n",
-		glGetBoolean(which) ? "glEnable" : "glDisable", GLenumToString(which));
+    return format("%s(%s);\n",
+        glGetBoolean(which) ? "glEnable" : "glDisable", GLenumToString(which));
 }
 
 
@@ -424,75 +424,75 @@ std::string getOpenGLState(bool showDisabled) {
     result += "//                          Other                                //\n\n";
     
     GLdouble d[4];
-	GLboolean b[4];
+    GLboolean b[4];
 
     // Viewport
     glGetDoublev(GL_VIEWPORT, d);
     result += format("glViewport(%g, %g, %g, %g);\n\n", d[0], d[1], d[2], d[3]);
 
-	//color
-	result += enableEntry(GL_COLOR_ARRAY);
-	result += enableEntry(GL_COLOR_LOGIC_OP);
-	result += enableEntry(GL_COLOR_MATERIAL);
+    //color
+    result += enableEntry(GL_COLOR_ARRAY);
+    result += enableEntry(GL_COLOR_LOGIC_OP);
+    result += enableEntry(GL_COLOR_MATERIAL);
 
-	glGetDoublev(GL_COLOR_CLEAR_VALUE, d);
+    glGetDoublev(GL_COLOR_CLEAR_VALUE, d);
     result += format("glClearColor(%g, %g, %g, %g);\n", d[0], d[1], d[2], d[3]);
     glGetDoublev(GL_CURRENT_COLOR, d);
     result += format("glColor4d(%g, %g, %g, %g);\n", d[0], d[1], d[2], d[3]);
-	glGetBooleanv(GL_COLOR_WRITEMASK, b);
-	result += format("glColorMask(%d, %d, %d, %d);\n", b[0], b[1], b[2], b[3]);
+    glGetBooleanv(GL_COLOR_WRITEMASK, b);
+    result += format("glColorMask(%d, %d, %d, %d);\n", b[0], b[1], b[2], b[3]);
 
-	result += format("\n");
+    result += format("\n");
 
 
-	//blend
-	result += enableEntry(GL_BLEND);
+    //blend
+    result += enableEntry(GL_BLEND);
 
     if (showDisabled || glGetBoolean(GL_BLEND)) {
-	    result += format("glBlendFunc(%s, %s);\n", 
+        result += format("glBlendFunc(%s, %s);\n", 
             GLenumToString(glGetInteger(GL_BLEND_DST)),
             GLenumToString(glGetInteger(GL_BLEND_SRC)));
-    	result += format("\n");
+        result += format("\n");
     }
 
 
 
-	//alpha
-	result += enableEntry(GL_ALPHA_TEST);
+    //alpha
+    result += enableEntry(GL_ALPHA_TEST);
 
     if (showDisabled || glGetBoolean(GL_ALPHA_TEST)) {
-	    result += format("glAlphaFunc(%s, %g);\n", 
-		    GLenumToString(glGetInteger(GL_ALPHA_TEST_FUNC)),
-		    glGetDouble(GL_ALPHA_TEST_REF));
-    	result += format("\n");
+        result += format("glAlphaFunc(%s, %g);\n", 
+            GLenumToString(glGetInteger(GL_ALPHA_TEST_FUNC)),
+            glGetDouble(GL_ALPHA_TEST_REF));
+        result += format("\n");
     }
 
 
-	//depth stuff
+    //depth stuff
     result += "///////////////////////////////////////////////////////////////////\n";
     result += "//                      Depth Buffer                             //\n\n";
-	result += enableEntry(GL_DEPTH_TEST);
+    result += enableEntry(GL_DEPTH_TEST);
     if (showDisabled || glGetBoolean(GL_DEPTH_TEST)) {
-	    result += format("glDepthFunc(%s);\n", 
+        result += format("glDepthFunc(%s);\n", 
             GLenumToString(glGetInteger(GL_DEPTH_FUNC)));
     }
 
-	result += format("glClearDepth(%g);\n", glGetDouble(GL_DEPTH_CLEAR_VALUE));
-	result += format("glDepthMask(%d);\n", glGetBoolean(GL_DEPTH_WRITEMASK));
+    result += format("glClearDepth(%g);\n", glGetDouble(GL_DEPTH_CLEAR_VALUE));
+    result += format("glDepthMask(%d);\n", glGetBoolean(GL_DEPTH_WRITEMASK));
 
     {
         Vector2 range = glGetVector2(GL_DEPTH_RANGE);
-    	result += format("glDepthRange(%g, %g);\n", range.x, range.y);
+        result += format("glDepthRange(%g, %g);\n", range.x, range.y);
     }
 
-	result += format("\n");
+    result += format("\n");
 
 
-	//stencil stuff
+    //stencil stuff
     result += "///////////////////////////////////////////////////////////////////////\n";
     result += "// Stencil\n\n";
 
-	result += enableEntry(GL_STENCIL_TEST);
+    result += enableEntry(GL_STENCIL_TEST);
 
     result += format("glClearStencil(0x%x);\n", glGetInteger(GL_STENCIL_CLEAR_VALUE));
 
@@ -506,13 +506,13 @@ std::string getOpenGLState(bool showDisabled) {
             "glStencilFunc(%s, %d, %d);\n",
             GLenumToString(glGetInteger(GL_STENCIL_FUNC)),
             glGetInteger(GL_STENCIL_REF),
-		    glGetInteger(GL_STENCIL_VALUE_MASK));
+            glGetInteger(GL_STENCIL_VALUE_MASK));
 
-	result += format(
+    result += format(
         "glStencilOp(%s, %s, %s);\n",
-		GLenumToString(glGetInteger(GL_STENCIL_FAIL)),
-		GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_FAIL)),
-		GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_PASS)));
+        GLenumToString(glGetInteger(GL_STENCIL_FAIL)),
+        GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_FAIL)),
+        GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_PASS)));
 
     result += format("glStencilMask(0x%x);\n", glGetInteger(GL_STENCIL_WRITEMASK));
 
@@ -525,80 +525,80 @@ std::string getOpenGLState(bool showDisabled) {
                 "glStencilFunc(%s, %d, %d);\n",
                 GLenumToString(glGetInteger(GL_STENCIL_FUNC)),
                 glGetInteger(GL_STENCIL_REF),
-		        glGetInteger(GL_STENCIL_VALUE_MASK));
+                glGetInteger(GL_STENCIL_VALUE_MASK));
 
-	    result += format(
+        result += format(
             "glStencilOp(%s, %s, %s);\n",
-		    GLenumToString(glGetInteger(GL_STENCIL_FAIL)),
-		    GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_FAIL)),
-		    GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_PASS)));
+            GLenumToString(glGetInteger(GL_STENCIL_FAIL)),
+            GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_FAIL)),
+            GLenumToString(glGetInteger(GL_STENCIL_PASS_DEPTH_PASS)));
 
         result += format("glStencilMask(0x%x);\n", glGetInteger(GL_STENCIL_WRITEMASK));
     }
     
     result += ("\n");
 
-	//misc
-	result += enableEntry(GL_NORMAL_ARRAY);
-	result += enableEntry(GL_NORMALIZE);
+    //misc
+    result += enableEntry(GL_NORMAL_ARRAY);
+    result += enableEntry(GL_NORMALIZE);
 
-	glGetDoublev(GL_CURRENT_NORMAL, d);
+    glGetDoublev(GL_CURRENT_NORMAL, d);
     result += format("glNormal3d(%g, %g, %g);\n", d[0], d[1], d[2]);
 
-	result += ("\n");
+    result += ("\n");
 
-	result += format("glPixelZoom(%g, %g);\n", glGetDouble(GL_ZOOM_X), 
+    result += format("glPixelZoom(%g, %g);\n", glGetDouble(GL_ZOOM_X), 
         glGetDouble(GL_ZOOM_Y));
 
-	result += format("glReadBuffer(%s);\n", 
+    result += format("glReadBuffer(%s);\n", 
         GLenumToString(glGetInteger(GL_READ_BUFFER)));
 
-	result += enableEntry(GL_POLYGON_SMOOTH);
-	result += enableEntry(GL_POLYGON_STIPPLE);
-	result += enableEntry(GL_LINE_SMOOTH);
-	result += enableEntry(GL_LINE_STIPPLE);
-	result += enableEntry(GL_POINT_SMOOTH);
+    result += enableEntry(GL_POLYGON_SMOOTH);
+    result += enableEntry(GL_POLYGON_STIPPLE);
+    result += enableEntry(GL_LINE_SMOOTH);
+    result += enableEntry(GL_LINE_STIPPLE);
+    result += enableEntry(GL_POINT_SMOOTH);
 
-	result += enableEntry(GL_AUTO_NORMAL);
-	result += enableEntry(GL_CULL_FACE);
+    result += enableEntry(GL_AUTO_NORMAL);
+    result += enableEntry(GL_CULL_FACE);
 
-	result += enableEntry(GL_POLYGON_OFFSET_FILL);
-	result += enableEntry(GL_POLYGON_OFFSET_LINE);
-	result += enableEntry(GL_POLYGON_OFFSET_POINT);
+    result += enableEntry(GL_POLYGON_OFFSET_FILL);
+    result += enableEntry(GL_POLYGON_OFFSET_LINE);
+    result += enableEntry(GL_POLYGON_OFFSET_POINT);
 
-	result += ("\n");
+    result += ("\n");
 
-	result += enableEntry(GL_DITHER);
-	result += enableEntry(GL_FOG);
+    result += enableEntry(GL_DITHER);
+    result += enableEntry(GL_FOG);
 
-	result += enableEntry(GL_VERTEX_ARRAY);
-	result += enableEntry(GL_INDEX_ARRAY);
-	result += enableEntry(GL_INDEX_LOGIC_OP);
+    result += enableEntry(GL_VERTEX_ARRAY);
+    result += enableEntry(GL_INDEX_ARRAY);
+    result += enableEntry(GL_INDEX_LOGIC_OP);
 
-	result += format("\n");
+    result += format("\n");
 
-	result += enableEntry(GL_MAP1_COLOR_4);
-	result += enableEntry(GL_MAP1_INDEX);
-	result += enableEntry(GL_MAP1_NORMAL);
-	result += enableEntry(GL_MAP1_TEXTURE_COORD_1);
-	result += enableEntry(GL_MAP1_TEXTURE_COORD_2);
-	result += enableEntry(GL_MAP1_TEXTURE_COORD_3);
-	result += enableEntry(GL_MAP1_TEXTURE_COORD_4);
-	result += enableEntry(GL_MAP1_VERTEX_3);
-	result += enableEntry(GL_MAP1_VERTEX_4);
-	result += enableEntry(GL_MAP2_COLOR_4);
-	result += enableEntry(GL_MAP2_INDEX);
-	result += enableEntry(GL_MAP2_NORMAL);
-	result += enableEntry(GL_MAP2_TEXTURE_COORD_1);
-	result += enableEntry(GL_MAP2_TEXTURE_COORD_2);
-	result += enableEntry(GL_MAP2_TEXTURE_COORD_3);
-	result += enableEntry(GL_MAP2_TEXTURE_COORD_4);
-	result += enableEntry(GL_MAP2_VERTEX_3);
-	result += enableEntry(GL_MAP2_VERTEX_4);
+    result += enableEntry(GL_MAP1_COLOR_4);
+    result += enableEntry(GL_MAP1_INDEX);
+    result += enableEntry(GL_MAP1_NORMAL);
+    result += enableEntry(GL_MAP1_TEXTURE_COORD_1);
+    result += enableEntry(GL_MAP1_TEXTURE_COORD_2);
+    result += enableEntry(GL_MAP1_TEXTURE_COORD_3);
+    result += enableEntry(GL_MAP1_TEXTURE_COORD_4);
+    result += enableEntry(GL_MAP1_VERTEX_3);
+    result += enableEntry(GL_MAP1_VERTEX_4);
+    result += enableEntry(GL_MAP2_COLOR_4);
+    result += enableEntry(GL_MAP2_INDEX);
+    result += enableEntry(GL_MAP2_NORMAL);
+    result += enableEntry(GL_MAP2_TEXTURE_COORD_1);
+    result += enableEntry(GL_MAP2_TEXTURE_COORD_2);
+    result += enableEntry(GL_MAP2_TEXTURE_COORD_3);
+    result += enableEntry(GL_MAP2_TEXTURE_COORD_4);
+    result += enableEntry(GL_MAP2_VERTEX_3);
+    result += enableEntry(GL_MAP2_VERTEX_4);
 
-	result += format("\n");
+    result += format("\n");
 
-	result += enableEntry(GL_SCISSOR_TEST);
+    result += enableEntry(GL_SCISSOR_TEST);
 
     return result;
 }

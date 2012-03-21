@@ -219,13 +219,13 @@ public:
         class RayTracer {
         public:
         
-  	void trace(const Vector2int32& pixel) {
+      void trace(const Vector2int32& pixel) {
         ...
-	}
+    }
 
-	void traceAll() {
+    void traceAll() {
         GThread::runConcurrently2D(Vector2int32(0,0), Vector2int32(w,h), this, &RayTracer::trace);
-	}
+    }
         };
         \endcode
     */

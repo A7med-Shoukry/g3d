@@ -156,17 +156,17 @@ void SurfaceElement::set
  const Vector3&  interpolatedTangent,
  const Vector3&  interpolatedTangent2,
  const Vector3&  eye,
- int			 index,
- float			 u,
- float			 v) {
+ int             index,
+ float             u,
+ float             v) {
     this->material.source = material;
     interpolated.texCoord = texCoord;
     interpolated.normal   = interpolatedNormal;
     geometric.location    = geometricLocation;
     geometric.normal      = geometricNormal;
     sourcePrimitive.index = index;
-	sourcePrimitive.u	  = u;
-	sourcePrimitive.v     = v;
+    sourcePrimitive.u      = u;
+    sourcePrimitive.v     = v;
     setBump(material->bump(), eye);
     this->material = MaterialElement(material->bsdf(), material->emissive(), shading.texCoord);
 }
