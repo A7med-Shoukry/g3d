@@ -51,7 +51,11 @@ private:
     /** Indices into the CPU Vertex array */
     uint32                  index[3];
 
-    /** The area of the triangle: (e0 x e1).length() * 0.5 */
+    /** 
+      The area of the triangle: (e0 x e1).length() * 0.5 
+      
+      Since this triangle is  
+      */
     float                   m_area;
 
 
@@ -99,7 +103,7 @@ public:
 
     /** Surface area. */
     float area() const {
-        return m_area;
+        return abs(m_area);
     }
 
     /** Vertex position (must be computed) */
