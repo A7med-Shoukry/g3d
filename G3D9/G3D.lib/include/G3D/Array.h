@@ -5,7 +5,7 @@
   \cite Portions written by Aaron Orenstein, a@orenstein.name
  
   \created 2001-03-11
-  \edited  2011-05-29
+  \edited  2012-03-21
 
   Copyright 2000-2012, Morgan McGuire, http://graphics.cs.williams.edu
   All rights reserved.
@@ -17,6 +17,7 @@
 #include "G3D/platform.h"
 #include "G3D/debug.h"
 #include "G3D/MemoryManager.h"
+#include "G3D/System.h"
 #ifdef G3D_DEBUG
 //   For formatting error messages
 #    include "G3D/format.h"
