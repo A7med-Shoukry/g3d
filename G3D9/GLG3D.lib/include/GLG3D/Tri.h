@@ -126,19 +126,16 @@ public:
     /** Vertex normal */
     const Vector3& normal(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(vertexArray != NULL);
         return vertex(vertexArray, i).normal;
     }
 
     const Vector2& texCoord(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(vertexArray != NULL);
         return vertex(vertexArray, i).texCoord0;
     }
 
     const Vector4& packedTangent(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(vertexArray != NULL);
         return vertex(vertexArray, i).tangent;
     }
 
@@ -146,7 +143,6 @@ public:
         the corresponding vertex normals.*/
     Vector3 tangent(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(vertexArray != NULL);
         return vertex(vertexArray, i).tangent.xyz();
     }
 
@@ -154,7 +150,6 @@ public:
         (Erroneously called the "binormal" in some literature) */
     Vector3 tangent2(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(vertexArray != NULL);
         const CPUVertexArray::Vertex& vertex = this->vertex(vertexArray, i);
         return vertex.normal.cross(vertex.tangent.xyz()) * vertex.tangent.w;
     }
