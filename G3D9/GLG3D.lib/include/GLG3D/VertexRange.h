@@ -3,11 +3,11 @@
 
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   \created 2001-05-29
-  \edited  2010-07-06
+  \edited  2012-03-20
 */
 
-#ifndef GLG3D_VERTEXRANGE_h
-#define GLG3D_VERTEXRANGE_h
+#ifndef GLG3D_VertexRange_h
+#define GLG3D_VertexRange_h
 
 #include "GLG3D/getOpenGLState.h"
 #include "GLG3D/glFormat.h"
@@ -15,7 +15,6 @@
 
 namespace G3D {
 
-// forward declare heavily dependent classes
 class RenderDevice;
 
 
@@ -71,16 +70,25 @@ private:
     /** The initial size this VertexRange was allocated with, in bytes. */
     size_t              m_maxSize;
 
+    bool                m_normalizedFixedPoint;
+
     /** For uploading interleaved arrays */
-    void init(VertexRange& dstPtr, size_t dstOffset, GLenum glformat, 
-        size_t eltSize, int numElements, size_t stride);
+    void init
+    (VertexRange&       dstPtr, 
+     size_t             dstOffset,
+     GLenum             glformat, 
+     size_t             eltSize, 
+     int                numElements, 
+     size_t             stride,
+     bool               normalizedFixedPoint);
 
     void init
     (const void*        sourcePtr, 
      int                numElements, 
      VertexBufferRef    area,
      GLenum             glformat, 
-     size_t             eltSize);
+     size_t             eltSize,
+     bool               normalizedFixedPoint);
 
     void init
     (const void*        srcPtr,
@@ -90,9 +98,10 @@ private:
      size_t             eltSize,
      VertexRange        dstPtr,
      size_t             dstOffset, 
-     size_t             dstStride);
+     size_t             dstStride,
+     bool               normalizedFixedPoint);
     
-    void update(const void* sourcePtr, int _numElements, GLenum glformat, size_t eltSize);
+    void update(const void* sourcePtr, int _numElements, GLenum glformat, size_t eltSize, bool normalizedFixedPoint);
 
     /** Performs the actual memory transfer (like memcpy).  The
         dstPtrOffset is the number of <B>bytes</B> to add to m_pointer
@@ -119,7 +128,7 @@ private:
     
     void texCoordPointer(unsigned int unit) const;
     
-    void vertexAttribPointer(unsigned int attribNum, bool normalize) const;
+    void vertexAttribPointer(unsigned int attribNum) const;
 
 public:
 
@@ -132,7 +141,8 @@ public:
             (m_stride == other.m_stride) &&
             (m_generation == other.m_generation) &&
             (m_underlyingRepresentation == other.m_underlyingRepresentation) &&
-            (m_maxSize == other.m_maxSize);
+            (m_maxSize == other.m_maxSize) &&
+            (m_normalizedFixedPoint == other.m_normalizedFixedPoint);
     }
 
     /** \sa buffer() \deprecated */
@@ -240,18 +250,27 @@ public:
     */
     template<class T>
     VertexRange(const T* sourcePtr, int _numElements, VertexBufferRef _area) {
-        alwaysAssertM((_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
+        alwaysAssertM((_area->type() == VertexBuffer::DATA) || glCanBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
-        init(sourcePtr, _numElements, _area, glFormatOf(T), sizeof(T));
+        init(sourcePtr, _numElements, _area, glFormatOf(T), sizeof(T), glIsNormalizedFixedPoint(T));
     }		
 
   
     template<class T>
     VertexRange(const Array<T>& source, VertexBufferRef _area) {
 
-        alwaysAssertM((_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
+        alwaysAssertM((_area->type() == VertexBuffer::DATA) || glCanBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
-        init(source.getCArray(), source.size(), _area, glFormatOf(T), sizeof(T));
+        init(source.getCArray(), source.size(), _area, glFormatOf(T), sizeof(T), glIsNormalizedFixedPoint(T));
+    }
+
+    void setNormalizedFixedPoint(bool b) {
+        m_normalizedFixedPoint = b;
+    }
+
+    /** True if this vertex is storing numbers in normalized fixed point format */
+    bool normalizedFixedPoint() {
+        return m_normalizedFixedPoint;
     }
 
 
@@ -405,11 +424,11 @@ public:
         size_t totalMemory = stride * N;
         
         VertexRange masterVAR(totalMemory, area);
-        var1.init(masterVAR, 0, glFormatOf(T1), size1, src1.size(), stride);
-        var2.init(masterVAR, size1, glFormatOf(T2), size2, src2.size(), stride);
-        var3.init(masterVAR, size1 + size2, glFormatOf(T3), size3, src3.size(), stride);
-        var4.init(masterVAR, size1 + size2 + size3, glFormatOf(T4), size4, src4.size(), stride);
-        var5.init(masterVAR, size1 + size2 + size3 + size4, glFormatOf(T5), size5, src5.size(), stride);
+        var1.init(masterVAR, 0, glFormatOf(T1), size1, src1.size(), stride, glIsNormalizedFixedPoint(T1));
+        var2.init(masterVAR, size1, glFormatOf(T2), size2, src2.size(), stride, glIsNormalizedFixedPoint(T2));
+        var3.init(masterVAR, size1 + size2, glFormatOf(T3), size3, src3.size(), stride, glIsNormalizedFixedPoint(T3));
+        var4.init(masterVAR, size1 + size2 + size3, glFormatOf(T4), size4, src4.size(), stride, glIsNormalizedFixedPoint(T4));
+        var5.init(masterVAR, size1 + size2 + size3 + size4, glFormatOf(T5), size5, src5.size(), stride, glIsNormalizedFixedPoint(T5));
 
         updateInterleaved(src1, var1, src2, var2, src3, var3, src4, var4, src5, var5);
     }
@@ -500,10 +519,10 @@ public:
     (const T&           ignored,
      int                _numElements,
      VertexRange        dstPtr,
-     size_t                dstOffset, 
-     size_t                dstStride) {
+     size_t             dstOffset, 
+     size_t             dstStride) {
         (void)ignored;
-        init(dstPtr, dstOffset, glFormatOf(T), sizeof(T), _numElements, dstStride);
+        init(dstPtr, dstOffset, glFormatOf(T), sizeof(T), _numElements, dstStride, glIsNormalizedFixedPoint(T));
     }
 
     /** Allocate a vertex range within a vertex buffer, but do not upload data to it.
@@ -527,17 +546,17 @@ public:
     VertexRange
     (const Array<T>& source,
      VertexRange     dstPtr,
-     size_t             dstOffset, 
-     size_t             dstStride) {
-        init(source.getCArray(), source.size(), 0, glFormatOf(T), sizeof(T), dstPtr, dstOffset, dstStride);
+     size_t          dstOffset, 
+     size_t          dstStride) {
+        init(source.getCArray(), source.size(), 0, glFormatOf(T), sizeof(T), dstPtr, dstOffset, dstStride, glIsNormalizedFixedPoint(T));
     }
 
     
     template<class T>
     void update(const T* sourcePtr, int _numElements) {
-        debugAssertM((m_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
+        debugAssertM((m_area->type() == VertexBuffer::DATA) || glCanBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
-        update(sourcePtr, _numElements, glFormatOf(T), sizeof(T));
+        update(sourcePtr, _numElements, glFormatOf(T), sizeof(T), glIsNormalizedFixedPoint(T));
     }
    
     /**
@@ -548,9 +567,9 @@ public:
     */
     template<class T>
     void update(const Array<T>& source) {
-        debugAssertM((m_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
+        debugAssertM((m_area->type() == VertexBuffer::DATA) || glCanBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
-        update(source.getCArray(), source.size(), glFormatOf(T), sizeof(T));
+        update(source.getCArray(), source.size(), glFormatOf(T), sizeof(T), glIsNormalizedFixedPoint(T));
     }
     
     /** Overwrites a single element of an existing array without
@@ -563,8 +582,11 @@ public:
     // direct access to VertexRange memory is generally slow and discouraged.
     template<class T>
     void set(int index, const T& value) {
-        debugAssertM((m_area->type() == VertexBuffer::DATA) || canBeIndexType(T),
+        debugAssertM((m_area->type() == VertexBuffer::DATA) || glCanBeIndexType(T),
                       "Cannot create an index VertexRange in a non-index VertexBuffer");
+        debugAssertM(glIsNormalizedFixedPoint(T) == m_normalizedFixedPoint, 
+                     "Mismatch in normalized fixed point flag between allocation and set time.");
+
         set(index, &value, glFormatOf(T), sizeof(T));
     }
     

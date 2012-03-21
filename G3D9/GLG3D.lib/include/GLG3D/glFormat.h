@@ -41,7 +41,20 @@
 
     Used by the vertex array infrastructure. */
 #define glFormatOf(T) (G3D::_internal::_GLFormat<T>::type())
-#define canBeIndexType(T) (G3D::_internal::_GLFormat<T>::canBeIndex())
+
+/** \def glCanBeIndexType
+
+    \brief True if the C-type passed as an argument can be used by an OpenGL index buffer as the data type.
+    e.g., glCanBeIndexType(float) = false.
+ */
+#define glCanBeIndexType(T) (G3D::_internal::_GLFormat<T>::canBeIndex())
+
+/** \def glIsNormalizedFixedPoint
+
+    \brief True if the C-type passed as an argument is stored in OpenGL normalized fixed point format.
+    e.g., glIsNormalizedFixedPoint(Vector2unorm16) = true.
+ */
+#define glIsNormalizedFixedPoint(T) (G3D::_internal::_GLFormat<T>::isNormalizedFixedPoint())
 
 namespace G3D {
 namespace _internal {
@@ -52,14 +65,17 @@ public:
     static GLenum type() {
         return GL_NONE;
     }
-    /** Is this an integer (usable as an index) */
-    static bool isInt() {
+
+    static bool canBeIndex() {            
+        return false;
+    }                                     
+    static bool isNormalizedFixedPoint() {
         return false;
     }
 };
 
-}
-}
+} // namespace _internal
+} // namespace G3D
 
 /**
    \def DECLARE_GLFORMATOF

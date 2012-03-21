@@ -598,7 +598,7 @@ RenderDevice::RenderState::RenderState(int width, int height, int htutc) :
 
     shadeMode                   = SHADE_FLAT;
 
-    vertexAndPixelShader        = NULL;
+    shaderProgram        = NULL;
     shader                      = NULL;
 
     for (int i = 0; i < MAX_LIGHTS; ++i) {
@@ -960,7 +960,7 @@ void RenderDevice::setState(
         setProjectionMatrix(newState.matrices.projectionMatrix);
     }
 
-    setShaderProgram(newState.vertexAndPixelShader);
+    setShaderProgram(newState.shaderProgram);
     setShader(newState.shader);
     
     // Adopt the popped state's deltas relative the state that it replaced.
@@ -1879,18 +1879,18 @@ void RenderDevice::setShader(const ShaderRef& s) {
 void RenderDevice::forceShaderProgramBind() {
     // Only change the vertex shader if it does not match the one used
     // last time.
-    if (m_lastShaderProgram != m_state.vertexAndPixelShader) {
+    if (m_lastShaderProgram != m_state.shaderProgram) {
 
         majGLStateChange();
-        if (m_state.vertexAndPixelShader.isNull()) {
+        if (m_state.shaderProgram.isNull()) {
             // Disables the programmable pipeline
             glUseProgramObjectARB(0);
         } else {
-            glUseProgramObjectARB(m_state.vertexAndPixelShader->glProgramObject());
+            glUseProgramObjectARB(m_state.shaderProgram->glProgramObject());
         }
         debugAssertGLOk();
 
-        m_lastShaderProgram = m_state.vertexAndPixelShader;
+        m_lastShaderProgram = m_state.shaderProgram;
     }
 }
 
@@ -1898,9 +1898,9 @@ void RenderDevice::forceShaderProgramBind() {
 void RenderDevice::setShaderProgram(const ShaderProgramRef& s) {
     majStateChange();
 
-    if (s != m_state.vertexAndPixelShader) {
+    if (s != m_state.shaderProgram) {
 
-        m_state.vertexAndPixelShader = s;
+        m_state.shaderProgram = s;
 
         if (s.notNull()) {
             alwaysAssertM(s->ok(), s->messages());
@@ -2958,9 +2958,9 @@ void RenderDevice::setVertexArray(const class VertexRange& v) {
 }
 
 
-void RenderDevice::setVertexAttribArray(unsigned int attribNum, const class VertexRange& v, bool normalize) {
+void RenderDevice::setVertexAttribArray(unsigned int attribNum, const class VertexRange& v) {
     setVARAreaFromVAR(v);
-    v.vertexAttribPointer(attribNum, normalize);
+    v.vertexAttribPointer(attribNum);
 }
 
 

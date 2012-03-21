@@ -8,7 +8,7 @@
 
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
   \created 2001-05-29
-  \edited  2011-08-29
+  \edited  2012-03-20
 
   Copyright 2000-2012, Morgan McGuire
 */
@@ -1196,10 +1196,8 @@ public:
         15      texture coordinate set 7     MultiTexCoord(TEXTURE7, ...)
        8+n      texture coordinate set n     MultiTexCoord(TEXTURE0+n, ...)
     </PRE>
-
-      @param normalize If true, the coordinates are forced to a [0, 1] scale
     */
-    void setVertexAttribArray(unsigned int attribNum, const class VertexRange& v, bool normalize);
+    void setVertexAttribArray(unsigned int attribNum, const class VertexRange& v);
 
     /**
      Draws the specified kind of primitive from the current vertex array.
@@ -1563,7 +1561,7 @@ private:
         float                       lowDepthRange;
         float                       highDepthRange;
 
-        ShaderProgramRef     vertexAndPixelShader;
+        ShaderProgramRef            shaderProgram;
 
         ShaderRef                   shader;
 

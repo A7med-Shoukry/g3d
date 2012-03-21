@@ -6,7 +6,7 @@
  \cite Thanks to Jared Hoberock and Qi Mo
 
  \created 2004-04-24
- \edited  2011-06-12
+ \edited  2012-03-20
  */
 
 #include "G3D/fileutils.h"
@@ -177,7 +177,8 @@ bool ShaderProgram::ShaderObject::replaceG3DIndex
     std::string prefix   = "(";
     std::string postfix  = "";
 
-    // Prefix contains spaces so that character counts match in the generated code; we replace by overwriting characters exactly.
+    // Prefix contains spaces so that character counts match in the
+    // generated code; we replace by overwriting characters exactly.
     replace(code, newDefines, "", "g3d_Index(", "(g3d_Indx_", ")");
 
     // Add the unique uniforms to the header for the code.
@@ -215,7 +216,8 @@ void ShaderProgram::ShaderObject::replaceG3DSize
     std::string prefix   = "     (";
     std::string postfix  = ".xy)";
 
-    // Prefix contains spaces so that character counts match in the generated code; we replace by overwriting characters exactly.
+    // Prefix contains spaces so that character counts match in the
+    // generated code; we replace by overwriting characters exactly.
     replace(code, newUniforms, "g3d_sz2D_", "g3d_sampler2DSize(", "     (", ".xy)");
     replace(code, newUniforms, "g3d_sz2D_", "g3d_sampler2DInvSize(", "        (", ".zw)");
 
@@ -255,6 +257,13 @@ void ShaderProgram::ShaderObject::checkForSupport() {
             _messages = "This graphics card does not support pixel shaders.";
         }
         break;
+
+    case GL_GEOMETRY_SHADER_ARB:
+        if (! Shader::supportsGeometryShaders()) {
+            _ok = false;
+            _messages = "This graphics card does not support geometry shaders.";
+        }
+        break;
     }
 }
 
@@ -279,7 +288,8 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
             if (end == std::string::npos) {
                 end = code.size();
             }
-            std::string includeLine = code.substr(i+1, end - i);
+  
+            const std::string& includeLine = code.substr(i + 1, end - i);
 
             std::string filename;
             TextInput t (TextInput::FROM_STRING, includeLine);
@@ -306,12 +316,12 @@ void Shader::processIncludes(const std::string& dir, std::string& code) {
 
 
 void ShaderProgram::ShaderObject::init
-(const std::string&	            name,
- const std::string&	            code,
- bool			                _fromFile,
- bool			                debug,	
- GLenum			                glType,
- const std::string&	            type,
+(const std::string&             name,
+ const std::string&             code,
+ bool                           _fromFile,
+ bool                           debug,	
+ GLenum                         glType,
+ const std::string&             type,
  PreprocessorStatus             preprocessor,
  const Table<std::string, int>& samplerMappings,
  bool                           secondPass) {
@@ -365,11 +375,11 @@ void ShaderProgram::ShaderObject::init
                 uniform mat3   g3d_ObjectToWorldNormalMatrix;
                 uniform mat4x3 g3d_WorldToCameraMatrix;
                 uniform mat4x3 g3d_CameraToWorldMatrix;
-                uniform int  g3d_NumLights;
-                uniform int  g3d_NumTextures;
-                uniform vec4 g3d_ObjectLight0;
-                uniform vec4 g3d_WorldLight0;
-                uniform bool g3d_InvertY;
+                uniform int    g3d_NumLights;
+                uniform int    g3d_NumTextures;
+                uniform vec4   g3d_ObjectLight0;
+                uniform vec4   g3d_WorldLight0;
+                uniform bool   g3d_InvertY;
                 );
 
         
@@ -394,12 +404,15 @@ void ShaderProgram::ShaderObject::init
         case GLCaps::ATI:
             defineString += "#define G3D_ATI\n";
             break;
+
         case GLCaps::NVIDIA:
             defineString += "#define G3D_NVIDIA\n";
             break;
+
         case GLCaps::MESA:
             defineString += "#define G3D_MESA\n";
             break;
+
         default:;
         }
 
@@ -558,6 +571,7 @@ void ShaderProgram::reload() {
     // TODO
 }
 
+
 ShaderProgram::ShaderProgram
 (const std::string&  vsCode,
  const std::string&  vsFilename,
@@ -680,9 +694,6 @@ ShaderProgram::ShaderProgram
             
             // note that the extra uniforms are computed from the original code,
             // not from the code that has the g3d uniforms prepended.
-            //vsFromFile ? readWholeFile(vsFilename) : vsCode);
-            //addUniformsFromCode(gsFromFile ? readWholeFile(gsFilename) : gsCode);
-            //addUniformsFromCode(psFromFile ? readWholeFile(psFilename) : psCode);
 
             // Add all uniforms to the name list
             for (int i = uniformArray.size() - 1; i >= 0; --i) {

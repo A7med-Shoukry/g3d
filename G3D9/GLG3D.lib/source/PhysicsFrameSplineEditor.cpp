@@ -57,11 +57,11 @@ PhysicsFrameSplineEditor::PhysicsFrameSplineEditor(const GuiText& caption, GuiPa
 
     if (false) {
         static float x,y,z;
-        static const float translationControlWidth = 80;
+        //static const float translationControlWidth = 80;
         static const float rotationControlWidth    = 40;
-        static const float captionWidth = 10;
+        //static const float captionWidth = 10;
         static const float rotationPrecision = 0.1;
-        static const float translationPrecision = 0.001;
+        //static const float translationPrecision = 0.001;
         static const std::string degrees = "\xba";
         cpPane->beginRow(); {
             GuiNumberBox<float>* c = NULL;

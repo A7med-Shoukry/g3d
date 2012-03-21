@@ -1,10 +1,10 @@
 /**
- @file VertexRange.cpp
+ \file VertexRange.cpp
  
- @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
- @created 2003-04-08
- @edited  2008-12-24
+ \created 2003-04-08
+ \edited  2012-03-20
  */
 
 #include "GLG3D/VertexRange.h"
@@ -15,17 +15,19 @@
 
 namespace G3D {
 
-VertexRange::VertexRange() : m_area(NULL), m_pointer(NULL), m_elementSize(0), 
-             m_numElements(0), m_stride(0), m_generation(0), 
-             m_underlyingRepresentation(GL_NONE), m_maxSize(0) {
+VertexRange::VertexRange() : 
+    m_area(NULL), m_pointer(NULL), m_elementSize(0), 
+    m_numElements(0), m_stride(0), m_generation(0), 
+    m_underlyingRepresentation(GL_NONE), m_maxSize(0), m_normalizedFixedPoint(false) {
 }
 
 
-VertexRange::VertexRange(size_t numBytes, VertexBufferRef area) : m_area(NULL), m_pointer(NULL), m_elementSize(0), 
-             m_numElements(0), m_stride(0), m_generation(0), 
-             m_underlyingRepresentation(GL_NONE), m_maxSize(0) {
+VertexRange::VertexRange(size_t numBytes, VertexBufferRef area) : 
+    m_area(NULL), m_pointer(NULL), m_elementSize(0), 
+    m_numElements(0), m_stride(0), m_generation(0), 
+    m_underlyingRepresentation(GL_NONE), m_maxSize(0), m_normalizedFixedPoint(false) {
 
-    init(NULL, (int)numBytes, area, GL_NONE, 1);
+    init(NULL, (int)numBytes, area, GL_NONE, 1, false);
 }
 
 
@@ -40,20 +42,23 @@ bool VertexRange::valid() const {
 
 
 void VertexRange::init
-  (VertexRange& dstPtr,
-    size_t dstOffset,
-    GLenum glformat,
-    size_t eltSize, 
-    int numElements,
-    size_t dstStride) {
+(VertexRange& dstPtr,
+ size_t       dstOffset,
+ GLenum       glformat,
+ size_t       eltSize, 
+ int          numElements,
+ size_t       dstStride,
+ bool         normalizedFixedPoint) {
 
     m_area = dstPtr.m_area;
     alwaysAssertM(m_area.notNull(), "Bad VertexBuffer");
+
     m_numElements              = numElements;
     m_underlyingRepresentation = glformat;
     m_elementSize              = eltSize;
     m_stride                   = dstStride;
     m_maxSize                  = dstPtr.m_maxSize / dstStride;
+    m_normalizedFixedPoint     = normalizedFixedPoint;
 
     m_generation = m_area->currentGeneration();
     m_pointer = (uint8*)dstPtr.m_pointer + dstOffset;
@@ -61,14 +66,17 @@ void VertexRange::init
 }
 
 
-void VertexRange::init(const void* srcPtr,
-               int          numElements, 
-               size_t          srcStride,      
-               GLenum       glformat, 
-               size_t          eltSize,
-               VertexRange  dstPtr,
-               size_t          dstOffset, 
-               size_t          dstStride) {
+void VertexRange::init
+(const void* srcPtr,
+ int         numElements, 
+ size_t      srcStride,      
+ GLenum      glformat, 
+ size_t      eltSize,
+ VertexRange dstPtr,
+ size_t      dstOffset, 
+ size_t      dstStride,
+ bool        normalizedFixedPoint) {
+
     debugAssertGLOk();
 
     m_area = dstPtr.m_area;
@@ -79,6 +87,7 @@ void VertexRange::init(const void* srcPtr,
     m_elementSize              = eltSize;
     m_stride                   = dstStride;
     m_maxSize                  = dstPtr.m_maxSize / dstStride;
+    m_normalizedFixedPoint     = normalizedFixedPoint;
 
     debugAssertM(
         (m_elementSize % sizeOfGLFormat(m_underlyingRepresentation)) == 0,
@@ -98,12 +107,13 @@ void VertexRange::init(const void* srcPtr,
 
 
 void VertexRange::init
-  (const void*          sourcePtr,
-   int                  numElements,
-   VertexBufferRef      area,
-   GLenum               glformat,
-   size_t               eltSize) {
-
+(const void*          sourcePtr,
+ int                  numElements,
+ VertexBufferRef      area,
+ GLenum               glformat,
+ size_t               eltSize,
+ bool                 normalizedFixedPoint) {
+    
     alwaysAssertM(area.notNull(), "Bad VertexBuffer");
 
     m_numElements              = numElements;
@@ -111,6 +121,7 @@ void VertexRange::init
     m_underlyingRepresentation = glformat;
     m_elementSize              = eltSize;
     m_stride                   = eltSize;
+    m_normalizedFixedPoint     = normalizedFixedPoint;
 
     size_t size                = m_elementSize * m_numElements;
     m_maxSize                  = size;
@@ -157,12 +168,13 @@ void VertexRange::init
 }
 
 
-void VertexRange::update(
-    const void*         sourcePtr,
-    int                 numElements,
-    GLenum              glformat,
-    size_t              eltSize) {
-
+void VertexRange::update
+(const void*         sourcePtr,
+ int                 numElements,
+ GLenum              glformat,
+ size_t              eltSize,
+ bool                normalizedFixedPoint) {
+    
     size_t size = eltSize * numElements;
 
     debugAssert(m_stride == 0 || m_stride == m_elementSize);
@@ -176,12 +188,12 @@ void VertexRange::update(
     m_numElements              = numElements;
     m_underlyingRepresentation = glformat;
     m_elementSize              = eltSize;
+    m_normalizedFixedPoint     = normalizedFixedPoint;
 
-    debugAssertM(
-                 (m_elementSize % sizeOfGLFormat(m_underlyingRepresentation)) == 0,
+    debugAssertM((m_elementSize % sizeOfGLFormat(m_underlyingRepresentation)) == 0,
                  "Sanity check failed on OpenGL data format; you may"
                  " be using an unsupported type in a vertex array.");
-	
+    
     // Upload the data
     if (size > 0) {
         uploadToCard(sourcePtr, 0, size);
@@ -368,13 +380,14 @@ void VertexRange::texCoordPointer(uint32 unit) const {
 }
 
 
-void VertexRange::vertexAttribPointer(uint32 attribNum, bool normalize) const {
+void VertexRange::vertexAttribPointer(uint32 attribNum) const {
     debugAssert(valid());
     if (GLCaps::supports_GL_ARB_vertex_program()) {
         glEnableVertexAttribArrayARB(attribNum);
         alwaysAssertM(m_stride < 0xFFFFFFFF, "Stride is too large for OpenGL");
+
         glVertexAttribPointerARB(attribNum, GLint(m_elementSize / sizeOfGLFormat(m_underlyingRepresentation)),
-                                 m_underlyingRepresentation, normalize, (GLsizei)m_stride, m_pointer);
+                                 m_underlyingRepresentation, m_normalizedFixedPoint, (GLsizei)m_stride, m_pointer);
     }
 }
 

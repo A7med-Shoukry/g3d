@@ -25,6 +25,7 @@ static const float DRAWER_Y_OFFSET = 5.0f;
 WeakReferenceCountedPointer<Shader> GuiTextureBox::g_cachedShader;
 WeakReferenceCountedPointer<Shader> GuiTextureBox::g_cachedCubemapShader;
 
+
 GuiTextureBox::GuiTextureBox
 (GuiContainer*       parent,
  const GuiText&      caption,
@@ -33,11 +34,11 @@ GuiTextureBox::GuiTextureBox
     GuiContainer(parent, caption), 
     m_showInfo(true), 
     m_drawerOpen(embeddedMode),
+    m_showCubemapEdges(false),
     m_dragging(false), 
     m_readbackXY(-1, -1),
     m_embeddedMode(embeddedMode),
-    m_showFormat(true),
-	m_showCubemapEdges(false){
+    m_showFormat(true) {
 
     // Height of caption and button bar
     const float cs = TOP_CAPTION_HEIGHT;
