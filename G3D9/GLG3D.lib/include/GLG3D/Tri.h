@@ -154,7 +154,7 @@ public:
         (Erroneously called the "binormal" in some literature) */
     Vector3 tangent2(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(m_cpuVertexArray != NULL);
+        debugAssert(vertexArray != NULL);
         const CPUVertexArray::Vertex& vertex = this->vertex(vertexArray, i);
         return vertex.normal.cross(vertex.tangent.xyz()) * vertex.tangent.w;
     }
