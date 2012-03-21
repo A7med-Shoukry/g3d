@@ -14,7 +14,7 @@ namespace G3D {
 
 TriTree::Poly::Poly() : m_source(NULL), m_area(0) {}
 
-TriTree::Poly::Poly(const Tri* tri) : 
+TriTree::Poly::Poly(const CPUVertexArray& vertexArray, const Tri* tri) : 
     m_source(tri),
     m_low(Vector3::inf()),
     m_high(-Vector3::inf()),
@@ -22,7 +22,7 @@ TriTree::Poly::Poly(const Tri* tri) :
 
     m_vertex.resize(3);
     for (int v = 0; v < 3; ++v) {
-        const Vector3& x = tri->position(v);
+        const Vector3& x = tri->position(vertexArray, v);
         m_vertex[v] = x;
         m_low  = m_low.min(x);
         m_high = m_high.max(x);
@@ -30,9 +30,9 @@ TriTree::Poly::Poly(const Tri* tri) :
 }
 
 
-void TriTree::Poly::draw(RenderDevice* rd) const {
+void TriTree::Poly::draw(RenderDevice* rd, const CPUVertexArray& vertexArray) const {
     rd->beginPrimitive(PrimitiveType::TRIANGLE_FAN);
-    rd->setNormal(m_source->normal());
+    rd->setNormal(m_source->normal(vertexArray));
     for (int i = 0; i < m_vertex.size(); ++i) {
         rd->sendVertex(m_vertex[i]);
     }

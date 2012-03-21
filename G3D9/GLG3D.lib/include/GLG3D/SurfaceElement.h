@@ -199,7 +199,7 @@ public:
 
     SurfaceElement() {}
 
-    SurfaceElement(const Tri::Intersector& intersector);
+    SurfaceElement(const CPUVertexArray& vertexArray, const Tri::Intersector& intersector);
     
     /** Sets all fields. Called from the SurfaceElement(Tri::Intersector) constructor.*/
     void set

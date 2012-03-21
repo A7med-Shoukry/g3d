@@ -233,7 +233,7 @@ public:
     MeshShape(const Array<Vector3>& vertex, const Array<int>& index);
 
     /** Copies the triangle array */
-    MeshShape(const Array<Tri>& tri);
+    MeshShape(const CPUVertexArray& vertexArray, const Array<Tri>& tri);
 
     virtual void render(RenderDevice* rd, const CoordinateFrame& cframe, Color4 solidColor = Color4(.5,.5,0,.5), Color4 wireColor = Color3::black());
 

@@ -48,9 +48,6 @@ private:
     /** Usually a material, but can be abstracted  */
     Proxy<Material>::Ref    m_material;
 
-    /** \deprecated */
-    CPUVertexArray*         m_cpuVertexArray;
-
     /** Indices into the CPU Vertex array */
     uint32                  index[3];
 
@@ -67,7 +64,7 @@ public:
        To extract the actual material from the proxy use Tri::material and Tri::data<T>.
     */
     Tri(const int i0, const int i1, const int i2,
-        CPUVertexArray* vertexArray,
+        const CPUVertexArray& vertexArray,
         const Proxy<Material>::Ref& material = NULL);
 
 
@@ -81,21 +78,21 @@ public:
     Tri otherSide() const;
     
     /** Edge vector v1 - v0 */
-    Vector3 e1() const{
-        return position(1) - position(0);
+    Vector3 e1(const CPUVertexArray& vertexArray) const{
+        return position(vertexArray, 1) - position(vertexArray, 0);
     }
 
     /** Edge vector v2 - v0 */
-    Vector3 e2() const{
-        return position(2) - position(0);
+    Vector3 e2(const CPUVertexArray& vertexArray) const{
+        return position(vertexArray, 2) - position(vertexArray, 0);
     }
 
 
     /** Returns a bounding box */
-    void getBounds(AABox& box) const {
-        const Vector3& v0 = position(0);
-        const Vector3& v1 = position(1);
-        const Vector3& v2 = position(2);
+    void getBounds(const CPUVertexArray& vertexArray, AABox& box) const {
+        const Vector3& v0 = position(vertexArray, 0);
+        const Vector3& v1 = position(vertexArray, 1);
+        const Vector3& v2 = position(vertexArray, 2);
 
         box = AABox(v0.min(v1).min(v2), v0.max(v1).max(v2));
     }
@@ -106,55 +103,55 @@ public:
     }
 
     /** Vertex position (must be computed) */
-    Point3 position(int i) const {
-        return m_cpuVertexArray->vertex[index[i]].position;
+    Point3 position(const CPUVertexArray& vertexArray, int i) const {
+        return vertexArray.vertex[index[i]].position;
     }
 
     /** Useful for accessing several vertex properties at once (for less pointer indirection) */
-    const CPUVertexArray::Vertex& vertex(int i) const {
+    const CPUVertexArray::Vertex& vertex(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        return m_cpuVertexArray->vertex[index[i]];
+        return vertexArray.vertex[index[i]];
     }
 
     /** Face normal.  For degenerate triangles, this is zero.  For all other triangles
     it has unit length and is defined by counter-clockwise winding. Calculate every call*/
-    Vector3 normal() const {
-        return e1().cross(e2()).directionOrZero();
+    Vector3 normal(const CPUVertexArray& vertexArray) const {
+        return e1(vertexArray).cross(e2(vertexArray)).directionOrZero();
     }
 
     /** Vertex normal */
-    const Vector3& normal(int i) const {
+    const Vector3& normal(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(m_cpuVertexArray != NULL);
-        return vertex(i).normal;
+        debugAssert(vertexArray != NULL);
+        return vertex(vertexArray, i).normal;
     }
 
-    const Vector2& texCoord(int i) const {
+    const Vector2& texCoord(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(m_cpuVertexArray != NULL);
-        return vertex(i).texCoord0;
+        debugAssert(vertexArray != NULL);
+        return vertex(vertexArray, i).texCoord0;
     }
 
-    const Vector4& packedTangent(int i) const {
+    const Vector4& packedTangent(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(m_cpuVertexArray != NULL);
-        return vertex(i).tangent;
+        debugAssert(vertexArray != NULL);
+        return vertex(vertexArray, i).tangent;
     }
 
     /** Per-vertex unit tangent, for bump mapping. Tangents are perpendicular to 
         the corresponding vertex normals.*/
-    Vector3 tangent(int i) const {
+    Vector3 tangent(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
-        debugAssert(m_cpuVertexArray != NULL);
-        return vertex(i).tangent.xyz();
+        debugAssert(vertexArray != NULL);
+        return vertex(vertexArray, i).tangent.xyz();
     }
 
     /** Per-vertex unit tangent = normal x tangent, for bump mapping.
         (Erroneously called the "binormal" in some literature) */
-    Vector3 tangent2(int i) const {
+    Vector3 tangent2(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
         debugAssert(m_cpuVertexArray != NULL);
-        const CPUVertexArray::Vertex& vertex = this->vertex(i);
+        const CPUVertexArray::Vertex& vertex = this->vertex(vertexArray, i);
         return vertex.normal.cross(vertex.tangent.xyz()) * vertex.tangent.w;
     }
     
@@ -177,9 +174,13 @@ public:
         return m_material.downcast<T>();
     }
 
-    /** Returns a (relatively) unique integer for this object */
+    /** 
+        Returns a (relatively) unique integer for this object
+        NOTE: Hashes only on the indices! Must think of Tri simply as
+        a set of indices and not an actual triangle
+      */
     uint32 hashCode() const {
-        return (uint32)((position(0).hashCode() << 20) + (position(1).hashCode() << 10) + position(2).hashCode());
+        return (uint32)((index[0] << 20) + (index[1] << 10) + index[2]);
     }
 
     bool operator==(const Tri& t) const {
@@ -187,9 +188,10 @@ public:
             (index[0] == t.index[0]) &&
             (index[1] == t.index[1]) &&
             (index[2] == t.index[2]) &&
-            (m_cpuVertexArray == m_cpuVertexArray) &&
             (m_material == t.m_material);
     }
+
+    Triangle Tri::toTriangle(const CPUVertexArray& vertexArray) const;
 
     /** \brief Performs intersection testing against Tri.  
 
@@ -265,7 +267,7 @@ public:
             float distance = finf();
             bool continueTracing = true;
             for (int t = 0; t < array.size()) && continueTracing; ++t) {
-                hit(ray, array[t], distance, continueTracing);
+                hit(ray, vertexArray, array[t], distance, continueTracing);
             }
 
             if (hit.tri != NULL) {
@@ -280,7 +282,7 @@ public:
           <pre>
           float distance = finf();
           Intersector hit;
-          tree.intersectRay(ray, hit, distance);  
+          tree.intersectRay(ray, vertexArray, hit, distance);  
 
           if (hit.tri != NULL) {
               SurfaceElement s(hit);
@@ -297,7 +299,7 @@ public:
 
           \return true if there was an intersection between the ray and triangle
           */
-        bool operator()(const Ray& ray, const Tri& tri, bool twoSided, float& distance);
+        bool operator()(const Ray& ray,  const CPUVertexArray& vertexArray, const Tri& tri, bool twoSided, float& distance);
 
         /** Computes information about the intersection from an
             established Intersector.  The normal will have unit
@@ -310,14 +312,16 @@ public:
             the tri member.
           */
         void getResult
-        (Vector3&        location,
+        (const CPUVertexArray& vertexArray,
+         Vector3&        location,
          Vector3&        normal,
          Vector2&        texCoord,
          Vector3&        tangent1,
          Vector3&        tangent2) const;
 
         void getResult
-        (Vector3&        location,
+        (const CPUVertexArray& vertexArray,
+         Vector3&        location,
          Vector3&        normal,
          Vector2&        texCoord) const;
     };
@@ -327,9 +331,9 @@ public:
 } // namespace G3D
 
 // Needed for InlineKDTree and KDTree
-template<> struct BoundsTrait<G3D::Tri> {
-    static void getBounds(const G3D::Tri& tri, G3D::AABox& out) { 
-        tri.getBounds(out);
+/*template<> struct BoundsTrait<G3D::Tri> {
+    static void getBounds(const CPUVertexArray& vertexArray, const G3D::Tri& tri, G3D::AABox& out) { 
+        tri.getBounds(vertexArray, out);
     }
 };
 
@@ -338,6 +342,6 @@ template <> struct HashTrait<G3D::Tri> {
     static size_t hashCode(const G3D::Tri& tri) { 
         return tri.hashCode();
     }
-};
+};*/
 
 #endif

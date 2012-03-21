@@ -16,15 +16,15 @@ namespace G3D {
 #define INV_PI  (0.318309886f)
 #define INV_8PI (0.0397887358f)
 
-SurfaceElement::SurfaceElement(const Tri::Intersector& intersector) {
+SurfaceElement::SurfaceElement(const CPUVertexArray& vertexArray, const Tri::Intersector& intersector) {
     debugAssert(intersector.tri != NULL);
 
     Point3 P;
     Vector3 n;
     Vector2 texCoord;
     Vector3 t1, t2;
-    intersector.getResult(P, n, interpolated.texCoord, t1, t2);
-    set(intersector.tri->material(), P, intersector.tri->normal(), n, interpolated.texCoord, t1, t2, intersector.eye, -1, intersector.u, intersector.v);
+    intersector.getResult(vertexArray, P, n, interpolated.texCoord, t1, t2);
+    set(intersector.tri->material(), P, intersector.tri->normal(vertexArray), n, interpolated.texCoord, t1, t2, intersector.eye, -1, intersector.u, intersector.v);
 }
 
     

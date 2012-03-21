@@ -190,8 +190,8 @@ DirectionHistogram::DirectionHistogram(int numSlices, const Vector3& axis) : m_s
 
             const Proxy<Material>::Ref vii = VertexIndexIndex::create(q);
             
-            Tri A(i0, i3, i2, &vertexArray, vii);
-            Tri B(i0, i2, i1, &vertexArray, vii);
+            Tri A(i0, i3, i2, vertexArray, vii);
+            Tri B(i0, i2, i1, vertexArray, vii);
 
             triArray.append(A);
             triArray.append(B);

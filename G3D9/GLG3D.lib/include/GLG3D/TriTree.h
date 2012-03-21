@@ -177,7 +177,7 @@ private:
 
         Poly();
 
-        Poly(const Tri* t);
+        Poly(const CPUVertexArray& vertexArray, const Tri* t);
 
         /** Original triangle from which this was created */
         inline const Tri* source() const {
@@ -201,7 +201,7 @@ private:
 
         /** Render this poly using a triangle fan. Inefficient; only 
             intended for debugging.*/
-        void draw(class RenderDevice* rd) const;
+        void draw(class RenderDevice* rd, const CPUVertexArray& vertexArray) const;
     
         /** Splits this at position @a offset on @a axis and appends the
             one or two pieces to the appropriate arrays. 
@@ -410,7 +410,7 @@ private:
             free the Node itself.*/
         void destroy(const MemoryManager::Ref& mm);
 
-        void draw(RenderDevice* rd, int level, bool showBoxes, int minNodeSize) const;
+        void draw(RenderDevice* rd, const CPUVertexArray& vertexArray, int level, bool showBoxes, int minNodeSize) const;
 
         /** Append all contained triangles that intersect this to triArray. Assumes that this node 
             does intersect the box. 
@@ -418,8 +418,8 @@ private:
             \param alreadyAdded Since nodes do not have unique ownership of triangles, this set is needed
             to avoid adding duplicates to the triArray.
           */  
-        void intersectBox(const AABox& box, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const;
-        void intersectSphere(const Sphere& sphere, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const;
+        void intersectBox(const AABox& box, const CPUVertexArray& vertexArray, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const;
+        void intersectSphere(const Sphere& sphere, const CPUVertexArray& vertexArray, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const;
 
         void print(const std::string& indent) const;
 
@@ -538,6 +538,11 @@ public:
 
     */
     void draw(RenderDevice* rd, int level, bool showBoxes = true, int minNodeSize = 0);
+
+
+    const CPUVertexArray& getCPUVertexArray() const {
+        return m_cpuVertexArray;
+    }
 };
 
 }

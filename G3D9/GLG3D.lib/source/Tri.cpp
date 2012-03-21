@@ -18,7 +18,7 @@ namespace G3D {
 
 
 Tri::Tri(const int i0, const int i1, const int i2,
-        CPUVertexArray* vertexArray,
+        const CPUVertexArray& vertexArray,
         const Proxy<Material>::Ref& material) :
     m_material(material) {
     
@@ -30,14 +30,12 @@ Tri::Tri(const int i0, const int i1, const int i2,
     index[1] = i1;
     index[2] = i2;
 
-    m_cpuVertexArray = vertexArray;
-
-    m_area = e1().cross(e2()).length() * 0.5f;
+    m_area = e1(vertexArray).cross(e2(vertexArray)).length() * 0.5f;
 }
 
 
-Tri::operator Triangle() const {
-    return Triangle(position(0), position(1), position(2));
+Triangle Tri::toTriangle(const CPUVertexArray& vertexArray) const {
+    return Triangle(position(vertexArray, 0), position(vertexArray, 1), position(vertexArray, 2));
 }
     
 
@@ -47,8 +45,6 @@ Tri Tri::otherSide() const {
     t.m_material = m_material;
     t.m_area     = m_area;
 
-
-    t.m_cpuVertexArray = m_cpuVertexArray;
     // Flip winding 
     // by swapping elements 1 and 2.
     // normal/tangents remain the same
@@ -75,7 +71,8 @@ Tri Tri::otherSide() const {
 #pragma float_control( precise, off )
 #endif
 
-bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided, float& distance) {
+bool Tri::Intersector::operator()(const Ray& ray, const CPUVertexArray& vertexArray, const Tri& tri, 
+                                  bool twoSided, float& distance) {
     // See RTR3 p.746 (RTR2 ch. 13.7) for the basic algorithm.
     static const float EPS = 1e-12f;
 
@@ -83,9 +80,9 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
     static const float conservative = 1e-8f;
 
     // Get all vertex attributes from these to avoid unneccessary pointer indirection
-    const CPUVertexArray::Vertex& vertex0 = tri.vertex(0);
-    const CPUVertexArray::Vertex& vertex1 = tri.vertex(1);
-    const CPUVertexArray::Vertex& vertex2 = tri.vertex(2);
+    const CPUVertexArray::Vertex& vertex0 = tri.vertex(vertexArray, 0);
+    const CPUVertexArray::Vertex& vertex1 = tri.vertex(vertexArray, 1);
+    const CPUVertexArray::Vertex& vertex2 = tri.vertex(vertexArray, 2);
     
     const Vector3& v0 = vertex0.position;
     const Vector3& e1 = vertex1.position - v0;
@@ -194,7 +191,8 @@ bool Tri::Intersector::operator()(const Ray& ray, const Tri& tri, bool twoSided,
 
 
 void Tri::Intersector::getResult
-(Vector3&        location,
+(const CPUVertexArray& vertexArray,
+ Vector3&        location,
  Vector3&        normal,
  Vector2&        texCoord) const {
 
@@ -202,9 +200,9 @@ void Tri::Intersector::getResult
     float w = 1.0 - u - v;
 
 
-    const CPUVertexArray::Vertex& vert0 = tri->vertex(0);
-    const CPUVertexArray::Vertex& vert1 = tri->vertex(1);
-    const CPUVertexArray::Vertex& vert2 = tri->vertex(2);
+    const CPUVertexArray::Vertex& vert0 = tri->vertex(vertexArray, 0);
+    const CPUVertexArray::Vertex& vert1 = tri->vertex(vertexArray, 1);
+    const CPUVertexArray::Vertex& vert2 = tri->vertex(vertexArray, 2);
 
     const Point3& v0 = vert0.position;
 
@@ -227,7 +225,8 @@ void Tri::Intersector::getResult
 
 
 void Tri::Intersector::getResult
-(Vector3&        location,
+(const CPUVertexArray& vertexArray,
+ Vector3&        location,
  Vector3&        normal,
  Vector2&        texCoord,
  Vector3&        tangent1,
@@ -236,9 +235,9 @@ void Tri::Intersector::getResult
     float w = 1.0 - u - v;
     // Identical to the parameter getResult, but copying code
     // to save pointer indirections on the vertex attributes
-    const CPUVertexArray::Vertex& vert0 = tri->vertex(0);
-    const CPUVertexArray::Vertex& vert1 = tri->vertex(1);
-    const CPUVertexArray::Vertex& vert2 = tri->vertex(2);
+    const CPUVertexArray::Vertex& vert0 = tri->vertex(vertexArray, 0);
+    const CPUVertexArray::Vertex& vert1 = tri->vertex(vertexArray, 1);
+    const CPUVertexArray::Vertex& vert2 = tri->vertex(vertexArray, 2);
 
     const Point3& v0 = vert0.position;
 

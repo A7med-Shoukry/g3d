@@ -28,7 +28,7 @@ void TriTree::intersectSphere
 
     if (m_root) {
         Set<Tri*> alreadyAdded;
-        m_root->intersectSphere(sphere, triArray, alreadyAdded);
+        m_root->intersectSphere(sphere, m_cpuVertexArray, triArray, alreadyAdded);
     }
 
 }
@@ -39,7 +39,7 @@ void TriTree::intersectBox
  Array<Tri>&   triArray) const {
     if (m_root) {
         Set<Tri*> alreadyAdded;
-        m_root->intersectBox(box, triArray, alreadyAdded);
+        m_root->intersectBox(box, m_cpuVertexArray, triArray, alreadyAdded);
     }
 
 }
@@ -64,7 +64,7 @@ void TriTree::setContents(const Array<Surface::Ref>& surfaceArray, ImageStorage 
     // Don't add 0 area triangles to source
     for (int i = 0; i < m_triArray.size(); ++i) {
         if (m_triArray[i].area() > epsilon) {
-            source.append(Poly(&m_triArray[i]));
+            source.append(Poly(m_cpuVertexArray, &m_triArray[i]));
         }
     }
     
@@ -408,12 +408,12 @@ float TriTree::Node::SAHCost(Vector3::Axis axis, float offset, const Array<Poly>
 
 
 bool __fastcall TriTree::Node::intersectRay
-(const TriTree&         triTree,
+(const TriTree&      triTree,
  const Ray&          ray,
  Tri::Intersector&   intersectCallback, 
  float&              distance,
  bool                exitOnAnyHit,
- bool                 twoSided) const {
+ bool                twoSided) const {
 
     bool hit = false;
     
@@ -451,7 +451,7 @@ bool __fastcall TriTree::Node::intersectRay
 
         // Test for intersection against every object at this node.
         for (int v = 0; v < valueArray->size; ++v) { 
-            bool justHit = intersectCallback(ray, *valueArray->data[v], twoSided, distance);
+            bool justHit = intersectCallback(ray, triTree.m_cpuVertexArray, *valueArray->data[v], twoSided, distance);
             
             if(justHit){
                 hit = true;
@@ -521,7 +521,7 @@ static void draw(RenderDevice* rd, const AABox& m_box, const Color4& color) {
 }
 
 
-void TriTree::Node::intersectSphere(const Sphere& sphere, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const {
+void TriTree::Node::intersectSphere(const Sphere& sphere, const CPUVertexArray& vertexArray, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const {
     if (! bounds.intersects(sphere)) {
         return;
     }
@@ -531,7 +531,8 @@ void TriTree::Node::intersectSphere(const Sphere& sphere, Array<Tri>& triArray, 
         for (int v = 0; v < valueArray->size; ++v) {
             Tri* tri = const_cast<Tri*>(valueArray->data[v]);
             if (! alreadyAdded.contains(tri)) {
-                if ((tri->area() > 0) && CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri->position(0), tri->position(1), tri->position(2)))) {
+                if ((tri->area() > 0) && CollisionDetection::fixedSolidSphereIntersectsFixedTriangle(sphere, Triangle(tri->position(vertexArray, 0), 
+                                                                                       tri->position(vertexArray, 1), tri->position(vertexArray, 2)))) {
                     triArray.append(*tri);
                     alreadyAdded.insert(tri);
                 }
@@ -542,13 +543,13 @@ void TriTree::Node::intersectSphere(const Sphere& sphere, Array<Tri>& triArray, 
     // Recurse into children
     if (! isLeaf()) {
         for (int c = 0; c < 2; ++c) {
-            child(c).intersectSphere(sphere, triArray, alreadyAdded);
+            child(c).intersectSphere(sphere, vertexArray, triArray, alreadyAdded);
         }
     }
 }
 
 
-void TriTree::Node::intersectBox(const AABox& box, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const {
+void TriTree::Node::intersectBox(const AABox& box,  const CPUVertexArray& vertexArray, Array<Tri>& triArray, Set<Tri*>& alreadyAdded) const {
     if (! bounds.intersects(box)) {
         return;
     }
@@ -558,7 +559,8 @@ void TriTree::Node::intersectBox(const AABox& box, Array<Tri>& triArray, Set<Tri
         for (int v = 0; v < valueArray->size; ++v) {
             Tri* tri = const_cast<Tri*>(valueArray->data[v]);
             if (! alreadyAdded.contains(tri)) {
-                if ((tri->area() > 0) && CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri->position(0), tri->position(1), tri->position(2)))) {
+                if ((tri->area() > 0) && CollisionDetection::fixedSolidBoxIntersectsFixedTriangle(box, Triangle(tri->position(vertexArray, 0), 
+                                                                                 tri->position(vertexArray, 1), tri->position(vertexArray, 2)))) {
                     triArray.append(*tri);
                     alreadyAdded.insert(tri);
                 }
@@ -569,13 +571,13 @@ void TriTree::Node::intersectBox(const AABox& box, Array<Tri>& triArray, Set<Tri
     // Recurse into children
     if (! isLeaf()) {
         for (int c = 0; c < 2; ++c) {
-            child(c).intersectBox(box, triArray, alreadyAdded);
+            child(c).intersectBox(box, vertexArray, triArray, alreadyAdded);
         }
     }
 }
 
 
-void TriTree::Node::draw(RenderDevice* rd, int level, bool showBoxes, int minNodeSize) const {
+void TriTree::Node::draw(RenderDevice* rd, const CPUVertexArray& vertexArray, int level, bool showBoxes, int minNodeSize) const {
     if (valueArray && (valueArray->size > minNodeSize)) {
         static const Vector3 epsilon = Vector3::one() * 0.001f;
         // Grow clip-bounds slightly to show objects right on the edge
@@ -586,9 +588,9 @@ void TriTree::Node::draw(RenderDevice* rd, int level, bool showBoxes, int minNod
         for (int p = 0; p < 2; ++p) {
             rd->beginPrimitive(PrimitiveType::TRIANGLES);
             for (int t = 0; t < valueArray->size; ++t) {
-                rd->setNormal(valueArray->data[t]->normal());
+                rd->setNormal(valueArray->data[t]->normal(vertexArray));
                 for (int v = 0; v < 3; ++v) {
-                    rd->sendVertex(valueArray->data[t]->position(v));
+                    rd->sendVertex(valueArray->data[t]->position(vertexArray, v));
                 }
             }
             rd->endPrimitive();
@@ -617,7 +619,7 @@ void TriTree::Node::draw(RenderDevice* rd, int level, bool showBoxes, int minNod
     // Recurse if not at the terminal level
     if ((level > 0) && ! isLeaf()) {
         for (int c = 0; c < 2; ++c) {
-            child(c).draw(rd, level - 1, showBoxes, minNodeSize);
+            child(c).draw(rd, vertexArray, level - 1, showBoxes, minNodeSize);
         }
     }
 }
@@ -711,10 +713,8 @@ void TriTree::setContents(const Array<Tri>& triArray, const CPUVertexArray& vert
 
     
     for (int i = 0; i < triArray.size(); ++i) {
-        // Fix the CPUVertexArrayPointers
-        m_triArray[i].m_cpuVertexArray = &m_cpuVertexArray;
         if (triArray[i].area() > epsilon) {
-            source.append(Poly(&m_triArray[i]));
+            source.append(Poly(m_cpuVertexArray, &m_triArray[i]));
         }
     }
     
@@ -732,7 +732,7 @@ void TriTree::setContents(const Array<Tri>& triArray, const CPUVertexArray& vert
 void TriTree::draw(RenderDevice* rd, int level, bool showBoxes, int minNodeSize) {
     if (m_root) {
         rd->setCullFace(RenderDevice::CULL_NONE);
-        m_root->draw(rd, level, showBoxes, minNodeSize);
+        m_root->draw(rd, m_cpuVertexArray, level, showBoxes, minNodeSize);
     }
 }
 

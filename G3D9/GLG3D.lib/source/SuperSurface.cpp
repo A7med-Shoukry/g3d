@@ -1135,7 +1135,7 @@ void SuperSurface::getTrisHomogeneous(const Array<Surface::Ref>& surfaceArray, C
                      index[i + 1] + indexOffset,
                      index[i + 2] + indexOffset,
 
-                     &cpuVertexArray,
+                     cpuVertexArray,
 
                     material));
 
