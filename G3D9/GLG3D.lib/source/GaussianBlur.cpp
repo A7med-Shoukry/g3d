@@ -30,9 +30,7 @@ void GaussianBlur::apply(RenderDevice* rd, const Texture::Ref& source, const Vec
 
         gaussian1DShader->args.set("source", source);
         gaussian1DShader->args.set("pixelStep", direction / source->vector2Bounds());
-        rd->setShader(gaussian1DShader);
-        
-        Draw::fastRect2D(dest, rd);
+        rd->applyRect(gaussian1DShader);
     }
     rd->pop2D();
 }

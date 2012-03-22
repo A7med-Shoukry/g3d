@@ -256,6 +256,46 @@ public:
             cleaning geometry. */
         Array<Instruction>          preprocess;
 
+        class BSPOptions {
+        public:
+            /** If true, lightmap coordinates are used for texCoord1.  If false (default),
+                they are discarded.
+              */
+            bool                    preserveLightMapCoordinates;
+            BSPOptions() : preserveLightMapCoordinates(false) {}
+        } bsp;
+
+        class OBJOptions {
+        public:
+
+            enum TexCoord3DMode {
+                /** Ignore the w component of a 3D texture coordinate (default) */
+                IGNORE,
+                /** Compute 
+                    \code
+                      texCoord1.x = floor(w / (2.0f * 2048.0f)) / 2048.0f
+                      texCoord1.y = (w - 2.0f * 2048.0f * floor(w / (2.0f * 2048.0f))) / 2048.0f 
+                    \endocde
+
+                    This format allows third-party programs to preserve the texture coordinate during processing.
+                    The constant 2048 is chosen based on the internal precision of texture coordinates in 3DS Max.
+                  */
+                UNIT_2048,
+
+                /** 
+                  Parse texture coordinates as (x0, y0, x1, y1).  This is nonstandard and will not allow most programs
+                  to preserve texture coordinates.  However, most programs will also ignore the 3rd and 4th coordinate on load
+                  and thus the format is backwards compatible.
+                */
+                FOUR_EXTENSION
+            };
+
+            TexCoord3DMode  texCoord3DMode;
+
+            OBJOptions() : texCoord3DMode(IGNORE) {}
+
+        } obj;
+
         Specification() : stripMaterials(false), mergeMeshesByMaterial(false), scale(1.0f) {}
 
         /**
