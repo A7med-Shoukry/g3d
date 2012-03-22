@@ -219,8 +219,7 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
             rd->clear();
             m_preBloomShader->args.set("sourceTexture",  input);
             m_preBloomShader->args.set("sensitivity",    m_sensitivity);
-            rd->setShader(m_preBloomShader);
-            Draw::fastRect2D(m_preBloom->rect2DBounds(), rd);
+            rd->applyRect(m_preBloomShader);
 
             // TODO: eliminate the prebloom pass and roll it into the horizontal blur
 
@@ -249,9 +248,7 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
             m_shader->args.set("bloomStrengthScaled",  bloomStrength * 10.0);
             m_shader->args.set("sensitivity",    m_sensitivity);
             m_shader->args.set("invGamma",       1.0f / m_gamma);
-            rd->setShader(m_shader);
-
-            Draw::fastRect2D(input->rect2DBounds(), rd);
+            rd->applyRect(m_shader);
         }
 
         if (m_antialiasingEnabled) {
@@ -259,8 +256,7 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
             rd->pop2D();
 
             m_antialiasingShader->args.set("sourceTexture", m_postGamma);
-            rd->setShader(m_antialiasingShader);
-            Draw::fastRect2D(m_postGamma->rect2DBounds(), rd);
+            rd->applyRect(m_antialiasingShader);
         }
 
     } rd->pop2D();

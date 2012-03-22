@@ -352,6 +352,7 @@ Texture::Ref Texture::createColor(const Color3unorm8& c) {
     s.filename = "<white>";
     s.preprocess.modulate = Color4unorm8(c, unorm8::one());
     s.settings.interpolateMode = NEAREST_NO_MIPMAP;
+    s.settings.wrapMode = WrapMode::TILE;
     s.desiredFormat = ImageFormat::RGB8();
     return Texture::create(s);
 }
@@ -362,6 +363,7 @@ Texture::Ref Texture::createColor(const Color4unorm8& c) {
     s.filename = "<white>";
     s.preprocess.modulate = c;   
     s.settings.interpolateMode = NEAREST_NO_MIPMAP;
+    s.settings.wrapMode = WrapMode::TILE;
     s.desiredFormat = ImageFormat::RGBA8();
     return Texture::create(s);
 }
@@ -375,7 +377,9 @@ Texture::Ref Texture::white() {
         // Cache is empty
         GImage im(4, 4, 3);
         System::memset(im.byte(), 0xFF, im.width() * im.height() * im.channels());
-        t = Texture::fromGImage("<white>", im);
+        Texture::Settings settings;
+        settings.wrapMode = WrapMode::TILE;
+        t = Texture::fromGImage("<white>", im, ImageFormat::RGB8(), Texture::DIM_2D, settings);
         // Store in cache
         cache = t;
     }

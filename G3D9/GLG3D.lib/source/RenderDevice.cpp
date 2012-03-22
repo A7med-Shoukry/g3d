@@ -154,8 +154,8 @@ static const char* isOk(void* x) {
 }
 
 
-void RenderDevice::init(
-    const OSWindow::Settings&      _settings) {
+void RenderDevice::init
+   (const OSWindow::Settings&      _settings) {
 
     m_deleteWindow = true;
     init(OSWindow::create(_settings));
@@ -168,7 +168,28 @@ OSWindow* RenderDevice::window() const {
 
 
 void RenderDevice::applyRect(const Shader::Ref& s) {
-    applyRect(s, viewport());
+    setShader(s);
+    const Rect2D& v = viewport();
+
+    // This is faster on some consoles and presumably some GPUs
+    // because it doesn't divide warps along the diagonal. This is 
+    // slightly faster than a big quad on GeForce GTX 480.
+    const bool bigTriangleMethod = true;
+
+    if (bigTriangleMethod) {
+        beginPrimitive(PrimitiveType::TRIANGLES); {
+            glVertex(v.x0y0());
+            glVertex(v.x0y0() + Vector2(0, v.height() * 2.0f));
+            glVertex(v.x0y0() + Vector2(v.width() * 2.0f, 0));
+        } endPrimitive();
+    } else {
+        beginPrimitive(PrimitiveType::QUADS); {
+            glVertex(v.x0y0());
+            glVertex(v.x0y1());
+            glVertex(v.x1y1());
+            glVertex(v.x1y0());
+        } endPrimitive();
+    }
 }
 
 

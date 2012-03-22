@@ -126,9 +126,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
         shadingPass->args.set("wsEye",              gbuffer->camera().coordinateFrame().translation);
         gbuffer->bindReadUniforms(shadingPass->args);
  
-        rd->setShader(shadingPass);
-
-        Draw::fastRect2D(rd->viewport(), rd);
+        rd->applyRect(shadingPass);
     } rd->pop2D();
 
     // Forward-render other objects
