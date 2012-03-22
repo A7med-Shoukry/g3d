@@ -31,7 +31,7 @@ void EmptyViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& ligh
 	screenPrintf("Image Formats: png, jpg, bmp, tga, pcx, dds, ppm, ico, gif (+ cube maps...just drop one face)");
 	screenPrintf("3D Formats:    obj, 3ds, pk3, md2, md3, bsp, off, ply, ply2, ifs, am.any");
     screenPrintf("GUI Formats:   fnt, gtm");
-#   ifndef NO_FFMPEG
+#   ifndef G3D_NO_FFMPEG
     screenPrintf("Video Formats: mp4, avi, mp4, mov, ogg, asf, wmv");
 #   endif
 
