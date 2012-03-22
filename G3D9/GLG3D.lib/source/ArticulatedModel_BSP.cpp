@@ -28,13 +28,13 @@ void ArticulatedModel::loadBSP(const Specification& specification) {
     const BSPMapRef& src = BSPMap::fromFile(pk3File, bspFile, 1.0, "", defaultTexture);
     debugAssertM(src.notNull(), "Could not find " + pk3File);
 
-    Array< Vector3 >    vertexArray;
-    Array< Vector3 >       normalArray;
-    Array< int >      indexArray;
-    Array< Vector2 >    texCoordArray;
-    Array< int >        textureMapIndexArray;
-    Array< Vector2 >    lightCoordArray;
-    Array< int >        lightMapIndexArray;
+    Array< Vector3 >      vertexArray;
+    Array< Vector3 >      normalArray;
+    Array< int >          indexArray;
+    Array< Vector2 >      texCoordArray;
+    Array< int >          textureMapIndexArray;
+    Array< Vector2 >      lightCoordArray;
+    Array< int >          lightMapIndexArray;
     Array< Texture::Ref > textureMapArray;
     Array< Texture::Ref > lightMapArray;
     
