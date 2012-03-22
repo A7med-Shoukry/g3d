@@ -38,7 +38,7 @@
 void bumpMapBlinn78(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord) {
         
     offsetTexCoord = texCoord;
-    	    
+            
     // Take the normal map values back to (-1, 1) range to compute a tangent space normal
     vec3 tsN = texture2D(normalBumpMap, offsetTexCoord).xyz * 2.0 + vec3(-1.0, -1.0, -1.0);
 
@@ -65,7 +65,7 @@ void bumpMapWelsh04(in sampler2D normalBumpMap, in float bumpMapScale, in float 
     // from TBN space, so we must flip the y-axis.
 
     offsetTexCoord = texCoord.xy + vec2(tsE.x, -tsE.y) * bump;
-    	    
+            
     // Take the normal map values back to (-1, 1) range to compute a tangent space normal
     vec3 tsN = texture2D(normalBumpMap, offsetTexCoord).xyz * 2.0 + vec3(-1.0, -1.0, -1.0);
 
