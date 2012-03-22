@@ -18,11 +18,10 @@ namespace G3D {
 
 
 Tri::Tri(const int i0, const int i1, const int i2,
-        const CPUVertexArray& vertexArray,
-        const Proxy<Material>::Ref& material) :
+         const CPUVertexArray&       vertexArray,
+         const Proxy<Material>::Ref& material,
+         bool                        twoSided) :
     m_material(material) {
-    
-
     debugAssert(material.isNull() ||
                 (isValidHeapPointer(material.pointer()) &&
                  (material.pointer() > (void*)0xf)));
@@ -31,36 +30,16 @@ Tri::Tri(const int i0, const int i1, const int i2,
     index[2] = i2;
 
     m_area = e1(vertexArray).cross(e2(vertexArray)).length() * 0.5f;
+
+    // Encode the twoSided flag into the sign bit of m_area
+    m_area = m_area * (twoSided ? -1.0f : 1.0f);
+
 }
 
 
 Triangle Tri::toTriangle(const CPUVertexArray& vertexArray) const {
     return Triangle(position(vertexArray, 0), position(vertexArray, 1), position(vertexArray, 2));
 }
-    
-
-Tri Tri::otherSide() const {
-    Tri t;
-    
-    t.m_material = m_material;
-    t.m_area     = m_area;
-
-    // Flip winding 
-    // by swapping elements 1 and 2.
-    // normal/tangents remain the same
-    
-
-    t.index[0]   = index[0];
-    
-
-    for (int i = 1; i < 3; ++i) {
-        int j = 3 - i;
-        t.index[i]   = index[j];
-    }
-    
-    return t;
-}
-
 
 #ifdef _MSC_VER
 // Turn on fast floating-point optimizations
@@ -93,21 +72,16 @@ bool Tri::Intersector::operator()(const Ray& ray, const CPUVertexArray& vertexAr
 
     // This test is equivalent to n.dot(ray.direction()) >= -EPS
     // Where n is the face unit normal, which we do not explicitly store
-    
-    if (!twoSided && (e1.cross(e2)).dot(ray.direction()) >= -EPS * 2.0f * tri.m_area) {
+    // The first two check whether we should treat the tri as double sided
+    if (!twoSided && (tri.m_area >= 0) && (e1.cross(e2)).dot(ray.direction()) >= -EPS * 2.0f * tri.m_area) {
         // Backface or nearly parallel
         return false;
     }
-
-    
- 
 
     const Vector3& p = ray.direction().cross(e2);
 
     // Will be negative if we are coming from the back.
     const float a = e1.dot(p);
-
-    //debugAssert(a >= -1e-7); 
 
     // Divide by a
     const float f = 1.0f / a;
@@ -173,7 +147,7 @@ bool Tri::Intersector::operator()(const Ray& ray, const CPUVertexArray& vertexAr
         }
         
         // This is a new hit.  Save away the data about the hit
-        // location, but don't bother computing barycentric w,
+        // location (including if we hit the backside), but don't bother computing barycentric w,
         // the hit location or the normal until after we've checked
         // against all triangles.
 
@@ -183,6 +157,7 @@ bool Tri::Intersector::operator()(const Ray& ray, const CPUVertexArray& vertexAr
         eye = ray.direction();
         this->u = u;
         this->v = v;
+        this->backside = (a < 0);
         return true;
     } else {
         return false;
@@ -210,16 +185,19 @@ void Tri::Intersector::getResult
                u * (vert1.position - v0) +
                v * (vert2.position - v0);
 
-    
-    
-    
-    texCoord = w * vert0.texCoord0 + 
-               u * vert1.texCoord0 +
-               v * vert2.texCoord0;
 
     normal   = ( w * vert0.normal + 
                  u * vert1.normal +
                  v * vert2.normal ).direction();
+
+    // Flip normal if on the backside
+    if(backside){
+        normal *= -1.0f;
+    }
+
+    texCoord = w * vert0.texCoord0 + 
+               u * vert1.texCoord0 +
+               v * vert2.texCoord0;
                  
 }
 
@@ -233,7 +211,7 @@ void Tri::Intersector::getResult
  Vector3&        tangent2) const {
 
     float w = 1.0 - u - v;
-    // Identical to the parameter getResult, but copying code
+    // Portions are identical to the 3 parameter getResult, but copying code
     // to save pointer indirections on the vertex attributes
     const CPUVertexArray::Vertex& vert0 = tri->vertex(vertexArray, 0);
     const CPUVertexArray::Vertex& vert1 = tri->vertex(vertexArray, 1);
@@ -245,8 +223,6 @@ void Tri::Intersector::getResult
                u * (vert1.position - v0) +
                v * (vert2.position - v0);
 
-    
-    
     
     texCoord = w * vert0.texCoord0 + 
                u * vert1.texCoord0 +
@@ -266,6 +242,13 @@ void Tri::Intersector::getResult
 
         tangent2 = normal.cross(tangent1);
     }
+
+    if(backside){
+        normal   *= -1.0f;
+        tangent1 *= -1.0f; 
+        tangent2 *= -1.0f; 
+    }
+
 }
 
 

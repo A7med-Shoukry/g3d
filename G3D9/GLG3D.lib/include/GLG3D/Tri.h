@@ -54,7 +54,9 @@ private:
     /** 
       The area of the triangle: (e0 x e1).length() * 0.5 
       
-      Since this triangle is  
+      Since the area is always positive, we encode a twoSided
+      flag into the sign bit. If the sign bit is 1, the triangle
+      should be treated as double sided.
       */
     float                   m_area;
 
@@ -69,17 +71,14 @@ public:
     */
     Tri(const int i0, const int i1, const int i2,
         const CPUVertexArray& vertexArray,
-        const Proxy<Material>::Ref& material = NULL);
+        const Proxy<Material>::Ref& material = NULL,
+        bool twoSided = false);
 
 
     Tri() {}
 
     /** Cast to Triangle */
     operator Triangle() const;
-
-    /** Backfacing version of this triangle.  Normals and tangents are
-        negated and the winding order is reversed. */
-    Tri otherSide() const;
     
     /** Edge vector v1 - v0 */
     Vector3 e1(const CPUVertexArray& vertexArray) const{
@@ -190,6 +189,12 @@ public:
             (m_material == t.m_material);
     }
 
+    /** True if this triangle should be treated as double sided */
+    bool twoSided(){
+        return (m_area < 0);
+    }
+
+
     Triangle toTriangle(const CPUVertexArray& vertexArray) const;
 
     /** \brief Performs intersection testing against Tri.  
@@ -230,6 +235,12 @@ public:
             This is an "output"*/
         float           v;
 
+        /** Flag signifying whether we hit the backside of the triangle
+
+
+            This is an "output"*/
+        bool            backside;
+
         /** Enables alpha testing in operator() when true. This is an
             "input"*/
         bool            alphaTest;
@@ -243,7 +254,7 @@ public:
         Vector3         eye;
 
         /** For SurfaceElement to copy. Not set by intersect, the caller must explicitly set this value */
-        int                primitiveIndex;
+        int             primitiveIndex;
 
         Intersector() : tri(NULL), u(0), v(0), alphaTest(true), alphaThreshold(0.5f), primitiveIndex(-1) {}
 

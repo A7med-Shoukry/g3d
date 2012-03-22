@@ -1100,7 +1100,7 @@ void SuperSurface::getTrisHomogeneous(const Array<Surface::Ref>& surfaceArray, C
         alwaysAssertM(surface.notNull(), "Non-SuperSurface passed to SuperSurface::getTrisHomogenous.");
 
         const SuperSurface::CPUGeom& cpuGeom        = surface->cpuGeom();
-        const SuperSurface::GPUGeom::Ref& gpuGeom = surface->gpuGeom();
+        const SuperSurface::GPUGeom::Ref& gpuGeom   = surface->gpuGeom();
     
         bool twoSided = gpuGeom->twoSided;
 
@@ -1127,7 +1127,6 @@ void SuperSurface::getTrisHomogeneous(const Array<Surface::Ref>& surfaceArray, C
 
         // G3D 9.00 format with interlaced vertices
         // All data are in object space
-
         for (int i = 0; i < index.size(); i += 3) {
             triArray.append
                 (Tri(index[i + 0] + indexOffset,
@@ -1135,14 +1134,9 @@ void SuperSurface::getTrisHomogeneous(const Array<Surface::Ref>& surfaceArray, C
                      index[i + 2] + indexOffset,
 
                      cpuVertexArray,
+                     material,
+                     twoSided));
 
-                    material));
-
-            if (twoSided) {
-                // TODO: Mike replace this with a TWO SIDED flag to the Tri constructor
-                const Tri& t = triArray.last().otherSide();
-                triArray.append(t);
-            }
         } // for index
     } // for surface
 }
