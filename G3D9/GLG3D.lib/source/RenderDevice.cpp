@@ -174,7 +174,7 @@ void RenderDevice::applyRect(const Shader::Ref& s) {
     // This is faster on some consoles and presumably some GPUs
     // because it doesn't divide warps along the diagonal. This is 
     // slightly faster than a big quad on GeForce GTX 480.
-    const bool bigTriangleMethod = true;
+    const bool bigTriangleMethod = false;
 
     // Texture coordinates are provided because G3D::Film's shaders need them at
     // the time of this implementation
