@@ -176,19 +176,37 @@ void RenderDevice::applyRect(const Shader::Ref& s) {
     // slightly faster than a big quad on GeForce GTX 480.
     const bool bigTriangleMethod = true;
 
+    // Texture coordinates are provided because G3D::Film's shaders need them at
+    // the time of this implementation
     if (bigTriangleMethod) {
         beginPrimitive(PrimitiveType::TRIANGLES); {
+            glTexCoord2f(0, 0);
             glVertex(v.x0y0());
+
+            glTexCoord2f(0, 2);
             glVertex(v.x0y0() + Vector2(0, v.height() * 2.0f));
+
+            glTexCoord2f(2, 0);
             glVertex(v.x0y0() + Vector2(v.width() * 2.0f, 0));
+
         } endPrimitive();
+        minGLStateChange(3);
     } else {
         beginPrimitive(PrimitiveType::QUADS); {
+            glTexCoord2f(0, 0);
             glVertex(v.x0y0());
+
+            glTexCoord2f(0, 1);
             glVertex(v.x0y1());
+
+            glTexCoord2f(1, 1);
             glVertex(v.x1y1());
+
+            glTexCoord2f(1, 0);
             glVertex(v.x1y0());
         } endPrimitive();
+
+        minGLStateChange(8);
     }
 }
 
