@@ -148,7 +148,7 @@ std::string readWholeFile(const std::string& filename) {
                 throw std::string("\"") + internalFile + "\" inside \"" + zipfile + "\" could not be opened.";
             } else {
                 const int64 bytesRead = zip_fread( zf, buffer, (info.size));
-                debugAssertM(bytesRead == info.size,
+                debugAssertM((int64)bytesRead == info.size,
                              internalFile + " was corrupt because it unzipped to the wrong size.");
                 (void)bytesRead;
                 zip_fclose( zf );

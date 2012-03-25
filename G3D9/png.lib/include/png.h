@@ -1,5 +1,5 @@
 #ifdef __APPLE__
-#error "On OS X, G3D is supposed to use the system version of libpng"
+//#error "On OS X, G3D is supposed to use the system version of libpng"
 #endif
 /* png.h - header file for PNG reference library
  *
