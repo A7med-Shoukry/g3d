@@ -12,8 +12,6 @@
        // Every entry in the font section and the order of the entries
        // are optional
 
-       // Recommendation; does not fail if this can't be loaded
-//       face = "LucidaSans.fnt",  size = 13,
        face = "arial.fnt",  size = 12,
 
        color = Color4(0, 0, 0, 1),
@@ -617,40 +615,39 @@
     ornatePane = Pane {
         frame = StretchRectHV {
             top = StretchRectH {
-                left      = Rect2D::xywh(163, 172,  7,  7),
+                left      = Rect2D::xywh(164, 172,  5,  5),
                 center    = Fill {
-                    source  = Rect2D::xywh(171, 172,  12,  7),
+                    source  = Rect2D::xywh(170, 172,  16,  4),
                     hmode   = "STRETCH",
                     vmode   = "STRETCH"
                 },
-                right     = Rect2D::xywh(183, 172,  7,  7)
+                right     = Rect2D::xywh(185, 172,  5,  5)
             },
                         
-            // Reuses the regular window frame
             centerLeft   = Fill {
-                source  = Rect2D::xywh(164, 179,  7,  12),
+                source  = Rect2D::xywh(164, 180,  5,  5),
                 hmode   = "STRETCH",
                 vmode   = "STRETCH"
             },
             centerCenter = Fill {
-                source  = Rect2D::xywh(171, 179,  12,  12),
+                source  = Rect2D::xywh(170, 180,  5,  5),
                 hmode   = "STRETCH",
                 vmode   = "STRETCH"
             },
             centerRight  = Fill {
-                source  = Rect2D::xywh(183, 179,  7,  12),
+                source  = Rect2D::xywh(185, 180,  5,  5),
                 hmode   = "STRETCH",
                 vmode   = "STRETCH"
             },
             
             bottom = StretchRectH {
-                left   = Rect2D::xywh(164, 191,  7,  7),
+                left   = Rect2D::xywh(164, 194,  5,  5),
                 center = Fill {
-                    source  = Rect2D::xywh(171, 191,  12,  7),
+                    source  = Rect2D::xywh(170, 194,  5,  5),
                     hmode   = "STRETCH",
                     vmode   = "STRETCH"
                 },
-                right  = Rect2D::xywh(183, 191,  7,  7)
+                right  = Rect2D::xywh(185, 194,  5,  5)
             }
         },
 
