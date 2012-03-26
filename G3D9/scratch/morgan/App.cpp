@@ -623,6 +623,20 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
+    // Make Gui
+    GuiTheme::makeThemeFromSourceFiles	("D:/morgan/g3d/data-source/guithemes/osx-10.7/", "osx-10.7_white.png", "osx-10.7_black.png", "osx-10.7.gtm.any", "D:/morgan/g3d/data-source/guithemes/osx-10.7/osx-10.7.gtm");
+    ::exit(0);
+    /*
+    // Make fonts
+    GFont::makeFont(256, "d:/font/LucidaSans", "d:/font/LucidaSans.fnt"); 
+    GFont::makeFont(256, "d:/font/LucidaSansItalic", "d:/font/LucidaSansItalic.fnt"); 
+    GFont::makeFont(256, "d:/font/LucidaSansBold", "d:/font/LucidaSansBold.fnt"); 
+    GFont::makeFont(256, "d:/font/LucidaSansBoldItalic", "d:/font/LucidaSansBoldItalic.fnt"); 
+    ::exit(0);
+    */
+
+    /*
+    // Gaussian coefficients:
     int N = 9;
     Array<float> coeff;
     float stddev = (2*N +1) * 0.25f;
@@ -631,6 +645,7 @@ int main(int argc, const char* argv[]) {
         debugPrintf("weight[%d] = %f; ", i, coeff[i]);
     debugPrintf("\n");
     ::exit(0);
+*/
     /*
 
     Array<std::string> files;

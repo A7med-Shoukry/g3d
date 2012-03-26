@@ -13,8 +13,9 @@
        // are optional
 
        // Recommendation; does not fail if this can't be loaded
-       face = "LucidaSans.fnt",
-       size = 12,
+//       face = "LucidaSans.fnt",  size = 13,
+       face = "arial.fnt",  size = 12,
+
        color = Color4(0, 0, 0, 1),
        outlineColor = Color4(0, 0, 0, 0)
     },
