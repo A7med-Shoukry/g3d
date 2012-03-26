@@ -144,7 +144,7 @@ public:
       The Bitmap Font Builder program can be downloaded from http://www.lmnopc.com/bitmapfontbuilder/
 
       Use the full ASCII character set; the conversion will strip
-      infrequently used characters automatically. Write out RAW files
+      infrequently used characters automatically. Write out TGA files
       with characters CENTER aligned and right side up using this
       program.  Then, also write out an INI file; this contains the
       width of each character in the font.  Example: 
