@@ -245,7 +245,7 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
         addWidget(splineManipulator);
         
         GFont::Ref      arialFont   = GFont::fromFile(System::findDataFile("icon.fnt"));
-        GuiTheme::Ref   theme       = GuiTheme::fromFile(System::findDataFile("osx.gtm"), arialFont);
+        GuiTheme::Ref   theme       = GuiTheme::fromFile(System::findDataFile("osx-10.7.gtm"), arialFont);
 
         debugWindow = GuiWindow::create("Control Window", theme, 
             Rect2D::xywh(0, 0, settings.window.width, 150), GuiTheme::PANEL_WINDOW_STYLE, GuiWindow::NO_CLOSE);

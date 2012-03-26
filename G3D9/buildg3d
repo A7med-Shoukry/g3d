@@ -399,6 +399,9 @@ def libTarget():
 
         if x == 0: x = runicompile('GLG3D.lib')
 
+
+    if x == 0:
+       copyIfNewer('data-files/shader', 'build/data/shader')
          
     return x
 
