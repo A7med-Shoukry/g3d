@@ -704,7 +704,8 @@ void GuiTextureBox::setUpShader(Shader::Ref shader, bool isCubemap){
         shader->args.set("colorShift", colorShift[m_settings.channels]);
         if(isCubemap){
             if(m_showCubemapEdges){
-                float thresholdValue = 2.0f - 1.0/m_texture->width();
+                // TODO: come up with a principled way to make this 1 pixel wide
+                float thresholdValue = 2.0f - 10.0/m_texture->width();
                 shader->args.set("edgeThreshold", thresholdValue);
             } else {
                 shader->args.set("edgeThreshold", 3.0f); // Anything over 2.0 turns off edge rendering
@@ -714,6 +715,11 @@ void GuiTextureBox::setUpShader(Shader::Ref shader, bool isCubemap){
 }
 
 void GuiTextureBox::drawTexture(RenderDevice* rd, const Rect2D& r) const {
+    /*rd->setTexture(0, m_texture);
+    rd->setShader(NULL);
+    Draw::fastRect2D(r, rd);
+    return;
+    */
     rd->setAlphaTest(RenderDevice::ALPHA_ALWAYS_PASS, 0);
     rd->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
 
@@ -991,15 +997,15 @@ STR(
     uniform mat4      colorShift;
     uniform float     bias;
     uniform float     scale;
-    uniform float       edgeThreshold;
-    uniform bool      invertIntensity;\n
-    #define PI (3.1415926536)\n
-    #define TWOPI (6.28318531)\n
+    uniform float     edgeThreshold;
+    uniform bool      invertIntensity;
+    
 
     void main(void) {
+        const float PI    = 3.14159265;
         vec2 sphericalCoord = gl_TexCoord[g3d_Index(texture)].xy;
         float theta = sphericalCoord.y * PI;
-        float phi   = sphericalCoord.x * TWOPI;
+        float phi   = sphericalCoord.x * 2 * PI;
         float sinTheta = sin(theta);
         vec3 cartesianCoord = vec3(cos(phi) * sinTheta, cos(theta), sin(phi) * sinTheta); 
         vec4 c = textureCube(texture, cartesianCoord);
