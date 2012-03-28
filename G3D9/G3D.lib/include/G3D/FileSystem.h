@@ -4,7 +4,7 @@
  \author Morgan McGuire, http://graphics.cs.williams.edu
  
  \author  2002-06-06
- \edited  2011-01-10
+ \edited  2012-03-26
  */
 #ifndef G3D_FileSystem_h
 #define G3D_FileSystem_h
@@ -13,6 +13,7 @@
 #include "G3D/Array.h"
 #include "G3D/Table.h"
 #include "G3D/Set.h"
+#include "G3D/GMutex.h"
 
 namespace G3D {
 
@@ -41,7 +42,6 @@ namespace G3D {
  zipfile without forcing it to open all parent directories for reading.
 
  \sa FilePath
- TODO: make threadsafe!
 */
 class FileSystem {
 public:
@@ -140,6 +140,8 @@ private:
     FileSystem();
 
     static FileSystem& instance();
+    static GMutex      mutex;
+
 
 #   ifdef G3D_WIN32
     /** On Windows, the drive letters that form the file system roots.*/
@@ -302,67 +304,100 @@ public:
 #   ifdef G3D_WIN32
     /** \copydoc _drives */
     static const Array<std::string>& drives() {
-        return instance()._drives();
+        mutex.lock();
+        Array<std::string>& s = instance()._drives();
+        mutex.unlock();
+        return s;
     }
 #   endif
 
     /** \copydoc _inZipfile */
     static bool inZipfile(const std::string& path, std::string& zipfile) {
-        return instance()._inZipfile(path, zipfile);
+        mutex.lock();
+        bool b = instance()._inZipfile(path, zipfile);
+        mutex.unlock();
+        return b;
     }
 
     /** \copydoc _clearCache */
     static void clearCache(const std::string& path = "") {
+        mutex.lock();
         instance()._clearCache(path);
+        mutex.unlock();
     }
 
     /** \copydoc _fopen */
     static FILE* fopen(const char* filename, const char* mode) {
-        return instance()._fopen(filename, mode);
+        mutex.lock();
+        FILE* f = instance()._fopen(filename, mode);
+        mutex.unlock();
+        return f;
     }
 
     static void fclose(FILE* f) {
+        mutex.lock();
         ::fclose(f);
+        mutex.unlock();
     }
 
     /** \copydoc _inZipfile */
     static bool inZipfile(const std::string& path) {
-        return instance()._inZipfile(path);
+        mutex.lock();
+        bool b = instance()._inZipfile(path);
+        mutex.unlock();
+        return b;
     }
 
     /** \copydoc _removeFile */
     static void removeFile(const std::string& path) {
+        mutex.lock();
         instance()._removeFile(path);
+        mutex.unlock();
     }
 
     /** \copydoc isZipfile */
     static bool isZipfile(const std::string& path) {
-        return instance()._isZipfile(path);
+        mutex.lock();
+        bool b = instance()._isZipfile(path);
+        mutex.unlock();
+        return b;
     }
 
     /** \copydoc _setCacheLifetime */
     void setCacheLifetime(float t) {
+        mutex.lock();
         instance()._setCacheLifetime(t);
+        mutex.unlock();
     }
 
     /** \copydoc _cacheLifetime */
     static float cacheLifetime() {
-        return instance()._cacheLifetime();
+        mutex.lock();
+        float f = instance()._cacheLifetime();
+        mutex.unlock();
+        return f;
     }
 
     /** \copydoc _createDirectory */
     static void createDirectory(const std::string& path) {
+        mutex.lock();
         instance()._createDirectory(path);
+        mutex.unlock();
     }
 
     /** \copydoc _currentDirectory */
     static std::string currentDirectory() {
-        return instance()._currentDirectory();
+        mutex.lock();
+        const std::string& s = instance()._currentDirectory();
+        mutex.unlock();
+        return s;
     }
 
     /** \copydoc _copyFile */
     static void copyFile(const std::string& srcPath, const std::string& dstPath) {
+        mutex.lock();
         instance()._copyFile(srcPath, dstPath);
+        mutex.unlock();
     }
 
     /** \copydoc _exists */
@@ -373,48 +408,72 @@ public:
         true
 #endif
         ) {
-        return instance()._exists(f, trustCache, caseSensitive);
+        mutex.lock();
+        bool e = instance()._exists(f, trustCache, caseSensitive);
+        mutex.unlock();
+        return e;
     }
 
     /** \copydoc _isDirectory */
     static bool isDirectory(const std::string& path) {
-        return instance()._isDirectory(path);
+        mutex.lock();
+        bool b = instance()._isDirectory(path);
+        mutex.unlock();
+        return b;
     }
 
     /** \copydoc _isFile */
     static bool isFile(const std::string& path) {
-        return instance()._isFile(path);
+        mutex.lock();
+        bool b = instance()._isFile(path);
+        mutex.unlock();
+        return b;
     }
 
     /** \copydoc _resolve */
     static std::string resolve(const std::string& path, const std::string& cwd = currentDirectory()) {
-        return instance()._resolve(path, cwd);
+        mutex.lock();
+        const std::string& s = instance()._resolve(path, cwd);
+        mutex.unlock();
+        return s;
     }
 
     /** \copydoc _isNewer */
     static bool isNewer(const std::string& src, const std::string& dst) {
-        return instance()._isNewer(src, dst);
+        mutex.lock();
+        bool b = instance()._isNewer(src, dst);
+        mutex.unlock();
+        return b;
     }
 
     /** \copydoc _size */
     static int64 size(const std::string& path) {
-        return instance()._size(path);
+        mutex.lock();
+        int64 i = instance()._size(path);
+        mutex.unlock();
+        return i;
     }
 
     /** \copydoc _list */
     static void list(const std::string& spec, Array<std::string>& result,
         const ListSettings& listSettings = ListSettings()) {
-        return instance()._list(spec, result, listSettings);
+        mutex.lock();
+        instance()._list(spec, result, listSettings);
+        mutex.unlock();
     }
 
     /** \copydoc _getFiles */
     static void getFiles(const std::string& spec, Array<std::string>& result, bool includeParentPath = false) {
-        return instance()._getFiles(spec, result, includeParentPath);
+        mutex.lock();
+        instance()._getFiles(spec, result, includeParentPath);
+        mutex.unlock();
     }
 
     /** \copydoc getDirectories */
     static void getDirectories(const std::string& spec, Array<std::string>& result, bool includeParentPath = false) {
-        return instance()._getDirectories(spec, result, includeParentPath);
+        mutex.lock();
+        instance()._getDirectories(spec, result, includeParentPath);
+        mutex.unlock();
     }
 
     /** Adds \a filename to usedFiles().  This is called automatically by open() and all 

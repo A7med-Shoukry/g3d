@@ -39,6 +39,8 @@ namespace G3D {
 
 static FileSystem* common = NULL;
 
+GMutex FileSystem::mutex;
+
 FileSystem& FileSystem::instance() {
     init();
     return *common;
@@ -546,7 +548,9 @@ std::string FileSystem::_currentDirectory() {
 static Set<std::string> _filesUsed;
 
 void FileSystem::markFileUsed(const std::string& filename) {
+    mutex.lock();
     _filesUsed.insert(filename);
+    mutex.unlock();
 }
 
 
