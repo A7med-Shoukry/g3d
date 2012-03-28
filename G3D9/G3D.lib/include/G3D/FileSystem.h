@@ -305,7 +305,7 @@ public:
     /** \copydoc _drives */
     static const Array<std::string>& drives() {
         mutex.lock();
-        Array<std::string>& s = instance()._drives();
+        const Array<std::string>& s = instance()._drives();
         mutex.unlock();
         return s;
     }
