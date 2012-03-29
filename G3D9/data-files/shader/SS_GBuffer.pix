@@ -202,7 +202,7 @@ void main() {
 #   endif
 
 #   ifdef CS_NORMAL
-        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)) * CS_NORMAL_writeScaleBias.x + vec3(CS__NORMAL_writeScaleBias.y);
+        CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)) * CS_NORMAL_writeScaleBias.x + vec3(CS_NORMAL_writeScaleBias.y);
 #   endif
 
 #   if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
