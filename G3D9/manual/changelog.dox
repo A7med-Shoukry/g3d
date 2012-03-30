@@ -21,8 +21,10 @@
    <p>
    Changes in 9.00:
    <ul>
-    <li> Modified G3D::Tri::Intersector to store a backside boolean if we hit the backside of the Tri. getResult will flip normals/tangents if this is true.</li>
-    <li> Added a new twoSided parameter to the Tri constructor, if set to true, Tri::Intersector will do double-sided intersections [Mike]</li>
+    <li> Added an optional mipLevel parameter to getTexImage, which defaults to 0. [Mike]</li>
+    <li> Implemented G3D::Texture::generateMipMaps() (It was defined in the header but not implemented before). [Mike]</li>
+    <li> Modified G3D::Tri::Intersector to store a backside boolean if we hit the backside of the Tri. getResult will flip normals/tangents if this is true. [Mike]</li>
+    <li> Added a new twoSided parameter to the Tri constructor, if set to true, Tri::Intersector will do double-sided intersections. (used sign bit of area, no change to Tri size) [Mike]</li>
     <li> Removed G3D::Tri::otherSide() (it does not work with the new CPUVertexArrayFormat).  [Mike]</li>
     <li> Removed the CPUVertexArray* from Tri. Updated all methods that access information about Tri to take a const Ref to a CPUVertexArray, and added G3D::TriTree::getCPUVertexArray() (Tri is now 24 bytes in a 64 bit build) [Mike]</li>
     <li> Removed v0, e1, e2, from G3D::Tri. Added the methods e1 and e2. Changed Tri::m_doubleArea to Tri::m_area for intuition's sake (Tri is now 32 bytes in a 64 bit build)[Mike]</li>

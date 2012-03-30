@@ -58,7 +58,7 @@ typedef ReferenceCountedPointer<Texture> TextureRef;
  already a power of 2.  However, DIM_2D_NPOT and DIM_CUBE_MAP_NPOT will safely fallback to
  POT requirements if the ARB_non_power_of_two extension is not supported. Develoeprs can 
  check if this will happen by calling GLCaps::supports_GL_ARB_texture_non_power_of_two().
- Note that the texture does not have to be a rectangle; the dimensions can be different powers of two.
+ Note that the texture does not have to be a square; the dimensions can be different powers of two.
  DIM_2D_RECT is provided primarily for older cards only and does not interact well with shaders.
 
  Textures are loaded so that (0, 0) is the upper-left corner of the image. 
@@ -751,7 +751,7 @@ public:
 
         \param face specifies the face of the cubemap
     */
-    void getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace face = CubeFace::POS_X) const;
+    void getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace face = CubeFace::POS_X, int mipLevel = 0) const;
 
     /** Reads back a single texel.  This is faster than reading an entire image, but 
         still stalls the pipeline because it is synchronous.
@@ -1166,7 +1166,9 @@ public:
     void setAutoMipMap(bool b);
 
     /** For a texture with automipmap off that supports the FrameBufferObject extension, 
-       generate mipmaps from the level 0 mipmap immediately.  For other textures, does nothing.*/
+       generate mipmaps from the level 0 mipmap immediately.  For other textures, does nothing.
+       // TODO: Make it actually do nothing for unsupported textures...
+       */
     void generateMipMaps();
 
     /** Allows forcing a change to the depthReadMode of the texture currently bound to the target. */

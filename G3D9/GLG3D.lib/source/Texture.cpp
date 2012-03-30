@@ -486,6 +486,13 @@ TextureRef Texture::opaqueGray() {
     return t;
 }
 
+void Texture::generateMipMaps(){
+    glPushAttrib(GL_TEXTURE_BIT); {
+        glBindTexture(openGLTextureTarget(), openGLID());
+        glGenerateMipmap(openGLTextureTarget());
+    } glPopAttrib();
+}
+
 
 /**
  Scales the intensity up or down of an entire image and gamma corrects.
@@ -1637,7 +1644,7 @@ void Texture::getImage(GImage& dst, const ImageFormat* outFormat, CubeFace face)
 }
 
 
-void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace face) const {
+void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace face, int mipLevel) const {
     
     GLenum target;
     if (isCubeMap()) { 
@@ -1653,7 +1660,7 @@ void Texture::getTexImage(void* data, const ImageFormat* desiredFormat, CubeFace
         
     glGetTexImage
         (target,
-         0,
+         mipLevel,
          desiredFormat->openGLBaseFormat,
          desiredFormat->openGLDataFormat,
          data);
