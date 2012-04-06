@@ -21,6 +21,7 @@
    <p>
    Changes in 9.00:
    <ul>
+    <li> Modified MD3Model::findFrameNum() to make the animations smoother until we get to implementing blending between animations [Mike]</li>
     <li> Added an optional mipLevel parameter to getTexImage, which defaults to 0. [Mike]</li>
     <li> Implemented G3D::Texture::generateMipMaps() (It was defined in the header but not implemented before). [Mike]</li>
     <li> Modified G3D::Tri::Intersector to store a backside boolean if we hit the backside of the Tri. getResult will flip normals/tangents if this is true. [Mike]</li>

@@ -850,36 +850,39 @@ void MD3Model::posePart(PartType partType, const Pose& pose, Array<Surface::Ref>
 float MD3Model::findFrameNum(AnimType animType, GameTime animTime) const {
     debugAssert(animType < NUM_ANIMATIONS);
 
-    float frameNum = m_animations[animType].start;
+    float firstFrame       = m_animations[animType].start;
+    float relativeFrameNum = 0.0f;
 
-    float initialLoopTime = (m_animations[animType].num / m_animations[animType].fps);
+    float initialAnimationDuration = ((m_animations[animType].num) / m_animations[animType].fps);
 
-    if (animTime < initialLoopTime) {
+    // Animation goes from first frame to last frame, then jumps immediately to the first loop frame
+    // Will need to be changed when blending animations
+    if (animTime < initialAnimationDuration) {
         // Less than 1 loop complete, no need to account for "loop" value
-        frameNum += static_cast<float>(animTime / initialLoopTime) * m_animations[animType].num;
+        relativeFrameNum = static_cast<float>(animTime / initialAnimationDuration) * (m_animations[animType].num - 1);
     } else {
         if (m_animations[animType].loop > 0.0f) {
             // otherwise find actual frame number after number of loops
-            animTime -= initialLoopTime;
-
-            // Find time for all subsequent loops
-            float otherLoopTime = m_animations[animType].loop / m_animations[animType].fps;
+            
+            float loopDuration = ((m_animations[animType].loop) / m_animations[animType].fps);
+            animTime -= loopDuration;
 
             // How far into the last loop
-            float timeIntoLastLoop = fmod(static_cast<float>(animTime), otherLoopTime);
+            float timeIntoLastLoop = fmod(static_cast<float>(animTime), loopDuration);
 
-            // "loop" works by specifying the last number of frames to loop over
+            // "loop" works by specifying the number of frames to loop over minus one
             // so a loop of 1 with num frames 5 means looping starts at frame 4 with frames {1, 2, 3, 4, 5} originally
 
-            frameNum += (m_animations[animType].num - m_animations[animType].loop);
+            relativeFrameNum  = (m_animations[animType].num - m_animations[animType].loop);
 
-            frameNum += (timeIntoLastLoop / otherLoopTime) * m_animations[animType].loop;
-        } else {
-            frameNum += m_animations[animType].num - 1;
+            // (m_animations[animType].loop-1) is the maximum frame offset
+            relativeFrameNum += (timeIntoLastLoop / loopDuration) * (m_animations[animType].loop-1);
+        } else { // Use the final frame
+            relativeFrameNum += m_animations[animType].num - 1;
         }
     }
 
-    return frameNum;
+    return firstFrame + relativeFrameNum;
 }
 
 
