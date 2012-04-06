@@ -2001,7 +2001,7 @@ public:
            Draw::fastRect2D(rd->viewport(), s);
         \endcode
       */
-    void applyRect(const Shader::Ref& s);
+    void applyRect(const Shader::Ref& s, float zCoord = 0.0f);
 
     /** Shorthand for:
     

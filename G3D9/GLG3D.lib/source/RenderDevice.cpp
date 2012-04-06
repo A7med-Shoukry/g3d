@@ -167,7 +167,7 @@ OSWindow* RenderDevice::window() const {
 }
 
 
-void RenderDevice::applyRect(const Shader::Ref& s) {
+void RenderDevice::applyRect(const Shader::Ref& s, float zCoord) {
     setShader(s);
     const Rect2D& v = viewport();
 
@@ -181,33 +181,34 @@ void RenderDevice::applyRect(const Shader::Ref& s) {
     if (bigTriangleMethod) {
         beginPrimitive(PrimitiveType::TRIANGLES); {
             glTexCoord2f(0, 0);
-            glVertex(v.x0y0());
+            glVertex(Vector3(v.x0y0(),zCoord));
 
             glTexCoord2f(0, 2);
-            glVertex(v.x0y0() + Vector2(0, v.height() * 2.0f));
+            glVertex(Vector3(v.x0y0() + Vector2(0, v.height() * 2.0f), zCoord));
 
             glTexCoord2f(2, 0);
-            glVertex(v.x0y0() + Vector2(v.width() * 2.0f, 0));
+            glVertex(Vector3(v.x0y0() + Vector2(v.width() * 2.0f, 0), zCoord));
 
         } endPrimitive();
         minGLStateChange(3);
     } else {
         beginPrimitive(PrimitiveType::QUADS); {
             glTexCoord2f(0, 0);
-            glVertex(v.x0y0());
+            glVertex(Vector3(v.x0y0(),zCoord));
 
             glTexCoord2f(0, 1);
-            glVertex(v.x0y1());
+            glVertex(Vector3(v.x0y1(),zCoord));
 
             glTexCoord2f(1, 1);
-            glVertex(v.x1y1());
+            glVertex(Vector3(v.x1y1(),zCoord));
 
             glTexCoord2f(1, 0);
-            glVertex(v.x1y0());
+            glVertex(Vector3(v.x1y0(),zCoord));
         } endPrimitive();
 
         minGLStateChange(8);
     }
+
 }
 
 
