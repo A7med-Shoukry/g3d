@@ -43,48 +43,56 @@ namespace G3D {
  - Quake 3 <a href="http://www.mralligator.com/q3/">BSP</a>
  - Any image format supported by G3D::GImage will be treated as a heighfield; apply a scale factor and material to transform it as desired
 
- Does not copy geometry to the GPU until it has to render.  This means that CPU rendering
- code need not consume GPU vertex buffer resources (or transfer time).  The current
- implementation eagerly loads Material%s onto the GPU.  If a future
- version also allows deferring that operation, then this class will be able to load models
- entirely on a non-rendering thread and will not require a GPU context to be active.
+ Does not copy geometry to the GPU until it has to render.  This means
+ that CPU rendering code need not consume GPU vertex buffer resources
+ (or transfer time).  The current implementation eagerly loads
+ Material%s onto the GPU.  If a future version also allows deferring
+ that operation, then this class will be able to load models entirely
+ on a non-rendering thread and will not require a GPU context to be
+ active.
  */
 class ArticulatedModel : public ReferenceCountedObject {
 public:
 
     typedef ReferenceCountedPointer<ArticulatedModel> Ref;
 
-    /** Parameters for  cleanGeometry() */
+    /** Parameters for cleanGeometry() */
     class CleanGeometrySettings {
     public:
         
-        /** Set to true to check for redundant vertices even if 
-           no normals or tangents need to be computed. This may increase
-           rendering performance and decrease cleanGeometry() performance.           
-           Default: true.
-           */
+        /** 
+            Set to true to check for redundant vertices even if no
+            normals or tangents need to be computed. This may increase
+            rendering performance and decrease cleanGeometry()
+            performance.  Default: true.
+        */
         bool                        forceVertexMerging;
 
 
-        /** Set to false to prevent the (slow) operation of merging colocated vertices that
-            have identical properties.  Merging vertices speeds up rendering but slows down
-            loading.  Setting to false overrides forceVertexMerging. */
+        /** 
+            Set to false to prevent the (slow) operation of merging
+            colocated vertices that have identical properties.
+            Merging vertices speeds up rendering but slows down
+            loading.  Setting to false overrides
+            forceVertexMerging. */
         bool                        allowVertexMerging;
 
         /**
-          Maximum angle in radians that a normal can be bent through to merge two vertices. 
-          Default: 8 degrees().
+           Maximum angle in radians that a normal can be bent through
+           to merge two vertices.  Default: 8 degrees().
           */
         float                       maxNormalWeldAngle;
 
         /** 
-        Maximum angle in radians between the normals of adjacent faces that will still create
-        the appearance of a smooth surface between them.  Alternatively, the minimum
-        angle between those normals required to create a sharp crease.
+            Maximum angle in radians between the normals of adjacent
+            faces that will still create the appearance of a smooth
+            surface between them.  Alternatively, the minimum angle
+            between those normals required to create a sharp crease.
 
-        Set to 0 to force faceting of a model.  Set to 2 * pif() to make completely smooth.
+            Set to 0 to force faceting of a model.  Set to 2 * pif()
+            to make completely smooth.
 
-        Default: 65 degrees().
+            Default: 65 degrees().
         */
         float                       maxSmoothAngle;
 
@@ -221,27 +229,29 @@ public:
     };
 
 
-    /** \brief Parameters for constructing a new ArticulatedModel from a file on disk.*/
+    /** \brief Parameters for constructing a new ArticulatedModel from
+        a file on disk. */
     class Specification {
     public:
         /** Materials will be loaded relative to this file.*/
         std::string                 filename;
 
         /** Ignore materials specified in the file, replacing them
-        with Material::create().  Setting to true increases loading
-        performance and may allow more aggressive optimization if
-        mergeMeshesByMaterial is also true.
+            with Material::create().  Setting to true increases
+            loading performance and may allow more aggressive
+            optimization if mergeMeshesByMaterial is also true.
         */
         bool                        stripMaterials;
 
         /** Merge all Mesh%es within a Part that share a material into
-        a single Mesh.  This will increase the rendering performance
-        of objects that were divided into many parts by an artist for
-        modeling purposes.  It may decrease the rendering performance
-        of very large objects that were divided into pieces that are
-        unlikely to all be visible in the frustum simultaneously.
+            a single Mesh.  This will increase the rendering
+            performance of objects that were divided into many parts
+            by an artist for modeling purposes.  It may decrease the
+            rendering performance of very large objects that were
+            divided into pieces that are unlikely to all be visible in
+            the frustum simultaneously.
 
-        Default: false
+            Default: false
         */
         bool                        mergeMeshesByMaterial;
 
@@ -256,14 +266,17 @@ public:
             cleaning geometry. */
         Array<Instruction>          preprocess;
 
+
         class BSPOptions {
         public:
-            /** If true, lightmap coordinates are used for texCoord1.  If false (default),
-                they are discarded.
+            /** If true, lightmap coordinates are used for texCoord1.
+                If false (default), they are discarded.
               */
             bool                    preserveLightMapCoordinates;
+
             BSPOptions() : preserveLightMapCoordinates(false) {}
         } bsp;
+
 
         class OBJOptions {
         public:
@@ -271,21 +284,26 @@ public:
             enum TexCoord3DMode {
                 /** Ignore the w component of a 3D texture coordinate (default) */
                 IGNORE,
+
                 /** Compute 
                     \code
                       texCoord1.x = floor(w / (2.0f * 2048.0f)) / 2048.0f
                       texCoord1.y = (w - 2.0f * 2048.0f * floor(w / (2.0f * 2048.0f))) / 2048.0f 
-                    \endocde
+                    \endcode
 
-                    This format allows third-party programs to preserve the texture coordinate during processing.
-                    The constant 2048 is chosen based on the internal precision of texture coordinates in 3DS Max.
+                    This format allows third-party programs to
+                    preserve the texture coordinate during processing.
+                    The constant 2048 is chosen based on the internal
+                    precision of texture coordinates in 3DS Max.
                   */
                 UNIT_2048,
 
                 /** 
-                  Parse texture coordinates as (x0, y0, x1, y1).  This is nonstandard and will not allow most programs
-                  to preserve texture coordinates.  However, most programs will also ignore the 3rd and 4th coordinate on load
-                  and thus the format is backwards compatible.
+                  Parse texture coordinates as (x0, y0, x1, y1).  This
+                  is nonstandard and will not allow most programs to
+                  preserve texture coordinates.  However, most
+                  programs will also ignore the 3rd and 4th coordinate
+                  on load and thus the format is backwards compatible.
                 */
                 FOUR_EXTENSION
             };
@@ -362,10 +380,14 @@ public:
         \endcode
          */
         Specification(const Any& a);
+
         Any toAny() const;
     };
 
 
+    /** 
+        \brief A set of primitives that share a material, within a Part.
+     */
     class Mesh {
     public:
         friend class ArticulatedModel;
@@ -521,6 +543,14 @@ public:
             space. Does not include child parts.*/
         AABox                       boxBounds;
 
+        /** \brief The geometry for this part, accessible on the CPU side.
+            
+            If you change this and want the geometry to be "cleaned" for you,
+            invoke cleanGeometry().
+
+            After changing this data, invoke clearVertexRanges() to
+            invalidate the old copy on the GPU.
+         */
         CPUVertexArray              cpuVertexArray;
 
         VertexRange                 gpuPositionArray;
@@ -567,7 +597,11 @@ public:
 
     public:
 
-        /** Discards all GPU vertex range data, which will then be re-uploaded automatically on the next pose() call. */
+        /** Discards all GPU vertex range data, which will then be
+            re-uploaded automatically on the next pose() call. 
+
+            Invoke this after you modify cpuVertexArray.
+        */
         void clearVertexRanges();
 
         /** NULL if this is a root of the model. */
@@ -602,10 +636,12 @@ public:
 
         - Wipes out the GPU vertex attribute data.
         - Computes a vertex normal for every element whose normal.x is fnan() (or if the normal array is empty).
-        - If there are texture coordiantes, computes a tangent for every element whose tangent.x is nanf() (or if the tangent array is empty).
+        - If there are texture coordinates, computes a tangent for every element whose tangent.x is nanf() (or if the tangent array is empty).
         - Merges all vertices with identical indices.
         - Updates all Mesh indices accordingly.
         - Recomputes the bounding sphere.
+        
+        Does not upload to the GPU.  You must invoke clearVertexRanges afterward.
 
         */
         void cleanGeometry(const CleanGeometrySettings& settings);
@@ -709,6 +745,8 @@ protected:
     /** \brief Execute the program.  Called from load() */
     void preprocess(const Array<Instruction>& program);
 
+    /** \brief Executes \a c for each part in the hierarchy.
+     */
     void forEachPart(PartCallback& c, Part* part, const CFrame& parentFrame, const Pose& pose, const int treeDepth);
 
     /** Called from cleanGeometry */

@@ -27,7 +27,6 @@ href="classes.html">Classes</a>.
     \link G3D::SuperSurface::GPUGeom SuperSurface::GPUGeom\endlink,
     \link G3D::GLight GLight\endlink,
     \link G3D::GMaterial GMaterial\endlink,
-    \link G3D::IFSModel IFSModel\endlink,
     \link G3D::Lighting Lighting\endlink,
     \link G3D::Shape Shape\endlink (\link G3D::ArrowShape ArrowShape\endlink, \link G3D::AxesShape AxesShape\endlink,\link G3D::BoxShape BoxShape\endlink, 
     \link G3D::CylinderShape CylinderShape\endlink, \link G3D::CapsuleShape CapsuleShape\endlink, 
@@ -107,9 +106,6 @@ href="classes.html">Classes</a>.
     \link G3D::X11Window X11Window\endlink
    
   <LI><B>Effects</B> &nbsp; &nbsp;
-    \link G3D::beginMarkShadows beginMarkShadows\endlink, 
-    \link G3D::drawFeatureEdges drawFeatureEdges\endlink,
-    \link G3D::endMarkShadows endMarkShadows\endlink, 
     \link G3D::GaussianBlur GaussianBlur\endlink,
     \link G3D::GBuffer GBuffer\endlink,
     \link G3D::markShadows markShadows\endlink,
@@ -507,14 +503,21 @@ href="classes.html">Classes</a>.
 
         
      <li><b>Platform Abstraction Macros</b> &nbsp; &nbsp;
-     \link G3D_WIN32() G3D_WIN32\endlink,
-	 G3D_OSX, G3D_LINUX, G3D_FREEBSD,     
-     PRAGMA(), G3D_BEGIN_PACKED_CLASS(), G3D_END_PACKED_CLASS(),
-     G3D_CHECK_PRINTF_METHOD_ARGS(), G3D_CHECK_VPRINTF_METHOD_ARGS(),
-     G3D_CHECK_PRINTF_ARGS(), G3D_CHECK_VPRINTF_ARGS(),
-     G3D_START_AT_MAIN(),
-	 \link G3D_REPRECATED() G3D_DEPRECATED\endlink, 
-	 \link G3D_DEBUG() G3D_DEBUG\endlink,
-	 G3D_STATIC_LINK_FFMPEG
+      \link G3D_WIN32() G3D_WIN32\endlink,
+      \link G3D_WINDOWS() G3D_WINDOWS\endlink,
+      \link G3D_OSX() G3D_OSX\endlink, 
+      \link G3D_LINUX() G3D_LINUX\endlink, 
+      \link G3D_FREEBSD() G3D_FREEBSD\endlink,
+      PRAGMA(), 
+      G3D_BEGIN_PACKED_CLASS(),
+      G3D_END_PACKED_CLASS(),
+      G3D_CHECK_PRINTF_METHOD_ARGS(), 
+      G3D_CHECK_VPRINTF_METHOD_ARGS(),
+      G3D_CHECK_PRINTF_ARGS(), 
+      G3D_CHECK_VPRINTF_ARGS(),
+      G3D_START_AT_MAIN(),
+      \link G3D_DEPRECATED() G3D_DEPRECATED\endlink, 
+      \link G3D_DEBUG() G3D_DEBUG\endlink,
+      \link G3D_STATIC_LINK_FFMPEG() G3D_STATIC_LINK_FFMPEG\endlink
    </UL>
  */
