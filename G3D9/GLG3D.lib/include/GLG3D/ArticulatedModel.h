@@ -805,10 +805,59 @@ public:
     /** 
         \brief Creates an empty ArticulatedModel that you can then programmatically construct Part%s and Mesh%es within.
 
-        Consider calling cleanGeometry() and maybeCompactArrays() after setting geometry during a preprocessing step.
-        If modifying geometry after the first call to pose(), invoke Part::clearVertexRanges() to wipe the out of date
-        GPU data.
+        Consider calling cleanGeometry() and maybeCompactArrays()
+        after setting geometry during a preprocessing step.  If
+        modifying geometry <i>after</i> the first call to pose(), invoke
+        Part::clearVertexRanges() to wipe the out of date GPU data.
 
+
+        Example of a procedurally generated model (run on load; too slow to execute in an animation loop):
+
+        \code
+        ArticulatedModel::Ref    model = ArticulatedModel::createEmpty("spiral");
+        ArticulatedModel::Part*  part  = model->addPart("root");
+        ArticulatedModel::Mesh*  mesh  = model->addMesh("root", part);
+
+        // Create the vertices
+        for (int i = 0; i < 100; ++i) {
+            CPUVertexArray::Vertex& v = part->cpuVertexArray.vertex.next();
+            v.position = Point3( ... );
+        }
+        
+        // Create the indices
+        for (int i = 0; i < 50; ++i) {
+            mesh->cpuIndexArray.append( ... );
+        }
+
+        // Tell Articulated model to generate normals automatically
+        part->cleanGeometry();
+        \endcode
+
+
+        Example of updating geometry on the CPU for vertex animation
+        (consider using a custom Shader to perform this work on the
+        GPU if possible):
+
+        \code
+        Array<CPUVertexArray::Vertex>& vertex = model->part(partID);
+        for (int i = 0; i < 50; ++i) {
+            vertex[i].position = ... ;
+            vertex[i].normal   = ... ;
+        }
+        part->clearVertexArrays();
+        \endcode
+
+        Note that you can obtain the partID when a part is originally
+        created, by explicitly iterating through the hierarchy from 
+        rootArray(), or by iterating with forEachPart().
+
+
+        Consider creating a SuperSurface, your own Surface subclass,
+        or using VertexBuffer directly if you need extensive dynamic
+        geometry that doesn't fit the design of ArticulatedModel
+        well.  G3D does not require the use of ArticulatedModel at all--
+        it is just a helper class to jumpstart your projects.
+        
         \sa create, fromFile, addMesh, addPart
        */
     static Ref createEmpty(const std::string& name);
