@@ -12,6 +12,7 @@
 #include "G3D/BinaryOutput.h"
 #include "G3D/fileutils.h"
 #include "G3D/FileSystem.h"
+#include "G3D/Image.h"
 
 namespace G3D {
     
@@ -39,12 +40,11 @@ IconSet::Ref IconSet::fromFile(const std::string& filename) {
         s->m_index.set(e.filename, i);
     }
 
-    GImage image;
-    image.decode(b, GImage::PNG);
+    Image::Ref image = Image::fromBinaryInput(&b);
     Texture::Settings settings;
     settings.wrapMode = WrapMode::CLAMP;
     settings.interpolateMode = Texture::BILINEAR_NO_MIPMAP;
-    s->m_texture = Texture::fromGImage(filename, image, ImageFormat::AUTO(), Texture::DIM_2D_NPOT, settings);
+    s->m_texture = Texture::fromImageBuffer(filename, image->toBuffer(), ImageFormat::AUTO(), Texture::DIM_2D_NPOT, settings);
 
     return s;
 }
@@ -54,14 +54,15 @@ void IconSet::findImages(const std::string& baseDir, const std::string& sourceDi
     Array<std::string> filenameArray;
     FileSystem::getFiles(pathConcat(pathConcat(baseDir, sourceDir), "*"), filenameArray);
     for (int i = 0; i < filenameArray.size(); ++i) {
-        if (GImage::supportedFormat(filenameExt(filenameArray[i]))) {
+        if (Image::fileSupported(filenameArray[i])) {
             std::string f = pathConcat(sourceDir, filenameArray[i]);
-            GImage im(pathConcat(baseDir, f));
+            Image::Ref im = Image::fromFile(pathConcat(baseDir, f));
             Source& s = sourceArray.next();
             s.filename = f;
-            s.width    = im.width();
-            s.height   = im.height();
-            s.channels = im.channels();
+            s.width    = im->width();
+            s.height   = im->height();
+            // todo (Image upgrade): find replacement calculation for channels
+            //s.channels = im.channels;
         }
     }
 
@@ -76,6 +77,7 @@ void IconSet::findImages(const std::string& baseDir, const std::string& sourceDi
 
 
 void IconSet::makeIconSet(const std::string& baseDir, const std::string& outFile) {
+    /* todo (Image upgrade): find replacement calculation for channels
     // Find all images
     Array<Source> sourceArray;
     findImages(baseDir, "", sourceArray);
@@ -180,6 +182,7 @@ void IconSet::makeIconSet(const std::string& baseDir, const std::string& outFile
     packed.encode(GImage::PNG, b);
 
     b.commit();
+    */
 }
 
 

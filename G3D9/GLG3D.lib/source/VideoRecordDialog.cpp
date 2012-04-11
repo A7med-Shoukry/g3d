@@ -395,15 +395,15 @@ void VideoRecordDialog::maybeRecord(RenderDevice* rd) {
 
 
 void VideoRecordDialog::screenshot(RenderDevice* rd) {
-    GImage screen;
+    Image::Ref screen;
 
     rd->pushState();
     rd->setReadBuffer(RenderDevice::READ_BACK);
-    rd->screenshotPic(screen);
+    screen = rd->screenshotPic();
     rd->popState();
 
     std::string filename = nextFilenameBase() + "." + toLower(m_ssFormatList[m_ssFormatIndex]);
-    screen.save(filename);
+    screen->toFile(filename);
     saveMessage(filename);
 }
 

@@ -209,7 +209,7 @@ bool VideoInput::readNext(RealTime timeStep, Texture::Ref& frame) {
     return frameUpdated;
 }
 
-bool VideoInput::readNext(RealTime timeStep, GImage& frame) {
+bool VideoInput::readNext(RealTime timeStep, ImageBuffer::Ref& frame) {
     GMutexLock m(&m_bufferMutex);
 
     m_currentTime += timeStep;
@@ -233,11 +233,15 @@ bool VideoInput::readNext(RealTime timeStep, GImage& frame) {
         // adjust current playback position to the time of the frame
         m_currentTime = buffer->m_pos;
 
-        // create 3-channel GImage (RGB8)
-        frame.resize(width(), height(), 3);
+        // create new frame if existing is wrong format
+        if (frame->format() != ImageFormat::RGB8()) {
+            if (frame->width() != width() || frame->height() != height()) {
+                frame = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), width(), height());
+            }
+        }
 
         // copy frame
-        memcpy(frame.byte(), buffer->m_frame->data[0], (width() * height() * 3));
+        memcpy(frame->buffer(), buffer->m_frame->data[0], (width() * height() * 3));
 
         m_emptyBuffers.enqueue(buffer);
         frameUpdated = true;
@@ -341,7 +345,7 @@ bool VideoInput::readFromPos(RealTime pos, Texture::Ref& frame) {
     return readFromIndex(iFloor(pos * fps()), frame);
 }
 
-bool VideoInput::readFromPos(RealTime pos, GImage& frame) {
+bool VideoInput::readFromPos(RealTime pos, ImageBuffer::Ref& frame) {
     // find the closest index to seek to
     return readFromIndex(iFloor(pos * fps()), frame);
 }
@@ -392,7 +396,7 @@ bool VideoInput::readFromIndex(int index, Texture::Ref& frame) {
     return foundFrame;
 }
 
-bool VideoInput::readFromIndex(int index, GImage& frame) {
+bool VideoInput::readFromIndex(int index, ImageBuffer::Ref& frame) {
     setIndex(index);
 
     // wait for seek to complete

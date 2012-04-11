@@ -433,16 +433,19 @@ Component4 Material::Specification::loadSpecular() const {
     } else if (m_shininess.filename != "") {
         
         // Only shininess.  Pack it into the alpha of an all-white texture
-        GImage s(m_shininess.filename);
+        Image::Ref s = Image::fromFile(m_shininess.filename);
 
-        s.convertToL8();
-        GImage pack(s.width(), s.height(), 4);
-        int n = s.width() * s.height();
+        s->convertToL8();
+        ImageBuffer::Ref pack = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), s->width(), s->height());
+        int n = s->width() * s->height();
         for (int i = 0; i < n; ++i) {
-            pack.pixel4()[i] = Color4unorm8(unorm8::one(), unorm8::one(), unorm8::one(), s.pixel1()[i].value);
+            Color1unorm8 pixel1;
+            s->get(Point2int32(i, 0), pixel1);
+            // todo (Image upgrade): investigate pixel1, pixel3 and pixel3 accessors from GImage
+            static_cast<Color4unorm8*>(pack->buffer())[i] = Color4unorm8(unorm8::one(), unorm8::one(), unorm8::one(), pixel1.value);
         }
 
-        texture = Texture::fromGImage
+        texture = Texture::fromImageBuffer
             (m_shininess.filename,
              pack,
              ImageFormat::RGBA8(),

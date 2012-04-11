@@ -11,7 +11,7 @@
 #include "G3D/Image4.h"
 #include "G3D/Image3unorm8.h"
 #include "G3D/Image3.h"
-#include "G3D/GImage.h"
+#include "G3D/Image.h"
 #include "G3D/Color1.h"
 #include "G3D/Color1unorm8.h"
 #include "G3D/Color4.h"
@@ -60,24 +60,6 @@ Image4unorm8::Image4unorm8(int w, int h, WrapMode wrap) : Map2D<Color4unorm8, Co
 }
 
 
-Image4unorm8::Ref Image4unorm8::fromGImage(const GImage& im, WrapMode wrap) {
-    switch (im.channels()) {
-    case 1:
-        return fromArray(im.pixel1(), im.width(), im.height(), wrap);
-
-    case 3:
-        return fromArray(im.pixel3(), im.width(), im.height(), wrap);
-
-    case 4:
-        return fromArray(im.pixel4(), im.width(), im.height(), wrap);
-
-    default:
-        debugAssertM(false, "Input GImage must have 1, 3, or 4 channels.");
-        return NULL;
-    }
-}
-
-
 Image4unorm8::Ref Image4unorm8::fromImage4(const ReferenceCountedPointer<Image4>& im) {
     Ref out = createEmpty(static_cast<WrapMode>(im->wrapMode()));
     out->copyArray(im->getCArray(), im->width(), im->height());
@@ -96,9 +78,9 @@ Image4unorm8::Ref Image4unorm8::createEmpty(WrapMode wrap) {
 }
 
 
-Image4unorm8::Ref Image4unorm8::fromFile(const std::string& filename, WrapMode wrap, GImage::Format fmt) {
+Image4unorm8::Ref Image4unorm8::fromFile(const std::string& filename, WrapMode wrap) {
     Ref out = createEmpty(wrap);
-    out->load(filename, fmt);
+    out->load(filename);
     return out;
 }
 
@@ -145,26 +127,38 @@ Image4unorm8::Ref Image4unorm8::fromArray(const class Color4* ptr, int w, int h,
 }
 
 
-void Image4unorm8::load(const std::string& filename, GImage::Format fmt) {
-    copyGImage(GImage(filename, fmt));
+void Image4unorm8::load(const std::string& filename) {
+    Image::Ref image = Image::fromFile(filename);
+    if (image->format() != ImageFormat::RGBA8()) {
+        image->convertToRGBA8();
+    }
+
+    switch (image->format()->code)
+    {
+        case ImageFormat::CODE_L8:
+            copyArray(static_cast<const Color1unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_L32F:
+            copyArray(static_cast<const Color1*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGB8:
+            copyArray(static_cast<const Color3unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGB32F:
+            copyArray(static_cast<const Color3*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGBA8:
+            copyArray(static_cast<const Color4unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGBA32F:
+            copyArray(static_cast<const Color4*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        default:
+            debugAssertM(false, "Trying to load unsupported image format");
+            break;
+    }
+
     setChanged(true);
-}
-
-
-void Image4unorm8::copyGImage(const GImage& im) {
-    switch (im.channels()) {
-    case 1:
-        copyArray(im.pixel1(), im.width(), im.height());
-        break;
-
-    case 3:
-        copyArray(im.pixel3(), im.width(), im.height());
-        break;
-
-    case 4:
-        copyArray(im.pixel4(), im.width(), im.height());
-        break;
-    } 
 }
 
 
@@ -210,8 +204,12 @@ void Image4unorm8::copyArray(const Color4* src, int w, int h) {
 
 void Image4unorm8::copyArray(const Color3unorm8* ptr, int w, int h) {
     resize(w, h);
-    
-    GImage::RGBtoRGBA((const unorm8*)ptr, (unorm8*)getCArray(), w * h);
+    int N = w * h;
+
+    Color4unorm8* dst = getCArray();
+    for (int i = 0; i < N; ++i) {
+        dst[i] = Color4unorm8(ptr[i], unorm8::one());
+    }
 }
 
 
@@ -227,10 +225,11 @@ void Image4unorm8::copyArray(const Color3* src, int w, int h) {
 
 
 /** Saves in any of the formats supported by G3D::GImage. */
-void Image4unorm8::save(const std::string& filename, GImage::Format fmt) {
-    GImage im(width(), height(), 4);
-    System::memcpy(im.byte(), getCArray(), width() * height() * 4);
-    im.save(filename, fmt);
+void Image4unorm8::save(const std::string& filename) {
+    ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), format(), width(), height());
+    System::memcpy(buffer->buffer(), getCArray(), width() * height());
+    Image::Ref image = Image::fromBuffer(buffer);
+    image->toFile(filename);
 }
 
 

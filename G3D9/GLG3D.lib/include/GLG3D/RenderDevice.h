@@ -1818,7 +1818,7 @@ public:
        because that is how OpenGL stores them.  Set invertY=false for
        this fast but upsidedown result.
      */
-    void screenshotPic(GImage& dest, bool getAlpha = false, bool invertY = true) const;
+    Image::Ref screenshotPic(bool getAlpha = false, bool invertY = true) const;
 
     /**
      Pixel dimensions of the OpenGL window interior

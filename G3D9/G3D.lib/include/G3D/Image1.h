@@ -14,7 +14,6 @@
 #include "G3D/platform.h"
 #include "G3D/Map2D.h"
 #include "G3D/Color1.h"
-#include "G3D/GImage.h"
 
 namespace G3D {
 
@@ -55,7 +54,7 @@ public:
     /** Creates a 0 x 0 image. */
     static Ref createEmpty(WrapMode wrap = WrapMode::ERROR);
 
-    static Ref fromFile(const std::string& filename, WrapMode wrap = WrapMode::ERROR, GImage::Format fmt = GImage::AUTODETECT);
+    static Ref fromFile(const std::string& filename, WrapMode wrap = WrapMode::ERROR);
     
     static Ref fromArray(const class Color1unorm8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
     static Ref fromArray(const class Color3unorm8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
@@ -66,19 +65,17 @@ public:
 
     static Ref fromImage1unorm8(const ReferenceCountedPointer<class Image1unorm8>& im);
 
-    static Ref fromGImage(const class GImage& im, WrapMode wrap = WrapMode::ERROR);
+    /** Loads from any of the file formats supported by G3D::Image.
 
-    /** Loads from any of the file formats supported by G3D::GImage,
-        and in PNG16 format.  If there is an alpha channel on the
-        input, it is stripped. Values are automatically scaled to the
-        range [0, 1].*/
-    void load(const std::string& filename, GImage::Format fmt = GImage::AUTODETECT);
+        If there is an alpha channel on the input, it is stripped.
+        Values are automatically scaled to the range [0, 1]. */
+    void load(const std::string& filename);
 
-    /** Saves in any of the formats supported by G3D::GImage, and in PNG16 format. 
+    /** Saves in any of the formats supported by G3D::Image. 
 
         The data values are assumed to be on the range [0, 1] and will
         be scaled appropriately for the save format.*/
-    void save(const std::string& filename, GImage::Format fmt = GImage::AUTODETECT);
+    void save(const std::string& filename);
 };
 
 } // G3D

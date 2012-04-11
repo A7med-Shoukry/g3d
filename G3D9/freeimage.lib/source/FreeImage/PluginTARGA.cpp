@@ -357,9 +357,9 @@ MimeType() {
 
 static BOOL 
 isTARGA20(FreeImageIO *io, fi_handle handle) {
-	const unsigned sizeofSig = 18;
-	// tga_signature = "TRUEVISION-XFILE." (TGA 2.0 only)
-	BYTE tga_signature[sizeofSig] = { 84, 82, 85, 69, 86, 73, 83, 73, 79, 78, 45, 88, 70, 73, 76, 69, 46, 0 };
+	const unsigned sizeofSig = 16;
+	// tga_signature = "TRUEVISION-XFILE" (TGA 2.0 only)
+	BYTE tga_signature[sizeofSig] = { 84, 82, 85, 69, 86, 73, 83, 73, 79, 78, 45, 88, 70, 73, 76, 69 };
 	// get the start offset
 	const long start_offset = io->tell_proc(handle);
 	// get the end-of-file

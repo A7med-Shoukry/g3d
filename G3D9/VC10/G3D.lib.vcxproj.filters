@@ -98,27 +98,6 @@
     <ClCompile Include="..\G3D.lib\source\GCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\GImage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\GImage_bayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\GImage_bmp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\GImage_jpeg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\GImage_png.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\GImage_ppm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\G3D.lib\source\GImage_tga.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\G3D.lib\source\GLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -455,9 +434,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\GCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\G3D.lib\include\G3D\GImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\G3D.lib\include\G3D\GLight.h">

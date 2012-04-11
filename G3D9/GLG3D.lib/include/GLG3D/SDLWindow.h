@@ -112,7 +112,7 @@ public:
 
     virtual std::string caption();
 
-    virtual void setIcon(const GImage& image);
+    virtual void setIcon(const Image::Ref& image);
 
     virtual void swapGLBuffers();
 

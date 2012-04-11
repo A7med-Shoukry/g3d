@@ -10,8 +10,8 @@
 #define G3D_OSWINDOW_H
 
 #include "G3D/platform.h"
-#include "G3D/GImage.h"
 #include "G3D/Array.h"
+#include "G3D/Image.h"
 #include "G3D/Queue.h"
 #include "GLG3D/GEvent.h"
 
@@ -362,12 +362,12 @@ public:
         or the window has no frame.  <I>May also fail if the OSWindow implementation's
         underlying GUI library is too limited.</I>
         @param image May have any dimension supported by underlying OS.*/
-    virtual void setIcon(const GImage& image) {
+    virtual void setIcon(const Image::Ref& image) {
         (void)image;
     }
 
     virtual void setIcon(const std::string& imageFilename) {
-        setIcon(GImage(imageFilename));
+        setIcon(Image::fromFile(imageFilename));
     }
 
     /** Swap the OpenGL front and back buffers.  Called by RenderDevice::endFrame. */

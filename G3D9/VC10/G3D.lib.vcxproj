@@ -223,13 +223,6 @@
     <ClCompile Include="..\G3D.lib\source\g3dfnmatch.cpp" />
     <ClCompile Include="..\G3D.lib\source\g3dmath.cpp" />
     <ClCompile Include="..\G3D.lib\source\GCamera.cpp" />
-    <ClCompile Include="..\G3D.lib\source\GImage.cpp" />
-    <ClCompile Include="..\G3D.lib\source\GImage_bayer.cpp" />
-    <ClCompile Include="..\G3D.lib\source\GImage_bmp.cpp" />
-    <ClCompile Include="..\G3D.lib\source\GImage_jpeg.cpp" />
-    <ClCompile Include="..\G3D.lib\source\GImage_png.cpp" />
-    <ClCompile Include="..\G3D.lib\source\GImage_ppm.cpp" />
-    <ClCompile Include="..\G3D.lib\source\GImage_tga.cpp" />
     <ClCompile Include="..\G3D.lib\source\GLight.cpp" />
     <ClCompile Include="..\G3D.lib\source\GThread.cpp" />
     <ClCompile Include="..\G3D.lib\source\GUniqueID.cpp" />
@@ -348,7 +341,6 @@
     <ClInclude Include="..\G3D.lib\include\G3D\G3DGameUnits.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\g3dmath.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\GCamera.h" />
-    <ClInclude Include="..\G3D.lib\include\G3D\GImage.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\GLight.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\GMutex.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\GThread.h" />

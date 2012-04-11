@@ -100,7 +100,7 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
     static size_t hashCode(G3D::ReferenceCountedPointer<T> key) { return reinterpret_cast<size_t>( key.pointer() ); }
 };
 
-#include "G3D/GImage.h"
+#include "G3D/Image.h"
 #include "G3D/CollisionDetection.h"
 #include "G3D/Intersect.h"
 #include "G3D/Log.h"
@@ -170,31 +170,31 @@ template<class T> struct HashTrait< G3D::ReferenceCountedPointer<T> > {
 #   pragma comment(lib, "version")
 #   ifdef G3D_64BIT
 #       pragma comment(lib, "zlib-64")
-#       pragma comment(lib, "png-64")
-#       pragma comment(lib, "jpeg-64")
 #       pragma comment(lib, "zip-64")
 #   else
 #       pragma comment(lib, "zlib")
-#       pragma comment(lib, "png")
-#       pragma comment(lib, "jpeg")
 #       pragma comment(lib, "zip")
 #   endif
 #   ifdef _DEBUG
         // Don't link against G3D when building G3D itself.
 #      ifndef G3D_BUILDING_LIBRARY_DLL
 #         ifdef G3D_64BIT
-#             pragma comment(lib, "G3D-64d.lib")
+#             pragma comment(lib, "G3D-64d")
+#             pragma comment(lib, "freeimage-64d")
 #         else
-#             pragma comment(lib, "G3Dd.lib")
+#             pragma comment(lib, "G3Dd")
+#             pragma comment(lib, "freeimaged")
 #         endif
 #      endif
 #   else
         // Don't link against G3D when building G3D itself.
 #      ifndef G3D_BUILDING_LIBRARY_DLL
 #         ifdef G3D_64BIT
-#             pragma comment(lib, "G3D-64.lib")
+#             pragma comment(lib, "G3D-64")
+#             pragma comment(lib, "freeimage-64")
 #         else
-#             pragma comment(lib, "G3D.lib")
+#             pragma comment(lib, "G3D")
+#             pragma comment(lib, "freeimage")
 #         endif
 #      endif
 #   endif

@@ -564,8 +564,8 @@ public:
     /** Displays the texture in a new GuiWindow */
     GuiWindow::Ref show(const Texture::Ref& t, const std::string& windowCaption = "");
 
-    GuiWindow::Ref show(const GImage& t, const std::string& windowCaption = "") {
-        return show(Texture::fromGImage("", t), windowCaption);
+    GuiWindow::Ref show(const ImageBuffer::Ref& t, const std::string& windowCaption = "") {
+        return show(Texture::fromImageBuffer("", t), windowCaption);
     }
 
     /** \a T must be some Image class, e.g., Image3uint, Image4, etc.*/

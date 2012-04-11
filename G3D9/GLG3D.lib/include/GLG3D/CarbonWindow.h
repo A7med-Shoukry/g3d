@@ -231,7 +231,7 @@ public:
     
     virtual std::string joystickName(unsigned int stickNum);
     
-    virtual void setIcon(const GImage& image);
+    virtual void setIcon(const Image::Ref& image);
     
     virtual void setRelativeMousePosition(double x, double y);
     virtual void setRelativeMousePosition(const Vector2 &p);

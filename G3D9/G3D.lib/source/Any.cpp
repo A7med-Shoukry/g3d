@@ -323,10 +323,8 @@ Any::Any(float x) : m_type(NUMBER), m_simpleValue(double(x)), m_data(NULL) {
 Any::Any(char x) : m_type(NUMBER), m_simpleValue(double(x)), m_data(NULL) {
 }
 
-
 Any::Any(long x) : m_type(NUMBER), m_simpleValue((double)x), m_data(NULL) {
 }
-
 
 Any::Any(int x) : m_type(NUMBER), m_simpleValue((double)x), m_data(NULL) {
 }

@@ -596,7 +596,7 @@ Texture::Ref Map::loadTexture(const std::string& resPath, const std::string& alt
         logPrintf("BSPMap reports missing texture #%d: \"%s\"\n", index, filename.c_str());
         return defaultTexture;
 
-    } catch (const GImage::Error& e) {
+    } catch (const Image::Error& e) {
         logPrintf("** BSPMap reports error while loading %s: %s\n", e.filename.c_str(), e.reason.c_str());
         return defaultTexture;
     }

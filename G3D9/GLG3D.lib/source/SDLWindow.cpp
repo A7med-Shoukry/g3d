@@ -118,11 +118,9 @@ SDLWindow::SDLWindow(const OSWindow::Settings& settings) {
     // Set default icon if available
     if (!m_settings.defaultIconFilename.empty()) {
         try {
-            GImage defaultIcon;
-            defaultIcon.load(m_settings.defaultIconFilename);
-
+            Image::Ref defaultIcon = Image::fromFile(m_settings.defaultIconFilename);
             setIcon(defaultIcon);
-        } catch (const GImage::Error& e) {
+        } catch (const Image::Error& e) {
             logPrintf("OSWindow's default icon failed to load: %s (%s)",
             e.filename.c_str(), e.reason.c_str());
         }
@@ -446,9 +444,9 @@ std::string SDLWindow::caption() {
 }
 
 
-void SDLWindow::setIcon(const GImage& image) {
-    alwaysAssertM((image.channels() == 3) ||
-                  (image.channels() == 4), 
+void SDLWindow::setIcon(const Image::Ref& image) {
+    alwaysAssertM((image->format() == ImageFormat::RGB8()) ||
+                  (image->format() == ImageFormat::RGBA8()), 
                   "Icon image must have at least 3 channels.");
 
     uint32 amask = 0xFF000000;
@@ -456,16 +454,17 @@ void SDLWindow::setIcon(const GImage& image) {
     uint32 gmask = 0x0000FF00;
     uint32 rmask = 0x000000FF;
 
-    if (image.channels() == 3) {
+    if (image->format() == ImageFormat::RGB8()) {
         // Take away the 4th channel.
         amask = 0x00000000;
     }
 
-    int pixelBitLen     = image.channels() * 8;
-    int scanLineByteLen = image.channels() * image.width();
+    ImageBuffer::Ref buffer = image->toBuffer();
+    int pixelBitLen     = buffer->foramt()->cpuBitsPerPixel;
+    int scanLineByteLen = (pixelBitLen / 8) * buffer->width();
 
     SDL_Surface* surface =
-        SDL_CreateRGBSurfaceFrom((void*)image.byte(), image.width(), image.height(),
+        SDL_CreateRGBSurfaceFrom(buffer->buffer(), buffer->width(), buffer->height(),
         pixelBitLen, scanLineByteLen, 
         rmask, gmask, bmask, amask);
 

@@ -14,7 +14,6 @@
 #include "G3D/Map2D.h"
 #include "G3D/Color4unorm8.h"
 #include "G3D/Color4.h"
-#include "G3D/GImage.h"
 #include "G3D/Image1unorm8.h"
 
 namespace G3D {
@@ -36,7 +35,6 @@ protected:
 
     Image4unorm8(int w, int h, WrapMode wrap);
 
-    void copyGImage(const class GImage& im);
     void copyArray(const Color1* src, int w, int h);
     void copyArray(const Color3* src, int w, int h);
     void copyArray(const Color4* src, int w, int h);
@@ -62,9 +60,7 @@ public:
     static Ref createEmpty(WrapMode wrap = WrapMode::ERROR);
 
 
-    static Ref fromFile(const std::string& filename, WrapMode wrap = WrapMode::ERROR, GImage::Format fmt = GImage::AUTODETECT);
-
-    static Ref fromGImage(const class GImage& im, WrapMode wrap = WrapMode::ERROR);
+    static Ref fromFile(const std::string& filename, WrapMode wrap = WrapMode::ERROR);
 
     static Ref fromArray(const class Color1unorm8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
     static Ref fromArray(const class Color3unorm8* ptr, int width, int height, WrapMode wrap = WrapMode::ERROR);
@@ -77,10 +73,10 @@ public:
 
     /** Loads from any of the file formats supported by G3D::GImage.  If there is an alpha channel on the input,
         it is stripped. */
-    void load(const std::string& filename, GImage::Format fmt = GImage::AUTODETECT);
+    void load(const std::string& filename);
 
     /** Saves in any of the formats supported by G3D::GImage. */
-    void save(const std::string& filename, GImage::Format fmt = GImage::AUTODETECT);
+    void save(const std::string& filename);
 
     /** Extracts color channel 0 <= c <= 3 and returns it as a new monochrome image. */
     ReferenceCountedPointer<class Image1unorm8> getChannel(int c) const;

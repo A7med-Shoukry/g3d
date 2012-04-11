@@ -39,7 +39,7 @@ private:
     static std::string tomorrow();
 
     /** Writes a complete HTTP response that sends a JPEG image to \a conn. */
-    static void sendJPEG(mg_connection* conn, const GImage& image);
+    static void sendJPEG(mg_connection* conn, const Image::Ref& image);
 
     /** This callback function is invoked (on separate threads) for every HTTP request received */
     static void processDynamic(mg_connection* conn, const mg_request_info* request_info, void* data);
@@ -51,7 +51,7 @@ private:
 
     static void processDefault(mg_connection* conn, const mg_request_info* request_info, void* data);
 
-    void render(const class View& view, GImage& image);
+    void render(const class View& view, Image::Ref& image);
 
     static void printRequest(const mg_request_info* request_info);
 

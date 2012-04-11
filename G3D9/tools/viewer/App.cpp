@@ -101,17 +101,18 @@ bool App::onEvent(const GEvent& e) {
             Array<Texture::Ref> output;
             renderCubeMap(renderDevice, output, defaultCamera);
 
-            GImage temp;
             const Texture::CubeMapInfo& cubeMapInfo = Texture::cubeMapInfo(CubeMapConvention::DIRECTX);
             for (int f = 0; f < 6; ++f) {
                 const Texture::CubeMapInfo::Face& faceInfo = cubeMapInfo.face[f];
-                output[f]->getImage(temp, ImageFormat::RGB8());
-                temp.flipVertical();
-                temp.rotate90CW(-faceInfo.rotations);
-                if (faceInfo.flipY) { temp.flipVertical();   }
-                if (faceInfo.flipX) { temp.flipHorizontal(); }
-                temp.save(format("cube-%s.png", faceInfo.suffix.c_str()));     
-                // output[f]->toImage3()->save(format("cube-%s.png", CubeFace(f).toString().c_str()));
+                ImageBuffer::Ref buffer;
+                output[f]->getImage(buffer, ImageFormat::RGB8());
+
+                Image::Ref temp = Image::fromBuffer(buffer);
+                temp->flipVertical();
+                temp->rotateCW(toRadians(90.0) * (-faceInfo.rotations));
+                if (faceInfo.flipY) { temp->flipVertical();   }
+                if (faceInfo.flipX) { temp->flipHorizontal(); }
+                temp->toFile(format("cube-%s.png", faceInfo.suffix.c_str()));
             }
             return true;
         }

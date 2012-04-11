@@ -5,7 +5,6 @@
 #include "G3D/ImageBuffer.h"
 
 //#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
-#pragma comment(lib, "freeimaged.lib")
 
 
 class App : public GApp {
@@ -105,8 +104,14 @@ void App::onInit() {
     //modelPose.anim[MD3Model::PART_UPPER] = MD3Model::UPPER_STAND;
 
     {
+        //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\cubemap\\noonclouds\\noonclouds_bk.png");
         Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\squaresswirls.exr");
-        imgTexture = Texture::fromImageBuffer("imgTexture", img->copyBuffer());
+        //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\material\\metalcrate\\metalcrate-L.png");
+        imgTexture = Texture::fromImageBuffer("imgTexture", img->toBuffer());
+
+        //Image::Ref img2 = Image::fromBuffer(img->toBuffer());
+        //img2->toFile("C:\\dev\\G3D\\G3D9\\data-files\\test3.exr");
+        img->toFile("C:\\dev\\G3D\\G3D9\\data-files\\test3.tiff");
     }
 
 	// start the sound engine with default parameters

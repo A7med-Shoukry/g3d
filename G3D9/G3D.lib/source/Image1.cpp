@@ -10,7 +10,7 @@
 
 #include "G3D/Image1.h"
 #include "G3D/Image1unorm8.h"
-#include "G3D/GImage.h"
+#include "G3D/Image.h"
 #include "G3D/Color4.h"
 #include "G3D/Color4unorm8.h"
 #include "G3D/Color1.h"
@@ -21,24 +21,6 @@ namespace G3D {
 
 Image1::Image1(int w, int h, WrapMode wrap) : Map2D<Color1, Color1>(w, h, wrap) {
     setAll(Color1(0.0f));
-}
-
-
-Image1::Ref Image1::fromGImage(const GImage& im, WrapMode wrap) {
-    switch (im.channels()) {
-    case 1:
-        return fromArray(im.pixel1(), im.width(), im.height(), wrap);
-
-    case 3:
-        return fromArray(im.pixel3(), im.width(), im.height(), wrap);
-
-    case 4:
-        return fromArray(im.pixel4(), im.width(), im.height(), wrap);
-
-    default:
-        debugAssertM(false, "Input GImage must have 1, 3, or 4 channels.");
-        return NULL;
-    }
 }
 
 
@@ -66,34 +48,45 @@ Image1::Ref Image1::createEmpty(WrapMode wrap) {
 }
 
 
-Image1::Ref Image1::fromFile(const std::string& filename, WrapMode wrap, GImage::Format fmt) {
+Image1::Ref Image1::fromFile(const std::string& filename, WrapMode wrap) {
     Ref out = createEmpty(wrap);
-    out->load(filename, fmt);
+    out->load(filename);
     return out;
 }
 
 
-void Image1::load(const std::string& filename, GImage::Format fmt) {
-    if (fmt == GImage::PNG16) {
-        // Special case
-        BinaryInput input(filename, G3D_LITTLE_ENDIAN);
-        
-        uint16* src = NULL;
-        int w, h, c;
-        MemoryManager::Ref memMan = MemoryManager::create();
-        GImage::decodePNG16(input, w, h, c, src, memMan);
-        resize(w, h);
-        int N = w * h;
-        for (int i = 0; i < N; ++i) {
-            data[i] = Color1(float(src[i * c]) * (1.0f / 65535.0f));
-        }
-        memMan->free(src);
-        src = NULL;
-
-    } else {
-        copyGImage(GImage(filename, fmt));
-        setChanged(true);
+void Image1::load(const std::string& filename) {
+    Image::Ref image = Image::fromFile(filename);
+    if (image->format() != ImageFormat::L32F()) {
+        image->convertToL8();
     }
+
+    switch (image->format()->code)
+    {
+        case ImageFormat::CODE_L8:
+            copyArray(static_cast<const Color1unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_L32F:
+            copyArray(static_cast<const Color1*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGB8:
+            copyArray(static_cast<const Color3unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGB32F:
+            copyArray(static_cast<const Color3*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGBA8:
+            copyArray(static_cast<const Color4unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        case ImageFormat::CODE_RGBA32F:
+            copyArray(static_cast<const Color4*>(image->toBuffer()->buffer()), image->width(), image->height());
+            break;
+        default:
+            debugAssertM(false, "Trying to load unsupported image format");
+            break;
+    }
+
+    setChanged(true);
 }
 
 
@@ -137,23 +130,6 @@ Image1::Ref Image1::fromArray(const class Color4* ptr, int w, int h, WrapMode wr
     out->copyArray(ptr, w, h);
     return out;
 }
-
-void Image1::copyGImage(const GImage& im) {
-    switch (im.channels()) {
-    case 1:
-        copyArray(im.pixel1(), im.width(), im.height());
-        break;
-
-    case 3:
-        copyArray(im.pixel3(), im.width(), im.height());
-        break;
-
-    case 4:
-        copyArray(im.pixel4(), im.width(), im.height());
-        break;
-    } 
-}
-
 
 void Image1::copyArray(const Color3unorm8* src, int w, int h) {
     resize(w, h);
@@ -221,30 +197,10 @@ void Image1::copyArray(const Color3* src, int w, int h) {
 }
 
 
-/** Saves in any of the formats supported by G3D::GImage. */
-void Image1::save(const std::string& filename, GImage::Format fmt) {
-    if (fmt == GImage::PNG16) {
-        // Special case
-        BinaryOutput out(filename, G3D_LITTLE_ENDIAN);
-        const int N = width() * height();
-        uint16* temp = new uint16[N];
-        for (int i = 0; i < N; ++i) {
-            temp[i] = iClamp(data[i].value * 65535, 0, 65535);
-        }
-        GImage::encodePNG16(out, width(), height(), 1, temp);
-        delete[] temp;
-        out.commit();
-    } else {
-        GImage im(width(), height(), 1);
-        
-        int N = im.width() * im.height();
-        Color1unorm8* dst = im.pixel1();
-        for (int i = 0; i < N; ++i) {
-            dst[i] = Color1unorm8(data[i]);
-        }
-    
-        im.save(filename, fmt);
-    }
+void Image1::save(const std::string& filename) {
+    // To avoid saving as floating point image.  FreeImage cannot convert floating point to L8.
+    Image1unorm8::Ref unorm8 = Image1unorm8::fromImage1(this);
+    unorm8->save(filename);
 }
 
 

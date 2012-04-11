@@ -3,8 +3,9 @@
  \author Corey Taylor
  */
 
-#include "G3D/platform.h"
 #include <cstdio>
+#include "G3D/platform.h"
+#include "G3D/Image.h"
 #include "GLG3D/VideoOutput.h"
 #include "GLG3D/VideoInput.h"
 #include "GLG3D/RenderDevice.h"
@@ -293,9 +294,11 @@ void VideoOutput::append(RenderDevice* rd, bool backbuffer) {
     } else {
         rd->setReadBuffer(RenderDevice::READ_FRONT);
     }
-    rd->screenshotPic(m_temp, false, false);
+    // todo (Image upgrade): optimize
+    Image::Ref image = rd->screenshotPic(false, false);
     rd->setReadBuffer(old);
-    encodeFrame(const_cast<uint8*>(m_temp.byte()), ImageFormat::RGB8(), true);
+    ImageBuffer::Ref imageBuffer = image->toBuffer();
+    encodeFrame(static_cast<uint8*>(imageBuffer->buffer()), imageBuffer->format(), true);
 }
 
 
@@ -304,14 +307,14 @@ void VideoOutput::append(const Texture::Ref& frame, bool invertY) {
     debugAssert(frame->height() == m_settings.height);
 
     frame->getImage(m_temp, TextureFormat::RGB8());
-    encodeFrame(const_cast<uint8*>(m_temp.byte()), ImageFormat::RGB8(), invertY);
+    encodeFrame(static_cast<uint8*>(m_temp->buffer()), ImageFormat::RGB8(), invertY);
 }
 
 
 void VideoOutput::append(VideoInput::Ref in) {
     debugAssert(in->width() == m_settings.width);
     debugAssert(in->height() == m_settings.height);
-    GImage temp;
+    ImageBuffer::Ref temp;
     for (int i = 0; i < in->numFrames(); ++i) {
         in->readFromIndex(i, temp);
         append(temp);
@@ -319,10 +322,10 @@ void VideoOutput::append(VideoInput::Ref in) {
 }
 
 
-void VideoOutput::append(const GImage& frame) {
-    debugAssert(frame.width() == m_settings.width);
-    debugAssert(frame.height() == m_settings.height);
-    encodeFrame(const_cast<uint8*>(frame.byte()), (frame.channels() == 3) ? ImageFormat::RGB8() : ImageFormat::RGBA8());
+void VideoOutput::append(const ImageBuffer::Ref& frame) {
+    debugAssert(frame->width() == m_settings.width);
+    debugAssert(frame->height() == m_settings.height);
+    encodeFrame(static_cast<uint8*>(frame->buffer()), frame->format());
 }
 
 
@@ -510,7 +513,7 @@ void VideoOutput::abort() {
             _unlink(m_filename.c_str());
 #       else
             unlink(m_filename.c_str());
-#       endif //_MSVC_VER
+#       endif //_MSC_VER
     }
 #endif
 }

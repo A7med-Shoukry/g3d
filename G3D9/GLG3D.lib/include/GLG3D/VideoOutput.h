@@ -13,7 +13,7 @@
 
 #include <string>
 #include "G3D/g3dmath.h"
-#include "G3D/GImage.h"
+#include "G3D/Image.h"
 #include "G3D/ReferenceCount.h"
 #include "GLG3D/Texture.h"
 
@@ -292,7 +292,7 @@ protected:
     int                 m_avEncodingBufferSize;
 
     /** Used by append(RenderDevice) to hold the read-back frame.*/
-    GImage              m_temp;
+    ImageBuffer::Ref   m_temp;
 
     /** Used by convertImage() to hold temp frame. */
     Array<uint8>        m_tempBuffer;
@@ -324,7 +324,7 @@ public:
 
     void append(const Texture::Ref& frame, bool invertY = false); 
 
-    void append(const GImage& frame); 
+    void append(const ImageBuffer::Ref& frame); 
 
     /** @brief Append the current frame on the RenderDevice to this
         video.  

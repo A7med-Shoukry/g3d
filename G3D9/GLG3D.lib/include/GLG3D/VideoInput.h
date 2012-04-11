@@ -26,8 +26,6 @@ struct SwsContext;
 
 namespace G3D {
 
-class GImage;
-
 /** 
     Read video files from MPG, MP4, AVI, MOV, OGG, ASF, and WMV files.
     
@@ -91,7 +89,7 @@ public:
     /** Advances the current file position to pos() + timeStep. If
         that advance stepped over a frame boundary, sets frame to that
         frame and returns true. Otherwise, returns false. */
-    bool        readNext(RealTime timeStep, GImage& frame);
+    bool        readNext(RealTime timeStep, ImageBuffer::Ref& frame);
     /** Advances the current file position to pos() + timeStep. If
         that advance stepped over a frame boundary, sets frame to that
         frame and returns true. Otherwise, returns false. */
@@ -111,7 +109,7 @@ public:
         pos is out of bounds. 
 
         @param pos Time in seconds from the beginning of playback.  */
-    bool        readFromPos(RealTime pos, GImage& frame);
+    bool        readFromPos(RealTime pos, ImageBuffer::Ref& frame);
     /** Gets the frame at playback position pos and returns false if
         pos is out of bounds. 
 
@@ -127,7 +125,7 @@ public:
     /** Gets the frame at frame index and returns false if index is out of bounds. */
     bool        readFromIndex(int index, Texture::Ref& frame);
     /** Gets the frame at frame index and returns false if index is out of bounds. */
-    bool        readFromIndex(int index, GImage& frame);
+    bool        readFromIndex(int index, ImageBuffer::Ref& frame);
     /** Gets the frame at frame index and returns false if index is out of bounds. */
     bool        readFromIndex(int index, Image3unorm8::Ref& frame);
     /** Gets the frame at frame index and returns false if index is out of bounds. */

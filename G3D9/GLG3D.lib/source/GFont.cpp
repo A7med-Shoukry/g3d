@@ -30,29 +30,30 @@ static WeakCache<std::string, GFontRef>& fontCache() {
 
 
 /** Copies blocks of src so that they are centered in the corresponding squares of dst.  Assumes each is a 16x16 grid.*/
-void GFont::recenterGlyphs(const GImage& src, GImage& dst) {
+void GFont::recenterGlyphs(const ImageBuffer::Ref& src, ImageBuffer::Ref& dst) {
     // Set dst to all black
-    debugAssert(src.channels() == 3);
-    debugAssert(dst.channels() == 3);
-    debugAssert(dst.width()  >= src.width());
-    debugAssert(dst.height() >= src.height());
+    debugAssert(src->format() == ImageFormat::RGB8());
+    debugAssert(dst->format() == ImageFormat::RGB8());
+    debugAssert(dst->width()  >= src->width());
+    debugAssert(dst->height() >= src->height());
 
-    System::memset(dst.byte(), 0, dst.width() * dst.height() * 3);
+    System::memset(dst->buffer(), 0, dst->size());
 
     // Block sizes
-    const int srcWidth  = src.width()  / 16;
-    const int srcHeight = src.height() / 16;
-    const int dstWidth  = dst.width()  / 16;
-    const int dstHeight = dst.height() / 16;
+    const int srcWidth  = src->width()  / 16;
+    const int srcHeight = src->height() / 16;
+    const int dstWidth  = dst->width()  / 16;
+    const int dstHeight = dst->height() / 16;
 
     const int dstOffsetX = (dstWidth  - srcWidth) / 2;
     const int dstOffsetY = (dstHeight - srcHeight) / 2;
 
-    for (int y = 0; y < 16; ++y) {
-        for (int x = 0; x < 16; ++x) {
-            GImage::copyRect(dst, src, x * dstWidth + dstOffsetX, y * dstHeight + dstOffsetY, x * srcWidth, y * srcHeight, srcWidth, srcHeight);
-        }
-    }
+    // todo (Image upgrade): implement copyRect() replacement
+    //for (int y = 0; y < 16; ++y) {
+    //    for (int x = 0; x < 16; ++x) {
+    //        GImage::copyRect(dst, src, x * dstWidth + dstOffsetX, y * dstHeight + dstOffsetY, x * srcWidth, y * srcHeight, srcWidth, srcHeight);
+    //    }
+    //}
 }
 
 
@@ -787,10 +788,10 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
         outfile = infileBase + ".fnt";
     }
 
-    GImage image(infileBase + ".tga");
-    debugAssert(isPow2(image.width()));
-    debugAssert(isPow2(image.height()));
-    image.convertToL8();
+    Image::Ref image = Image::fromFile(infileBase + ".tga");
+    debugAssert(isPow2(image->width()));
+    debugAssert(isPow2(image->height()));
+    image->convertToL8();
 
     TextInput    ini(infileBase + ".ini");
     BinaryOutput out(outfile, G3D_LITTLE_ENDIAN);
@@ -819,14 +820,16 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
     // Autodetect baseline from capital E
     {
         // Size of a character, in texels
-        int          w        = image.width() / 16;
+        int          w        = image->width() / 16;
 
         int          x0       = ('E' % 16) * w;
         int          y0       = ('E' / 16) * w;
         
+        int          baseline = w * 2 / 3;
+
+        /* todo (Image upgrade): replace byte access with pixel accessS
         const uint8* p        = image.byte();
         bool         done     = false;
-        int          baseline = w * 2 / 3;
     
         // Search up from the bottom for the first pixel
         for (int y = y0 + w - 1; (y >= y0) && ! done; --y) {
@@ -837,12 +840,13 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
                 }
             }
         }
+        */
         out.writeUInt16(baseline);
     }
 
     // Texture width
-    out.writeUInt16(image.width());
-    out.writeBytes(image.byte(), square(image.width()) * 256 / charsetSize);
+    out.writeUInt16(image->width());
+    out.writeBytes(image->toBuffer()->buffer(), square(image->width()) * 256 / charsetSize);
  
     out.compress();
     out.commit(false);

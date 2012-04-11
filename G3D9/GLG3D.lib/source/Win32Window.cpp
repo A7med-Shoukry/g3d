@@ -267,11 +267,9 @@ Win32Window::Win32Window(const OSWindow::Settings& s, bool creatingShareWindow)
     if (! m_settings.defaultIconFilename.empty()) {
         try {
 
-            GImage defaultIcon;
-            defaultIcon.load(m_settings.defaultIconFilename);
-
+            Image::Ref defaultIcon = Image::fromFile(m_settings.defaultIconFilename);
             setIcon(defaultIcon);
-        } catch (const GImage::Error& e) {
+        } catch (const Image::Error& e) {
             // Throw away default icon
             debugPrintf("OSWindow's default icon failed to load: %s (%s)", e.filename.c_str(), e.reason.c_str());
             logPrintf("OSWindow's default icon failed to load: %s (%s)", e.filename.c_str(), e.reason.c_str());            
@@ -592,36 +590,45 @@ bool Win32Window::requiresMainLoop() const {
 }
 
 
-void Win32Window::setIcon(const GImage& src) {
-    alwaysAssertM((src.channels() == 3) ||
-        (src.channels() == 4), 
+void Win32Window::setIcon(const Image::Ref& src) {
+    alwaysAssertM((src->format() == ImageFormat::RGB8()) ||
+        (src->format() == ImageFormat::RGBA8()), 
         "Icon image must have at least 3 channels.");
 
 //    alwaysAssertM((src.width() == 32) && (src.height() == 32),
 //        "Icons must be 32x32 on windows.");
 
+
     // Convert to Windows BGRA format
-    Array<uint8> colorData;
-    colorData.resize(src.width() * src.height() * 4);
-    Array<uint8> binaryMaskData;
-    binaryMaskData.resize(iCeil(src.width() * src.height() / 8.0f));
+    Image::Ref colorData = src->clone();
+    colorData->convertToRGBA8();
+
+    /* todo (Image upgrade): investigate RGBtoBGRA() replacement from GImage
     if (src.channels() == 3) {
         GImage::RGBtoBGRA((unorm8*)src.byte(), (unorm8*)colorData.getCArray(), src.width() * src.height());
     } else {
         GImage::RGBAtoBGRA((unorm8*)src.byte(), (unorm8*)colorData.getCArray(), src.width() * src.height());
     }
+    */
+
+    Array<uint8> binaryMaskData;
+    binaryMaskData.resize(iCeil(src->width() * src->height() / 8.0f));
 
     // Create the binary mask by shifting in the appropriate bits
     System::memset(binaryMaskData.getCArray(), 0, binaryMaskData.size());
-    for (int y = 0; y < src.height(); ++y) {
-        for (int x = 0; x < src.width(); ++x) {
-            uint8 bit = (colorData[(x + y*src.width()) * 4 + 3] > 127 ? 1 : 0) << (x % 8);
-            binaryMaskData[(y * (src.width() / 8)) + (x / 8)] |= bit;
+    for (int y = 0; y < src->height(); ++y) {
+        for (int x = 0; x < src->width(); ++x) {
+            // todo (Image upgrade): double check this re-created logic
+            Color4 pixel;
+            colorData->get(Point2int32(x, y), pixel);
+            uint8 bit = (pixel.a > 127 ? 1 : 0) << (x % 8);
+            binaryMaskData[(y * (src->width() / 8)) + (x / 8)] |= bit;
         }
     }
+    
 
-    HBITMAP bwMask = ::CreateBitmap(src.width(), src.height(), 1, 1, binaryMaskData.getCArray());  
-    HBITMAP color  = ::CreateBitmap(src.width(), src.height(), 1, 32, colorData.getCArray());
+    HBITMAP bwMask = ::CreateBitmap(src->width(), src->height(), 1, 1, binaryMaskData.getCArray());  
+    HBITMAP color  = ::CreateBitmap(src->width(), src->height(), 1, 32, colorData->toBuffer()->buffer());
 
     ICONINFO iconInfo;
     iconInfo.xHotspot = 0;

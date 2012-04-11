@@ -247,8 +247,8 @@ public:
      and draw using that.
      */
     static void fullScreenImage(
-        const class GImage& im,
-        RenderDevice*       renderDevice);
+        const ImageBuffer::Ref& im,
+        RenderDevice*           renderDevice);
 };
 
 }

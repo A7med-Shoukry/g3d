@@ -10,10 +10,10 @@
 #ifndef G3D_GFont_h
 #define G3D_GFont_h
 
-#include "GLG3D/Texture.h"
+#include <string>
 #include "G3D/BinaryInput.h"
 #include "G3D/CoordinateFrame.h"
-#include <string>
+#include "GLG3D/Texture.h"
 
 namespace G3D {
 
@@ -186,7 +186,7 @@ public:
      Useful when you have shrunk a font texture prior to invoking
      makeFont and want to use the original resolution to obtain good
      MIP-boundaries.*/
-    static void recenterGlyphs(const GImage& src, GImage& dst);
+    static void recenterGlyphs(const ImageBuffer::Ref& src, ImageBuffer::Ref& dst);
 
 
     /** Returns the natural character width and height of this font. */

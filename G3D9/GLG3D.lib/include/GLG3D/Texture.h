@@ -16,7 +16,7 @@
 #include "G3D/CubeFace.h"
 #include "G3D/Vector2.h"
 #include "G3D/WrapMode.h"
-#include "G3D/ImageFormat.h"
+#include "G3D/Image.h"
 #include "G3D/Image1.h"
 #include "G3D/Image1unorm8.h"
 #include "G3D/Image3.h"
@@ -29,7 +29,6 @@
 
 namespace G3D {
 
-class GImage;
 class Rect2D;
 class Matrix3;
 class Texture;
@@ -914,17 +913,9 @@ public:
                           dimension, settings, preprocess);
     }
 
-    static Texture::Ref fromGImage(
-        const std::string&              name,
-        const GImage&                   image,
-        const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
-        Dimension                       dimension      = defaultDimension(),
-        const Settings&                 settings       = Settings::defaults(),
-        const Preprocess&               preprocess     = Preprocess::defaults());
-
     static Texture::Ref fromImageBuffer(
         const std::string&              name,
-        const ImageBuffer::Ref&          image,
+        const ImageBuffer::Ref&         image,
         const ImageFormat*              desiredFormat  = ImageFormat::AUTO(),
         Dimension                       dimension      = defaultDimension(),
         const Settings&                 settings       = Settings::defaults(),
@@ -1030,7 +1021,7 @@ public:
 
      \param face Specifies the cubemap face to access.
      */
-    void getImage(GImage& dst, const ImageFormat* outFormat = ImageFormat::AUTO(), CubeFace face = CubeFace::POS_X) const;
+    void getImage(ImageBuffer::Ref& im, const ImageFormat* outFormat = ImageFormat::AUTO(), CubeFace face = CubeFace::POS_X) const;
 
     /** Extracts the data as ImageFormat::RGBA32F. */
     Image4::Ref toImage4() const;

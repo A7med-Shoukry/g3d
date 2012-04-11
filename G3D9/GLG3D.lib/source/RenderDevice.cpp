@@ -8,6 +8,7 @@
  */
 
 #include "G3D/platform.h"
+#include "G3D/Image.h"
 #include "G3D/Log.h"
 #include "G3D/GCamera.h"
 #include "G3D/FileSystem.h"
@@ -2851,39 +2852,34 @@ double RenderDevice::getDepthBufferValue(
 }
 
 
-void RenderDevice::screenshotPic(GImage& dest, bool getAlpha, bool invertY) const {
-    int ch = getAlpha ? 4 : 3;
-
-    if ((dest.channels() != ch) ||
-        (dest.width() != width()) ||
-        (dest.height() != height())) {
-        // Only resize if the current size is not correct
-        dest.resize(width(), height(), ch);
-    }
+Image::Ref RenderDevice::screenshotPic(bool getAlpha, bool invertY) const {
+    ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), getAlpha ? ImageFormat::RGBA8() : ImageFormat::RGB8(), width(), height());
 
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, width(), height(), 
-        getAlpha ? GL_RGBA : GL_RGB,
-        GL_UNSIGNED_BYTE, dest.byte());    
-
+    {
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(0, 0, width(), height(), imageBuffer->format()->openGLBaseFormat, imageBuffer->format()->openGLDataFormat, imageBuffer->buffer());
+    }
     glPopClientAttrib();
+
+    Image::Ref image = Image::fromBuffer(imageBuffer);
 
     // Flip right side up
     if (invertY) {
-        dest.flipVertical();
+        image->flipVertical();
     }
+
+    return image;
 }
 
 
 std::string RenderDevice::screenshot(const std::string& filepath) const {
-    GImage screen;
-
     std::string filename = FilePath::concat(filepath, generateFilenameBase("", "_" + System::appName()) + ".jpg");
 
-    screenshotPic(screen);
-    screen.save(filename);
+    Image::Ref screen = screenshotPic();
+    if (screen.notNull()) {
+        screen->toFile(filename);
+    }
 
     return filename;
 }

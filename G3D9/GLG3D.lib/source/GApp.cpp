@@ -427,7 +427,7 @@ int GApp::run() {
         } catch (const char* e) {
             alwaysAssertM(false, e);
             ret = -1;
-        } catch (const GImage::Error& e) {
+        } catch (const Image::Error& e) {
             alwaysAssertM(false, e.reason + "\n" + e.filename);
             ret = -1;
         } catch (const std::string& s) {

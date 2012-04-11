@@ -371,7 +371,7 @@ public:
 
     explicit Any(float x);
 
-#if defined(G3D_32BIT) || defined(_MSVC_VER)
+#if defined(G3D_32BIT) || defined(_MSC_VER)
     /** NUMBER constructor */
     explicit Any(int64 x) : m_type(NUMBER), m_simpleValue((double)x), m_data(NULL) {}
 #endif

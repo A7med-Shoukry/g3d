@@ -163,11 +163,8 @@ void ArticulatedModel::load(const Specification& specification) {
         load3DS(specification);
     } else if (ext == "bsp") {
         loadBSP(specification);
-    } else if (GImage::supportedFormat(ext)) {
-        loadHeightfield(specification);
     } else {
-        // Error
-        throw std::string("Unrecognized file extension on \"") + specification.filename + "\"";
+        loadHeightfield(specification);
     }
     timer.after("parse file");
 

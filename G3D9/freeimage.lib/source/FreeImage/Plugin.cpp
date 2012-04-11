@@ -268,14 +268,14 @@ FreeImage_Initialise(BOOL load_local_plugins_only) {
 
 				// store the current directory. then set the directory to the application location
 
-				if (GetCurrentDirectory(2 * _MAX_PATH, current_dir) != 0) {
-					if (GetModuleFileName(NULL, module, 2 * _MAX_PATH) != 0) {
+				if (GetCurrentDirectoryA(2 * _MAX_PATH, current_dir) != 0) {
+					if (GetModuleFileNameA(NULL, module, 2 * _MAX_PATH) != 0) {
 						char *last_point = strrchr(module, '\\');
 
 						if (last_point) {
 							*last_point = '\0';
 
-							bOk = SetCurrentDirectory(module);
+							bOk = SetCurrentDirectoryA(module);
 						}
 					}
 				}
@@ -294,7 +294,7 @@ FreeImage_Initialise(BOOL load_local_plugins_only) {
 							strcpy(buffer, s_search_list[count]);
 							strncat(buffer, find_data.name, MAX_PATH + 200);
 
-							HINSTANCE instance = LoadLibrary(buffer);
+							HINSTANCE instance = LoadLibraryA(buffer);
 
 							if (instance != NULL) {
 								FARPROC proc_address = GetProcAddress(instance, "_Init@8");
@@ -316,7 +316,7 @@ FreeImage_Initialise(BOOL load_local_plugins_only) {
 				// restore the current directory
 
 				if (bOk) {
-					SetCurrentDirectory(current_dir);
+					SetCurrentDirectoryA(current_dir);
 				}
 			}
 #endif // _WIN32
@@ -507,7 +507,7 @@ FreeImage_RegisterLocalPlugin(FI_InitProc proc_address, const char *format, cons
 FREE_IMAGE_FORMAT DLL_CALLCONV
 FreeImage_RegisterExternalPlugin(const char *path, const char *format, const char *description, const char *extension, const char *regexpr) {
 	if (path != NULL) {
-		HINSTANCE instance = LoadLibrary(path);
+		HINSTANCE instance = LoadLibraryA(path);
 
 		if (instance != NULL) {
 			FARPROC proc_address = GetProcAddress(instance, "_Init@8");

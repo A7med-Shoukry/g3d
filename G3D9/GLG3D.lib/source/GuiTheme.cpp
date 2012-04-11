@@ -10,15 +10,16 @@
 */
 
 #include "G3D/platform.h"
-#include "GLG3D/GuiTheme.h"
-#include "G3D/WeakCache.h"
-#include "GLG3D/RenderDevice.h"
-#include "G3D/TextInput.h"
+#include "G3D/Any.h"
 #include "G3D/fileutils.h"
+#include "G3D/Image.h"
 #include "G3D/Image3.h"
 #include "G3D/Log.h"
 #include "G3D/FileSystem.h"
-#include "G3D/Any.h"
+#include "G3D/TextInput.h"
+#include "G3D/WeakCache.h"
+#include "GLG3D/GuiTheme.h"
+#include "GLG3D/RenderDevice.h"
 
 namespace G3D {
 
@@ -118,14 +119,13 @@ void GuiTheme::loadTheme(BinaryInput& b) {
     loadCoords(any);
 
     // Read theme texture
-    GImage image;
-    image.decode(b, GImage::TGA);
+    G3D::Image::Ref image = G3D::Image::fromBinaryInput(&b);
 
     Texture::Preprocess p;
     p.computeMinMaxMean = false;
     
     // Load theme texture
-    m_texture = Texture::fromGImage(b.getFilename(), image, ImageFormat::RGBA8(), Texture::DIM_2D_NPOT, Texture::Settings::video(), p);
+    m_texture = Texture::fromImageBuffer(b.getFilename(), image->toBuffer(), ImageFormat::RGBA8(), Texture::DIM_2D_NPOT, Texture::Settings::video(), p);
 
     toGLMatrix(Matrix4(1.0f / m_texture->width(), 0, 0, 0,
                        0, 1.0f / m_texture->height(), 0, 0,
@@ -984,8 +984,9 @@ void GuiTheme::makeThemeFromSourceFiles(
 
     Image3Ref white = Image3::fromFile(FilePath::concat(sourceDir, whiteName));
     Image3Ref black = Image3::fromFile(FilePath::concat(sourceDir, blackName));
-    GImage out(white->width(), white->height(), 4);
-
+    // todo (Image upgrade): implement BinaryOutput save
+    //GImage out(white->width(), white->height(), 4);
+    /*
     for (int y = 0; y < (int)out.height(); ++y) {
         for (int x = 0; x < (int)out.width(); ++x) {
             const Color3& U = white->get(x, y);
@@ -1008,7 +1009,7 @@ void GuiTheme::makeThemeFromSourceFiles(
             out.pixel4(x, y) = Color4unorm8(Color4(base, a));
         }
     }
-
+    */
     std::string coords = readWholeFile(FilePath::concat(sourceDir, coordsFile));
 
     BinaryOutput b(destFile, G3D_LITTLE_ENDIAN);
@@ -1016,7 +1017,7 @@ void GuiTheme::makeThemeFromSourceFiles(
     b.writeString32("G3D Skin File");
     b.writeFloat32(1.0f);
     b.writeString32(coords);
-    out.encode(GImage::TGA, b);
+    //out.encode(GImage::TGA, b);
 
     b.compress();
     b.commit();

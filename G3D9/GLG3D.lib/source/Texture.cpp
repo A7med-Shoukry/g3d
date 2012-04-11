@@ -10,7 +10,6 @@
 #include "G3D/Any.h"
 #include "G3D/Matrix3.h"
 #include "G3D/Rect2D.h"
-#include "G3D/GImage.h"
 #include "G3D/fileutils.h"
 #include "GLG3D/glcalls.h"
 #include "G3D/ImageFormat.h"
@@ -375,11 +374,11 @@ Texture::Ref Texture::white() {
     Texture::Ref t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        GImage im(4, 4, 3);
-        System::memset(im.byte(), 0xFF, im.width() * im.height() * im.channels());
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), 4, 4);
+        System::memset(imageBuffer->buffer(), 0xFF, imageBuffer->size());
         Texture::Settings settings;
         settings.wrapMode = WrapMode::TILE;
-        t = Texture::fromGImage("<white>", im, ImageFormat::RGB8(), Texture::DIM_2D, settings);
+        t = Texture::fromImageBuffer("<white>", imageBuffer, ImageFormat::RGB8(), Texture::DIM_2D, settings);
         // Store in cache
         cache = t;
     }
@@ -393,14 +392,15 @@ TextureRef Texture::opaqueBlackCube() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        GImage im(4, 4, 3);
-        System::memset(im.byte(), 0x00, im.width() * im.height() * im.channels());
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), 4, 4);
+        System::memset(imageBuffer->buffer(), 0x00, imageBuffer->size());
         Array< Array<const void*> > bytes;
         Array<const void*>& cubeFace = bytes.next();
         for (int i = 0; i < 6; ++i)  {
-            cubeFace.append(im.pixel3());
+            // todo (Image upgrade): investigate pixel1, pixel3 and pixel3 accessors from GImage
+            cubeFace.append(static_cast<Color3unorm8*>(imageBuffer->buffer()));
         }
-        t = Texture::fromMemory("Opaque black cube", bytes, ImageFormat::RGB8(), im.width(), im.height(), 1, ImageFormat::RGB8(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
+        t = Texture::fromMemory("Opaque black cube", bytes, imageBuffer->format(), imageBuffer->width(), imageBuffer->height(), 1, ImageFormat::RGB8(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
 
         // Store in cache
         cache = t;
@@ -416,14 +416,15 @@ TextureRef Texture::whiteCube() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        GImage im(4, 4, 4);
-        System::memset(im.byte(), 0xFF, im.width() * im.height() * im.channels());
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), 4, 4);
+        System::memset(imageBuffer->buffer(), 0xFF, imageBuffer->size());
         Array< Array<const void*> > bytes;
         Array<const void*>& cubeFace = bytes.next();
         for (int i = 0; i < 6; ++i)  {
-            cubeFace.append(im.pixel4());
+            // todo (Image upgrade): investigate pixel1, pixel3 and pixel3 accessors from GImage
+            cubeFace.append(static_cast<Color3unorm8*>(imageBuffer->buffer()));
         }
-        t = Texture::fromMemory("White cube", bytes, ImageFormat::RGBA8(), im.width(), im.height(), 1, ImageFormat::RGBA8(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
+        t = Texture::fromMemory("White cube", bytes, imageBuffer->format(), imageBuffer->width(), imageBuffer->height(), 1, ImageFormat::RGB8(), Texture::DIM_CUBE_MAP, Texture::Settings::cubeMap());
 
         // Store in cache
         cache = t;
@@ -438,9 +439,9 @@ TextureRef Texture::zero() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty                                                                                      
-        GImage im(8, 8, 4);
-        System::memset(im.byte(), 0x00, im.width() * im.height() * im.channels());
-        t = Texture::fromGImage("Zero", im);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 8, 8);
+        System::memset(imageBuffer->buffer(), 0x00, imageBuffer->size());
+        t = Texture::fromImageBuffer("Zero", imageBuffer);
         
         cache = t;
     }
@@ -454,11 +455,13 @@ TextureRef Texture::opaqueBlack() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty                                                                                      
-        GImage im(8, 8, 4);
-        for (int i = 0; i < im.width() * im.height(); ++i) {
-            im.pixel4()[i] = Color4unorm8(unorm8::zero(), unorm8::zero(), unorm8::zero(), unorm8::one());
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 8, 8);
+        for (int i = 0; i < imageBuffer->width() * imageBuffer->height(); ++i) {
+            // todo (Image upgrade): investigate pixel1, pixel3 and pixel3 accessors from GImage
+            Color4unorm8* pixels = static_cast<Color4unorm8*>(imageBuffer->buffer());
+            pixels[i] = Color4unorm8(unorm8::zero(), unorm8::zero(), unorm8::zero(), unorm8::one());
         }
-        t = Texture::fromGImage("Opaque Black", im);
+        t = Texture::fromImageBuffer("Opaque Black", imageBuffer);
         
         cache = t;
     }
@@ -473,12 +476,14 @@ TextureRef Texture::opaqueGray() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty                                                                                      
-        GImage im(8, 8, 4);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 8, 8);
         const Color4unorm8 c(Color4(0.5f, 0.5f, 0.5f, 1.0f));
-        for (int i = 0; i < im.width() * im.height(); ++i) {
-            im.pixel4()[i] = c;
+        for (int i = 0; i < imageBuffer->width() * imageBuffer->height(); ++i) {
+            // todo (Image upgrade): investigate pixel1, pixel3 and pixel3 accessors from GImage
+            Color4unorm8* pixels = static_cast<Color4unorm8*>(imageBuffer->buffer());
+            pixels[i] = c;
         }
-        t = Texture::fromGImage("Gray", im);
+        t = Texture::fromImageBuffer("Gray", imageBuffer);
         
         cache = t;
     }
@@ -763,15 +768,17 @@ Texture::Ref Texture::fromGLTexture(
 }
 
 
-static void transform(GImage& image, const Texture::CubeMapInfo::Face& info) {
+static void transform(Image::Ref& image, const Texture::CubeMapInfo::Face& info) {
     // Apply transformations
     if (info.flipX) {
-        image.flipHorizontal();
+        image->flipHorizontal();
     }
     if (info.flipY) {
-        image.flipVertical();
+        image->flipVertical();
     }
-    image.rotate90CW(info.rotations);
+    if (info.rotations > 0) {
+        image->rotateCW(toRadians(90.0), info.rotations);
+    }
 }
 
 Texture::Ref Texture::create(const Specification& s) {
@@ -781,14 +788,14 @@ Texture::Ref Texture::create(const Specification& s) {
 class ImageLoaderThread : public GThread {
 private:
     std::string         m_filename;
-    GImage&             m_image;
+    Image::Ref&          m_image;
 public:
     
-    ImageLoaderThread(const std::string& filename, GImage& im) : 
+    ImageLoaderThread(const std::string& filename, Image::Ref& im) : 
         GThread(filename), m_filename(filename), m_image(im) {}
 
     void threadMain() {
-        m_image.load(m_filename);
+        m_image = Image::fromFile(m_filename);
     }
 };
 
@@ -877,16 +884,17 @@ Texture::Ref Texture::fromFile(
     }
 
     // The six cube map faces, or the one texture and 5 dummys.
-    GImage image[6];
+    Image::Ref image[6];
 
     if ((numFaces == 1) && (dimension == DIM_2D) || (dimension == DIM_2D_NPOT) || (dimension == DIM_3D_NPOT) || (dimension == DIM_3D)) {
         if (toLower(realFilename[0]) == "<white>") {
-            image[0].resize(1, 1, 4, false);
-            image[0].pixel4(0, 0) = Color4unorm8::one();
+            ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 1, 1);
+            image[0] = Image::fromBuffer(buffer);
+            image[0]->set(Point2int32(0, 0), Color4unorm8::one());
         } else {
-            image[0].load(realFilename[0]);
+            image[0] = Image::fromFile(realFilename[0]);
 
-            alwaysAssertM(image[0].width() > 0, 
+            alwaysAssertM(image[0]->width() > 0, 
                 G3D::format("Image not found: \"%s\" and GImage failed to throw an exception", realFilename[0].c_str()));
         }
     } else {
@@ -895,8 +903,9 @@ Texture::Ref Texture::fromFile(
 
         for (int f = 0; f < numFaces; ++f) {
             if ((toLower(realFilename[f]) == "<white>") || realFilename[f].empty()) {
-                image[f].resize(1, 1, 4, false);
-                image[f].pixel4(0, 0) = Color4unorm8::one();
+            ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 1, 1);
+            image[f] = Image::fromBuffer(buffer);
+            image[f]->set(Point2int32(0, 0), Color4unorm8::one());
             } else {
                 threadSet.insert(new ImageLoaderThread(realFilename[f], image[f]));
             }
@@ -905,39 +914,26 @@ Texture::Ref Texture::fromFile(
         threadSet.waitForCompletion();
     }
 
+    ImageBuffer::Ref buffers[6];
     for (int f = 0; f < numFaces; ++f) {
         //debugPrintf("Loading %s\n", realFilename[f].c_str());
-        alwaysAssertM(image[f].width() > 0, "Image not found");
-        alwaysAssertM(image[f].height() > 0, "Image not found");
+        alwaysAssertM(image[f]->width() > 0, "Image not found");
+        alwaysAssertM(image[f]->height() > 0, "Image not found");
 
-        switch (image[f].channels()) {
-        case 4:
-            format = ImageFormat::RGBA8();
-            opaque = false;
-            break;
-        case 3:
-            format = ImageFormat::RGB8();
-            opaque = true;
-            break;
-        case 1:
-            format = ImageFormat::L8();
-            opaque = true;
-            break;
-        }
-        
         if (numFaces > 1) {
             transform(image[f], info.face[f]);
         }
 
-        array[f] = image[f].byte();
+        buffers[f] = image[f]->toBuffer();
+        array[f] = buffers[f]->buffer();
     }
 
     Texture::Ref t =
         fromMemory(filename[0], 
                    byteMipMapFaces, 
-                   format,
-                   image[0].width(), 
-                   image[0].height(), 
+                   buffers[0]->format(),
+                   buffers[0]->width(), 
+                   buffers[0]->height(), 
                    1,
                    desiredFormat, 
                    dimension,
@@ -1004,15 +1000,16 @@ Texture::Ref Texture::fromTwoFiles(
         generateCubeMapFilenames(alphaFilename, alphaFilenameArray, alphaInfo);
     }
     
-    GImage color[6];
-    GImage alpha[6];
+    Image::Ref color[6];
+    Image::Ref alpha[6];
+    ImageBuffer::Ref buffers[6];
     Texture::Ref t;
 
     try {
         for (int f = 0; f < numFaces; ++f) {
             // Compose the two images to a single RGBA
-            color[f].load(filenameArray[f]);
-            alpha[f].load(alphaFilenameArray[f]);
+            color[f] = Image::fromFile(filenameArray[f]);
+            alpha[f] = Image::fromFile(alphaFilenameArray[f]);
             uint8* data = NULL;
 
 
@@ -1021,22 +1018,43 @@ Texture::Ref Texture::fromTwoFiles(
                 transform(alpha[f], alphaInfo.face[f]);
             }
 
-            if (color[f].channels() == 4) {
-                data = color[f].byte();
+            if (color[f]->format() == ImageFormat::RGBA8()) {
                 // Write the data inline
-                for (int i = 0; i < color[f].width() * color[f].height(); ++i) {
-                    data[i * 4 + 3] = alpha[f].byte()[i * alpha[f].channels()];
+                for (int h = 0; h < color[f]->height(); ++h) {
+                    for (int w = 0; w < color[f]->width(); ++w) {
+                        // todo (Image upgrade): double check this re-created logic
+                        Color4 origColor;
+                        color[f]->get(Point2int32(w, h), origColor);
+
+                        Color4 origAlpha;
+                        alpha[f]->get(Point2int32(w, h), origAlpha);
+
+                        color[f]->set(Point2int32(w, h), Color4(origColor.rgb(), origAlpha.a));
+                    }
                 }
+
+                buffers[f] = color[f]->toBuffer();
+                data = static_cast<uint8*>(buffers[f]->buffer());
             } else {
-                alwaysAssertM(color[f].channels() == 3, "Cannot load monochrome cube maps");
-                data = new uint8[color[f].width() * color[f].height() * 4];
+                alwaysAssertM(color[f]->format() == ImageFormat::RGB8(), "Cannot load monochrome cube maps");
+                buffers[f] = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), color[f]->width(), color[f]->height());
+                Image::Ref tempImage = Image::fromBuffer(buffers[f]);
                 // Write the data inline
-                for (int i = 0; i < color[f].width() * color[f].height(); ++i) {
-                    data[i * 4 + 0] = color[f].byte()[i * 3 + 0];
-                    data[i * 4 + 1] = color[f].byte()[i * 3 + 1];
-                    data[i * 4 + 2] = color[f].byte()[i * 3 + 2];
-                    data[i * 4 + 3] = alpha[f].byte()[i * alpha[f].channels()];
+                for (int h = 0; h < color[f]->height(); ++h) {
+                    for (int w = 0; w < color[f]->width(); ++w) {
+                        // todo (Image upgrade): double check this re-created logic
+                        Color4 origColor;
+                        color[f]->get(Point2int32(w, h), origColor);
+
+                        Color4 origAlpha;
+                        alpha[f]->get(Point2int32(w, h), origAlpha);
+
+                        tempImage->set(Point2int32(w, h), Color4(origColor.rgb(), origAlpha.a));
+                    }
                 }
+
+                buffers[f] = tempImage->toBuffer();
+                data = static_cast<uint8*>(buffers[f]->buffer());
             }
 
             array[f] = data;
@@ -1046,22 +1064,15 @@ Texture::Ref Texture::fromTwoFiles(
                 filename, 
                 mip, 
                 ImageFormat::RGBA8(),
-                color[0].width(), 
-                color[0].height(), 
+                buffers[0]->width(), 
+                buffers[0]->height(), 
                 1, 
                 desiredFormat, 
                 dimension,
                 settings,
                 preprocess);
 
-        if (color[0].channels() == 3) {
-            // Delete the data if it was dynamically allocated
-            for (int f = 0; f < numFaces; ++f) {
-                delete[] static_cast<uint8*>(const_cast<void*>(array[f]));
-            }
-        }
-
-    } catch (const GImage::Error& e) {
+    } catch (const Image::Error& e) {
         Log::common()->printf("\n**************************\n\n"
             "Loading \"%s\" failed. %s\n", e.filename.c_str(),
             e.reason.c_str());
@@ -1103,7 +1114,7 @@ Texture::Ref Texture::fromMemory(
 
     typedef Array< Array<const void*> > MipArray;
     // Used for normal map computation
-    GImage normal;
+    //GImage normal;
 
     float scaleFactor = preprocess.scaleFactor;
     
@@ -1167,6 +1178,7 @@ Texture::Ref Texture::fromMemory(
         debugAssertM(bytesFormat->numComponents == 1 || bytesFormat->numComponents == 3 || bytesFormat->numComponents == 4, "1, 3, or 4 channels needed to compute normal maps");
         debugAssertM(bytesPtr->size() == 1, "Cannot specify mipmaps when computing normal maps automatically");
 
+        /* todo (Image upgrade): replace GImage::computeNormalMap
         GImage::computeNormalMap(width, height, bytesFormat->numComponents, 
                                  reinterpret_cast<const unorm8*>((*bytesPtr)[0][0]),
                                  normal, preprocess.bumpMapPreprocess);
@@ -1183,6 +1195,7 @@ Texture::Ref Texture::fromMemory(
         }
 
         debugAssertM(desiredFormat->openGLBaseFormat == GL_RGBA, "Desired format must contain RGBA channels for bump mapping");
+        */
     } else if (desiredFormat == ImageFormat::AUTO()) {
         desiredFormat = bytesFormat;
     }
@@ -1366,10 +1379,11 @@ Texture::Ref Texture::fromMemory(
     if (bytesPtr != &_bytes) {
 
         // We must free our own data
+        /* todo (Image upgrade): replace GImage::computeNormalMap
         if (normal.width() != 0) {
             // The normal GImage is holding the data; do not free it because 
             // the GImage destructor will do so at the end of the method.
-        } else {
+        } else */{
             for (int m = 0; m < bytesPtr->size(); ++m) {
                 Array<const void*>& face = (*bytesPtr)[m]; 
                 for (int f = 0; f < face.size(); ++f) {
@@ -1385,66 +1399,13 @@ Texture::Ref Texture::fromMemory(
 }
 
 
-Texture::Ref Texture::fromGImage(
-    const std::string&              name,
-    const GImage&                   image,
-    const class ImageFormat*      desiredFormat,
-    Dimension                       dimension,
-    const Settings&                    settings,
-    const Preprocess&                preprocess) {
-
-    const ImageFormat* format = ImageFormat::RGB8();
-    bool opaque = true;
-
-    switch (image.channels()) {
-    case 4:
-        format = ImageFormat::RGBA8();
-        opaque = false;
-        break;
-
-    case 3:
-        format = ImageFormat::RGB8();
-        opaque = true;
-        break;
-
-    case 1:
-        format = ImageFormat::L8();
-        opaque = true;
-        break;
-
-    default:
-        alwaysAssertM(
-            false,
-            G3D::format("GImage has an unexpected number of channels (%d)", image.channels()));
-    }
-
-    if (desiredFormat == NULL) {
-        desiredFormat = format;
-    }
-
-    Texture::Ref t =
-        fromMemory(
-            name, 
-            image.byte(), 
-            format,
-            image.width(), 
-            image.height(), 
-            1,
-            desiredFormat, 
-            dimension, 
-            settings,
-            preprocess);
-
-    return t;
-}
-
 Texture::Ref Texture::fromImageBuffer(
     const std::string&              name,
     const ImageBuffer::Ref&         image,
     const ImageFormat*              desiredFormat,
     Dimension                       dimension,
-    const Settings&                    settings,
-    const Preprocess&                preprocess) {
+    const Settings&                 settings,
+    const Preprocess&               preprocess) {
 
     Array< Array< ImageBuffer::Ref > > mips;
     mips.append( Array< ImageBuffer::Ref >() );
@@ -1454,7 +1415,19 @@ Texture::Ref Texture::fromImageBuffer(
         desiredFormat = image->format();
     }
 
-    Texture::Ref t = new Texture(name, mips, dimension, settings.interpolateMode, settings.wrapMode, desiredFormat, settings);
+    Texture::Ref t =
+        fromMemory(
+            name, 
+            image->buffer(), 
+            image->format(),
+            image->width(), 
+            image->height(), 
+            image->depth(),
+            desiredFormat, 
+            dimension, 
+            settings,
+            preprocess);
+
     return t;
 }
 
@@ -1588,7 +1561,7 @@ const Texture::Settings& Texture::settings() const {
 }
 
 
-void Texture::getImage(GImage& dst, const ImageFormat* outFormat, CubeFace face) const {
+void Texture::getImage(ImageBuffer::Ref& im, const ImageFormat* outFormat, CubeFace face) const {
     alwaysAssertM(outFormat == ImageFormat::AUTO() ||
                   outFormat == ImageFormat::RGB8() ||
                   outFormat == ImageFormat::RGBA8() ||
@@ -1617,30 +1590,9 @@ void Texture::getImage(GImage& dst, const ImageFormat* outFormat, CubeFace face)
         }
     }
 
-    int channels = 0;
+    im = ImageBuffer::create(MemoryManager::create(), outFormat, m_width, m_height);
 
-
-    switch(outFormat->openGLBaseFormat) {
-    case GL_LUMINANCE:
-    case GL_ALPHA:
-        channels = 1;
-        break;
-
-    case GL_RGB:
-        channels = 3;
-        break;
-
-    case GL_RGBA:
-        channels = 4;
-        break;
-
-    default:
-        alwaysAssertM(false, "This texture format is not appropriate for reading to an image.");
-    }
-
-    dst.resize(m_width, m_height, channels);
-
-    getTexImage(dst.byte(), outFormat, face);
+    getTexImage(im->buffer(), outFormat, face);
 }
 
 
@@ -1748,7 +1700,7 @@ void Texture::splitFilenameAtWildCard(
         filenameBase = filename.substr(0, i);
         filenameExt  = filename.substr(i + 1, filename.size() - i - splitter.length()); 
     } else {
-        throw GImage::Error("Cube map filenames must contain \"*\" as a "
+        throw Image::Error("Cube map filenames must contain \"*\" as a "
             "placeholder for {up,lf,rt,bk,ft,dn} or {up,north,south,east,west,down}", filename);
     }
 }

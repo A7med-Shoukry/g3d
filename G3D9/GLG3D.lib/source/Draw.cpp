@@ -1178,17 +1178,16 @@ void Draw::sphere(
 }
 
 
-void Draw::fullScreenImage(const GImage& im, RenderDevice* renderDevice) {
-    debugAssert( im.channels() == 3 || im.channels() == 4 );
+void Draw::fullScreenImage(const ImageBuffer::Ref& im, RenderDevice* renderDevice) {
     renderDevice->push2D();
-        glPixelZoom((float)renderDevice->width() / (float)im.width(), 
-                   -(float)renderDevice->height() / (float)im.height());
+        glPixelZoom((float)renderDevice->width() / (float)im->width(), 
+                   -(float)renderDevice->height() / (float)im->height());
         glRasterPos4d(0.0, 0.0, 0.0, 1.0);
 
         glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
-        glDrawPixels(im.width(), im.height(), (im.channels() == 3) ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, (const GLvoid*)im.byte());
+        glDrawPixels(im->width(), im->height(), im->format()->openGLFormat, im->format()->openGLDataFormat, im->buffer());
 
         glPopClientAttrib();
     renderDevice->pop2D();

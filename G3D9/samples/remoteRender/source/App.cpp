@@ -88,7 +88,7 @@ void App::loadScene() {
 }
 
 
-void App::sendJPEG(mg_connection* conn, const GImage& image) {
+void App::sendJPEG(mg_connection* conn, const Image::Ref& image) {
     mg_printf(conn, "HTTP/1.1 200 OK\r\n");
 
     // We explicitly say that this image never expires, so that the client
@@ -97,9 +97,10 @@ void App::sendJPEG(mg_connection* conn, const GImage& image) {
     mg_printf(conn, "Expires: %s\r\n", tomorrow().c_str());
     mg_printf(conn, "Cache-Control: max-age=172800, public\r\n");
     mg_printf(conn, "Content-Type: image/jpeg\r\n\r\n");
-    BinaryOutput b("<memory>", G3D_LITTLE_ENDIAN);
-    image.encode(GImage::JPEG, b);
-    mg_write(conn, b.getCArray(), b.size());
+    // todo (Image upgrade): implement BinaryOutput save
+    //BinaryOutput b("<memory>", G3D_LITTLE_ENDIAN);
+    //image.encode(GImage::JPEG, b);
+    //mg_write(conn, b.getCArray(), b.size());
 }
 
 
@@ -137,7 +138,7 @@ void App::processDynamic(mg_connection* conn, const mg_request_info* request_inf
 
     if (ext == "png") {
 
-        GImage image;
+        Image::Ref image;
         app->render(view, image);
         sendJPEG(conn, image);
         
@@ -217,7 +218,7 @@ std::string App::tomorrow() {
 }
 
 
-void App::render(const View& view, GImage& image) {
+void App::render(const View& view, Image::Ref& image) {
     gpuMutex.lock();
 
     // Must set the context before rendering to OpenGL when on a different thread
@@ -258,7 +259,9 @@ void App::render(const View& view, GImage& image) {
     rd->popState();
         
     // Read back to the CPU
-    color->getImage(image);
+    ImageBuffer::Ref buffer;
+    color->getImage(buffer, ImageFormat::RGB8());
+    image = Image::fromBuffer(buffer);
     glMakeCurrent(oldContext);
     gpuMutex.unlock();
 }
