@@ -128,13 +128,12 @@ Library('zlib',        DYNAMIC,   'z',       'z',        None,       None,    ['
 Library('zip',         STATIC,    'zip',     'zip',      None,       None,    ['zip.h'],        ['zip_close'],                                  ['zlib'],    False),
 Library('glut',        maybeFwk,  'glut',    'glut',    'GLUT',     'GLUT',   ['glut.h'],       [],                                            [],           False),
 Library('OpenGL',      maybeFwk,  'GL',      'GL',      'OpenGL',   'OpenGL', ['gl.h'],         ['glBegin', 'glVertex3'],                      [],           False),
-Library('jpeg',        DYNAMIC,   'jpeg',    'jpeg',     None,       None,    ['jpeg.h'],       ['jpeg_memory_src', 'jpeg_CreateCompress'],    []),
-Library('png',         DYNAMIC,   'png',     'png',      None,       None,    ['png.h'],        ['png_create_info_struct'],                    []),
+Library('freeimage',   STATIC,   'freeimage',    'freeimaged',     None,       None,    ['FreeImagePlus.h', 'FreeImage.h'],       [],    []),
 Library('GLU',         maybeFwk,  'GLU',     'GLU',      None,       None,    ['glu.h'],        ['gluBuild2DMipmaps'],                         ['OpenGL'],   False),
 Library('Cocoa',       FRAMEWORK,  None,      None,     'Cocoa',    'Cocoa',  ['Cocoa.h'],      ['DebugStr'],                                  [],           False),
 Library('Carbon',      FRAMEWORK,  None,      None,     'Carbon',   'Carbon', ['Carbon.h'],     ['ShowWindow'],                                [],           False),
 Library('AppleGL',     FRAMEWORK,  None,      None,     'AGL',      'AGL',    ['agl.h'],        ['_aglChoosePixelFormat'],                     [],           False),
-Library('G3D',         STATIC,    'G3D',     'G3Dd',     None,       None,    ['G3D.h'], [],                                                   ['zlib', 'jpeg', 'png', 'zip', 'Cocoa', 'pthread', 'Carbon'] + maybeG3DX11),
+Library('G3D',         STATIC,    'G3D',     'G3Dd',     None,       None,    ['G3D.h'], [],                                                   ['zlib', 'freeimage', 'zip', 'Cocoa', 'pthread', 'Carbon'] + maybeG3DX11),
 Library('GLG3D',       STATIC,    'GLG3D',   'GLG3Dd',   None,       None,    ['GLG3D.h', 'RenderDevice.h'],      [],                          GLG3DDepend),
 Library('pthread',     DYNAMIC,   'pthread', 'pthread',  None,       None,    ['pthread.h'],    [],                                            [],           False),
 Library('math',        DYNAMIC,   'm', 'm',  None,       None,       [],    [],                                            [],           False),
@@ -171,8 +170,8 @@ def _makeLibOrder():
     # These control the linker order.  Put the library you want first on the left in the pair and
     # the library you want second on the right
     pairs = [('GLG3D', 'G3D'), ('G3D', 'Cocoa'), ('Cocoa', 'SDL'), ('SDL', 'OpenGL'), ('GLU', 'OpenGL'), 
-            ('GLG3D', 'GLU'), ('G3D', 'zlib'), ('G3D', 'zip'), ('G3D', 'png'), ('G3D', 'jpeg'), ('Cocoa', 'pthread'), 
-            ('Cocoa', 'zlib'), ('OpenGL', 'png'), ('OpenGL', 'jpeg'), ('OpenGL', 'pthread'), ('Cocoa', 'Carbon'),
+            ('GLG3D', 'GLU'), ('G3D', 'zlib'), ('G3D', 'zip'), ('G3D', 'freeimage'), ('Cocoa', 'pthread'), 
+            ('Cocoa', 'zlib'), ('OpenGL', 'pthread'), ('Cocoa', 'Carbon'),
             ('FFMPEG-format', 'FFMPEG-codec'), ('FFMPEG-codec', 'FFMPEG-util'), ('FFMPEG-format', 'zlib'), 
             ('GLG3D', 'FFMPEG-format')]
 

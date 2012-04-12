@@ -556,11 +556,10 @@ CarbonWindow::CarbonWindow
     // Set default icon if available
     if (! m_settings.defaultIconFilename.empty()) {
         try {
-            GImage defaultIcon;
-            defaultIcon.load(m_settings.defaultIconFilename);
+            Image::Ref defaultIcon = Image::fromFile(m_settings.defaultIconFilename);
             
             setIcon(defaultIcon);
-        } catch (const GImage::Error& e) {
+        } catch (const Image::Error& e) {
             /*
             logPrintf("OSWindow's default icon failed to load: %s (%s)", 
                       e.filename.c_str(), e.reason.c_str());
@@ -829,21 +828,22 @@ std::string CarbonWindow::joystickName(unsigned int stickNum) {
     return "";
 }
 
-void CarbonWindow::setIcon(const GImage& image) {
+void CarbonWindow::setIcon(const Image::Ref& image) {
     // SetApplicationDockTileImage
+    ImageBuffer::Ref buffer = image->toBuffer();
     CGImageRef dockImage = NULL;
     CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-    CGDataProviderRef dataProviderRef = CGDataProviderCreateWithData(NULL,image.byte(),image.sizeInMemory(),NULL);
+    CGDataProviderRef dataProviderRef = CGDataProviderCreateWithData(NULL,buffer->buffer(),buffer->size(),NULL);
     
     size_t bPC = 8;
-    CGBitmapInfo bmpInfo = (image.channels() == 4) ? kCGBitmapByteOrderDefault|kCGImageAlphaLast : kCGBitmapByteOrderDefault;
+    CGBitmapInfo bmpInfo = (buffer->format() == ImageFormat::RGBA8()) ? kCGBitmapByteOrderDefault|kCGImageAlphaLast : kCGBitmapByteOrderDefault;
     
     if((NULL != colorSpaceRef) && (NULL != dataProviderRef)) {
-        dockImage = CGImageCreate(	image.width(),
-                                        image.height(),
+        dockImage = CGImageCreate(	buffer->width(),
+                                        buffer->height(),
                                         bPC,
-                                        bPC*image.channels(),
-                                        image.width() * image.channels(),
+                                        buffer->format()->cpuBitsPerPixel/8,
+                                        buffer->stride(),
                                         colorSpaceRef,
                                         bmpInfo,
                                         dataProviderRef,

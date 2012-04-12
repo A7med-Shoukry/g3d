@@ -375,18 +375,12 @@ def libTarget():
         # - The above paths are for my machine; we need to discover them
         # - It seems to ignore incremental builds from inside the IDE (maybe it is putting the object files someplace else?)  It will do incremental builds on its own, however.
 
-        x = VC10('VC10/G3D.sln', ['jpeg.lib', 'png.lib', 'zlib.lib', 'zip.lib', 'mongoose.lib', 'G3D.lib', 'GLG3D.lib']);
+        x = VC10('VC10/G3D.sln', ['freeimage.lib', 'zlib.lib', 'zip.lib', 'mongoose.lib', 'G3D.lib', 'GLG3D.lib']);
         copyIfNewer('ffmpeg/win32/bin/*', 'build/bin/')
 
     else:
-        # OS X ships with an old version of libpng (1.2); force recompilation of our version (1.4.4)
-        # This is soon to be replaced by FreeImage anyway
-        #if (osx and not os.path.exists('/usr/X11/include/png.h')) or (ice.utils.shell("locate libpng.a") == ''):
-        if x == 0: x = runicompile('png.lib')
+        if x == 0: x = runicompile('freeimage.lib')
 
-        if osx or (ice.utils.shell("locate libjpeg.a") == ''):
-            if x == 0: x = runicompile('jpeg.lib')
-    
         if osx or (ice.utils.shell("locate libzip.a") == ''):
             if x == 0: x = runicompile('zip.lib')
          
@@ -829,7 +823,7 @@ all        clean + lib + test + jar + tools + doc
 update     lib + tools + doc + jar 
            
 lib        Build G3D, G3Dd, GLG3D, GLG3Dd and copy over headers. Also build
-           all dependencies (e.g., zlib, libpng)
+           all dependencies (e.g., zlib, freeimage)
 
 data       Copy over data-files (and ../data/, if you have it)
 
