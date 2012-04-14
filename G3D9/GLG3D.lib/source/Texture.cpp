@@ -1196,7 +1196,9 @@ Texture::Ref Texture::fromMemory(
 
         debugAssertM(desiredFormat->openGLBaseFormat == GL_RGBA, "Desired format must contain RGBA channels for bump mapping");
         */
-    } else if (desiredFormat == ImageFormat::AUTO()) {
+    }
+
+    if (desiredFormat == ImageFormat::AUTO()) {
         desiredFormat = bytesFormat;
     }
 
