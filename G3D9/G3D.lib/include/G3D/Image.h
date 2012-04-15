@@ -1,5 +1,9 @@
-
-
+/**
+  \file G3D/Image.h
+ 
+  Copyright 2000-2012, Morgan McGuire.
+  All rights reserved.
+ */
 #ifndef G3D_IMAGE_H
 #define G3D_IMAGE_H
 
@@ -20,7 +24,19 @@ namespace G3D {
 class BinaryInput;
 class ImageFormat;
 
+/**
+    \brief Provides general image loading, saving, conversion and pixel access.
 
+    Image allows you to load a variety of supported file formats
+    in their native pixel format with very few exceptions.  Users are
+    responsible for converting pixel data to the desired format after loading.
+
+    Image will also try to save directly to a file in the same pixel format
+    as it is stored internally.  If a file format does not support that pixel format
+    the user is responsible for converting before saving.
+
+    Image::Error exception is thrown if a file cannot be loaded.
+*/
 class Image : public ReferenceCountedObject {
 public:
     typedef ReferenceCountedPointer<Image> Ref;
@@ -42,21 +58,30 @@ private:
     const ImageFormat*  m_format;
 
     Image();
+
+    // Not-implemented
     Image(const Image&);
     Image& operator=(const Image&);
 
 public:
     virtual ~Image();
 
+    /** Determines if a file format is supported.  Does not check if pixel format is supported. */
     static bool fileSupported(const std::string& filename, bool allowCheckSignature = false);
 
+    /** Loads an image from file specified by \a filename.  Sets internal pixel format to imageFormat but does not convert. */
     static Ref fromFile(const std::string& filename, const ImageFormat* imageFormat = ImageFormat::AUTO());
+    /** Loads an image from existing BinaryInput \a bi.  Sets internal pixel format to imageFormat but does not convert. */
     static Ref fromBinaryInput(BinaryInput* bi, const ImageFormat* imageFormat = ImageFormat::AUTO());
+    /** Loads an image from existing ImageBuffer \a buffer.  Performs a copy of pixel data. */
     static Ref fromBuffer(const ImageBuffer::Ref& buffer);
 
+    /** Saves internal pixel data to file specified by \a filename.  Does not convert pixel format before saving. */
     void toFile(const std::string& filename) const;
+    /** Saves internal pixel data to ImageBuffer.  Does not convert pixel format before saving. */
     ImageBuffer::Ref toBuffer() const;
 
+    /** Creates a deep copy of iamge */
     Ref clone() const;
 
     int width() const;
