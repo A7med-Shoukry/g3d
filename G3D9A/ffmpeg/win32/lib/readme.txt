@@ -1,1 +1,0 @@
-The numbered .libs are for dynamic linking.  These are the stubs that load the dlls.  The unnumbered .libs are for static linking.  The LGPL license requires you to distribute your object files if you statically link to FFMPEG.
