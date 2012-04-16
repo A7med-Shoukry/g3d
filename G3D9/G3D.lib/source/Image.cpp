@@ -48,16 +48,21 @@ bool Image::fileSupported(const std::string& filename, bool allowCheckSignature)
 }
 
 Image::Ref Image::fromFile(const std::string& filename, const ImageFormat* imageFormat) {
+    debugAssertM(fileSupported(filename, true), G3D::format("Image file format not supported! (%s)", filename.c_str()));
+    BinaryInput bi(filename, G3D::G3D_LITTLE_ENDIAN);
+    return fromBinaryInput(&bi, imageFormat);
+}
+
+Image::Ref Image::fromBinaryInput(BinaryInput* bi, const ImageFormat* imageFormat) {
     Image* img = new Image;
-
-    debugAssert(fipImage::identifyFIF(filename.c_str()) != FIF_UNKNOWN);
-
-    if (! img->m_image->load(filename.c_str()))
+    
+    fipMemoryIO memoryIO(const_cast<uint8*>(bi->getCArray() + bi->getPosition()), static_cast<DWORD>(bi->getLength() - bi->getPosition()));
+    if (! img->m_image->loadFromMemory(memoryIO))
     {
         delete img;
 
         // todo: replace Image::Error handling with isNull() and notNull() checks in 
-        throw Image::Error("Unsupported file format or unable to allocate FreeImage buffer", filename);
+        throw Image::Error("Unsupported file format or unable to allocate FreeImage buffer", bi->getFilename());
         return NULL;
     }
 
@@ -67,7 +72,7 @@ Image::Ref Image::fromFile(const std::string& filename, const ImageFormat* image
         delete img;
 
         // todo: replace Image::Error handling with isNull() and notNull() checks in 
-        throw Image::Error("Loaded image data format does not map to any existing ImageFormat", filename);
+        throw Image::Error("Loaded image pixel format does not map to any existing ImageFormat", bi->getFilename());
         return NULL;
     }
     
@@ -75,6 +80,13 @@ Image::Ref Image::fromFile(const std::string& filename, const ImageFormat* image
         img->m_format = detectedFormat;
     } else {
         debugAssert(detectedFormat->canInterpretAs(imageFormat));
+        if (! detectedFormat->canInterpretAs(imageFormat)) {
+            delete img;
+
+            // todo: replace Image::Error handling with isNull() and notNull() checks in 
+            throw Image::Error(G3D::format("Loaded image pixel format is not compatible with requested ImageFormat (%s)", imageFormat->name().c_str()), bi->getFilename());
+            return NULL;
+        }
         img->m_format = imageFormat;
     }
 
@@ -100,42 +112,9 @@ Image::Ref Image::fromFile(const std::string& filename, const ImageFormat* image
             default:
                 delete img;
 
-                throw Image::Error("Loaded image data in unsupported palette format", filename);
+                throw Image::Error("Loaded image data in unsupported palette format", bi->getFilename());
                 return NULL;
         }
-    }
-    
-    return img;
-}
-
-Image::Ref Image::fromBinaryInput(BinaryInput* bi, const ImageFormat* imageFormat) {
-    Image* img = new Image;
-    
-    fipMemoryIO memoryIO(const_cast<uint8*>(bi->getCArray() + bi->getPosition()), static_cast<DWORD>(bi->getLength() - bi->getPosition()));
-    if (! img->m_image->loadFromMemory(memoryIO))
-    {
-        delete img;
-
-        // todo: replace Image::Error handling with isNull() and notNull() checks in 
-        throw Image::Error("Unsupported file format or unable to allocate FreeImage buffer");
-        return NULL;
-    }
-
-    const ImageFormat* detectedFormat = determineImageFormat(img->m_image);
-    
-    if (! detectedFormat) {
-        delete img;
-
-        // todo: replace Image::Error handling with isNull() and notNull() checks in 
-        throw Image::Error("Loaded image data format does not map to any existing ImageFormat");
-        return NULL;
-    }
-    
-    if (imageFormat == ImageFormat::AUTO()) {
-        img->m_format = detectedFormat;
-    } else {
-        debugAssert(detectedFormat->canInterpretAs(imageFormat));
-        img->m_format = imageFormat;
     }
     
     return img;
