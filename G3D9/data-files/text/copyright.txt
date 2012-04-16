@@ -1,0 +1,6 @@
+allwords.txt was generated from the SCOWL open source database using the following commands:
+
+grep -h "^[a-z]*$" american-words.10 english-words.10 british-words.10 american-words.20 english\
+-words.20 british-words.20 american-words.35 english-words.35 british-words.35 american-words.40\
+ english-words.40 british-words.40 american-words.50 english-words.50 british-words.50 american-\
+words.60 english-words.60 british-words.60 | tr -d '\r' | sort - > allwords.txt
