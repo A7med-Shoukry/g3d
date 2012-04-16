@@ -842,7 +842,7 @@ void CarbonWindow::setIcon(const Image::Ref& image) {
         dockImage = CGImageCreate(	buffer->width(),
                                         buffer->height(),
                                         bPC,
-                                        buffer->format()->cpuBitsPerPixel/8,
+                                        buffer->format()->cpuBitsPerPixel,
                                         buffer->stride(),
                                         colorSpaceRef,
                                         bmpInfo,
