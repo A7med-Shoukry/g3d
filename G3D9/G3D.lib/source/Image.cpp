@@ -49,6 +49,7 @@ bool Image::fileSupported(const std::string& filename, bool allowCheckSignature)
 
 Image::Ref Image::fromFile(const std::string& filename, const ImageFormat* imageFormat) {
     debugAssertM(fileSupported(filename, true), G3D::format("Image file format not supported! (%s)", filename.c_str()));
+    // Use BinaryInput to allow reading from zip files
     BinaryInput bi(filename, G3D::G3D_LITTLE_ENDIAN);
     return fromBinaryInput(&bi, imageFormat);
 }
@@ -90,6 +91,7 @@ Image::Ref Image::fromBinaryInput(BinaryInput* bi, const ImageFormat* imageForma
         img->m_format = imageFormat;
     }
 
+    // Convert palettized images so row data can be copied easier
     if (img->m_image->getColorType() == FIC_PALETTE) {
         switch (img->m_image->getBitsPerPixel()) 
         {
