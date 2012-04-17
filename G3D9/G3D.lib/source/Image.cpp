@@ -122,12 +122,6 @@ Image::Ref Image::fromBinaryInput(BinaryInput* bi, const ImageFormat* imageForma
     return img;
 }
 
-void Image::toFile(const std::string& filename) const {
-    if (! m_image->save(filename.c_str())) {
-        debugAssertM(false, G3D::format("Failed to write image to %s", filename.c_str()));
-    }
-}
-
 Image::Ref Image::fromImageBuffer(const ImageBuffer::Ref& buffer) {
     FREE_IMAGE_TYPE fiType = determineFreeImageType(buffer->format());
     debugAssertM(fiType != FIT_UNKNOWN, G3D::format("Trying to create Image from unsupported ImageBuffer format (%s)", buffer->format()->name().c_str()));
@@ -161,6 +155,16 @@ Image::Ref Image::fromImageBuffer(const ImageBuffer::Ref& buffer) {
     }
 
     return img;
+}
+
+void Image::toFile(const std::string& filename) const {
+    if (! m_image->save(filename.c_str())) {
+        debugAssertM(false, G3D::format("Failed to write image to %s", filename.c_str()));
+    }
+}
+
+void Image::toBinaryOutput(BinaryOutput* bo) const {
+    // todo: implement FreeImageIO helpers that wrap BinaryOutput, needs to be thread-safe
 }
 
 ImageBuffer::Ref Image::toImageBuffer() const {

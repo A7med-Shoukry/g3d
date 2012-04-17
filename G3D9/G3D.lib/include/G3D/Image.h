@@ -78,6 +78,8 @@ public:
 
     /** Saves internal pixel data to file specified by \a filename.  Does not convert pixel format before saving. */
     void toFile(const std::string& filename) const;
+    /** Saves internal pixel data to existing BinaryOutput \a bo.  Does not convert pixel format before saving. */
+    void toBinaryOutput(BinaryOutput* bo) const;
     /** Saves internal pixel data to ImageBuffer.  Does not convert pixel format before saving. */
     ImageBuffer::Ref toImageBuffer() const;
 
