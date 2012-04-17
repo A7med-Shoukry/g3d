@@ -107,9 +107,9 @@ void App::onInit() {
         //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\cubemap\\noonclouds\\noonclouds_bk.png");
         Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\squaresswirls.exr");
         //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\material\\metalcrate\\metalcrate-L.png");
-        imgTexture = Texture::fromImageBuffer("imgTexture", img->toBuffer());
+        imgTexture = Texture::fromImageBuffer("imgTexture", img->toImageBuffer());
 
-        //Image::Ref img2 = Image::fromBuffer(img->toBuffer());
+        //Image::Ref img2 = Image::fromImageBuffer(img->toImageBuffer());
         //img2->toFile("C:\\dev\\G3D\\G3D9\\data-files\\test3.exr");
         img->toFile("C:\\dev\\G3D\\G3D9\\data-files\\test3.tiff");
     }

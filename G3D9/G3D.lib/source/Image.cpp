@@ -128,7 +128,7 @@ void Image::toFile(const std::string& filename) const {
     }
 }
 
-Image::Ref Image::fromBuffer(const ImageBuffer::Ref& buffer) {
+Image::Ref Image::fromImageBuffer(const ImageBuffer::Ref& buffer) {
     FREE_IMAGE_TYPE fiType = determineFreeImageType(buffer->format());
     debugAssertM(fiType != FIT_UNKNOWN, G3D::format("Trying to create Image from unsupported ImageBuffer format (%s)", buffer->format()->name().c_str()));
 
@@ -163,7 +163,7 @@ Image::Ref Image::fromBuffer(const ImageBuffer::Ref& buffer) {
     return img;
 }
 
-ImageBuffer::Ref Image::toBuffer() const {
+ImageBuffer::Ref Image::toImageBuffer() const {
     ImageBuffer::Ref buffer = ImageBuffer::create(AlignedMemoryManager::create(), m_format, m_image->getWidth(), m_image->getHeight(), 1, 1);
 
     BYTE* pixels = m_image->accessPixels();

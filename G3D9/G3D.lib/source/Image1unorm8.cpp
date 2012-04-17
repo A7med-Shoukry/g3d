@@ -105,22 +105,22 @@ void Image1unorm8::load(const std::string& filename) {
     switch (image->format()->code)
     {
         case ImageFormat::CODE_L8:
-            copyArray(static_cast<const Color1unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            copyArray(static_cast<const Color1unorm8*>(image->toImageBuffer()->buffer()), image->width(), image->height());
             break;
         case ImageFormat::CODE_L32F:
-            copyArray(static_cast<const Color1*>(image->toBuffer()->buffer()), image->width(), image->height());
+            copyArray(static_cast<const Color1*>(image->toImageBuffer()->buffer()), image->width(), image->height());
             break;
         case ImageFormat::CODE_RGB8:
-            copyArray(static_cast<const Color3unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            copyArray(static_cast<const Color3unorm8*>(image->toImageBuffer()->buffer()), image->width(), image->height());
             break;
         case ImageFormat::CODE_RGB32F:
-            copyArray(static_cast<const Color3*>(image->toBuffer()->buffer()), image->width(), image->height());
+            copyArray(static_cast<const Color3*>(image->toImageBuffer()->buffer()), image->width(), image->height());
             break;
         case ImageFormat::CODE_RGBA8:
-            copyArray(static_cast<const Color4unorm8*>(image->toBuffer()->buffer()), image->width(), image->height());
+            copyArray(static_cast<const Color4unorm8*>(image->toImageBuffer()->buffer()), image->width(), image->height());
             break;
         case ImageFormat::CODE_RGBA32F:
-            copyArray(static_cast<const Color4*>(image->toBuffer()->buffer()), image->width(), image->height());
+            copyArray(static_cast<const Color4*>(image->toImageBuffer()->buffer()), image->width(), image->height());
             break;
         default:
             debugAssertM(false, "Trying to load unsupported image format");
@@ -195,7 +195,7 @@ void Image1unorm8::copyArray(const Color4* src, int w, int h) {
 void Image1unorm8::save(const std::string& filename) {
     ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), format(), width(), height());
     System::memcpy(buffer->buffer(), getCArray(), width() * height());
-    Image::Ref image = Image::fromBuffer(buffer);
+    Image::Ref image = Image::fromImageBuffer(buffer);
     image->toFile(filename);
 }
 

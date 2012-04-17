@@ -107,7 +107,7 @@ bool App::onEvent(const GEvent& e) {
                 ImageBuffer::Ref buffer;
                 output[f]->getImage(buffer, ImageFormat::RGB8());
 
-                Image::Ref temp = Image::fromBuffer(buffer);
+                Image::Ref temp = Image::fromImageBuffer(buffer);
                 temp->flipVertical();
                 temp->rotateCW(toRadians(90.0) * (-faceInfo.rotations));
                 if (faceInfo.flipY) { temp->flipVertical();   }

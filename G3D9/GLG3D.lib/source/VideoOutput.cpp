@@ -297,7 +297,7 @@ void VideoOutput::append(RenderDevice* rd, bool backbuffer) {
     // todo (Image upgrade): optimize
     Image::Ref image = rd->screenshotPic(false, false);
     rd->setReadBuffer(old);
-    ImageBuffer::Ref imageBuffer = image->toBuffer();
+    ImageBuffer::Ref imageBuffer = image->toImageBuffer();
     encodeFrame(static_cast<uint8*>(imageBuffer->buffer()), imageBuffer->format(), true);
 }
 

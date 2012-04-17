@@ -261,7 +261,7 @@ void App::render(const View& view, Image::Ref& image) {
     // Read back to the CPU
     ImageBuffer::Ref buffer;
     color->getImage(buffer, ImageFormat::RGB8());
-    image = Image::fromBuffer(buffer);
+    image = Image::fromImageBuffer(buffer);
     glMakeCurrent(oldContext);
     gpuMutex.unlock();
 }

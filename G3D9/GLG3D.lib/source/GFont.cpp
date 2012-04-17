@@ -846,7 +846,7 @@ void GFont::makeFont(int charsetSize, const std::string& infileBase, std::string
 
     // Texture width
     out.writeUInt16(image->width());
-    out.writeBytes(image->toBuffer()->buffer(), square(image->width()) * 256 / charsetSize);
+    out.writeBytes(image->toImageBuffer()->buffer(), square(image->width()) * 256 / charsetSize);
  
     out.compress();
     out.commit(false);

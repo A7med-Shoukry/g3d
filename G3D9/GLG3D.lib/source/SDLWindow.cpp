@@ -459,7 +459,7 @@ void SDLWindow::setIcon(const Image::Ref& image) {
         amask = 0x00000000;
     }
 
-    ImageBuffer::Ref buffer = image->toBuffer();
+    ImageBuffer::Ref buffer = image->toImageBuffer();
     int pixelBitLen     = buffer->foramt()->cpuBitsPerPixel;
     int scanLineByteLen = (pixelBitLen / 8) * buffer->width();
 

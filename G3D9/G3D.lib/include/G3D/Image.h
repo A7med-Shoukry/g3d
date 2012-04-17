@@ -74,12 +74,12 @@ public:
     /** Loads an image from existing BinaryInput \a bi.  Sets internal pixel format to imageFormat but does not convert. */
     static Ref fromBinaryInput(BinaryInput* bi, const ImageFormat* imageFormat = ImageFormat::AUTO());
     /** Loads an image from existing ImageBuffer \a buffer.  Performs a copy of pixel data. */
-    static Ref fromBuffer(const ImageBuffer::Ref& buffer);
+    static Ref fromImageBuffer(const ImageBuffer::Ref& buffer);
 
     /** Saves internal pixel data to file specified by \a filename.  Does not convert pixel format before saving. */
     void toFile(const std::string& filename) const;
     /** Saves internal pixel data to ImageBuffer.  Does not convert pixel format before saving. */
-    ImageBuffer::Ref toBuffer() const;
+    ImageBuffer::Ref toImageBuffer() const;
 
     /** Creates a deep copy of iamge */
     Ref clone() const;

@@ -44,7 +44,7 @@ IconSet::Ref IconSet::fromFile(const std::string& filename) {
     Texture::Settings settings;
     settings.wrapMode = WrapMode::CLAMP;
     settings.interpolateMode = Texture::BILINEAR_NO_MIPMAP;
-    s->m_texture = Texture::fromImageBuffer(filename, image->toBuffer(), ImageFormat::AUTO(), Texture::DIM_2D_NPOT, settings);
+    s->m_texture = Texture::fromImageBuffer(filename, image->toImageBuffer(), ImageFormat::AUTO(), Texture::DIM_2D_NPOT, settings);
 
     return s;
 }

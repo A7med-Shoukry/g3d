@@ -2862,7 +2862,7 @@ Image::Ref RenderDevice::screenshotPic(bool getAlpha, bool invertY) const {
     }
     glPopClientAttrib();
 
-    Image::Ref image = Image::fromBuffer(imageBuffer);
+    Image::Ref image = Image::fromImageBuffer(imageBuffer);
 
     // Flip right side up
     if (invertY) {

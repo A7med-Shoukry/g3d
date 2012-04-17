@@ -628,7 +628,7 @@ void Win32Window::setIcon(const Image::Ref& src) {
     
 
     HBITMAP bwMask = ::CreateBitmap(src->width(), src->height(), 1, 1, binaryMaskData.getCArray());  
-    HBITMAP color  = ::CreateBitmap(src->width(), src->height(), 1, 32, colorData->toBuffer()->buffer());
+    HBITMAP color  = ::CreateBitmap(src->width(), src->height(), 1, 32, colorData->toImageBuffer()->buffer());
 
     ICONINFO iconInfo;
     iconInfo.xHotspot = 0;

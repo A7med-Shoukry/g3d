@@ -889,7 +889,7 @@ Texture::Ref Texture::fromFile(
     if ((numFaces == 1) && (dimension == DIM_2D) || (dimension == DIM_2D_NPOT) || (dimension == DIM_3D_NPOT) || (dimension == DIM_3D)) {
         if (toLower(realFilename[0]) == "<white>") {
             ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 1, 1);
-            image[0] = Image::fromBuffer(buffer);
+            image[0] = Image::fromImageBuffer(buffer);
             image[0]->set(Point2int32(0, 0), Color4unorm8::one());
         } else {
             image[0] = Image::fromFile(realFilename[0]);
@@ -904,7 +904,7 @@ Texture::Ref Texture::fromFile(
         for (int f = 0; f < numFaces; ++f) {
             if ((toLower(realFilename[f]) == "<white>") || realFilename[f].empty()) {
             ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 1, 1);
-            image[f] = Image::fromBuffer(buffer);
+            image[f] = Image::fromImageBuffer(buffer);
             image[f]->set(Point2int32(0, 0), Color4unorm8::one());
             } else {
                 threadSet.insert(new ImageLoaderThread(realFilename[f], image[f]));
@@ -924,7 +924,7 @@ Texture::Ref Texture::fromFile(
             transform(image[f], info.face[f]);
         }
 
-        buffers[f] = image[f]->toBuffer();
+        buffers[f] = image[f]->toImageBuffer();
         array[f] = buffers[f]->buffer();
     }
 
@@ -1033,12 +1033,12 @@ Texture::Ref Texture::fromTwoFiles(
                     }
                 }
 
-                buffers[f] = color[f]->toBuffer();
+                buffers[f] = color[f]->toImageBuffer();
                 data = static_cast<uint8*>(buffers[f]->buffer());
             } else {
                 alwaysAssertM(color[f]->format() == ImageFormat::RGB8(), "Cannot load monochrome cube maps");
                 buffers[f] = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), color[f]->width(), color[f]->height());
-                Image::Ref tempImage = Image::fromBuffer(buffers[f]);
+                Image::Ref tempImage = Image::fromImageBuffer(buffers[f]);
                 // Write the data inline
                 for (int h = 0; h < color[f]->height(); ++h) {
                     for (int w = 0; w < color[f]->width(); ++w) {
@@ -1053,7 +1053,7 @@ Texture::Ref Texture::fromTwoFiles(
                     }
                 }
 
-                buffers[f] = tempImage->toBuffer();
+                buffers[f] = tempImage->toImageBuffer();
                 data = static_cast<uint8*>(buffers[f]->buffer());
             }
 
