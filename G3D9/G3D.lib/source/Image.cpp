@@ -269,6 +269,9 @@ void Image::get(const Point2int32& pos, Color4& color) const {
             }
             break;
         }
+        default:
+            debugAssertM(false, G3D::format("Image::get does not support pixel format (%s)", m_format->name().c_str()));
+            break;
     }
 }
 
@@ -308,6 +311,9 @@ void Image::get(const Point2int32& pos, Color4unorm8& color) const {
             }
             break;
         }
+        default:
+            debugAssertM(false, G3D::format("Image::get does not support pixel format (%s)", m_format->name().c_str()));
+            break;
     }
 }
 
@@ -350,6 +356,9 @@ void Image::set(const Point2int32& pos, const Color4& color) {
             }
             break;
         }
+        default:
+            debugAssertM(false, G3D::format("Image::set does not support pixel format (%s)", m_format->name().c_str()));
+            break;
     }
 }
 
@@ -384,6 +393,9 @@ void Image::set(const Point2int32& pos, const Color4unorm8& color) {
             }
             break;
         }
+        default:
+            debugAssertM(false, G3D::format("Image::set does not support pixel format (%s)", m_format->name().c_str()));
+            break;
     }
 }
 
