@@ -830,7 +830,7 @@ std::string CarbonWindow::joystickName(unsigned int stickNum) {
 
 void CarbonWindow::setIcon(const Image::Ref& image) {
     // SetApplicationDockTileImage
-    ImageBuffer::Ref buffer = image->toBuffer();
+    ImageBuffer::Ref buffer = image->toImageBuffer();
     CGImageRef dockImage = NULL;
     CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     CGDataProviderRef dataProviderRef = CGDataProviderCreateWithData(NULL,buffer->buffer(),buffer->size(),NULL);
