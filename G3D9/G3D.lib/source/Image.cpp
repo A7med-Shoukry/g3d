@@ -28,32 +28,32 @@ Image::~Image() {
     //FreeImage_DeInitialise();
 }
 
+
+GMutex Image::s_freeImageMutex;
+
 void Image::initFreeImage() {
-    GMutexLock lock(&m_freeImageMutex);
+    GMutexLock lock(&s_freeImageMutex);
     static bool hasInitialized = false;
-    if (hasInitialized == false) {
+
+    if (! hasInitialized) {
         FreeImage_Initialise();
         hasInitialized = true;
     }
 }
 
 bool Image::fileSupported(const std::string& filename, bool allowCheckSignature) {
-    // todo: if g3d ever has a global init, then this would move there to avoid deinitializing before program exit
-    FreeImage_Initialise();
+    initFreeImage();
 
     bool knownFormat = false;
 
     if (allowCheckSignature) {
-	    knownFormat = (FreeImage_GetFileType(filename.c_str(), 0) != FIF_UNKNOWN);
+        knownFormat = (FreeImage_GetFileType(filename.c_str(), 0) != FIF_UNKNOWN);
     }
-
+    
     if (! knownFormat) {
-		knownFormat = (FreeImage_GetFIFFromFilename(filename.c_str()) != FIF_UNKNOWN);
-	}
-
-    // This call can deinitialize the plugins if it's the last reference, but they can be re-initialized
-    FreeImage_DeInitialise();
-
+        knownFormat = (FreeImage_GetFIFFromFilename(filename.c_str()) != FIF_UNKNOWN);
+    }
+    
     return knownFormat;
 }
 

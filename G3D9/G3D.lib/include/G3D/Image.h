@@ -58,7 +58,7 @@ private:
     fipImage*           m_image;
     const ImageFormat*  m_format;
 
-    GMutex              m_freeImageMutex;
+    static GMutex       s_freeImageMutex;
 
     Image();
 
@@ -66,7 +66,8 @@ private:
     Image(const Image&);
     Image& operator=(const Image&);
 
-    void initFreeImage();
+    /** Initialize the FreeImage library on first use */
+    static void initFreeImage();
 
 public:
     virtual ~Image();
