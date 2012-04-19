@@ -10,6 +10,7 @@
 #include "G3D/Color4.h"
 #include "G3D/Color4unorm8.h"
 #include "G3D/Color1unorm8.h"
+#include "G3D/GMutex.h"
 #include "G3D/ImageBuffer.h"
 #include "G3D/Vector2int32.h"
 #include "G3D/ReferenceCount.h"
@@ -57,11 +58,15 @@ private:
     fipImage*           m_image;
     const ImageFormat*  m_format;
 
+    GMutex              m_freeImageMutex;
+
     Image();
 
     // Not-implemented
     Image(const Image&);
     Image& operator=(const Image&);
+
+    void initFreeImage();
 
 public:
     virtual ~Image();
@@ -79,11 +84,11 @@ public:
     /** Saves internal pixel data to file specified by \a filename.  Does not convert pixel format before saving. */
     void toFile(const std::string& filename) const;
     /** Saves internal pixel data to existing BinaryOutput \a bo.  Does not convert pixel format before saving. */
-    void toBinaryOutput(BinaryOutput* bo) const;
+    void toBinaryOutput(BinaryOutput* bo, const std::string& fileFormat) const;
     /** Saves internal pixel data to ImageBuffer.  Does not convert pixel format before saving. */
     ImageBuffer::Ref toImageBuffer() const;
 
-    /** Creates a deep copy of iamge */
+    /** Creates a deep copy */
     Ref clone() const;
 
     int width() const;

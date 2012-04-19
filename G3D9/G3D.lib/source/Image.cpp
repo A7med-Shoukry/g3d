@@ -15,7 +15,7 @@ Image::Image()
     , m_format(ImageFormat::AUTO()) {
 
     // todo: if g3d ever has a global init, then this would move there to avoid deinitializing before program exit
-    FreeImage_Initialise();
+    initFreeImage();
     m_image = new fipImage;
 }
 
@@ -24,7 +24,17 @@ Image::~Image() {
         delete m_image;
     }
     // This call can deinitialize the plugins if it's the last reference, but they can be re-initialized
-    FreeImage_DeInitialise();
+    // disabled for now -- initialize FreeImage once in a thread-safe manner, then leave initialize
+    //FreeImage_DeInitialise();
+}
+
+void Image::initFreeImage() {
+    GMutexLock lock(&m_freeImageMutex);
+    static bool hasInitialized = false;
+    if (hasInitialized == false) {
+        FreeImage_Initialise();
+        hasInitialized = true;
+    }
 }
 
 bool Image::fileSupported(const std::string& filename, bool allowCheckSignature) {
@@ -163,8 +173,44 @@ void Image::toFile(const std::string& filename) const {
     }
 }
 
-void Image::toBinaryOutput(BinaryOutput* bo) const {
+// FreeImageIO implementation for writing to BinaryOutput
+static unsigned _FIBinaryOutputWrite(void *buffer, unsigned int size, unsigned count, fi_handle handle) {
+    BinaryOutput* bo = static_cast<BinaryOutput*>(handle);
+    
+    // Write 'size' number of bytes from 'buffer' for 'count' times
+    unsigned numItems = count;
+    while (numItems-- > 0) {
+        bo->writeBytes(buffer, size);
+    }
+
+    return count;
+}
+
+// FreeImageIO implementation for writing to BinaryOutput
+static int _FIBinaryOutputSeek(fi_handle handle, long offset, int origin) {
+    debugAssert(offset == 0);
+    return 0;
+}
+
+// FreeImageIO implementation for writing to BinaryOutput
+static long _FIBinaryOutputTell(fi_handle handle) {
+    BinaryOutput* bo = static_cast<BinaryOutput*>(handle);
+
+    // This is only valid if this is the first "file" written to BinaryOutput;
+    return bo->position();
+}
+
+void Image::toBinaryOutput(BinaryOutput* bo, const std::string& fileFormat) const {
     // todo: implement FreeImageIO helpers that wrap BinaryOutput, needs to be thread-safe
+    FreeImageIO fiIO;
+    fiIO.read_proc = NULL;
+    fiIO.seek_proc = _FIBinaryOutputSeek;
+    fiIO.tell_proc = _FIBinaryOutputTell;
+    fiIO.write_proc = _FIBinaryOutputWrite;
+
+    if (! m_image->saveToHandle(FreeImage_GetFIFFromFormat(toUpper(fileFormat).c_str()), &fiIO, bo)) {
+        debugAssertM(false, "Failed to write image to BinaryOutput");
+    }
 }
 
 ImageBuffer::Ref Image::toImageBuffer() const {
