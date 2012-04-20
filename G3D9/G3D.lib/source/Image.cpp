@@ -173,14 +173,21 @@ void Image::toFile(const std::string& filename) const {
     }
 }
 
+// Helper for FreeImageIO to allow seeking
+struct _FIBinaryOutputInfo {
+    BinaryOutput* bo;
+    int64         startPos;
+};
+
 // FreeImageIO implementation for writing to BinaryOutput
 static unsigned _FIBinaryOutputWrite(void *buffer, unsigned int size, unsigned count, fi_handle handle) {
-    BinaryOutput* bo = static_cast<BinaryOutput*>(handle);
+    _FIBinaryOutputInfo* info = static_cast<_FIBinaryOutputInfo*>(handle);
     
     // Write 'size' number of bytes from 'buffer' for 'count' times
     unsigned numItems = count;
-    while (numItems-- > 0) {
-        bo->writeBytes(buffer, size);
+    while (numItems != 0) {
+        info->bo->writeBytes(buffer, size);
+        --numItems;
     }
 
     return count;
@@ -188,16 +195,46 @@ static unsigned _FIBinaryOutputWrite(void *buffer, unsigned int size, unsigned c
 
 // FreeImageIO implementation for writing to BinaryOutput
 static int _FIBinaryOutputSeek(fi_handle handle, long offset, int origin) {
-    debugAssert(offset == 0);
+    _FIBinaryOutputInfo* info = static_cast<_FIBinaryOutputInfo*>(handle);
+
+    switch (origin)
+    {
+        case SEEK_SET:
+        {
+            info->bo->setPosition(info->startPos + offset);
+            break;
+        }
+
+        case SEEK_END:
+        {
+            int64 oldLength = info->bo->length();
+            if (offset > 0) {
+                info->bo->setLength(oldLength + offset);
+            }
+
+            info->bo->setPosition(oldLength + offset);
+            break;
+        }
+
+        case SEEK_CUR:
+        {
+            info->bo->setPosition(info->bo->position() + offset);
+            break;
+        }
+
+        default:
+            return -1;
+            break;
+    }
+
     return 0;
 }
 
 // FreeImageIO implementation for writing to BinaryOutput
 static long _FIBinaryOutputTell(fi_handle handle) {
-    BinaryOutput* bo = static_cast<BinaryOutput*>(handle);
+    _FIBinaryOutputInfo* info = static_cast<_FIBinaryOutputInfo*>(handle);
 
-    // This is only valid if this is the first "file" written to BinaryOutput;
-    return bo->position();
+    return static_cast<long>(info->bo->position() - info->startPos);
 }
 
 void Image::toBinaryOutput(BinaryOutput* bo, const std::string& fileFormat) const {
@@ -208,7 +245,11 @@ void Image::toBinaryOutput(BinaryOutput* bo, const std::string& fileFormat) cons
     fiIO.tell_proc = _FIBinaryOutputTell;
     fiIO.write_proc = _FIBinaryOutputWrite;
 
-    if (! m_image->saveToHandle(FreeImage_GetFIFFromFormat(toUpper(fileFormat).c_str()), &fiIO, bo)) {
+    _FIBinaryOutputInfo info;
+    info.bo = bo;
+    info.startPos = bo->position();
+
+    if (! m_image->saveToHandle(FreeImage_GetFIFFromFormat(toUpper(fileFormat).c_str()), &fiIO, &info)) {
         debugAssertM(false, "Failed to write image to BinaryOutput");
     }
 }
