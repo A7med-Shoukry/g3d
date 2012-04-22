@@ -78,6 +78,8 @@
     <OutDir>$(SolutionDir)..\build\samples\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)d</TargetName>
+    <IncludePath>$(SolutionDir)..\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
