@@ -4,23 +4,24 @@
  \author Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2001-02-28
- \edited  2011-05-18
+ \edited  2012-04-21
 */
 #include "G3D/Log.h"
 #include "G3D/Any.h"
 #include "G3D/Matrix3.h"
 #include "G3D/Rect2D.h"
 #include "G3D/fileutils.h"
-#include "GLG3D/glcalls.h"
+#include "G3D/FileSystem.h"
+#include "G3D/ThreadSet.h"
 #include "G3D/ImageFormat.h"
 #include "G3D/CoordinateFrame.h"
+#include "GLG3D/glcalls.h"
 #include "GLG3D/Texture.h"
 #include "GLG3D/getOpenGLState.h"
 #include "GLG3D/GLCaps.h"
 #include "GLG3D/Framebuffer.h"
 #include "GLG3D/RenderDevice.h"
-#include "G3D/FileSystem.h"
-#include "G3D/ThreadSet.h"
+#include "GLG3D/BumpMap.h"
 
 #ifdef verify
 #undef verify
@@ -1110,11 +1111,11 @@ Texture::Ref Texture::fromMemory(
     Dimension                           dimension,
     const Settings&                     settings,
     const Preprocess&                   preprocess) {
-    
+
+    // For use computing normal maps
+    ImageBuffer::Ref normal;
 
     typedef Array< Array<const void*> > MipArray;
-    // Used for normal map computation
-    //GImage normal;
 
     float scaleFactor = preprocess.scaleFactor;
     
@@ -1178,15 +1179,14 @@ Texture::Ref Texture::fromMemory(
         debugAssertM(bytesFormat->numComponents == 1 || bytesFormat->numComponents == 3 || bytesFormat->numComponents == 4, "1, 3, or 4 channels needed to compute normal maps");
         debugAssertM(bytesPtr->size() == 1, "Cannot specify mipmaps when computing normal maps automatically");
 
-        /* todo (Image upgrade): replace GImage::computeNormalMap
-        GImage::computeNormalMap(width, height, bytesFormat->numComponents, 
+        normal = BumpMap::computeNormalMap(width, height, bytesFormat->numComponents, 
                                  reinterpret_cast<const unorm8*>((*bytesPtr)[0][0]),
-                                 normal, preprocess.bumpMapPreprocess);
+                                 preprocess.bumpMapPreprocess);
         
         // Replace the previous array with the data from our normal map
         bytesPtr = new MipArray();
         bytesPtr->resize(1);
-        (*bytesPtr)[0].append(normal.byte());
+        (*bytesPtr)[0].append(normal->buffer());
         
         bytesFormat = ImageFormat::RGBA8();
 
@@ -1195,7 +1195,6 @@ Texture::Ref Texture::fromMemory(
         }
 
         debugAssertM(desiredFormat->openGLBaseFormat == GL_RGBA, "Desired format must contain RGBA channels for bump mapping");
-        */
     }
 
     if (desiredFormat == ImageFormat::AUTO()) {
@@ -1381,11 +1380,10 @@ Texture::Ref Texture::fromMemory(
     if (bytesPtr != &_bytes) {
 
         // We must free our own data
-        /* todo (Image upgrade): replace GImage::computeNormalMap
-        if (normal.width() != 0) {
-            // The normal GImage is holding the data; do not free it because 
-            // the GImage destructor will do so at the end of the method.
-        } else */{
+        if (normal.notNull()) {
+            // The normal ImageBuffer is holding the data; do not free it because 
+            // the destructor will do so at the end of the method automatically.
+        } else {
             for (int m = 0; m < bytesPtr->size(); ++m) {
                 Array<const void*>& face = (*bytesPtr)[m]; 
                 for (int f = 0; f < face.size(); ++f) {

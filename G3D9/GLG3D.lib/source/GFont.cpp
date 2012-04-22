@@ -66,7 +66,7 @@ void GFont::adjustINIWidths(const std::string& srcFile, const std::string& dstFi
         in.readNumber();
         in.readSymbol("=");
 
-        int w = in.readNumber();
+        int w = (int)in.readNumber();
         w = iRound(w * scale);
         out.printf("%d=%d\n", i, w);
     }
@@ -175,12 +175,12 @@ GFont::GFont(const std::string& filename, BinaryInput& b) : m_texture(NULL) {
 
 
 Vector2 GFont::texelSize() const {
-    return Vector2(charWidth, charHeight);
+    return Vector2((float)charWidth, (float)charHeight);
 }
 
 
-Vector2 GFont::drawString(
-    RenderDevice*       renderDevice,
+Vector2 GFont::drawString
+   (RenderDevice*       renderDevice,
     const std::string&  s,
     float               x,
     float               y,
@@ -223,7 +223,7 @@ Vector2 GFont::drawString(
             glTexCoord2f((col + 1) * charWidth - 1, (row + 1) * charHeight - 2);
             glVertex2f(xx, y + h - sy); 
 
-            glTexCoord2f((col + 1) * charWidth - 1, row * charHeight + 1);
+            glTexCoord2f(float((col + 1) * charWidth - 1), float(row * charHeight + 1));
             glVertex2f(xx, y + sy);
                         
         }
@@ -275,8 +275,8 @@ Vector2 GFont::computePackedArray(
             float xx = x - sx;
             // Tex, Vert
             ++count;
-            array[count].x = col * charWidth;
-            array[count].y = row * charHeight + 1;
+            array[count].x = float(col * charWidth);
+            array[count].y = float(row * charHeight + 1);
 
             ++count;
             array[count].x = xx;
@@ -420,7 +420,7 @@ Vector2 GFont::send2DQuads(
         break;
 
     case XALIGN_CENTER:
-        x -= bounds(s, size, spacing).x / 2;
+        x -= bounds(s, size, spacing).x / 2.0f;
         break;
     
     default:
@@ -429,7 +429,7 @@ Vector2 GFont::send2DQuads(
 
     switch (yalign) {
     case YALIGN_CENTER:
-        y -= h / 2.0;
+        y -= h / 2.0f;
         break;
 
     case YALIGN_BASELINE:
@@ -468,7 +468,7 @@ Vector2 GFont::send2DQuads(
                     // shift from the previous outline
                     glTranslatef(dx - lastDx, dy - lastDy, 0);
                     glDrawArrays(GL_QUADS, 0, N);
-                    lastDx = dx; lastDy = dy;
+                    lastDx = float(dx); lastDy = float(dy);
                 }
             }
         }
@@ -546,7 +546,7 @@ Vector2 GFont::draw3D(
     float x = 0;
     float y = 0;
 
-    float h = size * 1.5;
+    float h = size * 1.5f;
     float w = h * charWidth / charHeight;
 
     switch (xalign) {
@@ -555,7 +555,7 @@ Vector2 GFont::draw3D(
         break;
 
     case XALIGN_CENTER:
-        x -= bounds(s, size, spacing).x / 2;
+        x -= bounds(s, size, spacing).x / 2.0f;
         break;
     
     default:
@@ -564,7 +564,7 @@ Vector2 GFont::draw3D(
 
     switch (yalign) {
     case YALIGN_CENTER:
-        y -= h / 2.0;
+        y -= h / 2.0f;
         break;
 
     case YALIGN_BASELINE:
@@ -609,7 +609,7 @@ Vector2 GFont::draw3D(
             // Make the equivalent of a 3D "1 pixel" offset (the
             // default 2D text size is 12-pt with a 1pix border)
 
-            const float borderOffset = size / 12.0;
+            const float borderOffset = size / 12.0f;
             renderDevice->setColor(border);
             for (int dy = -1; dy <= 1; dy += 2) {
                 for (int dx = -1; dx <= 1; dx += 2) {
@@ -678,7 +678,7 @@ int GFont::wordWrapCut
     debugAssert(maxWidth > 0);
     int n = (int)s.length();
 
-    const float h = size * 1.5;
+    const float h = size * 1.5f;
     const float w = h * charWidth / charHeight;
     const float propW = w / charWidth;
     float x = 0;
@@ -693,7 +693,7 @@ int GFont::wordWrapCut
         if (spacing == PROPORTIONAL_SPACING) {
             x += propW * subWidth[(int)c];
         } else {
-            x += propW * subWidth[(int)'M'] * 0.85;
+            x += propW * subWidth[(int)'M'] * 0.85f;
         }
 
         if (c == '\n') {
@@ -718,7 +718,7 @@ int GFont::wordWrapCut
         if (spacing == PROPORTIONAL_SPACING) {
             x -= propW * subWidth[(int)c];
         } else {
-            x -= propW * subWidth[(int)'M'] * 0.85;
+            x -= propW * subWidth[(int)'M'] * 0.85f;
         }
         --i;
     }
@@ -737,7 +737,7 @@ Vector2 GFont::bounds(
 
     int n = (int)s.length();
 
-    float h = size * 1.5;
+    float h = size * 1.5f;
     float w = h * charWidth / charHeight;
     float propW = w / charWidth;
     float x = 0;
@@ -749,7 +749,7 @@ Vector2 GFont::bounds(
             x += propW * subWidth[(int)c];
         }
     } else {
-        x = subWidth[(int)'M'] * n * 0.85 * propW;
+        x = subWidth[(int)'M'] * n * 0.85f * propW;
     }
 
     return Vector2(x, y);

@@ -3,7 +3,7 @@
 
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2009-02-19
- \edited  2011-07-24
+ \edited  2012-04-21
  
  Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
@@ -12,6 +12,7 @@
 #define G3D_BumpMap_h
 
 #include "G3D/platform.h"
+#include "G3D/ImageBuffer.h"
 #include "GLG3D/Component.h"
 
 namespace G3D {
@@ -151,6 +152,21 @@ public:
 
     /** True if the same SuperShader can be used for both bump maps.*/
     bool similarTo(const BumpMap::Ref& other) const;
+
+
+     /**
+     Given a monochrome, tangent-space bump map, computes a new image where the
+     RGB channels are a tangent space normal map and the alpha channel
+     is the original bump map.  Assumes the input image is tileable.
+
+     In the resulting image, x = red = tangent, y = green = binormal, and z = blue = normal. 
+      */
+    static ImageBuffer::Ref computeNormalMap
+        (int                 width,
+	     int                 height,
+	     int                 channels,
+	     const unorm8*       src,
+	     const BumpMapPreprocess& preprocess = BumpMapPreprocess());
 };
 
 } // namespace G3D

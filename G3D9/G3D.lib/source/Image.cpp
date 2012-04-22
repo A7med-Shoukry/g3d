@@ -487,33 +487,34 @@ void Image::set(const Point2int32& pos, const Color4& color) {
     }
 }
 
+
 void Image::set(const Point2int32& pos, const Color3& color) {
     set(pos, Color4(color));
 }
+
 
 void Image::set(const Point2int32& pos, const Color4unorm8& color) {
     Point2int32 fipPos(pos.x, m_image->getHeight() - pos.y - 1);
 
     BYTE* scanline = m_image->getScanLine(fipPos.y);
-    switch (m_image->getImageType())
-    {
+    switch (m_image->getImageType()) {
         case FIT_BITMAP:
         {
             if (m_image->isGrayscale()) {
-                // todo (Image upgrade): investigate adding average() to Coor3unorm8 to allow c.rgb().average()
+                // todo (Image upgrade): investigate adding average() to Color3unorm8 to allow c.rgb().average()
                 scanline[fipPos.x] = color.r.bits();
             } else if (m_image->getBitsPerPixel() == 24) {
                 scanline += 3 * fipPos.x;
 
-                scanline[FI_RGBA_RED] = color.r.bits();
+                scanline[FI_RGBA_RED]   = color.r.bits();
                 scanline[FI_RGBA_GREEN] = color.g.bits();
-                scanline[FI_RGBA_BLUE] = color.b.bits();
+                scanline[FI_RGBA_BLUE]  = color.b.bits();
             } else if (m_image->getBitsPerPixel() == 32) {
                 scanline += 4 * fipPos.x;
 
-                scanline[FI_RGBA_RED] = color.r.bits();
+                scanline[FI_RGBA_RED]   = color.r.bits();
                 scanline[FI_RGBA_GREEN] = color.g.bits();
-                scanline[FI_RGBA_BLUE] = color.b.bits();
+                scanline[FI_RGBA_BLUE]  = color.b.bits();
                 scanline[FI_RGBA_ALPHA] = color.a.bits();
             }
             break;
@@ -524,13 +525,16 @@ void Image::set(const Point2int32& pos, const Color4unorm8& color) {
     }
 }
 
+
 void Image::set(const Point2int32& pos, const Color3unorm8& color) {
     set(pos, Color4unorm8(color, unorm8::fromBits(255)));
 }
 
+
 void Image::set(const Point2int32& pos, const Color1unorm8& color) {
     set(pos, Color4unorm8(color.value, color.value, color.value, unorm8::fromBits(255)));
 }
+
 
 static const ImageFormat* determineImageFormat(const fipImage* image) {
     debugAssert(image->isValid() && image->getImageType() != FIT_UNKNOWN);
@@ -600,6 +604,7 @@ static const ImageFormat* determineImageFormat(const fipImage* image) {
 
     return imageFormat;
 }
+
 
 static FREE_IMAGE_TYPE determineFreeImageType(const ImageFormat* imageFormat) {
     FREE_IMAGE_TYPE fiType = FIT_UNKNOWN;

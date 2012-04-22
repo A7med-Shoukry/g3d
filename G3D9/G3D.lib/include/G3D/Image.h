@@ -8,6 +8,7 @@
 #ifndef G3D_Image_h
 #define G3D_Image_h
 
+#include "G3D/platform.h"
 #include "G3D/Color4.h"
 #include "G3D/Color4unorm8.h"
 #include "G3D/Color1unorm8.h"
@@ -15,7 +16,6 @@
 #include "G3D/ImageBuffer.h"
 #include "G3D/Vector2int32.h"
 #include "G3D/ReferenceCount.h"
-#include "G3D/BumpMapPreprocess.h"
 
 // non-G3D forward declarations
 class fipImage;
@@ -131,20 +131,6 @@ public:
     void set(const Point2int32& pos, const Color3unorm8& color);
     void set(const Point2int32& pos, const Color1unorm8& color);
 
-
-     /**
-     Given a monochrome, tangent-space bump map, computes a new image where the
-     RGB channels are a tangent space normal map and the alpha channel
-     is the original bump map.  Assumes the input image is tileable.
-
-     In the resulting image, x = red = tangent, y = green = binormal, and z = blue = normal. 
-      */
-    static Ref computeNormalMap
-        (int                 width,
-	     int                 height,
-	     int                 channels,
-	     const unorm8*       src,
-	     const BumpMapPreprocess& preprocess = BumpMapPreprocess());
 };
 
 } // namespace G3D
