@@ -1806,7 +1806,7 @@ public:
     std::string screenshot(const std::string& filepath="./") const;
 
     /**
-       @brief Takes a screenshot and puts the data into the G3D::GImage dest variable.
+       @brief Takes a screenshot.
 
        Reads from the current read buffer; use setReadBuffer(RenderDevice::READ_FRONT)
        to explicitly read from the front buffer, which is substantially faster than

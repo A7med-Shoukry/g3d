@@ -66,7 +66,7 @@ public:
     /** Load an existing icon set from a file. */
     static IconSet::Ref fromFile(const std::string& filename);
 
-    /** Load all of the image files (see G3D::GImage::supportedFormat)
+    /** Load all of the image files (see G3D::Image::supportedFormat)
         from \a sourceDir and its subdirectories and pack them into a
         single G3D::IconSet named \a outFile.
 

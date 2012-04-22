@@ -42,7 +42,7 @@ typedef ReferenceCountedPointer<Texture> TextureRef;
 
  Abstraction of OpenGL textures.  This class can be used with raw OpenGL, 
  without RenderDevice.  G3D::Texture supports all of the image formats
- that G3D::GImage can load, and DDS (DirectX textures), and Quake-style cube 
+ that G3D::Image can load, and DDS (DirectX textures), and Quake-style cube 
  maps.
 
  If you enable texture compression, textures will be compressed on the fly.
@@ -131,7 +131,7 @@ public:
 
      <pre>
      const Texture::CubeMapInfo::Face& faceInfo = cubeMapInfo.face[f];
-     GImage temp;
+     Image temp;
      renderTarget->getImage(temp, ImageFormat::RGB8());
      temp.flipVertical();
      temp.rotate90CW(-faceInfo.rotations);
