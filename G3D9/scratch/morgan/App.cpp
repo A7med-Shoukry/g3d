@@ -624,8 +624,8 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 int main(int argc, const char* argv[]) {
     // Make Gui
-    GuiTheme::makeThemeFromSourceFiles	("D:/morgan/g3d/data-source/guithemes/osx-10.7/", "osx-10.7_white.png", "osx-10.7_black.png", "osx-10.7.gtm.any", "D:/morgan/g3d/data-source/guithemes/osx-10.7/osx-10.7.gtm");
-    ::exit(0);
+//    GuiTheme::makeThemeFromSourceFiles	("D:/morgan/g3d/data-source/guithemes/osx-10.7/", "osx-10.7_white.png", "osx-10.7_black.png", "osx-10.7.gtm.any", "D:/morgan/g3d/data-source/guithemes/osx-10.7/osx-10.7.gtm");
+//    ::exit(0);
     /*
     // Make fonts
     GFont::makeFont(256, "d:/font/LucidaSans", "d:/font/LucidaSans.fnt"); 
@@ -658,9 +658,6 @@ int main(int argc, const char* argv[]) {
     ::exit(0);
 
     */
-
-    std::string d = "D:\\morgan\\foo";
-    FilePath::parent(d);
 
     (void)argc; (void)argv;
     GApp::Settings settings(argc, argv);
@@ -702,61 +699,7 @@ void App::onInit() {
 
     static CFrame C;
     debugPane->addCustom(new GuiCFrameBox(Pointer<CFrame>(&defaultCamera, &GCamera::coordinateFrame, &GCamera::setCoordinateFrame), debugPane, "CFrame"));
-
-#if 0
-    std::string materialPath = System::findDataFile("material");
-    std::string crateFile = System::findDataFile("crate.ifs");
-    model = ArticulatedModel::fromFile(crateFile);
-    Material::Specification mat;
-    std::string base = pathConcat(materialPath, "metalcrate/metalcrate-");
-    mat.setLambertian(base + "L.png", 0.2f);
-    mat.setSpecular(base + "G.png");
-    mat.setGlossyExponentShininess(20);
-    BumpMap::Settings b;
-    b.iterations = 1;
-    mat.setBump(base + "B.png", b);
-    Material::Ref material = Material::create(mat);
-    /*
-
-    // Save material
-    {
-        BinaryOutput b("material.mat.sl", G3D_LITTLE_ENDIAN);
-        SpeedLoadIdentifier sid;
-        material->speedSerialize(sid, b);
-        b.commit();
-    }
-
-    // Load material
-    {
-        BinaryInput b("material.mat.sl", G3D_LITTLE_ENDIAN);
-        SpeedLoadIdentifier sid;
-        material = Material::speedCreate(sid, b);
-    }*/
-
-    model->partArray[0].triList[0]->material = material;
-#endif
-
-#if 0 // sponza
-    Stopwatch timer;
-    ArticulatedModel::Ref model = ArticulatedModel::fromFile(System::findDataFile("crytek_sponza/sponza.obj"));
-    timer.after("Load OBJ");
-    // Save Model
-    { 
-        BinaryOutput b("model.am.sl", G3D_LITTLE_ENDIAN);
-        model->speedSerialize(b);
-        b.commit();
-    }
-    timer.after("speedSerialize");
-
-    // Load Model
-    {
-        BinaryInput b("model.am.sl", G3D_LITTLE_ENDIAN);
-        SpeedLoadIdentifier sid;
-        model = ArticulatedModel::speedCreate(b);
-    }
-    timer.after("speedDeserialize");
-#endif
-
+    
     lighting = defaultLighting();
 }
 
@@ -773,22 +716,10 @@ bool App::onEvent(const GEvent& e) {
     // if ((e.type == GEventType::GUI_ACTION) && (e.gui.control == m_button)) { ... return true;}
     // if ((e.type == GEventType::KEY_DOWN) && (e.key.keysym.sym == GKey::TAB)) { ... return true; }
 
-    switch (e.type) {
-    case GEventType::KEY_DOWN:
-        debugPrintf("KEY_DOWN: %d (LSHIFT = %d)\n", e.key.keysym.sym, GKey::LSHIFT);
-        break;
-
-    case GEventType::KEY_UP:
-        debugPrintf("KEY_UP: %d\n", e.key.keysym.sym);
-        break;
-    }
-    
     return false;
 }
 
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
-    screenPrintf("LShift down: %d\n", userInput->keyDown(GKey::LSHIFT));
-    screenPrintf("RShift down: %d\n", userInput->keyDown(GKey::RSHIFT));
     Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
 
 //    model->pose(surface3D);

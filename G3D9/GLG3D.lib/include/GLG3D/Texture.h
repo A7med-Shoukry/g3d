@@ -810,7 +810,7 @@ public:
     
     /**
      Creates a texture from a single image.  The image must have a format understood
-     by G3D::GImage or a DirectDraw Surface (DDS).  If dimension is DIM_CUBE_MAP, this loads the 6 files with names
+     by G3D::Image or a DirectDraw Surface (DDS).  If dimension is DIM_CUBE_MAP, this loads the 6 files with names
      _ft, _bk, ... following the G3D::Sky documentation.
      */    
     static Texture::Ref fromFile
@@ -898,7 +898,7 @@ public:
         const Settings&                 settings       = Settings::defaults(),
         const Preprocess&               preprocess     = Preprocess::defaults());
 
-    /** \sa Texture::fromMemory, Texture::fromGImage */
+    /** \sa Texture::fromMemory */
     static Texture::Ref fromImage
     (const std::string&              name,
      const Image3::Ref&              image,
