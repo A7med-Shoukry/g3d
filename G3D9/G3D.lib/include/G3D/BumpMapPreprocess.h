@@ -20,7 +20,7 @@ class Any;
 
 /** 
 Not in the BumpMap class to avoid a circular dependency between Texture and BumpMap.
-G3D::GImage::computeNormalMap().
+G3D::Image::computeNormalMap().
 */
 class BumpMapPreprocess {
 public:

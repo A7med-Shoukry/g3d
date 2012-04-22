@@ -4,16 +4,20 @@
   Copyright 2000-2012, Morgan McGuire.
   All rights reserved.
  */
-#ifndef G3D_IMAGEBUFFER_H
-#define G3D_IMAGEBUFFER_H
+#ifndef G3D_ImageBuffer_h
+#define G3D_ImageBuffer_h
 
+#include "G3D/MemoryManager.h"
 #include "G3D/ReferenceCount.h"
 #include "G3D/ImageFormat.h"
 
 namespace G3D {
 
 /**
-    \brief Provides a general container for transfering cpu pixel data
+    \brief Provides a general container for transferring CPU pixel data.
+
+    ImageBuffer intentionally does not provide operations on the data. See G3D::Image
+    for that.  See G3D::Texture for GPU pixel data.
  */
 class ImageBuffer : public ReferenceCountedObject {
 public:
@@ -38,7 +42,7 @@ private:
 
 public:
     /** Creates an empty ImageBuffer. */
-    static Ref create(MemoryManager::Ref memoryManager, const ImageFormat* format, int width, int height, int depth = 1, int rowAlignment = 1);
+    static Ref create(int width, int height, const ImageFormat* format, MemoryManager::Ref memoryManager = MemoryManager::create(), int depth = 1, int rowAlignment = 1);
 
     virtual ~ImageBuffer();
 
@@ -46,8 +50,10 @@ public:
 
     /** Returns entire size of pixel data in bytes. */
     int size() const                    { return m_height * m_depth * m_rowStride; }
+
     /** Returns alignment of each row of pixel data in bytes. */
     int rowAlignment() const            { return m_rowAlignment; }
+
     /** Returns size of each row of pixel data in bytes. */
     int stride() const                  { return m_rowStride; }
 
@@ -57,6 +63,7 @@ public:
 
     /** Returns pointer to raw pixel data */
     void* buffer()                      { return m_buffer; }
+
     /** Returns pointer to raw pixel data */
     const void* buffer() const          { return m_buffer; }
 

@@ -27,7 +27,8 @@ ImageBuffer::ImageBuffer(const ImageFormat* format, int width, int height, int d
     debugAssert(m_depth > 0);
 }
 
-ImageBuffer::Ref ImageBuffer::create(MemoryManager::Ref memoryManager, const ImageFormat* format, int width, int height, int depth, int rowAlignment) {
+
+ImageBuffer::Ref ImageBuffer::create(int width, int height, const ImageFormat* format, MemoryManager::Ref memoryManager, int depth, int rowAlignment) {
     ImageBuffer* imageBuffer = new ImageBuffer(format, width, height, depth, rowAlignment);
 
     // Allocate buffer with memory manager, this reference now owns the buffer
@@ -36,11 +37,13 @@ ImageBuffer::Ref ImageBuffer::create(MemoryManager::Ref memoryManager, const Ima
     return imageBuffer;
 }
 
+
 ImageBuffer::~ImageBuffer() {
     if (m_buffer) {
         freeBuffer();
     }
 }
+
 
 void ImageBuffer::allocateBuffer(MemoryManager::Ref memoryManager) {
     debugAssert(m_memoryManager.isNull());
@@ -56,6 +59,7 @@ void ImageBuffer::allocateBuffer(MemoryManager::Ref memoryManager) {
     int bufferSize = m_depth * m_height * m_rowStride;
     m_buffer = m_memoryManager->alloc(bufferSize);
 }
+
 
 void ImageBuffer::freeBuffer() {
     debugAssert(m_memoryManager.notNull());

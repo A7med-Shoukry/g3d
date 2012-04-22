@@ -236,7 +236,7 @@ bool VideoInput::readNext(RealTime timeStep, ImageBuffer::Ref& frame) {
         // create new frame if existing is wrong format
         if (frame->format() != ImageFormat::RGB8()) {
             if (frame->width() != width() || frame->height() != height()) {
-                frame = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), width(), height());
+                frame = ImageBuffer::create(width(), height(), ImageFormat::RGB8());
             }
         }
 

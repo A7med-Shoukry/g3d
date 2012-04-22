@@ -374,7 +374,7 @@ Texture::Ref Texture::white() {
     Texture::Ref t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), 4, 4);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(4, 4, ImageFormat::RGB8());
         System::memset(imageBuffer->buffer(), 0xFF, imageBuffer->size());
         Texture::Settings settings;
         settings.wrapMode = WrapMode::TILE;
@@ -392,7 +392,7 @@ TextureRef Texture::opaqueBlackCube() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), 4, 4);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(4, 4, ImageFormat::RGB8());
         System::memset(imageBuffer->buffer(), 0x00, imageBuffer->size());
         Array< Array<const void*> > bytes;
         Array<const void*>& cubeFace = bytes.next();
@@ -416,7 +416,7 @@ TextureRef Texture::whiteCube() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty
-        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGB8(), 4, 4);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(4, 4, ImageFormat::RGB8());
         System::memset(imageBuffer->buffer(), 0xFF, imageBuffer->size());
         Array< Array<const void*> > bytes;
         Array<const void*>& cubeFace = bytes.next();
@@ -439,7 +439,7 @@ TextureRef Texture::zero() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty                                                                                      
-        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 8, 8);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(8, 8, ImageFormat::RGBA8());
         System::memset(imageBuffer->buffer(), 0x00, imageBuffer->size());
         t = Texture::fromImageBuffer("Zero", imageBuffer);
         
@@ -455,7 +455,7 @@ TextureRef Texture::opaqueBlack() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty                                                                                      
-        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 8, 8);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(8, 8, ImageFormat::RGBA8());
         for (int i = 0; i < imageBuffer->width() * imageBuffer->height(); ++i) {
             // todo (Image upgrade): investigate pixel1, pixel3 and pixel3 accessors from GImage
             Color4unorm8* pixels = static_cast<Color4unorm8*>(imageBuffer->buffer());
@@ -476,7 +476,7 @@ TextureRef Texture::opaqueGray() {
     TextureRef t = cache.createStrongPtr();
     if (t.isNull()) {
         // Cache is empty                                                                                      
-        ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 8, 8);
+        ImageBuffer::Ref imageBuffer = ImageBuffer::create(8, 8, ImageFormat::RGBA8());
         const Color4unorm8 c(Color4(0.5f, 0.5f, 0.5f, 1.0f));
         for (int i = 0; i < imageBuffer->width() * imageBuffer->height(); ++i) {
             // todo (Image upgrade): investigate pixel1, pixel3 and pixel3 accessors from GImage
@@ -888,7 +888,7 @@ Texture::Ref Texture::fromFile(
 
     if ((numFaces == 1) && (dimension == DIM_2D) || (dimension == DIM_2D_NPOT) || (dimension == DIM_3D_NPOT) || (dimension == DIM_3D)) {
         if (toLower(realFilename[0]) == "<white>") {
-            ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 1, 1);
+            ImageBuffer::Ref buffer = ImageBuffer::create(1, 1, ImageFormat::RGBA8());
             image[0] = Image::fromImageBuffer(buffer);
             image[0]->set(Point2int32(0, 0), Color4unorm8::one());
         } else {
@@ -903,7 +903,7 @@ Texture::Ref Texture::fromFile(
 
         for (int f = 0; f < numFaces; ++f) {
             if ((toLower(realFilename[f]) == "<white>") || realFilename[f].empty()) {
-            ImageBuffer::Ref buffer = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), 1, 1);
+            ImageBuffer::Ref buffer = ImageBuffer::create(1, 1, ImageFormat::RGBA8());
             image[f] = Image::fromImageBuffer(buffer);
             image[f]->set(Point2int32(0, 0), Color4unorm8::one());
             } else {
@@ -1037,7 +1037,7 @@ Texture::Ref Texture::fromTwoFiles(
                 data = static_cast<uint8*>(buffers[f]->buffer());
             } else {
                 alwaysAssertM(color[f]->format() == ImageFormat::RGB8(), "Cannot load monochrome cube maps");
-                buffers[f] = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), color[f]->width(), color[f]->height());
+                buffers[f] = ImageBuffer::create(color[f]->width(), color[f]->height(), ImageFormat::RGBA8());
                 Image::Ref tempImage = Image::fromImageBuffer(buffers[f]);
                 // Write the data inline
                 for (int h = 0; h < color[f]->height(); ++h) {
@@ -1592,7 +1592,7 @@ void Texture::getImage(ImageBuffer::Ref& im, const ImageFormat* outFormat, CubeF
         }
     }
 
-    im = ImageBuffer::create(MemoryManager::create(), outFormat, m_width, m_height);
+    im = ImageBuffer::create(m_width, m_height, outFormat);
 
     getTexImage(im->buffer(), outFormat, face);
 }

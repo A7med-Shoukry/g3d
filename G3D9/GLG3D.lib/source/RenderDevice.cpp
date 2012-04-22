@@ -2853,7 +2853,7 @@ double RenderDevice::getDepthBufferValue(
 
 
 Image::Ref RenderDevice::screenshotPic(bool getAlpha, bool invertY) const {
-    ImageBuffer::Ref imageBuffer = ImageBuffer::create(MemoryManager::create(), getAlpha ? ImageFormat::RGBA8() : ImageFormat::RGB8(), width(), height());
+    ImageBuffer::Ref imageBuffer = ImageBuffer::create(width(), height(), getAlpha ? ImageFormat::RGBA8() : ImageFormat::RGB8());
 
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
     {

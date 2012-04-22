@@ -1,6 +1,14 @@
+/**
+  \file Image.cpp
+  \author Corey Taylor
+  Copyright 2002-2012, Morgan McGuire
 
+  \created 2002-05-27
+  \edited  2012-04-21
+ */
 
 #include "FreeImagePlus.h"
+#include "G3D/platform.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/Image.h"
 
@@ -26,6 +34,31 @@ Image::~Image() {
     // This call can deinitialize the plugins if it's the last reference, but they can be re-initialized
     // disabled for now -- initialize FreeImage once in a thread-safe manner, then leave initialize
     //FreeImage_DeInitialise();
+}
+
+
+Image::Ref Image::create(int width, int height, const ImageFormat* imageFormat) {
+    FREE_IMAGE_TYPE fiType = determineFreeImageType(imageFormat);
+    debugAssertM(fiType != FIT_UNKNOWN, G3D::format("Trying to create Image from unsupported ImageFormat (%s)", imageFormat->name().c_str()));
+
+    if (fiType == FIT_UNKNOWN) {
+        // todo: replace Image::Error handling with isNull() and notNull() checks in 
+        throw Image::Error(G3D::format("Trying to create Image from unsupported ImageFormat (%s)", imageFormat->name().c_str()));
+        return NULL;
+    }
+
+    Image* img = new Image();
+    if (! img->m_image->setSize(fiType, width, height, imageFormat->cpuBitsPerPixel)) {
+        delete img;
+
+        // todo: replace Image::Error handling with isNull() and notNull() checks in 
+        throw Image::Error(G3D::format("Unable to allocate FreeImage buffer from ImageFormat (%s)", imageFormat->name().c_str()));
+        return NULL;
+    }
+
+    img->m_format = imageFormat;
+
+    return img;
 }
 
 
@@ -132,26 +165,9 @@ Image::Ref Image::fromBinaryInput(BinaryInput* bi, const ImageFormat* imageForma
     return img;
 }
 
+
 Image::Ref Image::fromImageBuffer(const ImageBuffer::Ref& buffer) {
-    FREE_IMAGE_TYPE fiType = determineFreeImageType(buffer->format());
-    debugAssertM(fiType != FIT_UNKNOWN, G3D::format("Trying to create Image from unsupported ImageBuffer format (%s)", buffer->format()->name().c_str()));
-
-    if (fiType == FIT_UNKNOWN) {
-        // todo: replace Image::Error handling with isNull() and notNull() checks in 
-        throw Image::Error(G3D::format("Trying to create Image from unsupported ImageBuffer format (%s)", buffer->format()->name().c_str()));
-        return NULL;
-    }
-
-    Image* img = new Image;
-    if (! img->m_image->setSize(fiType, buffer->width(), buffer->height(), buffer->format()->cpuBitsPerPixel)) {
-        delete img;
-
-        // todo: replace Image::Error handling with isNull() and notNull() checks in 
-        throw Image::Error(G3D::format("Unable to allocate FreeImage buffer from ImageBuffer format (%s)", buffer->format()->name().c_str()));
-        return NULL;
-    }
-
-    img->m_format = buffer->format();
+    Image::Ref img = create(buffer->width(), buffer->height(), buffer->format());
 
     BYTE* pixels = img->m_image->accessPixels();
     debugAssert(pixels);
@@ -166,6 +182,7 @@ Image::Ref Image::fromImageBuffer(const ImageBuffer::Ref& buffer) {
 
     return img;
 }
+
 
 void Image::toFile(const std::string& filename) const {
     if (! m_image->save(filename.c_str())) {
@@ -254,8 +271,9 @@ void Image::toBinaryOutput(BinaryOutput* bo, const std::string& fileFormat) cons
     }
 }
 
+
 ImageBuffer::Ref Image::toImageBuffer() const {
-    ImageBuffer::Ref buffer = ImageBuffer::create(AlignedMemoryManager::create(), m_format, m_image->getWidth(), m_image->getHeight(), 1, 1);
+    ImageBuffer::Ref buffer = ImageBuffer::create(m_image->getWidth(), m_image->getHeight(), m_format, AlignedMemoryManager::create(), 1, 1);
 
     BYTE* pixels = m_image->accessPixels();
     if (pixels) {
@@ -269,6 +287,7 @@ ImageBuffer::Ref Image::toImageBuffer() const {
     return buffer;
 }
 
+
 Image::Ref Image::clone() const {
     Image* c = new Image;
     *(c->m_image) = *m_image;
@@ -276,25 +295,31 @@ Image::Ref Image::clone() const {
     return c;
 }
 
+
 int Image::width() const {
     return m_image->getWidth();
 }
+
 
 int Image::height() const {
     return m_image->getHeight();
 }
 
+
 const ImageFormat* Image::format() const {
     return m_format;
 }
+
 
 void Image::flipVertical() {
     m_image->flipVertical();
 }
 
+
 void Image::flipHorizontal() {
     m_image->flipHorizontal();
 }
+
 
 void Image::rotateCW(double radians, int numRotations) {
     while (numRotations > 0) {
@@ -303,9 +328,11 @@ void Image::rotateCW(double radians, int numRotations) {
     }
 }
 
+
 void Image::rotateCCW(double radians, int numRotations) {
     rotateCW(radians * -1.0, numRotations);
 }
+
 
 bool Image::convertToL8() {
     if (m_image->convertToGrayscale()) {
@@ -315,6 +342,7 @@ bool Image::convertToL8() {
     return false;
 }
 
+
 bool Image::convertToRGB8() {
     if (m_image->convertTo24Bits()) {
         m_format = ImageFormat::RGB8();
@@ -322,6 +350,7 @@ bool Image::convertToRGB8() {
     }
     return false;
 }
+
 
 bool Image::convertToRGBA8() {
     if (m_image->convertTo32Bits()) {
@@ -336,8 +365,7 @@ void Image::get(const Point2int32& pos, Color4& color) const {
     Point2int32 fipPos(pos.x, m_image->getHeight() - pos.y - 1);
 
     BYTE* scanline = m_image->getScanLine(fipPos.y);
-    switch (m_image->getImageType())
-    {
+    switch (m_image->getImageType()) {
         case FIT_BITMAP:
         {
             if (m_image->isGrayscale()) {
@@ -362,11 +390,13 @@ void Image::get(const Point2int32& pos, Color4& color) const {
             }
             break;
         }
+
         default:
             debugAssertM(false, G3D::format("Image::get does not support pixel format (%s)", m_format->name().c_str()));
             break;
     }
 }
+
 
 void Image::get(const Point2int32& pos, Color3& color) const {
     Color4 c;
@@ -374,12 +404,12 @@ void Image::get(const Point2int32& pos, Color3& color) const {
     color = Color3(c.r, c.g, c.b);
 }
 
+
 void Image::get(const Point2int32& pos, Color4unorm8& color) const {
     Point2int32 fipPos(pos.x, m_image->getHeight() - pos.y - 1);
 
     BYTE* scanline = m_image->getScanLine(fipPos.y);
-    switch (m_image->getImageType())
-    {
+    switch (m_image->getImageType()) {
         case FIT_BITMAP:
         {
             if (m_image->isGrayscale()) {
@@ -404,11 +434,13 @@ void Image::get(const Point2int32& pos, Color4unorm8& color) const {
             }
             break;
         }
+
         default:
             debugAssertM(false, G3D::format("Image::get does not support pixel format (%s)", m_format->name().c_str()));
             break;
     }
 }
+
 
 void Image::get(const Point2int32& pos, Color3unorm8& color) const {
     Color4unorm8 c;

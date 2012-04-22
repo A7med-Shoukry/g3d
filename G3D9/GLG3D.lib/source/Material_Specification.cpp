@@ -436,7 +436,7 @@ Component4 Material::Specification::loadSpecular() const {
         Image::Ref s = Image::fromFile(m_shininess.filename);
 
         s->convertToL8();
-        ImageBuffer::Ref pack = ImageBuffer::create(MemoryManager::create(), ImageFormat::RGBA8(), s->width(), s->height());
+        ImageBuffer::Ref pack = ImageBuffer::create(s->width(), s->height(),  ImageFormat::RGBA8(), MemoryManager::create());
         int n = s->width() * s->height();
         for (int i = 0; i < n; ++i) {
             Color1unorm8 pixel1;

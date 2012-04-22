@@ -82,8 +82,6 @@ static bool hasTexture(const Component4& c) {
 
 bool BumpMap::similarTo(const BumpMap::Ref& other) const {
     return
-//        ((m_numIterations == other->m_numIterations) || 
-//         ((m_numIterations > 1) && (other->m_numIterations > 1))) &&
         (m_settings.iterations == other->m_settings.iterations) &&
         (hasTexture(m_normalBump) == hasTexture(other->m_normalBump));
 }

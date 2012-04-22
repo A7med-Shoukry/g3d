@@ -236,6 +236,7 @@
     <ClCompile Include="..\G3D.lib\source\ImageBuffer.cpp" />
     <ClCompile Include="..\G3D.lib\source\ImageFormat.cpp" />
     <ClCompile Include="..\G3D.lib\source\ImageFormat_convert.cpp" />
+    <ClCompile Include="..\G3D.lib\source\Image_utils.cpp" />
     <ClCompile Include="..\G3D.lib\source\Intersect.cpp" />
     <ClCompile Include="..\G3D.lib\source\license.cpp" />
     <ClCompile Include="..\G3D.lib\source\Line.cpp" />
