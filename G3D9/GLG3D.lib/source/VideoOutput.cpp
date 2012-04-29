@@ -23,13 +23,13 @@ namespace G3D {
 // conversion routine helper
 static PixelFormat ConvertImageFormatToPixelFormat(const ImageFormat* format);
 
-VideoOutput::Settings::Settings(CodecID c, int w, int h, float f, int fourcc) :
+VideoOutput::Settings::Settings(CodecID c, int w, int h, float f, int customFourCC) :
     codec(c),
     fps(f),
     width(w),
     height(h),
     bitrate(0),
-    customFOURCC(fourcc) {
+    fourcc(customFourCC) {
 
     // just initializes the values so the optional entries aren't used
     raw.format = NULL;
@@ -75,7 +75,7 @@ VideoOutput::Settings VideoOutput::Settings::CinepakAVI(int width, int height, f
 
 
 VideoOutput::Settings VideoOutput::Settings::MPEG4(int width, int height, float fps) {
-    Settings s(CODEC_ID_MPEG4, width, height, fps, XVID_FOURCC);
+    Settings s(CODEC_ID_MPEG4, width, height, fps);
     
     // About 1500 kb/s for 640 * 480 gives high quality at a
     // reasonable file size. 
@@ -90,7 +90,7 @@ VideoOutput::Settings VideoOutput::Settings::MPEG4(int width, int height, float 
 
 
 VideoOutput::Settings VideoOutput::Settings::HQ_MPEG4(int width, int height, float fps) {
-    Settings s(CODEC_ID_MPEG4, width, height, fps, XVID_FOURCC);
+    Settings s(CODEC_ID_MPEG4, width, height, fps);
     
     // Give six times the bit rate of MPEG4
     s.bitrate = iRound(6.0 * 1500000.0 * ((double)s.width * s.height) / (640 * 480));
@@ -229,8 +229,8 @@ void VideoOutput::initialize(const std::string& filename, const Settings& settin
     }
 
     // set the fourcc
-    if (m_settings.customFOURCC != 0) {
-        m_avStream->codec->codec_tag  = m_settings.customFOURCC;
+    if (m_settings.fourcc != 0) {
+        m_avStream->codec->codec_tag  = m_settings.fourcc;
     }
 
     // set bframes and gop

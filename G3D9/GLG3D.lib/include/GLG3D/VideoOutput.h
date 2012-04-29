@@ -162,15 +162,6 @@ public:
         CODEC_ID_LAST
     };
 
-    /** Constants for customFOURCC */
-    enum {
-        /** FFmpeg broadly compatible format for MPG4  */
-        XVID_FOURCC = ('X' << 24) | ('V' << 16) | ('I' << 8) | ('D'),
-
-        /** FFmpeg internal codec specific format for MPG4  */
-        FMP4_FOURCC = ('F' << 24) | ('M' << 16) | ('P' << 8) | ('4')
-    };
-
     class Settings {
     public:
         
@@ -189,10 +180,8 @@ public:
         /** Stream avarage bits per second if needed by the codec.*/
         int             bitrate;
 
-        /** Custom fourcc if the automatic fourcc for a codec needs to be changed
-            (eg. 'XVID' vs. 'FMP4' default)
-            (0 means not set) */
-        int             customFOURCC;
+        /** If unset, uses default for codec as defined by FFmpeg. */
+        int             fourcc;
 
         struct
         {
@@ -239,10 +228,6 @@ public:
 
             This is the most advanced widely supported format and
             provides a good blend of quality and size.
-
-            The default customFourCC of XVID uses the Xvid.org
-            implementation, which is available for all G3D platforms.
-            This is for encoding only; it has no impact on playback.
         */
         static Settings MPEG4(int width, int height, float fps = 30.0f);
         static Settings HQ_MPEG4(int width, int height, float fps = 30.0f);
