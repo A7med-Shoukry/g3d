@@ -55,7 +55,7 @@ public:
 
     /** Maps f to round(f * 255).*/
     explicit snorm8(float f) {
-        m_bits = (int8)(clamp(f, -1.0f, 1.0f) * 127.0f + 0.5f);
+        m_bits = (int8)(round(clamp(f, -1.0f, 1.0f) * 127.0f));
     }
 
     /** Returns a number on [0.0f, 1.0f] */

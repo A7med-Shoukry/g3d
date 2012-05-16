@@ -748,10 +748,12 @@ int main(int argc, char* argv[]) {
 
     printf("\n\nTests:\n\n");
 
-	testunorm16();
-	testunorm8();
-	testsnorm8();
-	testsnorm16();
+    testunorm16();
+    testunorm8();
+    testsnorm8();
+    testsnorm16();
+    ::exit(0);
+
     testMatrix();
 
     testAny();

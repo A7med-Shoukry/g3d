@@ -55,7 +55,7 @@ public:
 
     /** Maps f to round(f * 32767).*/
     explicit snorm16(float f) {
-        m_bits = (int)(clamp(f, -1.0f, 1.0f) * 32767.0f + 0.5f);
+        m_bits = (int)round(clamp(f, -1.0f, 1.0f) * 32767.0f);
     }
 
     /** Returns a number on [0.0f, 1.0f] */
