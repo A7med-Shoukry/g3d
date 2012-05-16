@@ -752,7 +752,6 @@ int main(int argc, char* argv[]) {
     testunorm8();
     testsnorm8();
     testsnorm16();
-    ::exit(0);
 
     testMatrix();
 
