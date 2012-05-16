@@ -59,11 +59,11 @@ public:
 
     /** Maps f to round(f * 65535).*/
     explicit unorm16(float f) {
-        m_bits = iClamp(int(f * 65535.0f + 0.5f), 0, 65535);
+        m_bits = uint16(clamp(f, 0.0f, 1.0f) * 65535.0f + 0.5f);
     }
 
     explicit unorm16(double f) {
-        m_bits = iClamp(int(f * 65535.0 + 0.5), 0, 65535);
+        m_bits = uint16(clamp(f, 0.0, 1.0) * 65535.0 + 0.5);
     }
 
     /** Returns a number on [0.0f, 1.0f] */

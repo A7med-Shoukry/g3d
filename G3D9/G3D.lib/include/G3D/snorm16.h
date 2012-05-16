@@ -55,15 +55,14 @@ public:
 
     /** Maps f to round(f * 32767).*/
     explicit snorm16(float f) {
-        m_bits = iClamp(int(f * 32767.0 + 0.5), -32767, 32767);
+        m_bits = (int)(clamp(f, -1.0f, 1.0f) * 32767.0f + 0.5f);
     }
 
     /** Returns a number on [0.0f, 1.0f] */
     operator float() const {
-        return float (clamp((int)(m_bits) * (1.0f / 32767.0f), -1, 1));
+        return clamp(int(m_bits) * (1.0f / 32767.0f), -1.0f, 1.0f);
     }
 
-    // Change?
     static snorm16 one() {
         return fromBits(32767);
     }
