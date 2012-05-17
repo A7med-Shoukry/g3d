@@ -238,7 +238,7 @@ void Image3unorm8::copyArray(const Color4* src, int w, int h) {
 /** Saves in any of the formats supported by G3D::GImage. */
 void Image3unorm8::save(const std::string& filename) {
     ImageBuffer::Ref buffer = ImageBuffer::create(width(), height(),  format(), MemoryManager::create());
-    System::memcpy(buffer->buffer(), getCArray(), width() * height());
+    System::memcpy(buffer->buffer(), getCArray(), width() * height() * format()->cpuBitsPerPixel / 8);
     Image::Ref image = Image::fromImageBuffer(buffer);
     image->toFile(filename);
 }
