@@ -55,6 +55,17 @@ void testunorm8() {
         const float error = abs(f1 - f2);
 
         alwaysAssertM(error <= 0.5 / 255.0 + ULP, format("error = %f", error));
+
+        // Now verify that neighboring values are worse approximations than this one
+        const float f3 = (float)unorm8::fromBits(x.bits() + 1);
+        alwaysAssertM(fabs(f3 - f1) >= error, 
+                      format("Incrementing the bits by +1 gave a better representation of %f (%d)",
+                             f1, i));
+
+        const float f4 = (float)unorm8::fromBits(x.bits() - 1);
+        alwaysAssertM(fabs(f4 - f1) >= error, 
+                      format("Incrementing the bits by -1 gave a better representation of %f (%d)",
+                             f1, i));
     }
 
     // Ensure that 1.0 and 0.0 are exact
@@ -84,6 +95,17 @@ void testunorm16() {
         const float error = abs(f1 - f2);
 		 
         alwaysAssertM((error - 0.5 / 65535.0) <= ULP, format("error = %f", error));
+
+        // Now verify that neighboring values are worse approximations than this one
+        const float f3 = (float)unorm16::fromBits(x.bits() + 1);
+        alwaysAssertM(fabs(f3 - f1) >= error, 
+                      format("Incrementing the bits by +1 gave a better representation of %f (%d)",
+                             f1, i));
+
+        const float f4 = (float)unorm16::fromBits(x.bits() - 1);
+        alwaysAssertM(fabs(f4 - f1) >= error, 
+                      format("Incrementing the bits by -1 gave a better representation of %f (%d)",
+                             f1, i));
     }
 
     // Ensure that 1.0 and 0.0 are exact
@@ -111,6 +133,18 @@ void testsnorm8() {
         const float error = abs(f1 - f2);
 		 
         alwaysAssertM( error <= 0.5 / 127.0 + ULP, format("error = %f  %f - > %f", error, f1, f2));
+
+        // Now verify that neighboring values are worse approximations than this one
+        const float f3 = (float)snorm8::fromBits(x.bits() + 1);
+        alwaysAssertM(fabs(f3 - f1) >= error, 
+                      format("Incrementing the bits by +1 gave a better representation of %f (%d)",
+                             f1, i));
+
+        const float f4 = (float)snorm8::fromBits(x.bits() - 1);
+        alwaysAssertM(fabs(f4 - f1) >= error, 
+                      format("Incrementing the bits by -1 gave a better representation of %f (%d)",
+                             f1, i));
+
     }
 
     // Ensure that 1.0 and 0.0 are exact
@@ -138,6 +172,17 @@ void testsnorm16() {
         const float error = abs(f1 - f2);
 		 
         alwaysAssertM((error - 0.5 / 32767.0) <= ULP, format("error = %f", error));
+
+        // Now verify that neighboring values are worse approximations than this one
+        const float f3 = (float)snorm16::fromBits(x.bits() + 1);
+        alwaysAssertM(fabs(f3 - f1) >= error, 
+                      format("Incrementing the bits by +1 gave a better representation of %f (%d)",
+                             f1, i));
+
+        const float f4 = (float)snorm16::fromBits(x.bits() - 1);
+        alwaysAssertM(fabs(f4 - f1) >= error, 
+                      format("Incrementing the bits by -1 gave a better representation of %f (%d)",
+                             f1, i));
     }
 
     // Ensure that 1.0 and 0.0 are exact
