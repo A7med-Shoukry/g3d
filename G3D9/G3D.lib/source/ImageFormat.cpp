@@ -224,11 +224,15 @@ bool ImageFormat::canInterpretAs(const ImageFormat* otherFormat) const {
         return true;
     }
 
+    if (compressed || otherFormat->compressed) {
+        return false;
+    }
+
     if (colorSpace != otherFormat->colorSpace) {
         return false;
     }
 
-    if (compressed || otherFormat->compressed) {
+    if (floatingPoint != otherFormat->floatingPoint) {
         return false;
     }
 
