@@ -13,11 +13,15 @@
 namespace G3D {
 
 
+/**
+    Image conversion utility methods
+*/
 class ImageConvert {
 private:
     ImageConvert();
     
 public:
+    /** Converts image buffer to another format if supported, otherwise returns null ref */
     static ImageBuffer::Ref convertBuffer(const ImageBuffer::Ref& src, const ImageFormat* dstFormat);
 };
 
