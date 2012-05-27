@@ -20,6 +20,12 @@ class ImageConvert {
 private:
     ImageConvert();
     
+    typedef ImageBuffer::Ref (*ConvertFunc)(const ImageBuffer::Ref& src, const ImageFormat* dstFormat);
+    static ConvertFunc FindConverter(const ImageBuffer::Ref& src, const ImageFormat* dstFormat);
+
+    // Converters
+    ImageBuffer::Ref ConvertRGBAddAlpha(const ImageBuffer::Ref& src, const ImageFormat* dstFormat);
+
 public:
     /** Converts image buffer to another format if supported, otherwise returns null ref */
     static ImageBuffer::Ref convertBuffer(const ImageBuffer::Ref& src, const ImageFormat* dstFormat);
