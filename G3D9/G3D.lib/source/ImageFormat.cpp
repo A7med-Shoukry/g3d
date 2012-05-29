@@ -205,20 +205,6 @@ const std::string& ImageFormat::name() const {
     return nameArray[code];
 }
 
-
-const ImageFormat* ImageFormat::fromString(const std::string& s) {
-    if (toLower(s) == "auto") {
-        return NULL;
-    }
-
-    for (int i = 0; ! nameArray[i].empty(); ++i) {
-        if (s == nameArray[i]) {
-            return fromCode(ImageFormat::Code(i));
-        }
-    }
-    return NULL;
-}
-
 bool ImageFormat::canInterpretAs(const ImageFormat* otherFormat) const {
     if (this == otherFormat) {
         return true;
@@ -249,6 +235,60 @@ bool ImageFormat::canInterpretAs(const ImageFormat* otherFormat) const {
     }
 
     return true;
+}
+
+const ImageFormat* ImageFormat::getFormatWithAlpha(const ImageFormat* otherFormat) {
+    if (! otherFormat->opaque)
+    {
+        return otherFormat;
+    }
+
+    switch (otherFormat->code)
+    {
+        case CODE_RGB8:
+            return RGBA8();
+            break;
+
+        case CODE_RGB8I:
+            return RGBA8I();
+            break;
+
+        case CODE_RGB8UI:
+            return RGBA8UI();
+            break;
+
+        // todo: Add BGRA
+
+        case CODE_RGB16:
+            return RGBA16();
+            break;
+
+        case CODE_RGB16F:
+            return RGBA16F();
+            break;
+
+        case CODE_RGB32F:
+            return RGBA32F();
+            break;
+
+        default:
+            break;
+    }
+
+    return NULL;
+}
+
+const ImageFormat* ImageFormat::fromString(const std::string& s) {
+    if (toLower(s) == "auto") {
+        return NULL;
+    }
+
+    for (int i = 0; ! nameArray[i].empty(); ++i) {
+        if (s == nameArray[i]) {
+            return fromCode(ImageFormat::Code(i));
+        }
+    }
+    return NULL;
 }
 
 const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
