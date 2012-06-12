@@ -194,7 +194,11 @@
      <li> Sample programs, viewer, and test now statically link FFMPEG on Win32 to avoid DLL/PATH problems when distributing the binaries.</li>
      <li> In the G3D source tree, renamed doc-files/ to manual/ and doc-files/data-files to doc-files/ to match icompile conventions</li>
      <li> Upgraded to icompile 0.5.16</li>
-	 <li> Fix: RenderDevice::setInverseY now calls RenderDevice::forceSetCullFace after making the changes</li>
+	 <li> Added TangentSpace Normal to GBuffer. It uses  Encoding(2.0f, -1.0f), like the other normals in GBuffer [Mike]</li>
+	 <li> Added Tri::setData() [Mike]</li>
+	 <li> Added Tri::getIndex [Mike]</li>
+	 <li> Fix: Removed TriTree::m_size, which wan't storing the right value. [Mike]</li>
+	 <li> Fix: RenderDevice::setInverseY now calls RenderDevice::forceSetCullFace after making the changes [Mike]</li>
      <li> Fix: CFrame::toXYZYPRDegreesString and fromXYZYPRDegreesString are now correctly inverses (modulo 360 degrees) and have higher precision than in 8.xx</li>
      <li> Fix: GApp no longer passes consumed events to UserInput unless they are button up or key up</li>
      <li> Fix: BinaryInput and FilePath now convert Windows slashes to Unix ones on Unix</li>
