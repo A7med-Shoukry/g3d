@@ -48,9 +48,8 @@ void TriTree::intersectBox
 void TriTree::setContents(const Array<Surface::Ref>& surfaceArray, ImageStorage newStorage, const Settings& settings) {
     static const float epsilon = 0.000001f;
     clear();
-  
     Surface::getTris(surfaceArray, m_cpuVertexArray, m_triArray);
-    
+   
     if (newStorage != IMAGE_STORAGE_CURRENT) {
         for (int i = 0; i < m_triArray.size(); ++i) {
             const Tri& tri = m_triArray[i];
@@ -68,13 +67,12 @@ void TriTree::setContents(const Array<Surface::Ref>& surfaceArray, ImageStorage 
         }
     }
     
-    m_size = source.size();
     if (source.size() > 0) {
         m_memoryManager = AreaMemoryManager::create();
         m_root = new (m_memoryManager->alloc(sizeof(Node))) Node(source, settings, m_memoryManager);
     }
 
-    alwaysAssertM(m_triArray.size() == m_triArray.capacity(), "Allocated too much memory for the Tri Array");
+    //alwaysAssertM(m_triArray.size() == m_triArray.capacity(), "Allocated too much memory for the Tri Array");
     alwaysAssertM(m_cpuVertexArray.vertex.size() == m_cpuVertexArray.vertex.capacity(), "Allocated too much memory for the vertex array");
 }
 
@@ -664,7 +662,7 @@ void TriTree::Node::getStats(Stats& s, int level, int valuesPerNode) const {
 }
 
 
-TriTree::TriTree() : m_root(NULL), m_size(0) {}
+TriTree::TriTree() : m_root(NULL) {}
 
 
 TriTree::~TriTree() {
@@ -692,7 +690,6 @@ void TriTree::clear() {
         m_memoryManager->free(m_root);
         m_root = NULL;
         m_triArray.fastClear();
-        m_size = 0;
         m_memoryManager = NULL;
     }
 }
@@ -718,7 +715,6 @@ void TriTree::setContents(const Array<Tri>& triArray, const CPUVertexArray& vert
         }
     }
     
-    m_size = source.size();
     if (source.size() > 0) {
         m_memoryManager = AreaMemoryManager::create();
         m_root = new (m_memoryManager->alloc(sizeof(Node))) Node(source, settings, m_memoryManager);

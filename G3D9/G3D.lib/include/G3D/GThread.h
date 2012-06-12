@@ -35,11 +35,11 @@ typedef ReferenceCountedPointer<class GThread> GThreadRef;
  dropping all pointers (and causing deallocation) of a GThread does NOT 
  stop the underlying process.
 
- \sa G3D::GMutex, G3D::Spinlock, G3D::AtomicInt32, G3D::ThreadGroup
+ \sa G3D::GMutex, G3D::Spinlock, G3D::AtomicInt32, G3D::ThreadSet
 */
 class GThread : public ReferenceCountedObject {
 private:
-    // "Status" is a reserved work on FreeBSD
+    // "Status" is a reserved word on FreeBSD
     enum GStatus {STATUS_CREATED, STATUS_STARTED, STATUS_RUNNING, STATUS_COMPLETED};
 
     // Not implemented on purpose, don't use

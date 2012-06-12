@@ -48,8 +48,7 @@ private:
     /** Usually a material, but can be abstracted  */
     Proxy<Material>::Ref    m_material;
 
-    /** Indices into the CPU Vertex array */
-    uint32                  index[3];
+    
 
     /** 
       The area of the triangle: (e0 x e1).length() * 0.5 
@@ -62,6 +61,9 @@ private:
 
 
 public:
+
+    /** Indices into the CPU Vertex array */
+    uint32                  index[3];
 
     /** Assumes that normals are perpendicular to tangents, or that the tangents are zero.
 
@@ -90,6 +92,10 @@ public:
         return position(vertexArray, 2) - position(vertexArray, 0);
     }
 
+    /* Override the current material with the parameter */
+    void setData(const Proxy<Material>::Ref& newMaterial){
+        m_material = newMaterial;
+    }
 
     /** Returns a bounding box */
     void getBounds(const CPUVertexArray& vertexArray, AABox& box) const {
@@ -136,6 +142,11 @@ public:
     const Vector4& packedTangent(const CPUVertexArray& vertexArray, int i) const {
         debugAssert(i >= 0 && i <= 2);
         return vertex(vertexArray, i).tangent;
+    }
+
+    uint32 getIndex(int i) const {
+        debugAssert(i >= 0 && i <= 2);
+        return index[i];
     }
 
     /** Per-vertex unit tangent, for bump mapping. Tangents are perpendicular to 

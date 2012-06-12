@@ -52,6 +52,7 @@ const char* GBuffer::Field::toString(int i, Value& v) {
         "CS_Z",
 
         "DEPTH",
+        "TS_NORMAL",
         NULL};
 
     static const Value val[] = 
@@ -72,7 +73,8 @@ const char* GBuffer::Field::toString(int i, Value& v) {
 
         CS_Z,
 
-        DEPTH_AND_STENCIL};
+        DEPTH_AND_STENCIL,
+        TS_NORMAL};
 
     const char* s = str[i];
     if (s) {
@@ -98,6 +100,7 @@ GBuffer::Specification::Specification() {
     encoding[Field::CS_FACE_NORMAL] = Encoding(2.0f, -1.0f);
     encoding[Field::CS_NORMAL]      = Encoding(2.0f, -1.0f);
     encoding[Field::WS_NORMAL]      = Encoding(2.0f, -1.0f);
+    encoding[Field::TS_NORMAL]      = Encoding(2.0f, -1.0f);
     encoding[Field::SS_POSITION_CHANGE] = Encoding(64.0f, -32.0f);
 }
 

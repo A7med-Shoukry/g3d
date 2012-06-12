@@ -98,7 +98,7 @@ public:
     /**
      \brief Names of fields that may be present in a GBuffer.
 
-     These use the abbreviations CS = camera space, WS = world space, SS = screen space.
+     These use the abbreviations CS = camera space, WS = world space, SS = screen space, TS = tangent space.
 
      Normals are always encoded as n' = (n+1)/2, even if they are in
      floating point format, to simplify the implementation of routines
@@ -175,6 +175,10 @@ public:
             /** The depth buffer, used for depth write and test.  Not camera-space Z.
             This may include stencil bits */
             DEPTH_AND_STENCIL,
+
+            /** Shading normal, after interpolation and bump-mapping, in tangent-space.
+                Note that tangent space is based on interpolated vertex normals */
+            TS_NORMAL,
         
             /** Not a valid */
             COUNT
@@ -183,7 +187,7 @@ public:
         static const char* toString(int i, Value& v);
 
         bool isUnitVector() const {
-            return (value == WS_NORMAL) || (value == CS_NORMAL);
+            return (value == WS_NORMAL) || (value == CS_NORMAL) || (value == TS_NORMAL);
         }
 
         G3D_DECLARE_ENUM_CLASS_METHODS(Field);

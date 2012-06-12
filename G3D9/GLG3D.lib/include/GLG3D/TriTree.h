@@ -446,8 +446,6 @@ private:
         pointer jump of not storing Tris directly in the nodes. */
     Array<Tri>           m_triArray;
 
-    /** Number of elements in m_triArray */
-    int                  m_size;
 
 
     /** All vertices referenced by the Tris in the TriTree */
@@ -461,7 +459,7 @@ public:
 
     /** Array access to the stored Tris */
     inline const Tri& operator[](int i) const {
-        debugAssert(i >= 0 && i < m_size);
+        debugAssert(i >= 0 && i < m_triArray.size());
         return m_triArray[i];
     }
 
@@ -486,7 +484,7 @@ public:
                      const Settings& settings = Settings());
 
     int size() const {
-        return m_size;
+        return m_triArray.size();
     }
 
     /** Returns true if there was an intersection.
