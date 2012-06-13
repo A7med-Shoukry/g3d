@@ -67,7 +67,7 @@ World::World() : m_mode(TRACE) {
         ( ArticulatedModel::Specification {
             filename = "dabrovic_sponza/sponza.zip/sponza.obj";
           } );
-		 
+		  
 
 	/*Any sponza = PARSE_ANY
         ( ArticulatedModel::Specification {
