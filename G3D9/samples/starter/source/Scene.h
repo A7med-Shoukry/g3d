@@ -23,7 +23,7 @@ protected:
     /** Current time */
     GameTime                    m_time;
     Lighting::Ref               m_lighting;
- 
+    Texture::Ref                m_skyBoxTexture;
     float                       m_skyBoxConstant;
     Array<Entity::Ref>          m_entityArray;
 
@@ -33,7 +33,6 @@ protected:
         m_skyBoxConstant(1.0f) {}
 
 public:
-   Texture::Ref                m_skyBoxTexture;
 
     typedef ReferenceCountedPointer<Scene> Ref;
 

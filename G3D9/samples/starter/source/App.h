@@ -12,24 +12,7 @@
 
 #include "Scene.h"
 
-
-
-
-
 class App : public GApp {
-
- 
-
-
-
-
-
-
-
-
-
-    Texture::Ref        m_texture;
-
     GuiDropDownList*    m_sceneDropDownList;
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;

@@ -117,9 +117,7 @@ Scene::Ref Scene::create(const std::string& scene, GCamera& camera) {
 
         AnyTableReader propertyTable(it->value);
         if (it->value.nameEquals("Entity")) {
-            Entity::Ref ent = Entity::create(name, propertyTable, modelTable);
-            ent->setMD3Animation(MD3Model::PART_LOWER, MD3Model::LOWER_WALK);
-            s->m_entityArray.append(ent);
+            s->m_entityArray.append(Entity::create(name, propertyTable, modelTable));
         } /* else if (it->value.nameEquals("...")) {  TODO: add your own GEntity subclasses here! } */
         
         propertyTable.verifyDone();
