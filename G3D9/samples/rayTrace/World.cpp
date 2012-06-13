@@ -67,14 +67,14 @@ World::World() : m_mode(TRACE) {
         ( ArticulatedModel::Specification {
             filename = "dabrovic_sponza/sponza.zip/sponza.obj";
           } );
-		  
+		 
 
 	/*Any sponza = PARSE_ANY
         ( ArticulatedModel::Specification {
              filename = "models/cube/cube.obj";
 			 scale = 5.0f;
           } );
-		  */
+		*/  
 	Stopwatch timer;
     insert(ArticulatedModel::create(sponza), Vector3(8.2f, -6, 0));
     timer.after("Sponza load");
@@ -142,7 +142,7 @@ bool World::intersect(const Ray& ray, float& distance, SurfaceElement& surfel) c
     debugAssert(m_mode == TRACE);
 
     Tri::Intersector intersector;
-    if (m_triTree.intersectRay(ray, intersector, distance, false, false)) {
+    if (m_triTree.intersectRay(ray, intersector, distance, false, true)) {
         surfel = SurfaceElement(m_cpuVertexArray, intersector);
         return true;
     } else {

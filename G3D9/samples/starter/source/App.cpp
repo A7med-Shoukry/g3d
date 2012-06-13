@@ -34,6 +34,35 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 #   endif
 }
 
+Color3unorm8 radiance3tosRGB8(const Radiance3& radiance){
+        //return Color3unorm8(radiance);
+	/* TODO: Move this someplace sensible.
+		Set this to be the inverse of the maximum 
+		radiance value expected */
+        static const float inverseMaxRadiance = 1.0f;
+        
+        static bool init = true;
+#define POW_CACHE_SIZE (10000)
+        static unorm8 powInvTwoPointTwo[POW_CACHE_SIZE];
+        if(init){
+            init = false;
+            for(int i = 0; i < POW_CACHE_SIZE; ++i){
+                float f =  ::pow(float(i)/(POW_CACHE_SIZE-1.0f), (1/2.2f));
+                powInvTwoPointTwo[i] = unorm8(f);
+            }
+        }
+        const Radiance3 normalizedRadiance = radiance * inverseMaxRadiance;
+        //if(normalizedRadiance.max() >= 1.0f) debugPrintf("Normalized Radiance too large! Use something bigger than %f\n", normalizedRadiance.max());
+        
+        Color3unorm8 c;
+        c.r = powInvTwoPointTwo[int(normalizedRadiance.r * POW_CACHE_SIZE)];
+        c.g = powInvTwoPointTwo[int(normalizedRadiance.g * POW_CACHE_SIZE)];
+        c.b = powInvTwoPointTwo[int(normalizedRadiance.b * POW_CACHE_SIZE)];
+        return c;
+	    
+	    //return Color3unorm8((radiance * inverseMaxRadiance).pow(1/2.2f));
+}
+
 
 void App::onInit() {
     GApp::onInit();
@@ -48,18 +77,90 @@ void App::onInit() {
     m_preventEntityDrag   = false;
     m_preventEntitySelect = false;
 
+    Image3::Ref im = Image3::fromFile("test.png");
+    m_texture = Texture::createEmpty("E",im->width(), im->height(), ImageFormat::RGB8(), Texture::DIM_2D_NPOT);
+    m_texture->clear();
+    int imageByteNum = im->width() * im->height() * 3;
+
+    GLuint pbo = GL_NONE;
+    glGenBuffers(1, &pbo);
+    debugAssertGLOk();
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    debugAssertGLOk();
+    // allocate storage for PBO
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, imageByteNum, 0, GL_STREAM_DRAW);
+    
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, GL_NONE);
+    debugAssertGLOk();
+
+
+  
+    glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pbo);
+    debugAssertGLOk();
+    void *pboBuffer = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, imageByteNum, GL_MAP_WRITE_BIT);
+    debugAssertGLOk();
+    alwaysAssertM(pboBuffer != NULL, "Pixel Buffer NULL.\n");
+    Color3unorm8* gpuPixelArray = (Color3unorm8 *)pboBuffer;
+
+    Color3* cpuPixelArray = im->getCArray();
+    int pixelNum = im->height() * im->width();
+    for (int i = 0; i < pixelNum; ++i) {
+        gpuPixelArray[i] = radiance3tosRGB8(cpuPixelArray[i]);
+    }
+    pboBuffer = NULL;
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+    debugAssertGLOk();
+
+    glPushAttrib(GL_TEXTURE_BIT);
+    {
+        glBindTexture(m_texture->openGLTextureTarget(), m_texture->openGLID());
+        debugAssertGLOk();
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        debugAssertGLOk();
+            
+        const GLint xoffset = 0;
+        const GLint yoffset = 0;
+        const GLint mipLevel = 0;
+        GLenum target = m_texture->openGLTextureTarget();
+
+        glTexSubImage2D
+                (target, 
+                    mipLevel,
+                    xoffset,
+                    yoffset,
+                    im->width(), 
+                    im->height(), 
+                    ImageFormat::RGB8()->openGLBaseFormat,
+                    ImageFormat::RGB8()->openGLDataFormat, 
+                    0);
+        debugAssertGLOk();
+        glBindTexture(m_texture->openGLTextureTarget(), GL_NONE);
+    } glPopAttrib();
+    debugAssertGLOk();
+    glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, GL_NONE);
+    debugAssertGLOk();
+
+    
+    debugAssertGLOk();
+
+    glDeleteBuffers(1, &pbo);
+    debugAssertGLOk();
+    pbo = GL_NONE;
+
     // For higher-quality screenshots:
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
     // developerWindow->videoRecordDialog->setCaptureGui(false);
-
+    m_shadowMap = ShadowMap::create();
+    loadScene();
     makeGUI();
 
     // Start wherever the developer HUD last marked as "Home"
     defaultCamera.setCoordinateFrame(bookmark("Home"));
 
-    m_shadowMap = ShadowMap::create();
+    
 
-    loadScene();
+  
 }
 
 
@@ -118,6 +219,8 @@ void App::makeGUI() {
     infoPane->addLabel("You can add more GUI controls");
     infoPane->addLabel("in App::onInit().");
     infoPane->addButton("Exit", this, &App::endProgram);
+    //infoPane->addTextureBox(m_scene->m_skyBoxTexture);
+    infoPane->addTextureBox(m_texture);
     infoPane->pack();
 
     // More examples of debugging GUI controls:
@@ -132,7 +235,7 @@ void App::makeGUI() {
 
 
 void App::loadScene() {
-    const std::string& sceneName = m_sceneDropDownList->selectedValue().text();
+    const std::string& sceneName = "Crates";//m_sceneDropDownList->selectedValue().text();
 
     // Use immediate mode rendering to force a simple message onto the screen
     drawMessage("Loading " + sceneName + "...");
@@ -143,13 +246,13 @@ void App::loadScene() {
         defaultController->setFrame(defaultCamera.coordinateFrame());
 
         // Populate the entity list
-        Array<std::string> nameList;
+        /*Array<std::string> nameList;
         m_scene->getEntityNames(nameList);
         m_entityList->clear();
         m_entityList->append("<none>");
         for (int i = 0; i < nameList.size(); ++i) {
             m_entityList->append(nameList[i]);
-        }
+        }*/
 
     } catch (const ParseError& e) {
         const std::string& msg = e.filename + format(":%d(%d): ", e.line, e.character) + e.message;
@@ -189,7 +292,7 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
             m_selectedEntity->setFrameSpline(m_splineEditor->spline());
         }
 
-        m_scene->onSimulation(sdt);
+        m_scene->onSimulation(sdt/10);
     }
 }
 

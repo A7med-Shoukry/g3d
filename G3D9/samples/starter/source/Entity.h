@@ -28,6 +28,8 @@ public:
     virtual void setFrame(const CFrame& f) {
         m_frame = f;
     }
+
+     void setMD3Animation(MD3Model::PartType partType, MD3Model::AnimType animType);
 };
 
 #endif

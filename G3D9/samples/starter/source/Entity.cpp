@@ -1,5 +1,10 @@
 #include "Entity.h"
 
+
+void Entity::setMD3Animation(MD3Model::PartType partType, MD3Model::AnimType animType){
+     m_md3Pose.anim[partType] = animType;
+}
+
 Entity::Entity
 (const std::string& name,
  AnyTableReader&    propertyTable,
