@@ -82,7 +82,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(SolutionDir)..\build\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)G3D.lib\include;$(SolutionDir)GLG3D.lib\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)..\scratch\morgan</OutDir>
+    <OutDir>$(SolutionDir)..\scratch\morgan\</OutDir>
     <IntDir>$(SolutionDir)..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

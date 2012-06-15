@@ -14,7 +14,7 @@ class App : public GApp {
 public:
     
     Texture::Ref            texture;
-    ArticulatedModel::Ref  model;
+    ArticulatedModel::Ref   model;
     Lighting::Ref           lighting;
 
     App(const GApp::Settings& settings = GApp::Settings());

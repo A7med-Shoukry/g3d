@@ -11,6 +11,7 @@
 #include "G3D/platform.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/Image.h"
+#include "G3D/ImageFormat.h"
 
 
 namespace G3D {

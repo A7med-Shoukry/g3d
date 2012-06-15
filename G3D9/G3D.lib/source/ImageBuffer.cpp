@@ -5,7 +5,7 @@
   All rights reserved.
  */
 #include "G3D/ImageBuffer.h"
-
+#include "G3D/ImageFormat.h"
 
 namespace G3D {
 
