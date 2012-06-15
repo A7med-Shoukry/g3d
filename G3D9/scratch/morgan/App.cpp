@@ -734,7 +734,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 void App::onGraphics2D(RenderDevice* rd, Array<Surface2D::Ref>& posed2D) {
 
     rd->setTexture(0, texture);
-    Draw::rect2D(Rect2D::xywh(0,0,400,400), rd, Color3::white(), Rect2D::xywh(-1,-1,2,2));
+    Draw::rect2D(Rect2D::xywh(0,0,400,400), rd, Color3::white(), Rect2D::xywh(-1,-1,3,3));
 
     // Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction
     Surface2D::sortAndRender(rd, posed2D);
