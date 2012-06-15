@@ -623,6 +623,11 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
+
+    // Try to allocate 200 GB
+    void* b = ::malloc(int64(1024) * 1024 * 1024 * 50);
+    debugPrintf("happy: 0x%x\n", b);
+
     // Make Gui
 //    GuiTheme::makeThemeFromSourceFiles	("D:/morgan/g3d/data-source/guithemes/osx-10.7/", "osx-10.7_white.png", "osx-10.7_black.png", "osx-10.7.gtm.any", "D:/morgan/g3d/data-source/guithemes/osx-10.7/osx-10.7.gtm");
 //    ::exit(0);
