@@ -12,7 +12,9 @@
 
 class App : public GApp {
 public:
-    
+
+    Framebuffer::Ref        framebuffer;
+    Framebuffer::Ref        framebuffer1;
     Texture::Ref            texture;
     ArticulatedModel::Ref   model;
     Lighting::Ref           lighting;

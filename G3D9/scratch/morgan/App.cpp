@@ -706,7 +706,18 @@ void App::onInit() {
     debugPane->addCustom(new GuiCFrameBox(Pointer<CFrame>(&defaultCamera, &GCamera::coordinateFrame, &GCamera::setCoordinateFrame), debugPane, "CFrame"));
     
     lighting = defaultLighting();
-    texture = Texture::fromFile(System::findDataFile("checkerboard.jpg"), ImageFormat::AUTO(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+
+    Texture::Settings cszSettings = Texture::Settings::buffer();
+    cszSettings.interpolateMode   = Texture::NEAREST_MIPMAP;
+    cszSettings.maxMipMap         = 5;
+    texture = Texture::createEmpty("texture", 512, 512, ImageFormat::RG32F(), Texture::DIM_2D_NPOT, cszSettings);
+    framebuffer = Framebuffer::create("framebuffer");
+    framebuffer->set(Framebuffer::COLOR0, texture, CubeFace::POS_X, 0);
+
+    framebuffer1 = Framebuffer::create("framebuffer");
+    framebuffer1->set(Framebuffer::COLOR0, texture, CubeFace::POS_X, 1);
+
+    //texture = Texture::fromFile(System::findDataFile("checkerboard.jpg"), ImageFormat::AUTO(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
 }
 
 
@@ -728,6 +739,9 @@ bool App::onEvent(const GEvent& e) {
 void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::axes(CoordinateFrame(Vector3(0, 0, 0)), rd);
 
+    rd->push2D(framebuffer1); {
+        rd->clear();
+    } rd->pop2D();
 //    model->pose(surface3D);
     Surface::sortAndRender(rd, defaultCamera, surface3D, lighting);
 
