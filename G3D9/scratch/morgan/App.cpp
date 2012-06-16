@@ -711,6 +711,13 @@ void App::onInit() {
     cszSettings.interpolateMode   = Texture::NEAREST_MIPMAP;
     cszSettings.maxMipMap         = 5;
     texture = Texture::createEmpty("texture", 512, 512, ImageFormat::RG32F(), Texture::DIM_2D_NPOT, cszSettings);
+    /*
+    // Force MIP-map allocation
+    glBindTexture(texture->openGLTextureTarget(), texture->openGLID());
+    glGenerateMipmap(texture->openGLTextureTarget());
+    glBindTexture(texture->openGLTextureTarget(), GL_NONE);
+    */
+
     framebuffer = Framebuffer::create("framebuffer");
     framebuffer->set(Framebuffer::COLOR0, texture, CubeFace::POS_X, 0);
 

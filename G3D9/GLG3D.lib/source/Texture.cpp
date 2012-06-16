@@ -29,6 +29,21 @@
 
 namespace G3D {
 
+static bool isMipMapFormat(Texture::InterpolateMode i) {
+    switch (i) {
+    case Texture::TRILINEAR_MIPMAP:
+    case Texture::BILINEAR_MIPMAP:
+    case Texture::NEAREST_MIPMAP:
+        return true;
+
+    case Texture::BILINEAR_NO_MIPMAP:
+    case Texture::NEAREST_NO_MIPMAP:
+        return false;
+    }
+
+    alwaysAssertM(false, "Illegal interpolate mode");
+    return false;
+}
 
 /** Used by various Texture methods when a framebuffer is needed */
 static const Framebuffer::Ref& workingFramebuffer() {
@@ -809,8 +824,8 @@ Texture::Ref Texture::fromFile(
     
     std::string realFilename[6];
 
-    const ImageFormat* format = ImageFormat::RGB8();
-    bool opaque = true;
+    //    const ImageFormat* format = ImageFormat::RGB8();
+    //bool opaque = true;
 
     Array< Array< const void* > > byteMipMapFaces;
 
@@ -1083,21 +1098,6 @@ Texture::Ref Texture::fromTwoFiles(
 }
 
 
-static bool isMipMapformat(Texture::InterpolateMode i) {
-    switch (i) {
-    case Texture::TRILINEAR_MIPMAP:
-    case Texture::BILINEAR_MIPMAP:
-    case Texture::NEAREST_MIPMAP:
-        return true;
-
-    case Texture::BILINEAR_NO_MIPMAP:
-    case Texture::NEAREST_NO_MIPMAP:
-        return false;
-    }
-
-    alwaysAssertM(false, "Illegal interpolate mode");
-    return false;
-}
 
 
 Texture::Ref Texture::fromMemory(
@@ -1263,7 +1263,7 @@ Texture::Ref Texture::fromMemory(
         glEnable(target);
         glBindTexture(target, textureID);
         debugAssertGLOk();
-        if (isMipMapformat(settings.interpolateMode) && hasAutoMipMap() && (numMipMaps == 1)) {
+        if (isMipMapFormat(settings.interpolateMode) && hasAutoMipMap() && (numMipMaps == 1)) {
             // Enable hardware MIP-map generation.
             // Must enable before setting the level 0 image (we'll set it again
             // in setTexParameters, but that is intended primarily for 
@@ -1290,7 +1290,7 @@ Texture::Ref Texture::fromMemory(
                     target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + f;
                 }
 
-                if (isMipMapformat(settings.interpolateMode) && ! hasAutoMipMap() && (numMipMaps == 1)) {
+                if (isMipMapFormat(settings.interpolateMode) && ! hasAutoMipMap() && (numMipMaps == 1)) {
 
                     debugAssertM((bytesFormat->compressed == false), 
                                  "Cannot manually generate Mip-Maps for compressed textures.");
@@ -1485,6 +1485,12 @@ Texture::Ref Texture::createEmpty
         t->visualization = Visualization::depthBuffer();
     }
 
+    if (isMipMapFormat(settings.interpolateMode)) {
+        // Some GPU drivers will not allocate the MIP levels until
+        // this is called explicitly, which can cause framebuffer
+        // calls to fail
+        t->generateMipMaps();
+    }
 
     debugAssertGLOk();
     return t;

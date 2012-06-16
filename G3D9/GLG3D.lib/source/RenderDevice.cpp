@@ -563,6 +563,10 @@ void RenderDevice::push2D(const FramebufferRef& fb, const Rect2D& viewport) {
 
     setProjectionMatrix(Matrix4::orthogonalProjection(viewport.x0(), viewport.x0() + viewport.width(), 
                                                       viewport.y0() + viewport.height(), viewport.y0(), -1, 1));
+
+    // Workaround for a bug where setting the draw buffer alone is not
+    // enough, or where the order of setting causes problems.
+    setFramebuffer(fb);
 }
 
 
