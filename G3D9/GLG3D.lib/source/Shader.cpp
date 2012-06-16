@@ -382,7 +382,7 @@ void ShaderProgram::ShaderObject::init
                 uniform bool   g3d_InvertY;
                 );
 
-        
+
         // See if the program begins with a version pragma
         std::string versionLine;
         if (beginsWith(_code, "#version ")) {
@@ -433,6 +433,15 @@ void ShaderProgram::ShaderObject::init
 #       if defined(G3D_64BIT)
             defineString += "#define G3D_64BIT\n";
 #       endif
+
+        Array<std::string> extensions("GL_EXT_gpu_shader4",
+                                      "GL_ARB_gpu_shader5");
+
+        for (int i = 0; i < extensions.length(); ++i) {
+            if (GLCaps::supports(extensions[i])) {
+                defineString += "#define " + extensions[i] + " 1\n";
+            }
+        }
                 
         // Replace g3d_size and g3d_invSize with corresponding magic names
         replaceG3DSize(_code, uniformString);

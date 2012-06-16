@@ -4,7 +4,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
  \created 2004-04-25
- \edited  2011-06-12
+ \edited  2012-06-15
  */
 
 #ifndef G3D_Shader_h
@@ -586,8 +586,8 @@ typedef ReferenceCountedPointer<Shader> ShaderRef;
   line in which it appears.  There may be no space between the # and the include.
 
   The macros <code>G3D_OSX, G3D_WIN32, G3D_FREEBSD, G3D_LINUX,
-  G3D_ATI, G3D_NVIDIA, G3D_MESA</code> are defined on the relevant
-  platforms.
+  G3D_ATI, G3D_NVIDIA, G3D_MESA, GL_EXT_gpu_shader4, GL_ARB_gpu_shader5</code> 
+  are defined on the relevant platforms.
 
   <code>g3d_sampler2DSize</code> and <code>g3d_sampler2DInvSize</code>
   require that there be no additional space between the function name
