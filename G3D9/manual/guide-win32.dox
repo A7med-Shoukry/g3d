@@ -30,6 +30,10 @@ edition of Visual Studio 2010 that can be purchased and includes 64-bit support 
 
 <ul>
 <li> Visual Studio 2010: <a href="http://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a></li>
+<li> If you have Visual Studio 2010 Service Pack 1 (SP1) installed, you must uninstall it from the Control Panel before installing the Windows SDK 7.1 because
+of a bug in Microsoft's installer.  They have the wrong version numbers on the SDK and using SP1 will force you to use the old SDK, which is incompatible with G3D.
+See this <a href="http://stackoverflow.com/questions/10833852/compiling-fftw-source-in-visual-studio">Stackoverflow</a> post and 
+<a href="http://msmvps.com/blogs/carlosq/archive/2011/04/12/uninstalling-visual-studio-2010-sp1.aspx">this blog</a> for more information.</li>
 <li> Windows SDK 7.1: <a href="http://msdn.microsoft.com/en-us/windows/bb980924">http://msdn.microsoft.com/en-us/windows/bb980924</a></li>
 <li> Windows SDK patch: (may not be needed; only install if you see the error "Error: The "ConfigurationGeneral" rule is missing from the project.") <a href="http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=4422">http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=4422</a></li>
 </ul>
