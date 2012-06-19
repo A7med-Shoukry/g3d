@@ -14,15 +14,15 @@ namespace G3D {
 
 static ImageBuffer::Ref convertRGBA8toBGRA8(const ImageBuffer::Ref& src, const ImageFormat* dstFormat){
     alwaysAssertM(src->format() == ImageFormat::RGBA8() && dstFormat == ImageFormat::BGRA8(), 
-        format("This conversion only works from RGBA8 to BGRA8, not %s to %s", src->format()->name(), dstFormat->name()));
+        format("This conversion only works from RGBA8 to BGRA8, not %s to %s", src->format()->name().c_str(), dstFormat->name().c_str()));
     int width = src->width();
     int height = src->height();
 
     ImageBuffer::Ref dstBuffer = ImageBuffer::create(width, height, dstFormat, AlignedMemoryManager::create(), 1, 1);
 
 
-    BYTE* srcData = (BYTE*)src->buffer();
-    BYTE* dstData = (BYTE*)dstBuffer->buffer();
+    unorm8* srcData = (unorm8*)src->buffer();
+    unorm8* dstData = (unorm8*)dstBuffer->buffer();
 
     const int bytesPerPixel = 4;
 
