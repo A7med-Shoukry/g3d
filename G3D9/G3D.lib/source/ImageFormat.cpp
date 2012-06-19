@@ -198,6 +198,7 @@ const ImageFormat* ImageFormat::stencil(int bits) {
         "STENCIL16",
 
         "DEPTH24_STENCIL8",
+        "BGRA8",
         ""
     };
 
@@ -258,7 +259,9 @@ const ImageFormat* ImageFormat::getFormatWithAlpha(const ImageFormat* otherForma
             return RGBA8UI();
             break;
 
-        // todo: Add BGRA
+        case CODE_BGR8:
+            return BGRA8();
+            break;
 
         case CODE_RGB16:
             return RGBA16();
@@ -329,7 +332,7 @@ const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
 
     case ImageFormat::CODE_LA16F:
         return ImageFormat::LA16F();
-        break;
+        
     case ImageFormat::CODE_LA32F:
         return ImageFormat::LA32F();
 
@@ -371,6 +374,9 @@ const ImageFormat* ImageFormat::fromCode(ImageFormat::Code code) {
 
     case ImageFormat::CODE_BGR8:
         return ImageFormat::BGR8();
+
+    case ImageFormat::CODE_BGRA8:
+        return ImageFormat::BGRA8();
 
     case ImageFormat::CODE_R8:
         return ImageFormat::R8();
@@ -723,5 +729,8 @@ DEFINE_TEXTUREFORMAT_METHOD(DEPTH24_STENCIL8,   2, UNCOMP_FORMAT,   GL_DEPTH24_S
 DEFINE_TEXTUREFORMAT_METHOD(YUV420_PLANAR,  3, UNCOMP_FORMAT,   GL_NONE,    GL_NONE, 0, 0, 0, 0, 0, 0, 0, 12, 12,  GL_UNSIGNED_BYTE, OPAQUE_FORMAT, NORMALIZED_FIXED_POINT_FORMAT, ImageFormat::CODE_YUV420_PLANAR, ImageFormat::COLOR_SPACE_YUV);
 DEFINE_TEXTUREFORMAT_METHOD(YUV422,         3, UNCOMP_FORMAT,   GL_NONE,    GL_NONE, 0, 0, 0, 0, 0, 0, 0, 16, 16,  GL_UNSIGNED_BYTE, OPAQUE_FORMAT, NORMALIZED_FIXED_POINT_FORMAT, ImageFormat::CODE_YUV422, ImageFormat::COLOR_SPACE_YUV);
 DEFINE_TEXTUREFORMAT_METHOD(YUV444,         3, UNCOMP_FORMAT,   GL_NONE,    GL_NONE, 0, 0, 0, 0, 0, 0, 0, 24, 24,  GL_UNSIGNED_BYTE, OPAQUE_FORMAT, NORMALIZED_FIXED_POINT_FORMAT, ImageFormat::CODE_YUV444, ImageFormat::COLOR_SPACE_YUV);
+
+// TODO: Move this up with  BGR8
+DEFINE_TEXTUREFORMAT_METHOD(BGRA8,       3, UNCOMP_FORMAT,   GL_RGBA8,            GL_BGRA,     0,  8,  8,  8,  8,  0,  0, 32, 32,      GL_UNSIGNED_BYTE, CLEAR_FORMAT, NORMALIZED_FIXED_POINT_FORMAT, ImageFormat::CODE_BGR8, ImageFormat::COLOR_SPACE_RGB);
 
 }

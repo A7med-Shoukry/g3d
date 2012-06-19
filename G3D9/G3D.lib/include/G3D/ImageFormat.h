@@ -128,6 +128,8 @@ public:
 
         CODE_DEPTH24_STENCIL8,
 
+        CODE_BGRA8,
+
         CODE_NUM
         };
 
@@ -286,6 +288,8 @@ public:
     static const ImageFormat* LA32F();
 
     static const ImageFormat* BGR8();
+
+    static const ImageFormat* BGRA8();
 
     static const ImageFormat* R8();
 

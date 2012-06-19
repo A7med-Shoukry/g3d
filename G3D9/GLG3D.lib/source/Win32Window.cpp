@@ -31,7 +31,7 @@ All rights reserved.
 #include <time.h>
 #include <sstream>
 #include <crtdbg.h>
-
+#include "G3D/ImageConvert.h"
 #include "GLG3D/GApp.h" // for screenPrintf
 
 #ifndef WM_MOUSEHWHEEL // Only defined on Vista
@@ -625,10 +625,11 @@ void Win32Window::setIcon(const Image::Ref& src) {
             binaryMaskData[(y * (src->width() / 8)) + (x / 8)] |= bit;
         }
     }
-    
+    ImageBuffer::Ref bgraColorBuffer = ImageConvert::convertBuffer(colorData->toImageBuffer(), ImageFormat::BGRA8());
+
 
     HBITMAP bwMask = ::CreateBitmap(src->width(), src->height(), 1, 1, binaryMaskData.getCArray());  
-    HBITMAP color  = ::CreateBitmap(src->width(), src->height(), 1, 32, colorData->toImageBuffer()->buffer());
+    HBITMAP color  = ::CreateBitmap(src->width(), src->height(), 1, 32, bgraColorBuffer->buffer());
 
     ICONINFO iconInfo;
     iconInfo.xHotspot = 0;
