@@ -9,6 +9,9 @@
 
 #ifndef G3D_Args_h
 #define G3D_Args_h
+
+
+#include "G3D/platform.h"
 #include "G3D/constants.h"
 #include "G3D/SmallArray.h"
 
