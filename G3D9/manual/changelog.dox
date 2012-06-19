@@ -26,7 +26,9 @@
    <p>
    Changes in 9.00:
    <ul>
-
+    <li> Added BGRA8 to ImageFormat. [Mike] </li>
+    <li> Added convertRGBA8toBGRA8 functionality to ImageBuffer::convertBuffer() [Mike] </li>
+    <li> Modified Win32Window::setIcon to properly convert the icon to BRGA. (Our G3D icon now displays properly). [Mike] </li>
     <li> Added enum ImageFormat::NumberFormat which is {FLOATING_POINT_FORMAT, INTEGER_FORMAT, NORMALIZED_FIXED_POINT_FORMAT, OTHER}. 
          To eventually replace the floatingPoint boolean. Modified the constructor to match, and set its value for all image formats specified in the .cpp. [Mike] </li>
     <li> Added ImageFormat::isIntegerFormat() [Mike] </li>
