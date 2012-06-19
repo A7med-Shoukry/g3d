@@ -7,47 +7,47 @@
  \edited 2012-06-13
 
  TODO: Add parameter to turn off preprocessor to Specification
-
-
-
  */
 
+#include "G3D/platform.h"
 #include "GLG3D/Shader2.h"
-namespace G3D {
-    Shader2::Specification::Specification(){}
 
-    Shader2::Specification::Specification(const Any& any){
-       /* if(any.containsKey("vertexFile")){
-            vertex.val  = any["vertexFile"].string();
-            vertex.type = FILE;
-        } else if(any.containsKey("vertexString")){
-            vertex.val = any["vertexString"].string();
-        }
-        if(any.containsKey("tessellationFile")){
-            tessellation.val  = any["tessellationFile"].string();
-            tessellation.type = FILE;
-        } else if(any.containsKey("tessellationString")){
-            tessellation.val = any["tessellationString"].string();
-        }
-        if(any.containsKey("tessellationControlFile")){
-            tessellationControl.val  = any["tessellationControlFile"].string();
-            tessellationControl.type = FILE;
-        } else if(any.containsKey("tessellationControlString")){
-            tessellationControl.val = any["tessellationControlString"].string();
-        } 
-        if(any.containsKey("geometryFile")){
-            geometry.val  = any["geometryFile"].string();
-            geometry.type = FILE;
-        } else if(any.containsKey("geometryString")){
-            geometry.val = any["geometryString"].string();
-        } 
-        if(any.containsKey("pixelFile")){
-            pixel.val  = any["pixelFile"].string();
-            pixel.type = FILE;
-        } else if(any.containsKey("pixelString")){
-            pixel.val = any["pixelString"].string();
-        } */
-    }
+namespace G3D {
+
+Shader2::Specification::Specification(){}
+
+Shader2::Specification::Specification(const Any& any){
+    /* if(any.containsKey("vertexFile")){
+       vertex.val  = any["vertexFile"].string();
+       vertex.type = FILE;
+       } else if(any.containsKey("vertexString")){
+       vertex.val = any["vertexString"].string();
+       }
+       if(any.containsKey("tessellationFile")){
+       tessellation.val  = any["tessellationFile"].string();
+       tessellation.type = FILE;
+       } else if(any.containsKey("tessellationString")){
+       tessellation.val = any["tessellationString"].string();
+       }
+       if(any.containsKey("tessellationControlFile")){
+       tessellationControl.val  = any["tessellationControlFile"].string();
+       tessellationControl.type = FILE;
+       } else if(any.containsKey("tessellationControlString")){
+       tessellationControl.val = any["tessellationControlString"].string();
+       } 
+       if(any.containsKey("geometryFile")){
+       geometry.val  = any["geometryFile"].string();
+       geometry.type = FILE;
+       } else if(any.containsKey("geometryString")){
+       geometry.val = any["geometryString"].string();
+       } 
+       if(any.containsKey("pixelFile")){
+       pixel.val  = any["pixelFile"].string();
+       pixel.type = FILE;
+       } else if(any.containsKey("pixelString")){
+       pixel.val = any["pixelString"].string();
+       } */
+}
 
     Shader2::Source::Source(SourceType t, const std::string& value) :
         type(t), val(value){}
@@ -71,6 +71,4 @@ namespace G3D {
 
     
 
-
-
-}
+} // namespace G3D

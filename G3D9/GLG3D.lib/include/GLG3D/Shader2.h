@@ -10,6 +10,9 @@
 #ifndef GLG3D_Shader2_h
 #define GLG3D_Shader2_h
 
+#include "G3D/platform.h"
+#include <string>
+
 #include "G3D/Matrix2.h"
 #include "G3D/Matrix3.h"
 #include "G3D/Matrix4.h"
@@ -25,7 +28,6 @@
 #include "GLG3D/Texture.h"
 #include "GLG3D/Args.h"
 #include "G3D/SmallArray.h"
-#include <string>
 
 #include "G3D/constants.h"
 
