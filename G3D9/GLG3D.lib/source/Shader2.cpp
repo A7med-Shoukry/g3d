@@ -17,7 +17,7 @@
 namespace G3D {
 
 
-bool s_failureBehavior;
+Shader2::FailureBehavior Shader2::s_failureBehavior = Shader2::PROMPT;
 
 
 Shader2::Specification::Specification(){}
