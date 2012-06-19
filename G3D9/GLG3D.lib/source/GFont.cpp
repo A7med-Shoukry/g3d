@@ -213,14 +213,14 @@ Vector2 GFont::drawString
             }
 
             float xx = x - sx;
-            glTexCoord2f(col * charWidth, row * charHeight + 1);
+            glTexCoord2f(float(col * charWidth), float(row * charHeight + 1));
             glVertex2f(xx,     y + sy);
 
-            glTexCoord2f(col * charWidth, (row + 1) * charHeight - 2);
+            glTexCoord2f(float(col * charWidth), float((row + 1) * charHeight - 2));
             glVertex2f(xx,     y + h - sy); 
 
             xx += w;
-            glTexCoord2f((col + 1) * charWidth - 1, (row + 1) * charHeight - 2);
+            glTexCoord2f(float((col + 1) * charWidth - 1), float((row + 1) * charHeight - 2));
             glVertex2f(xx, y + h - sy); 
 
             glTexCoord2f(float((col + 1) * charWidth - 1), float(row * charHeight + 1));
@@ -283,8 +283,8 @@ Vector2 GFont::computePackedArray(
             array[count].y = y + sy;
 
             ++count;
-            array[count].x = col * charWidth;
-            array[count].y = (row + 1) * charHeight - 2;
+            array[count].x = float(col * charWidth);
+            array[count].y = float((row + 1) * charHeight - 2);
             
             ++count;
             array[count].x = xx;
@@ -292,16 +292,16 @@ Vector2 GFont::computePackedArray(
 
             xx += w;
             ++count;
-            array[count].x = (col + 1) * charWidth - 1;
-            array[count].y = (row + 1) * charHeight - 2;
+            array[count].x = float((col + 1) * charWidth - 1);
+            array[count].y = float((row + 1) * charHeight - 2);
             
             ++count;
             array[count].x = xx;
             array[count].y = y + h - sy;
     
             ++count;
-            array[count].x = (col + 1) * charWidth - 1;
-            array[count].y = row * charHeight + 1;
+            array[count].x = float((col + 1) * charWidth - 1);
+            array[count].y = float(row * charHeight + 1);
 
             ++count;
             array[count].x = xx;

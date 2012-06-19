@@ -607,6 +607,9 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shader2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\Args.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\GLG3D.lib\source\NSAutoreleasePoolWrapper.mm">

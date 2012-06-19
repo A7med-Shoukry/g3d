@@ -305,6 +305,7 @@
     <ClCompile Include="..\GLG3D.lib\source\Win32Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\Args.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BumpMap.h" />

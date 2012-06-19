@@ -299,7 +299,7 @@ void RenderDevice::init(OSWindow* window) {
                 
         // Test which texture and render buffer formats are supported by this card
         logLazyPrintf("Supported Formats:\n");
-        logLazyPrintf("%20s  %s %s\n", "Format", "Texture", "RenderBuffer");
+        logLazyPrintf("%20s  %s %s %s\n", "Format", "Texture", "RenderBuffer", "TextureDrawBuffer");
         
         for (int code = 0; code < ImageFormat::CODE_NUM; ++code) {
             if ((code == ImageFormat::CODE_DEPTH24_STENCIL8) && 
@@ -315,7 +315,8 @@ void RenderDevice::init(OSWindow* window) {
             // printf("Format: %s\n", fmt->name().c_str());
                 bool t = GLCaps::supportsTexture(fmt);
                 bool r = GLCaps::supportsRenderBuffer(fmt);
-                logLazyPrintf("%20s  %s       %s\n", fmt->name().c_str(), t ? "Yes" : "No ", r ? "Yes" : "No ");
+                bool d = GLCaps::supportsTextureDrawBuffer(fmt);
+                logLazyPrintf("%20s  %s       %s         %s\n", fmt->name().c_str(), t ? "Yes" : "No ", r ? "Yes" : "No ", d ? "Yes" : "No ");
             }
         }
 
@@ -2722,12 +2723,14 @@ void RenderDevice::beginPrimitive(PrimitiveType p) {
 
 
 void RenderDevice::endPrimitive() {
+    
+
     debugAssertM(m_inPrimitive, "Call to endPrimitive() without matching beginPrimitive()");
 
     minStateChange(m_currentPrimitiveVertexCount);
     minGLStateChange(m_currentPrimitiveVertexCount);
     countTriangles(m_currentPrimitive, m_currentPrimitiveVertexCount);
-
+    
     glEnd();
     debugAssertGLOk();
     m_inPrimitive = false;
@@ -3555,6 +3558,10 @@ void RenderDevice::describeSystem(TextOutput& t) {
     t.writeNewline();
     t.writeNewline();
     debugAssertGLOk();
+}
+
+void RenderDevice::setShader2(const Shader2::Ref& s){
+
 }
 
 } // namespace

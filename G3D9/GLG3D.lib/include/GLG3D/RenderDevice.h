@@ -34,6 +34,8 @@
 #include "G3D/Stopwatch.h"
 #include "G3D/Matrix2.h"
 
+#include "GLG3D/Shader2.h"
+
 namespace G3D {
 
 class VertexRange;
@@ -1342,6 +1344,8 @@ public:
      each primitive group to set other RenderDevice state.     
      */
     void setShader(const ShaderRef& s);
+
+    void setShader2(const Shader2::Ref& s);
    
     Shader::Ref shader() const {
         return m_state.shader;

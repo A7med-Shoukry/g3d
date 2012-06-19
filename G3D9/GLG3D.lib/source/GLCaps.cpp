@@ -69,6 +69,11 @@ static Table<const ImageFormat*, bool>& _supportedRenderBufferFormat() {
     return cache;
 }
 
+static Table<const ImageFormat*, bool>& _supportedTextureDrawBufferFormat() {
+    static Table<const ImageFormat*, bool> cache;
+    return cache;
+}
+
 Set<std::string> GLCaps::extensionSet;
 
 GLCaps::Vendor GLCaps::computeVendor() {
@@ -488,7 +493,7 @@ bool GLCaps::hasBug_R11G10B10F() {
 
 
 bool GLCaps::supportsTexture(const ImageFormat* fmt) {
-
+    
     if (fmt == ImageFormat::R11G11B10F() && hasBug_R11G10B10F()) {
         return false;
     }
@@ -539,6 +544,129 @@ bool GLCaps::supportsTexture(const ImageFormat* fmt) {
     return _supportedImageFormat()[fmt];
 }
 
+
+bool GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt) {
+   
+    // First, check if we've already tested this format
+    if (! _supportedTextureDrawBufferFormat().containsKey(fmt)) {
+
+        bool supportsFormat = true;
+        
+        // Mask off the unused channels
+        Color4 mask = fmt->channelMask();
+
+        if ( (! supports_GL_ARB_framebuffer_object() && ! supports_GL_EXT_framebuffer_object()) // No frame buffers
+                || (fmt->floatingPoint && ! supports_GL_ARB_texture_float())  // No floating point texture
+                || (fmt->depthBits > 0 || fmt->stencilBits > 0) // Depth and stencil, always fail test
+                || (mask.sum() <= 0) // No channels would be read back!
+                ){
+            supportsFormat = false;
+        } else {
+            
+            glPushAttrib(GL_COLOR_BUFFER_BIT); {
+                // Clear the error bit
+                glGetErrors();
+
+                // Set up a frame buffer to render to
+                GLuint testBufferGLName = 0;
+                glGenFramebuffers(1, &testBufferGLName);
+                glBindFramebuffer(GL_FRAMEBUFFER, testBufferGLName);
+
+                // The texture we're going to render to
+                GLuint testTexture;
+                glGenTextures(1, &testTexture);
+
+                // "Bind" the newly created texture : all future texture functions will modify this texture
+                glBindTexture(GL_TEXTURE_2D, testTexture);
+
+                // Make a 4x4 texture, (automatically 4-byte-aligned no matter the format), with no itialized data
+                const GLsizei   width  = 4;
+                const GLsizei   height = 4;
+                GLint           border = 0;
+                GLint           mipLevel  = 0;
+
+                glTexImage2D(GL_TEXTURE_2D, mipLevel, fmt->openGLFormat, width, height, border, fmt->openGLBaseFormat, GL_UNSIGNED_BYTE, NULL);
+ 
+                // Attach the texture to the framebuffer
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, testTexture, mipLevel);
+
+
+                // Early out test: If we can't even get this far without errors, don't try writing!
+                if(glGetError() == GL_NO_ERROR){
+                    // Setup successful
+
+                    // Set up a color array, for testing that we can validly render each color into a 4x4 texture bound to a framebuffer
+                    // This could be static
+                    const int testColorNum = 2;
+
+                    // The test colors (white and clear);
+                    Color4 testColors[testColorNum] = {
+                        Color4(1.0f, 1.0f, 1.0f, 1.0f), // White
+                        Color4(0.0f, 0.0f, 0.0f, 0.0f)  // Clear (Transparent Black)
+                    };
+                    const int pixelNum = width * height;
+    
+                    // We will read the pixel at 0,0.
+                    const int x = 0;
+                    const int y = 0;
+   
+                    // For each color in the test color array, render that color to the texture, read back the pixels,
+                    // and make sure the color was written correctly
+                    for(int i = 0; i < testColorNum; ++i){
+                        const Color4& testColor = testColors[i];
+    
+                        // Render the test color to the texture
+
+                        glClearColor(testColor.r, testColor.g, testColor.b, testColor.a);
+                        glClear(GL_COLOR_BUFFER_BIT);
+
+
+                        Color4 readBackPixel;
+
+                        // Read back the pixel, need to have a different code path for integer formats,
+                        // since otherwise glReadPixels will read all zeros.
+                        if( !fmt->isIntegerFormat() ){
+                            glReadPixels(x, y, 1, 1, GL_RGBA, GL_FLOAT, &readBackPixel);  
+                        } else {
+                            // We use a signed int8, since it has the lowest maxValue of all number formats.
+                            // glClear transforms 1.0f to the maxValue of the internal integer format:
+                            // 127 for signed byte, 65535 for unsigned short, etc. By reading back in GL_BYTE
+                            // format, we will always get 127 when we cleared to 1. If we used any other format,
+                            // we'd run into cases such as R8UI being reaad back as 255 after being cleared, but R8I
+                            // read back as 127. BAD! 
+                            // TODO: A more principled approach would to actually store max values for the various formats
+                            // and use them instead.
+                            int8 readBackByte[4] = {0,0,0,0};
+                            glReadPixels(x, y, 1, 1, GL_RGBA_INTEGER, GL_BYTE, &readBackByte);
+                            for(int k = 0; k < 4; ++k){
+                                // A signed byte (GL_BYTE) has a max value of 127. Since glClear maps [0,1]
+                                // to [0,maxValue], at least for zero and one we can obtain the original 
+                                // value by dividing by 127
+                                readBackPixel[k] = float(readBackByte[k]) / float(127.0f);
+                            }
+                        }
+                        supportsFormat &= (readBackPixel * mask == testColor * mask);
+                        
+                      
+                        
+                    }
+
+                } else { // Couldn't even set up texture and framebuffer
+                    
+                    supportsFormat = false;
+                }
+            } glPopAttrib();
+
+
+
+        }
+        // Clear error bit again
+        glGetErrors();
+        _supportedTextureDrawBufferFormat().set(fmt, supportsFormat);
+    }
+
+    return _supportedTextureDrawBufferFormat()[fmt];
+}
 
 bool GLCaps::supportsRenderBuffer(const ImageFormat* fmt) {
 

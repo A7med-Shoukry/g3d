@@ -205,6 +205,10 @@ public:
         device for Textures.*/
     static bool supportsTexture(const class ImageFormat* fmt);
 
+    /** Returns true if the given texture format is supported on this
+        device for draw FrameBuffers. Note: always false for depth compressed formats */
+    static bool supportsTextureDrawBuffer(const class ImageFormat* fmt);
+
     /** Returns the first element of \a prefs for which
         supportsTexture() returns true. Returns NULL if none are
         supported.*/

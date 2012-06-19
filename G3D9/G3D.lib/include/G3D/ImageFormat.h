@@ -147,6 +147,14 @@ public:
         BAYER_PATTERN_BGGR
     };
 
+
+    enum NumberFormat { 
+        FLOATING_POINT_FORMAT,
+        INTEGER_FORMAT,
+        NORMALIZED_FIXED_POINT_FORMAT,
+        OTHER // e.g. DXT
+    };
+
     /**  Number of channels (1 for a depth texture). */
     int                 numComponents;
     bool                compressed;
@@ -204,8 +212,12 @@ public:
     /** True if there is no alpha channel for this texture. */
     bool                opaque;
 
-    /** True if the bit depths specified are for float formats. */
+    
+    /** True if the bit depths specified are for float formats. TODO: Remove, replace with function keying off numberFormat */
     bool                floatingPoint;
+
+    /** Indicates whether this format treats numbers as integers, floating point, or normalized fixed point */
+    NumberFormat        numberFormat;
 
     /** Human readable name of this format.*/
     const std::string& name() const;
@@ -219,6 +231,8 @@ public:
 
     /** Takes the same values that name() returns */
     static const ImageFormat* fromString(const std::string& s);
+
+
 
 private:
 
@@ -238,7 +252,7 @@ private:
      int             cpuBitsPerPixel,
      int             glDataFormat,
      bool            opaque,
-     bool            floatingPoint,
+     NumberFormat    numberFormat,
      Code            code,
      ColorSpace      colorSpace,
      BayerPattern    bayerPattern = BAYER_PATTERN_NONE);
@@ -448,6 +462,18 @@ public:
 
     /** Does this contain exactly four unorm8 components? */
     bool representableAsColor4unorm8() const;
+
+    /** Returns a Color4 that masks off unused components in the format, given in RGBA
+        For example, the mask for R32F is (1,0,0,0), for A32F is (0,0,0,1), for RGB32F is (1,1,1,0).
+        (Note that luminance is interpreted as using only the R channel, even though RGB would make more sense
+        to me...)
+      */
+    Color4 channelMask() const;
+
+    bool isIntegerFormat() const{
+        return (numberFormat == INTEGER_FORMAT);
+    }
+
 };
 
 typedef ImageFormat TextureFormat;

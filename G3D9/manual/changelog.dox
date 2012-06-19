@@ -2,6 +2,11 @@
 
  \page changelog Change Log
 
+
+ 
+
+
+
 <P>
    Major version numbers introduce API changes that are not backwards
    compatible.  Minor versions are backwards compatible to the
@@ -21,6 +26,15 @@
    <p>
    Changes in 9.00:
    <ul>
+
+    <li> Added enum ImageFormat::NumberFormat which is {FLOATING_POINT_FORMAT, INTEGER_FORMAT, NORMALIZED_FIXED_POINT_FORMAT, OTHER}. 
+         To eventually replace the floatingPoint boolean. Modified the constructor to match, and set its value for all image formats specified in the .cpp. [Mike] </li>
+    <li> Added ImageFormat::isIntegerFormat() [Mike] </li>
+    <li> Added ImageFormat::channelMask, which returns a Color4 that masks off unused components in the format, given in RGBA. 
+        For example, the mask for R32F is (1,0,0,0), for A32F is (0,0,0,1), for RGB32F is (1,1,1,0). 
+        (Note that luminance is interpreted as using only the R channel). Used by GLCaps::supportsTextureDrawBuffer(). [Mike]</li>
+    <li> Added GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt). Extended RenderDevice::init to write out the 
+         result of this function for each format alongside the supportsTexture and supportsRenderBuffer functions. [Mike] <\li>
     <li> Modified MD3Model::findFrameNum() to make the animations smoother until we get to implementing blending between animations [Mike]</li>
     <li> Added an optional mipLevel parameter to getTexImage, which defaults to 0. [Mike]</li>
     <li> Implemented G3D::Texture::generateMipMaps() (It was defined in the header but not implemented before). [Mike]</li>
@@ -39,7 +53,7 @@
 	<li> Added G3D::SuperSurface::getTrisHomogenous(), which is a SuperSurface-specific implementation of G3D::Surface::getTrisHomogenous() [Mike]</li> 
 	<li> Added G3D::CPUVertexArray::Vertex::transformBy() that takes  a G3D::CoordinateFrame and transforms its position, tangent, and normals by the CFrame (object to world). [Mike]</li> 
 	<li> Added  G3D::CPUVertexArray::transformAndAppend() which takes a G3D::CPUVertexArray and a G3D::CoordinateFrame and appends the parameter array, transforming
-	tangents, normals and positions from object to world space. [Mike]</li> 
+         tangents, normals and positions from object to world space. [Mike]</li> 
 	<li> Removed G3D::Tri::getTris(). Use G3D::Surface::getTris() instead. (updated everything internal to G3D to reflect this change) [Mike]</li> 
 	<li> Renamed G3D::Tri::vertex() to G3D::Tri::position(), and added a new G3D::Tri::vertex() that returns the G3D::CPUVertexArray::Vertex for the specified vertex. [Mike]</li> 
 	<li> Added G3D::Array::copyPOD() and G3D::Array::appendPOD() for fast array copy and append for "Plain Old Data" [Mike]</li> 
@@ -70,15 +84,15 @@
     <li> G3D::Texture now checks for if it is a cubemap on construction and sets visualization.isCubemap appropriately. [Mike]</li>
     <li> G3D::Texture::Visualization: Added isCubemap boolean. Modified the constructors, ==, needsShader() and toAny to reflect this change. [Mike]</li>
     <li> G3D::Rect2D::operator*(const Vector2& s) [Mike] </li>
-     <li> G3D::Texture::update(), G3D::Texture::getTexImage(), and G3DTexture::getImage() all have a new parameter that specifies the face of the cubemap to use. [Mike]</li>
-     <li> G3D::VideoRecordDialog::setScreenShotFormat</li>
-     <li> New "updateShadowMaps" argument to Surface::sortAndRender </li>
-     <li> G3D::WeakCache::clear </li>
-     <li> G3D::Matrix4float64 </li>
-	 <li> G3D::unorm16, G3D::snorm8, G3D::snorm16 [Zina] </li>
-	 <li> Added two more default parameters to G3D::SuperBSDF::create(), glossy = Color4::zero(), transmissive = Color4::zero() [Mike M.] </li>
-	 <li> G3D::Material::createDiffuse(Texture::Ref texture) [Mike] </li>
-     <li> G3D::GBuffer now allows scale and bias on every field (except depth) </li>
+	<li> G3D::Texture::update(), G3D::Texture::getTexImage(), and G3DTexture::getImage() all have a new parameter that specifies the face of the cubemap to use. [Mike]</li>
+    <li> G3D::VideoRecordDialog::setScreenShotFormat</li>
+    <li> New "updateShadowMaps" argument to Surface::sortAndRender </li>
+    <li> G3D::WeakCache::clear </li>
+    <li> G3D::Matrix4float64 </li>
+	<li> G3D::unorm16, G3D::snorm8, G3D::snorm16 [Zina] </li>
+    <li> Added two more default parameters to G3D::SuperBSDF::create(), glossy = Color4::zero(), transmissive = Color4::zero() [Mike] </li>
+	<li> G3D::Material::createDiffuse(Texture::Ref texture) [Mike] </li>
+    <li> G3D::GBuffer now allows scale and bias on every field (except depth) </li>
      <li> Removed shift + left button = right on OS X (ctrl+left still works) in FirstPersonManipulator </li>
      <li> G3D::FirstPersonManipulator now uses Z and C for vertical up and down translation (configurable)</li>
      <li> GuiContainer is now notified through G3D::GuiContainer::onChildControlEvent() when one of its children fires a GUI event.</li>
@@ -197,6 +211,7 @@
 	 <li> Added TangentSpace Normal to GBuffer. It uses  Encoding(2.0f, -1.0f), like the other normals in GBuffer [Mike]</li>
 	 <li> Added Tri::setData() [Mike]</li>
 	 <li> Added Tri::getIndex [Mike]</li>
+	 <li> Fix: G3D::ImageFormat now correctly prints RGB9E5F as "RGB9E5F", instead of "RGB9E10F". [Mike] <\li>
 	 <li> Fix: Removed TriTree::m_size, which wan't storing the right value. [Mike]</li>
 	 <li> Fix: RenderDevice::setInverseY now calls RenderDevice::forceSetCullFace after making the changes [Mike]</li>
      <li> Fix: CFrame::toXYZYPRDegreesString and fromXYZYPRDegreesString are now correctly inverses (modulo 360 degrees) and have higher precision than in 8.xx</li>
@@ -232,6 +247,7 @@
 	 <li> Fix: GEventType::MOUSE_MOTION events are now only delivered once to each GuiControl, and are in the correct coordinate system</li>
 	 <li> Fix: FileSystem::exists now is insensitive to the direction of slashes inside zipfiles</li>
 	 <li> Fix: FileSystem::_drives() now accurately gets the string representation of present drives. </li>
+	 
     </ul>
 
      <b>Backwards Incompatible Changes</b>:

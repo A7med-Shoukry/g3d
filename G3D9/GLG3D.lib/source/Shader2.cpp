@@ -5,6 +5,11 @@
  
  \created 2012-06-13
  \edited 2012-06-13
+
+ TODO: Add parameter to turn off preprocessor to Specification
+
+
+
  */
 
 #include "GLG3D/Shader2.h"
