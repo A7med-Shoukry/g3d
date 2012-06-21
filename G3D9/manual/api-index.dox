@@ -106,11 +106,12 @@ href="classes.html">Classes</a>.
     \link G3D::X11Window X11Window\endlink
    
   <LI><B>Effects</B> &nbsp; &nbsp;
+    \link G3D::Film Film\endlink,
     \link G3D::GaussianBlur GaussianBlur\endlink,
     \link G3D::GBuffer GBuffer\endlink,
     \link G3D::markShadows markShadows\endlink,
-    \link G3D::ShadowMap ShadowMap\endlink,
-    \link G3D::Film Film\endlink
+    \link G3D::SAO SAO\endlink,
+    \link G3D::ShadowMap ShadowMap\endlink
    </UL>
 
 @section gl Hardware Rendering (GLG3D.h, GLG3D.lib)
