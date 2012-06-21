@@ -1152,10 +1152,12 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
 }
 
 
-static bool supportsSAO(){
-    bool supported = true;
-    if(false){
-        supported = false;
+bool GLCaps::supportsSAO(){
+    static bool supported = true;
+    static bool init = true;
+    if(init){
+        supported = (renderer().find("") == std::string::npos);
+        init = false;
     }
     return supported;
 }
