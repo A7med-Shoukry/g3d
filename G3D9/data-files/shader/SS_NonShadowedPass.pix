@@ -1,5 +1,6 @@
 #version 120 // -*- c++ -*-
 #extension GL_ARB_shader_texture_lod : require  // For textureCubeLod
+#extension GL_EXT_gpu_shader4 : enable          // For texelFetch2D        
 /**
   \file SS_NonShadowedPass.pix
   \author Morgan McGuire, http://graphics.cs.williams.edu
@@ -50,6 +51,16 @@ uniform float       environmentMapScale;
     uniform sampler2D   emissiveMap;
 #endif
 
+#ifdef GL_EXT_gpu_shader4
+uniform sampler2D   aoBuffer;
+uniform ivec2       aoBufferOffset;
+#endif
+
+#if __VERSION__ == 120
+#   define texelFetch   texelFetch2D
+#   define textureSize  textureSize2D
+#endif
+
 void main(void) {
 
 #define pi (3.1415926)
@@ -68,7 +79,15 @@ void main(void) {
     vec3 ambientTop    = textureCubeLod(environmentMap, vec3(0.0,  1.0, 0.0), 100.0).rgb;
     vec3 ambientBottom = textureCubeLod(environmentMap, vec3(0.0, -1.0, 0.0), 100.0).rgb;
 
-    vec3 E_lambertian  = (ambientTop + (ambientTop - ambientBottom) * min(wsN.y, 0.0)) * (environmentMapScale * pi);
+    float AO = 
+#       ifdef  GL_EXT_gpu_shader4
+            // The clamp is for the case where the aoBuffer is a small, all-white buffer
+            texelFetch(aoBuffer, min(ivec2(gl_FragCoord.xy) + aoBufferOffset, textureSize(aoBuffer, 0) - ivec2(1, 1)), 0).r;
+#       else
+            1.0;
+#       endif
+
+    vec3 E_lambertian  = (ambientTop + (ambientTop - ambientBottom) * min(wsN.y, 0.0)) * (environmentMapScale * pi) * AO;
     vec3 E_specular;
     float shininess;
 

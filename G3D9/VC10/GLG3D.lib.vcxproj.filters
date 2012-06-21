@@ -660,5 +660,20 @@
     <None Include="..\data-files\shader\SS_Refract.vrt">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="..\data-files\shader\SAO\SAO_AO.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\SAO\SAO_blur.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\SAO\SAO_minify.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\SAO\SAO_reconstructCSZ.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\SAO\SAO.vrt">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -74,6 +74,22 @@ public:
 
     Array<GLight>       lightArray;
 
+    /** A screen-space buffer containing per-pixel ambient occlusion.  This is 
+        typically rendered per frame, per viewpoint from a cloned copy of Lighting; it is analogous
+        to an environment shadow map for diffuse lighting.
+
+        May be NULL.
+        
+        \see G3D::SAO
+     */
+    Texture::Ref        ambientOcclusion;
+
+    /**
+      G3D::SAO computes ambientOcclusion with an optional guard band.  This value is the distance
+      from (0,0) of the ambientOcclusion texture to (0,0) of the screen.
+    */
+    Vector2int16        ambientOcclusionOffset;
+
     /** Creates a (dark) environment. */
     static Ref create(const Specification& s = Specification());
 
