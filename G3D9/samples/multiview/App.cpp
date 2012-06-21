@@ -19,7 +19,7 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 
 
 void App::onInit() {
-
+    renderDevice->setColorClearValue(Color3::white());
     debugWindow->setVisible(false);
     developerWindow->cameraControlWindow->setVisible(true);
     developerWindow->cameraControlWindow->moveTo(Vector2(developerWindow->cameraControlWindow->rect().x0(), 0));
@@ -36,6 +36,9 @@ void App::onInit() {
     m_aoFramebuffer = Framebuffer::create("AO");
     m_aoFramebuffer->set(Framebuffer::COLOR0, m_aoTexture);
     m_aoFramebuffer->set(Framebuffer::DEPTH,  m_depthBuffer);
+    renderDevice->push2D(m_aoFramebuffer); {
+        renderDevice->clear(true, false, false);
+    } renderDevice->pop2D();
 
     m_scene = Scene::create();
     
@@ -56,7 +59,7 @@ void App::onInit() {
     toolBar->pack();
     addWidget(toolBar);
 
-    renderDevice->setColorClearValue(Color3::white());
+    
 }
 
 
@@ -77,9 +80,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     Surface::renderDepthOnly(rd, surface3D, RenderDevice::CULL_BACK);
 
-    rd->push2D(m_aoFramebuffer); {
-        m_sao->compute(rd, m_depthBuffer, defaultCamera);
-    } rd->pop2D();
+    if(GLCaps::supportsSAO()){
+        rd->push2D(m_aoFramebuffer); {
+            m_sao->compute(rd, m_depthBuffer, defaultCamera);
+        } rd->pop2D();
+    }
 
     m_scene->lighting()->ambientOcclusion = m_aoTexture;
 

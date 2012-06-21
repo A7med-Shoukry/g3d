@@ -138,13 +138,27 @@ public:
         Specification(const Any& any);
         Specification();
 
-        /** appropruiate documentation 
-    
-        vrt or vtx
-        evl or hul
-        ctl or dom
-        geo
-        pix or frg
+        /** Take in between 1 and 5 filenames, each uniquely corresponding to one of 
+            the 5 stages of the shading pipeline.
+            We parse each filename, and based on the extension, load it into the specification at the corresponding stage
+            The valid extensions are as follows:
+            ------------------------------------------
+            Shader Stage            |   Extension(s)
+            ------------------------------------------
+            Vertex                  |   .vrt or .vtx
+            ------------------------------------------
+            Tesselation Control     |
+            (Hull) Shader           |   .ctl or .hul
+            ------------------------------------------
+            Tesselation Evaluation  |
+            (Domain) Shader         |   .evl or .dom
+            ------------------------------------------
+            Geometry Shader         |       .geo
+            ------------------------------------------
+            Pixel (Fragment) Shader |   .pix or .frg     
+            ------------------------------------------
+
+            If any of the strings passed in is not the empty string or a filename with this extension, an error will be thrown.    
         */
         Specification(
             const std::string& f0, 
