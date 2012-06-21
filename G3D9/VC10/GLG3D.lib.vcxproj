@@ -406,6 +406,7 @@
   <ItemGroup>
     <None Include="..\data-files\shader\BumpMap.glsl" />
     <None Include="..\data-files\shader\Film_FXAA.pix" />
+    <None Include="..\data-files\shader\reconstruct.glsl" />
     <None Include="..\data-files\shader\SAO\SAO.vrt" />
     <None Include="..\data-files\shader\SAO\SAO_AO.pix" />
     <None Include="..\data-files\shader\SAO\SAO_blur.pix" />

@@ -82,7 +82,7 @@ void main(void) {
     float AO = 
 #       ifdef  GL_EXT_gpu_shader4
             // The clamp is for the case where the aoBuffer is a small, all-white buffer
-            texelFetch(aoBuffer, min(ivec2(gl_FragCoord.xy) + aoBufferOffset, textureSize(aoBuffer, 0) - ivec2(1, 1)), 0).r;
+            (0.9 * texelFetch(aoBuffer, min(ivec2(gl_FragCoord.xy) + aoBufferOffset, textureSize(aoBuffer, 0) - ivec2(1, 1)), 0).r + 0.1);
 #       else
             1.0;
 #       endif

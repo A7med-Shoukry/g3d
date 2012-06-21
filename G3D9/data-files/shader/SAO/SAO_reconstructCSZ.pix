@@ -1,6 +1,6 @@
 #version 120 // -*- c++ -*-
 #extension GL_EXT_gpu_shader4 : require
-#include "reconstruct.glsl"
+#include "../reconstruct.glsl"
 #line 4
 
 /**

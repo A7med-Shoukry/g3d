@@ -28,7 +28,14 @@ void App::onInit() {
     
     defaultCamera.setCoordinateFrame(CFrame::fromXYZYPRDegrees(-0.61369f, 0.734589f, 0.934322f, 314.163f, -12.1352f));
 
+    m_sao = SAO::create();
     m_shadowMap = ShadowMap::create();
+    m_aoTexture = Texture::createEmpty("AO", window()->width(), window()->height(), 
+        GLCaps::supportsTextureDrawBuffer(ImageFormat::R8()) ? ImageFormat::R8() : ImageFormat::RGB8(), Texture::DIM_2D_NPOT,
+        Texture::Settings::buffer());
+    m_aoFramebuffer = Framebuffer::create("AO");
+    m_aoFramebuffer->set(Framebuffer::COLOR0, m_aoTexture);
+    m_aoFramebuffer->set(Framebuffer::DEPTH,  m_depthBuffer);
 
     m_scene = Scene::create();
     
@@ -68,6 +75,14 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Rect2D shadeViewport = Rect2D::xywh(0, 0, rd->width() / 2, rd->height() / 2);
     rd->setViewport(shadeViewport);
     Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
+    Surface::renderDepthOnly(rd, surface3D, RenderDevice::CULL_BACK);
+
+    rd->push2D(m_aoFramebuffer); {
+        m_sao->compute(rd, m_depthBuffer, defaultCamera);
+    } rd->pop2D();
+
+    m_scene->lighting()->ambientOcclusion = m_aoTexture;
+
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
 
     // Wireframe views

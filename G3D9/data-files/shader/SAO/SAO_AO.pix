@@ -1,7 +1,7 @@
 #version 120 // -*- c++ -*-
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_ARB_gpu_shader5 : enable
-#include "reconstruct.glsl"
+#include "../reconstruct.glsl"
 #line 4
 
 /**

@@ -10,6 +10,10 @@ class App : public GApp {
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;
 
+    Framebuffer::Ref    m_aoFramebuffer;
+    Texture::Ref        m_aoTexture;
+    SAO::Ref            m_sao;
+
 public:
     
     App(const GApp::Settings& settings = GApp::Settings());
