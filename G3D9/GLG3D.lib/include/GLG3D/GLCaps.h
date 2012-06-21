@@ -253,6 +253,10 @@ public:
      */
     static bool supportsG3D9(std::string& explanation);
 
+
+    static bool supportsSAO();
+
+
     static const std::string& renderer();
 
     /** Returns true if either GL_EXT_stencil_two_side or GL_ATI_separate_stencil is supported.

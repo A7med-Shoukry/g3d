@@ -3,7 +3,7 @@
 
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
   @created 2004-03-28
-  @edited  2009-11-10
+  @edited  2012-06-21
 */
 
 #include "G3D/TextOutput.h"
@@ -1150,5 +1150,16 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
 
     return supported;
 }
+
+
+static bool supportsSAO(){
+    bool supported = true;
+    if(false){
+        supported = false;
+    }
+    return supported;
+}
+
+
 }
 
