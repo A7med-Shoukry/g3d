@@ -30,9 +30,9 @@ namespace G3D {
 #define Z_COORD (-1.0f)
 
 SAO::Settings::Settings() : 
-    radius(1.0f * units::meters()),
+    radius(0.7f * units::meters()),
     bias(0.012f),
-    intensity(1.0f) {}
+    intensity(0.7f) {}
 
 
 SAO::Ref SAO::create() {
