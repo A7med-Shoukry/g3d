@@ -265,4 +265,16 @@ void SAO::compute
     compute(rd, depthBuffer, clipConstant, projConstant, abs(camera.imagePlanePixelsPerMeter(rd->viewport())), guardBandSize);
 }
 
+
+bool SAO::supported(){
+    static bool supported = true;
+    static bool init = true;
+    if(init){
+        supported = (GLCaps::renderer().find("NVIDIA GeForce GT 330M") == std::string::npos);
+        init = false;
+    }
+    return supported;
+}
+
+
 } // namespace GLG3D

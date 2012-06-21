@@ -26,6 +26,7 @@
    <p>
    Changes in 9.00:
    <ul>
+	<li> Added SAO::supported(). [Mike] </li>
     <li> Added BGRA8 to ImageFormat. [Mike] </li>
     <li> Added convertRGBA8toBGRA8 functionality to ImageBuffer::convertBuffer() [Mike] </li>
     <li> Modified Win32Window::setIcon to properly convert the icon to BRGA. (Our G3D icon now displays properly). [Mike] </li>

@@ -80,7 +80,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     Surface::renderDepthOnly(rd, surface3D, RenderDevice::CULL_BACK);
 
-    if(GLCaps::supportsSAO()){
+    if(SAO::supported()){
         rd->push2D(m_aoFramebuffer); {
             m_sao->compute(rd, m_depthBuffer, defaultCamera);
         } rd->pop2D();

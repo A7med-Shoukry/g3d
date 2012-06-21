@@ -1152,16 +1152,5 @@ bool GLCaps::supportsG3D9(std::string& explanation) {
 }
 
 
-bool GLCaps::supportsSAO(){
-    static bool supported = true;
-    static bool init = true;
-    if(init){
-        supported = (renderer().find("NVIDIA GeForce GT 330M") == std::string::npos);
-        init = false;
-    }
-    return supported;
-}
-
-
 }
 

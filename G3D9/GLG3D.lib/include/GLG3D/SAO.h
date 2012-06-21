@@ -252,6 +252,8 @@ public:
         return m_settings.intensity;
     }
 
+    /** Returns false if this graphics card is known to perform SAO abnormally slowly */
+    static bool supported();
 };
 
 } // namespace GLG3D
