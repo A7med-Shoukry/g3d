@@ -105,13 +105,16 @@ void App::onInit() {
 
     {
         //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\cubemap\\noonclouds\\noonclouds_bk.png");
-        Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\squaresswirls.exr");
+        //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\squaresswirls.exr");
         //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\material\\metalcrate\\metalcrate-L.png");
-        imgTexture = Texture::fromImageBuffer("imgTexture", img->toImageBuffer());
+        //Image::Ref img = Image::fromFile("C:\\dev\\G3D\\G3D9\\data-files\\md3\\chaos-marine\\models\\players\\Chaos-Marine\\Black-Legion_arms.tga");
+        //imgTexture = Texture::fromImageBuffer("imgTexture", img->toImageBuffer());
 
         //Image::Ref img2 = Image::fromImageBuffer(img->toImageBuffer());
-        //img2->toFile("C:\\dev\\G3D\\G3D9\\data-files\\test3.exr");
-        img->toFile("C:\\dev\\G3D\\G3D9\\data-files\\test3.tiff");
+        //img->toFile("C:\\dev\\G3D\\G3D9\\data-files\\test3.tga");
+        //BinaryOutput bo("C:\\dev\\G3D\\G3D9\\data-files\\test3.jpg", G3D::G3D_LITTLE_ENDIAN);
+        //img->toBinaryOutput(&bo, "JPEG");
+        //bo.commit(true);
     }
 
 	// start the sound engine with default parameters

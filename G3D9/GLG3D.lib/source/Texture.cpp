@@ -833,54 +833,6 @@ Texture::Ref Texture::fromFile(
         ((dimension == DIM_CUBE_MAP) || (dimension == DIM_CUBE_MAP_NPOT)) ?
         6 : 1;
 
-    // Check for DDS file and load separately.
-    if (endsWith(G3D::toUpper(filename[0]), ".DDS")) {
-
-        debugAssertM(GLCaps::supports_GL_EXT_texture_compression_s3tc(),
-            "This device does not support s3tc compression formats.");
-
-        DDSTexture ddsTexture(filename[0]);
-
-        uint8* byteStart = ddsTexture.getBytes();
-        debugAssert( byteStart != NULL );
-
-        const ImageFormat* bytesFormat = ddsTexture.getBytesFormat();
-        debugAssert( bytesFormat );
-
-        // Assert that we are loading a cubemap DDS
-        debugAssert( numFaces == ddsTexture.getNumFaces() );
-
-        int numMipMaps = ddsTexture.getNumMipMaps();
-        int mapWidth   = ddsTexture.getWidth();
-        int mapHeight  = ddsTexture.getHeight();
-
-        byteMipMapFaces.resize(numMipMaps);
-
-        for (int i = 0; i < numMipMaps; ++i) {
-            
-            byteMipMapFaces[i].resize(numFaces);
-
-            for (int face = 0; face < numFaces; ++face) {
-                byteMipMapFaces[i][face] = byteStart;
-                byteStart += ((bytesFormat->cpuBitsPerPixel / 8) * ((mapWidth + 3) / 4) * ((mapHeight + 3) / 4));
-            }
-            mapWidth = iMax(1, iFloor(mapWidth/2));
-            mapHeight = iMax(1,iFloor(mapHeight/2));
-        }
-
-        return fromMemory(
-            filename[0], 
-            byteMipMapFaces,
-            bytesFormat,
-            ddsTexture.getWidth(), 
-            ddsTexture.getHeight(), 
-            1,
-            desiredFormat,
-            dimension,
-            settings,
-            preprocess);
-    }
-
     // Single mip-map level
     byteMipMapFaces.resize(1);
     
