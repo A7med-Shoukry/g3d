@@ -378,6 +378,11 @@ template <class DECODER> void DecodeDXTBlock (BYTE *dstData, const BYTE *srcBloc
 		decoder.SetY (y);
 		for (int x = 0; x < bw; x++) {
 			decoder.GetColor (x, y, (Color8888 &)*dst);
+
+#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB
+		    INPLACESWAP(dst[FI_RGBA_RED],dst[FI_RGBA_BLUE]);
+#endif
+
 			dst += 4;
 		}
 	}
@@ -455,6 +460,7 @@ LoadDXT_Helper (FreeImageIO *io, fi_handle handle, int page, int flags, void *da
 		for (; y < height; y += 4) {
 			io->read_proc (input_buffer, sizeof (typename INFO::Block), inputLine, handle);
 			// TODO: probably need some endian work here
+            // G3D: color order correct in DecodeDXTBlock
 			BYTE *pbSrc = (BYTE *)input_buffer;
 			BYTE *pbDst = FreeImage_GetScanLine (dib, height - y - 1);
 
@@ -473,6 +479,7 @@ LoadDXT_Helper (FreeImageIO *io, fi_handle handle, int page, int flags, void *da
 	if (heightRest)	{
 		io->read_proc (input_buffer, sizeof (typename INFO::Block), inputLine, handle);
 		// TODO: probably need some endian work here
+        // G3D: color order correct in DecodeDXTBlock
 		BYTE *pbSrc = (BYTE *)input_buffer;
 		BYTE *pbDst = FreeImage_GetScanLine (dib, height - y - 1);
 
