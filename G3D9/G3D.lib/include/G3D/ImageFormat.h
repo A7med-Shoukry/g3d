@@ -64,6 +64,7 @@ public:
 
         CODE_ARGB8,
         CODE_BGR8,
+        CODE_BGRA8,
 
         CODE_R8,
 
@@ -127,8 +128,6 @@ public:
         CODE_STENCIL16,
 
         CODE_DEPTH24_STENCIL8,
-
-        CODE_BGRA8,
 
         CODE_NUM
         };

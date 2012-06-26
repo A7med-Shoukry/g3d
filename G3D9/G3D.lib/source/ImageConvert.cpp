@@ -11,40 +11,13 @@
 namespace G3D {
 
 
-
-static ImageBuffer::Ref convertRGBA8toBGRA8(const ImageBuffer::Ref& src, const ImageFormat* dstFormat){
-    alwaysAssertM(src->format() == ImageFormat::RGBA8() && dstFormat == ImageFormat::BGRA8(), 
-        format("This conversion only works from RGBA8 to BGRA8, not %s to %s", src->format()->name().c_str(), dstFormat->name().c_str()));
-    int width = src->width();
-    int height = src->height();
-
-    ImageBuffer::Ref dstBuffer = ImageBuffer::create(width, height, dstFormat, AlignedMemoryManager::create(), 1, 1);
-
-
-    unorm8* srcData = (unorm8*)src->buffer();
-    unorm8* dstData = (unorm8*)dstBuffer->buffer();
-
-    const int bytesPerPixel = 4;
-
-    // From RGBA to BGRA, for every 4 bytes, first and third swapped, others remain in place
-    for(int i = 0; i < (bytesPerPixel * width * height); i += 4) {
-        dstData[i+0] = srcData[i+2];
-        dstData[i+1] = srcData[i+1];
-        dstData[i+2] = srcData[i+0];
-        dstData[i+3] = srcData[i+3];
+ImageBuffer::Ref ImageConvert::convertBuffer(const ImageBuffer::Ref& src, const ImageFormat* dstFormat) {
+    // Early return for no conversion
+    if (src->format() == dstFormat)
+    {
+        return src;
     }
 
-    return dstBuffer;
-
-
-
-}
-
-static ImageBuffer::Ref convertRGBAddAlpha(const ImageBuffer::Ref& src, const ImageFormat* dstFormat) {
-    return NULL;
-}
-
-ImageBuffer::Ref ImageConvert::convertBuffer(const ImageBuffer::Ref& src, const ImageFormat* dstFormat) {
     ConvertFunc converter = findConverter(src, dstFormat);
     if (converter)
     {
@@ -57,13 +30,80 @@ ImageBuffer::Ref ImageConvert::convertBuffer(const ImageBuffer::Ref& src, const 
 }
 
 ImageConvert::ConvertFunc ImageConvert::findConverter(const ImageBuffer::Ref& src, const ImageFormat* dstFormat) {
-    if(src->format() == ImageFormat::RGBA8() && dstFormat == ImageFormat::BGRA8()){ //TODO: Allow the reverse transformation (which is the same)
-        return convertRGBA8toBGRA8;
-    } else {
+    // Only handle inter-RGB color space conversions for now
+    if (src->format()->colorSpace != ImageFormat::COLOR_SPACE_RGB)
+    {
         return NULL;
     }
+
+    if (dstFormat->colorSpace != ImageFormat::COLOR_SPACE_RGB)
+    {
+        return NULL;
+    }
+
+    // Check for color order reversal
+    if (src->format()->code == ImageFormat::CODE_RGBA8 && dstFormat->code == ImageFormat::CODE_BGRA8)
+    {
+        return convertRGBA8toBGRA8;
+    }
+
+    // Check for conversion that only adds alpha channel
+    if (ImageFormat::getFormatWithAlpha(src->format()) == dstFormat)
+    {
+        return &ImageConvert::convertRGBAddAlpha;
+    }
+
+    return NULL;
 }
 
+ImageBuffer::Ref ImageConvert::convertRGBAddAlpha(const ImageBuffer::Ref& src, const ImageFormat* dstFormat) {
+    debugAssert(src->rowAlignment() == 1);
 
+    ImageBuffer::Ref dstImage = ImageBuffer::create(src->width(), src->height(), dstFormat);
+    for (int pixelIndex = 0; pixelIndex = src->width() * src->height(); ++pixelIndex)
+    {
+        switch (dstFormat->code)
+        {
+            case ImageFormat::CODE_RGBA8:
+            {
+                uint8* oldPixels = static_cast<uint8*>(src->buffer());
+                uint8* newPixels = static_cast<uint8*>(dstImage->buffer());
+
+                newPixels[pixelIndex * 4] = oldPixels[pixelIndex * 3];
+                newPixels[pixelIndex * 4 + 1] = oldPixels[pixelIndex * 3 + 1];
+                newPixels[pixelIndex * 4 + 2] = oldPixels[pixelIndex * 3 + 2];
+                newPixels[pixelIndex * 4 + 3] = 0;
+                break;
+            }
+            default:
+                debugAssertM(false, "Unsupported destination image format");
+                break;
+        }
+    }
+
+    return dstImage;
+}
+
+ImageBuffer::Ref ImageConvert::convertRGBA8toBGRA8(const ImageBuffer::Ref& src, const ImageFormat* dstFormat) {
+    int width = src->width();
+    int height = src->height();
+
+    ImageBuffer::Ref dstBuffer = ImageBuffer::create(width, height, dstFormat, AlignedMemoryManager::create());
+
+    unorm8* srcData = static_cast<unorm8*>(src->buffer());
+    unorm8* dstData = static_cast<unorm8*>(dstBuffer->buffer());
+
+    const int bytesPerPixel = 4;
+
+    // From RGBA to BGRA, for every 4 bytes, first and third swapped, others remain in place
+    for(int i = 0; i < (bytesPerPixel * width * height); i += 4) {
+        dstData[i+0] = srcData[i+2];
+        dstData[i+1] = srcData[i+1];
+        dstData[i+2] = srcData[i+0];
+        dstData[i+3] = srcData[i+3];
+    }
+
+    return dstBuffer;
+}
 
 } // namespace G3D
