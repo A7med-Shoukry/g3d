@@ -52,6 +52,13 @@ void App::onInit() {
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
     // developerWindow->videoRecordDialog->setCaptureGui(false);
 
+
+    m_shader2TestTexture = Texture::createEmpty("CT", 512, 512, ImageFormat::RGB32F(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+    m_depthBuffer  = Texture::createEmpty("coordDepthBuffer", 512, 512, ImageFormat::DEPTH32F(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
+    m_testFrameBuffer	 = Framebuffer::create("Test");
+    m_testFrameBuffer->set(Framebuffer::COLOR0, m_shader2TestTexture);
+    m_testFrameBuffer->set(Framebuffer::DEPTH, m_depthBuffer);
+    
     makeGUI();
 
     // Start wherever the developer HUD last marked as "Home"
@@ -114,9 +121,8 @@ void App::makeGUI() {
     infoPane->moveRightOf(entityPane);
     infoPane->moveBy(10, 0);
 
-    // Example of how to add debugging controls
-    infoPane->addLabel("You can add more GUI controls");
-    infoPane->addLabel("in App::onInit().");
+    infoPane->addTextureBox(m_shader2TestTexture);
+    infoPane->addButton("Test Shader 2", this, &App::testShader2);
     infoPane->addButton("Exit", this, &App::endProgram);
     infoPane->pack();
 
@@ -128,6 +134,20 @@ void App::makeGUI() {
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
+}
+
+void App::testShader2(){
+    debugAssertGLOk();
+    Shader2::Ref shader2 = Shader2::fromFiles("test.pix","test.vrt");
+    debugAssertGLOk();
+    renderDevice->pushState(m_testFrameBuffer);{
+        renderDevice->setColorClearValue(Color4(1.0,1.0,1.0,1.0));
+        renderDevice->clear();
+        renderDevice->setDepthTest(RenderDevice::DEPTH_ALWAYS_PASS);
+        debugAssertGLOk();
+        renderDevice->applyRect(shader2);
+        debugAssertGLOk();
+    }renderDevice->popState();
 }
 
 

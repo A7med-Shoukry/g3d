@@ -1346,6 +1346,13 @@ public:
     void setShader(const ShaderRef& s);
 
     void setShader2(const Shader2::Ref& s);
+
+    void apply(const Shader2::Ref& s);
+
+    void apply(const Shader2::Ref& s, const Args& args);
+
+    void applyRect(const Shader2::Ref& s, const Args& args = Args(), const Rect2D& r = Rect2D());
+
    
     Shader::Ref shader() const {
         return m_state.shader;

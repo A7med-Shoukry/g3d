@@ -33,6 +33,10 @@ class App : public GApp {
     bool                m_showLightSources;
     bool                m_showWireframe;
 
+    Texture::Ref        m_shader2TestTexture;
+    Texture::Ref        m_depthBuffer;
+    Framebuffer::Ref    m_testFrameBuffer;
+
 
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
@@ -64,6 +68,8 @@ public:
     virtual bool onEvent(const GEvent& e) override;
     virtual void onUserInput(UserInput* ui) override;
     virtual void onCleanup() override;
+
+    void testShader2();
 
     /** Sets m_endProgram to true. */
     virtual void endProgram();

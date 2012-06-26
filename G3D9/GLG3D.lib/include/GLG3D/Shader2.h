@@ -12,7 +12,7 @@
 
 #include "G3D/platform.h"
 #include <string>
-
+#include "GLG3D/glheaders.h"
 #include "G3D/Matrix2.h"
 #include "G3D/Matrix3.h"
 #include "G3D/Matrix4.h"
@@ -30,6 +30,7 @@
 #include "G3D/SmallArray.h"
 
 #include "G3D/constants.h"
+
 
 namespace G3D {
 
@@ -109,7 +110,9 @@ public:
         
         GEOMETRY, 
         
-        PIXEL
+        PIXEL,
+
+        STAGE_COUNT
     };
 
     enum SourceType {FILE, STRING};
@@ -131,6 +134,7 @@ public:
     };
 
     class Specification {
+    friend class Shader2;
     protected:
         Source shaderStage[5];
 
@@ -177,10 +181,11 @@ public:
 
 protected:
 
-    class ProgramObject : public ReferenceCountedObject {
-    public:
-        typedef ReferenceCountedPointer<ProgramObject> Ref;
 
+
+    class ShaderProgram : public ReferenceCountedObject {
+        friend class Shader2;
+    
         /** Variable declaration discovered in the program */
         class Declaration {
         public:
@@ -189,15 +194,35 @@ protected:
             GLenum                              type;
         };
 
-        Table<std::string, Declaration>         m_declarationTable;
+        GLuint                              m_glShaderObject[STAGE_COUNT];
+
+        Table<std::string, Declaration>     m_declarationTable;
+        GLuint                              m_glProgramObject;
+        bool                                m_ok;
+
+        std::string                         m_messages;
+        ShaderProgram(Shader2::Specification s);
+    public:
+        typedef ReferenceCountedPointer<ShaderProgram> Ref;
+
+        GLuint glShaderProgramObject(){
+            return m_glProgramObject;
+        }
+
+        static ShaderProgram::Ref create(Shader2::Specification s);
+
     };
 
     /** Maps preamble + macro definitions to compiled shaders */
-    Table<std::string, ProgramObject::Ref>      m_compilationCache;
+    Table<std::string, ShaderProgram::Ref>      m_compilationCache;
 
     Specification                               m_specification;
 
     bool                                        m_ok;
+
+    ShaderProgram::Ref                          m_shaderProgram;
+
+    Shader2(Specification s);
 
 public:
 
@@ -220,6 +245,10 @@ public:
     bool ok() const;
 
     static void setFailureBehavior(FailureBehavior f);
+
+    GLuint shaderProgram(){
+        return m_shaderProgram->glShaderProgramObject();
+    }
 
     /** Loads and compiles the shader */
     static Ref create(const Specification& s);

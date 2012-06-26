@@ -3564,5 +3564,47 @@ void RenderDevice::setShader2(const Shader2::Ref& s){
 
 }
 
+
+void RenderDevice::apply(const Shader2::Ref& s){
+
+}
+
+void RenderDevice::apply(const Shader2::Ref& s, const Args& args){
+
+}
+
+void RenderDevice::applyRect(const Shader2::Ref& s, const Args& args, const Rect2D& r){
+    float zCoord = 0.0f;
+    s->args = args;
+    const Rect2D& v = viewport();
+    debugAssertGLOk();
+    beginOpenGL();
+    debugAssertGLOk();
+    //glUseProgram(s->shaderProgram());
+    glUseProgramObjectARB(s->shaderProgram());
+    
+    debugAssertGLOk();
+    glBegin(primitiveToGLenum(PrimitiveType::QUADS)); {
+        glTexCoord2f(0, 0);
+        glVertex(Vector3(v.x0y0(),zCoord));
+
+        glTexCoord2f(0, 1);
+        glVertex(Vector3(v.x0y1(),zCoord));
+
+        glTexCoord2f(1, 1);
+        glVertex(Vector3(v.x1y1(),zCoord));
+
+        glTexCoord2f(1, 0);
+        glVertex(Vector3(v.x1y0(),zCoord));
+    } glEnd(); 
+    debugAssertGLOk();
+    endOpenGL();
+    debugAssertGLOk();
+
+
+}
+
+
+
 } // namespace
 
