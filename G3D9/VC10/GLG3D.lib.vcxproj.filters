@@ -326,6 +326,9 @@
     <ClCompile Include="..\GLG3D.lib\source\SAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\Args.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\source\directinput8.h">

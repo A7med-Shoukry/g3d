@@ -202,6 +202,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\GLG3D.lib\source\Args.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_BSP.cpp" />

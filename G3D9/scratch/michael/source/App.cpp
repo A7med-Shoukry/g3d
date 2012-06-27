@@ -17,9 +17,9 @@ int main(int argc, const char* argv[]) {
 	if (FileSystem::exists("data-files", false)) {
             // Running on Windows, building inside the starter directory
             chdir("data-files");
-        } else if (FileSystem::exists("../samples/starter/data-files", false)) {
+        } else if (FileSystem::exists("../scratch/michael/data-files", false)) {
             // Running on Windows, building from the G3D.sln project (TODO: remove this from your program!)
-            chdir("../samples/starter/data-files");
+            chdir("../scratch/michael/data-files");
         }
 #   endif
 

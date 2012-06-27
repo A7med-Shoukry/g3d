@@ -81,7 +81,78 @@ Shader2::Ref Shader2::fromFiles(
     return create(s);
 }
 
+/** Converts a type name to a GL enum */
+static GLenum toGLType(const std::string& s) {
+    if (s == "float") {
+        return GL_FLOAT;
+    } else if (s == "vec2") {
+        return GL_FLOAT_VEC2;
+    } else if (s == "vec3") {
+        return GL_FLOAT_VEC3;
+    } else if (s == "vec4") {
+        return GL_FLOAT_VEC4;
 
+    } else if (s == "ivec2") {
+        return GL_INT_VEC2;
+
+    } else if (s == "int") {
+        return GL_INT;
+    } else if (s == "unsigned int") {
+        return GL_UNSIGNED_INT;
+
+    } else if (s == "bool") {
+        return GL_BOOL;
+
+    } else if (s == "mat2") {
+        return GL_FLOAT_MAT2;
+    } else if (s == "mat3") {
+        return GL_FLOAT_MAT3;
+    } else if (s == "mat4") {
+        return GL_FLOAT_MAT4;
+    } else if (s == "mat4x3") {
+        return GL_FLOAT_MAT4x3;
+
+    } else if (s == "sampler1D") {
+        return GL_SAMPLER_1D;
+    } else if (s == "isampler1D") {
+        return GL_INT_SAMPLER_1D;
+    } else if (s == "usampler1D") {
+        return GL_UNSIGNED_INT_SAMPLER_1D;
+
+    } else if (s == "sampler2D") {
+        return GL_SAMPLER_2D;
+    } else if (s == "isampler2D") {
+        return GL_INT_SAMPLER_2D;
+    } else if (s == "usampler2D") {
+        return GL_UNSIGNED_INT_SAMPLER_2D;
+
+    } else if (s == "sampler3D") {
+        return GL_SAMPLER_3D;
+    } else if (s == "isampler3D") {
+        return GL_INT_SAMPLER_3D;
+    } else if (s == "usampler3D") {
+        return GL_UNSIGNED_INT_SAMPLER_3D;
+
+    } else if (s == "samplerCube") {
+        return GL_SAMPLER_CUBE;
+    } else if (s == "isamplerCube") {
+        return GL_INT_SAMPLER_CUBE;
+    } else if (s == "usamplerCube") {
+        return GL_UNSIGNED_INT_SAMPLER_CUBE;
+
+    } else if (s == "sampler2DRect") {
+        return GL_SAMPLER_2D_RECT;
+    } else if (s == "usampler2DRect") {
+        return GL_UNSIGNED_INT_SAMPLER_2D_RECT;
+    } else if (s == "sampler2DShadow") {
+        return GL_SAMPLER_2D_SHADOW;
+    } else if (s == "sampler2DRectShadow") {
+        return GL_SAMPLER_2D_RECT_SHADOW;
+    } else {
+        debugAssertM(false, std::string("Unknown type in shader: ") + s);
+        return 0;
+    }
+}
 
 
 
@@ -209,6 +280,7 @@ GLenum glShaderType(int s){
     case Shader2::PIXEL:
         return GL_FRAGMENT_SHADER;
     default:
+        alwaysAssertM(false, format("Invalid shader type %d given to glShaderType", s));
         return -1;
     }
 }
@@ -392,7 +464,7 @@ void Shader2::g3dPreprocessor(const std::string& dir, std::string& code){
 
     for (int i = 0; i < extensions.length(); ++i) {
         if (GLCaps::supports(extensions[i])) {
-            defineString += "#define " + extensions[i] + " 1\n";
+            defineString += "#extension " + extensions[i] + " : enable\n";
         }
     }
                 
@@ -535,7 +607,7 @@ void Shader2::setFailureBehavior(FailureBehavior f){
 }
     
 void Shader2::reload(){
-       
+    m_shaderProgram = ShaderProgram::create(m_specification);
 }
 
 bool Shader2::ok() const{

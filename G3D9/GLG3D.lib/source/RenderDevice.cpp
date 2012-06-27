@@ -3579,9 +3579,8 @@ void RenderDevice::applyRect(const Shader2::Ref& s, const Args& args, const Rect
     const Rect2D& v = viewport();
     debugAssertGLOk();
     beginOpenGL();
-    debugAssertGLOk();
+    
     glUseProgram(s->shaderProgram());
-    //glUseProgramObjectARB(s->shaderProgram());
     
     debugAssertGLOk();
     glBegin(primitiveToGLenum(PrimitiveType::QUADS)); {
