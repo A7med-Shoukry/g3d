@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zip.lib", "zip.lib.vcxproj", "{7403F597-14F6-4F33-9800-CCF459C2C074}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4109E1AD-E10F-412C-9917-1E381D82EEE6} = {4109E1AD-E10F-412C-9917-1E381D82EEE6}
@@ -128,6 +128,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deferredShading", "deferred
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freeimage.lib", "freeimage.lib.vcxproj", "{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scratch-michael", "scratch-michael.vcxproj", "{2175D5EA-7A70-4BFE-81BB-14C222961EA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -316,6 +318,14 @@ Global
 		{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}.Release|Win32.Build.0 = Release|Win32
 		{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}.Release|x64.ActiveCfg = Release|x64
 		{1A4CC9C5-D693-4ADA-9866-E8ED97FDF0A0}.Release|x64.Build.0 = Release|x64
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Debug|Win32.Build.0 = Debug|Win32
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Debug|x64.ActiveCfg = Debug|x64
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Debug|x64.Build.0 = Debug|x64
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Release|Win32.ActiveCfg = Release|Win32
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Release|Win32.Build.0 = Release|Win32
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Release|x64.ActiveCfg = Release|x64
+		{2175D5EA-7A70-4BFE-81BB-14C222961EA6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

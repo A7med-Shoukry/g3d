@@ -17,6 +17,7 @@
 #include "GLG3D/GLCaps.h"
 #include "G3D/fileutils.h"
 #include "G3D/Log.h"
+#include "G3D/FileSystem.h"
 namespace G3D {
 
 Shader2::FailureBehavior Shader2::s_failureBehavior = Shader2::PROMPT;
@@ -216,6 +217,203 @@ Shader2::ShaderProgram::Ref Shader2::ShaderProgram::create(Shader2::Specificatio
     return new ShaderProgram(spec);
 }
 
+
+bool isNextToken(const std::string& macro, const std::string& code, int offset = 0){
+    size_t macroOffset = code.find(macro, offset);
+    if(offset == std::string::npos) return false;
+    for(int i = offset; i < macroOffset; ++i){
+        const char c = code[i];
+        if(c != ' ' && c != '\t') return false;
+    }
+    return true;
+}
+
+
+size_t findPragmaWithSpaces(const std::string& macro, const std::string& code,  size_t offset = 0){
+    if(beginsWith(code, "#")){
+        if(isNextToken(macro, code, 1)) {
+            return 0;
+        }
+    }
+    bool stringLeft = true;
+    do {
+        offset = code.find("\n#", offset);
+        if(offset != std::string::npos) {
+            ++offset;
+            if(isNextToken(macro, code, offset + 1)){
+                return offset;
+            }
+        } 
+
+    } while(offset != std::string::npos);
+    return offset;
+}
+
+void Shader2::processIncludes(const std::string& dir, std::string& code){
+    // Look for #include immediately after a newline.  If it is inside
+    // a #IF or a block comment, it will still be processed, but
+    // single-line comments will properly disable it.
+    bool foundPound = false;
+    do {
+        foundPound = false;
+        size_t i = findPragmaWithSpaces("include", code);
+        
+        if (i != std::string::npos) {
+            // Remove this line
+            size_t end = code.find("\n", i + 1);
+            if (end == std::string::npos) {
+                end = code.size();
+            }
+  
+            const std::string& includeLine = code.substr(i, end - i + 1);
+
+            std::string filename;
+            TextInput t (TextInput::FROM_STRING, includeLine);
+            t.readSymbols("#", "include");
+            filename = t.readString();            
+
+            if (! beginsWith(filename, "/")) {
+                filename = pathConcat(dir, filename);
+            }
+            if (! FileSystem::exists(filename)) {
+                filename = System::findDataFile(filename);
+            }
+            std::string includedFile = readWholeFile(filename);
+            if (! endsWith(includedFile, "\n")) {
+                includedFile += "\n";
+            }
+
+            code = code.substr(0, i) + includedFile + code.substr(end);
+            foundPound = true;
+        }
+
+    } while (foundPound);
+}
+
+bool Shader2::processVersion(std::string& code, std::string& versionLine){
+    size_t i = findPragmaWithSpaces("version", code);
+        
+    if (i != std::string::npos) {
+        // Remove this line
+        size_t end = code.find("\n", i + 1);
+        if (end == std::string::npos) {
+            end = code.size();
+        }
+        versionLine = code.substr(i, end - i + 1);
+        code = code.substr(0, i) + code.substr(end);
+        return true;
+    } else {
+        // Insert #version 120
+        versionLine = "#version 120\n";
+        return false;
+    }
+    
+}
+
+
+static int countNewlines(const std::string& s) { 
+    int c = 0;
+    for (int i = 0; i < (int)s.size(); ++i) {
+        if (s[i] == '\n') {
+            ++c;
+        }
+    }
+    return c;
+}
+
+
+void Shader2::g3dPreprocessor(const std::string& dir, std::string& code){
+
+    int shifted = 0;
+    // G3D Preprocessor
+    // Handle #include directives first, since they may affect
+    // what preprocessing is needed in the code. 
+    Shader2::processIncludes(dir, code);        
+
+    // Standard uniforms.  We'll add custom ones to this below
+    std::string uniformString = 
+        STR(uniform mat4x3 g3d_WorldToObjectMatrix;
+            uniform mat4x3 g3d_ObjectToWorldMatrix;
+            uniform mat3   g3d_WorldToObjectNormalMatrix;
+            uniform mat3   g3d_ObjectToWorldNormalMatrix;
+            uniform mat4x3 g3d_WorldToCameraMatrix;
+            uniform mat4x3 g3d_CameraToWorldMatrix;
+            uniform int    g3d_NumLights;
+            uniform int    g3d_NumTextures;
+            uniform vec4   g3d_ObjectLight0;
+            uniform vec4   g3d_WorldLight0;
+            uniform bool   g3d_InvertY;
+            );
+
+
+    // See if the program begins with a version pragma
+    std::string versionLine;
+    processVersion(code, versionLine);
+
+    // #defines we'll prepend onto the shader
+    std::string defineString;
+        
+    switch (GLCaps::enumVendor()) {
+    case GLCaps::ATI:
+        defineString += "#define G3D_ATI\n";
+        break;
+
+    case GLCaps::NVIDIA:
+        defineString += "#define G3D_NVIDIA\n";
+        break;
+
+    case GLCaps::MESA:
+        defineString += "#define G3D_MESA\n";
+        break;
+
+    default:;
+    }
+
+#       ifdef G3D_OSX 
+        defineString += "#define G3D_OSX\n";
+#       elif defined(G3D_WINDOWS)
+        defineString += "#define G3D_WINDOWS\n";
+#       elif defined(G3D_LINUX)
+        defineString += "#define G3D_LINUX\n";
+#       elif defined(G3D_FREEBSD)
+        defineString += "#define G3D_FREEBSD\n";
+#       endif
+
+#       if defined(G3D_WIN32)
+        defineString += "#define G3D_WIN32\n";
+#       endif
+
+#       if defined(G3D_64BIT)
+        defineString += "#define G3D_64BIT\n";
+#       endif
+
+    Array<std::string> extensions("GL_EXT_gpu_shader4",
+                                    "GL_ARB_gpu_shader5");
+
+    for (int i = 0; i < extensions.length(); ++i) {
+        if (GLCaps::supports(extensions[i])) {
+            defineString += "#define " + extensions[i] + " 1\n";
+        }
+    }
+                
+    // Replace g3d_size and g3d_invSize with corresponding magic names
+    //replaceG3DSize(_code, uniformString);
+            
+    //m_usesG3DIndex = replaceG3DIndex(_code, defineString, samplerMappings, secondPass);
+        
+    // Correct line numbers
+    std::string insertString = defineString + uniformString + "\n";
+    shifted += countNewlines(insertString) + 1;
+        
+    std::string lineDirective = "";
+    // Insert line directive here
+        
+    lineDirective += "// End of G3D::Shader inserted code\n";
+
+    code = versionLine + insertString + lineDirective + code + "\n";
+}
+
+
 Shader2::ShaderProgram::ShaderProgram(Shader2::Specification spec){
     m_ok = true;
     debugAssertGLOk();
@@ -230,30 +428,30 @@ Shader2::ShaderProgram::ShaderProgram(Shader2::Specification spec){
         debugAssertGLOk();
         // Read the code into a string
         const Source& source = spec.shaderStage[s];
-        std::string code;
-        std::string name;
+        std::string code = "";
+        std::string name = "";
+        std::string dir  = "";
         if(source.type == STRING){
-            code = source.val;
-            name = "'" + stageName(s) + " from string'";
+            code = source.val;     
         } else {
             // TODO: catch exception?
             isEmptyStage[s] = (source.val == "");
             if(!isEmptyStage[s]){
                 code = readWholeFile(source.val);
-                
-            } else {
-                code = "";
-            }
+                dir = filenamePath(name);
+            } 
             name = source.val;
         }
+        
         debugAssertGLOk();
         // If it's empty, there's nothing to compile!
         isEmptyStage[s] = (code == "");
         if(!isEmptyStage[s]){
+            g3dPreprocessor(dir, code);
             debugAssertGLOk();
             GLint compiled = GL_FALSE;
             
-            GLhandleARB& glShaderObject = m_glShaderObject[s];
+            GLuint& glShaderObject = m_glShaderObject[s];
             debugAssertGLOk();
             glShaderObject = glCreateShader(glShaderType(s));
             debugAssertGLOk();
@@ -262,7 +460,7 @@ Shader2::ShaderProgram::ShaderProgram(Shader2::Specification spec){
             const GLchar* codePtr = static_cast<const GLchar*>(code.c_str());
             debugAssertGLOk();
             // Show the preprocessed code: TODO remove, this is just for testing
-            fprintf(stderr, "\"%s\"\n", code.c_str());
+            debugPrintf("\"%s\"\n", code.c_str());
             debugAssertGLOk();
             glShaderSource(glShaderObject, 1, &codePtr, &length);
             debugAssertGLOk();
@@ -307,7 +505,7 @@ Shader2::ShaderProgram::ShaderProgram(Shader2::Specification spec){
     glGetObjectParameterivARB(m_glProgramObject, GL_OBJECT_LINK_STATUS_ARB, &linked);
     GLint maxLength = 0, length = 0;
     glGetObjectParameterivARB(m_glProgramObject, GL_OBJECT_INFO_LOG_LENGTH_ARB, &maxLength);
-    GLcharARB* pInfoLog = (GLcharARB *)malloc(maxLength * sizeof(GLcharARB));
+    GLchar* pInfoLog = (GLchar *)malloc(maxLength * sizeof(GLcharARB));
     glGetInfoLogARB(m_glProgramObject, maxLength, &length, pInfoLog);
 
     m_messages += std::string("Linking\n") + std::string(pInfoLog) + "\n";

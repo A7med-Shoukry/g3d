@@ -247,9 +247,9 @@ protected:
 
     static std::string      ignore;
 
-    ShaderObject                vertexShader;
-    ShaderObject                geometryShader;
-    ShaderObject                pixelShader;
+    ShaderObject            vertexShader;
+    ShaderObject            geometryShader;
+    ShaderObject            pixelShader;
 
     GLhandleARB             _glProgramObject;
 

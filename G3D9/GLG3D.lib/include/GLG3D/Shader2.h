@@ -54,7 +54,7 @@ Runtime
 Bind G3D RenderDevice uniforms, if required
 Streamline the constructor interface
 Support tessellation shaders
-Sources from strings or files
+*Sources from strings or files
 Support passing structs and arrays
 Shader::reload
 Caches compilations with various preambles and macro definitions
@@ -246,6 +246,7 @@ public:
 
     static void setFailureBehavior(FailureBehavior f);
 
+    /** Return the OpenGL object corresponding to the last compiled version of this shader */
     GLuint shaderProgram(){
         return m_shaderProgram->glShaderProgramObject();
     }
@@ -263,6 +264,39 @@ public:
 
     /** Reload this shader from the files on disk, if it was loaded from disk. */
     void reload();
+
+
+    /** Replaces all \#includes in @a code with the contents of the appropriate files.
+        It is called recursively, so included files may have includes themselves.
+        This is called automatically by the preprocessor, but is public so as to be
+        accessible to code like SuperShader that directly manipulates source strings.
+        
+        TODO: Automatically add #line file directives to included files
+
+        @param dir The directory from which the parent was loaded.
+      */
+    static void processIncludes(const std::string& dir, std::string& code);
+
+
+    /** Execute all steps of our preprocessor engine
+
+        Process Includes
+        Process Version Line
+        Add G3D #defines
+        Add G3D uniform declarations
+    */
+    static void g3dPreprocessor(const std::string& dir, std::string& code);
+
+
+    /** Reads the code looking for a #version line (spaces allowed after "#"). If one is found, 
+        remove it from @param code and put it in @param versionLine, otherwise set versionLine
+        to "#version 120\n". The #version line in the original source CANNOT be the last line
+        (we depend on the newline, TODO: remove this dependency)
+    
+        @return True if we found and removed a version line from the code.
+    */
+    static bool processVersion(std::string& code, std::string& versionLine);
+
 
 }; // class Shader
 

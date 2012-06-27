@@ -25,6 +25,9 @@ public:
      AnyTableReader&    propertyTable,
      const ModelTable&  modelTable);
 
+    virtual void setFrame(const CFrame& f) {
+        m_frame = f;
+    }
 };
 
 #endif
