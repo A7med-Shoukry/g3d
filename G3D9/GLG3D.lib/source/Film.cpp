@@ -279,7 +279,7 @@ void Film::makeGui(class GuiPane* pane, float maxSensitivity, float sliderWidth,
     n->setWidth(sliderWidth);  n->moveBy(indent, 0);
 
     GuiCheckBox* c = pane->addCheckBox("Post-process Antialiasing", &m_antialiasingEnabled);
-    c->moveBy(indent, 0);
+    c->moveBy(indent - 2, 0);
 }
 
 }

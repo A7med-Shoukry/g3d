@@ -1,11 +1,10 @@
 /**
-  @file GCamera.cpp
+  \file G3D/source/GCamera.cpp
 
-  @author Morgan McGuire, http://graphics.cs.williams.edu
-  @author Jeff Marsceill, 08jcm@williams.edu
+  \author Morgan McGuire, http://graphics.cs.williams.edu
  
-  @created 2005-07-20
-  @edited  2010-07-31
+  \created 2005-07-20
+  \edited  2012-06-28
 */
 #include "G3D/GCamera.h"
 #include "G3D/platform.h"
@@ -20,44 +19,60 @@
 namespace G3D {
 
 GCamera::GCamera(const Any& any) {
-    any.verifyName("GCamera");
-    any.verifyType(Any::TABLE);
     *this = GCamera();
 
-    const Any::AnyTable& table = any.table();
-    Any::AnyTable::Iterator it = table.begin();
-    while (it.isValid()) {
-        const std::string& k = toUpper(it->key);
-        if (k == "FOVDIRECTION") {
-            const std::string& v = toUpper(it->value);
-            if (v == "HORIZONTAL") {
-                m_direction = HORIZONTAL;
-            } else if (v == "VERTICAL") {
-                m_direction = VERTICAL;
-            } else {
-                any.verify(false, "fovDirection must be \"HORIZONTAL\" or \"VERTICAL\"");
-            }
-        } else if (k == "COORDINATEFRAME") {
-            m_cframe = it->value;
-        } else if (k == "FOVDEGREES") {
-            m_fieldOfView = toRadians(it->value.number());
-        } else if (k == "NEARPLANEZ") {
-            m_nearPlaneZ = it->value;
-        } else if (k == "FARPLANEZ") {
-            m_farPlaneZ = it->value;
-        } else if (k == "PIXELOFFSET") {
-            m_pixelOffset = it->value;
-        } else if (k == "LENSRADIUS") {
-            m_lensRadius = it->value;
-        } else if (k == "FOCUSPLANEZ") {
-            m_focusPlaneZ = it->value;
-        } else if (k == "EXPOSURETIME") {
-            m_exposureTime = it->value;
+    AnyTableReader reader("GCamera", any);
+
+    std::string s;
+    float f;
+
+    if (reader.getIfPresent("fovDirection", s)) {
+        const std::string& v = toUpper(s);
+        if (v == "HORIZONTAL") {
+            m_direction = HORIZONTAL;
+        } else if (v == "VERTICAL") {
+            m_direction = VERTICAL;
         } else {
-            any.verify(false, std::string("Illegal key in table: ") + it->key);
+            any.verify(false, "fovDirection must be \"HORIZONTAL\" or \"VERTICAL\"");
         }
-        ++it;
     }
+
+    if (reader.getIfPresent("fovDegrees", f)) {
+        m_fieldOfView = toRadians(f);
+    }
+
+    reader.getIfPresent("coordinateFrame", m_cframe);
+    
+    reader.getIfPresent("nearPlaneZ", m_nearPlaneZ);
+    reader.getIfPresent("farlaneZ", m_farPlaneZ);
+
+    reader.getIfPresent("pixelOffset", m_pixelOffset);
+
+    if (reader.getIfPresent("dofModel", s)) {
+        const std::string& v = toUpper(s);
+        if (v == "NONE") {
+            m_dofModel = NONE;
+        } else if (v == "PHYSICAL") {
+            m_dofModel = PHYSICAL;
+        } else if (v == "ARTIST") {
+            m_dofModel = ARTIST;
+        } else {
+            any.verify(false, "dofModel must be \"NONE\", \"PHYSICAL\" or \"ARTIST\"");
+        }
+    }
+
+    reader.getIfPresent("lensRadius", m_lensRadius);
+    reader.getIfPresent("focusPlaneZ", m_focusPlaneZ);
+    reader.getIfPresent("exposureTime", m_exposureTime);
+    
+    reader.getIfPresent("nearBlurRadiusFraction", m_nearRadiusFraction);
+    reader.getIfPresent("nearBlurryPlaneZ",       m_nearBlurryZ);
+    reader.getIfPresent("nearSharpPlaneZ",        m_nearSharpZ);
+    reader.getIfPresent("farSharpPlaneZ",         m_farSharpZ);
+    reader.getIfPresent("farBlurryPlaneZ",        m_farBlurryZ);
+    reader.getIfPresent("farBlurRadiusFraction",  m_farRadiusFraction);
+
+    reader.verifyDone();
 }
 
 
@@ -66,12 +81,24 @@ Any GCamera::toAny() const {
 
     any["fovDirection"]     = std::string((m_direction == HORIZONTAL) ? "HORIZONTAL" : "VERTICAL");
     any["fovDegrees"]       = toDegrees(m_fieldOfView);
+
+
+    any["dofModel"]         = std::string((m_dofModel == NONE) ? "NONE" : 
+                                         (m_dofModel == PHYSICAL) ? "PHYSICAL" : "ARTIST");
+    any["focusPlaneZ"]      = m_focusPlaneZ;
+    any["lensRadius"]       = m_lensRadius;
+    any["nearBlurRadiusFraction"] = m_nearRadiusFraction;
+    any["nearBlurryPlaneZ"]      = m_nearBlurryZ;
+    any["nearSharpPlaneZ"]       = m_nearSharpZ;
+    any["farSharpPlaneZ"]        = m_farSharpZ;
+    any["farBlurryPlaneZ"]       = m_farBlurryZ;
+    any["farBlurRadiusFraction"] = m_farRadiusFraction;
+
+
     any["nearPlaneZ"]       = nearPlaneZ();
     any["farPlaneZ"]        = farPlaneZ();
     any["coordinateFrame"]  = coordinateFrame();
     any["pixelOffset"]      = pixelOffset();
-    any["focusPlaneZ"]      = m_focusPlaneZ;
-    any["lensRadius"]       = m_lensRadius;
     any["exposureTime"]     = m_exposureTime;
 
     return any;
@@ -79,43 +106,95 @@ Any GCamera::toAny() const {
 
     
 float GCamera::circleOfConfusionRadius(float z, const class Rect2D& viewport) const {
-    debugAssert(z < 0);
-    
-    //              Actual position z
-    //                     |
-    //      ()-----______  |
-    //     (  )          --|---___| 
-    //     (  )    ______--|---   |          
-    //      ()-----        |      |
-    //                           
-    //      Lens                 Rays converge at m_focusPlaneZ
-    //
-    //                     |<---->|
-    //                 | focusPlaneZ - z |
-    //                            
-    //       |<------------------>| 
-    //          | focusPlaneZ |
-    //
-    // By similar triangles,
-    //
-    //   | focusPlaneZ - z |
-    //  --------------------- lensRadius = radius at z
-    //         -focusPlaneZ 
+    switch (m_dofModel) {
+    case NONE:
+        return 0.0f;
 
-    // Circle of confusion at z, in meters
-    const float rzmeters = fabs((m_focusPlaneZ - z) / m_focusPlaneZ) * m_lensRadius;
+    case PHYSICAL:
+        {
+            debugAssert(z < 0);
+            
+            //              Actual position z
+            //                     |
+            //      ()-----______  |
+            //     (  )          --|---___| 
+            //     (  )    ______--|---   |          
+            //      ()-----        |      |
+            //                           
+            //      Lens                 Rays converge at m_focusPlaneZ
+            //
+            //                     |<---->|
+            //                 | focusPlaneZ - z |
+            //                            
+            //       |<------------------>| 
+            //          | focusPlaneZ |
+            //
+            // By similar triangles,
+            //
+            //   | focusPlaneZ - z |
+            //  --------------------- lensRadius = radius at z
+            //         -focusPlaneZ 
+            
+            // Circle of confusion at z, in meters
+            const float rzmeters = fabs((m_focusPlaneZ - z) / m_focusPlaneZ) * m_lensRadius;
+            
+            // Project
+            const float rimeters = rzmeters / -z;
+            
+            // Convert to pixels
+            const float ripixels = rimeters * imagePlanePixelsPerMeter(viewport);
+            
+            return ripixels;
+        } break;
+        
+    case ARTIST:
+        {
+            // Radius relative to screen dimension
+            float r = 0;
 
-    // Project
-    const float rimeters = rzmeters / -z;
-    
-    // Convert to pixels
-    const float ripixels = rimeters * imagePlanePixelsPerMeter(viewport);
+            if (z >= m_nearSharpZ) {
+                // Near field
+                
+                // Blurriness fraction
+                const float a = (min(z, m_nearBlurryZ) - m_nearSharpZ) / (m_nearSharpZ - m_nearBlurryZ);
+                
+                r = lerp(0.0f, m_nearRadiusFraction, a);
+                
+            } else if (z <= m_farSharpZ) {
+                return 0.0f;
+            } else {
+                // Far field
+                const float a = (m_farSharpZ - max(z, m_farBlurryZ)) / (m_farBlurryZ - m_farSharpZ);
+                r = lerp(0.0f, m_farRadiusFraction, a);
+            }
 
-    return ripixels;
+            debugAssertM(r >= 0 && r <= 1.0f, "Illegal circle of confusion radius");
+            if (m_direction == HORIZONTAL) {
+                return r * viewport.width();
+            } else {
+                return r * viewport.height();
+            }
+        }
+        break;
+
+    default:
+        return 0.0f;
+    }
 }
 
 
-GCamera::GCamera() : m_lensRadius(0.0f), m_focusPlaneZ(-10.0f), m_exposureTime(0.0f) {
+GCamera::GCamera() : 
+    m_lensRadius(0.0f), 
+    m_focusPlaneZ(-10.0f), 
+    m_exposureTime(0.0f), 
+    m_dofModel(NONE),
+    m_nearRadiusFraction(0.1f),
+    m_nearBlurryZ(-0.25f),
+    m_nearSharpZ(-1.0f),
+    m_farSharpZ(-40.0f),
+    m_farBlurryZ(-100.0f),
+    m_farRadiusFraction(0.05) {
+
     setNearPlaneZ(-0.15f);
     setFarPlaneZ(-150.0f);
     setFieldOfView((float)toRadians(90.0f), HORIZONTAL);
@@ -198,6 +277,14 @@ float GCamera::imagePlanePixelsPerMeter(const class Rect2D& viewport) const {
 
 
 Ray GCamera::worldRay(float x, float y, float u, float v, const class Rect2D &viewport) const {
+    alwaysAssertM(m_dofModel != ARTIST, 
+                  "Cannot cast rays under the ARTIST depth of field model.");
+    
+    if (m_dofModel == NONE) {
+        // Ignore the lense
+        u = 0.0f; 
+        v = 0.0f;
+    }
 
     // Pinhole ray
     const Ray& ray = GCamera::worldRay(x, y, viewport);

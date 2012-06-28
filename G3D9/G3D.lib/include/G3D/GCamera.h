@@ -46,10 +46,37 @@ class GCamera  {
 
 public:
     /**
-    Stores the direction of the field of view
+       Stores the direction of the field of view.
     */
     enum FOVDirection {HORIZONTAL, VERTICAL};
 
+    /**
+       The depth of field model.
+     */
+    enum DOFModel {
+        /** Pinhole lens, circle of confusion is always zero.*/
+        NONE,
+
+        /** In this model, the circle of confusion is determined by
+            the Gaussian lens model for an ideal single-lens
+            camera. */
+        PHYSICAL, 
+
+        /** In this model, the circle of confusion is determined by
+            linear interpolation between depth stops in an explicit
+            gradient:
+          
+
+            <pre>
+             eye     nearBlurryPlaneZ   nearSharpPlaneZ    farSharpPlaneZ   farBlurryPlaneZ
+
+              &lt;)             |                 .                 .                 |
+                             |                                                     |
+            </pre>
+        */
+        ARTIST
+    };
+    
 private:
     
     /** Full field of view (in radians) */
@@ -69,6 +96,7 @@ private:
 
     Vector2                     m_pixelOffset;
 
+    /** Aperture in meters.  Used for DOF.  Does not affect intensity. */
     float                       m_lensRadius;
 
     /** Negative number */
@@ -76,6 +104,32 @@ private:
 
     /** Non-negative, in seconds */
     float                       m_exposureTime;
+
+    DOFModel                    m_dofModel;
+    
+    /** Maximum defocus blur in the near field, as a fraction of the
+        screen size along the axis indicated by the field of view. */
+    float                       m_nearRadiusFraction;
+
+    /** Z-plane at which the m_nearRadiusFraction blur is reached.
+        This must be greater (less negative) than nearSharpZ */
+    float                       m_nearBlurryZ;
+
+    /** Z-plane at which the in-focus field begins.  This must be
+        greater (less negative) than farSharpZ */
+    float                       m_nearSharpZ;
+
+    /** Z-plane at which the in-focus ends begins.  This must be
+        greater (less negative) than farBlurryZ */
+    float                       m_farSharpZ;
+
+    /** Z-plane at which the m_farRadiusFraction blur is reached.  This must be
+        less (more negative) than farSharpZ */
+    float                       m_farBlurryZ;
+
+    /** Maximum defocus blur in the near field, as a fraction of the
+        screen size along the axis indicated by the field of view. */
+    float                       m_farRadiusFraction;
 
 public:
 
@@ -215,17 +269,26 @@ public:
         direction = m_direction;
     }
 
-#if 0
-    /** Returns the field of view in \a direction for the \a viewport. */
-    float fieldOfView(FOVDirection direction, const Rect2D& viewport) const {
-        if (m_fieldOfView == direction) {
-            return m_fieldOfView;
-        } else if (direction == HORIZONTAL) {
-            m_fieldOfView;
-        }
+    /** Set the edge-to-edge FOV angle along the current
+        fieldOfViewDirection in radians. */
+    void setFieldOfViewAngle(float edgeToEdgeAngleRadians);
+    void setFieldOfViewAngleDegrees(float edgeToEdgeAngleDegrees) {
+        setFieldOfViewAngle(toRadians(edgeToEdgeAngleDegrees));
     }
-#endif
-    
+
+    void setFieldOfViewDirection(FOVDirection d);
+
+    float fieldOfViewAngle() const {
+        return m_fieldOfView;
+    }
+
+    float fieldOfViewAngleDegrees() const {
+        return toDegrees(m_fieldOfView);
+    }
+
+    FOVDirection fieldOfViewDirection() const {
+        return m_direction;
+    } 
 
     /**
      Pinhole projects a world space point onto a width x height screen.  The
@@ -398,8 +461,74 @@ public:
     void serialize(class BinaryOutput& bo) const;
     void deserialize(class BinaryInput& bi);
 
-    /** Plane that is in focus under a lens camera. This is a negative
-        number. */
+    void setDepthOfFieldModel(DOFModel m) {
+        m_dofModel = m;
+    }
+    
+    DOFModel depthOfFieldModel() const {
+        return m_dofModel;
+    }
+
+    /** Maximum defocus blur in the near field under the ARTIST depth
+        of field model, as a fraction of the screen size along the
+        axis indicated by the field of view.  */
+    void setNearBlurRadiusFraction(float r) { 
+        m_nearRadiusFraction = r;
+    }
+
+    float nearBlurRadiusFraction() const {
+        return m_nearRadiusFraction;
+    }
+
+    /** Set the plane at which the maximum blur radius is reached in
+        the near field under the ARTIST depth of field model.*/
+    void setNearBlurryPlaneZ(float z) {
+        m_nearBlurryZ = z;
+    }
+
+    float nearBlurryPlaneZ() const {
+        return m_nearBlurryZ;
+    }
+
+    void setNearSharpPlaneZ(float z) {
+        m_nearSharpZ = z;
+    }
+
+    float nearSharpPlaneZ() const {
+        return m_nearSharpZ;
+    }
+
+    void setFarSharpPlaneZ(float z) {
+        m_farSharpZ = z;
+    }
+
+    float farSharpPlaneZ() const {
+        return m_farSharpZ;
+    }
+
+    void setFarBlurryPlaneZ(float z) {
+        m_farBlurryZ = z;
+    }
+
+    float farBlurryPlaneZ() const {
+        return m_farBlurryZ;
+    }
+
+    /** Maximum defocus blur in the near field under the ARTIST depth
+        of field model, as a fraction of the screen size along the
+        axis indicated by the field of view.  */
+    void setFarBlurRadiusFraction(float r) { 
+        m_farRadiusFraction = r;
+    }
+
+    float farBlurRadiusFraction() const {
+        return m_farRadiusFraction;
+    }
+
+
+
+    /** Plane that is in focus under a lens camera (PHYSICAL depth of
+        field model). This is a negative number. */
     void setFocusPlaneZ(float z) {
         debugAssert(z < 0);
         m_focusPlaneZ = z;
@@ -409,6 +538,7 @@ public:
         return m_focusPlaneZ;
     }
 
+    /** Radius of the lens in meters under the PHYSICAL depth of field model. */
     void setLensRadius(float r) {
         m_lensRadius = r;
     }
@@ -421,8 +551,9 @@ public:
         (-1, 1) that should lie within a unit-radius disc.*/
     Ray worldRay(float x, float y, float u, float v, const class Rect2D &viewport) const;
     
-    /** Circle of confusion radius, in pixels, for a point at negative position \a z from the center of projection
-    along the camera-space z axis.*/
+    /** Circle of confusion radius, in pixels, for a point at negative
+        position \a z from the center of projection along the
+        camera-space z axis.*/
     float circleOfConfusionRadius(float z, const class Rect2D& viewport) const;
    
 };

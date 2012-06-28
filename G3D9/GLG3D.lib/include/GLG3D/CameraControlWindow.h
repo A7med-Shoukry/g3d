@@ -6,8 +6,8 @@
   \created 2002-07-28
   \edited  2008-07-14
 */
-#ifndef G3D_CAMERACONTROLWINDOW_H
-#define G3D_CAMERACONTROLWINDOW_H
+#ifndef GLG3D_CameraControlWindow_h
+#define GLG3D_CameraControlWindow_h
 
 #include "G3D/platform.h"
 #include "GLG3D/Widget.h"
@@ -57,6 +57,9 @@ protected:
 
     void setLensRadius(float r);
     float lensRadius() const;
+
+    void setDepthOfFieldModel(int e);
+    int depthOfFieldModel() const;
 
     /** Name of the file in which current bookmarks are stored. */
     std::string                 m_bookmarkFilename;
@@ -126,13 +129,13 @@ protected:
         the camera. */
     bool                        m_manualOperation;
 
-    CameraControlWindow(
-        const FirstPersonManipulatorRef&    manualManipulator, 
-        const UprightSplineManipulatorRef&  trackManipulator, 
-        const Pointer<Manipulator::Ref>&    cameraManipulator,
-        GCamera*                            camera,
-        const Film::Ref&                    film,
-        const GuiThemeRef&                  skin);
+    CameraControlWindow
+    (const FirstPersonManipulatorRef&    manualManipulator, 
+     const UprightSplineManipulatorRef&  trackManipulator, 
+     const Pointer<Manipulator::Ref>&    cameraManipulator,
+     GCamera*                            camera,
+     const Film::Ref&                    film,
+     const GuiThemeRef&                  skin);
 
     /** Sets the controller for the cameraManipulator. */
     //void setSource(Source s);

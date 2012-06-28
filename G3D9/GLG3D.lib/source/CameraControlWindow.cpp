@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2007-06-01
-  \edited  2010-03-01
+  \edited  2012-06-28
 */
 #include "G3D/platform.h"
 #include "G3D/GCamera.h"
@@ -16,10 +16,9 @@
 #include "GLG3D/GuiPane.h"
 #include "G3D/FileSystem.h"
 
-
 namespace G3D {
 
-enum {FILM_PANE_SIZE = 102, FOCUS_PANE_SIZE = 54};
+enum {FILM_PANE_SIZE = 124, FOCUS_PANE_SIZE = 328};
 const Vector2 CameraControlWindow::sDefaultWindowSize(286 + 16, 46);
 const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 176 + FILM_PANE_SIZE + FOCUS_PANE_SIZE);
 
@@ -131,6 +130,14 @@ float CameraControlWindow::focusZ() const {
     return m_camera->focusPlaneZ();
 }
 
+void CameraControlWindow::setDepthOfFieldModel(int e) {
+    m_camera->setDepthOfFieldModel((GCamera::DOFModel)e);
+}
+
+int CameraControlWindow::depthOfFieldModel() const {
+    return m_camera->depthOfFieldModel();
+}
+
 void CameraControlWindow::setLensRadius(float r) {
     m_camera->setLensRadius(r);
 }
@@ -192,6 +199,8 @@ CameraControlWindow::CameraControlWindow(
     m_expanded(false)
 {
 
+    //GFont::Ref paneCaptionFont = GFont::fromFile(System::findDataFile("arial-bold.fnt"));
+
     m_manualOperation = m_manualManipulator->active();
 
     updateTrackFiles();
@@ -235,46 +244,91 @@ CameraControlWindow::CameraControlWindow(
 
     m_showBookmarksButton->setSize(w, h);
 
-    GuiButton* copyButton = pane->addButton(GuiText(CLIPBOARD, iconFont, 16), GuiControl::Callback(this, &CameraControlWindow::copyToClipboard), GuiTheme::TOOL_BUTTON_STYLE);
+    GuiButton* copyButton = 
+        pane->addButton(GuiText(CLIPBOARD, iconFont, 16),
+                        GuiControl::Callback(this, &CameraControlWindow::copyToClipboard),
+                        GuiTheme::TOOL_BUTTON_STYLE);
     copyButton->setSize(w, h);
 #   ifdef G3D_OSX
         copyButton->setEnabled(false);
 #   endif
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    const float sliderWidth = 290,  indent = 2.0f;
-
-    GuiPane* focusPane = pane->addPane();
-    focusPane->moveBy(-9, 2);
-    
-    GuiControl* n = focusPane->addNumberBox("Focus", 
-        NegativeAdapter<float>::create(Pointer<float>(this, &CameraControlWindow::focusZ, &CameraControlWindow::setFocusZ)),
-        "m", GuiTheme::LOG_SLIDER, 0.01f, 200.0f);
-    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
-
-    n = focusPane->addNumberBox("Lens Radius", 
-        Pointer<float>(this, &CameraControlWindow::lensRadius, &CameraControlWindow::setLensRadius),
-        "m", GuiTheme::LOG_SLIDER, 0.0f, 0.5f);
-    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
-
-    /////////////////////////////////////////////////////////////////////////////////////////
-
-    GuiPane* filmPane = pane->addPane();
-    filmPane->moveBy(-9, 2);
-    if (film.notNull()) {
-        film->makeGui(filmPane, 10.0f, sliderWidth, indent);
+    GuiPane* filmPane = pane->addPane("Sensor");
+    {
+        const float sliderWidth = 290,  indent = 2.0f;
+        
+        filmPane->moveBy(-3, -2);
+        if (film.notNull()) {
+            film->makeGui(filmPane, 10.0f, sliderWidth, indent);
+        }
     }
+
+
+#   define INDENT_SLIDER(n) n->setWidth(275); n->moveBy(15, 0); n->setCaptionWidth(100);
+
+    GuiPane* focusPane = pane->addPane("Depth of Field");
+    {
+        focusPane->moveBy(-3, 4);
+        
+        Pointer<int> dofPtr(this, &CameraControlWindow::depthOfFieldModel, &CameraControlWindow::setDepthOfFieldModel);
+        focusPane->addRadioButton("None (Pinhole)", (int)GCamera::NONE, dofPtr, GuiTheme::NORMAL_RADIO_BUTTON_STYLE);
+        focusPane->addRadioButton("Physical Lens", (int)GCamera::PHYSICAL, dofPtr, GuiTheme::NORMAL_RADIO_BUTTON_STYLE);
+        {
+            GuiControl* n = focusPane->addNumberBox
+                ("Focus Dist.", 
+                 NegativeAdapter<float>::create(Pointer<float>(this, &CameraControlWindow::focusZ, &CameraControlWindow::setFocusZ)),
+                 "m", GuiTheme::LOG_SLIDER, 0.01f, 200.0f);
+            INDENT_SLIDER(n);
+            
+            n = focusPane->addNumberBox
+                ("Lens Radius", 
+                 Pointer<float>(this, &CameraControlWindow::lensRadius, &CameraControlWindow::setLensRadius),
+                 "m", GuiTheme::LOG_SLIDER, 0.0f, 0.5f);
+            INDENT_SLIDER(n);
+        }
+        
+        focusPane->addRadioButton("Artist Custom", 
+                                  (int)GCamera::ARTIST, dofPtr, GuiTheme::NORMAL_RADIO_BUTTON_STYLE);
+
+        {
+            static float ignoref = 1.0f;
+            static int ignorei = 1;
+            GuiControl* n;
+
+            n = focusPane->addNumberBox("Nearfield Blur",   &ignorei, "%", GuiTheme::LINEAR_SLIDER, 0, 10);
+            INDENT_SLIDER(n);
+
+            n = focusPane->addNumberBox("Near Blur Dist.",  &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            INDENT_SLIDER(n);
+
+            n = focusPane->addNumberBox("Near Sharp Dist.", &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            INDENT_SLIDER(n);
+
+            n = focusPane->addNumberBox("Far Sharp Dist.",  &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            INDENT_SLIDER(n);
+
+            n = focusPane->addNumberBox("Far Sharp Dist.",  &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            INDENT_SLIDER(n);
+
+            n = focusPane->addNumberBox("Farfield Blur",    &ignorei, "%", GuiTheme::LINEAR_SLIDER, 0, 10);
+            INDENT_SLIDER(n);
+
+        }
+    }
+
+#   undef INDENT_SLIDER
     /////////////////////////////////////////////////////////////////////////////////////////
 
-    GuiPane* manualPane = pane->addPane();
-    manualPane->moveBy(-8, 0);
+    GuiPane* manualPane = pane->addPane("Animation");
+    manualPane->moveBy(-3, 2);
 
-    manualPane->addCheckBox("Manual Control (F2)", &m_manualOperation)->moveBy(-2, 3);
+    manualPane->addCheckBox("Manual Control (F2)", &m_manualOperation)->moveBy(-4, 3);
 
     manualPane->beginRow();
     {
         m_trackList = manualPane->addDropDownList("Path", m_trackFileArray, &m_trackFileIndex);
-        m_trackList->setRect(Rect2D::xywh(Vector2(0, m_trackList->rect().y1() - 25), Vector2(180, m_trackList->rect().height())));
+        m_trackList->setRect(Rect2D::xywh(Vector2(2, m_trackList->rect().y1() - 25), Vector2(180, m_trackList->rect().height())));
         m_trackList->setCaptionWidth(34);
 
         m_visibleCheckBox = manualPane->addCheckBox("Visible", 
@@ -389,14 +443,14 @@ CameraControlWindow::CameraControlWindow(
 }
 
 
-CameraControlWindow::Ref CameraControlWindow::create(
-    const FirstPersonManipulatorRef&   manualManipulator,
-    const UprightSplineManipulatorRef& trackManipulator,
-    const Pointer<Manipulator::Ref>&   cameraManipulator,
-    GCamera*                           camera,
-    const Film::Ref&                   film,
-    const GuiThemeRef&                 skin) {
-
+CameraControlWindow::Ref CameraControlWindow::create
+(const FirstPersonManipulatorRef&   manualManipulator,
+ const UprightSplineManipulatorRef& trackManipulator,
+ const Pointer<Manipulator::Ref>&   cameraManipulator,
+ GCamera*                           camera,
+ const Film::Ref&                   film,
+ const GuiThemeRef&                 skin) {
+    
     return new CameraControlWindow(manualManipulator, trackManipulator, cameraManipulator, camera, film, skin);
 }
 
