@@ -12,6 +12,7 @@
 #include "G3D/BinaryInput.h"
 #include "G3D/Image.h"
 #include "G3D/ImageFormat.h"
+#include "G3D/FileSystem.h"
 
 
 namespace G3D {
@@ -189,6 +190,10 @@ void Image::toFile(const std::string& filename) const {
     if (! m_image->save(filename.c_str())) {
         debugAssertM(false, G3D::format("Failed to write image to %s", filename.c_str()));
     }
+    // Since we are bypassing G3D::FileSystem, our cache does not get updated
+    // without this line, we get errors such as multiple screenshots in quick 
+    // succession saving to the same file
+    FileSystem::clearCache();
 }
 
 // Helper for FreeImageIO to allow seeking
