@@ -140,8 +140,7 @@ def getUser():
     elif williamsCollege:
         # look up the user in ph (http://www.vub.ac.be/tools/ph.1.html)
         try:
-              try:
-                result = getoutput('ph -m unix=' + user + ' return name email').split('\n')
+            result = getoutput('ph -m unix=' + user + ' return name email').split('\n')
             # Format is:
             #----------------------------------------
             #     name: Ephriam Williams
@@ -151,7 +150,7 @@ def getUser():
             name = name[len('name: '):]
             email = result[2].strip()
             email = email[len('email: '):]
-         
+            
             return name + ', ' + email
         except:
             pass
