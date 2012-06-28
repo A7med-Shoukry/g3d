@@ -176,6 +176,36 @@ public:
     }
 };
 
+
+/** Maps a floating point fraction to a percentage G3D::Pointer value */
+template<class T>
+class PercentageAdapter : public ReferenceCountedObject {
+private:
+
+    friend class Pointer<float>;
+
+    Pointer<float>      m_source;
+
+    typedef ReferenceCountedPointer<PercentageAdapter> Ptr;
+
+
+    /** For use by Pointer<T> */
+    T get() const {  return 100 * m_source.getValue();     }
+
+    /** For use by Pointer<T> */
+    void set(const T& v) {   m_source.setValue(v * 0.01f);   }
+
+    PercentageAdapter(Pointer<T> ptr) : m_source(ptr) {}
+
+public:
+
+    static Pointer<T> create(Pointer<T> ptr) {
+        Ptr p = new PercentageAdapter(ptr);
+        return Pointer<T>(p, &PercentageAdapter::get, &PercentageAdapter::set);
+    }
+};
+
+
 CameraControlWindow::CameraControlWindow(
     const FirstPersonManipulatorRef&      manualManipulator, 
     const UprightSplineManipulatorRef&    trackManipulator, 
@@ -292,26 +322,51 @@ CameraControlWindow::CameraControlWindow(
                                   (int)GCamera::ARTIST, dofPtr, GuiTheme::NORMAL_RADIO_BUTTON_STYLE);
 
         {
-            static float ignoref = 1.0f;
-            static int ignorei = 1;
             GuiControl* n;
 
-            n = focusPane->addNumberBox("Nearfield Blur",   &ignorei, "%", GuiTheme::LINEAR_SLIDER, 0, 10);
+            n = focusPane->addNumberBox
+                ("Nearfield Blur", 
+                 PercentageAdapter<float>::create(Pointer<float>(m_camera,
+                                                          &GCamera::nearBlurRadiusFraction,
+                                                          &GCamera::setNearBlurRadiusFraction)),
+                 "%", GuiTheme::LINEAR_SLIDER, 0.0f, 10.0f, 0.1f);
             INDENT_SLIDER(n);
 
-            n = focusPane->addNumberBox("Near Blur Dist.",  &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            n = focusPane->addNumberBox
+                ("Near Blur Dist.",  
+                 NegativeAdapter<float>::create(Pointer<float>(m_camera,
+                                                               &GCamera::nearBlurryPlaneZ, 
+                                                               &GCamera::setNearBlurryPlaneZ)),
+                 "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
             INDENT_SLIDER(n);
 
-            n = focusPane->addNumberBox("Near Sharp Dist.", &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            n = focusPane->addNumberBox("Near Sharp Dist.",
+                 NegativeAdapter<float>::create(Pointer<float>(m_camera,
+                                                               &GCamera::nearSharpPlaneZ, 
+                                                               &GCamera::setNearSharpPlaneZ)),
+                                        "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
             INDENT_SLIDER(n);
 
-            n = focusPane->addNumberBox("Far Sharp Dist.",  &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            n = focusPane->addNumberBox("Far Sharp Dist.", 
+                 NegativeAdapter<float>::create(Pointer<float>(m_camera,
+                                                               &GCamera::farSharpPlaneZ, 
+                                                               &GCamera::setFarSharpPlaneZ)),
+                                        "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
             INDENT_SLIDER(n);
 
-            n = focusPane->addNumberBox("Far Sharp Dist.",  &ignoref, "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
+            n = focusPane->addNumberBox("Far Sharp Dist.",  
+                 NegativeAdapter<float>::create(Pointer<float>(m_camera,
+                                                               &GCamera::farBlurryPlaneZ, 
+                                                               &GCamera::setFarBlurryPlaneZ)),
+                                        "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
             INDENT_SLIDER(n);
 
-            n = focusPane->addNumberBox("Farfield Blur",    &ignorei, "%", GuiTheme::LINEAR_SLIDER, 0, 10);
+            n = focusPane->addNumberBox
+                ("Farfield Blur",  
+                 PercentageAdapter<float>::create(Pointer<float>(m_camera,
+                                                          &GCamera::farBlurRadiusFraction,
+                                                          &GCamera::setFarBlurRadiusFraction)),
+                 "%", GuiTheme::LINEAR_SLIDER, 0.0f, 10.0f, 0.1f);
             INDENT_SLIDER(n);
 
         }
