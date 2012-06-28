@@ -329,6 +329,15 @@ def _findWindowsBinary(program):
 def toLocalPath(s):
     return s.replace('/', os.sep)
 
+
+#############################################################################
+
+""" If the program name contains spaces, we
+   add quotes around it. """
+def safeWindowsName(p):
+  if (' ' in p) and not ('"' in p):
+    return '"' + p + '"'
+
 #############################################################################
 
 """Run a program with command line arguments.
@@ -354,10 +363,7 @@ def run(program, args = [], echo = True, env = {}):
     argProgram = program
 
     if windows:
-        # If the program name contains spaces, we
-        # add quotes around it.
-        if (' ' in argProgram) and not ('"' in argProgram):
-            argProgram = '"' + argProgram + '"'
+      argProgram = safeWindowsName(argProgram)
                     
     # spawn requires specification of argv[0]
     # Because the program name may contain spaces, we

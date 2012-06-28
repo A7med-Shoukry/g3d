@@ -207,10 +207,11 @@ def initOS():
 
 initOS()
 
+
 def copyIfNewer(source, dest, echoCommands = True, echoFilenames = True, actuallyCopy = True):
     if windows:
         # Use the binary
-        print('copyifnewer %s %s' % (source, dest))
+        print('copyifnewer %s %s' % (safeWindowsName(source), safeWindowsName(dest)))
         return os.spawnv(os.P_WAIT, 'bin\\copyifnewer.exe', 
                    ['bin\\copyifnewer.exe', '--super-exclusions', source, dest])
     else:
