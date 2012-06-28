@@ -193,7 +193,7 @@ void Image::toFile(const std::string& filename) const {
     // Since we are bypassing G3D::FileSystem, our cache does not get updated
     // without this line, we get errors such as multiple screenshots in quick 
     // succession saving to the same file
-    FileSystem::clearCache();
+    FileSystem::clearCache(FileSystem::currentDirectory());
 }
 
 // Helper for FreeImageIO to allow seeking
