@@ -50,7 +50,7 @@ public:
     typedef ReferenceCountedPointer<%(classname)s> Ref;
 
 
-    /** @brief Constructs an empty %(classname)s. */
+    /** \brief Constructs an empty %(classname)s. */
     static %(classname)s::Ref create();
 """ % {'classname' : classname}
 
@@ -78,15 +78,15 @@ public:
             'date'      : datetime.date.today()}
 
     header = """/**
- @file   %(classname)s.h
- @author %(programmer)s
- @date   %(date)s
+ \file   %(classname)s.h
+ \author %(programmer)s
+ \date   %(date)s
 */
 #ifndef %(classname)s_h
 #define %(classname)s_h
 %(include)s
 /** 
-  @brief
+  \brief
  */
 class %(classname)s %(inherit)s{
 %(hbody)s
@@ -96,9 +96,9 @@ class %(classname)s %(inherit)s{
 """ % vars
 
     cpp = """/**
- @file   %(classname)s.cpp
- @author %(programmer)s
- @date   %(date)s
+ \file   %(classname)s.cpp
+ \author %(programmer)s
+ \date   %(date)s
 */
 #include "%(classname)s.h"
 %(cbody)s
