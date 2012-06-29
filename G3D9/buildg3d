@@ -15,7 +15,7 @@ from functools import reduce
 # To get access to icompile routines
 sys.path.append('bin')
 import ice.copyifnewer, ice.utils
-from ice.utils import run, pathConcat, shell, mkdir, VC10, _findWindowsBinary
+from ice.utils import run, pathConcat, shell, mkdir, VC10, _findWindowsBinary, safeWindowsName
 import ice.doxygen
 
 doxygen = 'doxygen'

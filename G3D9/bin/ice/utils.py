@@ -337,6 +337,8 @@ def toLocalPath(s):
 def safeWindowsName(p):
   if (' ' in p) and not ('"' in p):
     return '"' + p + '"'
+  else:
+    return p
 
 #############################################################################
 
