@@ -292,6 +292,7 @@
     <ClCompile Include="..\G3D.lib\source\Vector3int16.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector3int32.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector4.cpp" />
+    <ClCompile Include="..\G3D.lib\source\Vector4int16.cpp" />
     <ClCompile Include="..\G3D.lib\source\Vector4int8.cpp" />
     <ClCompile Include="..\G3D.lib\source\Welder.cpp" />
     <ClCompile Include="..\G3D.lib\source\WinMain.cpp" />
@@ -430,6 +431,7 @@
     <ClInclude Include="..\G3D.lib\include\G3D\Vector3int16.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector3int32.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector4.h" />
+    <ClInclude Include="..\G3D.lib\include\G3D\Vector4int16.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\Vector4int8.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\vectorMath.h" />
     <ClInclude Include="..\G3D.lib\include\G3D\WeakCache.h" />

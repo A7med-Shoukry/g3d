@@ -15,7 +15,7 @@
 #include "G3D/Matrix2.h"
 #include "G3D/CoordinateFrame.h"
 #include "G3D/Vector4int16.h"
-#include "G3D/Matrix.h"
+
 namespace G3D {
 
 void Args::setPreamble(const std::string& preamble){
@@ -26,7 +26,7 @@ void Args::setPreamble(const std::string& preamble){
 std::string Args::getPreambleAndMacroString() const{
     std::string preambleAndMacroString = m_preamble + "\n";
     for(int i = 0; i < m_macroArgs.size(); ++i){
-        preambleAndMacroString += format("#define %s %s\n", m_macroArgs[i].name, m_macroArgs[i].value.toString());
+        preambleAndMacroString += format("#define %s %s\n", m_macroArgs[i].name, m_macroArgs[i].value);
     }
     return preambleAndMacroString;
 }
@@ -143,98 +143,98 @@ void Args::setMacro(const std::string& name, const std::string& value){
     m_macroArgs.append(MacroArgPair(name,value));
 }
 
-void Args::setMacro(const std::string& name, bool val, bool optional = false){
+void Args::setMacro(const std::string& name, bool val){
     std::string value = val ? "true" : "false";
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, int val, bool optional = false){
+void Args::setMacro(const std::string& name, int val){
     std::string value = format("%d", val);
     setMacro(name, value);
 }
-void Args::setMacro(const std::string& name, uint32 val, bool optional = false){
+void Args::setMacro(const std::string& name, uint32 val){
     std::string value = format("%u", val);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, double val, bool optional = false){
+void Args::setMacro(const std::string& name, double val){
     std::string value = format("%f", val);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, float val, bool optional = false){
+void Args::setMacro(const std::string& name, float val){
     std::string value = format("%f", val);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector2& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector2& vec){
     std::string value = format("vec2(%f, %f)", vec.x, vec.y);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector3& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector3& vec){
     std::string value = format("vec3(%f, %f, %f)", vec.x, vec.y, vec.z);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector4& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector4& vec){
     std::string value = format("vec4(%f, %f, %f, %f)", vec.x, vec.y, vec.z, vec.w);
     setMacro(name, value);
 }
 
 /** Becomes float in GLSL */
-void Args::setMacro(const std::string& name, const Color1& col, bool optional = false){
+void Args::setMacro(const std::string& name, const Color1& col){
     std::string value = format("%f", col.value);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Color3& col, bool optional = false){
+void Args::setMacro(const std::string& name, const Color3& col){
     std::string value = format("vec3(%f, %f, %f)", col.r, col.g, col.b);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Color4& col, bool optional = false){
+void Args::setMacro(const std::string& name, const Color4& col){
     std::string value = format("vec4(%f, %f, %f, %f)", col.r, col.g, col.b, col.a);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector2int32& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector2int32& vec){
     std::string value = format("ivec2(%d, %d)", vec.x, vec.y);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector3int32& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector3int32& vec){
     std::string value = format("ivec3(%d, %d, %d)", vec.x, vec.y, vec.z);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector2int16& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector2int16& vec){
     std::string value = format("ivec2(%d, %d)", vec.x, vec.y);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector3int16& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector3int16& vec){
     std::string value = format("ivec3(%d, %d, %d)", vec.x, vec.y, vec.z);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Vector4int16& vec, bool optional = false){
+void Args::setMacro(const std::string& name, const Vector4int16& vec){
     std::string value = format("ivec4(%d, %d, %d, %d)", vec.x, vec.y, vec.z, vec.w);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Matrix2& mat, bool optional = false){
+void Args::setMacro(const std::string& name, const Matrix2& mat){
     std::string value = format("mat2(%f, %f, %f, %f)", mat[0][0], mat[1][0], mat[0][1], mat[1][1]);
     setMacro(name, value);
 }
 
-void Args::setMacro(const std::string& name, const Matrix3& mat, bool optional = false){
+void Args::setMacro(const std::string& name, const Matrix3& mat){
     std::string value = format("mat3(%f, %f, %f,", mat[0][0], mat[1][0], mat[2][0]); // Column 0
     value += format(" %f, %f, %f,", mat[0][1], mat[1][1], mat[2][1]); // Column 1
     value += format(" %f, %f, %f)", mat[0][1], mat[1][1], mat[2][1]); // Column 2
     setMacro(name, value);
 }
-void Args::setMacro(const std::string& name, const Matrix4& mat, bool optional = false){
+void Args::setMacro(const std::string& name, const Matrix4& mat){
     std::string value = format("mat3(%d, %d, %d,", mat[0][0], mat[1][0], mat[2][0]); // Column 0
     value += format(" %d, %d, %d,", mat[0][1], mat[1][1], mat[2][1]); // Column 1
     value += format(" %d, %d, %d)", mat[0][1], mat[1][1], mat[2][1]); // Column 2
@@ -242,9 +242,9 @@ void Args::setMacro(const std::string& name, const Matrix4& mat, bool optional =
 }
 
 /** Becomes mat3x4 in GLSL */
-//void Args::setMacro(const std::string& name, const CoordinateFrame&   val, bool optional = false);
+//void Args::setMacro(const std::string& name, const CoordinateFrame&   val);
 
-//void Args::setMacro(const std::string& name, const Matrix& val, bool optional = false);
+//void Args::setMacro(const std::string& name, const Matrix& val);
 
 
 
