@@ -104,6 +104,7 @@ href="classes.html">Classes</a>.
     \link G3D::WidgetManager WidgetManager\endlink,
     \link G3D::Win32Window Win32Window\endlink,
     \link G3D::X11Window X11Window\endlink
+  </li>
    
   <LI><B>Effects</B> &nbsp; &nbsp;
     \link G3D::Film Film\endlink,
@@ -112,13 +113,14 @@ href="classes.html">Classes</a>.
     \link G3D::markShadows markShadows\endlink,
     \link G3D::SAO SAO\endlink,
     \link G3D::ShadowMap ShadowMap\endlink
-   </UL>
+  </li>
+</UL>
 
-@section gl Hardware Rendering (GLG3D.h, GLG3D.lib)
-<I>An easy-to-use wrapper for OpenGL and a platform-independent windowing system.</I>
+\section gl Hardware Rendering (GLG3D.h, GLG3D.lib)
+<i>An easy-to-use wrapper for OpenGL and a platform-independent windowing system.</i>
 
- <UL>
-  <LI><B>OpenGL Abstraction</B> &nbsp; &nbsp;
+<ul>
+  <li><B>OpenGL Abstraction</B> &nbsp; &nbsp;
     \link G3D::Draw Draw\endlink,
     \link G3D::DepthEncoding DepthEncoding\endlink,
     \link G3D::Framebuffer Framebuffer\endlink,
@@ -166,11 +168,11 @@ href="classes.html">Classes</a>.
     \link G3D::GLenumToString GLenumToString\endlink
 </UL>
 
-@section math 3D Math and Systems (G3D.h, G3D.lib)
-<I>Core data structures and system functionality.</I>
+\section math 3D Math and Systems (G3D.h, G3D.lib)
+<i>Core data structures and system functionality.</i>
 
-    <UL>
-     <LI><B>Geometry</B> &nbsp; &nbsp;
+<ul>
+  <li><B>Geometry</B> &nbsp; &nbsp;
     \link G3D::AABox AABox\endlink,
     \link G3D::Rect2D AABox2D (Rect2D)\endlink,
     \link G3D::Box Box\endlink,
