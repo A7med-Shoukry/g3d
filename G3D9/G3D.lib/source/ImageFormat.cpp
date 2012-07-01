@@ -98,7 +98,7 @@ const ImageFormat* ImageFormat::stencil(int bits) {
 }
 
 
-    static const std::string nameArray[] = 
+    static const std::string nameArray[ImageFormat::CODE_NUM] = 
     {
         "L8", 
         "L16",
@@ -135,6 +135,7 @@ const ImageFormat* ImageFormat::stencil(int bits) {
 
         "ARGB8",
         "BGR8",
+        "BGRA8",
 
         "R8",
 
@@ -197,9 +198,7 @@ const ImageFormat* ImageFormat::stencil(int bits) {
         "STENCIL8",
         "STENCIL16",
 
-        "DEPTH24_STENCIL8",
-        "BGRA8",
-        ""
+        "DEPTH24_STENCIL8"
     };
 
 const std::string& ImageFormat::name() const {
@@ -287,7 +286,7 @@ const ImageFormat* ImageFormat::fromString(const std::string& s) {
         return NULL;
     }
 
-    for (int i = 0; ! nameArray[i].empty(); ++i) {
+    for (int i = 0; i < CODE_NUM; ++i) {
         if (s == nameArray[i]) {
             return fromCode(ImageFormat::Code(i));
         }
