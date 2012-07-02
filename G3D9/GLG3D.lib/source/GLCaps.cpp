@@ -604,7 +604,6 @@ bool GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt) {
                         Color4(1.0f, 1.0f, 1.0f, 1.0f), // White
                         Color4(0.0f, 0.0f, 0.0f, 0.0f)  // Clear (Transparent Black)
                     };
-                    const int pixelNum = width * height;
     
                     // We will read the pixel at 0,0.
                     const int x = 0;
@@ -650,11 +649,17 @@ bool GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt) {
                       
                         
                     }
+                    supportsFormat &= (glGetError() == GL_NO_ERROR);
 
                 } else { // Couldn't even set up texture and framebuffer
                     
                     supportsFormat = false;
                 }
+
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, NULL, mipLevel);
+                glDeleteFramebuffers(1, &testBufferGLName);
+                supportsFormat &= (glGetError() == GL_NO_ERROR);
+
             } glPopAttrib();
 
 
