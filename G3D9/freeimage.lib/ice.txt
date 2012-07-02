@@ -121,14 +121,14 @@ uses:
 ################################################################
 [DEBUG]
 
-compileoptions: -DNO_LCMS
+compileoptions: -DNO_LCMS -w
 
 linkoptions:
 
 ################################################################
 [RELEASE]
 
-compileoptions: -DNO_LCMS
+compileoptions: -DNO_LCMS -w
 
 linkoptions:
 
