@@ -33,10 +33,6 @@ class App : public GApp {
     bool                m_showLightSources;
     bool                m_showWireframe;
 
-    Texture::Ref        m_shader2TestTexture;
-    Texture::Ref        m_depthBuffer;
-    Framebuffer::Ref    m_testFrameBuffer;
-
 
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
