@@ -33,8 +33,8 @@ GuiTextureBox::GuiTextureBox
  bool                embeddedMode) : 
     GuiContainer(parent, caption), 
     m_showInfo(true), 
-    m_drawerOpen(embeddedMode),
     m_showCubemapEdges(false),
+    m_drawerOpen(embeddedMode),
     m_dragging(false), 
     m_readbackXY(-1, -1),
     m_embeddedMode(embeddedMode),

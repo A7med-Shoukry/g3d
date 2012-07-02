@@ -64,6 +64,18 @@ int Framebuffer::stencilBits() const {
 }
 
 
+FramebufferRef Framebuffer::create(const Texture::Ref& t0) {
+    Framebuffer::Ref f = create(t0->name() + " framebuffer");
+
+    if (t0->format()->depthBits > 0) {
+        f->set(DEPTH_AND_STENCIL, t0);
+    } else {
+        f->set(COLOR0, t0);
+    }
+    return f;
+}
+
+
 FramebufferRef Framebuffer::create(const std::string& _name) {
     GLuint _framebufferID;
     

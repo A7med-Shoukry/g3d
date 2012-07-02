@@ -7,7 +7,7 @@
  \cite http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
 
  \created 2006-01-07
- \edited  2011-06-10
+ \edited  2012-07-02
 
   Copyright 2000-2012, Morgan McGuire
 */
@@ -331,6 +331,12 @@ public:
        \param name Name of framebuffer, for debugging purposes. */
     static Ref create(const std::string& name);
 
+    /** Creates a Framebuffer object and binds the argument to
+        Framebuffer::DEPTH_AND_STENCIL if it has depth bits or
+        Framebuffer::COLOR0 otherwise.
+     */
+    static Ref create(const Texture::Ref& color0);
+
     /** Bind this framebuffer and force all of its attachments to
         actually be attached at the OpenGL level.  The latter step is
         needed because set() is lazy.
@@ -436,8 +442,10 @@ public:
         return m_framebufferID;
     }
     
+    /** Read from the first attachment every time called. */
     int width() const;
     
+    /** Read from the first attachment every time called. */
     int height() const;
     
     Rect2D rect2DBounds() const;
