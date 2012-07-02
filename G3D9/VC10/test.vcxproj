@@ -102,7 +102,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\data-files\* $(OutDir)</Command>
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\$(ProjectName)\data-files\*" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -135,7 +135,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\data-files\* $(OutDir)</Command>
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\$(ProjectName)\data-files\*" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

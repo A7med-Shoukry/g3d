@@ -211,6 +211,7 @@
 	 <li> Added TangentSpace Normal to GBuffer. It uses  Encoding(2.0f, -1.0f), like the other normals in GBuffer [Mike]</li>
 	 <li> Added Tri::setData() [Mike]</li>
 	 <li> Added Tri::getIndex [Mike]</li>
+     <li> Fix: Updated VC10 project files to support paths with spaces in the names [Edward Powell]</li>
 	 <li> Fix: G3D::ImageFormat now correctly prints RGB9E5F as "RGB9E5F", instead of "RGB9E10F". [Mike] <\li>
 	 <li> Fix: Removed TriTree::m_size, which wan't storing the right value. [Mike]</li>
 	 <li> Fix: RenderDevice::setInverseY now calls RenderDevice::forceSetCullFace after making the changes [Mike]</li>

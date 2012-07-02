@@ -100,7 +100,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\include $(OutDir)\..\include</Command>
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\$(ProjectName)\include" "$(OutDir)\..\include"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Copying Headers</Message>
@@ -140,7 +140,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\include $(OutDir)\..\include</Command>
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\$(ProjectName)\include" "$(OutDir)\..\include"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Copying Headers</Message>

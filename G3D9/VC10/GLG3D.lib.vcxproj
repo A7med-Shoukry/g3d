@@ -116,8 +116,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\include $(OutDir)\..\include
-"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\ffmpeg\win32\lib $(OutDir)
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\$(ProjectName)\include" "$(OutDir)\..\include"
+"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\ffmpeg\win32\lib" "$(OutDir)\..\lib"
 </Command>
     </PreBuildEvent>
     <PreBuildEvent>
@@ -166,8 +166,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\$(ProjectName)\include $(OutDir)\..\include
-"$(SolutionDir)..\bin\copyifnewer" --exclusions $(SolutionDir)..\ffmpeg\lib\win32 $(OutDir)
+      <Command>"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\$(ProjectName)\include" "$(OutDir)\..\include"
+"$(SolutionDir)..\bin\copyifnewer" --exclusions "$(SolutionDir)..\ffmpeg\lib\win32" "$(OutDir)\..\lib"
 </Command>
     </PreBuildEvent>
     <PreBuildEvent>
