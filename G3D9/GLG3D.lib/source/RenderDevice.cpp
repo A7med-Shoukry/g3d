@@ -1346,24 +1346,30 @@ void RenderDevice::clear(bool clearColor, bool clearDepth, bool clearStencil) {
         mask |= GL_COLOR_BUFFER_BIT;
         setColorWrite(true);
     }
+    debugAssertGLOk();
 
     bool oldDepthWrite = depthWrite();
     if (clearDepth) {
         mask |= GL_DEPTH_BUFFER_BIT;
         setDepthWrite(true);
     }
+    debugAssertGLOk();
 
     if (clearStencil) {
         mask |= GL_STENCIL_BUFFER_BIT;
         minGLStateChange();
         minStateChange();
     }
+    debugAssertGLOk();
 
     glClear(mask);
+    debugAssertGLOk();
     minGLStateChange();
     minStateChange();
     setColorWrite(oldColorWrite);
+    debugAssertGLOk();
     setDepthWrite(oldDepthWrite);
+    debugAssertGLOk();
 }
 
 

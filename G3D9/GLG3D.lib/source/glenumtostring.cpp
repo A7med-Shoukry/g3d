@@ -108,6 +108,7 @@ const char* GLenumToString(GLenum i) {
     S(GL_STACK_OVERFLOW);
     S(GL_STACK_UNDERFLOW);
     S(GL_OUT_OF_MEMORY);
+    S(GL_INVALID_FRAMEBUFFER_OPERATION);
 
     S(GL_2D);
     S(GL_3D);
