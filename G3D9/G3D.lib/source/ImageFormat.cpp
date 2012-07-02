@@ -238,48 +238,60 @@ bool ImageFormat::canInterpretAs(const ImageFormat* otherFormat) const {
     return true;
 }
 
+
 const ImageFormat* ImageFormat::getFormatWithAlpha(const ImageFormat* otherFormat) {
-    if (! otherFormat->opaque)
-    {
+    if (! otherFormat->opaque) {
         return otherFormat;
     }
 
-    switch (otherFormat->code)
-    {
-        case CODE_RGB8:
-            return RGBA8();
-            break;
+    switch (otherFormat->code) {
+    case CODE_L8:
+        return LA8();
+        break;
 
-        case CODE_RGB8I:
-            return RGBA8I();
-            break;
+    case CODE_L16F:
+        return LA16F();
+        break;
 
-        case CODE_RGB8UI:
-            return RGBA8UI();
-            break;
+    case CODE_RGB8:
+        return RGBA8();
+        break;
+        
+    case CODE_RGB8I:
+        return RGBA8I();
+        break;
+        
+    case CODE_RGB8UI:
+        return RGBA8UI();
+        break;
+        
+    case CODE_BGR8:
+        return BGRA8();
+        break;
+        
+    case CODE_RGB16:
+        return RGBA16();
+        break;
+        
+    case CODE_RGB16F:
+        return RGBA16F();
+        break;
+        
+    case CODE_RGB32F:
+        return RGBA32F();
+        break;
 
-        case CODE_BGR8:
-            return BGRA8();
-            break;
-
-        case CODE_RGB16:
-            return RGBA16();
-            break;
-
-        case CODE_RGB16F:
-            return RGBA16F();
-            break;
-
-        case CODE_RGB32F:
-            return RGBA32F();
-            break;
-
-        default:
-            break;
+    case CODE_R11G11B10F:
+        return RGBA16F();
+        break;
+        
+    default:
+        break;
     }
 
     return NULL;
 }
+
 
 const ImageFormat* ImageFormat::fromString(const std::string& s) {
     if (toLower(s) == "auto") {

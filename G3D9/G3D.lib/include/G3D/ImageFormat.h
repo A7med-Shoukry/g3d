@@ -226,13 +226,15 @@ public:
     /** True if data in otherFormat is binary compatible */
     bool canInterpretAs(const ImageFormat* otherFormat) const;
 
-    /** Returns ImageFormat representing the same values as \a otherFormat along with an alpha channel or NULL.
-        Will return itself if already contains an alpha channel. */
+    /** Returns ImageFormat representing the same channels as \a
+        otherFormat plus an alpha channel, all with at least the same
+        precision as \a otherFormat, or returns NULL if an equivalent
+        format is unavailable.  Will return itself if already contains
+        an alpha channel. */
     static const ImageFormat* getFormatWithAlpha(const ImageFormat* otherFormat);
 
     /** Takes the same values that name() returns */
     static const ImageFormat* fromString(const std::string& s);
-
 
 
 private:
