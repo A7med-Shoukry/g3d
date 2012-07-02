@@ -623,8 +623,11 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
+    OSWindow* osWindow = OSWindow::create();
+    //GLCaps::init();
+
     RenderDevice* rd = new RenderDevice();
-    rd->init(OSWindow::Settings());
+    rd->init(osWindow);
     
     glClear(GL_COLOR_BUFFER_BIT);
     debugAssertGLOk();

@@ -300,7 +300,6 @@ void RenderDevice::init(OSWindow* window) {
         // Test which texture and render buffer formats are supported by this card
         logLazyPrintf("Supported Formats:\n");
         logLazyPrintf("%20s  %s %s %s\n", "Format", "Texture", "RenderBuffer", "TextureDrawBuffer");
-        
         for (int code = 0; code < ImageFormat::CODE_NUM; ++code) {
             if ((code == ImageFormat::CODE_DEPTH24_STENCIL8) && 
                 (GLCaps::enumVendor() == GLCaps::MESA)) {
@@ -312,14 +311,16 @@ void RenderDevice::init(OSWindow* window) {
                 ImageFormat::fromCode((ImageFormat::Code)code);
             
             if (fmt) {
-            // printf("Format: %s\n", fmt->name().c_str());
                 bool t = GLCaps::supportsTexture(fmt);
                 bool r = GLCaps::supportsRenderBuffer(fmt);
-                bool d = GLCaps::supportsTextureDrawBuffer(fmt);
-                logLazyPrintf("%20s  %s       %s         %s\n", fmt->name().c_str(), t ? "Yes" : "No ", r ? "Yes" : "No ", d ? "Yes" : "No ");
+                bool d = false;//GLCaps::supportsTextureDrawBuffer(fmt); TODO Mike
+                logLazyPrintf("%20s  %s       %s         %s\n", 
+                              fmt->name().c_str(), 
+                              t ? "Yes" : "No ", 
+                              r ? "Yes" : "No ", 
+                              d ? "Yes" : "No ");
             }
         }
-
         logLazyPrintf("\n");
     
         OSWindow::Settings actualSettings;
@@ -365,20 +366,19 @@ void RenderDevice::init(OSWindow* window) {
         bool s = GLCaps::supportsG3D9(e);
         logLazyPrintf("This driver will%s support G3D 9.00:\n%s\n\n",
                       s ? "" : " NOT", e.c_str());
-
         logPrintf("Done initializing RenderDevice.\n"); 
     }
-
     m_initialized = true;
 
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
     m_window->m_renderDevice = this;
+    debugAssertGLOk();
 }
 
 
-void RenderDevice::describeSystem(
-                                  std::string&        s) {
+void RenderDevice::describeSystem
+(std::string&        s) {
     
     TextOutput t;
     describeSystem(t);
