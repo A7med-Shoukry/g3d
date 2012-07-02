@@ -481,9 +481,14 @@ public:
     }
 
     /** Set the plane at which the maximum blur radius is reached in
-        the near field under the ARTIST depth of field model.*/
+        the near field under the ARTIST depth of field model.
+        Adjusts the other plane depths to maintain a legal model.
+    */
     void setNearBlurryPlaneZ(float z) {
         m_nearBlurryZ = z;
+        m_nearSharpZ  = min(m_nearBlurryZ - 0.001f, m_nearSharpZ);
+        m_farSharpZ   = min(m_nearSharpZ - 0.001f, m_farSharpZ);
+        m_farBlurryZ  = min(m_farSharpZ - 0.001f, m_farBlurryZ);
     }
 
     float nearBlurryPlaneZ() const {
@@ -492,6 +497,9 @@ public:
 
     void setNearSharpPlaneZ(float z) {
         m_nearSharpZ = z;
+        m_nearBlurryZ = max(m_nearBlurryZ, 0.001f + m_nearSharpZ);
+        m_farSharpZ   = min(m_nearSharpZ - 0.001f, m_farSharpZ);
+        m_farBlurryZ  = min(m_farSharpZ - 0.001f, m_farBlurryZ);
     }
 
     float nearSharpPlaneZ() const {
@@ -500,6 +508,9 @@ public:
 
     void setFarSharpPlaneZ(float z) {
         m_farSharpZ = z;
+        m_farBlurryZ  = min(m_farSharpZ - 0.001f, m_farBlurryZ);
+        m_nearSharpZ  = max(m_farSharpZ + 0.001f, m_nearSharpZ);
+        m_nearBlurryZ = max(m_nearBlurryZ, 0.001f + m_nearSharpZ);
     }
 
     float farSharpPlaneZ() const {
@@ -508,6 +519,9 @@ public:
 
     void setFarBlurryPlaneZ(float z) {
         m_farBlurryZ = z;
+        m_farSharpZ   = max(m_farSharpZ, 0.001f + m_farBlurryZ);
+        m_nearSharpZ  = max(m_farSharpZ + 0.001f, m_nearSharpZ);
+        m_nearBlurryZ = max(m_nearBlurryZ, 0.001f + m_nearSharpZ);
     }
 
     float farBlurryPlaneZ() const {
