@@ -3583,7 +3583,7 @@ void RenderDevice::apply(const Shader2::Ref& s, const Args& args){
 void RenderDevice::applyRect(const Shader2::Ref& s, const Args& args, const Rect2D& r){
     float zCoord = 0.0f;
     s->args = args;
-    const Rect2D& v = viewport();
+    //const Rect2D& v = viewport(); TODO: Mike
     debugAssertGLOk();
     beginOpenGL();
     

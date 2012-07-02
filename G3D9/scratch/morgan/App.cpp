@@ -623,6 +623,14 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
+    RenderDevice* rd = new RenderDevice();
+    rd->init(OSWindow::Settings());
+    
+    glClear(GL_COLOR_BUFFER_BIT);
+    debugAssertGLOk();
+    ::exit(0);
+
+#if 0
     Array<std::string> s;
     VideoOutput::getSupportedCodecs(s);
 
@@ -644,7 +652,7 @@ int main(int argc, const char* argv[]) {
         printf("(none)\n");
     }
     ::exit(0);
-
+#endif
    
     // Make Gui
 //    GuiTheme::makeThemeFromSourceFiles	("D:/morgan/g3d/data-source/guithemes/osx-10.7/", "osx-10.7_white.png", "osx-10.7_black.png", "osx-10.7.gtm.any", "D:/morgan/g3d/data-source/guithemes/osx-10.7/osx-10.7.gtm");
