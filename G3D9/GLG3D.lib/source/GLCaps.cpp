@@ -649,7 +649,7 @@ bool GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt) {
                       
                         
                     }
-                    supportsFormat &= (glGetError() == GL_NO_ERROR);
+                    
 
                 } else { // Couldn't even set up texture and framebuffer
                     
@@ -658,7 +658,6 @@ bool GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt) {
 
                 glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, NULL, mipLevel);
                 glDeleteFramebuffers(1, &testBufferGLName);
-                supportsFormat &= (glGetError() == GL_NO_ERROR);
 
             } glPopAttrib();
 
