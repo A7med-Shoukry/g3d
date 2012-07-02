@@ -623,8 +623,28 @@ void convertToOBJFile(const std::string& srcFilename) {
 
 
 int main(int argc, const char* argv[]) {
+    Array<std::string> s;
+    VideoOutput::getSupportedCodecs(s);
 
-    // Try to allocate 200 GB
+#ifdef G3D_NO_FFMPEG
+    printf("G3D_NO_FFMPEG (app): %d\n", G3D_NO_FFMPEG);
+#else
+    printf("G3D_NO_FFMPEG (app): (undefined)\n");
+#endif
+
+
+    printf("G3D_NO_FFMPEG (library): %s\n", 
+           VideoOutput::ENABLED_IN_LIBRARY ? "(undefined)" : "(defined!)");
+
+    printf("Supported Codecs:\n");
+    for (int i = 0; i < s.length(); ++i) { 
+        printf("%s\n", s[i].c_str());
+    }
+    if (s.length() == 0) {
+        printf("(none)\n");
+    }
+    ::exit(0);
+
    
     // Make Gui
 //    GuiTheme::makeThemeFromSourceFiles	("D:/morgan/g3d/data-source/guithemes/osx-10.7/", "osx-10.7_white.png", "osx-10.7_black.png", "osx-10.7.gtm.any", "D:/morgan/g3d/data-source/guithemes/osx-10.7/osx-10.7.gtm");

@@ -32,6 +32,8 @@ namespace G3D {
  */
 class VideoOutput : public ReferenceCountedObject {
 public:
+    /** True if the libray was built without G3D_NO_FFMPEG defined. */
+    static const bool ENABLED_IN_LIBRARY;
 
     enum CodecID {
         CODEC_ID_NONE,

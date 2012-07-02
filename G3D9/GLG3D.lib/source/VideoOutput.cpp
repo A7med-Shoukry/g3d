@@ -132,6 +132,13 @@ VideoOutput::VideoOutput() :
 {
 }
 
+const bool VideoOutput::ENABLED_IN_LIBRARY =
+#ifdef G3D_NO_FFMPEG
+    false;
+#else
+    true;
+#endif
+
 VideoOutput::~VideoOutput() {
 #ifndef G3D_NO_FFMPEG
     if (!m_isFinished && m_isInitialized) {

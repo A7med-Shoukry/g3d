@@ -7,7 +7,7 @@
  \author Eric Muller 09edm@williams.edu, Dan Fast 10dpf@williams.edu, Katie Creel 10kac_2@williams.edu
  
  \created 2007-05-31
- \edited  2011-12-31
+ \edited  2012-07-01
  */
 #include "EmptyViewer.h"
 
@@ -28,7 +28,7 @@ void EmptyViewer::onGraphics(RenderDevice* rd, App* app, const LightingRef& ligh
     screenPrintf("\n");
 	screenPrintf("Drag and drop an file to view.\n");
 	screenPrintf("\n");
-	screenPrintf("Image Formats: png, jpg, bmp, tga, pcx, dds, ppm, ico, gif (+ cube maps...just drop one face)");
+	screenPrintf("Image Formats: png, jpg, bmp, tga, pcx, dds, psd, cut, exr, hdr, iff, mng, tiff, xbm, xpm, pfm, pict, jbig, ppm, ico, gif, (+ cube maps...just drop one face)");
 	screenPrintf("3D Formats:    obj, 3ds, pk3, md2, md3, bsp, off, ply, ply2, ifs, am.any");
     screenPrintf("GUI Formats:   fnt, gtm");
 #   ifndef G3D_NO_FFMPEG

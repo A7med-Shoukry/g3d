@@ -218,8 +218,8 @@ void App::setViewer(const std::string& newFilename) {
         // Images can be either a Texture or a Sky, TextureViewer will figure it out
         viewer = new TextureViewer();
 
-		// Angle the camera slightly so a sky/cube map doesn't see only 1 face
-		defaultController->setFrame(Matrix3::fromAxisAngle(Vector3::unitY(), halfPi() / 2.0) * Matrix3::fromAxisAngle(Vector3::unitX(), halfPi() / 2.0));
+        // Angle the camera slightly so a sky/cube map doesn't see only 1 face
+        defaultController->setFrame(Matrix3::fromAxisAngle(Vector3::unitY(), halfPi() / 2.0) * Matrix3::fromAxisAngle(Vector3::unitX(), halfPi() / 2.0));
 
     } else if (ext == "fnt") {
         

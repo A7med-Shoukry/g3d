@@ -1681,6 +1681,25 @@ bool Texture::isSupportedImage(const std::string& filename) {
         (ext == "ppm") ||
         (ext == "pgm") ||
         (ext == "pbm") ||
+        (ext == "tiff") ||
+        (ext == "exr") ||
+        (ext == "cut") ||
+        (ext == "psd") ||
+        (ext == "jbig") ||
+        (ext == "xbm") ||
+        (ext == "xpm") ||
+        (ext == "gif") ||
+        (ext == "hdr") ||
+        (ext == "iff") ||
+        (ext == "jng") ||
+        (ext == "pict") ||
+        (ext == "ras") ||
+        (ext == "wbmp") ||
+        (ext == "sgi") ||
+        (ext == "pcd") ||
+        (ext == "jp2") ||
+        (ext == "jpx") ||
+        (ext == "jpf") ||
         (ext == "pcx")) {
         return true;
     } else {
