@@ -649,10 +649,13 @@ void GApp::onGraphics2D(RenderDevice* rd, Array<Surface2DRef>& posed2D) {
 
 
 void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surface2DRef>& posed2D) {
+    debugAssertGLOk();
+
     // Clear the entire screen (needed even though we'll render over it because
     // AFR uses clear() to detect that the buffer is not re-used.)
     rd->clear();
-    
+    debugAssertGLOk();
+
     // Ignore changes to this value inside of onGraphics, when it is
     // too late to switch
     const bool useFilmThisFrame = m_useFilm;
@@ -686,6 +689,7 @@ void GApp::onGraphics(RenderDevice* rd, Array<SurfaceRef>& posed3D, Array<Surfac
         onGraphics2D(rd, posed2D);
     }
     rd->pop2D();
+    debugAssertGLOk();
 }
 
 

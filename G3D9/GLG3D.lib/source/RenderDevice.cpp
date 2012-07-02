@@ -1602,6 +1602,7 @@ const Rect2D& RenderDevice::viewport() const {
 
 
 void RenderDevice::pushState(const FramebufferRef& fb) {
+    debugAssertGLOk();
     pushState();
 
     if (fb.notNull()) {
