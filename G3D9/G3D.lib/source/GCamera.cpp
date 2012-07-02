@@ -44,7 +44,7 @@ GCamera::GCamera(const Any& any) {
     reader.getIfPresent("coordinateFrame", m_cframe);
     
     reader.getIfPresent("nearPlaneZ", m_nearPlaneZ);
-    reader.getIfPresent("farlaneZ", m_farPlaneZ);
+    reader.getIfPresent("farPlaneZ", m_farPlaneZ);
 
     reader.getIfPresent("pixelOffset", m_pixelOffset);
 
