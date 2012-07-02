@@ -313,7 +313,7 @@ void RenderDevice::init(OSWindow* window) {
             if (fmt) {
                 bool t = GLCaps::supportsTexture(fmt);
                 bool r = GLCaps::supportsRenderBuffer(fmt);
-                bool d = false;//GLCaps::supportsTextureDrawBuffer(fmt); TODO Mike
+                bool d = GLCaps::supportsTextureDrawBuffer(fmt); //TODO Mike
                 logLazyPrintf("%20s  %s       %s         %s\n", 
                               fmt->name().c_str(), 
                               t ? "Yes" : "No ", 
