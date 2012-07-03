@@ -354,7 +354,7 @@ CameraControlWindow::CameraControlWindow(
                                         "m", GuiTheme::LOG_SLIDER, 0.01f, 400.0f, 0.01f);
             INDENT_SLIDER(n);
 
-            n = focusPane->addNumberBox("Far Sharp Dist.",  
+            n = focusPane->addNumberBox("Far Blur Dist.",  
                  NegativeAdapter<float>::create(Pointer<float>(m_camera,
                                                                &GCamera::farBlurryPlaneZ, 
                                                                &GCamera::setFarBlurryPlaneZ)),
