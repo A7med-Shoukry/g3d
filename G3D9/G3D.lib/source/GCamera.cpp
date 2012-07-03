@@ -188,12 +188,12 @@ GCamera::GCamera() :
     m_focusPlaneZ(-10.0f), 
     m_exposureTime(0.0f), 
     m_dofModel(NONE),
-    m_nearRadiusFraction(0.1f),
+    m_nearRadiusFraction(0.02f),
     m_nearBlurryZ(-0.25f),
     m_nearSharpZ(-1.0f),
     m_farSharpZ(-40.0f),
     m_farBlurryZ(-100.0f),
-    m_farRadiusFraction(0.05) {
+    m_farRadiusFraction(0.02) {
 
     setNearPlaneZ(-0.15f);
     setFarPlaneZ(-150.0f);

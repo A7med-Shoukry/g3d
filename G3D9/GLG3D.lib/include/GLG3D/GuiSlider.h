@@ -74,7 +74,7 @@ private:
         m_source(ptr), m_low((double)low), m_high((double)high) {
         m_range = m_high - m_low;
 
-        m_base = max(10.0, m_range / 100.0);
+        m_base = max(20.0, m_range / 100.0);
         m_logBase = ::log(m_base);
     }
 
