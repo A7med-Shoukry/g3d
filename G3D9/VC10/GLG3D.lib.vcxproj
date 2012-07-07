@@ -411,6 +411,8 @@
     <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_minify.pix" />
     <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_reconstructCSZ.pix" />
     <None Include="..\data-files\shader\BumpMap.glsl" />
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_artistCoC.pix" />
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_physicalCoC.pix" />
     <None Include="..\data-files\shader\Film_FXAA.pix" />
     <None Include="..\data-files\shader\reconstruct.glsl" />
     <None Include="..\data-files\shader\SS_GBuffer.pix" />

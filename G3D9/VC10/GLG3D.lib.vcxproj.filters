@@ -681,5 +681,11 @@
     <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_minify.pix">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_artistCoC.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_physicalCoC.pix">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
