@@ -323,10 +323,10 @@
     <ClCompile Include="..\GLG3D.lib\source\Shader2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\SAO.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\Args.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GLG3D.lib\source\Args.cpp">
+    <ClCompile Include="..\GLG3D.lib\source\AmbientOcclusion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -616,7 +616,7 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Args.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SAO.h">
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\AmbientOcclusion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -663,22 +663,22 @@
     <None Include="..\data-files\shader\SS_Refract.vrt">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="..\data-files\shader\SAO\SAO_AO.pix">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\data-files\shader\SAO\SAO_blur.pix">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\data-files\shader\SAO\SAO_minify.pix">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\data-files\shader\SAO\SAO_reconstructCSZ.pix">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="..\data-files\shader\SAO\SAO.vrt">
-      <Filter>Shader Files</Filter>
-    </None>
     <None Include="..\data-files\shader\reconstruct.glsl">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_reconstructCSZ.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion.vrt">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_AO.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_blur.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_minify.pix">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

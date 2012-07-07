@@ -23,24 +23,24 @@ namespace G3D {
 /** Floating point bits per pixel for CSZ: 16 or 32.  There is no perf difference on GeForce GTX 580 */
 #define ZBITS (32)
 
-/** This must be greater than or equal to the MAX_MIP_LEVEL and  defined in SAO_AO.pix. */
+/** This must be greater than or equal to the MAX_MIP_LEVEL and  defined in AmbientOcclusion_AO.pix. */
 #define MAX_MIP_LEVEL (5)
 
 /** Used to allow us to depth test versus the sky without an explicit check, speeds up rendering when some of the skybox is visible */
 #define Z_COORD (-1.0f)
 
-SAO::Settings::Settings() : 
+AmbientOcclusion::Settings::Settings() : 
     radius(0.7f * units::meters()),
     bias(0.012f),
     intensity(0.7f) {}
 
 
-SAO::Ref SAO::create() {
-    return new SAO();
+AmbientOcclusion::Ref AmbientOcclusion::create() {
+    return new AmbientOcclusion();
 }
 
 
-void SAO::compute
+void AmbientOcclusion::compute
    (RenderDevice*               rd,
     const Texture::Ref&         depthBuffer, 
     const Vector3&              clipConstant,
@@ -67,22 +67,22 @@ void SAO::compute
 }
 
 
-void SAO::reloadShaders() {
-    m_rawAOShader = Shader::fromFiles(System::findDataFile("SAO/SAO.vrt"), System::findDataFile("SAO/SAO_AO.pix"));
+void AmbientOcclusion::reloadShaders() {
+    m_rawAOShader = Shader::fromFiles(System::findDataFile("AmbientOcclusion/AmbientOcclusion.vrt"), System::findDataFile("AmbientOcclusion/AmbientOcclusion_AO.pix"));
     m_rawAOShader->setPreserveState(false);
 
-    m_blurShader = Shader::fromFiles(System::findDataFile("SAO/SAO.vrt"), System::findDataFile("SAO/SAO_blur.pix"));
+    m_blurShader = Shader::fromFiles(System::findDataFile("AmbientOcclusion/AmbientOcclusion.vrt"), System::findDataFile("AmbientOcclusion/AmbientOcclusion_blur.pix"));
     m_blurShader->setPreserveState(false);
 
-    m_reconstructCSZShader = Shader::fromFiles(System::findDataFile("SAO/SAO.vrt"), System::findDataFile("SAO/SAO_reconstructCSZ.pix"));
+    m_reconstructCSZShader = Shader::fromFiles(System::findDataFile("AmbientOcclusion/AmbientOcclusion.vrt"), System::findDataFile("AmbientOcclusion/AmbientOcclusion_reconstructCSZ.pix"));
     m_reconstructCSZShader->setPreserveState(false);
 
-    m_cszMinifyShader = Shader::fromFiles(System::findDataFile("SAO/SAO.vrt"), System::findDataFile("SAO/SAO_minify.pix"));
+    m_cszMinifyShader = Shader::fromFiles(System::findDataFile("AmbientOcclusion/AmbientOcclusion.vrt"), System::findDataFile("AmbientOcclusion/AmbientOcclusion_minify.pix"));
     m_cszMinifyShader->setPreserveState(false);
 }
 
 
-void SAO::resizeBuffers(int width, int height) {
+void AmbientOcclusion::resizeBuffers(int width, int height) {
     bool rebind = false;
 
     if (m_rawAOFramebuffer.isNull()) {
@@ -137,7 +137,7 @@ void SAO::resizeBuffers(int width, int height) {
 }
 
 
-void SAO::computeCSZ
+void AmbientOcclusion::computeCSZ
 (RenderDevice* rd,         
  const Texture::Ref&         depthBuffer, 
  const Vector3&              clipInfo) {
@@ -163,7 +163,7 @@ void SAO::computeCSZ
 }
 
 
-void SAO::computeRawAO
+void AmbientOcclusion::computeRawAO
    (RenderDevice*               rd,
     const Texture::Ref&         depthBuffer, 
     const Vector3&              clipConstant,
@@ -199,7 +199,7 @@ void SAO::computeRawAO
 }
 
 
-void SAO::blurHorizontal
+void AmbientOcclusion::blurHorizontal
    (RenderDevice*               rd,
     const Texture::Ref&         depthBuffer, 
     const int                   guardBandSize) {
@@ -218,7 +218,7 @@ void SAO::blurHorizontal
 }
 
 
-void SAO::blurVertical   
+void AmbientOcclusion::blurVertical   
    (RenderDevice*               rd,
     const Texture::Ref&         depthBuffer, 
     const int                   guardBandSize) {
@@ -238,7 +238,7 @@ void SAO::blurVertical
 }
 
 
-void SAO::compute
+void AmbientOcclusion::compute
    (RenderDevice*               rd,
     const Texture::Ref&         depthBuffer, 
     const GCamera&              camera,
@@ -266,7 +266,7 @@ void SAO::compute
 }
 
 
-bool SAO::supported(){
+bool AmbientOcclusion::supported(){
     static bool supported = true;
     static bool init = true;
     if(init){

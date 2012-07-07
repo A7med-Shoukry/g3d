@@ -202,6 +202,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\GLG3D.lib\source\AmbientOcclusion.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Args.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\ArticulatedModel_3DS.cpp" />
@@ -278,7 +279,6 @@
     <ClCompile Include="..\GLG3D.lib\source\Profiler.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Renderbuffer.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\RenderDevice.cpp" />
-    <ClCompile Include="..\GLG3D.lib\source\SAO.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\SDLWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shader.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Shader2.cpp" />
@@ -307,6 +307,7 @@
     <ClCompile Include="..\GLG3D.lib\source\Win32Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\AmbientOcclusion.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Args.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\ArticulatedModel.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\BSPMAP.h" />
@@ -374,7 +375,6 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Profiler.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Renderbuffer.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\RenderDevice.h" />
-    <ClInclude Include="..\GLG3D.lib\include\GLG3D\SAO.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\SDLWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shader.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Shader2.h" />
@@ -405,14 +405,14 @@
     <ClInclude Include="..\GLG3D.lib\source\Load3DS.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion.vrt" />
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_AO.pix" />
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_blur.pix" />
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_minify.pix" />
+    <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_reconstructCSZ.pix" />
     <None Include="..\data-files\shader\BumpMap.glsl" />
     <None Include="..\data-files\shader\Film_FXAA.pix" />
     <None Include="..\data-files\shader\reconstruct.glsl" />
-    <None Include="..\data-files\shader\SAO\SAO.vrt" />
-    <None Include="..\data-files\shader\SAO\SAO_AO.pix" />
-    <None Include="..\data-files\shader\SAO\SAO_blur.pix" />
-    <None Include="..\data-files\shader\SAO\SAO_minify.pix" />
-    <None Include="..\data-files\shader\SAO\SAO_reconstructCSZ.pix" />
     <None Include="..\data-files\shader\SS_GBuffer.pix" />
     <None Include="..\data-files\shader\SS_GBuffer.vrt" />
     <None Include="..\data-files\shader\SS_Globals.pix" />
