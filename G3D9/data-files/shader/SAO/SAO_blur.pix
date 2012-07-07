@@ -2,7 +2,7 @@
 #extension GL_EXT_gpu_shader4 : require
 #line 4
 /** 
-  \file SAO_blur.pix
+  \file AmbientOcclusion_blur.pix
   \author Morgan McGuire and Michael Mara, NVIDIA Research
 
   \brief 7-tap 1D cross-bilateral blur using a packed depth key

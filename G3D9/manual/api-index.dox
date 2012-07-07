@@ -111,7 +111,7 @@ href="classes.html">Classes</a>.
     \link G3D::GaussianBlur GaussianBlur\endlink,
     \link G3D::GBuffer GBuffer\endlink,
     \link G3D::markShadows markShadows\endlink,
-    \link G3D::SAO SAO\endlink,
+    \link G3D::AmbientOcclusion AmbientOcclusion\endlink,
     \link G3D::ShadowMap ShadowMap\endlink
   </li>
 </UL>

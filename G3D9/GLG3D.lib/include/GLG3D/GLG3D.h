@@ -113,7 +113,7 @@
 #ifdef G3D_OSX
 #include "GLG3D/SDLWindow.h"
 #endif
-#include "GLG3D/SAO.h"
+#include "GLG3D/AmbientOcclusion.h"
 
 
 // Set up the linker on Windows

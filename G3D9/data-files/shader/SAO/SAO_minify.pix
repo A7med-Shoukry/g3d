@@ -6,7 +6,7 @@
 #endif
 
 /**
- \file SAO_minify.pix
+ \file AmbientOcclusion_minify.pix
  \author Morgan McGuire and Michael Mara, NVIDIA Research
  
   Open Source under the "BSD" license: http://www.opensource.org/licenses/bsd-license.php

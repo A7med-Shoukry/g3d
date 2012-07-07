@@ -80,12 +80,12 @@ public:
 
         May be NULL.
         
-        \see G3D::SAO
+        \see G3D::AmbientOcclusion
      */
     Texture::Ref        ambientOcclusion;
 
     /**
-      G3D::SAO computes ambientOcclusion with an optional guard band.  This value is the distance
+      G3D::AmbientOcclusion computes ambientOcclusion with an optional guard band.  This value is the distance
       from (0,0) of the ambientOcclusion texture to (0,0) of the screen.
     */
     Vector2int16        ambientOcclusionOffset;

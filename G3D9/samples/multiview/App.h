@@ -12,7 +12,7 @@ class App : public GApp {
 
     Framebuffer::Ref    m_aoFramebuffer;
     Texture::Ref        m_aoTexture;
-    SAO::Ref            m_sao;
+    AmbientOcclusion::Ref            m_sao;
 
 public:
     

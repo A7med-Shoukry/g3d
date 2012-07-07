@@ -28,7 +28,7 @@ void App::onInit() {
     
     defaultCamera.setCoordinateFrame(CFrame::fromXYZYPRDegrees(-0.61369f, 0.734589f, 0.934322f, 314.163f, -12.1352f));
 
-    m_sao = SAO::create();
+    m_sao = AmbientOcclusion::create();
     m_shadowMap = ShadowMap::create();
     m_aoTexture = Texture::createEmpty("AO", window()->width(), window()->height(), 
         GLCaps::supportsTextureDrawBuffer(ImageFormat::R8()) ? ImageFormat::R8() : ImageFormat::RGB8(), Texture::DIM_2D_NPOT,
@@ -80,7 +80,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     Draw::skyBox(rd, m_scene->lighting()->environmentMapTexture, m_scene->lighting()->environmentMapConstant);
     Surface::renderDepthOnly(rd, surface3D, RenderDevice::CULL_BACK);
 
-    if(SAO::supported()){
+    if(AmbientOcclusion::supported()){
         rd->push2D(m_aoFramebuffer); {
             m_sao->compute(rd, m_depthBuffer, defaultCamera);
         } rd->pop2D();

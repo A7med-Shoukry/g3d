@@ -5,12 +5,12 @@
 #line 4
 
 /**
- \file SAO_AO.pix
+ \file AmbientOcclusion_AO.pix
  \author Morgan McGuire and Michael Mara, NVIDIA Research
 
- Reference implementation of the Scalable Ambient Obscurance (SAO) screen-space ambient obscurance algorithm. 
+ Reference implementation of the Scalable Ambient Obscurance (AmbientOcclusion) screen-space ambient obscurance algorithm. 
  
- The optimized algorithmic structure of SAO was published in McGuire, Mara, and Luebke, Scalable Ambient Obscurance,
+ The optimized algorithmic structure of AmbientOcclusion was published in McGuire, Mara, and Luebke, Scalable Ambient Obscurance,
  <i>HPG</i> 2012, and was developed at NVIDIA with support from Louis Bavoil.
 
  The mathematical ideas of AlchemyAO were first described in McGuire, Osman, Bukowski, and Hennessy, The 
@@ -43,7 +43,7 @@
 // If it is too high (> 5), we'll get bad performance because we're not using the MIP levels effectively
 #define LOG_MAX_OFFSET (3)
 
-// This must be less than or equal to the MAX_MIP_LEVEL defined in SSAO.cpp
+// This must be less than or equal to the MAX_MIP_LEVEL defined in SAmbientOcclusion.cpp
 #define MAX_MIP_LEVEL (5)
 
 /** Used for preventing AO computation on the sky (at infinite depth) and defining the CS Z to bilateral depth key scaling. 

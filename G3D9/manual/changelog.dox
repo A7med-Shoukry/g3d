@@ -23,7 +23,7 @@
    Changes in 9.00:
    <ul>
     <li> Extended G3D::GCamera with two depth-of-field models </li>
-    <li> G3D::SAO screen-space ambient obscurance [Morgan + Mike] </li>
+    <li> G3D::AmbientOcclusion screen-space ambient obscurance [Morgan + Mike] </li>
     <li> Added G3D::ImageFormat::BGRA8 [Mike] </li>
     <li> Added convertRGBA8toBGRA8 functionality to ImageBuffer::convertBuffer() [Mike] </li>
     <li> Modified Win32Window::setIcon to properly convert the icon to BRGA. (Our G3D icon now displays properly). [Mike] </li>

@@ -1,5 +1,5 @@
 /**
- \file SAO.h
+ \file AmbientOcclusion.h
  \author Morgan McGuire and Michael Mara, NVIDIA Research
 
  Implementation of:
@@ -7,7 +7,7 @@
  Scalable Ambient Obscurance.
  Morgan McGuire, Michael Mara, and David Luebke, <i>HPG</i> 2012 
  
- SAO is an optimized variation of the "Alchemy AO" screen-space ambient obscurance algorithm. It is 3x-7x faster on NVIDIA GPUs 
+ AmbientOcclusion is an optimized variation of the "Alchemy AO" screen-space ambient obscurance algorithm. It is 3x-7x faster on NVIDIA GPUs 
  and easier to integrate than the original algorithm. The mathematical ideas were
  first described in McGuire, Osman, Bukowski, and Hennessy, The Alchemy Screen-Space Ambient Obscurance Algorithm, <i>HPG</i> 2011
  and were developed at Vicarious Visions.  
@@ -24,8 +24,8 @@
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-#ifndef GLG3D_SAO_h
-#define GLG3D_SAO_h
+#ifndef GLG3D_AmbientOcclusion_h
+#define GLG3D_AmbientOcclusion_h
 
 #include "G3D/platform.h"
 #include "G3D/ReferenceCount.h"
@@ -41,11 +41,11 @@ namespace G3D {
  <h3>Initialization</h3>
 
     \code
-    SAO::Ref         sao;
+    AmbientOcclusion::Ref         sao;
     Texture::Ref     aoBuffer;
     Framebuffer::Ref aoResultFramebuffer;
  
-    sao = SAO::create();
+    sao = AmbientOcclusion::create();
 
     aoBuffer = Texture::createEmpty("aoBuffer", width, height, ImageFormat::R8(), Texture::DIM_2D_NPOT, Texture::Settings::buffer());
 
@@ -65,10 +65,10 @@ namespace G3D {
 
  \author Morgan McGuire and Michael Mara, NVIDIA and Williams College, http://research.nvidia.com, http://graphics.cs.williams.edu 
 */
-class SAO : public ReferenceCountedObject {
+class AmbientOcclusion : public ReferenceCountedObject {
 public:
-    /** Provide automated resource management. Use SAO::Ref in place of SAO* and never call delete. */
-    typedef ReferenceCountedPointer<class SAO> Ref;
+    /** Provide automated resource management. Use AmbientOcclusion::Ref in place of AmbientOcclusion* and never call delete. */
+    typedef ReferenceCountedPointer<class AmbientOcclusion> Ref;
 
 protected:
     
@@ -147,11 +147,11 @@ protected:
 
 public:
 
-    /** \brief Create a new SAO instance. 
+    /** \brief Create a new AmbientOcclusion instance. 
     
         Only one is ever needed, but if you are rendering to differently-sized
         framebuffers it is faster to create one instance per resolution than to
-        constantly force SAO to resize its internal buffers. */
+        constantly force AmbientOcclusion to resize its internal buffers. */
     static Ref create();
     
     /**
@@ -220,7 +220,7 @@ public:
         const GCamera&              camera,
         const int                   guardBandSize = 0);
 
-    /** For debugging; not needed to be called from outside of SAO in production code */
+    /** For debugging; not needed to be called from outside of AmbientOcclusion in production code */
     void reloadShaders();
 
     /** Increase to compute AO from more distant objects, at a performance and image quality cost. Default is 0.20 meters. */
@@ -234,7 +234,7 @@ public:
     }
     
     /** Increase to avoid self-shadowing in mesh corners, decrease to improve AO for small features and eliminate white halos. 
-        Default is 0.012m. \copydoc SAO::Settings::bias*/
+        Default is 0.012m. \copydoc AmbientOcclusion::Settings::bias*/
     void setBias(float b) {
         m_settings.bias = b;
     }
@@ -252,10 +252,10 @@ public:
         return m_settings.intensity;
     }
 
-    /** Returns false if this graphics card is known to perform SAO abnormally slowly */
+    /** Returns false if this graphics card is known to perform AmbientOcclusion abnormally slowly */
     static bool supported();
 };
 
 } // namespace GLG3D
 
-#endif // SAO_h
+#endif // AmbientOcclusion_h

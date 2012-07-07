@@ -1,5 +1,5 @@
 /**
- \file SAO_AO.vrt
+ \file AmbientOcclusion_AO.vrt
  \author Morgan McGuire and Michael Mara, NVIDIA Research
 
   Open Source under the "BSD" license: http://www.opensource.org/licenses/bsd-license.php
