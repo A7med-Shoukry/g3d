@@ -41,8 +41,8 @@
     args.set("farNormalize", farNormalize);
     \endcode
 */
-#include "reconstruct.glsl"
-#include "compatability.glsl"
+#include "../reconstruct.glsl"
+#include "../compatability.glsl"
 #line 10
 
 uniform sampler2D color;
