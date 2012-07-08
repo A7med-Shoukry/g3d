@@ -4,7 +4,7 @@
   \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   \created 2007-06-01
-  \edited  2012-06-28
+  \edited  2012-07-08
 */
 #include "G3D/platform.h"
 #include "G3D/GCamera.h"
@@ -15,12 +15,12 @@
 #include "GLG3D/FileDialog.h"
 #include "GLG3D/GuiPane.h"
 #include "G3D/FileSystem.h"
+#include "GLG3D/GuiTabPane.h"
 
 namespace G3D {
 
-enum {FILM_PANE_SIZE = 124, FOCUS_PANE_SIZE = 328};
 const Vector2 CameraControlWindow::sDefaultWindowSize(286 + 16, 46);
-const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 176 + FILM_PANE_SIZE + FOCUS_PANE_SIZE);
+const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 46 + 260);
 
 static const std::string noSpline = "< None >";
 static const std::string untitled = "< Unsaved >";
@@ -283,13 +283,16 @@ CameraControlWindow::CameraControlWindow(
         copyButton->setEnabled(false);
 #   endif
 
+
+    GuiTabPane* tabPane = pane->addTabPane();
+    tabPane->moveBy(-5, 5);
+
     /////////////////////////////////////////////////////////////////////////////////////////
-    GuiPane* filmPane = pane->addPane("Sensor");
+    GuiPane* filmPane = tabPane->addTab("Sensor");
     {
-        const float sliderWidth = 290,  indent = 2.0f;
-        
-        filmPane->moveBy(-3, -2);
+        const float sliderWidth = 275,  indent = 2.0f;        
         if (film.notNull()) {
+            filmPane->moveBy(0, 5);
             film->makeGui(filmPane, 10.0f, sliderWidth, indent);
         }
     }
@@ -297,10 +300,9 @@ CameraControlWindow::CameraControlWindow(
 
 #   define INDENT_SLIDER(n) n->setWidth(275); n->moveBy(15, 0); n->setCaptionWidth(100);
 
-    GuiPane* focusPane = pane->addPane("Depth of Field");
-    {
-        focusPane->moveBy(-3, 4);
-        
+    GuiPane* focusPane = tabPane->addTab("Lens");
+    {        
+        focusPane->moveBy(0, 5);
         Pointer<int> dofPtr(this, &CameraControlWindow::depthOfFieldModel, &CameraControlWindow::setDepthOfFieldModel);
         focusPane->addRadioButton("None (Pinhole)", (int)GCamera::NONE, dofPtr, GuiTheme::NORMAL_RADIO_BUTTON_STYLE);
         focusPane->addRadioButton("Physical Lens", (int)GCamera::PHYSICAL, dofPtr, GuiTheme::NORMAL_RADIO_BUTTON_STYLE);
@@ -375,7 +377,7 @@ CameraControlWindow::CameraControlWindow(
 #   undef INDENT_SLIDER
     /////////////////////////////////////////////////////////////////////////////////////////
 
-    GuiPane* manualPane = pane->addPane("Animation");
+    GuiPane* manualPane = tabPane->addTab("Animation");
     manualPane->moveBy(-3, 2);
 
     manualPane->addCheckBox("Manual Control (F2)", &m_manualOperation)->moveBy(-4, 3);
@@ -439,6 +441,8 @@ CameraControlWindow::CameraControlWindow(
         m_cyclicCheckBox->setPosition(m_visibleCheckBox->rect().x0(), m_saveButton->rect().y0() + 1);
     }
     manualPane->endRow();
+
+    tabPane->pack();
     /*
     static float m_playbackSpeed = 1.0f;
     GuiNumberBox<float>* speedBox = manualPane->addNumberBox("Speed", &m_playbackSpeed, "x", GuiTheme::LOG_SLIDER, 0.1f, 10.0f);

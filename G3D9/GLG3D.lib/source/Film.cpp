@@ -24,22 +24,37 @@ static const char* shaderCode =
     uniform float     bloomStrengthScaled;\n\
 #endif\n\
 uniform float     sensitivity;\
-\
-/* 1.0 / monitorGamma.  Usually about invGamma = 0.45*/\
-uniform float     invGamma;\
+\n\
+/* 1.0 / monitorGamma.  Usually about invGamma = 0.45*/\n\
+uniform float     invGamma;\n\
+\n\
+uniform float     vignetteTopStrength;\n\
+uniform float     vignetteBottomStrength;\n\
+uniform float     vignetteSize;\n\
+uniform float     invVignetteSize;\n\
 \n\
 #if __VERSION__ < 150\n\
 #define texelFetch texelFetch2D\n\
 #endif\n\
 void main(void) {\
 \n\
-    vec3 src   = texelFetch(sourceTexture, ivec2(gl_TexCoord[0].st * g3d_sampler2DSize(sourceTexture)), 0).rgb;\n\
+    ivec2 X = ivec2(gl_TexCoord[0].st * g3d_sampler2DSize(sourceTexture));\
+\
+    vec3 src   = texelFetch(sourceTexture, X, 0).rgb;\n\
 \
     src *= sensitivity;\n\
 #   ifdef BLOOM\n\
         vec3 bloom = texture2D(bloomTexture,  gl_TexCoord[0].st).rgb;\n\
         src += bloom * bloomStrengthScaled;\n\
 #   endif\n\
+\
+    vec2 C = g3d_sampler2DSize(sourceTexture) * 0.5;\
+    vec2 delta = (X - C) / length(C);\
+    float vignette = clamp(1.0 - \
+         (length(delta) - (1.0 - vignetteSize)) * invVignetteSize        \
+         * mix(vignetteTopStrength, vignetteBottomStrength, X.y * g3d_sampler2DInvSize(sourceTexture).y), 0.0, 1.0);\
+\
+    src *= vignette; \
 \
     /* Fix out-of-gamut saturation*/\
     /* Maximumum channel:*/\
@@ -69,16 +84,6 @@ void main(void) {\n\
 }";
 
 
-    /*
-static const char* antialiasingShaderCode =
-STR(
-uniform sampler2D sourceTexture;
-void main() {
-    gl_FragColor.rgb = texture2D(sourceTexture, gl_TexCoord[g3d_Index(sourceTexture)].st).ggg;
-}
-);
-    */
-
 Film::Film(const ImageFormat* f, const ImageFormat* t) :
     m_intermediateFormat(f),
     m_targetFormat(t),
@@ -86,7 +91,10 @@ Film::Film(const ImageFormat* f, const ImageFormat* t) :
     m_sensitivity(1.0f),
     m_bloomStrength(0.18f),
     m_bloomRadiusFraction(0.008f),
-    m_antialiasingEnabled(false) {
+    m_antialiasingEnabled(true),
+    m_vignetteTopStrength(0.4f),
+    m_vignetteBottomStrength(0.1f),
+    m_vignetteSizeFraction(0.15f) {
 
     init();
 }
@@ -248,6 +256,10 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
             m_shader->args.set("bloomStrengthScaled",  bloomStrength * 10.0);
             m_shader->args.set("sensitivity",    m_sensitivity);
             m_shader->args.set("invGamma",       1.0f / m_gamma);
+            m_shader->args.set("vignetteTopStrength", m_vignetteTopStrength);
+            m_shader->args.set("vignetteBottomStrength", m_vignetteBottomStrength);
+            m_shader->args.set("vignetteSize",    m_vignetteSizeFraction);
+            m_shader->args.set("invVignetteSize",    1.0f / max(m_vignetteSizeFraction, 0.0001f));
             rd->applyRect(m_shader);
         }
 
@@ -266,20 +278,32 @@ void Film::exposeAndRender(RenderDevice* rd, const Texture::Ref& input, int down
 void Film::makeGui(class GuiPane* pane, float maxSensitivity, float sliderWidth, float indent) {
     GuiNumberBox<float>* n = NULL;
 
+    pane->addLabel("Exposure")->moveBy(indent, 0);
     n = pane->addNumberBox("Gamma",         &m_gamma, "", GuiTheme::LOG_SLIDER, 1.0f, 7.0f, 0.1f);
-    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
+    n->setWidth(sliderWidth);  n->moveBy(indent + 15, 0);
 
     n = pane->addNumberBox("Sensitivity",   &m_sensitivity, "", GuiTheme::LOG_SLIDER, 0.001f, maxSensitivity);
-    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
+    n->setWidth(sliderWidth);  n->moveBy(indent + 15, 0);
 
-    n = pane->addNumberBox("Bloom Str.",    &m_bloomStrength, "", GuiTheme::LOG_SLIDER, 0.0f, 1.0f);
-    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
+    pane->addLabel("Bloom")->moveBy(indent, 10);
+    n = pane->addNumberBox("Strength",    &m_bloomStrength, "", GuiTheme::LOG_SLIDER, 0.0f, 1.0f);
+    n->setWidth(sliderWidth);  n->moveBy(indent + 15, 0);
 
-    n = pane->addNumberBox("Bloom Radius",  &m_bloomRadiusFraction, "", GuiTheme::LOG_SLIDER, 0.0f, 0.2f);
-    n->setWidth(sliderWidth);  n->moveBy(indent, 0);
+    n = pane->addNumberBox("Radius",  &m_bloomRadiusFraction, "", GuiTheme::LOG_SLIDER, 0.0f, 0.2f);
+    n->setWidth(sliderWidth);  n->moveBy(indent + 15, 0);
+
+    pane->addLabel("Vignette")->moveBy(indent, 10);
+    n = pane->addNumberBox("Top",  &m_vignetteTopStrength, "", GuiTheme::LINEAR_SLIDER, 0.0f, 1.5f);
+    n->setWidth(sliderWidth);  n->moveBy(indent + 15, 0);
+
+    n = pane->addNumberBox("Bottom",  &m_vignetteBottomStrength, "", GuiTheme::LINEAR_SLIDER, 0.0f, 1.5f);
+    n->setWidth(sliderWidth);  n->moveBy(indent + 15, 0);
+
+    n = pane->addNumberBox("Size",  &m_vignetteSizeFraction, "", GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f);
+    n->setWidth(sliderWidth);  n->moveBy(indent + 15, 0);
 
     GuiCheckBox* c = pane->addCheckBox("Post-process Antialiasing", &m_antialiasingEnabled);
-    c->moveBy(indent - 2, 0);
+    c->moveBy(indent - 2, 10);
 }
 
 }

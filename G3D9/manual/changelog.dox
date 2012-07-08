@@ -22,6 +22,7 @@
    <p>
    Changes in 9.00:
    <ul>
+    <li> Added optional vignetting to G3D::Film</li>
     <li> Extended G3D::GCamera with two depth-of-field models </li>
     <li> G3D::AmbientOcclusion screen-space ambient obscurance [Morgan + Mike] </li>
     <li> Added G3D::ImageFormat::BGRA8 [Mike] </li>

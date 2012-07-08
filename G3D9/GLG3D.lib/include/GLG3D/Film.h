@@ -2,7 +2,7 @@
  \file GLG3D/Film.h
  \author Morgan McGuire, http://graphics.cs.williams.edu
  \created 2008-07-01
- \edited  2011-05-31
+ \edited  2011-07-08
  */
 
 #ifndef G3D_Film_h
@@ -124,6 +124,10 @@ private:
 
     bool                    m_antialiasingEnabled;
 
+    float                   m_vignetteTopStrength;
+    float                   m_vignetteBottomStrength;
+    float                   m_vignetteSizeFraction;
+
     /** Loads the shaders. Called from expose. */
     void init();
 
@@ -144,6 +148,33 @@ public:
       */
     static Ref create(const ImageFormat* intermediateFormat = ImageFormat::RGB16F(), 
                       const ImageFormat* targetFormat = ImageFormat::RGB8());
+
+    /** Amount of darkness due to vignetting for the top of the screen, on the range [0, 1] */
+    float vignetteTopStrength() const {
+        return m_vignetteTopStrength;
+    }
+
+    void setVignetteTopStrength(float s) {
+        m_vignetteTopStrength = s;
+    }
+    
+    void setVignetteBottomStrength(float s) {
+        m_vignetteBottomStrength = s;
+    }
+
+    void setVignetteSizeFraction(float s) {
+        m_vignetteSizeFraction = s;
+    }
+
+    /** Amount of darkness due to vignetting for the bottom of the screen, on the range [0, 1] */
+    float vignetteBottomStrength() const {
+        return m_vignetteBottomStrength;
+    }
+
+    /** Fraction of the diagonal radius of the screen covered by vignette, on the range [0, 1] */
+    float vignetteSizeFraction() const {
+        return m_vignetteSizeFraction;
+    }
 
     /** \brief Monitor gamma used in tone-mapping. Default is 2.0. */
     float gamma() const {
