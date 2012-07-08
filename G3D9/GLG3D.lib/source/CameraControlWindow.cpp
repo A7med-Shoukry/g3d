@@ -288,7 +288,7 @@ CameraControlWindow::CameraControlWindow(
     tabPane->moveBy(-5, 5);
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    GuiPane* filmPane = tabPane->addTab("Sensor");
+    GuiPane* filmPane = tabPane->addTab("Film");
     {
         const float sliderWidth = 275,  indent = 2.0f;        
         if (film.notNull()) {
@@ -300,7 +300,7 @@ CameraControlWindow::CameraControlWindow(
 
 #   define INDENT_SLIDER(n) n->setWidth(275); n->moveBy(15, 0); n->setCaptionWidth(100);
 
-    GuiPane* focusPane = tabPane->addTab("Lens");
+    GuiPane* focusPane = tabPane->addTab("Depth of Field");
     {        
         focusPane->moveBy(0, 5);
         Pointer<int> dofPtr(this, &CameraControlWindow::depthOfFieldModel, &CameraControlWindow::setDepthOfFieldModel);
