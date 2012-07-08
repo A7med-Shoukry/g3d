@@ -146,7 +146,7 @@ void DepthOfField::blurPass
     // Dimension along which the blur fraction is measured
     const float dimension = 
         (camera.fieldOfViewDirection() == GCamera::HORIZONTAL) ?
-        input->width() : input->height();
+        m_packedBuffer->width() : m_packedBuffer->height();
 
     const float maxRadiusFraction = 
         max(camera.nearBlurRadiusFraction(), camera.farBlurRadiusFraction());
