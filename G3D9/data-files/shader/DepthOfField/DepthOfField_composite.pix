@@ -16,7 +16,9 @@ void main() {
 
     float4 pack  = texelFetch(packedBuffer, A, 0);
     float3 sharp   = pack.rgb;
-    float3 blurred = texelFetch(blurBuffer, A, 0).rgb;
+
+    // Bilinear interpolate
+    float3 blurred = texture(blurBuffer, gl_FragCoord.xy * g3d_sampler2DInvSize(packedBuffer)).rgb;
 
     // Normalized Radius
     float normRadius = (pack.a * 2.0 - 1.0);

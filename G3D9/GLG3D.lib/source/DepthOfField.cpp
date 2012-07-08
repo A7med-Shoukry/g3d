@@ -223,7 +223,8 @@ static void matchTarget
  const ImageFormat*  format,
  Texture::Ref&       texture, 
  Framebuffer::Ref&   framebuffer,
- Framebuffer::AttachmentPoint attachmentPoint = Framebuffer::COLOR0) {
+ Framebuffer::AttachmentPoint attachmentPoint = Framebuffer::COLOR0,
+ Texture::Settings   settings = Texture::Settings::buffer()) {
     alwaysAssertM(format, "Format may not be NULL");
 
     if (texture.isNull() || (texture->format() != format)) {
@@ -234,7 +235,7 @@ static void matchTarget
              target->height() / divHeight,
              format,
              Texture::DIM_2D_NPOT,
-             Texture::Settings::buffer());
+             settings);
 
         if (framebuffer.isNull()) {
             framebuffer = Framebuffer::create("");
@@ -254,8 +255,8 @@ void DepthOfField::resizeBuffers(Texture::Ref target) {
 
     // Need an alpha channel for storing radius in the packed and blurry temp buffers
     matchTarget(target, 1, 1, plusAlphaFormat,     m_packedBuffer,    m_packedFramebuffer);
-    matchTarget(target, 1, 1, plusAlphaFormat,     m_tempBlurBuffer,  m_horizontalFramebuffer);
-    matchTarget(target, 1, 1, target->format(),    m_blurBuffer,      m_verticalFramebuffer);
+    matchTarget(target, 2, 1, plusAlphaFormat,     m_tempBlurBuffer,  m_horizontalFramebuffer);
+    matchTarget(target, 2, 2, target->format(),    m_blurBuffer,      m_verticalFramebuffer, Framebuffer::COLOR0, Texture::Settings::video());
 }
 
 } // Namespace G3D

@@ -59,8 +59,10 @@ void main() {
 	blurResult.rgb  = float3(0.0f);
 	float blurWeightSum = 0.0f;
     
-	// Location of the central filter tap (i.e., "this" pixel's location)
-	int2 A = int2(gl_FragCoord.xy);
+	// Location of the central filter tap (i.e., "this" pixel's location).
+    // Since the blur filter reduces the size by 50% in the dimension along which it is filtering,
+    // we need to alter the coordinate scale
+	int2 A = int2(gl_FragCoord.xy) * (direction + ivec2(1));
 
     float packedA = texelFetch(blurSourceBuffer, A, 0).a;
     float r_A = (packedA * 2.0 - 1.0) * maxCoCRadiusPixels;
