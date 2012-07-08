@@ -329,7 +329,7 @@ CameraControlWindow::CameraControlWindow(
                  PercentageAdapter<float>::create(Pointer<float>(m_camera,
                                                           &GCamera::nearBlurRadiusFraction,
                                                           &GCamera::setNearBlurRadiusFraction)),
-                 "%", GuiTheme::LINEAR_SLIDER, 0.0f, 10.0f, 0.1f);
+                 "%", GuiTheme::LINEAR_SLIDER, 0.0f, 2.0f, 0.01f);
             INDENT_SLIDER(n);
 
             n = focusPane->addNumberBox
@@ -366,7 +366,7 @@ CameraControlWindow::CameraControlWindow(
                  PercentageAdapter<float>::create(Pointer<float>(m_camera,
                                                           &GCamera::farBlurRadiusFraction,
                                                           &GCamera::setFarBlurRadiusFraction)),
-                 "%", GuiTheme::LINEAR_SLIDER, 0.0f, 10.0f, 0.1f);
+                 "%", GuiTheme::LINEAR_SLIDER, 0.0f, 2.0f, 0.01f);
             INDENT_SLIDER(n);
 
         }
