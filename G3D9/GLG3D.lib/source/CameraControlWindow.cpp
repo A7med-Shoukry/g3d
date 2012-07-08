@@ -20,7 +20,7 @@
 namespace G3D {
 
 const Vector2 CameraControlWindow::sDefaultWindowSize(286 + 16, 46);
-const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 46 + 260);
+const Vector2 CameraControlWindow::sExpandedWindowSize(286 + 16, 46 + 360);
 
 static const std::string noSpline = "< None >";
 static const std::string untitled = "< Unsaved >";
