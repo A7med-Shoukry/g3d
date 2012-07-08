@@ -67,11 +67,8 @@ protected:
     /** Writes m_packedBuffer */
     void computeCoC(RenderDevice* rd, const Texture::Ref& color, const Texture::Ref& depth, const GCamera& camera);
 
-    /** Writes m_tempBlurBuffer */
-    void horizontalPass(RenderDevice* rd, const Texture::Ref& packed, const GCamera& camera);
-
-    /** Writes m_blurBuffer */
-    void verticalPass(RenderDevice* rd, const Texture::Ref& tempBlur, const GCamera& camera);
+    /** Called first for horizontal and then again for vertical */
+    void blurPass(RenderDevice* rd, const Texture::Ref& input, const Framebuffer::Ref& output, Shader::Ref shader, const GCamera& camera);
 
     /**
        Writes to the currently-bound framebuffer.

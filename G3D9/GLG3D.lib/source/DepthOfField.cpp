@@ -52,8 +52,8 @@ void DepthOfField::apply
     resizeBuffers(color);
 
     computeCoC(rd, color, depth, camera);
-    horizontalPass(rd, m_packedBuffer, camera);
-    verticalPass(rd, m_tempBlurBuffer, camera);
+    blurPass(rd, m_packedBuffer, m_horizontalFramebuffer, m_horizontalShader, camera);
+    blurPass(rd, m_tempBlurBuffer, m_verticalFramebuffer, m_verticalShader, camera);
     composite(rd, m_packedBuffer, m_blurBuffer);
 }
 
@@ -134,49 +134,19 @@ void DepthOfField::computeCoC
 }
 
 
-void DepthOfField::horizontalPass
-(RenderDevice*          rd,
- const Texture::Ref&    packed,
- const GCamera&         camera) {
+void DepthOfField::blurPass
+(RenderDevice*           rd, 
+ const Texture::Ref&     input,
+ const Framebuffer::Ref& output,
+ Shader::Ref             shader,
+ const GCamera&          camera) {
 
-    alwaysAssertM(packed.notNull(), "Packed is NULL");
-
-    // Dimension along which the blur fraction is measured
-    const float dimension = 
-        (camera.fieldOfViewDirection() == GCamera::HORIZONTAL) ?
-        packed->width() : packed->height();
-
-    const float maxRadiusFraction = 
-            max(max(camera.nearBlurRadiusFraction(), camera.farBlurRadiusFraction()), 0.001f);
-
-    const int maxCoCRadiusPixels =
-            iCeil((camera.depthOfFieldModel() == GCamera::ARTIST) ? 
-                  (maxRadiusFraction * dimension) :
-                  maxPhysicalBlurRadius(camera, packed->rect2DBounds()));
-
-
-    rd->push2D(m_horizontalFramebuffer); {
-        rd->clear();
-        Shader::ArgList& args = m_horizontalShader->args;
-
-        args.set("blurSourceBuffer",   packed);
-        args.set("maxCoCRadiusPixels", maxCoCRadiusPixels);
-
-        rd->applyRect(m_horizontalShader);
-    } rd->pop2D();
-}
-
-
-void DepthOfField::verticalPass
-(RenderDevice*          rd, 
- const Texture::Ref&    tempBlur,
- const GCamera&         camera) {
-    alwaysAssertM(tempBlur.notNull(), "tempBlur is NULL");
+    alwaysAssertM(input.notNull(), "input is NULL");
 
     // Dimension along which the blur fraction is measured
     const float dimension = 
         (camera.fieldOfViewDirection() == GCamera::HORIZONTAL) ?
-        tempBlur->width() : tempBlur->height();
+        input->width() : input->height();
 
     const float maxRadiusFraction = 
         max(camera.nearBlurRadiusFraction(), camera.farBlurRadiusFraction());
@@ -186,14 +156,14 @@ void DepthOfField::verticalPass
                   (maxRadiusFraction * dimension) :
                   maxPhysicalBlurRadius(camera, m_packedBuffer->rect2DBounds()));
                   
-    rd->push2D(m_verticalFramebuffer); {
+    rd->push2D(output); {
         rd->clear();
-        Shader::ArgList& args = m_verticalShader->args;
+        Shader::ArgList& args = shader->args;
 
-        args.set("blurSourceBuffer",   tempBlur);
+        args.set("blurSourceBuffer",   input);
         args.set("maxCoCRadiusPixels", maxCoCRadiusPixels);
 
-        rd->applyRect(m_verticalShader);
+        rd->applyRect(shader);
     } rd->pop2D();
 }
 
