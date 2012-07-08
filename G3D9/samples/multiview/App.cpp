@@ -41,6 +41,8 @@ void App::onInit() {
     } renderDevice->pop2D();
 
     m_scene = Scene::create();
+
+    m_film->setAntialiasingEnabled(false);
     
     GuiTheme::Ref theme = debugWindow->theme();
 
