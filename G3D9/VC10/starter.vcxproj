@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\samples\starter\data-files\crates.scn.any" />
+    <None Include="..\samples\starter\data-files\sponza.scn.any" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{935AA8F5-59C4-4336-A21E-4336F2F186B7}</ProjectGuid>

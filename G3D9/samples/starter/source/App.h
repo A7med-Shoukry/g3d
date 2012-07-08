@@ -16,9 +16,11 @@ class App : public GApp {
     GuiDropDownList*    m_sceneDropDownList;
     Scene::Ref          m_scene;
     ShadowMap::Ref      m_shadowMap;
+    DepthOfField::Ref   m_depthOfField;
 
     /** Used for enabling dragging of objects with m_splineEditor.*/
     Entity::Ref         m_selectedEntity;
+
 
     /** Used for editing entity splines.*/
     PhysicsFrameSplineEditor::Ref   m_splineEditor;

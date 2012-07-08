@@ -1,0 +1,50 @@
+// -*- c++ -*-
+{
+    name = "Sponza",
+   
+    models = {
+		m0 = ArticulatedModel::Specification {
+			filename = "models/crytek_sponza/sponza.zip/sponza.obj";
+			// stripMaterials = true;
+			scale = 0.02;
+		};
+    };
+    
+    lighting = Lighting::Specification {
+        lightArray = (GLight::directional(Vector3(1, 6, 1), Color3(8), true),
+                     GLight::directional(Vector3(-1,-0.5f,-1), Color3::fromARGB(0x1e324d), false));
+
+        environmentMap = {
+            constant = 1.0;
+            texture = "cubemap/noonclouds/noonclouds_*.png";
+        };
+    };
+    
+    entities = {
+        // Each entity has a name and is an instance of a model.  The instantiation syntax accepts
+        // two (optional) arguments: a position spline (which can be a single position), and a 
+        // pose spline (which can be a single pose).
+        
+        e0 = Entity {
+            model    = "m0";
+            position = Vector3(0.0, 0.0, 0.0);
+        };        
+    };
+        
+    camera = GCamera {
+        coordinateFrame = CFrame::fromXYZYPRDegrees( 14.5f,   0.5f,   3.8f,  62.9f,  22.4f,   0.0f);
+        
+        dofModel = "ARTIST";
+        farBlurRadiusFraction = 0.01;
+        farBlurryPlaneZ  = -120;
+        farSharpPlaneZ  =  -11;
+        nearSharpPlaneZ =  -2.0;
+        nearBlurryPlaneZ =  -1.0;
+        nearBlurRadiusFraction = 0.02;
+
+        nearPlaneZ = -0.1;
+        farPlaneZ = -200;
+        fovDirection = "VERTICAL";
+        fovDegrees = 60;
+    };
+}

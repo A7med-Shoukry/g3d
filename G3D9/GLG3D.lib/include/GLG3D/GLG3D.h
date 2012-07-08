@@ -7,7 +7,7 @@
  \maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
  \created 2002-08-07
- \edited  2011-07-22
+ \edited  2012-07-08
 
  Copyright 2000-2012, Morgan McGuire.
  All rights reserved.
@@ -113,7 +113,9 @@
 #ifdef G3D_OSX
 #include "GLG3D/SDLWindow.h"
 #endif
+
 #include "GLG3D/AmbientOcclusion.h"
+#include "GLG3D/DepthOfField.h"
 
 
 // Set up the linker on Windows

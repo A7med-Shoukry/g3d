@@ -4,7 +4,7 @@
   \author Morgan McGuire, http://graphics.cs.williams.edu
  
   \created 2005-07-20
-  \edited  2012-07-07
+  \edited  2012-07-08
 */
 #include "G3D/GCamera.h"
 #include "G3D/platform.h"
@@ -188,12 +188,12 @@ GCamera::GCamera() :
     m_focusPlaneZ(-10.0f), 
     m_exposureTime(0.0f), 
     m_dofModel(NONE),
-    m_nearRadiusFraction(0.01f),
+    m_nearRadiusFraction(0.015f),
     m_nearBlurryZ(-0.25f),
     m_nearSharpZ(-1.0f),
     m_farSharpZ(-40.0f),
     m_farBlurryZ(-100.0f),
-    m_farRadiusFraction(0.0025) {
+    m_farRadiusFraction(0.005) {
 
     setNearPlaneZ(-0.15f);
     setFarPlaneZ(-150.0f);

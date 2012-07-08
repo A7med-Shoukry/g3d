@@ -329,6 +329,9 @@
     <ClCompile Include="..\GLG3D.lib\source\AmbientOcclusion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\GLG3D.lib\source\DepthOfField.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GLG3D.lib\source\directinput8.h">
@@ -619,6 +622,9 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\AmbientOcclusion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\DepthOfField.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\GLG3D.lib\source\NSAutoreleasePoolWrapper.mm">
@@ -685,6 +691,18 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="..\data-files\shader\DepthOfField\DepthOfField_physicalCoC.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_horizontal.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_vertical.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_composite.pix">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_blur.glsl">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

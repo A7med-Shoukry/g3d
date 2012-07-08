@@ -48,6 +48,8 @@ void App::onInit() {
     m_preventEntityDrag   = false;
     m_preventEntitySelect = false;
 
+    m_depthOfField        = DepthOfField::create();
+
     // For higher-quality screenshots:
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
     // developerWindow->videoRecordDialog->setCaptureGui(false);
@@ -287,8 +289,8 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     }
     rd->setAmbientLightColor(Color3::white() * 0.5f);
 
-    Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());
-    Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f), Color3::black());
+    // Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());
+    // Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f), Color3::black());
 
     if (m_showAxes) {
         Draw::axes(Point3(0, 0, 0), rd);
@@ -300,6 +302,10 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
 
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
+
+    if (defaultCamera.depthOfFieldModel() != GCamera::NONE) {
+        m_depthOfField->apply(rd, m_colorBuffer0, m_depthBuffer, defaultCamera);
+    }
 }
 
 

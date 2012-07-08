@@ -95,6 +95,8 @@
     camera = GCamera {
         coordinateFrame = CFrame::fromXYZYPRDegrees( -0.0f,   0.6f,   1.8f,  341.1f,  -0.0f,   0.0f);
         
+        dofModel = "ARTIST";
+
         nearPlaneZ = -0.2;
         farPlaneZ = -100;
         fovDirection = "VERTICAL";

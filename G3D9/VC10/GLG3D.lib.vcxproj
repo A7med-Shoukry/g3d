@@ -224,6 +224,7 @@
     <ClCompile Include="..\GLG3D.lib\source\Component.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\CPUVertexArray.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DDSTexture.cpp" />
+    <ClCompile Include="..\GLG3D.lib\source\DepthOfField.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DeveloperWindow.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\DirectionHistogram.cpp" />
     <ClCompile Include="..\GLG3D.lib\source\Discovery.cpp" />
@@ -316,6 +317,7 @@
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\CarbonWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Component.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\CPUVertexArray.h" />
+    <ClInclude Include="..\GLG3D.lib\include\GLG3D\DepthOfField.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\DeveloperWindow.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\DirectionHistogram.h" />
     <ClInclude Include="..\GLG3D.lib\include\GLG3D\Discovery.h" />
@@ -412,7 +414,11 @@
     <None Include="..\data-files\shader\AmbientOcclusion\AmbientOcclusion_reconstructCSZ.pix" />
     <None Include="..\data-files\shader\BumpMap.glsl" />
     <None Include="..\data-files\shader\DepthOfField\DepthOfField_artistCoC.pix" />
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_blur.glsl" />
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_composite.pix" />
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_horizontal.pix" />
     <None Include="..\data-files\shader\DepthOfField\DepthOfField_physicalCoC.pix" />
+    <None Include="..\data-files\shader\DepthOfField\DepthOfField_vertical.pix" />
     <None Include="..\data-files\shader\Film_FXAA.pix" />
     <None Include="..\data-files\shader\reconstruct.glsl" />
     <None Include="..\data-files\shader\SS_GBuffer.pix" />
