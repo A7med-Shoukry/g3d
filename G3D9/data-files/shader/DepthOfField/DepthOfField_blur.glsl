@@ -78,7 +78,7 @@ void main() {
 		float r_B = (blurInput.a * 2.0 - 1.0) * float(maxCoCRadiusPixels);
         
         // Stretch the kernel extent to the radius at pixel B.
-        float weight = kernel[clamp(int(float(abs(delta) * (KERNEL_TAPS - 1)) / (0.001 + abs(r_B))), 0, KERNEL_TAPS)];
+        float weight = kernel[clamp(int(float(abs(delta) * (KERNEL_TAPS - 1)) / (0.001 + abs(r_B * 0.8))), 0, KERNEL_TAPS)];
 
 		blurWeightSum  += weight;
 		blurResult.rgb += blurInput.rgb * weight;

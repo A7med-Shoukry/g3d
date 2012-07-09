@@ -122,7 +122,7 @@ void DepthOfField::computeCoC
         } else {
             const float scale = 
                 camera.imagePlanePixelsPerMeter(rd->viewport()) * camera.lensRadius() / 
-                       (camera.focusPlaneZ() * maxPhysicalBlurRadius(camera, color->rect2DBounds()));
+                (camera.focusPlaneZ() * maxPhysicalBlurRadius(camera, color->rect2DBounds()));
             args.set("focusPlaneZ", camera.focusPlaneZ());
             args.set("scale", scale);
 
