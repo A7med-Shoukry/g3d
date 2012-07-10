@@ -110,7 +110,7 @@ void App::onPose(Array<Surface::Ref>& surface, Array<Surface2D::Ref>& surface2D)
     
     const CFrame& previousFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
 
-    yaw += 4.0f * units::degrees();
+    yaw += 20.0f * units::degrees();
     const CFrame& currentFrame = CFrame::fromXYZYPRDegrees(0,0,0,yaw,0,0);
 
     model->pose(surface, currentFrame, ArticulatedModel::defaultPose(), previousFrame, ArticulatedModel::defaultPose());

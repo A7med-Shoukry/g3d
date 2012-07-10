@@ -152,8 +152,8 @@ void SuperSurface::renderIntoGBufferHomogeneous
                 // Previous object-to-camera projection for velocity buffer
                 CFrame previousFrame;
                 surface->getCoordinateFrame(previousFrame, true);
-                const CFrame& PreviousObjectToCameraMatrix = previousCameraFrame.inverse() * previousFrame;
-                shader->args.set("PreviousObjectToCameraMatrix", PreviousObjectToCameraMatrix);
+                const CFrame& previousObjectToCameraMatrix = previousCameraFrame.inverse() * previousFrame;
+                shader->args.set("PreviousObjectToCameraMatrix", previousObjectToCameraMatrix);
             }
 
             if (gbuffer->specification().format[GBuffer::Field::SS_POSITION_CHANGE] != NULL) {

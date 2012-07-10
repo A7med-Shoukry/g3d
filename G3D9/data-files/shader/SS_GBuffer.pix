@@ -252,7 +252,7 @@ void main() {
         {
             vec4 temp = ProjectToScreenMatrix * vec4(csPrevPosition, 1.0);
             vec2 ssPrevPosition = temp.xy / temp.w;
-            SS_POSITION_CHANGE.xy = (gl_FragCoord.xy - ssPrevPosition) * SS_POSITION_CHANGE.x + vec2(SS_POSITION_CHANGE.y);
+            SS_POSITION_CHANGE.xy = (gl_FragCoord.xy - ssPrevPosition) * SS_POSITION_CHANGE_writeScaleBias.x + vec2(SS_POSITION_CHANGE_writeScaleBias.y);
         }
 #   endif
 }
