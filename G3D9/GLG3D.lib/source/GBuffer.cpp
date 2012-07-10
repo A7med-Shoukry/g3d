@@ -163,6 +163,27 @@ GBuffer::GBuffer(const std::string& name, const Specification& specification) :
 }
 
 
+Texture::Ref GBuffer::texture(Field f) const {
+    Framebuffer::Attachment::Ref a = m_framebuffer->get(m_fieldToAttachmentPoint[f]);
+    if (a.isNull()) {
+        return NULL;
+    } else {
+        return a->texture();
+    }
+}
+
+
+/** Returns the Renderbuffer bound to \a f, or NULL if there is not one */
+Renderbuffer::Ref GBuffer::renderbuffer(Field f) const {
+    Framebuffer::Attachment::Ref a = m_framebuffer->get(m_fieldToAttachmentPoint[f]);
+    if (a.isNull()) {
+        return NULL;
+    } else {
+        return a->renderbuffer();
+    }                
+}
+
+
 void GBuffer::bindWriteUniforms(Shader::ArgList& args) const {
     for (int f = 0; f < Field::COUNT; ++f) {
         const ImageFormat* format = m_specification.format[f];

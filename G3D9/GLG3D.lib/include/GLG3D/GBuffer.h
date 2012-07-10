@@ -464,14 +464,10 @@ public:
     }
 
     /** Returns the Texture bound to \a f, or NULL if there is not one */
-    Texture::Ref texture(Field f) const {
-        return m_framebuffer->get(m_fieldToAttachmentPoint[f])->texture();
-    }
+    Texture::Ref texture(Field f) const;
 
     /** Returns the Renderbuffer bound to \a f, or NULL if there is not one */
-    Renderbuffer::Ref renderbuffer(Field f) const {
-        return m_framebuffer->get(m_fieldToAttachmentPoint[f])->renderbuffer();
-    }
+    Renderbuffer::Ref renderbuffer(Field f) const;
 
     /** Bind the framebuffer and clear it, then set the camera and time offsets */
     void prepare(RenderDevice* rd, const GCamera& camera, float timeOffset, float velocityStartTimeOffset);

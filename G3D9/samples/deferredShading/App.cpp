@@ -35,12 +35,12 @@ void App::onInit() {
 
 void App::makeGBuffer() {
     GBuffer::Specification specification;
-    specification.format[GBuffer::Field::WS_NORMAL]   = ImageFormat::RGB16F();
-    specification.format[GBuffer::Field::SS_POSITION_CHANGE]   = ImageFormat::RG8();
-    specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB32F();
-    specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
-    specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
-    specification.format[GBuffer::Field::DEPTH_AND_STENCIL] = ImageFormat::DEPTH24();
+    specification.format[GBuffer::Field::WS_NORMAL]          = ImageFormat::RGB16F();
+    specification.format[GBuffer::Field::SS_POSITION_CHANGE] = ImageFormat::RG16F();
+    specification.format[GBuffer::Field::WS_POSITION]        = ImageFormat::RGB32F();
+    specification.format[GBuffer::Field::LAMBERTIAN]         = ImageFormat::RGB8();
+    specification.format[GBuffer::Field::GLOSSY]             = ImageFormat::RGBA8();
+    specification.format[GBuffer::Field::DEPTH_AND_STENCIL]  = ImageFormat::DEPTH24();
     specification.depthEncoding = DepthEncoding::HYPERBOLIC;
 
     gbuffer = GBuffer::create(specification);
@@ -86,14 +86,20 @@ void App::makeGUI() {
     // Show the G-buffers
     debugPane->setCaption(GuiText("G-Buffers", GFont::fromFile(System::findDataFile("arial.fnt")), 16));
     debugPane->moveBy(2, 10);
+
+    GuiTabPane* tabPane = debugPane->addTabPane();
     debugPane->beginRow();
-    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_NORMAL));
-    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE));
-    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_POSITION))->moveBy(40, 0);
-    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::LAMBERTIAN))->moveBy(40, 0);
-    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::GLOSSY))->moveBy(40, 0);
-    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::DEPTH_AND_STENCIL))->moveBy(40, 0);
-    debugPane->endRow();
+    for (int i = 0; i < GBuffer::Field::COUNT; ++i) {
+        GBuffer::Field f = (GBuffer::Field)i;
+        Texture::Ref t = gbuffer->texture(f);
+
+        if (t.notNull()) {
+            GuiPane* p = tabPane->addTab(f.toString());
+            p->addTextureBox(t);
+        }
+    }
+    tabPane->pack();
+    tabPane->setWidth(800);
     debugPane->pack();
 }
 
