@@ -306,6 +306,8 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     if (defaultCamera.depthOfFieldModel() != GCamera::NONE) {
         m_depthOfField->apply(rd, m_colorBuffer0, m_depthBuffer, defaultCamera);
     }
+
+    defaultCamera.setPixelOffset(Vector2(G3D::uniformRandom(-0.05f, 0.05f), G3D::uniformRandom(-0.05f, 0.05f)));
 }
 
 

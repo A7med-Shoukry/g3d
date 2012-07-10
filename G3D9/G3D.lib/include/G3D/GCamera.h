@@ -207,7 +207,10 @@ public:
     /** Displacement from the upper left added in pixels in screen
         space to the projection matrix.  This is useful for shifting
         the sampled location from the pixel center (OpenGL convention)
-        to other locations, such as the upper-left.*/
+        to other locations, such as the upper-left.
+      
+        The default is (0, 0).
+     */
     void setPixelOffset(const Vector2& p) {
         m_pixelOffset = p;
     }

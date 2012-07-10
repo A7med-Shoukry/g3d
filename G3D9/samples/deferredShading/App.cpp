@@ -43,7 +43,7 @@ void App::makeGBuffer() {
     specification.format[GBuffer::Field::WS_POSITION]        = ImageFormat::RGB32F();
     specification.format[GBuffer::Field::LAMBERTIAN]         = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]             = ImageFormat::RGBA8();
-    specification.format[GBuffer::Field::DEPTH_AND_STENCIL]  = ImageFormat::DEPTH24();
+    specification.format[GBuffer::Field::DEPTH_AND_STENCIL]  = ImageFormat::DEPTH32();
     specification.depthEncoding = DepthEncoding::HYPERBOLIC;
 
     gbuffer = GBuffer::create(specification);
@@ -60,7 +60,7 @@ void App::makeGBuffer() {
 void App::makeScene() {
     renderDevice->setColorClearValue(Color3::white() * 0.5f);
 
-    defaultCamera.setFarPlaneZ(-20.0f);
+    defaultCamera.setFarPlaneZ(-100.0f);
     defaultCamera.setCoordinateFrame(CFrame::fromXYZYPRDegrees(  1.5f,   0.2f,   1.8f,  42.4f,   3.4f,   0.0f));
 
     m_film->setAntialiasingEnabled(true);
