@@ -35,12 +35,12 @@
   Normal mapping
   Following the algorithm of Blinn '78
   */
-void bumpMapBlinn78(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord) {
+void bumpMapBlinn78(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord, out vec3 tsN) {
         
     offsetTexCoord = texCoord;
             
     // Take the normal map values back to (-1, 1) range to compute a tangent space normal
-    vec3 tsN = texture2D(normalBumpMap, offsetTexCoord).xyz * 2.0 + vec3(-1.0, -1.0, -1.0);
+    tsN = texture2D(normalBumpMap, offsetTexCoord).xyz * 2.0 + vec3(-1.0, -1.0, -1.0);
 
     // note that the columns might be slightly non-orthogonal due to interpolation
     mat3 tangentToWorld = mat3(tan_X, tan_Y, tan_Z);
@@ -57,7 +57,7 @@ void bumpMapBlinn78(in sampler2D normalBumpMap, in float bumpMapScale, in float 
     Parallax mapping
     Following the algorithm of Welsh '04
     */
-void bumpMapWelsh04(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord) {
+void bumpMapWelsh04(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord, out vec3 tsN) {
     // Convert bumps to a world space distance
     float bump = (texture2D(normalBumpMap, texCoord).w - 0.5 + bumpMapBias) * bumpMapScale;
     
@@ -67,7 +67,7 @@ void bumpMapWelsh04(in sampler2D normalBumpMap, in float bumpMapScale, in float 
     offsetTexCoord = texCoord.xy + vec2(tsE.x, -tsE.y) * bump;
             
     // Take the normal map values back to (-1, 1) range to compute a tangent space normal
-    vec3 tsN = texture2D(normalBumpMap, offsetTexCoord).xyz * 2.0 + vec3(-1.0, -1.0, -1.0);
+    tsN = texture2D(normalBumpMap, offsetTexCoord).xyz * 2.0 + vec3(-1.0, -1.0, -1.0);
 
     // note that the columns might be slightly not orthogonal due to interpolation
     mat3 tangentToWorld = mat3(tan_X, tan_Y, tan_Z);
@@ -88,14 +88,14 @@ void bumpMapWelsh04(in sampler2D normalBumpMap, in float bumpMapScale, in float 
     Linear search and linear interpolation after the hit.
     Constants have been adjusted to give high performance on GeForce cards.
     */
-void bumpMapTatarchuk06(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord) {
+void bumpMapTatarchuk06(in sampler2D normalBumpMap, in float bumpMapScale, in float bumpMapBias, in vec2 texCoord, in vec3 tan_X, in vec3 tan_Y, in vec3 tan_Z, in float backside, in vec3 tsE, out vec3 wsN, out vec2 offsetTexCoord, out vec3 tsN) {
     // Actual texture coordinate that we'll use based on
     // parallax offset.  The z coordinate is the height of the
     // bump above the surface
     vec3 offsetCoord;
 
-    // Packed tangent space normals (to be unpacked below)
-    vec3 tsN;
+    // tsN is the Packed tangent space normals (to be unpacked below)
+    
 
     // Back up the intersection since we should be entering the surface
     // at the top of the bounding box (bump = 1) and the initial intersection point 
