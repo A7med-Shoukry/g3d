@@ -36,7 +36,7 @@ void App::onInit() {
 void App::makeGBuffer() {
     GBuffer::Specification specification;
     specification.format[GBuffer::Field::WS_NORMAL]   = ImageFormat::RGB16F();
-    //specification.format[GBuffer::Field::SS_POSITION_CHANGE]   = ImageFormat::RG8();
+    specification.format[GBuffer::Field::SS_POSITION_CHANGE]   = ImageFormat::RG8();
     specification.format[GBuffer::Field::WS_POSITION] = ImageFormat::RGB32F();
     specification.format[GBuffer::Field::LAMBERTIAN]  = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]      = ImageFormat::RGBA8();
@@ -88,7 +88,7 @@ void App::makeGUI() {
     debugPane->moveBy(2, 10);
     debugPane->beginRow();
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_NORMAL));
-    //debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE));
+    debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE));
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::WS_POSITION))->moveBy(40, 0);
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::LAMBERTIAN))->moveBy(40, 0);
     debugPane->addTextureBox(gbuffer->texture(GBuffer::Field::GLOSSY))->moveBy(40, 0);

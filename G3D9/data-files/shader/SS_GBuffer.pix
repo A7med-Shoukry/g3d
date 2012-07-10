@@ -244,7 +244,7 @@ void main() {
 #   ifdef SS_POSITION_CHANGE
         {
             vec4 temp = ProjectToScreenMatrix * vec4(csPrevPosition, 1.0);
-            vec2 ssPrevPosition = temp.xy / temp.w;
+            vec2 ssPrevPosition = vec2(0);//temp.xy / temp.w;
             SS_POSITION_CHANGE.xy = (gl_FragCoord.xy - ssPrevPosition) * SS_POSITION_CHANGE.x + vec2(SS_POSITION_CHANGE.y);
         }
 #   endif
