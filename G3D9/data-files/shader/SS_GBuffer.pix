@@ -94,11 +94,12 @@ void main() {
 #   if defined(NORMALBUMPMAP)
         vec3 wsN;
         vec2 offsetTexCoord;
+        vec3 tsN;
 #       if (PARALLAXSTEPS > 0)
-            bumpMap(normalBumpMap, bumpMapScale, bumpMapBias, texCoord, tan_X, tan_Y, tan_Z, backside, normalize(_tsE), wsN, offsetTexCoord);
+            bumpMap(normalBumpMap, bumpMapScale, bumpMapBias, texCoord, tan_X, tan_Y, tan_Z, backside, normalize(_tsE), wsN, offsetTexCoord, tsN);
 #       else
             // Vanilla normal mapping
-            bumpMap(normalBumpMap, 0.0, 0.0, texCoord, tan_X, tan_Y, tan_Z, backside, vec3(0.0), wsN, offsetTexCoord);
+            bumpMap(normalBumpMap, 0.0, 0.0, texCoord, tan_X, tan_Y, tan_Z, backside, vec3(0.0), wsN, offsetTexCoord, tsN);
 #       endif    
 
 #   else
@@ -203,6 +204,10 @@ void main() {
 
 #   ifdef CS_NORMAL
         CS_NORMAL.xyz = (g3d_WorldToCameraMatrix * vec4(wsN, 0.0)) * CS_NORMAL_writeScaleBias.x + vec3(CS_NORMAL_writeScaleBias.y);
+#   endif
+
+#   ifdef TS_NORMAL
+        TS_NORMAL.xyz = tsN * TS_NORMAL_writeScaleBias.x + vec3(TS_NORMAL_writeScaleBias.y);
 #   endif
 
 #   if defined(WS_FACE_NORMAL) || defined(CS_FACE_NORMAL)
