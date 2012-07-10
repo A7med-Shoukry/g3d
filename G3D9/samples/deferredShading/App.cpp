@@ -36,7 +36,10 @@ void App::onInit() {
 void App::makeGBuffer() {
     GBuffer::Specification specification;
     specification.format[GBuffer::Field::WS_NORMAL]          = ImageFormat::RGB16F();
-    specification.format[GBuffer::Field::SS_POSITION_CHANGE] = ImageFormat::RG16F();
+
+    specification.format[GBuffer::Field::SS_POSITION_CHANGE] = ImageFormat::RG8();
+    specification.encoding[GBuffer::Field::SS_POSITION_CHANGE] = Vector2(128.0f, -63.0f);
+
     specification.format[GBuffer::Field::WS_POSITION]        = ImageFormat::RGB32F();
     specification.format[GBuffer::Field::LAMBERTIAN]         = ImageFormat::RGB8();
     specification.format[GBuffer::Field::GLOSSY]             = ImageFormat::RGBA8();
@@ -46,6 +49,7 @@ void App::makeGBuffer() {
     gbuffer = GBuffer::create(specification);
 
     gbuffer->resize(renderDevice->width(), renderDevice->height());
+    gbuffer->texture(GBuffer::Field::SS_POSITION_CHANGE)->visualization = Texture::Visualization::unitVector();
 
     // Share the depth buffer with the forward-rendering pipeline
     m_depthBuffer = gbuffer->texture(GBuffer::Field::DEPTH_AND_STENCIL);
