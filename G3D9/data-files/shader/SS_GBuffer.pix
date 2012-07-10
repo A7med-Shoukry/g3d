@@ -106,6 +106,8 @@ void main() {
         // World space normal
         vec3 wsN = normalize(tan_Z.xyz * backside);
         vec2 offsetTexCoord = texCoord;
+        // No bump maps, normal always Z-axis of tangent space
+        vec3 tsN = vec3(0.0,0.0,1.0);
 #   endif
 
     //////////////////////// MATERIAL //////////////////////////////
