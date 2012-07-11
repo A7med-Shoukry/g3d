@@ -173,7 +173,7 @@ void DepthOfField::composite
  Texture::Ref    packedBuffer, 
  Texture::Ref    blurBuffer) {
     rd->push2D(); {
-        rd->clear();
+        rd->clear(true, false, false);
         Shader::ArgList& args = m_compositeShader->args;
         
         args.set("blurBuffer",   blurBuffer);
