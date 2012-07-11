@@ -278,6 +278,8 @@ GApp::GApp(const Settings& settings, OSWindow* window) :
     m_realTime    = 0;
     m_lastWaitTime  = System::time();
 
+    m_depthOfField = DepthOfField::create();
+
     renderDevice->setColorClearValue(Color3(0.1f, 0.5f, 1.0f));
     logPrintf("Done GApp::GApp()\n\n");
 }

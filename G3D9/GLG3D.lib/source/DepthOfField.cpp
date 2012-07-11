@@ -6,10 +6,11 @@
 #include "GLG3D/DepthOfField.h"
 #include "GLG3D/RenderDevice.h"
 #include "G3D/GCamera.h"
+#include "GLG3D/Draw.h"
 
 namespace G3D {
     
-DepthOfField::DepthOfField() {
+DepthOfField::DepthOfField() : m_enabled(true) {
     // Intentionally empty
 }
 
@@ -42,6 +43,22 @@ void DepthOfField::apply
  Texture::Ref       color,
  Texture::Ref       depth, 
  const GCamera&     camera) {
+    if ((camera.depthOfFieldModel() == GCamera::NONE) || ! m_enabled) {
+        Framebuffer::Ref f = rd->framebuffer();
+
+        Framebuffer::Attachment::Ref a = f->get(Framebuffer::COLOR0);
+       
+        if (f.isNull() || (a->texture() != color)) {
+            // TODO: Run a copy shader; fixed function can clip colors
+            rd->clear(true, false, false);
+            rd->setTexture(0, color);
+            Draw::fastRect2D(rd->viewport(), rd);
+            rd->setTexture(0, NULL);
+        }
+
+        // Exit abruptly because DoF is disabled
+        return;
+    }
     
     alwaysAssertM(color.notNull(), "Color buffer may not be NULL");
     alwaysAssertM(depth.notNull(), "Depth buffer may not be NULL");

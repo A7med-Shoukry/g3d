@@ -48,8 +48,6 @@ void App::onInit() {
     m_preventEntityDrag   = false;
     m_preventEntitySelect = false;
 
-    m_depthOfField        = DepthOfField::create();
-
     // For higher-quality screenshots:
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
     // developerWindow->videoRecordDialog->setCaptureGui(false);
@@ -303,9 +301,7 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     // Call to make the GApp show the output of debugDraw
     drawDebugShapes();
 
-    if (defaultCamera.depthOfFieldModel() != GCamera::NONE) {
-        m_depthOfField->apply(rd, m_colorBuffer0, m_depthBuffer, defaultCamera);
-    }
+    m_depthOfField->apply(rd, m_colorBuffer0, m_depthBuffer, defaultCamera);
 
     defaultCamera.setPixelOffset(Vector2(G3D::uniformRandom(-0.05f, 0.05f), G3D::uniformRandom(-0.05f, 0.05f)));
 }

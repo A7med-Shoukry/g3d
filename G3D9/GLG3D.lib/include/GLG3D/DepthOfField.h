@@ -61,6 +61,8 @@ protected:
 
     Shader::Ref          m_compositeShader;
 
+    bool                 m_enabled;
+
     /** Allocates and resizes buffers */
     void resizeBuffers(Texture::Ref target);
 
@@ -81,6 +83,13 @@ public:
 
     void reloadShaders();
 
+    bool enabled() const {
+        return m_enabled;
+    }
+
+    void setEnabled(bool b) {
+        m_enabled = b;
+    }
 
     /** \brief Constructs an empty DepthOfField. */
     static Ref create();
@@ -91,6 +100,11 @@ public:
 
         Reads depth reconstruction and circle of confusion parameters
         from \a camera.
+
+        If not enabled() or camera.depthOfFieldModel == GCamera::NONE,
+        this copies the color to the current framebuffer but performs
+        no blurring.  If the color buffer is bound to the current
+        framebuffer then nothing happens.
     */
     void apply(RenderDevice* rd, Texture::Ref color, Texture::Ref depth, const GCamera& camera);
 };

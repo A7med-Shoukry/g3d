@@ -24,6 +24,7 @@
 #include "GLG3D/Film.h"
 #include "GLG3D/Shape.h"
 #include "GLG3D/Renderbuffer.h"
+#include "GLG3D/DepthOfField.h"
 
 namespace G3D {
 
@@ -305,6 +306,8 @@ protected:
         \sa setFilmEnabled, filmEnabled, m_useFilm
     */
     Film::Ref               m_film;
+
+    DepthOfField::Ref       m_depthOfField;
 
     /** Framebuffer used for rendering the 3D portion of the scene. */
     Framebuffer::Ref        m_frameBuffer;
