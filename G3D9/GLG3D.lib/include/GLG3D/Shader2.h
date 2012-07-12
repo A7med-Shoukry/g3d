@@ -98,7 +98,7 @@ Make G3D assume programmable pipeline and not retain fixed-function state by def
 class Shader2  : public ReferenceCountedObject {
 public:
     typedef ReferenceCountedPointer<Shader2>   Ref;
-            
+    
     enum ShaderStage {
         VERTEX, 
         
@@ -114,6 +114,7 @@ public:
 
         STAGE_COUNT
     };
+
 
     enum SourceType {FILE, STRING};
 
@@ -181,37 +182,144 @@ public:
 
 protected:
 
+    /** 
+        A structure containing the individual parts of the code of a preprocessed shader. 
+        This is combined with the macro argument and preamble string at compilation time
+        in the following manner: versionString + g3dInsertString + preprocessedCode.
+      */
+    class PreprocessedShaderSource {
+    public:
 
+        /** The original code, with #includes evaluated, and the version line (if existant) replaced with an empty line */
+        std::string preprocessedCode;
+        /** 
+            The filename of the file where the code was originally loaded from.
+            Note that this does *not* somehow account for #include pragmas. 
+          */
+        std::string filename;
+
+        /** The #defines and uniform args added by G3D. Does not include user-defined macro arguments or preamble */
+        std::string g3dInsertString;
+
+        /** 
+            A line of the form "#version XXX" where XXX is a three digit number denoting the GLSL 
+            version for the graphics driver to use. Inserted at the beginning of the final code submitted to the driver.
+          */
+        std::string versionString;
+    };
 
     class ShaderProgram : public ReferenceCountedObject {
         friend class Shader2;
-    
-        /** Variable declaration discovered in the program */
+        public:
+        /** Uniform variable declaration discovered in the program */
         class Declaration {
         public:
-            GLuint                              location;
-            std::string                         name;
-            GLenum                              type;
+            GLint       location;
+            
+            std::string name;
+
+            /** OpenGL type of the variable (e.g. GL_INT) */
+            GLenum      type;
+
+            GLuint      size;
+            
+            /** Texture Unit */
+            GLint       textureUnit;
+
+            bool        dummy;
         };
 
-        GLuint                              m_glShaderObject[STAGE_COUNT];
 
-        Table<std::string, Declaration>     m_declarationTable;
-        GLuint                              m_glProgramObject;
-        bool                                m_ok;
 
-        std::string                         m_messages;
-        ShaderProgram(Shader2::Specification s);
+        /** Uniform variable declaration discovered in the program */
+        class AttributeDeclaration {
+        public:
+            GLint       location;
+
+            /** OpenGL type of the variable (e.g. GL_INT) */
+            GLenum      type;
+
+            GLint      size;
+
+            std::string name;
+
+        };
+
+
+
+
+        typedef Table<std::string, Declaration>          DeclTable;
+
+        typedef Table<std::string, AttributeDeclaration> AttrTable;
+        
+
+        GLuint                              glShaderObject[STAGE_COUNT];
+
+        DeclTable                           declarationTable;
+        AttrTable                           attributeTable;
+        GLuint                              glProgramObject;
+        bool                                ok;
+
+        std::string                         messages;
+
+        ShaderProgram(){}
     public:
         typedef ReferenceCountedPointer<ShaderProgram> Ref;
 
         GLuint glShaderProgramObject(){
-            return m_glProgramObject;
+            return glProgramObject;
         }
 
-        static ShaderProgram::Ref create(Shader2::Specification s);
+        /** False if and only if there was an error in compilation or linking */
+        bool isOk() {
+            return ok;
+        }
+
+        void cleanDeclarationTables();
+
+        /** True if and only if the uniform declaration table contains a non-dummy entry @param name. */
+        bool containsNonDummyUniform(const std::string& name);
+
+        /** Computes the uniform table from the program object.  Called from the constructor */
+        void computeUniformTable();
+
+        /** Computes the vertex attribute table from the program object.  Called from the constructor */
+        void computeVertexAttributeTable();
+
+        
+        //void addVertexAttributesFromSource(const Array<PreprocessedShaderSource>& preprocessedSource);
+
+        /** Finds any uniform variables in the code for all shader stages that are not already
+            in the uniform list that OpenGL returned and adds them to
+            the table.  This causes ShaderProgram to surpress
+            warnings about setting variables that have been compiled
+            away--those warnings are annoying when temporarily commenting
+            out code. */
+        void addUniformsFromSource(const Array<PreprocessedShaderSource>& preprocessedSource);
+
+        /** Finds any uniform variables in the code string, and adds them to the uniform table */
+        void addUniformsFromCode(const std::string& code);
+
+        /** Compile using the current macro args, preamble, and source code. */
+        void compile(const Array<PreprocessedShaderSource>& preprocessedSource, const std::string& preambleAndMacroArgs);
+
+        /** Link the program object */
+        void link();
+        
+        /** Compile and link the shader, and set up the formal parameter lists */
+        void init(const Array<PreprocessedShaderSource>& preprocessedSource, const std::string& preambleAndMacroArgs);
+
+        static ShaderProgram::Ref create(const Array<PreprocessedShaderSource>& preprocessedSource, const std::string& preambleAndMacroArgs);
+
+        const Table<std::string, Declaration>& declTable() {
+            return declarationTable;
+        }
 
     };
+
+    
+    /** The source code for a shader from the STAGE_COUNT stages. */
+    Array<PreprocessedShaderSource>             m_preprocessedSource;
 
     /** Maps preamble + macro definitions to compiled shaders */
     Table<std::string, ShaderProgram::Ref>      m_compilationCache;
@@ -226,8 +334,6 @@ protected:
 
 public:
 
-    Args args;
-
     enum FailureBehavior {
         /** Throw an exception on compilation failure */
         EXCEPTION, 
@@ -239,10 +345,12 @@ public:
         SILENT
     };
 
-
+    
     static FailureBehavior s_failureBehavior;
 
     bool ok() const;
+
+    static bool isSamplerType(GLenum type);
 
     static void setFailureBehavior(FailureBehavior f);
 
@@ -251,7 +359,7 @@ public:
         return m_shaderProgram->glShaderProgramObject();
     }
 
-    /** Loads and compiles the shader */
+    /** Loads the shader */
     static Ref create(const Specification& s);
 
     /** \copydoc Shader2::Source::Source() */
@@ -262,9 +370,38 @@ public:
         const std::string& f3 = "", 
         const std::string& f4 = "");
 
+
+    
+
+    void setG3DArgs(Args& args, RenderDevice* renderDevice);
+
     /** Reload this shader from the files on disk, if it was loaded from disk. */
     void reload();
 
+    /** Reload from files on disk and recompile */
+    void retry(const Args& args);
+
+    /** Bind a single uniform variable */
+    void bindStreamArg(const std::string& name, const VertexRange& vertexRange, const ShaderProgram::AttributeDeclaration& decl);
+
+    /** Iterate over all formal parameters and bind all variables appropriately */
+    void bindStreamArgs(const Args& args, RenderDevice* rd);
+
+    /** Bind a single uniform variable */
+    void bindUniformArg(const Args::Arg& arg, const ShaderProgram::Declaration& decl);
+
+    /** Iterate over all formal parameters and bind all non-dummy variables appropriately */
+    void bindUniformArgs(const Args& args);
+
+    /** Compile the shader and bind the arguments as necessary. Adds the necessary g3d uniforms to args */
+    void compileAndBind(Args& args, RenderDevice* rd);
+
+    /** Compile the shader. Here is where we access the cache, and if we get a cache miss
+      * compile and link using the current macro args, preamble, and source code */
+    void compile(const Args& args);
+
+    /** Load the shaders from files on disk, and run the preprocessor */
+    void load();
 
     /** Replaces all \#includes in @a code with the contents of the appropriate files.
         It is called recursively, so included files may have includes themselves.
@@ -280,12 +417,12 @@ public:
 
     /** Execute all steps of our preprocessor engine
 
-        Process Includes
+        Process Includes (adding #line directives where neccessary)
         Process Version Line
         Add G3D #defines
         Add G3D uniform declarations
     */
-    static void g3dPreprocessor(const std::string& dir, std::string& code);
+    static void g3dPreprocessor(const std::string& dir, PreprocessedShaderSource& source);
 
 
     /** Reads the code looking for a #version line (spaces allowed after "#"). If one is found, 

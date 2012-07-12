@@ -1349,9 +1349,9 @@ public:
 
     void apply(const Shader2::Ref& s);
 
-    void apply(const Shader2::Ref& s, const Args& args);
+    void apply(const Shader2::Ref& s, Args& args);
 
-    void applyRect(const Shader2::Ref& s, const Args& args = Args(), const Rect2D& r = Rect2D());
+    void applyRect(const Shader2::Ref& s, Args& args = Args(), const Rect2D& r = Rect2D());
 
    
     Shader::Ref shader() const {

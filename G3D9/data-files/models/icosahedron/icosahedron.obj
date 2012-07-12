@@ -1,0 +1,44 @@
+# Unit-volume cube with the same texture coordinates on each face.
+#
+# Adapted by Michael Mara from The Little Grasshopper Graphics Programming Tips: Triangle Tessellation 
+# with OpenGL 4.0 (accessed at http://prideout.net/blog/?p=48), and released into the Public Domain on
+# July 11, 2012.
+#
+# http://graphics.cs.williams.edu/data
+
+
+
+v  0.000 0.000 1.000
+v  0.894  0.000  0.447
+v  0.276  0.851  0.447
+v  -0.724  0.526  0.447
+v  -0.724 -0.526  0.447
+v  0.276 -0.851  0.447
+v  0.724  0.526 -0.447
+v  -0.276  0.851 -0.447
+v  -0.894  0.000 -0.447
+v  -0.276 -0.851 -0.447
+v  0.724 -0.526 -0.447
+v  0.000  0.000 -1.000
+
+g cube
+f 1 2 3
+f 1 3 4
+f 1 4 5
+f 1 5 6
+f 1 6 2
+f 8 7 12
+f 9 8 12
+f 10 9 12
+f 11 10 12
+f 7 11 12
+f 7 3 2
+f 8 4 3
+f 9 5 4
+f 10 6 5
+f 11 2 6
+f 7 8 3
+f 8 9 4
+f 9 10 5
+f 10 11 6
+f 11 7 2

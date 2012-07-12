@@ -23,7 +23,7 @@ namespace G3D {
 
 /** All arguments */
 class Args {
-
+public:
     /** 8-byte storage used for all argument types */
     union Scalar {
         float  f;
@@ -68,28 +68,46 @@ class Args {
         MacroArgPair(const std::string& n, const std::string& v) : name(n), value(v) {}
     };
    
-    typedef Table<std::string, Arg> ArgTable;
-       
+    typedef Table<std::string, Arg>                 ArgTable;
+    typedef Table<std::string, VertexRange>         AttrTable;
 private:
-        
-    std::string                                 m_preamble;
-    Array<MacroArgPair>                         m_macroArgs;
-    ArgTable                                    m_uniformArgs;
-        
-    Table<std::string, const VertexRange>       m_streamArgs;
-    int                                         m_numInstances;
+    
+    std::string         m_preamble;
+    Array<MacroArgPair> m_macroArgs;
+    ArgTable            m_uniformArgs;
+    AttrTable           m_streamArgs;
+    int                 m_numInstances;
 
     /** If empty, sequential indicies will be used */
-    VertexRange                                 m_indexArray;
-
+    VertexRange         m_indexArray;
+    
 public:
-
+    Args(){
+        geometryInput = PrimitiveType::TRIANGLES;
+        patchVertices = 3;
+    }
+    std::string toString() const;
     PrimitiveType geometryInput;
     PrimitiveType geometryOutput;
+    GLint patchVertices;
 
     void setIndexArray(const VertexRange indArray);
 
-    std::string getPreambleAndMacroString() const;
+    std::string preambleAndMacroString() const;
+
+    bool hasPreambleOrMacros(){
+        return m_preamble != "" || m_macroArgs.size() > 0;
+    }
+
+    const AttrTable& attributeTable() const{
+        return m_streamArgs;
+    }
+
+    const VertexRange& getIndices(){
+        return m_indexArray;
+    }
+
+    const Arg& getUniform(const std::string& name) const;
 
     /** Arbitrary string to append to beginning of the shader */
     void setPreamble(const std::string& preamble);

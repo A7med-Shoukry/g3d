@@ -3576,18 +3576,25 @@ void RenderDevice::apply(const Shader2::Ref& s){
 
 }
 
-void RenderDevice::apply(const Shader2::Ref& s, const Args& args){
-
+void RenderDevice::apply(const Shader2::Ref& s, Args& args){
+    
+    
+    s->compileAndBind(args, this);
+    beginIndexedPrimitives(); {
+        s->bindStreamArgs(args, this);
+        sendIndices(args.geometryInput, args.getIndices());
+    } endIndexedPrimitives();
 }
 
-void RenderDevice::applyRect(const Shader2::Ref& s, const Args& args, const Rect2D& r){
+void RenderDevice::applyRect(const Shader2::Ref& s, Args& args, const Rect2D& r){
     float zCoord = 0.0f;
-    s->args = args;
+    
+    s->compileAndBind(args, this);
     //const Rect2D& v = viewport(); TODO: Mike
     debugAssertGLOk();
     beginOpenGL();
     
-    glUseProgram(s->shaderProgram());
+    
     
     debugAssertGLOk();
     glBegin(primitiveToGLenum(PrimitiveType::QUADS)); {

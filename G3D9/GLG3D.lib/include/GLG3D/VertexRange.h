@@ -16,6 +16,7 @@
 namespace G3D {
 
 class RenderDevice;
+class Shader2;
 
 
 /**
@@ -42,6 +43,7 @@ class VertexRange {
 private:
 
     friend class RenderDevice;
+    friend class Shader2;
 
     VertexBuffer::Ref   m_area;
     

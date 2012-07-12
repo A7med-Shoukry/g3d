@@ -67,6 +67,16 @@ void App::onInit() {
     m_shadowMap = ShadowMap::create();
 
     loadScene();
+    Image3::Ref im0 = Image3::fromFile("sineNoise1.jpg");
+
+    m_testTexture0 = Texture::fromImage("Noise", im0);
+
+
+    Image3::Ref im1 = Image3::fromFile("text-only-logos.png");
+
+    m_testTexture1 = Texture::fromImage("logos", im1);
+
+    m_shader2 = Shader2::fromFiles("test.pix","test.vrt");
 }
 
 
@@ -122,7 +132,7 @@ void App::makeGUI() {
     infoPane->moveBy(10, 0);
 
     infoPane->addTextureBox(m_shader2TestTexture);
-    infoPane->addButton("Test Shader 2", this, &App::testShader2);
+    infoPane->addButton("Reload Shader 2", this, &App::reloadShader2);
     infoPane->addButton("Exit", this, &App::endProgram);
     infoPane->pack();
 
@@ -135,19 +145,61 @@ void App::makeGUI() {
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, window()->width(), debugWindow->rect().height()));
 }
-
+void App::reloadShader2(){
+    m_shader2->reload();
+}
 void App::testShader2(){
+    Array<Surface::Ref> surface3D;
+    m_scene->onPose(surface3D);
     debugAssertGLOk();
-    Shader2::Ref shader2 = Shader2::fromFiles("test.pix","test.vrt");
-    debugAssertGLOk();
-    renderDevice->pushState(m_testFrameBuffer);{
+    
+    Args args;
+    args.setUniform("jump", 5);
+    args.setUniform("noise", m_testTexture1);
+    args.setUniform("screenSize", Vector2(512.0f, 512.0f)); 
+    args.setMacro("ODD_COLOR", Color3(0.8,0.9,0.2));
+    args.setPreamble("#define EVEN_COLOR vec3(0.0, 0.0, 0.4)");
+    renderDevice->pushState();{
         renderDevice->setColorClearValue(Color4(1.0,1.0,1.0,1.0));
         renderDevice->clear();
-        renderDevice->setDepthTest(RenderDevice::DEPTH_ALWAYS_PASS);
+    } renderDevice->popState();
+    for(int i = 0; i < surface3D.size(); ++i){
+        const SuperSurface::Ref&  surface = surface3D[i].downcast<SuperSurface>();
+        if(surface.isNull()) {
+            debugPrintf("Surface %d, not a supersurface.\n", i);
+            continue;
+        }
+        const SuperSurface::GPUGeom::Ref& gpuGeom = surface->gpuGeom();
+        
+        args.setStream("g3d_Normal", gpuGeom->normal);
+        args.setStream("g3d_MultiTexCoord0", gpuGeom->texCoord0);
+        args.setStream("g3d_Vertex", gpuGeom->vertex);
+        args.setIndexArray(gpuGeom->index);
+        args.geometryInput = gpuGeom->primitive;
         debugAssertGLOk();
-        renderDevice->applyRect(shader2);
-        debugAssertGLOk();
-    }renderDevice->popState();
+        renderDevice->pushState();{
+            renderDevice->setBlendFunc(RenderDevice::BLEND_ONE, RenderDevice::BLEND_ZERO);
+            renderDevice->setDepthTest(RenderDevice::DEPTH_LEQUAL);
+            renderDevice->setProjectionAndCameraMatrix(defaultCamera);
+            CoordinateFrame cf;
+            debugPrintf("Surface %d: %s\n", i, surface->name().c_str());
+
+            surface->getCoordinateFrame(cf);
+            debugPrintf("CoordinateFrame:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n", 
+                cf.rotation[0][0], cf.rotation[0][1], cf.rotation[0][2], cf.translation[0],
+                cf.rotation[1][0], cf.rotation[1][1], cf.rotation[1][2], cf.translation[1],
+                cf.rotation[2][0], cf.rotation[2][1], cf.rotation[2][2], cf.translation[2]);
+            const CoordinateFrame o2w = renderDevice->objectToWorldMatrix();
+
+            renderDevice->setObjectToWorldMatrix(cf);
+            debugAssertGLOk();
+            renderDevice->apply(m_shader2, args);
+            renderDevice->setObjectToWorldMatrix(o2w);
+            debugAssertGLOk();
+        }renderDevice->popState();
+    }
+
+    
 }
 
 
@@ -288,27 +340,30 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     if (m_scene.isNull()) {
         return;
     }
-    Draw::skyBox(rd, m_scene->skyBoxTexture(), m_scene->skyBoxConstant());
+    testShader2();
+    /*Draw::skyBox(rd, m_scene->skyBoxTexture(), m_scene->skyBoxConstant());
 
     // Render all objects (or, you can call Surface methods on the
     // elements of posed3D directly to customize rendering.  Pass a
     // ShadowMap as the final argument to create shadows.)
     Surface::sortAndRender(rd, defaultCamera, surface3D, m_scene->lighting(), m_shadowMap);
-
+    
+    
     if (m_showWireframe) {
         Surface::renderWireframe(rd, surface3D);
     }
 
     //////////////////////////////////////////////////////
     // Sample immediate-mode rendering code
+    
     rd->enableLighting();
     for (int i = 0; i < m_scene->lighting()->lightArray.size(); ++i) {
         rd->setLight(i, m_scene->lighting()->lightArray[i]);
     }
     rd->setAmbientLightColor(Color3::white() * 0.5f);
 
-    Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());
-    Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f), Color3::black());
+    //Draw::sphere(Sphere(Vector3(2.5f, 0.5f, 0), 0.5f), rd, Color3::white(), Color4::clear());
+    //Draw::box(AABox(Vector3(-2.0f, 0.0f, -0.5f), Vector3(-1.0f, 1.0f, 0.5f)), rd, Color4(Color3::orange(), 0.25f), Color3::black());
 
     if (m_showAxes) {
         Draw::axes(Point3(0, 0, 0), rd);
@@ -317,9 +372,9 @@ void App::onGraphics3D(RenderDevice* rd, Array<Surface::Ref>& surface3D) {
     if (m_showLightSources) {
         Draw::lighting(m_scene->lighting(), rd);
     }
-
+    
     // Call to make the GApp show the output of debugDraw
-    drawDebugShapes();
+    drawDebugShapes();*/
 }
 
 

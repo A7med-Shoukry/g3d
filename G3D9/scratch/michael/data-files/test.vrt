@@ -1,7 +1,20 @@
-void main() {
+#version 420 : compatability
+in vec3 g3d_Vertex;
+in vec3 g3d_Normal;
+in vec2 g3d_MultiTexCoord0;
 
-    gl_Position = gl_Vertex;
+out vec3 ws_normal;
+
+out vec2 texCoord;
+
+
+#extension GL_EXT_gpu_shader4 : enable
+void main() {
+    //gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_Position = g3d_ModelViewProjectionMatrix * vec4(g3d_Vertex, 1.0);
+    texCoord    = g3d_MultiTexCoord0;
+    ws_normal   = g3d_ObjectToWorldNormalMatrix * g3d_Normal;
+
 }
 
-
-#       version 120
+//#       version 330

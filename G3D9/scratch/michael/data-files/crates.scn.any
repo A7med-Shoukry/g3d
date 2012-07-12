@@ -27,7 +27,7 @@
 
         
        crateModel = ArticulatedModel::Specification {
-            filename = "ifs/crate.ifs";
+            filename = "models/icosahedron/icosahedron.obj";
             preprocess = (
                 // You can #include a material file, or simply put all of the
                 // options here as was done for groundModel.  #include can be
@@ -62,7 +62,7 @@
             model = "crateModel";
             position = CFrame::fromXYZYPRDegrees(0.6f, 0.5f, -1.8f, 30.0f);
         };
-
+        
         s0 = Entity {
             model = "shipModel";
             position = PhysicsFrameSpline {
@@ -85,11 +85,11 @@
                 cyclic = true;
             };
         };
-        
+        /*
         ground = Entity {
             model    = "groundModel";
             position = CFrame::fromXYZYPRDegrees(0, -0.01, 0, 45);
-        };
+        };*/
     };
         
     camera = GCamera {

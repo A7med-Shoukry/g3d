@@ -26,7 +26,8 @@ public:
         TRIANGLE_STRIP = 0x0005,
         TRIANGLE_FAN   = 0x0006,
         QUADS          = 0x0007, 
-        QUAD_STRIP     = 0x0008
+        QUAD_STRIP     = 0x0008,
+        PATCHES        = 0x000E
     };
 
 private:

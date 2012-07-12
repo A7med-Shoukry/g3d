@@ -15,33 +15,20 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\scratch\michael\source\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\scratch\michael\source\App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\scratch\michael\source\Entity.h">
+    <ClInclude Include="..\samples\allStagesShader\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\scratch\michael\source\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\michael\source\App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scratch\michael\source\Entity.cpp">
+    <ClCompile Include="..\samples\allStagesShader\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\scratch\michael\data-files\test.glsl" />
-    <None Include="..\scratch\michael\data-files\test.pix" />
-    <None Include="..\scratch\michael\data-files\test.vrt" />
-    <None Include="..\scratch\michael\data-files\crates.scn.any">
-      <Filter>Resource Files</Filter>
-    </None>
+    <None Include="..\samples\allStagesShader\data-files\geodesic.ctl" />
+    <None Include="..\samples\allStagesShader\data-files\geodesic.evl" />
+    <None Include="..\samples\allStagesShader\data-files\geodesic.geo" />
+    <None Include="..\samples\allStagesShader\data-files\geodesic.pix" />
+    <None Include="..\samples\allStagesShader\data-files\geodesic.vrt" />
   </ItemGroup>
 </Project>

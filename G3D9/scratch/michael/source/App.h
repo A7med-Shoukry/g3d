@@ -35,9 +35,12 @@ class App : public GApp {
 
     Texture::Ref        m_shader2TestTexture;
     Texture::Ref        m_depthBuffer;
+    Texture::Ref        m_testTexture0;
+    Texture::Ref        m_testTexture1;
+
     Framebuffer::Ref    m_testFrameBuffer;
 
-
+    Shader2::Ref        m_shader2;
     /** Loads whatever scene is currently selected in the m_sceneDropDownList. */
     void loadScene();
 
@@ -70,6 +73,7 @@ public:
     virtual void onCleanup() override;
 
     void testShader2();
+    void reloadShader2();
 
     /** Sets m_endProgram to true. */
     virtual void endProgram();

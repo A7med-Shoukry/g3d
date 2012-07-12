@@ -64,12 +64,13 @@ Color4 Texture::readTexel(int x, int y, RenderDevice* rd) const {
 
     // Read back 1 pixel
     if (format()->depthBits == 0) {
-        // This is a depth texture
+
         fbo->set(Framebuffer::COLOR0, Texture::Ref(this));
         rd->pushState(fbo);
         glReadPixels(x, y, 1, 1, GL_RGBA, GL_FLOAT, &c);
         rd->popState();
     } else {
+        // This is a depth texture
         fbo->set(Framebuffer::DEPTH, Texture::Ref(this));
         rd->pushState(fbo);
         glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &c.r);

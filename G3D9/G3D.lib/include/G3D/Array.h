@@ -179,7 +179,7 @@ private:
 
 public:
    /**
-    Assignment operator.  Will be private in a future release because this is slow and can be invoked by accident by novide C++ programmers.
+    Assignment operator.  Will be private in a future release because this is slow and can be invoked by accident by novice C++ programmers.
     If you really want to copy an Array, use the explicit copy constructor.
     */ 
    Array& operator=(const Array& other) {
