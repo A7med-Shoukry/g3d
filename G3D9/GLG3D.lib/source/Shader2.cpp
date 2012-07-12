@@ -270,7 +270,7 @@ void Shader2::ShaderProgram::addVertexAttributesFromSource(const Array<Preproces
 
             // Read the name
             std::string name = ti.readSymbol();
-/*
+
             if ((ti.peek().type() == Token::SYMBOL) && (ti.peek().string() == "[")) {
                 ti.readSymbol("[");
                 ti.readNumber();
@@ -321,7 +321,7 @@ void Shader2::ShaderProgram::computeVertexAttributeTable() {
     // Get the sizes, types and names
 
     // Loop over glGetActiveAttribute and store the results away.
-    for (GLuint i = 0; i < attributeCount; ++i) {
+    for (GLuint i = 0; i < (GLuint)attributeCount; ++i) {
 
         
         AttributeDeclaration d;
@@ -885,10 +885,10 @@ Shader2::ShaderProgram::Ref Shader2::ShaderProgram::create(const Array<Preproces
 }
 
 
-bool isNextToken(const std::string& macro, const std::string& code, int offset = 0){
+bool isNextToken(const std::string& macro, const std::string& code, size_t offset = 0){
     size_t macroOffset = code.find(macro, offset);
     if(offset == std::string::npos) return false;
-    for(int i = offset; i < macroOffset; ++i){
+    for(size_t i = offset; i < macroOffset; ++i){
         const char c = code[i];
         if(c != ' ' && c != '\t') return false;
     }
@@ -1388,9 +1388,8 @@ void Shader2::compile(const Args& args){
         debugAssertGLOk();
         debugPrintf("Unable to find shader in cache for preamble and macro string %s.\n", preambleAndMacroString.c_str());
         m_compilationCache.set(preambleAndMacroString, m_shaderProgram);
-        debugPrintf(m_shaderProgram->messages.c_str());
+        debugPrintf("%s", m_shaderProgram->messages.c_str());
         if(!m_ok){
-            debugPrintf(m_shaderProgram->messages.c_str());
             if(s_failureBehavior == PROMPT){
                 const int cDebug  = 0;
                 const int cRetry = 1;
