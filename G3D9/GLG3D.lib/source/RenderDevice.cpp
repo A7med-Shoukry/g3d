@@ -3585,6 +3585,10 @@ void RenderDevice::apply(const Shader2::Ref& s, Args& args){
         sendIndices(args.geometryInput, args.getIndices());
     } endIndexedPrimitives();
 }
+void RenderDevice::applyRect(const Shader2::Ref& s){
+    Args args;
+    applyRect(s, args);
+}
 
 void RenderDevice::applyRect(const Shader2::Ref& s, Args& args, const Rect2D& r){
     float zCoord = 0.0f;
