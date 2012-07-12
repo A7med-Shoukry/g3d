@@ -22,19 +22,26 @@
    <p>
    Changes in 9.00:
    <ul>
+    <li> Added the PrimitiveType PATCHES to constants.h. [Mike] </li>
+    <li> Updated glew.h, glew.c, glxew.h and wglew.h to their latest version (1.7). [Mike] </li>
+    <li> G3D::Shader2, intended to eventually replace G3D::Shader. [Mike] </li>
+    <li> G3D::Args, a separate class used extensively by Shader2. [Mike] </li>
+    <li> G3D::RenderDevice::apply and G3D::RenderDevice::applyRect, both of which take a Shader2 and Args. [Mike] </li>
+    <li> Added the allStagesShader project to showcase Shader2 using all 5 stages of the OpenGL 4 programmable shader pipeline. [Mike] </li>
+    <li> Added icosahedron.obj, an icosahedron with all vertices on the unit sphere., used in allStagesShader. [Mike] </li>
     <li> Added optional vignetting to G3D::Film</li>
     <li> Extended G3D::GCamera with two depth-of-field models </li>
     <li> G3D::AmbientOcclusion screen-space ambient obscurance [Morgan + Mike] </li>
-    <li> Added G3D::ImageFormat::BGRA8 [Mike] </li>
+    <li> G3D::ImageFormat::BGRA8 [Mike] </li>
     <li> Added convertRGBA8toBGRA8 functionality to ImageBuffer::convertBuffer() [Mike] </li>
     <li> Modified Win32Window::setIcon to properly convert the icon to BRGA. (Our G3D icon now displays properly). [Mike] </li>
     <li> Added enum ImageFormat::NumberFormat which is {FLOATING_POINT_FORMAT, INTEGER_FORMAT, NORMALIZED_FIXED_POINT_FORMAT, OTHER}.
          To eventually replace the floatingPoint boolean. Modified the constructor to match, and set its value for all image formats specified in the .cpp. [Mike] </li>
-    <li> Added ImageFormat::isIntegerFormat() [Mike] </li>
-    <li> Added ImageFormat::channelMask, which returns a Color4 that masks off unused components in the format, given in RGBA.
+    <li> ImageFormat::isIntegerFormat [Mike] </li>
+    <li> ImageFormat::channelMask, which returns a Color4 that masks off unused components in the format, given in RGBA.
         For example, the mask for R32F is (1,0,0,0), for A32F is (0,0,0,1), for RGB32F is (1,1,1,0).
         (Note that luminance is interpreted as using only the R channel). Used by GLCaps::supportsTextureDrawBuffer(). [Mike]</li>
-    <li> Added GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt). Extended RenderDevice::init to write out the
+    <li> GLCaps::supportsTextureDrawBuffer(const ImageFormat* fmt). Extended RenderDevice::init to write out the
          result of this function for each format alongside the supportsTexture and supportsRenderBuffer functions. [Mike] <\li>
     <li> Modified MD3Model::findFrameNum() to make the animations smoother until we get to implementing blending between animations [Mike]</li>
     <li> Added an optional mipLevel parameter to getTexImage, which defaults to 0. [Mike]</li>
